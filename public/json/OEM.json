@@ -1,0 +1,12 @@
+{
+    "code": 0,
+    "data": {
+        "loginName": "质检大屏",
+        "loginLogo": "/logo.svg",
+        "loginDesc": "登录页产品描述",
+        "menusLogo": "/logo.svg",
+        "menusName": "质检大屏",
+        "copyright": "",
+        "links": null
+    }
+}

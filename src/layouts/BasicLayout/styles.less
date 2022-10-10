@@ -1,0 +1,31 @@
+@import '@/styles/ant.less';
+
+.layoutMenuItem {
+    a {
+        color: @menu-highlight-color !important;
+    }
+    &:hover {
+        a {
+            color: @menu-highlight-color !important;
+        }
+    }
+}
+
+.ant-menu-dark {
+    .layoutMenuItem {
+        a {
+            color: @menu-dark-color !important;
+        }
+        &:hover {
+            a {
+                color: @layout-trigger-color !important;
+            }
+        }
+    }
+
+    .layoutMenuItem {
+        a {
+            opacity: 0;
+        }
+    }
+}

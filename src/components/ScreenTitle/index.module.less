@@ -1,0 +1,88 @@
+.topHeader {
+  width: 100%;
+  display: flex;
+  gap: 13%;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+  background: url('../../assets/img/top.png') no-repeat;
+  background-size: 100% 100%;
+  cursor: default;
+  animation: _header 1.5s;
+  transform: translateY(-2px);
+
+  >* {
+    animation: _header-content 1.5s;
+  }
+
+  :global {
+    .left {
+      width: 27%;
+      padding-left: 40px;
+      cursor: default;
+    }
+
+    .center-title {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 1;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .right {
+      display: flex;
+      gap: 20px;
+      justify-content: flex-end;
+      width: 27%;
+      padding-right: 2%;
+    }
+
+    .date-time {
+      color: #0ab7ef;
+      font-size: 24px;
+      font-family: LED;
+      letter-spacing: 1px;
+      height: 24px;
+      line-height: 24px;
+    }
+  }
+}
+
+@keyframes _header {
+  0% {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+
+  33% {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+
+  67% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes _header-content {
+  0% {
+    opacity: 0;
+  }
+
+  67% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

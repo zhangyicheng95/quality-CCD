@@ -1,0 +1,37 @@
+.progressBox {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    
+    :global{
+        .top-progress-title{
+            text-align: right;
+        }
+
+        .top-progress-percent{
+            flex: 1;
+            height: 24px;
+            margin: 0 8px;
+            border-radius: 16px;
+            background: rgba(76, 136, 223, 0.2);
+            display: inline-block;
+
+            .left {
+                background: blue;
+                height: 100%;
+                line-height: 24px;
+                border-radius: 16px;
+                background: linear-gradient(90deg, rgb(112, 200, 250), rgb(77, 88, 237));
+                text-align: right;
+                
+                .percent {
+                    color: #fff;
+                    font-size: 12px;
+                    padding-right: 8px;
+                }
+            }
+        }
+    }
+}

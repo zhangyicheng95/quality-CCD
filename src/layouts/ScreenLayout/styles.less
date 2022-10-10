@@ -1,0 +1,71 @@
+.only-show-one-line {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.only-show-two-line {
+  word-break: break-all;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: normal;
+  display: -webkit-box;
+  display: -moz-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; /*控制文字行数*/
+}
+
+.only-show-two-line-ie {
+  max-height: 38px;
+
+  span {
+    line-height: 19px;
+  }
+}
+
+.flex-box {
+  display: flex;
+  display: -ms-flex;
+  -webkit-align-items: center;
+  align-items: center;
+}
+
+.flex-box-start {
+  display: flex;
+  display: -ms-flex;
+  align-items: flex-start;
+  -webkit-align-items: flex-start;
+}
+
+.flex-box-align-end {
+  display: flex;
+  display: -ms-flex;
+  -webkit-align-items: flex-end;
+  align-items: flex-end;
+}
+
+.flex-box-justify-end {
+  display: flex;
+  display: -ms-flex;
+  -webkit-justify-content: flex-end;
+  justify-content: flex-end;
+}
+
+.flex-box-center {
+  display: flex;
+  display: -ms-flex;
+  -webkit-align-items: center;
+  align-items: center;
+  justify-content: center;
+  -webkit-justify-content: center;
+}
+
+.requird-before::before {
+  display: inline-block;
+  margin-right: 4px;
+  color: #f5222d;
+  font-size: 14px;
+  font-family: SimSun, sans-serif;
+  line-height: 1;
+  content: '*';
+}

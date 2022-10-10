@@ -1,0 +1,55 @@
+// tree 样式覆盖
+@import "@/styles/index.scss";
+
+.background {
+    width: 1920px;
+    height: 1080px;
+    background: rgba(02, 14, 53, 1);
+    overflow: hidden;
+    // transform: scale(1);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    // transform: scale(1.3, 1.3) translate(-50%, -50%);
+    transform-origin: left top;
+    display: flex;
+    flex-direction: column;
+}
+
+// 内部样式设定 主要是为了给子组件设置100% 高度
+.contents {
+    .ant-card {
+        height: 100%;
+
+        .ant-card-body {
+            height: calc(100% - 38px);
+
+            .ant-row {
+                height: calc(100% - 38px);
+            }
+        }
+    }
+}
+
+.layout {
+    @extend .contents;
+}
+
+.center-layout {
+    @extend .contents;
+}
+
+.contents-screenfill-message {
+    cursor: pointer;
+
+    .bulb-text {
+        font-size: initial;
+        font-weight: 600;
+        border: 1px #f5f5f5 solid;
+        margin: 2px;
+        padding: 2px;
+        border-radius: 4px;
+    }
+
+    .enter {}
+}

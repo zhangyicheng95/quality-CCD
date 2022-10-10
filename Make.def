@@ -1,0 +1,60 @@
+# Top level makefile template
+
+# XXX: use domain name jimage.jd.com
+REGISTRY := ai-harbor.sany.com.cn
+NAMESPACE := web
+PROJECT_NAME := vision-portal
+
+.PHONY: help prepare build debug push all build-r push-r all-r
+
+IMAGE_TAG ?= latest
+IMAGE_NAME := $(REGISTRY)/$(NAMESPACE)/$(PROJECT_NAME)
+IMAGE := $(IMAGE_NAME):$(IMAGE_TAG)
+# DOCKER_BUILD_OPTIONS += --pull --no-cache
+DOCKER_BUILD_OPTIONS += --pull
+
+DOWNLOAD_WITH_MD5_CHECK := \
+	function download { \
+		local url=$${1:?}; \
+		local pkg=$${2:-$$(basename "$$url")}; \
+		! grep $$pkg md5sum.txt | md5sum --check || return 0; \
+		curl -fsSL "$$url" > $$pkg && grep $$pkg md5sum.txt | md5sum --check; \
+	}; \
+	download
+
+help:
+	@echo "make help    - Display this help message and exit"
+	@echo "make prepare - Execute customized prepare steps only (see Makefile)"
+	@echo "make build   - Build docker image defined by ./Dockerfile"
+	@echo "make test    - Run a container defined by ./Dockerfile"
+	@echo "make debug   - Run a container defined by ./Dockerfile and give /bin/bash"
+	@echo "make push    - Push docker image defined by ./Dockerfile to registry"
+	@echo "make all     - Build and push image defined by ./Dockerfile"
+	@echo "make build-r - Build docker images recursively in current dir and subdirs"
+	@echo "make push-r  - Push docker images recursively in current dir and subdirs"
+	@echo "make all-r   - Build and push images recursively in current dir and subdirs"
+
+prepare:
+
+build: prepare
+	docker build $(DOCKER_BUILD_OPTIONS) -t $(IMAGE) .
+	docker images | grep --color -E "^$(IMAGE_NAME) +$(IMAGE_TAG) "
+
+test:
+	docker run --rm -it $(IMAGE)
+
+debug:
+	docker run --rm -it $(IMAGE) /bin/sh
+
+push:
+	docker push $(IMAGE)
+
+all: build push
+
+build-r: build
+	for d in */; do [[ ! -r $$d/Dockerfile ]] || make -C $$d build-r; done
+
+push-r: push
+	for d in */; do [[ ! -r $$d/Dockerfile ]] || make -C $$d push-r; done
+
+all-r: build-r push-r
