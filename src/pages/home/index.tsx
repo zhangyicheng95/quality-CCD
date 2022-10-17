@@ -8,16 +8,21 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Form, Input, message, Modal, notification, Spin } from "antd";
 import * as _ from "lodash-es";
 import ScreenTitle from "@components/ScreenTitle";
-import { Props } from "./typing";
 import { getCarDetail, getStationID, url } from "./api";
 import styles from "./index.module.less";
-import SecondTabs from "@/pages/home/components/SecondTabs";
-import StatusBox from "@/pages/home/components/StatusBox";
-import ScreenContent from "@/pages/home/components/ScreenContent";
+import SecondTabs from "@/pages/Home/components/Slider";
+import StatusBox from "@/pages/Home/components/Footer";
+import ScreenContent from "@/pages/Home/components/Header";
 import { nodeStatusColor } from "@/share/Utils/AppUtilHelper";
+import Header from "@/pages/Home/components/Header";
+import Slider from "@/pages/Home/components/Slider";
+import Footer from "@/pages/Home/components/Footer";
+import Content from "./components/Content";
+import { useLocation } from "react-router-dom";
 
-const RouterHome: React.FC<Props> = (props) => {
+const RouterHome: React.FC<any> = (props) => {
   const [form] = Form.useForm();
+  const { pathname } = useLocation();
   const { validateFields, resetFields, getFieldsValue, setFieldsValue } = form;
   const [settingVisible, setSettingVisible] = useState(false);
   const socketRef = useRef<WebSocket>();
@@ -200,54 +205,31 @@ const RouterHome: React.FC<Props> = (props) => {
     }
   }
   useEffect(() => {
-    logWebSocketInit(`ws://${url}/task-error/${ipString}`);
-    webSocketInit(`ws://${url}/task-data/${ipString}`);
-    stateWebSocketInit(`ws://${url}/task-state/${ipString}`);
+    // logWebSocketInit(`ws://${url}/task-error/${ipString}`);
+    // webSocketInit(`ws://${url}/task-data/${ipString}`);
+    // stateWebSocketInit(`ws://${url}/task-state/${ipString}`);
   }, [url, ipString]);
   useEffect(() => {
-    return () => {
-      socketRef.current && socketRef.current.close();
-      socketLogRef.current && socketLogRef.current.close();
-      console.log("socket关闭");
-    };
+    // return () => {
+    //   socketRef.current && socketRef.current.close();
+    //   socketLogRef.current && socketLogRef.current.close();
+    //   console.log("socket关闭");
+    // };
   }, []);
 
   return (
     <div className={styles.reportWrap}>
-      <ScreenTitle
-        title={`视觉质检软件`}
-        onClick={() => setSettingVisible(true)}
-      />
-      <div className="box">
-        <div className="left-box">
-          <SecondTabs
-            setLeftInfo={setLeftInfo}
-            showNum={showNum}
-            setShowNum={setShowNum}
-            ipString={ipString}
-            setIpString={setIpString}
-          />
-          <StatusBox errorData={errorData} leftInfo={leftInfo} data={data[0] || {}} />
+      <Header onClick={() => setSettingVisible(true)} />
+      <div className="box flex-box">
+        {
+          pathname === '/setting' ? null : <Slider />
+        }
+        <div className="content-box">
+          <Content />
+          {
+            pathname === '/setting' ? null : <Footer />
+          }
         </div>
-        <div className="screen-body">
-          <ScreenContent showNum={showNum} data={data} footerData={footerData} />
-        </div>
-      </div>
-      <div className="content-footer">
-        <div className="footer-item footer-title">
-          设备状态
-          <div className="footer-title-bg" />
-        </div>
-        {Object.entries(footerData).map((item: any, index) => {
-          return (
-            <div className="footer-item" key={index} style={{ color: nodeStatusColor[_.toUpper(item[1].Status)] }}>
-              {`${data.filter((i: any) => i.uid === item[0])[0]?.nid ||
-                item?.node_name ||
-                "未知节点"
-                }（${_.toUpper(item[1].Status)}）`}
-            </div>
-          );
-        })}
       </div>
       {settingVisible ? (
         <Modal

@@ -1,20 +1,11 @@
 [
-    {
-        "id": 31,
-        "name": "大屏1",
-        "path": "/home",
-        "component": "pages/home",
-        "exact": false,
-        "auth": null,
-        "icon": null
-    },
-    {
-        "id": 30,
-        "name": "登录",
-        "path": "/login",
-        "component": "layouts/UserLayout",
-        "exact": false,
-        "auth": null,
-        "icon": null
-    }
+  {
+    "id": 1,
+    "name": "主页",
+    "path": "/home",
+    "component": "pages/Home",
+    "exact": false,
+    "auth": null,
+    "icon": null
+  }
 ]

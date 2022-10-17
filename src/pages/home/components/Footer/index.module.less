@@ -1,0 +1,24 @@
+.footer {
+  height: 100px;
+  width: 100%;
+  border-left: 1px solid #eee;
+
+  :global {
+    .btn-box {
+      height: 100%;
+      border-right: 1px solid #eee;
+
+      .btn {
+        padding: 8px 16px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+      }
+    }
+
+    .log-content {
+      height: 100%;
+      flex: 1;
+      overflow: auto;
+    }
+  }
+}

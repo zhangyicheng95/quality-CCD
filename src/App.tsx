@@ -16,6 +16,9 @@ import CurrentUser from "@store/CurrentUser";
 import { isEmptyObject } from "@gaopeng123/utils";
 import "./styles/ant.less";
 import './global.less';
+import RouterHome from "./pages/Home";
+import History from "./pages/Home/components/Content/components/History";
+import Control from "./pages/Home/components/Content/components/Control";
 
 const App: React.FC<any> = (props) => {
   const setOem = useSetRecoilState(OEM);
@@ -46,16 +49,7 @@ const App: React.FC<any> = (props) => {
   return (
     <Router history={BrowserHistory}>
       <Switch>
-        {/*登录页*/}
-        <Route exact path="/login">
-          <UserLayout />
-        </Route>
-        <Route exact path="/404">
-          404
-        </Route>
-        <Route exact path="*">
-          <ScreenLayout />
-        </Route>
+        <Route path="/" render={(routeProps) => <RouterHome {...routeProps} />} />
       </Switch>
     </Router>
   );

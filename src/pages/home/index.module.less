@@ -1,56 +1,33 @@
 .reportWrap {
+  position: relative;
   height: 100vh;
   width: 100vw;
-  background: url(../../assets/img/bg.png) no-repeat;
-  background-size: 100% 100%;
+  overflow: hidden;
+  background: #33333e;
   color: #eee;
+  font-size: 16px;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
 
   :global {
     .box {
-      height: calc(100% - 112px);
-      display: flex;
+      flex: 1;
 
-      .left-box {
-        width: 30%;
-        min-width: 450px;
+      .content-box {
         height: 100%;
-        margin-right: 24px;
-        box-shadow: 0px 0px 6px 0px rgba(55, 232, 247, 0.5) inset;
-      }
-
-      .screen-body {
-        flex: 1;
-        height: 100%;
-        box-shadow: 0px 0px 6px 0px rgba(55, 232, 247, 0.5) inset;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
       }
     }
 
-    .content-footer {
-      height: 32px;
-      width: 100%;
-      line-height: 32px;
-      display: flex;
-      align-items: center;
-      overflow-x: auto;
-      overflow-y: hidden;
+    .btn {
+      cursor: pointer;
+      gap: 8px;
 
-      .footer-title {
-        position: relative;
-
-        .footer-title-bg {
-          position: absolute;
-          left: 16px;
-          bottom: 8px;
-          width: 60px;
-          height: 2px;
-          box-shadow: 2px 1px 8px rgb(0, 255, 0);
-        }
-      }
-
-      .footer-item {
-        padding: 0 16px;
-        font-size: 14px;
-        white-space: nowrap;
+      &:hover {
+        background: rgba(68, 68, 84, 0.8);
       }
     }
   }

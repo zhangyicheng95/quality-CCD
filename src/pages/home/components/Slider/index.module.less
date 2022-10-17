@@ -1,0 +1,26 @@
+.sider {
+  width: 200px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  :global {
+    .btn-box {
+      .btn {
+        padding: 16px;
+        border-bottom: 1px solid #eee;
+      }
+    }
+
+    .info-box {
+      flex: 1;
+      border-bottom: 1px solid #eee;
+      padding: 16px;
+    }
+
+    .message-box {
+      flex: 1;
+      padding: 16px;
+    }
+  }
+}
