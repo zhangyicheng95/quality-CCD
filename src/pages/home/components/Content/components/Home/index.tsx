@@ -5,7 +5,8 @@ import _ from "lodash";
 
 const Home: React.FC<any> = (props: any) => {
   const { errorData, leftInfo, data = {} } = props;
-
+  // @ts-ignore
+  console.log(window.QUALITY_CCD_CONFIG)
   return (
     <div className={`${styles.home} flex-box`}>
       home
