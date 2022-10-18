@@ -3,7 +3,7 @@
 # XXX: use domain name jimage.jd.com
 REGISTRY := ai-harbor.sany.com.cn
 NAMESPACE := web
-PROJECT_NAME := vision-portal
+PROJECT_NAME := quality-inspection-test
 
 .PHONY: help prepare build debug push all build-r push-r all-r
 

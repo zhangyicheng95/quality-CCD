@@ -1,30 +1,28 @@
-/**
- *@模块名称：useResize
- *
- *@创建人：ligaoming
- *
- *@作用：自定义hooks 获取窗口变化信息
- *
- *@date 2021/1/10
- *
- *@版权所有：
- */
-import React, {useEffect, useState} from 'react';
-import {debounce} from "@gaopeng123/utils";
+import {useEffect, useState} from 'react';
+import { debounce} from 'lodash';
 
-const useResize = () => {
-    const height = window.innerHeight;
-    const [contentsHeight, setContentsHeight] = useState(height);
+interface IProps {
+    width: number;
+    height: number;
+}
+const useResize = (): IProps => {
+    const [height, setHeight] = useState<number>(window.innerHeight);
+    const [width, setWidth] = useState<number>(window.innerWidth);
     useEffect(() => {
         const onResize = debounce(() => {
-            setContentsHeight(window.innerHeight);
-        }, 200, {leading: false});
+            if (window.innerHeight > 500) {
+                setHeight(window.innerHeight);
+            }
+            if (window.innerWidth > 500) {
+                setWidth(window.innerWidth);
+            }
+        }, 200);
         window.addEventListener('resize', onResize);
         return () => {
             window.removeEventListener('resize', onResize);
         };
     }, []);
-    return contentsHeight
+    return { width, height }
 };
 
 export default useResize;
