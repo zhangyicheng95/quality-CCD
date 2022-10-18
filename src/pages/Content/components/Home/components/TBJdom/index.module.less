@@ -1,0 +1,23 @@
+.tbj {
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+
+  :global {
+    .tab-box {
+      width: 100%;
+
+      .tab-item {
+        flex: 1;
+        padding: 16px;
+        text-align: center;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+
+        &:hover {
+          background: rgba(68, 68, 84, 0.8);
+        }
+      }
+    }
+  }
+}

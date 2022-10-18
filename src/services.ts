@@ -2,7 +2,7 @@ import { request } from 'umi';
 const { origin, pathname = '/', href } = window.location;
 const BASE_IP = (href.indexOf('iframe') > -1 || pathname !== '/') ? `${origin + pathname}` :
     `http://${localStorage.getItem("ipUrl-history")}${pathname}` || `http://localhost:19820${pathname}`;
-console.log(window.location)
+
 // 历史数据
 export const queryOrderList = params => request(`${BASE_IP}track/order/list/v1`, { params });
 export const getOrderDetail = orderId => request(`${BASE_IP}track/order/post/detail?orderId=${orderId}`, { method: 'POST', });

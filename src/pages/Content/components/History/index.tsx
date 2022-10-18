@@ -4,7 +4,6 @@ import { Col, Form, Row, Table } from "antd";
 import _ from "lodash";
 
 const History: React.FC<any> = (props: any) => {
-  const { errorData, leftInfo, data = {} } = props;
 
   return (
     <div className={`${styles.history} flex-box`}>

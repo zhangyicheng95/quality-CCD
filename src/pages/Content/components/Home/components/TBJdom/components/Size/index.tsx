@@ -3,13 +3,18 @@ import styles from "./index.module.less";
 import { Col, Form, Row, Table } from "antd";
 import _ from "lodash";
 
-const Control: React.FC<any> = (props: any) => {
+const Size: React.FC<any> = (props: any) => {
 
   return (
-    <div className={`${styles.control} flex-box`}>
-      control
+    <div className={styles.size}>
+      <div className="table-box">
+
+      </div>
+      <div className="chart-box">
+        
+      </div>
     </div>
   );
 };
 
-export default Control;
+export default Size;
