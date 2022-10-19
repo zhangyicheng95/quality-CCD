@@ -20,17 +20,21 @@ const RouterHome: React.FC<any> = (props) => {
   const { validateFields, } = form;
   const [settingVisible, setSettingVisible] = useState(false);
 
+  const ifShowSlider = useMemo(() => {
+    return ['/setting', '/history', '/control'].includes(pathname);
+  }, [pathname])
+
   return (
     <div className={styles.reportWrap}>
       <Header onClick={() => setSettingVisible(true)} />
       <div className="box flex-box">
         {
-          pathname === '/setting' ? null : <Slider />
+          ifShowSlider ? null : <Slider />
         }
         <div className="content-box">
           <Content />
           {
-            pathname === '/setting' ? null : <Footer />
+            ifShowSlider ? null : <Footer />
           }
         </div>
       </div>

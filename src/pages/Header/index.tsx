@@ -1,20 +1,16 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import styles from "./index.module.less";
 import { Image, Form, Input, Row, Select } from "antd";
-import Charts from "@/components/Charts";
-import {
-  lineChartDefectOption,
-  barChartDefectOption,
-} from "@/components/Charts/echartsConfig";
 import { isString, toUpper } from "lodash-es";
 import _ from "lodash";
 import { ControlOutlined, FileTextOutlined, HomeOutlined, SettingOutlined } from "@ant-design/icons";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 const { Option } = Select;
 const Header: React.FC<any> = (props: any) => {
   const { onClick } = props;
   const { push } = useHistory();
+  const { pathname } = useLocation();
 
   return (
     <div className={`${styles.header} flex-box`}>
@@ -22,18 +18,18 @@ const Header: React.FC<any> = (props: any) => {
         UBVision
       </div>
       <div className="btn-box flex-box">
-        <div className="flex-box btn" onClick={() => push('home')}>
-          <HomeOutlined />
-          主页
-        </div>
-        <div className="flex-box btn" onClick={() => push('history')}>
-          <FileTextOutlined />
-          历史记录
-        </div>
-        <div className="flex-box btn" onClick={() => push('control')}>
-          <ControlOutlined />
-          参数控制
-        </div>
+        {
+          routes.map((route: any, index: number) => {
+            const { title, path, icon } = route;
+            return <div className="flex-box btn" key={path}
+              style={pathname === `/${path}` ? { background: 'rgba(68, 68, 84, 0.8)' } : {}}
+              onClick={() => push(path)}
+            >
+              {icon}
+              {title}
+            </div>
+          })
+        }
       </div>
       <div className="setting">
         <div className="flex-box btn" onClick={() => push('setting')}>
@@ -47,3 +43,20 @@ const Header: React.FC<any> = (props: any) => {
 
 export default Header;
 
+const routes = [
+  {
+    title: '主页',
+    icon: <HomeOutlined />,
+    path: 'home'
+  },
+  {
+    title: '历史记录',
+    icon: <FileTextOutlined />,
+    path: 'history'
+  },
+  {
+    title: '参数控制',
+    icon: <ControlOutlined />,
+    path: 'control'
+  }
+];

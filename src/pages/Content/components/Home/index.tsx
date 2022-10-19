@@ -5,6 +5,7 @@ import _ from "lodash";
 import TBJ from "./components/TBJdom";
 import DGH from "./components/DGHdom";
 import DPJ from "./components/DPJdom";
+import MFD from "./components/MFDdom";
 import Common from "./components/Commondom";
 
 const Home: React.FC<any> = (props: any) => {
@@ -22,7 +23,10 @@ const Home: React.FC<any> = (props: any) => {
             type === 'dpj' ?
               <DPJ />
               :
-              <Common />
+              type === 'mfd' ?
+                <MFD />
+                :
+                <Common />
       }
     </div>
   );

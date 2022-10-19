@@ -6,19 +6,19 @@ const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(
 export const isUrl = (path: string): boolean => reg.test(path);
 
 export const isAntDesignPro = (): boolean => {
-  if (ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site') {
-    return true;
-  }
-  return window.location.hostname === 'preview.pro.ant.design';
+    if (ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site') {
+        return true;
+    }
+    return window.location.hostname === 'preview.pro.ant.design';
 };
 
 // 给官方演示站点用，用于关闭真实开发环境不需要使用的特性
 export const isAntDesignProOrDev = (): boolean => {
-  const { NODE_ENV } = process.env;
-  if (NODE_ENV === 'development') {
-    return true;
-  }
-  return isAntDesignPro();
+    const { NODE_ENV } = process.env;
+    if (NODE_ENV === 'development') {
+        return true;
+    }
+    return isAntDesignPro();
 };
 
 export const random = {
@@ -34,12 +34,12 @@ export const random = {
     }
 };
 
-export const set = (state, {keys = [], payload}) => {
+export const set = (state, { keys = [], payload }) => {
     if (keys.length) {
         const [curKey, ...restKeys] = keys;
         return {
             ...state,
-            [curKey]: set(state[curKey], {keys: restKeys, payload})
+            [curKey]: set(state[curKey], { keys: restKeys, payload })
         }
     }
     return {
@@ -59,7 +59,7 @@ export interface IObjMap {
 export const arr2obj = (arr: (string | any)[], key?: string): IObjMap => {
     return arr.reduce((pre, cur) => ({
         ...pre,
-        [key ? cur[key] : cur ]: true,
+        [key ? cur[key] : cur]: true,
     }), {})
 }
 
@@ -80,12 +80,83 @@ export function titleCase(s) {
     });
 }
 
-export function copy2clipbord (str: string) {
+export function copy2clipbord(str: string) {
     const input = document.createElement('input');
-	document.body.appendChild(input);
- 	input.setAttribute('value', str);
-	input.select();
-	const res = document.execCommand('copy')
+    document.body.appendChild(input);
+    input.setAttribute('value', str);
+    input.select();
+    const res = document.execCommand('copy')
     res && message.success('文本复制到剪切板成功!')
     document.body.removeChild(input);
 }
+// 数字转汉字
+export function convertToChinaNum(num) {
+
+    var arr1 = new Array('零', '一', '二', '三', '四', '五', '六', '七', '八', '九');
+
+    var arr2 = new Array('', '十', '百', '千', '万', '十', '百', '千', '亿', '十', '百', '千', '万', '十', '百', '千', '亿');//可继续追加更高位转换值    
+
+    if (!num || isNaN(num)) {
+
+        return "零";
+
+    }
+
+    var english = num.toString().split("")
+
+    var result = "";
+
+    for (var i = 0; i < english.length; i++) {
+
+        var des_i = english.length - 1 - i;//倒序排列设值        
+
+        result = arr2[i] + result;
+
+        var arr1_index = english[des_i];
+
+        result = arr1[arr1_index] + result;
+
+    }
+
+    //将【零千、零百】换成【零】 【十零】换成【十】    
+
+    result = result.replace(/零(千|百|十)/g, '零').replace(/十零/g, '十');
+
+    //合并中间多个零为一个零    
+
+    result = result.replace(/零+/g, '零');
+
+    //将【零亿】换成【亿】【零万】换成【万】    
+
+    result = result.replace(/零亿/g, '亿').replace(/零万/g, '万');
+
+    //将【亿万】换成【亿】    
+
+    result = result.replace(/亿万/g, '亿');
+
+    //移除末尾的零    
+
+    result = result.replace(/零+$/, '')
+
+    //将【零一十】换成【零十】    
+
+    //result = result.replace(/零一十/g, '零十');
+
+    //貌似正规读法是零一十    
+
+    //将【一十】换成【十】    
+
+    result = result.replace(/^一十/g, '十');
+
+    return result;
+
+}
+
+// 生成唯一id,8位数
+export const guid = () => {
+    return 'xxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = (Math.random() * 16) | 0;
+        const v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+    });
+};
