@@ -1,0 +1,37 @@
+@import '~antd/es/style/themes/default.less';
+
+.fc {
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  background: @body-background;
+
+  :global {
+
+    .fc-content-box {
+      width: 100%;
+      height: calc(100% - 58px);
+      overflow-y: auto;
+      overflow-x: hidden;
+
+      .charts-box {
+        height: 150px;
+        width: 100%;
+      }
+
+      .list-box {
+        height: calc(100% - 150px);
+
+        .item-box {
+          width: 48%;
+          height: 400px;
+          min-height: 300px;
+          margin: 1%;
+          background-color: @border-color-base;
+          float: left;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

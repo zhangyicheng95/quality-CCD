@@ -1,4 +1,3 @@
-
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
@@ -9,7 +8,6 @@ _roadhog-api-doc
 
 # production
 /dist
-/.vscode
 
 # misc
 .DS_Store
@@ -20,8 +18,9 @@ yarn-error.log
 .idea
 yarn.lock
 package-lock.json
+pnpm-lock.yaml
 *bak
-.vscode
+
 
 # visual studio code
 .history
@@ -39,7 +38,3 @@ screenshot
 .eslintcache
 
 build
-
-/*.zip
-/track
-/*.7z

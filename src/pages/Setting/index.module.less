@@ -1,4 +1,33 @@
+@import '~antd/es/style/themes/default.less';
+
 .setting {
+  width: 50%;
   height: 100%;
-  width: 100%;
+  padding: 24px;
+  background: @body-background;
+  flex-direction: column;
+
+  :global {
+    .title {
+      width: 100%;
+    }
+
+    .body {
+      width: 100%;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .footer {
+      width: 100%;
+      justify-content: center;
+      padding-top: 24px;
+
+      .ant-btn {
+        width: 200px;
+        height: 40px;
+        // line-height: 30px;
+      }
+    }
+  }
 }

@@ -1,0 +1,55 @@
+@import '~antd/es/style/themes/default.less';
+
+.header {
+  height: 80px;
+  min-height: 80px;
+  max-height: 80px;
+  width: 100%;
+  padding: 0 16px;
+  background-color: @layout-header-background;
+  color: rgba(229, 224, 216, 0.85);
+  border-bottom: 1px solid rgba(229, 224, 216, 0.65);
+
+  :global {
+    .title {
+      font-size: 32px;
+      font-weight: bolder;
+      margin-bottom: 0;
+      gap: 8px;
+
+      .title-logo {
+        height: 40px;
+        width: 40px;
+      }
+    }
+
+    .btn-box {
+      padding: 0 24px;
+      flex: 1;
+      height: 100%;
+
+      .btn {
+
+        &:hover {
+          background-color: @primary-color;
+        }
+      }
+    }
+
+    .btn {
+      height: 100%;
+      padding: 0 16px;
+    }
+
+    .setting {
+      height: 100%;
+
+      .btn {
+
+        &:hover {
+          background-color: @primary-color;
+        }
+      }
+    }
+  }
+}

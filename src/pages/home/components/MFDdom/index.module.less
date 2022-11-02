@@ -1,0 +1,55 @@
+@import '~antd/es/style/themes/default.less';
+
+.mfd {
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+  overflow-x: auto;
+  background: @body-background;
+
+  :global {
+    .item-box {
+      width: 31%;
+      min-width: 31%;
+      height: 100%;
+      padding: 0 1%;
+      flex-direction: column;
+
+      .item-top {
+        flex: 1;
+        width: 100%;
+        margin-bottom: 24px;
+
+        .top-img {
+          width: 100%;
+          height: calc(100% - 32px);
+          background-color: @border-color-base;
+        }
+
+        .item-type {
+          height: 32px;
+          line-height: 32px;
+          width: 100%;
+          text-align: center;
+          background: rgb(51, 182, 36);
+        }
+      }
+
+      .item-bottom {
+        width: 100%;
+
+        .item-info {
+          border-bottom: 1px solid #ddd;
+          gap: 8px;
+
+          .info-type {
+            padding: 2px 0;
+            width: 40px;
+            text-align: center;
+            background: rgb(51, 182, 36);
+          }
+        }
+      }
+    }
+  }
+}

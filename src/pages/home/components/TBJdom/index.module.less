@@ -1,0 +1,18 @@
+@import '~antd/es/style/themes/default.less';
+
+.tbj {
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  background: @body-background;
+
+  :global {
+
+    .tbj-body {
+      width: 100%;
+      height: calc(100% - 58px);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+  }
+}

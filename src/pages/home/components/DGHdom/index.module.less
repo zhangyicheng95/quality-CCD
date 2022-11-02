@@ -1,0 +1,63 @@
+@import '~antd/es/style/themes/default.less';
+
+.dgh {
+  width: 100%;
+  height: 100%;
+  padding: 24px 24px 0;
+  flex-direction: column;
+  background: @body-background;
+
+  :global {
+    .item-box {
+      flex: 1;
+      width: 100%;
+      margin-bottom: 24px;
+      border: 1px solid #ddd;
+
+      .left {
+        height: 100%;
+        width: 215px;
+        border-right: 1px solid #ddd;
+
+        .left-item {
+          border-bottom: 1px solid #ddd;
+          gap: 4px;
+
+          .item-type {
+            padding: 2px 0;
+            width: 32px;
+            text-align: center;
+            background: rgb(51, 182, 36);
+          }
+        }
+      }
+
+      .right {
+        flex: 1;
+        height: 100%;
+        overflow-x: auto;
+
+        .right-item {
+          width: 31%;
+          min-width: 31%;
+          height: 88%;
+          margin: 1%;
+
+          .item-img {
+            width: 100%;
+            height: calc(100% - 28px);
+            background-color: @border-color-base;
+          }
+
+          .item-type {
+            height: 28px;
+            line-height: 28px;
+            width: 100%;
+            text-align: center;
+            background: rgb(51, 182, 36);
+          }
+        }
+      }
+    }
+  }
+}

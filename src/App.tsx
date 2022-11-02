@@ -1,70 +1,134 @@
-import { message, notification } from 'antd';
-import type { RequestConfig } from 'umi';
-import type { RequestOptionsInit, ResponseError } from 'umi-request';
-import { debounce } from 'lodash';
+import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
+import { SettingDrawer } from '@ant-design/pro-layout';
+import { PageLoading } from '@ant-design/pro-layout';
+import type { RunTimeLayoutConfig } from 'umi';
+import { history, Link } from 'umi';
+import RightContent from '@/components/RightContent';
+import Footer from '@/components/Footer';
+import { BookOutlined, LinkOutlined } from '@ant-design/icons';
+import defaultSettings from '../config/defaultSettings';
+import icon from '@/access/icon.svg';
+import HomeLayout from './components/HomeLayout';
+import { useEffect } from 'react';
 
+const isDev = process.env.NODE_ENV === 'development';
+
+/** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
-    loading: <div />,
+  loading: <PageLoading />,
 };
 
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */
 export async function getInitialState(): Promise<{
-    settings?: any;
+  settings?: Partial<LayoutSettings>;
+  currentUser?: API.CurrentUser;
+  loading?: boolean;
+  fetchUserInfo?: () => Promise<any>;
 }> {
-    return {
-        settings: {},
-    };
+  const fetchUserInfo = async () => {
+    return new Promise((resolve, reject) => {
+      resolve({
+        name: '',
+        avatar: '',
+        userid: '',
+        email: '',
+        signature: '',
+        title: '',
+        group: '',
+        tags: { key: '', label: '' },
+        notifyCount: 1,
+        unreadCount: 1,
+        country: '',
+        access: '',
+        geographic: {
+          province: { label: '', key: '' },
+          city: { label: '', key: '' },
+        },
+        address: '',
+        phone: '',
+      })
+      // try {
+      //   const msg = await queryCurrentUser();
+      //   return msg.data;
+      // } catch (error) {
+
+      //   history.push(loginPath);
+      // }
+    })
+  };
+  // 如果不是登录页面，执行
+  // if (history.location.pathname !== loginPath) {
+  //   const currentUser = await fetchUserInfo();
+  //   return {
+  //     fetchUserInfo,
+  //     currentUser,
+  //     settings: defaultSettings,
+  //   };
+  // }
+  return {
+    fetchUserInfo,
+    settings: defaultSettings,
+  };
 }
 
-// const debounceWran = debounce((msg) => {
-//     message.warn(msg);
-// }, 2000, {
-//     leading: true,
-//     trailing: false
-// });
-
-// const responseInterceptors = async (response: Response, options: RequestOptionsInit) => {
-//     const {success, ...data} = await response.clone().json();
-//     console.log('responseInterceptors', data)
-//     if (data && data.code !== 200) {
-//         debounceWran(data.message);
-//         // throw data.message
-//     } else {
-//         return data
-//     }
-// };
-
-const middleware = async (ctx, next) => {
-    await next()
-    // console.log('middleware', ctx.res)
-    if (!ctx.req.options.raw) {
-        if (ctx.res.code !== 200) {
-            message.error(ctx.res.message)
-            ctx.res = false
-        } else {
-            ctx.res = ctx.res.result || true
-        }
-    }
-}
-
-export const request: RequestConfig = {
-    errorHandler: (error: ResponseError) => {
-        console.error(error)
-        const {response} = error;
-        if (!response) return message.error('请求失败')
-        if (response) {
-            const { status, statusText, url } = response;
-            const requestErrorMessage = '请求失败';
-            const errorMessage = `${requestErrorMessage} ${status}: ${url}`;
-            const errorDescription = '请求失败' || statusText;
-            notification.error({
-                message: errorMessage,
-                description: errorDescription,
-            });
-        }
+// ProLayout 支持的api https://procomponents.ant.design/components/layout
+export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
+  return {
+    // headerRender: () => null,
+    rightContentRender: () => <RightContent />,
+    disableContentMargin: false,
+    waterMarkProps: {
+      content: initialState?.currentUser?.name,
     },
-    middlewares: [middleware], // 中间件
-    // responseInterceptors: [responseInterceptors],
+    footerRender: () => null,
+    onPageChange: () => {
+      // const { location } = history;
+      // 如果没有登录，重定向到 login
+      // if (!initialState?.currentUser && location.pathname !== loginPath) {
+      //   history.push(loginPath);
+      // }
+    },
+    links: isDev
+      ? [
+        <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
+          <LinkOutlined />
+          <span>OpenAPI 文档</span>
+        </Link>,
+        <Link to="/~docs" key="docs">
+          <BookOutlined />
+          <span>业务组件文档</span>
+        </Link>,
+      ]
+      : [],
+    menuHeaderRender: undefined,
+    // 自定义 403 页面
+    // unAccessible: <div>unAccessible</div>,
+    // 增加一个 loading 的状态
+    childrenRender: (children, props) => {
+      // if (initialState?.loading) return <PageLoading />;
+      return (
+        <>
+          <HomeLayout>{children}</HomeLayout>
+          {!props.location?.pathname?.includes('/login') && (
+            <SettingDrawer
+              disableUrlParams
+              enableDarkTheme
+              settings={initialState?.settings}
+              onSettingChange={(settings) => {
+                setInitialState((preInitialState) => ({
+                  ...preInitialState,
+                  settings,
+                }));
+              }}
+            />
+          )}
+        </>
+      );
+    },
+    ...initialState?.settings,
+    logo: icon,
+    title: 'UBVision',
+  };
 };
