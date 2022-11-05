@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import styles from "./index.module.less";
-import { Button, message, Select, Upload } from "antd";
+import { message, } from "antd";
 import { PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
-
-const { Option } = Select;
 
 const Slider: React.FC<any> = (props: any) => {
   const { } = props;
@@ -12,11 +10,11 @@ const Slider: React.FC<any> = (props: any) => {
     <div className={styles.slider}>
       <div className="btn-box">
         <div className="flex-box btn start" onClick={() => message.success('任务启动成功')}>
-          <PlayCircleOutlined />
-          启动
+          <PlayCircleOutlined className="btn-icon" />
+          启动检测
         </div>
         <div className="flex-box btn end" onClick={() => message.success('任务停止成功')}>
-          <PauseCircleOutlined />
+          <PauseCircleOutlined className="btn-icon" />
           停止检测
         </div>
       </div>

@@ -1,8 +1,86 @@
+@import '~antd/es/style/themes/default.less';
+
 .home {
-  height: calc(100% - 100px);
+  height: 100%;
   width: 100%;
-  padding: 24px;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  position: relative;
+
+  :global {
+    .btn-box {
+      width: 100%;
+      height: 100%;
+      box-shadow: @box-shadow-base;
+      background-color: @body-background;
+
+      .btn {
+        width: 100%;
+        height: 56px;
+        // justify-content: space-between;
+        padding: 12px;
+        border-bottom: .5px solid rgba(229, 224, 216, 0.65);
+      }
+
+      .btn-icon {
+        font-size: 30px;
+      }
+    }
+
+    .info-box {
+      width: 100%;
+      height: 100%;
+      box-shadow: @box-shadow-base;
+      background-color: @body-background;
+
+      .info-box-content {
+        font-size: 20px;
+        line-height: 1.1;
+        padding: 12px;
+        height: calc(100% - 40px);
+        overflow-y: auto;
+        word-break: break-all;
+      }
+    }
+
+    .message-box {
+      //  
+    }
+
+    .drag-btn {
+      cursor: pointer;
+    }
+
+    .ant-spin-container {
+      position: relative;
+
+      .home-content {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      .drag-btn {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100px;
+        width: 100px;
+      }
+    }
+
+    .log-content {
+      height: 100%;
+      flex: 1;
+      background: @body-background;
+      overflow: hidden;
+
+      .content-item-span {
+        font-size: 20px;
+        line-height: 1.1;
+        padding: 12px;
+        height: calc(100% - 40px);
+        overflow-y: auto;
+        word-break: break-all;
+      }
+    }
+  }
 }

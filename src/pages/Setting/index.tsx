@@ -2,55 +2,64 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Form, Input, message, Button, Tree } from "antd";
 import * as _ from "lodash";
 import styles from "./index.module.less";
-import { getParams } from "@/services/api";
+import { getParams, updateParams } from "@/services/api";
+import PrimaryTitle from "@/components/PrimaryTitle";
 
 const Setting: React.FC<any> = (props) => {
   const [form] = Form.useForm();
-  const { validateFields, } = form;
+  const { validateFields, setFieldsValue } = form;
   const [paramData, setParamData] = useState<any>({});
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
   const [treeData, setTreeData] = useState([]);
 
-  const getData = async () => {
-    const res = await getParams({ id: '123123123' });
-    const { data } = res;
-    const { flowData } = data;
-    const { nodes } = flowData;
-    let idList: any = [];
-    let checkedList: any = [];
-    const result: any = (nodes || []).map((node: any) => {
-      const { alias, name, id, config } = node;
-      const { initParams = {} } = config;
-      idList = idList.concat(id);
-      if (!!initParams && !_.isEmpty(initParams)) {
-        return {
-          title: alias || name,
-          key: id,
-          children: Object.entries(initParams).map((param: any) => {
-            const { alias, name, onHidden } = param[1];
-            const key = `${id}@$@${param[0]}`;
-            idList = idList.concat(param[1]);
-            if (!onHidden) {
-              checkedList = checkedList.concat(key)
-            }
+  const getData = () => {
+    getParams(localStorage.getItem("ipString") || '').then((res: any) => {
+      if (res && res.code === 'SUCCESS') {
+        const { data = {} } = res;
+        const { flowData } = data;
+        const { nodes } = flowData;
+        let idList: any = [];
+        let checkedList: any = [];
+        const result: any = (nodes || []).map((node: any) => {
+          const { alias, name, id, config } = node;
+          const { initParams = {} } = config;
+          idList = idList.concat(id);
+          if (!!initParams && !_.isEmpty(initParams)) {
             return {
               title: alias || name,
-              key: key,
-              checked: true,
-            };
-          }),
+              key: id,
+              children: Object.entries(initParams).map((param: any) => {
+                const { alias, name, onHidden } = param[1];
+                const key = `${id}@$@${param[0]}`;
+                idList = idList.concat(param[1]);
+                if (!onHidden) {
+                  checkedList = checkedList.concat(key)
+                }
+                return {
+                  title: alias || name,
+                  key: key,
+                  checked: true,
+                };
+              }),
+            }
+          };
+          return null;
+        }).filter(Boolean);
+        setParamData(data);
+        setTreeData(result);
+        setExpandedKeys(idList);
+        setCheckedKeys(checkedList);
+        if (!localStorage.getItem("quality_name")) {
+          setFieldsValue({ quality_name: data.name });
         }
-      };
-      return null;
-    }).filter(Boolean);
-    setParamData(data);
-    setTreeData(result);
-    setExpandedKeys(idList);
-    setCheckedKeys(checkedList);
+      } else {
+        message.error(res?.msg || '接口异常');
+      }
+    });
   };
   useEffect(() => {
-    if (!localStorage.getItem("ipUrl-history")) return;
+    if (!localStorage.getItem("ipUrl-history") || !localStorage.getItem("ipString")) return;
     getData();
   }, []);
 
@@ -59,7 +68,7 @@ const Setting: React.FC<any> = (props) => {
   };
 
   const onCheck = (checkedKeysValue: React.Key[]) => {
-    setCheckedKeys(checkedKeysValue);
+    setCheckedKeys(checkedKeysValue.filter((i: any) => i?.indexOf("@$@") > -1));
   };
 
   const onFinish = () => {
@@ -70,20 +79,19 @@ const Setting: React.FC<any> = (props) => {
           const id = key.split('@$@');
           if (!!id[1]) {
             nodeList = nodeList.map((node: any) => {
-              if (node.id === id[0]) {
-                const { config } = node;
-                const { initParams = {} } = config;
-                return Object.assign({}, node, {
-                  config: Object.assign({}, config, {
-                    initParams: Object.assign({}, initParams, {
-                      [id[1]]: Object.assign({}, initParams[id[1]], {
-                        onHidden: false
+              const { config } = node;
+              const { initParams = {} } = config;
+              return Object.assign({}, node, {
+                config: Object.assign({}, config, {
+                  initParams: Object.entries(initParams).reduce((pre: any, cen: any) => {
+                    return Object.assign({}, pre, {
+                      [cen[0]]: Object.assign({}, cen[1], {
+                        onHidden: !checkedKeys.includes(`${node.id}@$@${cen[0]}`)
                       })
-                    })
-                  })
-                });
-              };
-              return node;
+                    });
+                  }, {}),
+                })
+              });
             })
           }
         });
@@ -92,10 +100,21 @@ const Setting: React.FC<any> = (props) => {
             nodes: nodeList,
           })
         });
+        updateParams({
+          id: paramData.id,
+          data: result
+        }).then((res: any) => {
+          if (res && res.code === 'SUCCESS') {
+            message.success('修改成功')
+          } else {
+            message.error(res?.msg || '接口异常');
+          }
+        })
         message.success('更新配置成功');
+        localStorage.setItem("quality_name", values['quality_name']);
         localStorage.setItem("ipUrl-history", values['ipUrl-history']);
         localStorage.setItem("ipString", values['ipString']);
-        // window.location.reload();
+        window.location.reload();
       })
       .catch((err) => {
         const { errorFields } = err;
@@ -105,15 +124,21 @@ const Setting: React.FC<any> = (props) => {
 
   return (
     <div className={`${styles.setting} flex-box`}>
-      <div className="title">
-        系统配置
-      </div>
+      <PrimaryTitle title={"系统配置"} />
       <div className="body">
         <Form
           form={form}
           layout="vertical"
           scrollToFirstError
         >
+          <Form.Item
+            name="quality_name"
+            label="方案名称"
+            initialValue={localStorage.getItem("quality_name") || paramData?.name}
+            rules={[{ required: true, message: "方案名称" }]}
+          >
+            <Input placeholder="方案名称" />
+          </Form.Item>
           <Form.Item
             name="ipUrl-history"
             label="服务端地址"
@@ -141,6 +166,7 @@ const Setting: React.FC<any> = (props) => {
               onExpand={onExpand}
               expandedKeys={expandedKeys}
               autoExpandParent={true}
+              showLine={true}
               // @ts-ignore
               onCheck={onCheck}
               checkedKeys={checkedKeys}

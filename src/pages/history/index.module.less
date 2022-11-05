@@ -3,21 +3,24 @@
 .history {
   width: 50%;
   height: 100%;
-  padding: 24px;
+  padding: 24px 0;
   background: @body-background;
 
   :global {
+    .history-content-box {
+      padding: 0 24px;
 
-    .search-box {
-      width: 100%;
-      margin: 16px 0;
+      .search-box {
+        width: 100%;
+        margin: 16px 0;
 
-      .ant-form-item {
-        margin-bottom: 0;
-      }
+        .ant-form-item {
+          margin-bottom: 0;
+        }
 
-      .flex-box {
-        justify-content: space-between;
+        .flex-box {
+          justify-content: space-between;
+        }
       }
     }
   }

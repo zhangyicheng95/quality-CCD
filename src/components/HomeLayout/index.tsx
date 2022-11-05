@@ -16,25 +16,17 @@ import { useLocation } from "react-router-dom";
 const HomeLayout: React.FC<any> = (props) => {
   const { children } = props;
   const { pathname } = useLocation();
-  // useEffect(() => {
-  //   !localStorage.getItem("ipUrl-history") && localStorage.setItem("ipUrl-history", "localhost:8000");
-  // }, []);
+
   const ifShowSlider = useMemo(() => {
     return ['/setting', '/history', '/control'].includes(pathname);
   }, [pathname])
 
   return (
     <div className={styles.reportWrap}>
-      <Header />
+      {/* <Header /> */}
       <div className="box flex-box">
-        {
-          ifShowSlider ? null : <Slider />
-        }
         <div className="content-box">
           {children}
-          {
-            ifShowSlider ? null : <Footer />
-          }
         </div>
       </div>
     </div>

@@ -1,0 +1,115 @@
+@import '~antd/es/style/themes/default.less';
+
+.dashboardContent {
+    // 这个一定要设置，不然容易有偏移
+    position: relative;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+
+    :global {
+        .react-grid-layout {
+            height: 100%;
+            width: 100%;
+
+            .react-grid-item {
+                position: relative;
+                background-color: @border-color-base;
+
+                img {
+                    height: 100%;
+                    width: 100%;
+                }
+
+                .custom-handle {
+                    position: absolute;
+                    right: 0;
+                    bottom: 0;
+                    height: 30px;
+                    width: 30px;
+                    justify-content: center;
+                    cursor: se-resize;
+
+                    .custom-resize-handle-component {
+                        height: 15px;
+                        width: 15px;
+                        border-right: 2px solid rgba(0, 0, 0, 0.4);
+                        border-bottom: 2px solid rgba(0, 0, 0, 0.4);
+                    }
+                }
+
+                .custom-drag {
+                    position: absolute;
+                    left: 30px;
+                    right: 30px;
+                    top: 0;
+                    bottom: 0;
+                }
+
+                .custom-handle-nw {
+                    cursor: nw-resize;
+                    top: 8px;
+                    left: 8px;
+                    border-right: 0;
+                    border-bottom: 0;
+                }
+
+                .custom-handle-n {
+                    cursor: n-resize;
+                    height: 20px;
+                    top: 0;
+                    left: 20px;
+                    right: 20px;
+                }
+
+                .custom-handle-ne {
+                    cursor: ne-resize;
+                    top: 8px;
+                    right: 8px;
+                    border-left: 0;
+                    border-bottom: 0;
+                }
+
+                .custom-handle-e {
+                    cursor: e-resize;
+                    width: 20px;
+                    right: 8px;
+                    top: 20px;
+                    bottom: 20px;
+                }
+
+                .custom-handle-se {
+                    cursor: se-resize;
+                    bottom: 8px;
+                    right: 8px;
+                    border-left: 0;
+                    border-top: 0;
+                }
+
+                .custom-handle-s {
+                    cursor: s-resize;
+                    height: 20px;
+                    bottom: 0;
+                    left: 20px;
+                    right: 20px;
+                }
+
+                .custom-handle-sw {
+                    cursor: sw-resize;
+                    bottom: 8px;
+                    left: 8px;
+                    border-right: 0;
+                    border-top: 0;
+                }
+
+                .custom-handle-w {
+                    cursor: w-resize;
+                    width: 20px;
+                    left: 0;
+                    top: 20px;
+                    bottom: 20px;
+                }
+            }
+        }
+    }
+}

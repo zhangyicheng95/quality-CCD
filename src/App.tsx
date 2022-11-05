@@ -2,14 +2,12 @@ import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
 import { SettingDrawer } from '@ant-design/pro-layout';
 import { PageLoading } from '@ant-design/pro-layout';
 import type { RunTimeLayoutConfig } from 'umi';
-import { history, Link } from 'umi';
+import { Link } from 'umi';
 import RightContent from '@/components/RightContent';
-import Footer from '@/components/Footer';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import defaultSettings from '../config/defaultSettings';
 import icon from '@/access/icon.svg';
 import HomeLayout from './components/HomeLayout';
-import { useEffect } from 'react';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -77,6 +75,7 @@ export async function getInitialState(): Promise<{
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   return {
     // headerRender: () => null,
+    headerHeight: 80,
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: {
@@ -129,6 +128,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     },
     ...initialState?.settings,
     logo: icon,
-    title: 'UBVision',
+    title: localStorage.getItem("quality_name") || 'UBVision',
   };
 };

@@ -1,4 +1,5 @@
 import { message } from "antd";
+import * as _ from "lodash";
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
 const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
@@ -34,7 +35,8 @@ export const random = {
     }
 };
 
-export const set = (state, { keys = [], payload }) => {
+export const set: any = (state: any, props: any) => {
+    const { keys = [], payload } = props;
     if (keys.length) {
         const [curKey, ...restKeys] = keys;
         return {
@@ -63,19 +65,19 @@ export const arr2obj = (arr: (string | any)[], key?: string): IObjMap => {
     }), {})
 }
 
-export const arr2enum = (arr: any[], valueKey = 'id', labelKey = 'name'): IValueEnum => {
+export const arr2enum = (arr: any[], valueKey = 'id', labelKey = 'name') => {
     return arr.reduce((pre, cur) => ({
         ...pre,
         [cur[valueKey]]: cur[labelKey]
     }), {})
 }
 
-export const enum2values = (obj): any[] => Object.keys(obj)
+export const enum2values = (obj: any): any[] => Object.keys(obj)
 
-export const options2enum = (arr: IOption[]) => arr2enum(arr, "value", "label")
+export const options2enum = (arr: []) => arr2enum(arr, "value", "label")
 
-export function titleCase(s) {
-    return s.toLowerCase().replace(/\b([\w|‘]+)\b/g, (word) => {
+export function titleCase(s: any) {
+    return s.toLowerCase().replace(/\b([\w|‘]+)\b/g, (word: any) => {
         return word.replace(word.charAt(0), word.charAt(0).toUpperCase());
     });
 }
@@ -90,7 +92,7 @@ export function copy2clipbord(str: string) {
     document.body.removeChild(input);
 }
 // 数字转汉字
-export function convertToChinaNum(num) {
+export function convertToChinaNum(num: any) {
 
     var arr1 = new Array('零', '一', '二', '三', '四', '五', '六', '七', '八', '九');
 
@@ -160,3 +162,32 @@ export const guid = () => {
         return v.toString(16);
     });
 };
+
+// 后端接口返回数据格式化
+export function formatResponse(res: any) {
+    if (res.data && _.isObject(res.data)) {
+        for (const key in res.data) {
+            switch (key) {
+                case 'error_code':
+                    res.data.code = res.data.error_code;
+                    if (res.data.error_code == '000000') {
+                        res.data.code = 100000;
+                    }
+                    delete res.data.error_code;
+                    break;
+                case 'error_msg':
+                    res.data.msg = res.data.error_msg;
+                    if (res.data.error_msg == '请求成功') {
+                        res.data.status = 'success';
+                    } else {
+                        res.data.status = 'failed';
+                    }
+                    delete res.data.error_msg;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    return res;
+}

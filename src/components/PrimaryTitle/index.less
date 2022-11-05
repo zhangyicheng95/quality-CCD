@@ -1,0 +1,30 @@
+@import '~antd/es/style/themes/default.less';
+
+.primaryTitle {
+  height: 50px;
+  width: 100%;
+  padding: 0 24px;
+  margin-bottom: 32px;
+
+  :global {
+    .title {
+      font-family: 'PingFangSC-Semibold', 'PingFang SC Semibold', 'PingFang SC', sans-serif;
+      font-weight: 700;
+      font-style: normal;
+      font-size: 32px;
+      color: @text-color;
+      // flex: 1;
+    }
+
+    .input-box {
+      width: 300px;
+      margin: 0 32px;
+      transition: width .5s;
+    }
+
+    .onfocus {
+      width: 500px;
+      transition: width 1s;
+    }
+  }
+}

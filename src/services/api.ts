@@ -1,23 +1,39 @@
-// @ts-ignore
-/* eslint-disable */
-import { request } from 'umi';
-const { origin, pathname = '/', href } = window.location;
+import { fetchGet, fetchPost, fetchPut, fetchDelete } from '@/services/fetch';
 const BASE_IP = localStorage.getItem("ipUrl-history") ?
-  `http://${localStorage.getItem("ipUrl-history")}${pathname}` : `http://localhost:19820${pathname}`;
-console.log(BASE_IP)
-/** 此处后端没有提供注释 GET /api/notices */
-export async function getNotices(options?: { [key: string]: any }) {
-  return request<API.NoticeIconList>(`${BASE_IP}api/notices`, {
-    method: 'GET',
-    ...(options || {}),
-  });
+  `http://${localStorage.getItem("ipUrl-history")}/` : `http://localhost:8888/`;
+
+// 获取所有项目
+export async function getAllProject() {
+  return fetchGet(`${BASE_IP}projects`);
 }
 
-/** 获取规则列表 GET /api/rule */
-export async function getParams(params: any, options?: { [key: string]: any },) {
-  return request<API.Params>(`${BASE_IP}api/params`, {
-    method: 'GET',
-    params,
-    ...(options || {}),
-  });
+// 根据id获取项目
+export async function getParams(id: string) {
+  return fetchGet(`${BASE_IP}project/${id}`);
+}
+
+// 根据id修改项目
+export async function updateParams(params: any) {
+  const { id, data } = params;
+  return fetchPut(`${BASE_IP}project/${id}`, { body: data });
+}
+
+// 根据id获取任务状态
+export async function getFlowStatusService(id: string) {
+  return fetchGet(`${BASE_IP}task/${id}`);
+}
+
+// 业务启动
+export async function startFlowService(id: string) {
+  return fetchPost(`${BASE_IP}task/${id}`);
+}
+
+// 业务停止
+export async function stopFlowService(id: string) {
+  return fetchDelete(`${BASE_IP}task/${id}`);
+}
+
+// 自助触发推送
+export async function touchFlowService() {
+  return fetchPost(`${BASE_IP}trigger/2000?msg=ONCE`);
 }

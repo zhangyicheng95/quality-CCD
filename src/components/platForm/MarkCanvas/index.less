@@ -1,0 +1,101 @@
+@liner: rgba(144, 144, 144, .1) 1px;
+@import '~antd/es/style/themes/default.less';
+
+.markCanvas {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    flex-direction: column;
+    background: @background-color-base;
+
+    :global {
+        .canvas-header {
+            height: 50px;
+            align-items: center;
+        }
+
+        .canvas-body {
+            // height: calc(100% - 100px);
+            width: 100%;
+            flex: 1;
+
+            .btn-box {
+                margin-left: 8px;
+                width: 50px;
+                height: 100%;
+                margin-right: 8px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+
+                .top,
+                .center,
+                .bottom {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: #fff;
+                    padding: 12px 0;
+                    border-radius: 4px;
+                    box-shadow: -2px 4px 10px 0 rgb(15 0 44 / 19%);
+                    margin-bottom: 24px;
+
+                    img {
+                        width: 28px;
+                        height: 28px;
+                        padding: 4px;
+                        cursor: pointer;
+                    }
+
+                    .selected {
+                        background-color: rgba(24, 144, 255, .3);
+                    }
+                }
+            }
+
+            .canvas-box {
+                flex: 1;
+                height: 100%;
+                background-color: #fff;
+                padding: 8px;
+
+                .canvas {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(193, 193, 193, .1);
+                    background-image: linear-gradient(0deg,
+                            @liner, @liner,
+                            transparent 1px,
+                            transparent 100%),
+                        linear-gradient(90deg,
+                            @liner, @liner,
+                            transparent 1px,
+                            transparent 100px);
+                    background-size: 50px 50px;
+                    // opacity: 0.1;
+                    // z-index: -1;
+                }
+            }
+        }
+
+        .canvas-footer {
+            height: 50px;
+            width: 100%;
+
+            .img-box {
+                box-shadow: 0 1px 2px 0 rgb(64 2 189 / 6%);
+                border-radius: 4px;
+                background-color: #fff;
+                padding: 8px 16px;
+                cursor: pointer;
+                color: rgba(0, 0, 0, 0.85);
+
+                &:hover {
+                    background-color: rgba(144, 144, 144, .1);
+                }
+            }
+        }
+    }
+}

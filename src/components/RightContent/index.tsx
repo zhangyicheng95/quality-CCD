@@ -47,8 +47,8 @@ const GlobalHeaderRight: React.FC = () => {
             value: 'Pro Layout',
           },
         ]} // onSearch={value => {
-        //   console.log('input', value);
-        // }}
+      //   console.log('input', value);
+      // }}
       />
       <span
         className={styles.action}
@@ -58,7 +58,6 @@ const GlobalHeaderRight: React.FC = () => {
       >
         <QuestionCircleOutlined />
       </span>
-      <NoticeIconView />
       <Avatar menu />
       <SelectLang className={styles.action} />
     </Space>

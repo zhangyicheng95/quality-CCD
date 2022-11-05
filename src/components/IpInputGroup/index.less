@@ -1,0 +1,48 @@
+@import '~antd/es/style/themes/default.less';
+
+.inputGroup {
+  border: 1px solid @input-border-color;
+  border-radius: 2px;
+  transition: all 0.3s;
+
+  &:hover {
+    border-color: #45bbff;
+    border-right-width: 1px !important;
+    outline: 0;
+    box-shadow: 0 0 0 1px @input-hover-border-color;
+  }
+
+  text-align: center;
+
+  :global {
+    .dot {
+      width: 3px;
+      height: 3px;
+      // border: 1px solid #000;
+      border-radius: 50%;
+      background-color: @text-color;
+      opacity: 0.5;
+      z-index: 9;
+      position: relative;
+      top: 21px;
+    }
+
+    .self_input {
+      border: none;
+      outline: 0;
+
+      &:hover {
+        box-shadow: none;
+      }
+
+      &::selection {
+        box-shadow: none;
+      }
+
+      &:focus {
+        box-shadow: none;
+        border: 0 !important;
+      }
+    }
+  }
+}
