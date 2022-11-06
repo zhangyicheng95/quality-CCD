@@ -1,5 +1,5 @@
 import { fetchGet, fetchPost, fetchPut, fetchDelete } from '@/services/fetch';
-const BASE_IP = localStorage.getItem("ipUrl-history") ?
+export const BASE_IP = localStorage.getItem("ipUrl-history") ?
   `http://${localStorage.getItem("ipUrl-history")}/` : `http://localhost:8888/`;
 
 // 获取所有项目
@@ -36,4 +36,14 @@ export async function stopFlowService(id: string) {
 // 自助触发推送
 export async function touchFlowService() {
   return fetchPost(`${BASE_IP}trigger/2000?msg=ONCE`);
+}
+
+// 选择文件路径
+export async function selectFilePathService(path: string) {
+  return fetchGet(`${BASE_IP}file_browser/${path}`);
+}
+
+// 加载本次磁盘文件
+export async function getFileFromLocalService(path: string) {
+  return fetchGet(`file:/${path}`);
 }

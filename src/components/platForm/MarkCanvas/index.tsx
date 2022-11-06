@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Menu, message, Popover, Spin } from 'antd';
-import { AimOutlined, PictureOutlined } from "@ant-design/icons";
+import { Menu, message, Popover } from 'antd';
+import { PictureOutlined } from "@ant-design/icons";
 // @ts-ignore
 import { saveAs } from "file-saver";
 import * as _ from "lodash";
@@ -12,15 +12,12 @@ import grabHandIcon from '@/access/imgs/grabHand.svg';
 import plusIcon from '@/access/imgs/magnifier-plus.svg';
 import minusIcon from '@/access/imgs/magnifier-minus.svg';
 import circleIcon from '@/access/imgs/circle.svg';
-import maskIcon from '@/access/imgs/draw-mask.svg';
-import clearMaskIcon from '@/access/imgs/clear-mask.svg';
 import polyLineIcon from '@/access/imgs/poly-line.svg';
 import polygonIcon from '@/access/imgs/polygon.svg';
 import lineIcon from '@/access/imgs/line.svg';
 import rectIcon from '@/access/imgs/rect.svg';
 import aimIcon from '@/access/imgs/aim.svg';
-import loadIcon from '@/access/imgs/down-load.svg';
-import clearIcon from '@/access/imgs/clear.svg';
+import { BASE_IP } from "@/services/api";
 
 interface Props {
   data?: any;
@@ -29,7 +26,7 @@ interface Props {
 const AILabel = require('ailabel');
 const CONTAINER_ID = 'mark-canvas';
 let timer: NodeJS.Timeout | null = null;
-let img: HTMLImageElement | null = null;
+let img: any = null;
 let gMap: any | null = null;
 let gFirstFeatureLayer: any | null = null;
 let gFirstMaskLayer: any | null = null;
@@ -41,13 +38,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   const { value, platFormValue } = data;
   const markRef = useRef<any>();
   const [selectedBtn, setSelectedBtn] = useState('PAN');
-  console.log(data);
+
   useEffect(() => {
     timer && clearTimeout(timer);
     timer = setTimeout(() => {
-      const dom = document.getElementById(CONTAINER_ID);
       img = new Image();
-      img.src = encodeURI(`file://${value}`);
+      img.src = `${BASE_IP}file_browser/${value}`;
       img.title = 'img.png';
       img.width = 800;
       img.height = 800;
@@ -230,7 +226,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       gMap.events.on('featureUpdated', (feature: any, shape: any) => {
         feature.updateShape(shape);
 
-        const markerId = feature.props.deleteMarkerId;
+        // const markerId = feature.props.deleteMarkerId;
         const textId = feature.props.textId;
         // 更新marker位置
         // const targetMarker = gMap.markerLayer.getMarkerById(markerId);
@@ -298,18 +294,19 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       );
       gMap.addLayer(gFirstTextLayer);
       // 添加text公共方法
-      const addFeatureText = (data: any, relatedTextId: string, text: string) => {
-        // 添加feature标签名
-        const { x: ltx, y: lty, } = data;
-        const gFirstText = new AILabel.Text(
-          relatedTextId, // id
-          { text, position: { x: ltx, y: lty }, offset: { x: 0, y: 0 } }, // shape, 左上角
-          { name: '文本对象' }, // props
-          { fillStyle: '#F4A460', strokeStyle: '#D2691E', background: true, globalAlpha: 1, fontColor: '#0f0' } // style
-        );
-        gFirstTextLayer.addText(gFirstText);
-      };
+      // const addFeatureText = (data: any, relatedTextId: string, text: string) => {
+      //   // 添加feature标签名
+      //   const { x: ltx, y: lty, } = data;
+      //   const gFirstText = new AILabel.Text(
+      //     relatedTextId, // id
+      //     { text, position: { x: ltx, y: lty }, offset: { x: 0, y: 0 } }, // shape, 左上角
+      //     { name: '文本对象' }, // props
+      //     { fillStyle: '#F4A460', strokeStyle: '#D2691E', background: true, globalAlpha: 1, fontColor: '#0f0' } // style
+      //   );
+      //   gFirstTextLayer.addText(gFirstText);
+      // };
       window.addEventListener('resize', () => gMap && gMap.resize());
+
     }, 300);
 
     return () => {
@@ -356,8 +353,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           );
           gFirstFeatureLayer.addFeature(polylineFeature);
         } else {
-          const scale = gMap.getScale();
-          const width = drawingStyle.lineWidth / scale;
+          // const scale = gMap.getScale();
+          // const width = drawingStyle.lineWidth / scale;
           console.log(rest)
           // const drawMaskAction = new AILabel.Mask.Draw(
           //   `${+new Date()}`, // id
@@ -365,7 +362,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           // );
           // gFirstMaskLayer.addAction(drawMaskAction);
         }
-        setMode('');
       })
     }, 500);
   }, [gMap, gFirstFeatureLayer, platFormValue]);

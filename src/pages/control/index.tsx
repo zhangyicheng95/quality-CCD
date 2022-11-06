@@ -1,8 +1,8 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import styles from "./index.module.less";
-import { Button, message, Form, Modal, Input, Radio, Select, Checkbox, InputNumber, Switch, } from "antd";
+import { Button, message, Form, Input, Radio, Select, Checkbox, InputNumber, Switch, Upload, } from "antd";
 import * as _ from "lodash";
-import { getParams, updateParams } from "@/services/api";
+import { getParams, selectFilePathService, updateParams } from "@/services/api";
 import { CaretDownOutlined, CaretRightOutlined } from "@ant-design/icons";
 import PrimaryTitle from "@/components/PrimaryTitle";
 import IpInput from "@/components/IpInputGroup";
@@ -11,6 +11,7 @@ import TooltipDiv from "@/components/TooltipDiv";
 import MonacoEditor from "@/components/MonacoEditor";
 import PlatFormModal from "@/components/platForm";
 import { guid } from "@/utils/utils";
+import FileManager from "@/components/FileManager";
 
 const FormItem = Form.Item;
 const Control: React.FC<any> = (props: any) => {
@@ -23,6 +24,8 @@ const Control: React.FC<any> = (props: any) => {
   const [editorValue, setEditorValue] = useState<any>({});
   const [platFormVisible, setPlatFormVisible] = useState(false);
   const [platFormValue, setPlatFormValue] = useState<any>({});
+  const [selectPathVisible, setSelectPathVisible] = useState(false);
+  const [selectedPath, setSelectedPath] = useState<any>({});
 
   useEffect(() => {
     if (!localStorage.getItem("ipUrl-history") || !localStorage.getItem("ipString")) return;
@@ -128,14 +131,16 @@ const Control: React.FC<any> = (props: any) => {
                             id={`${id}@$@${item[0]}`}
                             config={item}
                             form={form}
-                            setEditorVisible={setEditorVisible}
-                            setEditorValue={setEditorValue}
                             disabled={false}
-                            widgetChange={widgetChange}
                             selectedOption={selectedOption}
                             setSelectedOption={setSelectedOption}
+                            widgetChange={widgetChange}
+                            setEditorVisible={setEditorVisible}
+                            setEditorValue={setEditorValue}
                             setPlatFormVisible={setPlatFormVisible}
                             setPlatFormValue={setPlatFormValue}
+                            setSelectPathVisible={setSelectPathVisible}
+                            setSelectedPath={setSelectedPath}
                           />
                         </div>
                       </div>
@@ -160,7 +165,6 @@ const Control: React.FC<any> = (props: any) => {
           visible={editorVisible}
           onOk={(val: any) => {
             const { id, value, language } = val;
-            console.log(val);
             widgetChange(id, { value, language });
             setEditorValue({});
             setEditorVisible(false);
@@ -176,8 +180,9 @@ const Control: React.FC<any> = (props: any) => {
             visible={platFormVisible}
             data={platFormValue}
             onOk={(val: any) => {
-              console.log(val);
-              setPlatFormValue(val);
+              const { id, ...rest } = val;
+              widgetChange(id, rest);
+              setPlatFormValue({});
               setPlatFormVisible(false);
             }}
             onCancel={() => {
@@ -185,6 +190,25 @@ const Control: React.FC<any> = (props: any) => {
             }}
           />
         ) : null
+      }
+      {
+        selectPathVisible ?
+          <FileManager
+            fileType={selectedPath.fileType}
+            data={selectedPath}
+            onOk={(val: any) => {
+              const { id, ...rest } = val;
+              console.log(val);
+              widgetChange(id, rest);
+              setSelectedPath({});
+              setSelectPathVisible(false);
+            }}
+            onCancel={() => {
+              setSelectPathVisible(false);
+              setSelectedPath({});
+            }}
+          />
+          : null
       }
     </div>
   );
@@ -194,9 +218,11 @@ export default Control;
 
 const FormatWidgetToDom = (props: any) => {
   const {
-    id, config = [], form, setEditorVisible, setEditorValue,
-    disabled, widgetChange, selectedOption, setSelectedOption,
-    stateData, setPlatFormVisible, setPlatFormValue
+    id, config = [], disabled, widgetChange,
+    selectedOption, setSelectedOption,
+    setEditorVisible, setEditorValue,
+    setPlatFormVisible, setPlatFormValue,
+    setSelectPathVisible, setSelectedPath,
   } = props;
   // const { getFieldDecorator, setFieldsValue, getFieldValue } = form;
   const {
@@ -212,13 +238,11 @@ const FormatWidgetToDom = (props: any) => {
 
   let { max, min, options, precision, step, suffix, type: type1 } = widget;
   const updateTimer = useRef<any>();
-  const [uploadValues, setUploadValues] = useState<any>({});
 
   if (_.isArray(options) && _.isString(options[0])) {
     options = options.map((option: string) => ({ label: option, value: option }));
   }
   const name = `${id}`;
-  const nameSelf = `${config[0]}__${type}__${guid()}`;
 
   useEffect(() => {
     if (type1 === 'TagRadio') {
@@ -226,6 +250,22 @@ const FormatWidgetToDom = (props: any) => {
       setSelectedOption(children);
     };
   }, [type1]);
+
+  const fileProps: any = {
+
+    beforeUpload(file: any) {
+      console.log(file);
+      return false;
+    },
+  };
+
+  const dirProps: any = {
+    directory: true,
+    beforeUpload(file: any) {
+      console.log(file);
+      return false;
+    },
+  };
 
   switch (type1) {
     case 'Input':
@@ -465,56 +505,37 @@ const FormatWidgetToDom = (props: any) => {
         </FormItem>
       );
     case 'File':
-      const title1 = uploadValues[nameSelf] || value;
       return (
         <FormItem
           shouldUpdate
-          name={nameSelf}
+          name={name}
           tooltip={description}
           initialValue={value || undefined}
           valuePropName="file"
           rules={[{ required: require, message: `${alias}` }]}
         >
           <div className='flex-box dir'>
-            {
-              title1 ?
-                <TooltipDiv title={title1}>
-                  {/* <a onClick={() => openFolder(title1, true)}> */}
-                  {title1}
-                  {/* </a> */}
-                </TooltipDiv>
-                : null
-            }
-            <Button
-              onClick={() => {
-                // chooseFile(
-                //   (res: any) => {
-                //     const result = (isArray(res) && res.length === 1) ? res[0] : res;
-                //     setUploadValues((prev: {}) => {
-                //       return { ...prev, [nameSelf]: result };
-                //     });
-                //     setFieldsValue({ [nameSelf]: result });
-                //     widgetChange(nameSelf, result)
-                //   },
-                //   false,
-                //   suffix.includes('all') ?
-                //     { name: 'All Files', extensions: ['*'] }
-                //     :
-                //     { name: 'File', extensions: suffix }
-                // );
-              }}
-              disabled={disabled}
-            >
-              选择文件
-            </Button>
+            <TooltipDiv title={value}>
+              {value}
+            </TooltipDiv>
+            <Upload {...fileProps}>
+              <Button
+                onClick={() => {
+                  setSelectedPath(Object.assign({ id: name, fileType: 'file' }, config[1]));
+                  setSelectPathVisible(true);
+                }}
+                disabled={disabled}
+              >
+                选择文件
+              </Button>
+            </Upload>
           </div>
         </FormItem>
       );
     case 'Dir':
-      const title = uploadValues[nameSelf] || value;
       return (
         <FormItem
-          name={nameSelf}
+          name={name}
           tooltip={description}
           initialValue={value || undefined}
           valuePropName="file"
@@ -528,30 +549,19 @@ const FormatWidgetToDom = (props: any) => {
           rules={[{ required: require, message: `${alias}` }]}
         >
           <div className='flex-box dir'>
-            {
-              title ?
-                <TooltipDiv title={title}>
-                  {/* <a onClick={() => openFolder(title)}> */}
-                  {title}
-                  {/* </a> */}
-                </TooltipDiv>
-                : null
-            }
+            <TooltipDiv title={value}>
+              {value}
+            </TooltipDiv>
             <Button
               onClick={() => {
-                // chooseFolder((res, err) => {
-                //   const result = (isArray(res) && res.length === 1) ? res[0] : res;
-                //   setUploadValues((prev: {}) => {
-                //     return { ...prev, [nameSelf]: result };
-                //   });
-                //   setFieldsValue({ [nameSelf]: result });
-                //   widgetChange(nameSelf, result)
-                // });
+                setSelectedPath(Object.assign({ id: name, fileType: 'dir' }, config[1]));
+                setSelectPathVisible(true);
               }}
               disabled={disabled}
             >
               选择文件夹
             </Button>
+
           </div>
         </FormItem>
       );
@@ -572,58 +582,27 @@ const FormatWidgetToDom = (props: any) => {
             Code
           </Button>
         </FormItem>
-        // <Monaco
-        //   width="100%"
-        //   height="300"
-        //   language="sql"
-        //   theme="vs-dark"
-        //   value={value}
-        //   onChange={(value) => {
-        //     return console.log(value);
-        //   }}
-        // />
       );
     case 'platForm':
-      const title2 = uploadValues[nameSelf] || value;
       return (
         <>
           <FormItem
             shouldUpdate
-            name={nameSelf}
+            name={name}
             tooltip={description}
             initialValue={value || undefined}
             valuePropName="file"
             rules={[{ required: require, message: `${alias}` }]}
           >
-            {
-              title2 ?
-                <TooltipDiv title={title2}>
-                  {/* <a onClick={() => openFolder(title2, true)}> */}
-                  {title2}
-                  {/* </a> */}
-                </TooltipDiv>
-                : null
-            }
+            <TooltipDiv title={value}>
+              {value}
+            </TooltipDiv>
           </FormItem>
           <div className='flex-box'>
             <Button
               onClick={() => {
-                // chooseFile(
-                //   (res: any) => {
-                //     const result = (isArray(res) && res.length === 1) ? res[0] : res;
-                //     setUploadValues((prev: {}) => {
-                //       return { ...prev, [nameSelf]: result };
-                //     });
-                //     setFieldsValue({ [nameSelf]: result });
-                //     widgetChange(nameSelf, result);
-                //     setPlatFormValue({ platFormValue: [], value: result });
-                //   },
-                //   false,
-                //   suffix.includes('all') ?
-                //     { name: 'All Files', extensions: ['*'] }
-                //     :
-                //     { name: 'File', extensions: ['jpg', 'jpeg', 'png', 'svg'] }
-                // );
+                setSelectedPath(Object.assign({ id: name, fileType: 'file' }, config[1]));
+                setSelectPathVisible(true);
               }}
               disabled={disabled}
               style={{ marginRight: 8 }}
@@ -633,7 +612,7 @@ const FormatWidgetToDom = (props: any) => {
             <Button
               type='primary'
               onClick={() => {
-                setPlatFormValue(config[1]);
+                setPlatFormValue(Object.assign({ id: name }, config[1]));
                 setPlatFormVisible(true);
               }}
               disabled={disabled}

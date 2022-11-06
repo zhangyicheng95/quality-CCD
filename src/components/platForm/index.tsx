@@ -1,17 +1,15 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Select, Modal, } from 'antd';
+import React, { useState } from 'react';
+import { Modal, } from 'antd';
 import * as _ from 'lodash';
 import styles from './index.less';
 import MarkCanvas from './MarkCanvas';
 
-const { Option } = Select;
 interface Props {
   data?: any;
   visible: any;
   onOk: any;
   onCancel: any;
 }
-let timer: NodeJS.Timeout | null = null;
 
 const PlatFormModal: React.FC<Props> = (props) => {
   const {

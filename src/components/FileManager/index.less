@@ -1,0 +1,39 @@
+@import '~antd/es/style/themes/default.less';
+
+:global {
+    .file-manager-modal {
+        .ant-modal-body {
+            padding: 0;
+            overflow: hidden;
+        }
+    }
+}
+
+.fileManagerBox {
+
+    :global {
+
+        .file-managet-title {
+            font-size: 20px;
+            padding: 12px 24px;
+            border-bottom: 1px solid @border-color-base;
+        }
+
+        .file-manager-item-box {
+            max-height: calc(100vh - 250px);
+            min-height: calc(40vh);
+            padding: 12px 24px;
+            overflow-y: auto;
+
+            .file-manager-item {
+                margin-bottom: 12px;
+                cursor: pointer;
+
+                .can-not-select {
+                    color: @text-color-secondary;
+                    cursor: not-allowed;
+                }
+            }
+        }
+    }
+}
