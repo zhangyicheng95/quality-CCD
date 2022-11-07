@@ -52,14 +52,18 @@ const Home: React.FC<any> = (props: any) => {
           disabled={!started}
           loading={started && loading}
         >停止检测</Button>
-        <Button
-          className="flex-box btn"
-          icon={<AndroidOutlined className="btn-icon" />}
-          type="link"
-          onClick={() => touchFlowService()}
-          disabled={!started}
-          loading={started && loading}
-        >自助触发</Button>
+        {
+          process.env.NODE_ENV === 'development' ?
+            <Button
+              className="flex-box btn"
+              icon={<AndroidOutlined className="btn-icon" />}
+              type="link"
+              onClick={() => touchFlowService()}
+              disabled={!started}
+              loading={started && loading}
+            >自助触发</Button>
+            : null
+        }
       </div>
     </div>,
     <div key={'slider-2'}>

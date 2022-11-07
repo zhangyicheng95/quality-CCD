@@ -14,24 +14,55 @@
     :global {
 
         .file-managet-title {
-            font-size: 20px;
+            font-size: 24px;
             padding: 12px 24px;
             border-bottom: 1px solid @border-color-base;
         }
 
+        .file-managet-header {
+            height: 50px;
+            font-size: 20px;
+
+            .header-name,
+            .header-time,
+            .header-size {
+                flex: 1;
+                padding: 0 24px;
+                gap: 8px;
+            }
+
+            .header-name {
+                flex: 3;
+            }
+        }
+
         .file-manager-item-box {
-            max-height: calc(100vh - 250px);
+            max-height: calc(100vh - 300px);
             min-height: calc(40vh);
             padding: 12px 24px;
             overflow-y: auto;
+            font-size: 18px;
 
             .file-manager-item {
                 margin-bottom: 12px;
                 cursor: pointer;
+                gap: 48px;
 
                 .can-not-select {
                     color: @text-color-secondary;
                     cursor: not-allowed;
+                }
+
+                .body-name,
+                .body-time,
+                .body-size {
+                    flex: 1;
+                    gap: 8px;
+                    word-break: break-all;
+                }
+
+                .body-name {
+                    flex: 3;
                 }
             }
         }

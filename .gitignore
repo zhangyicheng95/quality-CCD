@@ -37,4 +37,6 @@ screenshot
 .firebase
 .eslintcache
 
-build
+dist
+quality
+quality.zip

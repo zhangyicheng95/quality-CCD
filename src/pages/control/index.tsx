@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import styles from "./index.module.less";
 import { Button, message, Form, Input, Radio, Select, Checkbox, InputNumber, Switch, Upload, } from "antd";
 import * as _ from "lodash";
-import { getParams, selectFilePathService, updateParams } from "@/services/api";
+import { getParams, updateParams } from "@/services/api";
 import { CaretDownOutlined, CaretRightOutlined } from "@ant-design/icons";
 import PrimaryTitle from "@/components/PrimaryTitle";
 import IpInput from "@/components/IpInputGroup";
@@ -10,7 +10,6 @@ import SliderGroup from "@/components/SliderGroup";
 import TooltipDiv from "@/components/TooltipDiv";
 import MonacoEditor from "@/components/MonacoEditor";
 import PlatFormModal from "@/components/platForm";
-import { guid } from "@/utils/utils";
 import FileManager from "@/components/FileManager";
 
 const FormItem = Form.Item;
@@ -96,6 +95,7 @@ const Control: React.FC<any> = (props: any) => {
               const { id, alias, name, config = {}, hidden } = node;
               const { initParams = {} } = config;
               if (!!initParams && !_.isEmpty(initParams)) {
+                if (Object.entries(initParams).filter((i: any) => !i[1].onHidden).length === 0) return null;
                 return <div key={id} className="control-item">
                   <div className="item-title flex-box" onClick={() => {
                     setNodeList((prev: any) => {
@@ -250,22 +250,6 @@ const FormatWidgetToDom = (props: any) => {
       setSelectedOption(children);
     };
   }, [type1]);
-
-  const fileProps: any = {
-
-    beforeUpload(file: any) {
-      console.log(file);
-      return false;
-    },
-  };
-
-  const dirProps: any = {
-    directory: true,
-    beforeUpload(file: any) {
-      console.log(file);
-      return false;
-    },
-  };
 
   switch (type1) {
     case 'Input':
@@ -518,17 +502,15 @@ const FormatWidgetToDom = (props: any) => {
             <TooltipDiv title={value}>
               {value}
             </TooltipDiv>
-            <Upload {...fileProps}>
-              <Button
-                onClick={() => {
-                  setSelectedPath(Object.assign({ id: name, fileType: 'file' }, config[1]));
-                  setSelectPathVisible(true);
-                }}
-                disabled={disabled}
-              >
-                选择文件
-              </Button>
-            </Upload>
+            <Button
+              onClick={() => {
+                setSelectedPath(Object.assign({ id: name, fileType: 'file' }, config[1]));
+                setSelectPathVisible(true);
+              }}
+              disabled={disabled}
+            >
+              选择文件
+            </Button>
           </div>
         </FormItem>
       );
