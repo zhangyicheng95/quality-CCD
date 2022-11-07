@@ -198,7 +198,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
               type === 'CIRCLE' ? { x: shape.cx + shape.r, y: shape.cy - shape.r } :
                 type === 'POLYGON' ? shape.location :
                   type === 'LINE' ? shape.start :
-                    type === 'POLYLINE' ? shape.points[0] : {},
+                    type === 'POLYLINE' ? shape.points[0] :
+                      type === 'POINT' ? shape : {},
             offset: {
               x: -20,
               y: -4

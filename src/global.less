@@ -170,7 +170,7 @@ ol {
 
 .ant-btn,
 .ant-input {
-  line-height: 1;
+  line-height: 1 !important;
 }
 
 .ant-modal {
@@ -202,6 +202,14 @@ ol {
 
 .ant-input-number {
   width: 100% !important;
+
+  .ant-input-number-handler-wrap {
+    opacity: 1 !important;
+  }
+}
+
+.ant-row {
+  align-items: center;
 }
 
 .ant-slider {
@@ -213,6 +221,16 @@ ol {
   .ant-slider-handle {
     margin: 0 !important;
   }
+}
+
+.page-size {
+  width: calc(100% - 48px);
+  max-width: 1200px;
+  margin: 24px 0;
+  height: calc(100% - 48px);
+  padding: 24px;
+  background: @body-background;
+  box-shadow: @box-shadow-base;
 }
 
 .flex-box {

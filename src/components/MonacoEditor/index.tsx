@@ -4,7 +4,7 @@ import {
   Modal,
 } from 'antd';
 import Monaco from 'react-monaco-editor';
-import styles from './index.less';
+import './index.less';
 
 const { Option } = Select;
 interface Props {
@@ -74,7 +74,7 @@ const MonacoEditor: React.FC<Props> = (props) => {
         </div>
       }
       width="calc(100vw - 48px)"
-      wrapClassName={styles["monaco-editor-modal"]}
+      wrapClassName={"monaco-editor-modal"}
       centered
       open={visible}
       onOk={() => {
@@ -88,6 +88,7 @@ const MonacoEditor: React.FC<Props> = (props) => {
       onCancel={() => {
         onCancel();
       }}
+      getContainer={false}
     >
       <Monaco
         width="100%"

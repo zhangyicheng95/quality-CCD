@@ -34,15 +34,28 @@
       .info-box-content {
         font-size: 20px;
         line-height: 1.1;
-        padding: 12px;
         height: calc(100% - 40px);
         overflow-y: auto;
         word-break: break-all;
       }
+
+      .info-item {
+        padding: 12px;
+        text-align: center;
+      }
     }
 
     .message-box {
-      //  
+      .message-item {
+        text-align: center;
+        padding: 12px;
+        cursor: pointer;
+        border-bottom: 1px solid @border-color-base;
+
+        &:hover {
+          background-color: @btn-text-hover-bg;
+        }
+      }
     }
 
     .drag-btn {

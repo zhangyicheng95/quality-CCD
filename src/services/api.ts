@@ -40,7 +40,7 @@ export async function touchFlowService() {
 
 // 选择文件路径
 export async function selectFilePathService(path: string) {
-  return fetchGet(`${BASE_IP}file_browser/${path}`);
+  return fetchGet(`${BASE_IP}file_browser${path.indexOf('\\') === 0 ? '' : '\\'}${path}`);
 }
 
 // 加载本次磁盘文件

@@ -83,7 +83,7 @@ const Control: React.FC<any> = (props: any) => {
       });
   };
   return (
-    <div className={`${styles.control} flex-box`}>
+    <div className={`${styles.control} flex-box page-size`}>
       <PrimaryTitle title={"参数控制"} />
       <div className="control-body">
         <Form
@@ -96,6 +96,18 @@ const Control: React.FC<any> = (props: any) => {
               const { initParams = {} } = config;
               if (!!initParams && !_.isEmpty(initParams)) {
                 if (Object.entries(initParams).filter((i: any) => !i[1].onHidden).length === 0) return null;
+                const TagRadioList = Object.entries(initParams).reduce((pre: any, cen: any) => {
+                  const { widget } = cen[1];
+                  if (widget?.type === 'TagRadio') {
+                    const ids = (widget?.options || []).reduce((optionP: any, optionC: any) => {
+                      const { children } = optionC;
+                      const childIds = children.map((item: any) => item.id);
+                      return optionP.concat(childIds);
+                    }, []);
+                    return pre.concat(ids)
+                  }
+                  return pre;
+                }, []);
                 return <div key={id} className="control-item">
                   <div className="item-title flex-box" onClick={() => {
                     setNodeList((prev: any) => {
@@ -116,7 +128,7 @@ const Control: React.FC<any> = (props: any) => {
                     !hidden && (Object.entries(initParams) || []).map((item: any) => {
                       const { alias, name, widget, onHidden } = item[1];
                       const { type } = widget;
-                      if (onHidden) return null;
+                      if (onHidden || TagRadioList.includes(item[0])) return null;
                       return <div className="flex-box param-item" key={`${id}@$@${item[0]}`}>
                         <div className="icon-box flex-box">
                           {_.toUpper(type.slice(0, 1))}
@@ -435,6 +447,7 @@ const FormatWidgetToDom = (props: any) => {
             rules={[{ required: require, message: `${alias}` }]}
           >
             <InputNumber
+              controls={true}
               placeholder={`请输入${alias}`}
               precision={precision}
               step={step}

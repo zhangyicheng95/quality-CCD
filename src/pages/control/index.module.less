@@ -1,10 +1,6 @@
 @import '~antd/es/style/themes/default.less';
 
 .control {
-  width: 50%;
-  height: 100%;
-  padding: 24px 0;
-  background: @body-background;
   flex-direction: column;
   user-select: none;
 
@@ -16,6 +12,8 @@
     .control-body {
       width: 100%;
       flex: 1;
+      margin-top: -24px;
+      padding-top: 24px;
       overflow-y: auto;
 
       .control-item {
@@ -85,6 +83,15 @@
 
             .ant-form-item {
               margin-bottom: 0;
+
+              .ant-form-item-control {
+                height: 40px;
+                line-height: 40px;
+
+                .ant-btn {
+                  height: 38px;
+                }
+              }
 
               .dir {
                 gap: 12px;

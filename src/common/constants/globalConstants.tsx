@@ -2,13 +2,13 @@
 import _ from 'lodash';
 
 export const layoutTransform = {
-  0: { i: '0', x: 0, y: 0, w: 4, h: 24, minW: 2, maxW: 6, minH: 4, maxH: 32 },
-  1: { i: '1', x: 4, y: 0, w: 2, h: 12, minW: 2, maxW: 6, minH: 4, maxH: 32 },
-  2: { i: '2', x: 6, y: 12, w: 2, h: 12, minW: 2, maxW: 6, minH: 4, maxH: 32 },
-  3: { i: '3', x: 8, y: 0, w: 2, h: 12, minW: 2, maxW: 6, minH: 4, maxH: 32 },
-  4: { i: '4', x: 4, y: 12, w: 2, h: 12, minW: 2, maxW: 6, minH: 4, maxH: 32 },
-  5: { i: '5', x: 6, y: 0, w: 2, h: 12, minW: 2, maxW: 6, minH: 4, maxH: 32 },
-  6: { i: '6', x: 8, y: 12, w: 2, h: 12, minW: 2, maxW: 6, minH: 4, maxH: 32 }
+  0: { i: '0', x: 0, y: 0, w: 6, h: 20, minW: 2, maxW: 10, minH: 4, maxH: 32 },
+  1: { i: '1', x: 6, y: 0, w: 3, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
+  2: { i: '2', x: 9, y: 0, w: 3, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
+  3: { i: '3', x: 6, y: 10, w: 3, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
+  4: { i: '4', x: 9, y: 10, w: 3, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
+  5: { i: '5', x: 0, y: 20, w: 3, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
+  6: { i: '6', x: 3, y: 20, w: 3, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 }
 };
 
 const colorList = [
@@ -22,6 +22,15 @@ const colorList = [
   '#6d7a33',
   '#5991d1',
 ];
+
+export const logColors = {
+  warning: 'rgba(245,160,49,1)',
+  WARNING: 'rgba(245,160,49,1)',
+  error: 'rgba(255,107,104,1)',
+  ERROR: 'rgba(255,107,104,1)',
+  critical: 'rgba(255,107,104,1)',
+  CRITICAL: 'rgba(255,107,104,1)',
+};
 export const portTypeObj: any = {
   string: {
     color: '#165b5c',

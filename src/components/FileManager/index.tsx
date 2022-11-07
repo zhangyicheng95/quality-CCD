@@ -1,9 +1,8 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
-import { Select, Modal, message, } from 'antd';
+import React, { Fragment, useEffect, useState } from 'react';
+import { Modal, message, Spin, } from 'antd';
 import * as _ from 'lodash';
 import styles from './index.less';
 import { selectFilePathService } from '@/services/api';
-import { divide } from 'lodash';
 import { CalendarOutlined, FileOutlined, FileTextOutlined, FolderOpenOutlined, HomeOutlined } from '@ant-design/icons';
 import moment from 'moment';
 
@@ -17,17 +16,20 @@ interface Props {
 const FileManager: React.FC<Props> = (props) => {
   const { fileType = 'file', data, onOk, onCancel, } = props;
   const { value } = data;
+  const [loading, setLoading] = useState<any>(false);
   const [list, setList] = useState<any>([]);
-  const [select, setSelect] = useState(value || '/');
+  const [select, setSelect] = useState(value || '');
 
   useEffect(() => {
-    selectFilePathService(select).then(res => {
+    setLoading(true);
+    selectFilePathService(select + '\\').then(res => {
       if (!!res && !!res.items && _.isArray(res.items)) {
         const { items } = res;
         setList(items || []);
       } else {
         !_.isUndefined(res) && message.error('接口异常');
       }
+      setLoading(false);
     });
   }, [select]);
 
@@ -48,15 +50,14 @@ const FileManager: React.FC<Props> = (props) => {
     >
       <div className={styles.fileManagerBox}>
         <div className="file-managet-title">
-          {(select + '').split(`\\`).map((item: string, index: number) => {
-            return <a onClick={() => {
+          {!!select && (select + '').split(`\\`).map((item: string, index: number) => {
+            if (!item) return null;
+            return <a key={item} onClick={() => {
               setSelect((select + '').split(`\\`).slice(0, index + 1).join('\\'));
             }}>
               {
                 index === 0 ?
-                  <Fragment>
-                    <HomeOutlined style={{ marginRight: 8 }} />
-                  </Fragment>
+                  <HomeOutlined style={{ marginRight: 8 }} />
                   : null
               }
               {item}&nbsp;{`   ${index + 1 === (select + '').split(`\\`).length ? '' : '/'}   `}&nbsp;
@@ -78,42 +79,44 @@ const FileManager: React.FC<Props> = (props) => {
           </div>
         </div>
         <div className="file-manager-item-box">
-          {
-            (list || []).map((item: any, index: number) => {
-              const { type, name, create_at, update_time } = item;
-              return <div className="file-manager-item flex-box">
-                <div className="body-name flex-box">
-                  {
-                    type === 'file' ?
-                      <Fragment>
-                        <FileOutlined className='file-icon' />
-                        {
-                          fileType === 'file' ?
-                            <span onClick={() => {
-                              setSelect((prev: string) => `${prev}\\${name}`);
-                              setList([]);
-                            }}>{name}</span>
-                            : <div className='can-not-select'>{name}</div>
-                        }
-                      </Fragment>
-                      :
-                      <Fragment>
-                        <FolderOpenOutlined className='dir-icon' />
-                        <a onClick={() => {
-                          setSelect((prev: string) => `${prev}\\${name}`)
-                        }}>{name}/</a>
-                      </Fragment>
-                  }
+          <Spin spinning={loading}>
+            {
+              (list || []).map((item: any, index: number) => {
+                const { type, name, create_at, update_time } = item;
+                return <div className="file-manager-item flex-box" key={index}>
+                  <div className="body-name flex-box">
+                    {
+                      type === 'file' ?
+                        <Fragment>
+                          <FileOutlined className='file-icon' />
+                          {
+                            fileType === 'file' ?
+                              <span onClick={() => {
+                                setSelect((prev: string) => `${prev}\\${name}`);
+                                setList([]);
+                              }}>{name}</span>
+                              : <div className='can-not-select'>{name}</div>
+                          }
+                        </Fragment>
+                        :
+                        <Fragment>
+                          <FolderOpenOutlined className='dir-icon' />
+                          <a onClick={() => {
+                            setSelect((prev: string) => `${prev}\\${name}`)
+                          }}>{name}/</a>
+                        </Fragment>
+                    }
+                  </div>
+                  <div className="body-time flex-box">
+                    {moment(update_time).format('YYYY-MM-DD HH:mm:ss')}
+                  </div>
+                  <div className="body-size flex-box">
+                    {moment(create_at).format('YYYY-MM-DD HH:mm:ss')}
+                  </div>
                 </div>
-                <div className="body-time flex-box">
-                  {moment(update_time).format('YYYY-MM-DD HH:mm:ss')}
-                </div>
-                <div className="body-size flex-box">
-                  {moment(create_at).format('YYYY-MM-DD HH:mm:ss')}
-                </div>
-              </div>
-            })
-          }
+              })
+            }
+          </Spin>
         </div>
       </div>
     </Modal>

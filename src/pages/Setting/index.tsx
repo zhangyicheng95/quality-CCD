@@ -1,17 +1,25 @@
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, { useEffect, useState, useRef, useMemo, Fragment } from "react";
 import { Form, Input, message, Button, Tree } from "antd";
 import * as _ from "lodash";
 import styles from "./index.module.less";
 import { getParams, updateParams } from "@/services/api";
 import PrimaryTitle from "@/components/PrimaryTitle";
+import FileManager from "@/components/FileManager";
+import TooltipDiv from "@/components/TooltipDiv";
+import { editor } from "monaco-editor";
 
 const Setting: React.FC<any> = (props) => {
   const [form] = Form.useForm();
-  const { validateFields, setFieldsValue } = form;
+  const { validateFields, setFieldsValue, getFieldValue } = form;
   const [paramData, setParamData] = useState<any>({});
-  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
   const [treeData, setTreeData] = useState([]);
+  const [selectPathVisible, setSelectPathVisible] = useState(false);
+  const [selectedPath, setSelectedPath] = useState<any>('');
+  const [edit, setEdit] = useState({
+    ip: false,
+    id: false,
+  });
 
   const getData = () => {
     getParams(localStorage.getItem("ipString") || '').then((res: any) => {
@@ -19,12 +27,10 @@ const Setting: React.FC<any> = (props) => {
         const { data = {} } = res;
         const { flowData } = data;
         const { nodes } = flowData;
-        let idList: any = [];
         let checkedList: any = [];
         const result: any = (nodes || []).map((node: any) => {
           const { alias, name, id, config } = node;
           const { initParams = {} } = config;
-          idList = idList.concat(id);
           if (!!initParams && !_.isEmpty(initParams)) {
             return {
               title: alias || name,
@@ -32,7 +38,6 @@ const Setting: React.FC<any> = (props) => {
               children: Object.entries(initParams).map((param: any) => {
                 const { alias, name, onHidden } = param[1];
                 const key = `${id}@$@${param[0]}`;
-                idList = idList.concat(param[1]);
                 if (!onHidden) {
                   checkedList = checkedList.concat(key)
                 }
@@ -48,7 +53,6 @@ const Setting: React.FC<any> = (props) => {
         }).filter(Boolean);
         setParamData(data);
         setTreeData(result);
-        setExpandedKeys(idList);
         setCheckedKeys(checkedList);
         if (!localStorage.getItem("quality_name")) {
           setFieldsValue({ quality_name: data.name });
@@ -62,10 +66,6 @@ const Setting: React.FC<any> = (props) => {
     if (!localStorage.getItem("ipUrl-history") || !localStorage.getItem("ipString")) return;
     getData();
   }, []);
-
-  const onExpand = (expandedKeysValue: React.Key[]) => {
-    setExpandedKeys(expandedKeysValue);
-  };
 
   const onCheck = (checkedKeysValue: React.Key[]) => {
     setCheckedKeys(checkedKeysValue.filter((i: any) => i?.indexOf("@$@") > -1));
@@ -111,6 +111,7 @@ const Setting: React.FC<any> = (props) => {
           }
         })
         message.success('更新配置成功');
+        localStorage.setItem("quality_icon", values['quality_icon'] || '');
         localStorage.setItem("quality_name", values['quality_name']);
         localStorage.setItem("ipUrl-history", values['ipUrl-history']);
         localStorage.setItem("ipString", values['ipString']);
@@ -123,38 +124,64 @@ const Setting: React.FC<any> = (props) => {
   }
 
   return (
-    <div className={`${styles.setting} flex-box`}>
+    <div className={`${styles.setting} flex-box page-size`}>
       <PrimaryTitle title={"系统配置"} />
       <div className="body">
         <Form
           form={form}
-          layout="vertical"
+          layout="horizontal"
           scrollToFirstError
         >
           <Form.Item
+            name="quality_icon"
+            label="系统图标"
+            initialValue={localStorage.getItem("quality_icon") || ''}
+            rules={[{ required: false, message: "系统图标" }]}
+          >
+            <div className="flex-box">
+              {
+                getFieldValue("quality_icon") ?
+                  <TooltipDiv title={getFieldValue("quality_icon")} style={{ marginLeft: 16, }}>
+                    {getFieldValue("quality_icon")}
+                  </TooltipDiv>
+                  : null
+              }
+              <Button style={{ height: 40 }} onClick={() => {
+                setSelectedPath(localStorage.getItem("quality_icon") || '');
+                setSelectPathVisible(true)
+              }}>选择系统图标</Button>
+            </div>
+          </Form.Item>
+          <Form.Item
             name="quality_name"
-            label="方案名称"
+            label="系统名称"
             initialValue={localStorage.getItem("quality_name") || paramData?.name}
-            rules={[{ required: true, message: "方案名称" }]}
+            rules={[{ required: true, message: "系统名称" }]}
           >
-            <Input placeholder="方案名称" />
+            <Input placeholder="系统名称" />
           </Form.Item>
-          <Form.Item
-            name="ipUrl-history"
-            label="服务端地址"
-            initialValue={localStorage.getItem("ipUrl-history") || undefined}
-            rules={[{ required: true, message: "服务端地址" }]}
-          >
-            <Input placeholder="localhost:8866" />
-          </Form.Item>
-          <Form.Item
-            name="ipString"
-            label="方案ID绑定"
-            initialValue={localStorage.getItem("ipString") || undefined}
-            rules={[{ required: true, message: "方案ID绑定" }]}
-          >
-            <Input placeholder="方案ID" />
-          </Form.Item>
+          <div className="flex-box has-edit-btn">
+            <Form.Item
+              name="ipUrl-history"
+              label="服务端地址"
+              initialValue={localStorage.getItem("ipUrl-history") || undefined}
+              rules={[{ required: true, message: "服务端地址" }]}
+            >
+              <Input placeholder="localhost:8866" disabled={!edit.ip} />
+            </Form.Item>
+            <Button type="primary" onClick={() => setEdit(prev => Object.assign({ ip: !prev.ip }))}>修改</Button>
+          </div>
+          <div className="flex-box has-edit-btn">
+            <Form.Item
+              name="ipString"
+              label="方案ID绑定"
+              initialValue={localStorage.getItem("ipString") || undefined}
+              rules={[{ required: true, message: "方案ID绑定" }]}
+            >
+              <Input placeholder="方案ID" disabled={!edit.id} />
+            </Form.Item>
+            <Button type="primary" onClick={() => setEdit(prev => Object.assign({ id: !prev.id }))}>修改</Button>
+          </div>
           <Form.Item
             name="params"
             label="参数项管理"
@@ -163,8 +190,6 @@ const Setting: React.FC<any> = (props) => {
           >
             <Tree
               checkable
-              onExpand={onExpand}
-              expandedKeys={expandedKeys}
               autoExpandParent={true}
               showLine={true}
               // @ts-ignore
@@ -179,6 +204,25 @@ const Setting: React.FC<any> = (props) => {
       <div className="footer flex-box">
         <Button type="primary" onClick={() => onFinish()}>确认</Button>
       </div>
+
+      {
+        selectPathVisible ?
+          <FileManager
+            data={{ value: selectedPath }}
+            onOk={(val: any) => {
+              const { value } = val;
+              console.log(value);
+              setFieldsValue({ quality_icon: value })
+              setSelectPathVisible(false);
+              setSelectedPath('');
+            }}
+            onCancel={() => {
+              setSelectPathVisible(false);
+              setSelectedPath('');
+            }}
+          />
+          : null
+      }
     </div>
   );
 };

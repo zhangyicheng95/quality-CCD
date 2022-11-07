@@ -6,6 +6,7 @@ import { layoutTransform } from "@/common/constants/globalConstants";
 import GridLayout from "@/components/GridLayout";
 
 const id = 'EUlayoutArr';
+let timer: string | number | NodeJS.Timeout | null | undefined = null;
 const Common: React.FC<any> = (props: any) => {
   const { data } = props;
   const [list, setList] = useState([]);
@@ -13,26 +14,40 @@ const Common: React.FC<any> = (props: any) => {
 
   useEffect(() => {
     if (data.length) {
-      let listData: any = [],
-        layoutData: any = !!localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id) || "") : [];
-      data.forEach((item: any, index: number) => {
-        const imgList: any = Object.entries(item).filter((i: any) => !!i[1] && i[1].indexOf('http') > -1);
-        if (!!imgList[0]) {
-          listData = listData.concat(<div key={index + ''}>
-            <img src={imgList[0][1]} alt="logo" />
-            <div className="custom-drag" />
-          </div>);
-          if (layoutData.filter((i: any) => i.i == index).length === 0) {
-            layoutData = layoutData.concat(Object.assign({}, { i: index + '' },
-              !!layoutTransform[index] ? layoutTransform[index] : {
-                x: 0, y: 24 + 12 * index, w: 2, h: 12, minW: 2, maxW: 6, minH: 4, maxH: 32
-              }))
+      timer && clearTimeout(timer);
+      timer = setTimeout(() => {
+        let listData: any = [],
+          layoutData: any = !!localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id) || "") : [];
+        data.forEach((item: any, index: number) => {
+          const imgList: any = Object.entries(item).filter((i: any) => !!i[1] && i[1].indexOf('http') > -1);
+          if (!!imgList[0]) {
+            const img = new Image();
+            img.src = imgList[0][1];
+            img.onload = (res) => {
+              const { width, height } = img;
+              listData = listData.concat(<div key={index + ''} className="flex-box" style={{
+                justifyContent: 'center', overflow: 'hidden', width: '100%', height: '100%'
+              }}>
+                <img
+                  src={imgList[0][1]} alt="logo"
+                  style={(width / height) < 1 ? { height: '100%', width: 'auto' } : { width: '100%', height: 'auto' }}
+                />
+                <div className="custom-drag" />
+              </div>);
+              if (layoutData.filter((i: any) => i.i == index + '').length === 0) {
+                layoutData = layoutData.concat(Object.assign({}, { i: index + '' },
+                  !!layoutTransform[index] ? layoutTransform[index] : {
+                    x: 0, y: 24 + 12 * index, w: 2, h: 12, minW: 2, maxW: 6, minH: 4, maxH: 32
+                  }));
+              }
+            };
           }
-          console.log(layoutData)
-        }
-      });
-      setList(listData);
-      setLayout(layoutData);
+          setTimeout(() => {
+            setList(listData);
+            setLayout(layoutData);
+          }, 1000);
+        });
+      }, 100);
     }
   }, [data]);
 

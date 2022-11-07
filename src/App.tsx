@@ -69,7 +69,13 @@ export async function getInitialState(): Promise<{
     fetchUserInfo,
     settings: defaultSettings,
   };
-}
+};
+
+const BASE_IP = localStorage.getItem("ipUrl-history") ?
+  `http://${localStorage.getItem("ipUrl-history")}/` : `http://localhost:8888/`;
+const iconDom = <img src={!!localStorage.getItem('quality_icon') ?
+  `${BASE_IP}file_browser/${localStorage.getItem('quality_icon')}` : icon
+} alt="logo" />
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
@@ -127,7 +133,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       );
     },
     ...initialState?.settings,
-    logo: icon,
+    logo: iconDom,
     title: localStorage.getItem("quality_name") || 'UBVision',
   };
 };

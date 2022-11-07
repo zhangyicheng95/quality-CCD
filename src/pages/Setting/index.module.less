@@ -1,10 +1,6 @@
 @import '~antd/es/style/themes/default.less';
 
 .setting {
-  width: 50%;
-  height: 100%;
-  padding: 24px 0;
-  background: @body-background;
   flex-direction: column;
 
   :global {
@@ -17,6 +13,28 @@
       flex: 1;
       padding: 0 24px;
       overflow-y: auto;
+
+      .has-edit-btn {
+        width: 100%;
+        gap: 16px;
+
+        .ant-form-item {
+          flex: 1;
+        }
+
+        .ant-btn {
+          margin-bottom: 24px;
+        }
+      }
+
+      .ant-row {
+        align-items: flex-start;
+      }
+
+      .ant-form-item-label {
+        width: 150px;
+        text-align: left;
+      }
     }
 
     .footer {

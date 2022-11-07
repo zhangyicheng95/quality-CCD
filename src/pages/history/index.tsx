@@ -37,7 +37,7 @@ const History: React.FC<any> = (props: any) => {
     { key: 'confirmedAlarmImgCount', dataIndex: 'confirmedAlarmImgCount', title: '异常图片数量', align: 'center', },
   ];
   return (
-    <div className={styles.history}>
+    <div className={`${styles.history} page-size`}>
       <PrimaryTitle title={"工单列表"} />
       <div className="history-content-box">
         <div className="search-box">

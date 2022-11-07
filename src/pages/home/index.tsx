@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./index.module.less";
-import { Spin, notification, Button, message } from "antd";
+import { Spin, notification, Button, message, DatePicker } from "antd";
 import _ from "lodash";
 import TBJ from "./components/TBJdom";
 import DGH from "./components/DGHdom";
@@ -13,6 +13,10 @@ import { website } from "@/services/consts";
 import moment from "moment";
 import GridLayout from "@/components/GridLayout";
 import { AndroidOutlined, PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
+import { guid } from "@/utils/utils";
+import { logColors } from "@/common/constants/globalConstants";
+import BasicScrollBar from "@/components/BasicScrollBar";
+import TooltipDiv from "@/components/TooltipDiv";
 
 const id = 'HomelayoutArr';
 const Home: React.FC<any> = (props: any) => {
@@ -72,7 +76,13 @@ const Home: React.FC<any> = (props: any) => {
           基本信息
         </div>
         <div className="info-box-content">
-
+          {
+            Object.entries({ orderId: 'xxxxxxxxx-xxx' }).map((item: any, index: number) => {
+              return <TooltipDiv title={item[1]} className="info-item" key={item[0]}>
+                订单号：{item[1]}
+              </TooltipDiv>
+            })
+          }
         </div>
       </div>
     </div>,
@@ -82,7 +92,15 @@ const Home: React.FC<any> = (props: any) => {
           实时信息
         </div>
         <div className="info-box-content">
-
+          {
+            [{}, {}, {}, {}].map((item: any, index: number) => {
+              return <div className="message-item" key={index} onClick={() => {
+                console.log(item)
+              }}>
+                {moment(new Date().getTime()).format('MM-DD HH:mm:ss')}
+              </div>
+            })
+          }
         </div>
       </div>
     </div>,
@@ -131,12 +149,39 @@ const Home: React.FC<any> = (props: any) => {
         <div className="common-card-title-box drag-btn">
           错误信息
         </div>
-        <div
-          className="content-item-span"
-          dangerouslySetInnerHTML={{
-            __html: errorData.map((i: any) => i.data).join(`<br/><br/>`),
-          }}
-        />
+        <div className="content-item-span">
+          <BasicScrollBar data={errorData}>
+            {
+              errorData.map((log: any, index: number) => {
+                const { level, node_name, nid, message, time } = log;
+                return (
+                  <div className="log-item flex-box-start" key={index}>
+                    <div className="log-item-content">
+                      <div className="content-item">
+                        <span>{moment(time).format('YYYY-MM-DD HH:mm:ss')}&nbsp;</span>
+                        &nbsp;
+                        <div
+                          className="content-item-span"
+                          style={{
+                            color:
+                              level === 'warning'
+                                ? logColors.warning
+                                : level === 'error'
+                                  ? logColors.error
+                                  : logColors.critical,
+                          }}
+                          dangerouslySetInnerHTML={{
+                            __html: `节点${node_name || ''}（${nid || ''}）发生错误：${message}`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            }
+          </BasicScrollBar>
+        </div>
       </div>
     </div>,
   ];
@@ -308,8 +353,11 @@ const Home: React.FC<any> = (props: any) => {
             ? result.message.join(",")
             : result.message,
         };
-        console.log('error ws:', currentData)
+        // console.log('error ws:', currentData)
         setErrorData((prev) => prev.concat(currentData));
+        if (errorData.length > 5) {
+          notification.destroy();
+        }
         openNotificationWithIcon({
           type: result?.level,
           title:
@@ -416,7 +464,6 @@ const openNotificationWithIcon = (item: any) => {
   notification[type === "WARNING" ? "warning" : "error"]({
     message: title,
     description: content,
-    // maxCount: 5, // 最大显示数, 超过限制时，最早的消息会被自动关闭
-    duration: type === "CRITICAL" ? null : 5, // 自动关闭时间，null表示不关闭
+    duration: 6, //type === "CRITICAL" ? null : 5, // 自动关闭时间，null表示不关闭
   });
 };
