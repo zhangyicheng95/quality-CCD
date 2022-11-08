@@ -574,7 +574,7 @@ const FormatWidgetToDom = (props: any) => {
             }}
             disabled={disabled}
           >
-            Code
+            打开编辑器
           </Button>
         </FormItem>
       );

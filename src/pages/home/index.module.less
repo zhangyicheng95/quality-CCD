@@ -12,6 +12,13 @@
       box-shadow: @box-shadow-base;
       background-color: @body-background;
 
+      .status-icon {
+        .ant-badge-status-dot {
+          height: 15px;
+          width: 15px;
+        }
+      }
+
       .btn {
         width: 100%;
         height: 56px;
@@ -62,6 +69,18 @@
       cursor: move;
     }
 
+    .success-message {
+      border-left-color: @success-color;
+    }
+
+    .warning-message {
+      border-left-color: @warning-color;
+    }
+
+    .error-message {
+      border-left-color: @error-color;
+    }
+
     .ant-spin-container {
       position: relative;
 
@@ -93,6 +112,38 @@
         height: calc(100% - 40px);
         overflow-y: auto;
         word-break: break-all;
+      }
+    }
+  }
+}
+
+:global {
+  .history-img-modal {
+
+    .ant-modal {
+      height: calc(100vh - 48px);
+
+      .ant-modal-content {
+        height: 100%;
+        overflow: hidden;
+
+        .ant-modal-header {
+          height: 55px;
+        }
+
+        .ant-modal-body {
+          height: calc(100% - 55px);
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          img {
+            // height: 100%;
+            width: 60%;
+          }
+        }
+
       }
     }
   }

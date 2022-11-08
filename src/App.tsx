@@ -74,7 +74,7 @@ export async function getInitialState(): Promise<{
 const BASE_IP = localStorage.getItem("ipUrl-history") ?
   `http://${localStorage.getItem("ipUrl-history")}/` : `http://localhost:8888/`;
 const iconDom = <img src={!!localStorage.getItem('quality_icon') ?
-  `${BASE_IP}file_browser/${localStorage.getItem('quality_icon')}` : icon
+  `${BASE_IP}file_browser${localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'}${localStorage.getItem('quality_icon')}` : icon
 } alt="logo" />
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout

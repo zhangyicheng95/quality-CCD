@@ -63,6 +63,7 @@ const Setting: React.FC<any> = (props) => {
     });
   };
   useEffect(() => {
+    !localStorage.getItem("quality_name") && localStorage.setItem("quality_name", 'UBVision');
     if (!localStorage.getItem("ipUrl-history") || !localStorage.getItem("ipString")) return;
     getData();
   }, []);
@@ -141,7 +142,7 @@ const Setting: React.FC<any> = (props) => {
             <div className="flex-box">
               {
                 getFieldValue("quality_icon") ?
-                  <TooltipDiv title={getFieldValue("quality_icon")} style={{ marginLeft: 16, }}>
+                  <TooltipDiv title={getFieldValue("quality_icon")} style={{ marginRight: 16, }}>
                     {getFieldValue("quality_icon")}
                   </TooltipDiv>
                   : null
@@ -169,7 +170,9 @@ const Setting: React.FC<any> = (props) => {
             >
               <Input placeholder="localhost:8866" disabled={!edit.ip} />
             </Form.Item>
-            <Button type="primary" onClick={() => setEdit(prev => Object.assign({ ip: !prev.ip }))}>修改</Button>
+            <Button type="primary" onClick={() => setEdit(prev => Object.assign({ ip: !prev.ip }))}>
+              {edit.ip ? '确认' : '修改'}
+            </Button>
           </div>
           <div className="flex-box has-edit-btn">
             <Form.Item
@@ -180,7 +183,9 @@ const Setting: React.FC<any> = (props) => {
             >
               <Input placeholder="方案ID" disabled={!edit.id} />
             </Form.Item>
-            <Button type="primary" onClick={() => setEdit(prev => Object.assign({ id: !prev.id }))}>修改</Button>
+            <Button type="primary" onClick={() => setEdit(prev => Object.assign({ id: !prev.id }))}>
+              {edit.id ? '确认' : '修改'}
+            </Button>
           </div>
           <Form.Item
             name="params"
@@ -202,7 +207,7 @@ const Setting: React.FC<any> = (props) => {
 
       </div>
       <div className="footer flex-box">
-        <Button type="primary" onClick={() => onFinish()}>确认</Button>
+        <Button type="primary" onClick={() => onFinish()}>保存</Button>
       </div>
 
       {

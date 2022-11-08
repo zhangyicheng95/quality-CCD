@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { Modal, message, Spin, } from 'antd';
 import * as _ from 'lodash';
 import styles from './index.less';
@@ -32,6 +32,9 @@ const FileManager: React.FC<Props> = (props) => {
       setLoading(false);
     });
   }, [select]);
+  const selectList = useMemo(() => {
+    return (select + '').split(`\\`).filter(Boolean);
+  }, [select]);
 
   return (
     <Modal
@@ -50,10 +53,10 @@ const FileManager: React.FC<Props> = (props) => {
     >
       <div className={styles.fileManagerBox}>
         <div className="file-managet-title">
-          {!!select && (select + '').split(`\\`).map((item: string, index: number) => {
+          {selectList.map((item: string, index: number) => {
             if (!item) return null;
             return <a key={item} onClick={() => {
-              setSelect((select + '').split(`\\`).slice(0, index + 1).join('\\'));
+              setSelect(selectList.slice(0, index + 1).join('\\'));
             }}>
               {
                 index === 0 ?

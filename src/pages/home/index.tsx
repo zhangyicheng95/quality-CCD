@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./index.module.less";
-import { Spin, notification, Button, message, DatePicker } from "antd";
+import { Spin, notification, Button, message, DatePicker, Modal, Badge } from "antd";
 import _ from "lodash";
 import TBJ from "./components/TBJdom";
 import DGH from "./components/DGHdom";
@@ -19,6 +19,7 @@ import BasicScrollBar from "@/components/BasicScrollBar";
 import TooltipDiv from "@/components/TooltipDiv";
 
 const id = 'HomelayoutArr';
+let timer: string | number | NodeJS.Timer | null | undefined = null;
 const Home: React.FC<any> = (props: any) => {
   // @ts-ignore
   const { type } = window.QUALITY_CCD_CONFIG;
@@ -35,10 +36,25 @@ const Home: React.FC<any> = (props: any) => {
   const [errorData, setErrorData] = useState<Array<any>>([]);
   const [footerData, setFooterData] = useState<any>({});
   const [taskDataConnect, setTaskDataConnect] = useState(false);
+  const [historyImg, setHistoryImg] = useState('');
+  const [historyImgTitle, setHistoryImgTitle] = useState('');
 
   const gridList: any = [
     <div key={'slider-1'}>
       <div className="btn-box">
+        <div className={`common-card-title-box flex-box drag-btn ${started ?
+          taskDataConnect ? 'success-message' : 'error-message'
+          : ''
+          }`}>
+          当前状态：{
+            started ?
+              taskDataConnect ?
+                <Badge status="processing" className="status-icon" text={"服务已连接"} /> :
+                <Badge status="error" className="status-icon" text={"socket未连接"} />
+              :
+              loading ? '启动中' : '未启动'
+          }
+        </div>
         <Button
           className="flex-box btn"
           icon={<PlayCircleOutlined className="btn-icon" />}
@@ -88,16 +104,17 @@ const Home: React.FC<any> = (props: any) => {
     </div>,
     <div key={'slider-3'}>
       <div className="info-box message-box">
-        <div className="common-card-title-box drag-btn">
+        <div className="common-card-title-box drag-btn success-message">
           实时信息
         </div>
         <div className="info-box-content">
           {
-            [{}, {}, {}, {}].map((item: any, index: number) => {
+            Object.entries(historyData).map((item: any, index: number) => {
               return <div className="message-item" key={index} onClick={() => {
-                console.log(item)
+                // setHistoryImg(item[1]);
+                // setHistoryImgTitle(item[0]);
               }}>
-                {moment(new Date().getTime()).format('MM-DD HH:mm:ss')}
+                {item[0]}
               </div>
             })
           }
@@ -133,7 +150,7 @@ const Home: React.FC<any> = (props: any) => {
     </div>,
     <div key={'footer-1'}>
       <div className="log-content">
-        <div className="common-card-title-box drag-btn">
+        <div className="common-card-title-box drag-btn warning-message">
           日志信息
         </div>
         <div
@@ -146,41 +163,41 @@ const Home: React.FC<any> = (props: any) => {
     </div>,
     <div key={'footer-2'}>
       <div className="log-content">
-        <div className="common-card-title-box drag-btn">
+        <div className="common-card-title-box drag-btn error-message">
           错误信息
         </div>
         <div className="content-item-span">
-          <BasicScrollBar data={errorData}>
-            {
-              errorData.map((log: any, index: number) => {
-                const { level, node_name, nid, message, time } = log;
-                return (
-                  <div className="log-item flex-box-start" key={index}>
-                    <div className="log-item-content">
-                      <div className="content-item">
-                        <span>{moment(time).format('YYYY-MM-DD HH:mm:ss')}&nbsp;</span>
-                        &nbsp;
-                        <div
-                          className="content-item-span"
-                          style={{
-                            color:
-                              level === 'warning'
-                                ? logColors.warning
-                                : level === 'error'
-                                  ? logColors.error
-                                  : logColors.critical,
-                          }}
-                          dangerouslySetInnerHTML={{
-                            __html: `节点${node_name || ''}（${nid || ''}）发生错误：${message}`,
-                          }}
-                        />
-                      </div>
+          {/* <BasicScrollBar data={errorData}> */}
+          {
+            errorData.map((log: any, index: number) => {
+              const { level, node_name, nid, message, time } = log;
+              return (
+                <div className="log-item flex-box-start" key={index}>
+                  <div className="log-item-content">
+                    <div className="content-item">
+                      <span>{moment(time).format('YYYY-MM-DD HH:mm:ss')}&nbsp;</span>
+                      &nbsp;
+                      <div
+                        className="content-item-span"
+                        style={{
+                          color:
+                            level === 'warning'
+                              ? logColors.warning
+                              : level === 'error'
+                                ? logColors.error
+                                : logColors.critical,
+                        }}
+                        dangerouslySetInnerHTML={{
+                          __html: `节点${node_name || ''}（${nid || ''}）发生错误：${message}`,
+                        }}
+                      />
                     </div>
                   </div>
-                );
-              })
-            }
-          </BasicScrollBar>
+                </div>
+              );
+            })
+          }
+          {/* </BasicScrollBar> */}
         </div>
       </div>
     </div>,
@@ -190,25 +207,34 @@ const Home: React.FC<any> = (props: any) => {
     { i: "slider-2", x: 0, y: 4, w: 2, h: 9, minW: 2, maxW: 4, minH: 4, maxH: 30 },
     { i: "slider-3", x: 0, y: 8, w: 2, h: 15, minW: 2, maxW: 4, minH: 4, maxH: 30 },
     { i: "content", x: 2, y: 0, w: 10, h: 24, minW: 6, maxW: 12, minH: 4, maxH: 30 },
-    { i: "footer-1", x: 2, y: 10, w: 7, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 },
-    { i: "footer-2", x: 7, y: 10, w: 3, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 }
+    { i: "footer-1", x: 2, y: 24, w: 7, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 },
+    { i: "footer-2", x: 9, y: 24, w: 3, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 }
   ];
-
-  useEffect(() => {
-    if (!ipString) return;
+  const getServiceStatus = () => {
     getFlowStatusService(ipString).then((res: any) => {
       if (!!res && _.isObject(res) && !_.isEmpty(res)) {
         setStarted(true);
       } else {
-        setStarted(false)
+        setStarted(false);
       }
       setLoading(false);
     })
+  };
+  useEffect(() => {
+    if (!ipString) return;
+    getServiceStatus();
+    timer = setInterval(() => {
+      getServiceStatus()
+    }, 5000);
+
+    return () => {
+      timer && clearInterval(timer);
+    }
   }, []);
   const start = () => {
-    if (!localStorage.getItem('ipString')) return;
+    if (!ipString) return;
     setLoading(true);
-    startFlowService(localStorage.getItem('ipString') || '').then((res: any) => {
+    startFlowService(ipString || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
         message.success('任务启动成功');
         setStarted(true);
@@ -218,11 +244,10 @@ const Home: React.FC<any> = (props: any) => {
       setLoading(false);
     });
   };
-
   const end = () => {
-    if (!localStorage.getItem('ipString')) return;
+    if (!ipString) return;
     setLoading(true);
-    stopFlowService(localStorage.getItem('ipString') || '').then((res: any) => {
+    stopFlowService(ipString || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
         message.success('任务停止成功');
         setStarted(false);
@@ -231,7 +256,7 @@ const Home: React.FC<any> = (props: any) => {
       }
       setLoading(false);
     })
-  }
+  };
   // task-data
   let timeConnect = 0;
   function webSocketInit(service: string) {
@@ -279,10 +304,10 @@ const Home: React.FC<any> = (props: any) => {
           const imgData = Object.entries(newData).filter((res: any) => {
             return _.isString(res[1]) ? res[1].indexOf("http") > -1 : false;
           });
-          if (imgData[0]) {
+          if (imgData[0] && imgData[0][1]) {
             setHistoryData((prev: any) => {
               return Object.assign({}, prev, {
-                [`${uid} ${moment(new Date()).format('YYYY-MM-DD HH:mm:ss')}`]: imgData[0]
+                [`${moment(new Date()).format('YYYY-MM-DD HH:mm:ss')} ${uid}`]: imgData[0][1]
               });
             });
           }
@@ -303,7 +328,7 @@ const Home: React.FC<any> = (props: any) => {
       setTaskDataConnect(false);
       reconnect(service);
     };
-  }
+  };
   // 重连
   function reconnect(service: string) {
     timeConnect++;
@@ -312,7 +337,7 @@ const Home: React.FC<any> = (props: any) => {
     setTimeout(() => {
       webSocketInit(service);
     }, 10000);
-  }
+  };
   //task-state
   function stateWebSocketInit(service: string) {
     //获取节点状态
@@ -333,7 +358,7 @@ const Home: React.FC<any> = (props: any) => {
       socketStateRef.current = undefined;
       // reconnect(service);
     };
-  }
+  };
   // task-error
   let timeErrorConnect = 0;
   function errorWebSocketInit(service: string) {
@@ -388,7 +413,7 @@ const Home: React.FC<any> = (props: any) => {
       console.log("ws:error:", err);
       errorReconnect(service);
     };
-  }
+  };
   // 重连
   function errorReconnect(service: string) {
     timeErrorConnect++;
@@ -397,7 +422,7 @@ const Home: React.FC<any> = (props: any) => {
     setTimeout(() => {
       errorWebSocketInit(service);
     }, 10000);
-  }
+  };
   // task-log
   let timeLogConnect = 0;
   function logWebSocketInit(service: string) {
@@ -419,7 +444,7 @@ const Home: React.FC<any> = (props: any) => {
     socketLogRef.current.onerror = function (err) {
       logReconnect(service);
     };
-  }
+  };
   // 重连
   function logReconnect(service: string) {
     timeLogConnect++;
@@ -429,13 +454,13 @@ const Home: React.FC<any> = (props: any) => {
       logWebSocketInit(service);
     }, 2000);
 
-  }
+  };
   const onclose = () => {
     socketRef.current && socketRef.current.close();
     socketErrorRef.current && socketErrorRef.current.close();
     socketLogRef.current && socketLogRef.current.close();
     socketStateRef.current && socketStateRef.current.close();
-  }
+  };
   useEffect(() => {
     if (started) {
       logWebSocketInit(`${website.socket}task-log/${ipString}?tail=1&n=1`)
@@ -444,6 +469,7 @@ const Home: React.FC<any> = (props: any) => {
     } else {
       onclose()
     }
+
     return () => {
       onclose();
     };
@@ -452,6 +478,23 @@ const Home: React.FC<any> = (props: any) => {
   return (
     <div className={`${styles.home} flex-box`}>
       <GridLayout id={id} dragName={'.drag-btn'} list={gridList} layout={layout} />
+
+      <Modal
+        title={historyImgTitle}
+        width="calc(100vw - 48px)"
+        wrapClassName="history-img-modal"
+        centered
+        visible={!!historyImg}
+        maskClosable={false}
+        footer={false}
+        onCancel={() => {
+          setHistoryImg('');
+          setHistoryImgTitle('');
+        }}
+        getContainer={false}
+      >
+        <img src={historyImg} alt="" />
+      </Modal>
     </div>
   );
 };
