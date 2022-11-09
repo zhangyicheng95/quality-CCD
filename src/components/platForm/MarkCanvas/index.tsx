@@ -42,6 +42,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   useEffect(() => {
     timer && clearTimeout(timer);
     timer = setTimeout(() => {
+      const dom = document.getElementById(CONTAINER_ID);
       img = new Image();
       img.src = `${BASE_IP}file_browser/${value}`;
       img.title = 'img.png';
@@ -51,7 +52,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       // 声明容器
       gMap = new AILabel.Map(CONTAINER_ID, {
         // size: { width: dom?.clientWidth, height: dom?.clientHeight },
-        center: { x: 400, y: 155 },
+        center: { x: 400, y: 400 },
         zoom: 800,
         mode: 'PAN', // 绘制线段
         refreshDelayWhenZooming: true, // 缩放时是否允许刷新延时，性能更优
