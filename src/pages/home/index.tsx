@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import styles from "./index.module.less";
-import { Spin, notification, Button, message, DatePicker, Modal, Badge } from "antd";
+import { Spin, notification, Button, message, Modal, Badge } from "antd";
 import _ from "lodash";
 import TBJ from "./components/TBJdom";
 import DGH from "./components/DGHdom";
@@ -13,7 +13,6 @@ import { website } from "@/services/consts";
 import moment from "moment";
 import GridLayout from "@/components/GridLayout";
 import { AndroidOutlined, PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
-import { guid } from "@/utils/utils";
 import { logColors } from "@/common/constants/globalConstants";
 import BasicScrollBar from "@/components/BasicScrollBar";
 import TooltipDiv from "@/components/TooltipDiv";
@@ -38,7 +37,8 @@ const Home: React.FC<any> = (props: any) => {
   const [taskDataConnect, setTaskDataConnect] = useState(false);
   const [historyImg, setHistoryImg] = useState('');
   const [historyImgTitle, setHistoryImgTitle] = useState('');
-
+  // @ts-ignore
+  const isWeiChai = window.QUALITY_CCD_CONFIG.type === 'wc';
   const gridList: any = [
     <div key={'slider-1'}>
       <div className="btn-box">
@@ -55,34 +55,39 @@ const Home: React.FC<any> = (props: any) => {
               loading ? '启动中' : '未启动'
           }
         </div>
-        <Button
-          className="flex-box btn"
-          icon={<PlayCircleOutlined className="btn-icon" />}
-          type="link"
-          onClick={() => start()}
-          disabled={started}
-          loading={!started && loading}
-        >启动检测</Button>
-        <Button
-          className="flex-box btn"
-          danger
-          icon={<PauseCircleOutlined className="btn-icon" />}
-          type="text"
-          onClick={() => end()}
-          disabled={!started}
-          loading={started && loading}
-        >停止检测</Button>
         {
-          process.env.NODE_ENV === 'development' ?
-            <Button
-              className="flex-box btn"
-              icon={<AndroidOutlined className="btn-icon" />}
-              type="link"
-              onClick={() => touchFlowService()}
-              disabled={!started}
-              loading={started && loading}
-            >自助触发</Button>
-            : null
+          isWeiChai ? null :
+            <Fragment>
+              <Button
+                className="flex-box btn"
+                icon={<PlayCircleOutlined className="btn-icon" />}
+                type="link"
+                onClick={() => start()}
+                disabled={started}
+                loading={!started && loading}
+              >启动检测</Button>
+              <Button
+                className="flex-box btn"
+                danger
+                icon={<PauseCircleOutlined className="btn-icon" />}
+                type="text"
+                onClick={() => end()}
+                disabled={!started}
+                loading={started && loading}
+              >停止检测</Button>
+              {
+                process.env.NODE_ENV === 'development' ?
+                  <Button
+                    className="flex-box btn"
+                    icon={<AndroidOutlined className="btn-icon" />}
+                    type="link"
+                    onClick={() => touchFlowService()}
+                    disabled={!started}
+                    loading={started && loading}
+                  >自助触发</Button>
+                  : null
+              }
+            </Fragment>
         }
       </div>
     </div>,
@@ -108,7 +113,7 @@ const Home: React.FC<any> = (props: any) => {
           实时信息
         </div>
         <div className="info-box-content">
-          {
+          {/* {
             Object.entries(historyData).map((item: any, index: number) => {
               return <div className="message-item" key={index} onClick={() => {
                 // setHistoryImg(item[1]);
@@ -117,7 +122,7 @@ const Home: React.FC<any> = (props: any) => {
                 {item[0]}
               </div>
             })
-          }
+          } */}
         </div>
       </div>
     </div>,
@@ -203,7 +208,7 @@ const Home: React.FC<any> = (props: any) => {
     </div>,
   ];
   const layout: any = !!localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id) || "") : [
-    { i: "slider-1", x: 0, y: 0, w: 2, h: 6, minW: 2, maxW: 4, minH: 4, maxH: 30 },
+    { i: "slider-1", x: 0, y: 0, w: 2, h: 6, minW: 2, maxW: 4, minH: isWeiChai ? 2 : 4, maxH: 30 },
     { i: "slider-2", x: 0, y: 4, w: 2, h: 9, minW: 2, maxW: 4, minH: 4, maxH: 30 },
     { i: "slider-3", x: 0, y: 8, w: 2, h: 15, minW: 2, maxW: 4, minH: 4, maxH: 30 },
     { i: "content", x: 2, y: 0, w: 10, h: 24, minW: 6, maxW: 12, minH: 4, maxH: 30 },
@@ -221,6 +226,10 @@ const Home: React.FC<any> = (props: any) => {
     })
   };
   useEffect(() => {
+    if (isWeiChai) {
+      setLoading(false);
+      setStarted(true);
+    }
     if (!ipString) return;
     getServiceStatus();
     timer = setInterval(() => {
@@ -484,7 +493,7 @@ const Home: React.FC<any> = (props: any) => {
         width="calc(100vw - 48px)"
         wrapClassName="history-img-modal"
         centered
-        visible={!!historyImg}
+        open={!!historyImg}
         maskClosable={false}
         footer={false}
         onCancel={() => {

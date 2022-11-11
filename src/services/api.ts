@@ -1,10 +1,16 @@
 import { fetchGet, fetchPost, fetchPut, fetchDelete } from '@/services/fetch';
+import { parseParamsToUrl } from '@/utils/utils';
 export const BASE_IP = localStorage.getItem("ipUrl-history") ?
   `http://${localStorage.getItem("ipUrl-history")}/` : `http://localhost:8888/`;
 
 // 获取所有项目
-export async function getAllProject() {
-  return fetchGet(`${BASE_IP}projects`);
+export async function getAllProject(params: any) {
+  return fetchGet(`${BASE_IP}projects?${parseParamsToUrl(params)}`);
+}
+
+// 获取历史记录
+export async function getAllHistory(params: any) {
+  return fetchGet(`${BASE_IP}history?${parseParamsToUrl(params)}`);
 }
 
 // 根据id获取项目

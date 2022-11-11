@@ -309,9 +309,9 @@ const FormatWidgetToDom = (props: any) => {
             widgetChange(name, e.target.value);
           }}>
             {options.map((option: any, index: any) => {
-              const { id, label, value } = option;
+              const { label, value } = option;
               return (
-                <Radio key={id} value={value}>
+                <Radio key={`${name}_${value}`} value={value}>
                   {label}
                 </Radio>
               );

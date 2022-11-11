@@ -5,6 +5,7 @@ export default {
   'menu.history': '历史记录',
   'menu.control': '参数控制',
   'menu.setting': '设置',
+  'menu.mark': '数据标注',
   'menu.admin': '管理页',
   'menu.admin.sub-page': '二级管理页',
   'menu.login': '登录',

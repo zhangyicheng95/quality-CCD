@@ -5,26 +5,52 @@
     path: '/home',
     // layout: false,
     component: './home',
+    access: 'canAdmin',
   },
   {
     name: 'history',
     icon: 'history',
     path: '/history',
-    // layout: false,
     component: './history',
+    routes: [
+      {
+        path: '/history',
+        redirect: './history/components/List',
+      },
+      {
+        path: '/history/detail',
+        component: './history/components/Details',
+      },
+    ]
+  },
+  {
+    name: 'mark',
+    // icon: 'trademark',
+    path: '/mark',
+    component: './mark',
+    access: 'canMark',
+    routes: [
+      {
+        path: '/mark',
+        redirect: './mark/components/List',
+      },
+      {
+        path: '/mark/detail',
+        component: './mark/components/Details',
+      },
+    ]
   },
   {
     name: 'control',
     icon: 'control',
     path: '/control',
-    // layout: false,
     component: './control',
+    access: 'notWeiChai',
   },
   {
     name: 'setting',
     icon: 'setting',
     path: '/setting',
-    // layout: false,
     component: './setting',
   },
 

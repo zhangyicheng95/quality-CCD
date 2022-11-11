@@ -20,7 +20,8 @@ const Setting: React.FC<any> = (props) => {
     ip: false,
     id: false,
   });
-
+  // @ts-ignore
+  const isWeiChai = window.QUALITY_CCD_CONFIG.type === 'wc';
   const getData = () => {
     getParams(localStorage.getItem("ipString") || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
@@ -64,7 +65,7 @@ const Setting: React.FC<any> = (props) => {
   };
   useEffect(() => {
     !localStorage.getItem("quality_name") && localStorage.setItem("quality_name", 'UBVision');
-    if (!localStorage.getItem("ipUrl-history") || !localStorage.getItem("ipString")) return;
+    if (!localStorage.getItem("ipUrl-history") || !localStorage.getItem("ipString") || isWeiChai) return;
     getData();
   }, []);
 
@@ -187,22 +188,27 @@ const Setting: React.FC<any> = (props) => {
               {edit.id ? '确认' : '修改'}
             </Button>
           </div>
-          <Form.Item
-            name="params"
-            label="参数项管理"
-            initialValue={localStorage.getItem("params") || undefined}
-            rules={[{ required: false, message: "参数项管理" }]}
-          >
-            <Tree
-              checkable
-              autoExpandParent={true}
-              showLine={true}
-              // @ts-ignore
-              onCheck={onCheck}
-              checkedKeys={checkedKeys}
-              treeData={treeData}
-            />
-          </Form.Item>
+          {
+            isWeiChai ?
+              null
+              :
+              <Form.Item
+                name="params"
+                label="参数项管理"
+                initialValue={localStorage.getItem("params") || undefined}
+                rules={[{ required: false, message: "参数项管理" }]}
+              >
+                <Tree
+                  checkable
+                  autoExpandParent={true}
+                  showLine={true}
+                  // @ts-ignore
+                  onCheck={onCheck}
+                  checkedKeys={checkedKeys}
+                  treeData={treeData}
+                />
+              </Form.Item>
+          }
         </Form>
 
       </div>

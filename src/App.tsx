@@ -6,8 +6,9 @@ import { Link } from 'umi';
 import RightContent from '@/components/RightContent';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import defaultSettings from '../config/defaultSettings';
-import icon from '@/access/icon.svg';
+import icon from '@/assets/icon.svg';
 import HomeLayout from './components/HomeLayout';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -20,9 +21,11 @@ export const initialStateConfig = {
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */
 export async function getInitialState(): Promise<{
+  type?: any;
   settings?: Partial<LayoutSettings>;
   currentUser?: API.CurrentUser;
   loading?: boolean;
+  routes: Array<string>;
   fetchUserInfo?: () => Promise<any>;
 }> {
   const fetchUserInfo = async () => {
@@ -66,7 +69,10 @@ export async function getInitialState(): Promise<{
   //   };
   // }
   return {
+    // @ts-ignore
+    type: window.QUALITY_CCD_CONFIG.type,
     fetchUserInfo,
+    routes: ['home', 'history', 'control', 'setting'],
     settings: defaultSettings,
   };
 };
@@ -114,7 +120,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     childrenRender: (children, props) => {
       // if (initialState?.loading) return <PageLoading />;
       return (
-        <>
+        // @ts-ignore
+        <ErrorBoundary>
           <HomeLayout>{children}</HomeLayout>
           {!props.location?.pathname?.includes('/login') && (
             <SettingDrawer
@@ -122,14 +129,14 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
               enableDarkTheme
               settings={initialState?.settings}
               onSettingChange={(settings) => {
-                setInitialState((preInitialState) => ({
+                setInitialState((preInitialState: any) => ({
                   ...preInitialState,
                   settings,
                 }));
               }}
             />
           )}
-        </>
+        </ErrorBoundary>
       );
     },
     ...initialState?.settings,

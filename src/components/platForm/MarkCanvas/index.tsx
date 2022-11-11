@@ -1,22 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Menu, message, Popover } from 'antd';
+import { Menu, message, Popover, Spin } from 'antd';
 import { PictureOutlined } from "@ant-design/icons";
 // @ts-ignore
 import { saveAs } from "file-saver";
 import * as _ from "lodash";
 import styles from "./index.less";
-import markIcon from '@/access/imgs/marker.png';
-import deleteIcon from '@/access/imgs/delete.png';
-import cursorIcon from '@/access/imgs/cursor.svg';
-import grabHandIcon from '@/access/imgs/grabHand.svg';
-import plusIcon from '@/access/imgs/magnifier-plus.svg';
-import minusIcon from '@/access/imgs/magnifier-minus.svg';
-import circleIcon from '@/access/imgs/circle.svg';
-import polyLineIcon from '@/access/imgs/poly-line.svg';
-import polygonIcon from '@/access/imgs/polygon.svg';
-import lineIcon from '@/access/imgs/line.svg';
-import rectIcon from '@/access/imgs/rect.svg';
-import aimIcon from '@/access/imgs/aim.svg';
+import markIcon from '@/assets/imgs/marker.png';
+import deleteIcon from '@/assets/imgs/delete.png';
+import cursorIcon from '@/assets/imgs/cursor.svg';
+import grabHandIcon from '@/assets/imgs/grabHand.svg';
+import plusIcon from '@/assets/imgs/magnifier-plus.svg';
+import minusIcon from '@/assets/imgs/magnifier-minus.svg';
+import circleIcon from '@/assets/imgs/circle.svg';
+import polyLineIcon from '@/assets/imgs/poly-line.svg';
+import polygonIcon from '@/assets/imgs/polygon.svg';
+import lineIcon from '@/assets/imgs/line.svg';
+import rectIcon from '@/assets/imgs/rect.svg';
+import aimIcon from '@/assets/imgs/aim.svg';
 import { BASE_IP } from "@/services/api";
 
 interface Props {
@@ -37,23 +37,26 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   const { data, setGetDataFun } = props;
   const { value, platFormValue } = data;
   const markRef = useRef<any>();
+  const [loading, setLoading] = useState(false);
   const [selectedBtn, setSelectedBtn] = useState('PAN');
 
   useEffect(() => {
     timer && clearTimeout(timer);
     timer = setTimeout(() => {
-      const dom = document.getElementById(CONTAINER_ID);
+      const dom: any = document.getElementById(CONTAINER_ID);
+      const width = dom?.clientWidth > 800 ? 800 : dom?.clientWidth,
+        height = dom?.clientHeight > 800 ? 800 : dom?.clientHeight;
       img = new Image();
       img.src = `${BASE_IP}file_browser/${value}`;
       img.title = 'img.png';
-      img.width = 800;
-      img.height = 800;
+      img.width = width;
+      img.height = height;
 
       // 声明容器
       gMap = new AILabel.Map(CONTAINER_ID, {
         // size: { width: dom?.clientWidth, height: dom?.clientHeight },
-        center: { x: 400, y: 400 },
-        zoom: 800,
+        center: { x: width / 2, y: height / 2 },
+        zoom: dom?.clientHeight * 2,
         mode: 'PAN', // 绘制线段
         refreshDelayWhenZooming: true, // 缩放时是否允许刷新延时，性能更优
         zoomWhenDrawing: true,
@@ -264,13 +267,15 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       );
       // 图片层相关事件监听
       gFirstImageLayer.events.on('loadStart', (a: any, b: any) => {
-
+        setLoading(true);
       });
       gFirstImageLayer.events.on('loadEnd', (a: any, b: any) => {
         // console.log(b.imageInfo);
+        setLoading(false);
       });
       gFirstImageLayer.events.on('loadError', (a: any, b: any) => {
         message.error('图片加载失败');
+        setLoading(false);
       });
       // 添加到gMap对象
       gMap.addLayer(gFirstImageLayer);
@@ -542,9 +547,13 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           <img src={minusIcon} alt="minus" onClick={() => zoomOut()} />
         </div>
       </div>
-      <div className="canvas-box">
-        <div className="canvas" id={CONTAINER_ID} />
-      </div>
+      <Spin spinning={loading} tip="Loading...">
+        <div className="rule-box">
+          <div className="rule rule1" />
+          <div className="rule rule4" />
+          <div className="canvas-box" id={CONTAINER_ID} />
+        </div>
+      </Spin>
     </div>
     <div className="canvas-footer flex-box-center">
       <div className="img-box" onClick={() => window.open(img?.src)}>

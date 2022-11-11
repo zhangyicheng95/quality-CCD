@@ -1,0 +1,40 @@
+.basic-table {
+  height: 100%;
+  width: 100%;
+
+  :global {
+    .ant-table-wrapper {
+      height: 100%;
+
+      .ant-spin-nested-loading {
+        height: 100%;
+
+        .ant-spin-container {
+          height: 100%;
+
+          .ant-table {
+            height: calc(100% - 64px);
+
+            .ant-table-container {
+              height: 100%;
+
+              .ant-table-header {
+                height: 55px;
+                max-height: 55px;
+              }
+
+              .ant-table-body {
+                overflow-y: auto !important;
+                height: calc(100% - 55px);
+              }
+            }
+          }
+
+          .ant-pagination {
+            padding: 0 16px;
+          }
+        }
+      }
+    }
+  }
+}

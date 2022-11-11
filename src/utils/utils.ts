@@ -58,6 +58,29 @@ export interface IObjMap {
     [propName: number | string]: boolean;
 };
 
+/** *
+ * 将params转为 a=b&c=d 格式
+ * @param params
+ */
+export function parseParamsToUrl(params: any) {
+    let queryParam: any = null;
+    if (params) {
+        const keys = Object.keys(params);
+
+        keys.forEach((key) => {
+            const _value =
+                typeof params[key] === 'object'
+                    ? JSON.stringify(params[key])
+                    : params[key];
+            if (!_value) return;
+            queryParam = queryParam
+                ? `${queryParam}&${key}=${_value}`
+                : `${key}=${_value}`;
+        });
+    }
+    return queryParam;
+}
+
 export const arr2obj = (arr: (string | any)[], key?: string): IObjMap => {
     return arr.reduce((pre, cur) => ({
         ...pre,
