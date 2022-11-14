@@ -7,8 +7,8 @@ import RightContent from '@/components/RightContent';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import defaultSettings from '../config/defaultSettings';
 import icon from '@/assets/icon.svg';
-import HomeLayout from './components/HomeLayout';
-import ErrorBoundary from './components/ErrorBoundary';
+import HomeLayout from '@/components/HomeLayout';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -117,7 +117,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态
-    childrenRender: (children, props) => {
+    childrenRender: (children: any, props: any) => {
       // if (initialState?.loading) return <PageLoading />;
       return (
         // @ts-ignore
