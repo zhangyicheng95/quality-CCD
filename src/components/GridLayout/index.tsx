@@ -49,18 +49,22 @@ const GridLayout: React.FC<Props> = (props: any) => {
             <div className={styles.dashboardContent}>
                 {
                     // @ts-ignore
-                    <ResponsiveGridLayout className="layout" layouts={{ lg: layout }} rowHeight={30}
+                    <ResponsiveGridLayout
+                        className="layout"
+                        layouts={{ lg: layout }}
+                        rowHeight={30}
                         breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                         cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                         isResizable={true}
                         isDraggable={true}
                         isBounded={true}
                         allowOverlap={false} // 覆盖
+                        autoSize={true}
                         onLayoutChange={onLayoutChange}
                         resizeHandles={['se']}  // 'n', 'e', 's', 'w', 'nw', 'ne', 'se', 'sw'
                         resizeHandle={<CustomResizeHandle />}
                         draggableHandle={dragName}
-                        margin={[8, 8]}
+                        margin={[12, 12]}
                     >
                         {
                             list.map((item: any) => {

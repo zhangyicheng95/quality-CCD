@@ -7,6 +7,7 @@ import PrimaryTitle from "@/components/PrimaryTitle";
 import FileManager from "@/components/FileManager";
 import TooltipDiv from "@/components/TooltipDiv";
 import { editor } from "monaco-editor";
+import { isWeiChai } from "@/common/constants/globalConstants";
 
 const Setting: React.FC<any> = (props) => {
   const [form] = Form.useForm();
@@ -20,8 +21,7 @@ const Setting: React.FC<any> = (props) => {
     ip: false,
     id: false,
   });
-  // @ts-ignore
-  const isWeiChai = window.QUALITY_CCD_CONFIG.type === 'wc';
+
   const getData = () => {
     getParams(localStorage.getItem("ipString") || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {

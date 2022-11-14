@@ -3,19 +3,24 @@
 .historyDetail {
 
   :global {
-    .history-content-box {
+    .history-detail-box {
+      width: 100%;
+      height: calc(100% - 82px);
       padding: 0 24px;
+      overflow-y: auto;
 
-      .search-box {
-        width: 100%;
-        margin: 16px 0;
+      .detail-item {
+        margin-bottom: 12px;
 
-        .ant-form-item {
-          margin-bottom: 0;
+        .detail-item-title {
+          font-size: inherit;
+          font-weight: bolder;
+          // width: 200px;
         }
 
-        .flex-box {
-          justify-content: space-between;
+        .detail-item-value {
+          flex: 1;
+          overflow: hidden;
         }
       }
     }

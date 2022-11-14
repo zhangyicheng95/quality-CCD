@@ -38,7 +38,7 @@ const Common: React.FC<any> = (props: any) => {
             if (layoutData.filter((i: any) => i.i == index + '').length === 0) {
               layoutData = layoutData.concat(Object.assign({}, { i: index + '' },
                 !!layoutTransform[index] ? layoutTransform[index] : {
-                  x: 0, y: 24 + 12 * index, w: 2, h: 12, minW: 2, maxW: 6, minH: 4, maxH: 32
+                  x: 0, y: 20 + 10 * index, w: 3, h: 10, minW: 2, maxW: 6, minH: 4, maxH: 32
                 }));
             }
           };
@@ -46,7 +46,7 @@ const Common: React.FC<any> = (props: any) => {
           setTimeout(() => {
             setList(listData);
             setLayout(layoutData);
-          }, 100);
+          }, 300);
         });
       }, 100);
     }

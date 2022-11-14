@@ -13,8 +13,7 @@ import { website } from "@/services/consts";
 import moment from "moment";
 import GridLayout from "@/components/GridLayout";
 import { AndroidOutlined, PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
-import { logColors } from "@/common/constants/globalConstants";
-import BasicScrollBar from "@/components/BasicScrollBar";
+import { isWeiChai, logColors } from "@/common/constants/globalConstants";
 import TooltipDiv from "@/components/TooltipDiv";
 
 const id = 'HomelayoutArr';
@@ -30,6 +29,7 @@ const Home: React.FC<any> = (props: any) => {
   const [started, setStarted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Array<any>>([]);
+  const [infoData, setInfoData] = useState<any>('');
   const [historyData, setHistoryData] = useState<any>({});
   const [logData, setLogData] = useState<any>([]);
   const [errorData, setErrorData] = useState<Array<any>>([]);
@@ -37,8 +37,7 @@ const Home: React.FC<any> = (props: any) => {
   const [taskDataConnect, setTaskDataConnect] = useState(false);
   const [historyImg, setHistoryImg] = useState('');
   const [historyImgTitle, setHistoryImgTitle] = useState('');
-  // @ts-ignore
-  const isWeiChai = window.QUALITY_CCD_CONFIG.type === 'wc';
+
   const gridList: any = [
     <div key={'slider-1'}>
       <div className="btn-box">
@@ -98,12 +97,17 @@ const Home: React.FC<any> = (props: any) => {
         </div>
         <div className="info-box-content">
           {
+            <TooltipDiv title={infoData} className="info-item">
+              订单号：{infoData}
+            </TooltipDiv>
+          }
+          {/* {
             Object.entries({ orderId: 'xxxxxxxxx-xxx' }).map((item: any, index: number) => {
               return <TooltipDiv title={item[1]} className="info-item" key={item[0]}>
                 订单号：{item[1]}
               </TooltipDiv>
             })
-          }
+          } */}
         </div>
       </div>
     </div>,
@@ -229,6 +233,7 @@ const Home: React.FC<any> = (props: any) => {
     if (isWeiChai) {
       setLoading(false);
       setStarted(true);
+      return;
     }
     if (!ipString) return;
     getServiceStatus();
@@ -282,7 +287,7 @@ const Home: React.FC<any> = (props: any) => {
     socketRef.current.onmessage = function (res) {
       try {
         const result = JSON.parse(res.data);
-        const { uid = "", data = {}, ...rest } = result;
+        const { uid = "", orderId = "", data = {} } = result;
         if (uid) {
           const newData = (Object.entries(data || {}) || []).reduce(
             (pre: any, cen: any) => {
@@ -298,18 +303,25 @@ const Home: React.FC<any> = (props: any) => {
               };
             }, {}
           );
-          // console.log("data ws:message:", newData);
-          setData((prev: any) => {
-            if (prev.filter((i: any) => i.uid === newData.uid).length) {
-              return prev.map((item: any) => {
-                if (item.uid === newData.uid) {
-                  return Object.assign({}, item, newData);
+          console.log("data ws:message:", newData);
+          setInfoData((preInfo: any) => {
+            if (preInfo === orderId) {
+              setData((prev: any) => {
+                if (prev.filter((i: any) => i.uid === newData.uid).length) {
+                  return prev.map((item: any) => {
+                    if (item.uid === newData.uid) {
+                      return Object.assign({}, item, newData);
+                    }
+                    return item;
+                  })
                 }
-                return item;
-              })
+                return prev.concat(newData)
+              });
+            } else {
+              setData([].concat(newData));
             }
-            return prev.concat(newData)
-          });
+            return orderId;
+          })
           const imgData = Object.entries(newData).filter((res: any) => {
             return _.isString(res[1]) ? res[1].indexOf("http") > -1 : false;
           });
@@ -471,7 +483,7 @@ const Home: React.FC<any> = (props: any) => {
     socketStateRef.current && socketStateRef.current.close();
   };
   useEffect(() => {
-    if (started) {
+    if (started && ipString) {
       logWebSocketInit(`${website.socket}task-log/${ipString}?tail=1&n=1`)
       errorWebSocketInit(`${website.socket}task-error/${ipString}`);
       webSocketInit(`${website.socket}task-data/${ipString}`);

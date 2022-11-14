@@ -88,7 +88,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   return {
     // headerRender: () => null,
     headerHeight: 80,
-    rightContentRender: () => null, //<RightContent />,
+    rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: {
       content: initialState?.currentUser?.name,

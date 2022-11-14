@@ -1,14 +1,18 @@
 @import '~antd/es/style/themes/default.less';
 
 .history {
+  height: 100%;
+  overflow: hidden;
 
   :global {
     .history-content-box {
+      height: calc(100% - 82px);
       padding: 0 24px;
 
       .search-box {
         width: 100%;
-        margin: 16px 0;
+        height: 40px;
+        margin-bottom: 16px;
 
         .ant-form-item {
           margin-bottom: 0;
@@ -17,6 +21,10 @@
         .flex-box {
           justify-content: space-between;
         }
+      }
+
+      .table-box {
+        height: calc(100% - 56px);
       }
     }
   }

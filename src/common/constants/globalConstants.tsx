@@ -7,9 +7,11 @@ export const layoutTransform = {
   2: { i: '2', x: 7, y: 0, w: 3, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
   3: { i: '3', x: 4, y: 10, w: 3, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
   4: { i: '4', x: 7, y: 10, w: 3, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
-  5: { i: '5', x: 0, y: 20, w: 3, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
-  6: { i: '6', x: 3, y: 20, w: 3, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 }
+  5: { i: '5', x: 10, y: 0, w: 2, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
+  6: { i: '6', x: 10, y: 10, w: 2, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 }
 };
+// @ts-ignore
+export const isWeiChai = window.QUALITY_CCD_CONFIG.type === 'wc';
 
 const colorList = [
   '#694256',
