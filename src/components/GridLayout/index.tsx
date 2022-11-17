@@ -7,10 +7,10 @@ import styles from './index.less';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 interface Props {
-    id: any;
     dragName?: any;
     list: any;
     layout: any;
+    onChange?: any;
 }
 const CustomResizeHandle = React.forwardRef((props: any, ref) => {
     const { handleAxis, ...restProps } = props;
@@ -28,20 +28,18 @@ const CustomResizeHandle = React.forwardRef((props: any, ref) => {
 });
 
 const GridLayout: React.FC<Props> = (props: any) => {
-    const { id, dragName = '.custom-drag', list, layout, } = props;
+    const { dragName = '.custom-drag', list, layout, onChange } = props;
 
     //存储拖拽移动的位置到缓存
-    const onLayoutChange = (layout: any) => {
-        let EUlayoutArr: any = [];
-
+    const onLayoutChange = (data: any) => {
+        const EUlayoutArr: any = [];
         var index = -1;
-        localStorage.removeItem(id);
-        layout.forEach((item: any) => {
+        data.forEach((item: any) => {
             const { i, x, y, w, h, minW, maxW, minH, maxH } = item;
             index++;
             EUlayoutArr[index] = { i, x, y, w, h, minW, maxW, minH, maxH }
         })
-        localStorage.setItem(id, JSON.stringify(EUlayoutArr))
+        onChange && onChange(EUlayoutArr);
     }
 
     return (

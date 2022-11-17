@@ -122,36 +122,10 @@
         word-break: break-all;
       }
     }
-  }
-}
 
-:global {
-  .history-img-modal {
-
-    .ant-modal {
-      height: calc(100vh - 48px);
-
-      .ant-modal-content {
-        height: 100%;
-        overflow: hidden;
-
-        .ant-modal-header {
-          height: 55px;
-        }
-
-        .ant-modal-body {
-          height: calc(100% - 55px);
-          overflow: hidden;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          img {
-            // height: 100%;
-            width: 60%;
-          }
-        }
-
+    .history-window-modal {
+      .ant-modal {
+        max-width: 800px;
       }
     }
   }

@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import styles from "./index.module.less";
-import { Spin, notification, Button, message, Modal, Badge } from "antd";
+import { Spin, notification, Button, message, Modal, Badge, Cascader, Form } from "antd";
 import _ from "lodash";
 import TBJ from "./components/TBJdom";
 import DGH from "./components/DGHdom";
@@ -8,17 +8,20 @@ import DPJ from "./components/DPJdom";
 import MFD from "./components/MFDdom";
 import FC from "./components/FCdom";
 import Common from "./components/Commondom";
-import { getFlowStatusService, startFlowService, stopFlowService, touchFlowService } from "@/services/api";
+import { getFlowStatusService, getParams, startFlowService, stopFlowService, touchFlowService, updateParams } from "@/services/api";
 import { website } from "@/services/consts";
 import moment from "moment";
 import GridLayout from "@/components/GridLayout";
-import { AndroidOutlined, PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
+import { AndroidOutlined, PauseCircleOutlined, PlayCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { isWeiChai, logColors } from "@/common/constants/globalConstants";
 import TooltipDiv from "@/components/TooltipDiv";
+import { guid } from "@/utils/utils";
 
 const id = 'HomelayoutArr';
 let timer: string | number | NodeJS.Timer | null | undefined = null;
 const Home: React.FC<any> = (props: any) => {
+  const [form] = Form.useForm();
+  const { validateFields, setFieldsValue, getFieldValue } = form;
   // @ts-ignore
   const { type } = window.QUALITY_CCD_CONFIG;
   const ipString: any = localStorage.getItem('ipString');
@@ -28,15 +31,17 @@ const Home: React.FC<any> = (props: any) => {
   const socketStateRef = useRef<WebSocket>();
   const [started, setStarted] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<Array<any>>([]);
   const [infoData, setInfoData] = useState<any>('');
   const [historyData, setHistoryData] = useState<any>({});
   const [logData, setLogData] = useState<any>([]);
   const [errorData, setErrorData] = useState<Array<any>>([]);
-  const [footerData, setFooterData] = useState<any>({});
   const [taskDataConnect, setTaskDataConnect] = useState(false);
-  const [historyImg, setHistoryImg] = useState('');
-  const [historyImgTitle, setHistoryImgTitle] = useState('');
+  const [addWindowVisible, setAddWindowVisible] = useState(false);
+  const [editWindowData, setEditWindowData] = useState<any>({});
+  const [gridHomeList, setGridHomeList] = useState<any>([]);
+  const [gridContentList, setGridContentList] = useState<any>({});
+  const [paramData, setParamData] = useState<any>({});
+  const [nodeList, setNodeList] = useState<any>([]);
 
   const gridList: any = [
     <div key={'slider-1'}>
@@ -54,6 +59,13 @@ const Home: React.FC<any> = (props: any) => {
               loading ? '启动中' : '未启动'
           }
         </div>
+        <Button
+          className="flex-box btn"
+          icon={<PlusCircleOutlined className="btn-icon" />}
+          type="text"
+          onClick={() => setAddWindowVisible(true)}
+          disabled={!paramData.id}
+        >添加窗口</Button>
         {
           isWeiChai ? null :
             <Fragment>
@@ -134,24 +146,31 @@ const Home: React.FC<any> = (props: any) => {
       <Spin spinning={loading}>
         <div className="home-content flex-box">
           {
-            type === 'tbj' ?
-              <TBJ />
-              :
-              type === 'dgh' ?
-                <DGH />
+            !_.isEmpty(gridContentList) && !_.isEmpty(paramData) ?
+              type === 'tbj' ?
+                <TBJ />
                 :
-                type === 'dpj' ?
-                  <DPJ />
+                type === 'dgh' ?
+                  <DGH />
                   :
-                  type === 'mfd' ?
-                    <MFD />
+                  type === 'dpj' ?
+                    <DPJ />
                     :
-                    type === 'fc' ?
-                      <FC />
+                    type === 'mfd' ?
+                      <MFD />
                       :
-                      <Common
-                        data={data}
-                      />
+                      type === 'fc' ?
+                        <FC />
+                        :
+                        <Common
+                          gridContentList={gridContentList}
+                          setGridContentList={setGridContentList}
+                          paramData={paramData}
+                          setParamData={setParamData}
+                          setEditWindowData={setEditWindowData}
+                          setAddWindowVisible={setAddWindowVisible}
+                        />
+              : null
           }
         </div>
         <div className="drag-btn" />
@@ -211,14 +230,6 @@ const Home: React.FC<any> = (props: any) => {
       </div>
     </div>,
   ];
-  const layout: any = !!localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id) || "") : [
-    { i: "slider-1", x: 0, y: 0, w: 2, h: 6, minW: 2, maxW: 4, minH: isWeiChai ? 2 : 4, maxH: 30 },
-    { i: "slider-2", x: 0, y: 4, w: 2, h: 9, minW: 2, maxW: 4, minH: 4, maxH: 30 },
-    { i: "slider-3", x: 0, y: 8, w: 2, h: 15, minW: 2, maxW: 4, minH: 4, maxH: 30 },
-    { i: "content", x: 2, y: 0, w: 10, h: 24, minW: 6, maxW: 12, minH: 4, maxH: 30 },
-    { i: "footer-1", x: 2, y: 24, w: 7, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 },
-    { i: "footer-2", x: 9, y: 24, w: 3, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 }
-  ];
   const getServiceStatus = () => {
     getFlowStatusService(ipString).then((res: any) => {
       if (!!res && _.isObject(res) && !_.isEmpty(res)) {
@@ -229,6 +240,47 @@ const Home: React.FC<any> = (props: any) => {
       setLoading(false);
     })
   };
+  useEffect(() => {
+    if (!localStorage.getItem("ipUrl-history") || !ipString) return;
+    getParams(localStorage.getItem("ipString") || '').then((res: any) => {
+      if (res && res.code === 'SUCCESS') {
+        const { data = {} } = res;
+        const { flowData, contentData = {} } = data;
+        const { nodes } = flowData;
+        setParamData(data);
+        setNodeList(() => nodes.map((node: any) => {
+          const { name, alias, id, ports } = node;
+          return {
+            value: id,
+            label: `${alias || name} - ${id}`,
+            children: (ports?.items || []).map((port: any) => {
+              const { group, label = {} } = port;
+              const { name, alias } = label;
+              const value = alias || name;
+              if (group === 'bottom') {
+                return {
+                  value: value,
+                  label: value,
+                  disabled: contentData.content[id]?.value[1] === value,
+                }
+              }
+            }).filter(Boolean),
+          }
+        }));
+        setGridHomeList(contentData.home || [
+          { i: "slider-1", x: 0, y: 0, w: 2, h: 6, minW: 2, maxW: 4, minH: isWeiChai ? 2 : 4, maxH: 30 },
+          { i: "slider-2", x: 0, y: 4, w: 2, h: 9, minW: 2, maxW: 4, minH: 4, maxH: 30 },
+          { i: "slider-3", x: 0, y: 8, w: 2, h: 15, minW: 2, maxW: 4, minH: 4, maxH: 30 },
+          { i: "content", x: 2, y: 0, w: 10, h: 24, minW: 6, maxW: 12, minH: 4, maxH: 30 },
+          { i: "footer-1", x: 2, y: 24, w: 7, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 },
+          { i: "footer-2", x: 9, y: 24, w: 3, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 }
+        ]);
+        setGridContentList(contentData.content || {});
+      } else {
+        message.error(res?.msg || '接口异常');
+      }
+    });
+  }, []);
   useEffect(() => {
     if (isWeiChai) {
       setLoading(false);
@@ -274,15 +326,11 @@ const Home: React.FC<any> = (props: any) => {
   // task-data
   let timeConnect = 0;
   function webSocketInit(service: string) {
-    // stateWebSocketInit(`${website.socket}task-state/${ipString}`);
-    // let timer: any = null;
     socketRef.current = new WebSocket(service);
     socketRef.current.onopen = function () {
       console.log("data ws:open");
       setTaskDataConnect(true);
-      // timer = setInterval(() => {
       socketRef.current && socketRef.current?.send("PING");
-      // }, 500);
     };
     socketRef.current.onmessage = function (res) {
       try {
@@ -304,24 +352,30 @@ const Home: React.FC<any> = (props: any) => {
             }, {}
           );
           console.log("data ws:message:", newData);
-          setInfoData((preInfo: any) => {
-            if (preInfo === orderId) {
-              setData((prev: any) => {
-                if (prev.filter((i: any) => i.uid === newData.uid).length) {
-                  return prev.map((item: any) => {
-                    if (item.uid === newData.uid) {
-                      return Object.assign({}, item, newData);
-                    }
-                    return item;
-                  })
-                }
-                return prev.concat(newData)
-              });
-            } else {
-              setData([].concat(newData));
-            }
-            return orderId;
-          })
+          if (isWeiChai) {
+            setInfoData((preInfo: any) => {
+              if (preInfo === orderId) {
+                setGridContentList((prev: any) => {
+                  return Object.entries(prev).reduce((pre: any, cen: any) => {
+                    return Object.assign({}, pre, cen[0] === newData.uid ? {
+                      [cen[0]]: Object.assign({}, cen[1], newData)
+                    } : { [cen[0]]: cen[1] })
+                  }, {});
+                });
+              } else {
+                setGridContentList({});
+              }
+              return orderId;
+            });
+          } else {
+            setGridContentList((prev: any) => {
+              return Object.entries(prev).reduce((pre: any, cen: any) => {
+                return Object.assign({}, pre, cen[0] === newData.uid ? {
+                  [cen[0]]: Object.assign({}, cen[1], newData)
+                } : { [cen[0]]: cen[1] })
+              }, {});
+            });
+          }
           const imgData = Object.entries(newData).filter((res: any) => {
             return _.isString(res[1]) ? res[1].indexOf("http") > -1 : false;
           });
@@ -339,10 +393,7 @@ const Home: React.FC<any> = (props: any) => {
     };
     socketRef.current.onclose = function () {
       console.log("data ws:close");
-      // timer && clearInterval(timer);
-      // timer = null;
       socketRef.current = undefined;
-      // reconnect(service);
     };
     socketRef.current.onerror = function (err) {
       console.log("data ws:error:", err);
@@ -358,27 +409,6 @@ const Home: React.FC<any> = (props: any) => {
     setTimeout(() => {
       webSocketInit(service);
     }, 10000);
-  };
-  //task-state
-  function stateWebSocketInit(service: string) {
-    //获取节点状态
-    socketStateRef.current = new WebSocket(service);
-    socketStateRef.current.onopen = function () {
-      console.log("state ws:open");
-    };
-    socketStateRef.current.onmessage = function (stateRes) {
-      try {
-        const result = JSON.parse(stateRes.data);
-        setFooterData(result);
-      } catch (err) {
-        // console.log(err);
-      }
-    };
-    socketStateRef.current.onclose = function () {
-      console.log("state ws:close");
-      socketStateRef.current = undefined;
-      // reconnect(service);
-    };
   };
   // task-error
   let timeErrorConnect = 0;
@@ -496,26 +526,143 @@ const Home: React.FC<any> = (props: any) => {
     };
   }, [started]);
 
+  useEffect(() => {
+    if (!_.isEmpty(paramData)) {
+      updateParams({
+        id: paramData.id,
+        data: Object.assign({}, paramData, !!paramData.contentData ? {
+          contentData: Object.assign({}, paramData.contentData, !!paramData.contentData.content ? {
+            content: Object.entries(paramData.contentData.content).reduce((pre: any, cen: any) => {
+              return Object.assign({}, pre, {
+                [cen[0]]: {
+                  value: cen[1].value,
+                  size: cen[1].size,
+                }
+              });
+            }, {}),
+          } : {}),
+        } : {}),
+      }).then((res: any) => {
+        if (res && res.code === 'SUCCESS') {
+
+        } else {
+          message.error(res?.msg || '接口异常');
+        }
+      });
+    }
+  }, [paramData]);
+
+  useEffect(() => {
+    if (nodeList.length && !_.isEmpty(gridContentList)) {
+      setNodeList((prev: any) => prev.map((item: any) => {
+        const { value, children } = item;
+        return Object.assign({}, item, {
+          children: children.map((child: any) => {
+            return Object.assign({}, child, { disabled: !!gridContentList[value] && child.value === gridContentList[value].value[1] });
+          }),
+        });
+        return item;
+      }));
+    }
+  }, [gridContentList]);
+
   return (
     <div className={`${styles.home} flex-box`}>
-      <GridLayout id={id} dragName={'.drag-btn'} list={gridList} layout={layout} />
+      {
+        !_.isEmpty(gridHomeList) ?
+          <GridLayout
+            dragName={'.drag-btn'}
+            list={gridList}
+            layout={gridHomeList}
+            onChange={(data: any) => {
+              setGridHomeList(data);
+              if (paramData.id) {
+                const params = Object.assign({}, paramData, { contentData: Object.assign({}, paramData.contentData, { home: data }) });
+                setParamData(params);
+              }
+            }}
+          />
+          : null
+      }
 
-      <Modal
-        title={historyImgTitle}
-        width="calc(100vw - 48px)"
-        wrapClassName="history-img-modal"
-        centered
-        open={!!historyImg}
-        maskClosable={false}
-        footer={false}
-        onCancel={() => {
-          setHistoryImg('');
-          setHistoryImgTitle('');
-        }}
-        getContainer={false}
-      >
-        <img src={historyImg} alt="" />
-      </Modal>
+      {
+        addWindowVisible ?
+          <Modal
+            title={`${_.isEmpty(editWindowData) ? '添加' : '编辑'}监控窗口`}
+            wrapClassName="history-window-modal"
+            centered
+            width="50vw"
+            open={addWindowVisible}
+            // maskClosable={false}
+            onOk={() => {
+              validateFields()
+                .then((values) => {
+                  values = Object.entries(values).reduce((pre: any, cen: any) => {
+                    return Object.assign({}, pre, {
+                      [cen[0].split('-')[0]]: cen[1]
+                    });
+                  }, {});
+                  const { windowSelect } = values;
+                  const id = windowSelect[0];
+                  let result = {};
+                  if (_.isEmpty(editWindowData)) {
+                    result = Object.assign({}, gridContentList, {
+                      [id]: {
+                        value: windowSelect,
+                        size: { i: id, x: 0, y: 0, w: 3, h: 3, minW: 2, maxW: 10, minH: 4, maxH: 32 },
+                      }
+                    });
+                  } else {
+                    result = Object.assign({}, _.omit(gridContentList, editWindowData.value[0]), {
+                      [id]: {
+                        value: windowSelect,
+                        size: Object.assign({}, editWindowData.size, { i: id, }),
+                      }
+                    });
+                  }
+                  console.log(result)
+                  if (paramData.id) {
+                    const params = Object.assign({}, paramData, { contentData: Object.assign({}, paramData.contentData, { content: result }) });
+                    setParamData(params);
+                  }
+                  form.resetFields();
+                  setEditWindowData({});
+                  setGridContentList(result);
+                  setAddWindowVisible(false);
+                })
+                .catch((err) => {
+                  const { errorFields } = err;
+                  _.isArray(errorFields) && message.error(`${errorFields[0]?.errors[0]} 是必填项`);
+                });
+            }}
+            onCancel={() => {
+              form.resetFields();
+              setEditWindowData({});
+              setAddWindowVisible(false);
+            }}
+            getContainer={false}
+            destroyOnClose={true}
+          >
+            <Form
+              form={form}
+              scrollToFirstError
+            >
+              <Form.Item
+                name={`windowSelect-${guid()}`}
+                label="绑定节点"
+                rules={[{ required: false, message: "绑定节点" }]}
+                initialValue={editWindowData.value}
+              >
+                <Cascader
+                  style={{ width: '100%' }}
+                  options={nodeList}
+                // expandTrigger="hover"
+                />
+              </Form.Item>
+            </Form>
+          </Modal>
+          : null
+      }
     </div>
   );
 };

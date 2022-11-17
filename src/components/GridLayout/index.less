@@ -8,6 +8,10 @@
     overflow-y: auto;
 
     :global {
+        .ant-image {
+            height: calc(100% - 60px);
+        }
+
         .react-grid-layout {
             height: 100%;
             width: 100%;
@@ -19,6 +23,7 @@
                 img {
                     height: 100%;
                     width: 100%;
+                    max-height: 100%;
                 }
 
                 .custom-handle {
@@ -40,10 +45,11 @@
 
                 .custom-drag {
                     position: absolute;
-                    left: 30px;
-                    right: 30px;
-                    top: 0;
-                    bottom: 0;
+                    left: 30%;
+                    right: 30%;
+                    top: 30%;
+                    bottom: 30%;
+                    cursor: move;
                 }
 
                 .custom-handle-nw {

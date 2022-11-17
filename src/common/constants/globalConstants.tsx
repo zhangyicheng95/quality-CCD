@@ -2,28 +2,16 @@
 import _ from 'lodash';
 
 export const layoutTransform = {
-  0: { i: '0', x: 0, y: 0, w: 4, h: 20, minW: 2, maxW: 10, minH: 4, maxH: 32 },
-  1: { i: '1', x: 4, y: 0, w: 3, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
-  2: { i: '2', x: 7, y: 0, w: 3, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
-  3: { i: '3', x: 4, y: 10, w: 3, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
-  4: { i: '4', x: 7, y: 10, w: 3, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
-  5: { i: '5', x: 10, y: 0, w: 2, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
-  6: { i: '6', x: 10, y: 10, w: 2, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 }
+  0: { i: '0', x: 0, y: 0, w: 5, h: 20, minW: 2, maxW: 10, minH: 4, maxH: 32 },
+  1: { i: '1', x: 5, y: 0, w: 2, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
+  2: { i: '2', x: 7, y: 0, w: 2, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
+  3: { i: '3', x: 9, y: 0, w: 2, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
+  4: { i: '4', x: 5, y: 10, w: 2, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
+  5: { i: '5', x: 7, y: 10, w: 2, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
+  6: { i: '6', x: 9, y: 10, w: 2, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 }
 };
 // @ts-ignore
 export const isWeiChai = window.QUALITY_CCD_CONFIG.type === 'wc';
-
-const colorList = [
-  '#694256',
-  '#553a46',
-  '#7d573a',
-  '#425e7e',
-  '#165b5c',
-  '#6c5da2',
-  '#7f6087',
-  '#6d7a33',
-  '#5991d1',
-];
 
 export const logColors = {
   warning: 'rgba(245,160,49,1)',

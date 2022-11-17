@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo, Fragment } from "react";
+import React, { useEffect, useState, } from "react";
 import { Form, Input, message, Button, Tree } from "antd";
 import * as _ from "lodash";
 import styles from "./index.module.less";
@@ -6,7 +6,6 @@ import { getParams, updateParams } from "@/services/api";
 import PrimaryTitle from "@/components/PrimaryTitle";
 import FileManager from "@/components/FileManager";
 import TooltipDiv from "@/components/TooltipDiv";
-import { editor } from "monaco-editor";
 import { isWeiChai } from "@/common/constants/globalConstants";
 
 const Setting: React.FC<any> = (props) => {

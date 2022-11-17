@@ -1,62 +1,99 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./index.module.less";
-import { Col, Form, Row, Table } from "antd";
+import { Image, Popconfirm } from "antd";
 import _ from "lodash";
-import { layoutTransform } from "@/common/constants/globalConstants";
 import GridLayout from "@/components/GridLayout";
 
-const id = 'EUlayoutArr';
 let timer: string | number | NodeJS.Timeout | null | undefined = null;
 const Common: React.FC<any> = (props: any) => {
-  const { data } = props;
+  const {
+    gridContentList = {}, setGridContentList, paramData, setParamData,
+    setEditWindowData, setAddWindowVisible
+  } = props;
   const [list, setList] = useState([]);
   const [layout, setLayout] = useState([]);
 
   useEffect(() => {
-    if (data.length) {
+    if (!_.isEmpty(gridContentList)) {
       timer && clearTimeout(timer);
       timer = setTimeout(() => {
         let listData: any = [],
-          layoutData: any = !!localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id) || "") : [];
-        data.forEach((item: any, index: number) => {
-          const imgList: any = Object.entries(item).filter((i: any) => !!i[1] && i[1].indexOf('http') > -1);
-          if (!!imgList[0]) {
-            // const img = new Image();
-            // img.src = imgList[0][1];
-            // img.onload = (res) => {
-            //   const { width, height } = img;
-            listData = listData.concat(<div key={index + ''} className="flex-box" style={{
-              justifyContent: 'center', overflow: 'hidden', width: '100%', height: '100%'
+          layoutData: any = [];
+
+        Object.entries(gridContentList).forEach((item: any, index: number) => {
+          const key = item[0];
+          if (_.isEmpty(item[1])) { return; }
+          const { size, value } = item[1];
+          listData = listData.concat(
+            <div key={key} className="flex-box" style={{
+              justifyContent: 'center', overflow: 'hidden', width: '100%', height: '100%', position: 'relative'
             }}>
-              <img
-                src={imgList[0][1]} alt="logo"
-                style={{ width: '100%', height: 'auto' }}
-              // style={(width / height) < 1 ? { height: '100%', width: 'auto' } : { width: '100%', height: 'auto' }}
-              />
+              <div className="flex-box-center" style={{
+                position: 'absolute',
+                top: 0,
+                right: 8,
+                height: 30,
+                gap: 8,
+                fontSize: 12,
+              }} >
+                <div style={{ cursor: 'pointer' }} onClick={() => {
+                  setEditWindowData(item[1]);
+                  setAddWindowVisible(true);
+                }}>编辑</div>
+                <Popconfirm
+                  title="确认删除监控窗口吗?"
+                  onConfirm={() => {
+                    const result = _.omit(gridContentList, key);
+                    const params = Object.assign({}, paramData, { contentData: Object.assign({}, paramData.contentData, { content: result }) });
+                    setGridContentList(result);
+                    setParamData(params);
+                  }}
+                  okText="确认"
+                  cancelText="取消"
+                >
+                  <div style={{ cursor: 'pointer' }}>删除</div>
+                </Popconfirm>
+              </div>
+              {
+                _.isString(item[1][value[1]]) && item[1][value[1]].indexOf('http') > -1 ?
+                  <Image
+                    src={item[1][value[1]]} alt="logo"
+                    style={{ width: '100%', height: 'auto' }}
+                  />
+                  : null
+              }
               <div className="custom-drag" />
-            </div>);
-            if (layoutData.filter((i: any) => i.i == index + '').length === 0) {
-              layoutData = layoutData.concat(Object.assign({}, { i: index + '' },
-                !!layoutTransform[index] ? layoutTransform[index] : {
-                  x: 0, y: 20 + 10 * index, w: 3, h: 10, minW: 2, maxW: 6, minH: 4, maxH: 32
-                }));
-            }
-          };
-          // }
-          setTimeout(() => {
-            setList(listData);
-            setLayout(layoutData);
-          }, 300);
+            </div>
+          );
+          layoutData = layoutData.concat(size)
         });
+
+        setList(listData);
+        setLayout(layoutData);
       }, 100);
     }
-  }, [data]);
+  }, [gridContentList]);
 
   return (
     <div className={`${styles.common} flex-box`}>
       {
-        list.length ?
-          <GridLayout id={id} list={list} layout={layout} />
+        !_.isEmpty(list) && !_.isEmpty(layout) ?
+          <GridLayout
+            list={list}
+            layout={layout}
+            onChange={(data: any) => {
+              const result = Object.entries(gridContentList).reduce((pre: any, cen: any) => {
+                return Object.assign({}, pre, {
+                  [cen[0]]: Object.assign({}, cen[1], {
+                    size: data.filter((i: any) => i.i === cen[0])[0]
+                  }),
+                });
+              }, {});
+              const params = Object.assign({}, paramData, { contentData: Object.assign({}, paramData.contentData, { content: result }) });
+              setGridContentList(result);
+              setParamData(params);
+            }}
+          />
           : null
       }
     </div>

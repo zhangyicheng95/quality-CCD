@@ -85,7 +85,7 @@
   // },
   {
     path: '/',
-    redirect: '/home',
+    redirect: '/setting',
   },
   {
     component: './404',
