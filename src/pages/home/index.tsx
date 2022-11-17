@@ -17,11 +17,10 @@ import { isWeiChai, logColors } from "@/common/constants/globalConstants";
 import TooltipDiv from "@/components/TooltipDiv";
 import { guid } from "@/utils/utils";
 
-const id = 'HomelayoutArr';
 let timer: string | number | NodeJS.Timer | null | undefined = null;
 const Home: React.FC<any> = (props: any) => {
   const [form] = Form.useForm();
-  const { validateFields, setFieldsValue, getFieldValue } = form;
+  const { validateFields, } = form;
   // @ts-ignore
   const { type } = window.QUALITY_CCD_CONFIG;
   const ipString: any = localStorage.getItem('ipString');
@@ -264,6 +263,7 @@ const Home: React.FC<any> = (props: any) => {
                   disabled: contentData.content[id]?.value[1] === value,
                 }
               }
+              return null;
             }).filter(Boolean),
           }
         }));

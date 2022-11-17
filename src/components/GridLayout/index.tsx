@@ -62,7 +62,7 @@ const GridLayout: React.FC<Props> = (props: any) => {
                         resizeHandles={['se']}  // 'n', 'e', 's', 'w', 'nw', 'ne', 'se', 'sw'
                         resizeHandle={<CustomResizeHandle />}
                         draggableHandle={dragName}
-                        margin={[12, 12]}
+                        margin={[8, 8]}
                     >
                         {
                             list.map((item: any) => {
