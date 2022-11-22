@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import styles from "./index.module.less";
-import { Spin, notification, Button, message, Modal, Badge, Cascader, Form, Popover, Menu } from "antd";
+import { Spin, notification, Button, message, Modal, Badge, Cascader, Form, Popover, Menu, Tooltip } from "antd";
 import _ from "lodash";
 import TBJ from "./components/TBJdom";
 import DGH from "./components/DGHdom";
@@ -12,7 +12,7 @@ import { getFlowStatusService, getParams, startFlowService, stopFlowService, tou
 import { website } from "@/services/consts";
 import moment from "moment";
 import GridLayout from "@/components/GridLayout";
-import { AndroidOutlined, PauseCircleOutlined, PlayCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import { AndroidOutlined, LoadingOutlined, PauseCircleOutlined, PlayCircleOutlined, PlusCircleOutlined, SyncOutlined } from "@ant-design/icons";
 import { isWeiChai, logColors } from "@/common/constants/globalConstants";
 import TooltipDiv from "@/components/TooltipDiv";
 import { guid } from "@/utils/utils";
@@ -53,10 +53,21 @@ const Home: React.FC<any> = (props: any) => {
           当前状态：{
             started ?
               taskDataConnect ?
-                <Badge status="processing" className="status-icon" text={"服务已连接"} /> :
-                <Badge status="error" className="status-icon" text={"socket未连接"} />
+                <Tooltip title={'服务已连接'} placement={"bottom"}>
+                  <Badge status="processing" className="status-icon" />
+                </Tooltip> :
+                <Tooltip title={'socket未连接'} placement={"bottom"}>
+                  <Badge status="error" className="status-icon" />
+                </Tooltip>
               :
-              loading ? '启动中' : '未启动'
+              loading ?
+                <Tooltip title={'启动中'} placement={"bottom"}>
+                  <LoadingOutlined style={{ fontSize: 15 }} />
+                </Tooltip>
+                :
+                <Tooltip title={'未启动'} placement={"bottom"}>
+                  <Badge status="default" className="status-icon" />
+                </Tooltip>
           }
         </div>
         {
@@ -64,12 +75,14 @@ const Home: React.FC<any> = (props: any) => {
             <Fragment>
               <Button
                 className="flex-box btn"
-                icon={<PlayCircleOutlined className="btn-icon" />}
+                icon={started ? <div style={{ height: 30, width: 30, marginRight: 8 }}>
+                  <div className="k-loader" />
+                </div> : <PlayCircleOutlined className="btn-icon" />}
                 type="link"
                 onClick={() => start()}
                 disabled={started}
                 loading={!started && loading}
-              >启动检测</Button>
+              >{started ? '检测中' : '启动检测'}</Button>
               <Button
                 className="flex-box btn"
                 danger
@@ -82,7 +95,7 @@ const Home: React.FC<any> = (props: any) => {
             </Fragment>
         }
         <Popover placement="right" title={'配置窗口'} content={<Menu>
-          <Menu.Item onClick={() => setGridCanEdit(prev => !prev)}>{`${gridCanEdit ? '锁定' : '解锁'}布局`}</Menu.Item>
+          <Menu.Item disabled onClick={() => setGridCanEdit(prev => !prev)}>{`${gridCanEdit ? '锁定' : '解锁'}布局`}</Menu.Item>
           <Menu.Item onClick={() => setAddWindowVisible(true)}>添加新窗口</Menu.Item>
         </Menu>} trigger="hover">
           <Button
