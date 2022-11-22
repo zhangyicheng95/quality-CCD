@@ -18,7 +18,7 @@ const Common: React.FC<any> = (props: any) => {
       timer = setTimeout(() => {
         let listData: any = [],
           layoutData: any = !!localStorage.getItem(id) ? JSON.parse(localStorage.getItem(id) || "") : [];
-        data.forEach((item: any, index: number) => {
+        data.sort((a: any, b: any) => a?.index - b?.index).forEach((item: any, index: number) => {
           const imgList: any = Object.entries(item).filter((i: any) => !!i[1] && i[1].indexOf('http') > -1);
           if (!!imgList[0]) {
             // const img = new Image();
