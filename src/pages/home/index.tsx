@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import styles from "./index.module.less";
-import { Spin, notification, Button, message, Modal, Badge, Cascader, Form } from "antd";
+import { Spin, notification, Button, message, Modal, Badge, Cascader, Form, Popover, Menu } from "antd";
 import _ from "lodash";
 import TBJ from "./components/TBJdom";
 import DGH from "./components/DGHdom";
@@ -39,6 +39,7 @@ const Home: React.FC<any> = (props: any) => {
   const [editWindowData, setEditWindowData] = useState<any>({});
   const [gridHomeList, setGridHomeList] = useState<any>([]);
   const [gridContentList, setGridContentList] = useState<any>({});
+  const [gridCanEdit, setGridCanEdit] = useState(true);
   const [paramData, setParamData] = useState<any>({});
   const [nodeList, setNodeList] = useState<any>([]);
 
@@ -58,13 +59,6 @@ const Home: React.FC<any> = (props: any) => {
               loading ? '启动中' : '未启动'
           }
         </div>
-        <Button
-          className="flex-box btn"
-          icon={<PlusCircleOutlined className="btn-icon" />}
-          type="text"
-          onClick={() => setAddWindowVisible(true)}
-          disabled={!paramData.id}
-        >添加窗口</Button>
         {
           isWeiChai ? null :
             <Fragment>
@@ -85,19 +79,30 @@ const Home: React.FC<any> = (props: any) => {
                 disabled={!started}
                 loading={started && loading}
               >停止检测</Button>
-              {
-                process.env.NODE_ENV === 'development' ?
-                  <Button
-                    className="flex-box btn"
-                    icon={<AndroidOutlined className="btn-icon" />}
-                    type="link"
-                    onClick={() => touchFlowService()}
-                    disabled={!started}
-                    loading={started && loading}
-                  >自助触发</Button>
-                  : null
-              }
             </Fragment>
+        }
+        <Popover placement="right" title={'配置窗口'} content={<Menu>
+          <Menu.Item onClick={() => setGridCanEdit(prev => !prev)}>{`${gridCanEdit ? '锁定' : '解锁'}布局`}</Menu.Item>
+          <Menu.Item onClick={() => setAddWindowVisible(true)}>添加新窗口</Menu.Item>
+        </Menu>} trigger="hover">
+          <Button
+            className="flex-box btn"
+            icon={<PlusCircleOutlined className="btn-icon" />}
+            type="text"
+            disabled={!paramData.id}
+          >配置窗口</Button>
+        </Popover>
+        {
+          process.env.NODE_ENV === 'development' ?
+            <Button
+              className="flex-box btn"
+              icon={<AndroidOutlined className="btn-icon" />}
+              type="link"
+              onClick={() => touchFlowService()}
+              disabled={!started}
+              loading={started && loading}
+            >自助触发</Button>
+            : null
         }
       </div>
     </div>,
@@ -168,6 +173,7 @@ const Home: React.FC<any> = (props: any) => {
                           setParamData={setParamData}
                           setEditWindowData={setEditWindowData}
                           setAddWindowVisible={setAddWindowVisible}
+                          edit={gridCanEdit}
                         />
               : null
           }
@@ -260,14 +266,14 @@ const Home: React.FC<any> = (props: any) => {
                 return {
                   value: value,
                   label: value,
-                  disabled: contentData.content[id]?.value[1] === value,
+                  disabled: !_.isEmpty(contentData) && !!contentData?.content && contentData?.content[id]?.value[1] === value,
                 }
               }
               return null;
             }).filter(Boolean),
           }
         }));
-        setGridHomeList(contentData.home || [
+        setGridHomeList(!!contentData?.home ? contentData?.home : [
           { i: "slider-1", x: 0, y: 0, w: 2, h: 6, minW: 2, maxW: 4, minH: isWeiChai ? 2 : 4, maxH: 30 },
           { i: "slider-2", x: 0, y: 4, w: 2, h: 9, minW: 2, maxW: 4, minH: 4, maxH: 30 },
           { i: "slider-3", x: 0, y: 8, w: 2, h: 15, minW: 2, maxW: 4, minH: 4, maxH: 30 },
@@ -275,7 +281,7 @@ const Home: React.FC<any> = (props: any) => {
           { i: "footer-1", x: 2, y: 24, w: 7, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 },
           { i: "footer-2", x: 9, y: 24, w: 3, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 }
         ]);
-        setGridContentList(contentData.content || {});
+        setGridContentList(!!contentData?.content ? contentData?.content : {});
       } else {
         message.error(res?.msg || '接口异常');
       }
@@ -572,6 +578,7 @@ const Home: React.FC<any> = (props: any) => {
         !_.isEmpty(gridHomeList) ?
           <GridLayout
             dragName={'.drag-btn'}
+            edit={gridCanEdit}
             list={gridList}
             layout={gridHomeList}
             onChange={(data: any) => {

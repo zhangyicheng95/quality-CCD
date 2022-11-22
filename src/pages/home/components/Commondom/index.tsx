@@ -8,7 +8,7 @@ let timer: string | number | NodeJS.Timeout | null | undefined = null;
 const Common: React.FC<any> = (props: any) => {
   const {
     gridContentList = {}, setGridContentList, paramData, setParamData,
-    setEditWindowData, setAddWindowVisible
+    setEditWindowData, setAddWindowVisible, edit
   } = props;
   const [list, setList] = useState([]);
   const [layout, setLayout] = useState([]);
@@ -25,17 +25,8 @@ const Common: React.FC<any> = (props: any) => {
           if (_.isEmpty(item[1])) { return; }
           const { size, value } = item[1];
           listData = listData.concat(
-            <div key={key} className="flex-box" style={{
-              justifyContent: 'center', overflow: 'hidden', width: '100%', height: '100%', position: 'relative'
-            }}>
-              <div className="flex-box-center" style={{
-                position: 'absolute',
-                top: 0,
-                right: 8,
-                height: 30,
-                gap: 8,
-                fontSize: 12,
-              }} >
+            <div key={key} className="flex-box drag-item-content-box" >
+              <div className="flex-box-center drag-item-btn-box" >
                 <div style={{ cursor: 'pointer' }} onClick={() => {
                   setEditWindowData(item[1]);
                   setAddWindowVisible(true);
@@ -79,6 +70,7 @@ const Common: React.FC<any> = (props: any) => {
       {
         !_.isEmpty(list) && !_.isEmpty(layout) ?
           <GridLayout
+            edit={edit}
             list={list}
             layout={layout}
             onChange={(data: any) => {

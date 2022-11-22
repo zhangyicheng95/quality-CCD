@@ -11,6 +11,7 @@ interface Props {
     list: any;
     layout: any;
     onChange?: any;
+    edit?: any;
 }
 const CustomResizeHandle = React.forwardRef((props: any, ref) => {
     const { handleAxis, ...restProps } = props;
@@ -28,7 +29,7 @@ const CustomResizeHandle = React.forwardRef((props: any, ref) => {
 });
 
 const GridLayout: React.FC<Props> = (props: any) => {
-    const { dragName = '.custom-drag', list, layout, onChange } = props;
+    const { dragName = '.custom-drag', edit, list, layout, onChange } = props;
 
     //存储拖拽移动的位置到缓存
     const onLayoutChange = (data: any) => {
@@ -41,7 +42,6 @@ const GridLayout: React.FC<Props> = (props: any) => {
         })
         onChange && onChange(EUlayoutArr);
     }
-
     return (
         <>
             <div className={styles.dashboardContent}>
@@ -54,7 +54,7 @@ const GridLayout: React.FC<Props> = (props: any) => {
                         breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                         cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                         isResizable={true}
-                        isDraggable={true}
+                        isDraggable={!!edit}
                         isBounded={true}
                         allowOverlap={false} // 覆盖
                         autoSize={true}

@@ -128,5 +128,30 @@
         max-width: 800px;
       }
     }
+
+    .drag-item-content-box {
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+      position: relative;
+
+      &:hover {
+        .drag-item-btn-box {
+          opacity: 1;
+        }
+      }
+
+      .drag-item-btn-box {
+        z-index: 99;
+        color: rgba(255, 255, 255, 0.8);
+        position: absolute;
+        top: 0;
+        right: 8px;
+        height: 30px;
+        gap: 16px;
+        font-size: 14px;
+        opacity: 0;
+      }
+    }
   }
 }
