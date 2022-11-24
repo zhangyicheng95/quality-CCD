@@ -350,6 +350,22 @@ ol {
   border-bottom: 1px solid @border-color-base;
   border-left: 6px solid @primary-color;
   word-break: keep-all;
+
+  &:hover {
+    .common-card-title-icon {
+      opacity: 1;
+    }
+  }
+
+  .common-card-title {
+    flex: 1;
+  }
+
+  .common-card-title-icon {
+    font-size: 14px;
+    cursor: pointer;
+    opacity: 0;
+  }
 }
 
 .operation-line {

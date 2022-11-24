@@ -12,7 +12,7 @@ import { getFlowStatusService, getParams, startFlowService, stopFlowService, tou
 import { website } from "@/services/consts";
 import moment from "moment";
 import GridLayout from "@/components/GridLayout";
-import { AndroidOutlined, LoadingOutlined, PauseCircleOutlined, PlayCircleOutlined, PlusCircleOutlined, SyncOutlined } from "@ant-design/icons";
+import { AndroidOutlined, CloseCircleOutlined, LoadingOutlined, PauseCircleOutlined, PlayCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { isWeiChai, logColors } from "@/common/constants/globalConstants";
 import TooltipDiv from "@/components/TooltipDiv";
 import { guid } from "@/utils/utils";
@@ -29,7 +29,7 @@ const Home: React.FC<any> = (props: any) => {
   const socketLogRef = useRef<WebSocket>();
   const socketStateRef = useRef<WebSocket>();
   const [started, setStarted] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [infoData, setInfoData] = useState<any>('');
   const [historyData, setHistoryData] = useState<any>({});
   const [logData, setLogData] = useState<any>([]);
@@ -50,25 +50,27 @@ const Home: React.FC<any> = (props: any) => {
           taskDataConnect ? 'success-message' : 'error-message'
           : ''
           }`}>
-          当前状态：{
-            started ?
-              taskDataConnect ?
-                <Tooltip title={'服务已连接'} placement={"bottom"}>
-                  <Badge status="processing" className="status-icon" />
-                </Tooltip> :
-                <Tooltip title={'socket未连接'} placement={"bottom"}>
-                  <Badge status="error" className="status-icon" />
-                </Tooltip>
-              :
-              loading ?
-                <Tooltip title={'启动中'} placement={"bottom"}>
-                  <LoadingOutlined style={{ fontSize: 15 }} />
-                </Tooltip>
+          <div className="flex-box common-card-title">
+            当前状态：{
+              started ?
+                taskDataConnect ?
+                  <Tooltip title={'服务已连接'} placement={"bottom"}>
+                    <Badge status="processing" className="status-icon" />
+                  </Tooltip> :
+                  <Tooltip title={'socket未连接'} placement={"bottom"}>
+                    <Badge status="error" className="status-icon" />
+                  </Tooltip>
                 :
-                <Tooltip title={'未启动'} placement={"bottom"}>
-                  <Badge status="default" className="status-icon" />
-                </Tooltip>
-          }
+                loading ?
+                  <Tooltip title={'启动中'} placement={"bottom"}>
+                    <LoadingOutlined style={{ fontSize: 15 }} />
+                  </Tooltip>
+                  :
+                  <Tooltip title={'未启动'} placement={"bottom"}>
+                    <Badge status="default" className="status-icon" />
+                  </Tooltip>
+            }
+          </div>
         </div>
         {
           isWeiChai ? null :
@@ -94,17 +96,78 @@ const Home: React.FC<any> = (props: any) => {
               >停止检测</Button>
             </Fragment>
         }
-        <Popover placement="right" title={'配置窗口'} content={<Menu>
-          <Menu.Item disabled onClick={() => setGridCanEdit(prev => !prev)}>{`${gridCanEdit ? '锁定' : '解锁'}布局`}</Menu.Item>
-          <Menu.Item onClick={() => setAddWindowVisible(true)}>添加新窗口</Menu.Item>
-        </Menu>} trigger="hover">
-          <Button
-            className="flex-box btn"
-            icon={<PlusCircleOutlined className="btn-icon" />}
-            type="text"
-            disabled={!paramData.id}
-          >配置窗口</Button>
-        </Popover>
+        {
+          paramData.id ?
+            <Popover placement="right" title={'配置窗口'} trigger="click" content={<Menu>
+              <Menu.Item key={"clock"} disabled onClick={() => setGridCanEdit(prev => !prev)}>{`${gridCanEdit ? '锁定' : '解锁'}布局`}</Menu.Item>
+              <Menu.Item key={"add"} onClick={() => setAddWindowVisible(true)}>添加监控窗口</Menu.Item>
+              {
+                gridHomeList[1]?.w === 0 ?
+                  <Menu.Item key={"slider-2"} onClick={() => {
+                    setGridHomeList((prev: any) => {
+                      let data = [].concat(prev);
+                      data[1] = Object.assign({}, data[1], {
+                        w: 2, h: 4, minW: 2, minH: 4,
+                      });
+                      return data;
+                    });
+                  }}>显示基本信息</Menu.Item>
+                  : null
+              }
+              {
+                gridHomeList[2]?.w === 0 ?
+                  <Menu.Item key={"slider-3"} onClick={() => {
+                    setGridHomeList((prev: any) => {
+                      let data = [].concat(prev);
+                      data[2] = Object.assign({}, data[2], {
+                        w: 2, h: 4, minW: 2, minH: 4,
+                      });
+                      return data;
+                    });
+                  }}>显示实时信息</Menu.Item>
+                  : null
+              }
+              {
+                gridHomeList[4]?.w === 0 ?
+                  <Menu.Item key={"footer-1"} onClick={() => {
+                    setGridHomeList((prev: any) => {
+                      let data = [].concat(prev);
+                      data[4] = Object.assign({}, data[4], {
+                        w: 7, h: 4, minW: 2, minH: 4,
+                      });
+                      return data;
+                    });
+                  }}>显示日志信息</Menu.Item>
+                  : null
+              }
+              {
+                gridHomeList[5]?.w === 0 ?
+                  <Menu.Item key={"footer-2"} onClick={() => {
+                    setGridHomeList((prev: any) => {
+                      let data = [].concat(prev);
+                      data[5] = Object.assign({}, data[5], {
+                        w: 3, h: 4, minW: 2, minH: 4,
+                      });
+                      return data;
+                    });
+                  }}>显示错误信息</Menu.Item>
+                  : null
+              }
+            </Menu>}>
+              <Button
+                className="flex-box btn"
+                icon={<PlusCircleOutlined className="btn-icon" />}
+                type="text"
+              >配置窗口</Button>
+            </Popover>
+            :
+            <Button
+              className="flex-box btn"
+              icon={<PlusCircleOutlined className="btn-icon" />}
+              type="text"
+              disabled={true}
+            >配置窗口</Button>
+        }
         {
           process.env.NODE_ENV === 'development' ?
             <Button
@@ -121,8 +184,19 @@ const Home: React.FC<any> = (props: any) => {
     </div>,
     <div key={'slider-2'}>
       <div className="info-box">
-        <div className="common-card-title-box drag-btn">
-          基本信息
+        <div className="common-card-title-box flex-box drag-btn">
+          <div className="flex-box common-card-title">
+            基本信息
+          </div>
+          <CloseCircleOutlined className="common-card-title-icon" onClick={() => {
+            setGridHomeList((prev: any) => {
+              let data = [].concat(prev);
+              data[1] = Object.assign({}, data[1], {
+                w: 0, h: 0, minW: 0, minH: 0
+              });
+              return data;
+            });
+          }} />
         </div>
         <div className="info-box-content">
           {
@@ -142,8 +216,19 @@ const Home: React.FC<any> = (props: any) => {
     </div>,
     <div key={'slider-3'}>
       <div className="info-box message-box">
-        <div className="common-card-title-box drag-btn success-message">
-          实时信息
+        <div className="common-card-title-box flex-box drag-btn success-message">
+          <div className="flex-box common-card-title">
+            实时信息
+          </div>
+          <CloseCircleOutlined className="common-card-title-icon" onClick={() => {
+            setGridHomeList((prev: any) => {
+              let data = [].concat(prev);
+              data[2] = Object.assign({}, data[2], {
+                w: 0, h: 0, minW: 0, minH: 0
+              });
+              return data;
+            });
+          }} />
         </div>
         <div className="info-box-content">
           {/* {
@@ -196,8 +281,19 @@ const Home: React.FC<any> = (props: any) => {
     </div>,
     <div key={'footer-1'}>
       <div className="log-content">
-        <div className="common-card-title-box drag-btn warning-message">
-          日志信息
+        <div className="common-card-title-box flex-box drag-btn warning-message">
+          <div className="flex-box common-card-title">
+            日志信息
+          </div>
+          <CloseCircleOutlined className="common-card-title-icon" onClick={() => {
+            setGridHomeList((prev: any) => {
+              let data = [].concat(prev);
+              data[4] = Object.assign({}, data[4], {
+                w: 0, h: 0, minW: 0, minH: 0
+              });
+              return data;
+            });
+          }} />
         </div>
         <div
           className="content-item-span"
@@ -209,8 +305,19 @@ const Home: React.FC<any> = (props: any) => {
     </div>,
     <div key={'footer-2'}>
       <div className="log-content">
-        <div className="common-card-title-box drag-btn error-message">
-          错误信息
+        <div className="common-card-title-box flex-box drag-btn error-message">
+          <div className="flex-box common-card-title">
+            错误信息
+          </div>
+          <CloseCircleOutlined className="common-card-title-icon" onClick={() => {
+            setGridHomeList((prev: any) => {
+              let data = [].concat(prev);
+              data[5] = Object.assign({}, data[5], {
+                w: 0, h: 0, minW: 0, minH: 0
+              });
+              return data;
+            });
+          }} />
         </div>
         <div className="content-item-span">
           {/* <BasicScrollBar data={errorData}> */}
@@ -248,6 +355,7 @@ const Home: React.FC<any> = (props: any) => {
       </div>
     </div>,
   ];
+
   const getServiceStatus = () => {
     getFlowStatusService(ipString).then((res: any) => {
       if (!!res && _.isObject(res) && !_.isEmpty(res)) {
@@ -307,6 +415,7 @@ const Home: React.FC<any> = (props: any) => {
       return;
     }
     if (!ipString) return;
+    setLoading(true);
     getServiceStatus();
     timer = setInterval(() => {
       getServiceStatus()
@@ -331,6 +440,7 @@ const Home: React.FC<any> = (props: any) => {
   };
   const end = () => {
     if (!ipString) return;
+    timer && clearInterval(timer);
     setLoading(true);
     stopFlowService(ipString || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
@@ -340,6 +450,9 @@ const Home: React.FC<any> = (props: any) => {
         message.error(res?.msg || '接口异常');
       }
       setLoading(false);
+      timer = setInterval(() => {
+        getServiceStatus()
+      }, 5000);
     })
   };
   // task-data
