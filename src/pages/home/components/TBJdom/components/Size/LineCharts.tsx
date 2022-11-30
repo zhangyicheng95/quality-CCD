@@ -1,5 +1,4 @@
-import React, { useEffect, useContext, useState, useRef, useMemo, useCallback } from 'react';
-import { Tooltip, Form, Modal, Input, message, notification, Switch } from 'antd';
+import React, { useEffect } from 'react';
 import * as echarts from 'echarts';
 import moment from 'moment';
 
@@ -10,9 +9,10 @@ interface Props {
 }
 
 const LineCharts: React.FC<Props> = (props: any) => {
-    const { data = [], id, } = props;
+    const { data = {}, id, } = props;
+
     useEffect(() => {
-        const dom = document.getElementById(`echart-${id}`);
+        const dom: any = document.getElementById(`echart-${id}`);
         const myChart = echarts.init(dom);
         const option = {
             color: ['rgb(115,171,216)', 'rgb(245,142,94)'],
@@ -24,29 +24,37 @@ const LineCharts: React.FC<Props> = (props: any) => {
                 }
             },
             legend: {
+                top: '2%',
                 textStyle: {
-                    color: '#ddd'
+                    color: '#666'
                     // fontFamily:'serif',
                 },
             },
             grid: {
                 left: '3%',
                 right: '4%',
-                bottom: 0,
+                bottom: '2%',
                 containLabel: true
             },
             yAxis: {
                 type: 'value',
+                boundaryGap: '5%',
                 fontSize: 14,
-                splitNumber: data.length === 1 ? 1 : 3,
+                splitNumber: 3,
                 axisLabel: {
-                    color: '#ddd'
+                    color: '#666'
                     // fontFamily:'serif',
                 },
                 axisLine: {
                     show: true,
                     lineStyle: {
-                        color: '#ddd',
+                        color: '#666',
+                    }
+                },
+                splitLine: {
+                    show: true,
+                    lineStyle: {
+                        color: '#666'
                     }
                 },
             },
@@ -55,7 +63,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
                 axisLine: {
                     show: true,
                     lineStyle: {
-                        color: '#ddd',
+                        color: '#666',
                     }
                 },
                 axisLabel: {
@@ -65,7 +73,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
                     // rotate: 45,
                     fontSize: 14,
                     // interval:99,
-                    color: '#ddd',
+                    color: '#666',
                     fontFamily: 'Helvetica',
                     formatter: function (val: any) {
                         return parseInt(val) ? moment(parseInt(val)).format(`YYYY-MM-DD HH:mm`) : val;
@@ -84,7 +92,36 @@ const LineCharts: React.FC<Props> = (props: any) => {
                     emphasis: {
                         focus: 'series'
                     },
-                    data: data
+                    markLine: {
+                        data: !!data?.normal ? [
+                            {
+                                name: '正常',
+                                yAxis: data?.normal?.upperThreshold,
+                                // type: "median",
+                                lineStyle: {
+                                    color: '#FF3E3E',
+                                },
+                            },
+                            {
+                                name: '正常',
+                                yAxis: data?.normal?.lowerThreshold,
+                                // type: "median",
+                                lineStyle: {
+                                    color: '#FF3E3E',
+                                },
+                            }
+                        ] : [],
+                        lineStyle: {
+                            width: 1,
+                            color: '#3FBF00',
+                        },
+                        label: {
+                            show: false,
+                        },
+                        silent: true, // 鼠标悬停事件, true悬停不会出现实线
+                        // symbol: 'none', // 去掉箭头
+                    },
+                    data: data?.normal?.data
                 },
                 {
                     name: '异常',
@@ -97,12 +134,46 @@ const LineCharts: React.FC<Props> = (props: any) => {
                     emphasis: {
                         focus: 'series'
                     },
-                    data: data
+                    markLine: {
+                        data: !!data?.abNormal ? [
+                            {
+                                name: '异常',
+                                yAxis: data?.abNormal?.upperThreshold,
+                                // type: "median",
+                                lineStyle: {
+                                    color: '#FFB100',
+                                },
+                            },
+                            {
+                                name: '异常',
+                                yAxis: data?.abNormal?.upperThreshold,
+                                // type: "median",
+                                lineStyle: {
+                                    color: '#FFB100',
+                                },
+                            }
+                        ] : [],
+                        lineStyle: {
+                            width: 1,
+                            color: '#3FBF00',
+                        },
+                        label: {
+                            show: false,
+                        },
+                        silent: true, // 鼠标悬停事件, true悬停不会出现实线
+                        // symbol: 'none', // 去掉箭头
+                    },
+                    data: data?.abNormal?.data
                 },
             ]
         };
         myChart.setOption(option);
+        myChart.resize({
+            width: dom.clientWidth,
+            height: dom.clientHeight,
+        })
     }, [data]);
+
 
     return (
         <div

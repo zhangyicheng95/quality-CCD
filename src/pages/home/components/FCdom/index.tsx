@@ -16,10 +16,10 @@ const FC: React.FC<any> = (props: any) => {
   return (
     <div className={`${styles.fc} flex-box`}>
       <div className="tab-box flex-box">
-        <div className="tab-item" style={tab === '1' ? { background: '#f5f5f5' } : {}} onClick={() => setTab('1')}>
+        <div className={`tab-item ${tab === '1' ? 'selected' : ''}`} onClick={() => setTab('1')}>
           工位一
         </div>
-        <div className="tab-item" style={tab === '2' ? { background: '#f5f5f5' } : {}} onClick={() => setTab('2')} >
+        <div className={`tab-item ${tab === '2' ? 'selected' : ''}`} onClick={() => setTab('2')} >
           工位二
         </div>
       </div>

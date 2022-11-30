@@ -6,6 +6,7 @@
   padding: 24px 24px 0;
   flex-direction: column;
   background: @body-background;
+  overflow-y: auto;
 
   :global {
     .item-box {
@@ -26,8 +27,10 @@
           .item-type {
             padding: 2px 0;
             width: 32px;
+            min-width: 32px;
             text-align: center;
             background: rgb(51, 182, 36);
+            color: @text-color-dark;
           }
         }
       }
@@ -55,6 +58,7 @@
             width: 100%;
             text-align: center;
             background: rgb(51, 182, 36);
+            color: @text-color-dark;
           }
         }
       }

@@ -20,44 +20,46 @@ const Common: React.FC<any> = (props: any) => {
         let listData: any = [],
           layoutData: any = [];
 
-        Object.entries(gridContentList).forEach((item: any, index: number) => {
-          const key = item[0];
-          if (_.isEmpty(item[1])) { return; }
-          const { size, value } = item[1];
-          listData = listData.concat(
-            <div key={key} className="flex-box drag-item-content-box" >
-              <div className="flex-box-center drag-item-btn-box" >
-                <div style={{ cursor: 'pointer' }} onClick={() => {
-                  setEditWindowData(item[1]);
-                  setAddWindowVisible(true);
-                }}>编辑</div>
-                <Popconfirm
-                  title="确认删除监控窗口吗?"
-                  onConfirm={() => {
-                    const result = _.omit(gridContentList, key);
-                    const params = Object.assign({}, paramData, { contentData: Object.assign({}, paramData.contentData, { content: result }) });
-                    setGridContentList(result);
-                    setParamData(params);
-                  }}
-                  okText="确认"
-                  cancelText="取消"
-                >
-                  <div style={{ cursor: 'pointer' }}>删除</div>
-                </Popconfirm>
+        Object.entries(gridContentList)
+          .filter((i: any) => !i[1].type)
+          .forEach((item: any, index: number) => {
+            const key = item[0];
+            if (_.isEmpty(item[1])) { return; }
+            const { size, value } = item[1];
+            listData = listData.concat(
+              <div key={key} className="flex-box drag-item-content-box" >
+                <div className="flex-box-center drag-item-btn-box" >
+                  <div style={{ cursor: 'pointer' }} onClick={() => {
+                    setEditWindowData(item[1]);
+                    setAddWindowVisible(true);
+                  }}>编辑</div>
+                  <Popconfirm
+                    title="确认删除监控窗口吗?"
+                    onConfirm={() => {
+                      const result = _.omit(gridContentList, key);
+                      const params = Object.assign({}, paramData, { contentData: Object.assign({}, paramData.contentData, { content: result }) });
+                      setGridContentList(result);
+                      setParamData(params);
+                    }}
+                    okText="确认"
+                    cancelText="取消"
+                  >
+                    <div style={{ cursor: 'pointer' }}>删除</div>
+                  </Popconfirm>
+                </div>
+                {
+                  _.isString(item[1][value[1]]) && item[1][value[1]].indexOf('http') > -1 ?
+                    <Image
+                      src={item[1][value[1]]} alt="logo"
+                      style={{ width: '100%', height: 'auto' }}
+                    />
+                    : null
+                }
+                <div className="custom-drag" />
               </div>
-              {
-                _.isString(item[1][value[1]]) && item[1][value[1]].indexOf('http') > -1 ?
-                  <Image
-                    src={item[1][value[1]]} alt="logo"
-                    style={{ width: '100%', height: 'auto' }}
-                  />
-                  : null
-              }
-              <div className="custom-drag" />
-            </div>
-          );
-          layoutData = layoutData.concat(size)
-        });
+            );
+            layoutData = layoutData.concat(size)
+          });
 
         setList(listData);
         setLayout(layoutData);

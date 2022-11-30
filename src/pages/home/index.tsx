@@ -13,11 +13,12 @@ import { website } from "@/services/consts";
 import moment from "moment";
 import GridLayout from "@/components/GridLayout";
 import { AndroidOutlined, CloseCircleOutlined, LoadingOutlined, PauseCircleOutlined, PlayCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import { isWeiChai, logColors } from "@/common/constants/globalConstants";
+import { logColors, systemType } from "@/common/constants/globalConstants";
 import TooltipDiv from "@/components/TooltipDiv";
 import { guid } from "@/utils/utils";
 
 let timer: string | number | NodeJS.Timer | null | undefined = null;
+let updateTimer: string | number | NodeJS.Timer | null | undefined = null;
 const Home: React.FC<any> = (props: any) => {
   const [form] = Form.useForm();
   const { validateFields, } = form;
@@ -32,6 +33,7 @@ const Home: React.FC<any> = (props: any) => {
   const [loading, setLoading] = useState(false);
   const [infoData, setInfoData] = useState<any>('');
   const [historyData, setHistoryData] = useState<any>({});
+  const [activeTab, setActiveTab] = useState<any>('1');
   const [logData, setLogData] = useState<any>([]);
   const [errorData, setErrorData] = useState<Array<any>>([]);
   const [taskDataConnect, setTaskDataConnect] = useState(false);
@@ -72,87 +74,81 @@ const Home: React.FC<any> = (props: any) => {
             }
           </div>
         </div>
-        {
-          isWeiChai ? null :
-            <Fragment>
-              <Button
-                className="flex-box btn"
-                icon={started ? <div style={{ height: 30, width: 30, marginRight: 8 }}>
-                  <div className="k-loader" />
-                </div> : <PlayCircleOutlined className="btn-icon" />}
-                type="link"
-                onClick={() => start()}
-                disabled={started}
-                loading={!started && loading}
-              >{started ? '检测中' : '启动检测'}</Button>
-              <Button
-                className="flex-box btn"
-                danger
-                icon={<PauseCircleOutlined className="btn-icon" />}
-                type="text"
-                onClick={() => end()}
-                disabled={!started}
-                loading={started && loading}
-              >停止检测</Button>
-            </Fragment>
-        }
+        <Button
+          className="flex-box btn"
+          icon={started ? <div style={{ height: 30, width: 30, marginRight: 8 }}>
+            <div className="k-loader" />
+          </div> : <PlayCircleOutlined className="btn-icon" />}
+          type="link"
+          onClick={() => start()}
+          disabled={started}
+          loading={!started && loading}
+        >{started ? '检测中' : '启动检测'}</Button>
+        <Button
+          className="flex-box btn"
+          danger
+          icon={<PauseCircleOutlined className="btn-icon" />}
+          type="text"
+          onClick={() => end()}
+          disabled={!started}
+          loading={started && loading}
+        >停止检测</Button>
         {
           paramData.id ?
-            <Popover placement="right" title={'配置窗口'} trigger="click" content={<Menu>
-              <Menu.Item key={"clock"} disabled onClick={() => setGridCanEdit(prev => !prev)}>{`${gridCanEdit ? '锁定' : '解锁'}布局`}</Menu.Item>
-              <Menu.Item key={"add"} onClick={() => setAddWindowVisible(true)}>添加监控窗口</Menu.Item>
+            <Popover placement="right" title={'配置窗口'} trigger="click" content={<Menu items={[
+              { label: `${gridCanEdit ? '锁定' : '解锁'}布局`, key: 'clock', disabled: true, onClick: () => setGridCanEdit(prev => !prev) },
+              { label: '添加监控窗口', key: 'add', onClick: () => setAddWindowVisible(true) },
               {
-                gridHomeList[1]?.w === 0 ?
-                  <Menu.Item key={"slider-2"} onClick={() => {
-                    setGridHomeList((prev: any) => {
+                label: '显示首页窗口',
+                key: 'home-content',
+                children: [
+                  {
+                    label: '显示基本信息', key: 'slider-2',
+                    disabled: gridHomeList[1]?.w !== 0,
+                    onClick: () => setGridHomeList((prev: any) => {
                       let data = [].concat(prev);
                       data[1] = Object.assign({}, data[1], {
                         w: 2, h: 4, minW: 2, minH: 4,
                       });
                       return data;
-                    });
-                  }}>显示基本信息</Menu.Item>
-                  : null
-              }
-              {
-                gridHomeList[2]?.w === 0 ?
-                  <Menu.Item key={"slider-3"} onClick={() => {
-                    setGridHomeList((prev: any) => {
+                    }),
+                  },
+                  {
+                    label: '显示实时信息', key: 'slider-3',
+                    disabled: gridHomeList[2]?.w !== 0,
+                    onClick: () => setGridHomeList((prev: any) => {
                       let data = [].concat(prev);
                       data[2] = Object.assign({}, data[2], {
                         w: 2, h: 4, minW: 2, minH: 4,
                       });
                       return data;
-                    });
-                  }}>显示实时信息</Menu.Item>
-                  : null
-              }
-              {
-                gridHomeList[4]?.w === 0 ?
-                  <Menu.Item key={"footer-1"} onClick={() => {
-                    setGridHomeList((prev: any) => {
+                    }),
+                  },
+                  {
+                    label: '显示日志信息', key: 'footer-1',
+                    disabled: gridHomeList[4]?.w !== 0,
+                    onClick: () => setGridHomeList((prev: any) => {
                       let data = [].concat(prev);
                       data[4] = Object.assign({}, data[4], {
                         w: 7, h: 4, minW: 2, minH: 4,
                       });
                       return data;
-                    });
-                  }}>显示日志信息</Menu.Item>
-                  : null
-              }
-              {
-                gridHomeList[5]?.w === 0 ?
-                  <Menu.Item key={"footer-2"} onClick={() => {
-                    setGridHomeList((prev: any) => {
+                    }),
+                  },
+                  {
+                    label: '显示错误信息', key: 'footer-2',
+                    disabled: gridHomeList[5]?.w !== 0,
+                    onClick: () => setGridHomeList((prev: any) => {
                       let data = [].concat(prev);
                       data[5] = Object.assign({}, data[5], {
                         w: 3, h: 4, minW: 2, minH: 4,
                       });
                       return data;
-                    });
-                  }}>显示错误信息</Menu.Item>
-                  : null
-              }
+                    }),
+                  },
+                ],
+              },
+            ]}>
             </Menu>}>
               <Button
                 className="flex-box btn"
@@ -248,9 +244,18 @@ const Home: React.FC<any> = (props: any) => {
       <Spin spinning={loading}>
         <div className="home-content flex-box">
           {
-            !_.isEmpty(gridContentList) && !_.isEmpty(paramData) ?
+            !_.isEmpty(paramData) ?
               type === 'tbj' ?
-                <TBJ />
+                <TBJ
+                  gridContentList={gridContentList}
+                  setGridContentList={setGridContentList}
+                  paramData={paramData}
+                  setParamData={setParamData}
+                  setEditWindowData={setEditWindowData}
+                  setAddWindowVisible={setAddWindowVisible}
+                  edit={gridCanEdit}
+                  setActiveTab={setActiveTab}
+                />
                 :
                 type === 'dgh' ?
                   <DGH />
@@ -367,8 +372,8 @@ const Home: React.FC<any> = (props: any) => {
     })
   };
   useEffect(() => {
-    if (!localStorage.getItem("ipUrl-history") || !ipString) return;
-    getParams(localStorage.getItem("ipString") || '').then((res: any) => {
+    if (!ipString) return;
+    getParams(ipString || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
         const { data = {} } = res;
         const { flowData, contentData = {} } = data;
@@ -395,7 +400,7 @@ const Home: React.FC<any> = (props: any) => {
           }
         }));
         setGridHomeList(!!contentData?.home ? contentData?.home : [
-          { i: "slider-1", x: 0, y: 0, w: 2, h: 6, minW: 2, maxW: 4, minH: isWeiChai ? 2 : 4, maxH: 30 },
+          { i: "slider-1", x: 0, y: 0, w: 2, h: 6, minW: 2, maxW: 4, minH: 4, maxH: 30 },
           { i: "slider-2", x: 0, y: 4, w: 2, h: 9, minW: 2, maxW: 4, minH: 4, maxH: 30 },
           { i: "slider-3", x: 0, y: 8, w: 2, h: 15, minW: 2, maxW: 4, minH: 4, maxH: 30 },
           { i: "content", x: 2, y: 0, w: 10, h: 24, minW: 6, maxW: 12, minH: 4, maxH: 30 },
@@ -409,11 +414,6 @@ const Home: React.FC<any> = (props: any) => {
     });
   }, []);
   useEffect(() => {
-    if (isWeiChai) {
-      setLoading(false);
-      setStarted(true);
-      return;
-    }
     if (!ipString) return;
     setLoading(true);
     getServiceStatus();
@@ -484,30 +484,13 @@ const Home: React.FC<any> = (props: any) => {
             }, {}
           );
           console.log("data ws:message:", newData);
-          if (isWeiChai) {
-            setInfoData((preInfo: any) => {
-              if (preInfo === orderId) {
-                setGridContentList((prev: any) => {
-                  return Object.entries(prev).reduce((pre: any, cen: any) => {
-                    return Object.assign({}, pre, cen[0] === newData.uid ? {
-                      [cen[0]]: Object.assign({}, cen[1], newData)
-                    } : { [cen[0]]: cen[1] })
-                  }, {});
-                });
-              } else {
-                setGridContentList({});
-              }
-              return orderId;
-            });
-          } else {
-            setGridContentList((prev: any) => {
-              return Object.entries(prev).reduce((pre: any, cen: any) => {
-                return Object.assign({}, pre, cen[0] === newData.uid ? {
-                  [cen[0]]: Object.assign({}, cen[1], newData)
-                } : { [cen[0]]: cen[1] })
-              }, {});
-            });
-          }
+          setGridContentList((prev: any) => {
+            return Object.entries(prev).reduce((pre: any, cen: any) => {
+              return Object.assign({}, pre, cen[0] === newData.uid ? {
+                [cen[0]]: Object.assign({}, cen[1], newData)
+              } : { [cen[0]]: cen[1] })
+            }, {});
+          });
           const imgData = Object.entries(newData).filter((res: any) => {
             return _.isString(res[1]) ? res[1].indexOf("http") > -1 : false;
           });
@@ -659,38 +642,43 @@ const Home: React.FC<any> = (props: any) => {
   }, [started]);
 
   useEffect(() => {
-    if (!_.isEmpty(paramData)) {
-      updateParams({
-        id: paramData.id,
-        data: Object.assign({}, paramData, !!paramData.contentData ? {
-          contentData: Object.assign({}, paramData.contentData, !!paramData.contentData.content ? {
-            content: Object.entries(paramData.contentData.content).reduce((pre: any, cen: any) => {
-              return Object.assign({}, pre, {
-                [cen[0]]: {
-                  value: cen[1].value,
-                  size: cen[1].size,
-                }
-              });
-            }, {}),
+    if (!_.isEmpty(paramData) && !!paramData.id) {
+      updateTimer && clearTimeout(updateTimer);
+      updateTimer = setTimeout(() => {
+        updateParams({
+          id: paramData.id,
+          data: Object.assign({}, paramData, !!paramData.contentData ? {
+            contentData: Object.assign({}, paramData.contentData, !!paramData.contentData.content ? {
+              content: Object.entries(paramData.contentData.content).reduce((pre: any, cen: any) => {
+                return Object.assign({}, pre, {
+                  [cen[0]]: {
+                    value: cen[1].value,
+                    size: cen[1].size,
+                  }
+                });
+              }, {}),
+            } : {}),
           } : {}),
-        } : {}),
-      }).then((res: any) => {
-        if (res && res.code === 'SUCCESS') {
+        }).then((res: any) => {
+          if (res && res.code === 'SUCCESS') {
 
-        } else {
-          message.error(res?.msg || '接口异常');
-        }
-      });
+          } else {
+            message.error(res?.msg || '接口异常');
+          }
+        });
+      }, 500);
     }
   }, [paramData]);
 
   useEffect(() => {
-    if (nodeList.length && !_.isEmpty(gridContentList)) {
+    if (nodeList.length) {
       setNodeList((prev: any) => prev.map((item: any) => {
         const { value, children } = item;
         return Object.assign({}, item, {
           children: children.map((child: any) => {
-            return Object.assign({}, child, { disabled: !!gridContentList[value] && child.value === gridContentList[value].value[1] });
+            return Object.assign({}, child, {
+              disabled: !_.isEmpty(gridContentList) && !!gridContentList[value] && gridContentList[value]?.type === systemType && child.value === gridContentList[value].value[1]
+            });
           }),
         });
         return item;
@@ -742,7 +730,9 @@ const Home: React.FC<any> = (props: any) => {
                     result = Object.assign({}, gridContentList, {
                       [id]: {
                         value: windowSelect,
-                        size: { i: id, x: 0, y: 0, w: 3, h: 3, minW: 2, maxW: 10, minH: 4, maxH: 32 },
+                        size: { i: id, x: 0, y: 0, w: 3, h: 3, minW: 2, maxW: 12, minH: 2, maxH: 32 },
+                        type: systemType,
+                        tab: activeTab,
                       }
                     });
                   } else {

@@ -15,7 +15,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
         const myChart = echarts.init(dom);
         const option = {
             color: ['rgb(105,250,106)', 'rgb(51,115,245)', 'rgb(7,47,107)', 'rgb(234,200,70)'],
-            backgroundColor: '#d9d9d9',
+            // backgroundColor: '#d9d9d9',
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {

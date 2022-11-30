@@ -10,8 +10,9 @@ export const layoutTransform = {
   5: { i: '5', x: 7, y: 10, w: 2, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
   6: { i: '6', x: 9, y: 10, w: 2, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 }
 };
+
 // @ts-ignore
-export const isWeiChai = window.QUALITY_CCD_CONFIG.type === 'wc';
+export const systemType = window.QUALITY_CCD_CONFIG.type;
 
 export const logColors = {
   warning: 'rgba(245,160,49,1)',

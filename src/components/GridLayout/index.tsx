@@ -29,7 +29,7 @@ const CustomResizeHandle = React.forwardRef((props: any, ref) => {
 });
 
 const GridLayout: React.FC<Props> = (props: any) => {
-    const { dragName = '.custom-drag', edit, list, layout, onChange } = props;
+    const { dragName = '.custom-drag', edit, list = [], layout = [], onChange } = props;
 
     //存储拖拽移动的位置到缓存
     const onLayoutChange = (data: any) => {
@@ -49,7 +49,7 @@ const GridLayout: React.FC<Props> = (props: any) => {
                     // @ts-ignore
                     <ResponsiveGridLayout
                         className="layout"
-                        layouts={{ lg: layout }}
+                        layouts={{ lg: layout.filter(Boolean) }}
                         rowHeight={30}
                         breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                         cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
@@ -65,7 +65,7 @@ const GridLayout: React.FC<Props> = (props: any) => {
                         margin={[8, 8]}
                     >
                         {
-                            list.map((item: any) => {
+                            list.filter(Boolean).map((item: any) => {
                                 return item
                             })
                         }

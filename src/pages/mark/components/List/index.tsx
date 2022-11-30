@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Table } from 'antd';
+import { Button, message, Table } from 'antd';
 import styles from "./index.less";
 import TooltipDiv from "../../../../components/TooltipDiv";
 import BasicTable from "../../../../components/BasicTable";
@@ -14,7 +14,11 @@ const MarkList: React.FC = (props: any) => {
 
   useEffect(() => {
     getAllProject({}).then((res: any) => {
-      setList(res?.data);
+      if (res && res.code === 'SUCCESS') {
+        setList(res?.data);
+      } else {
+        message.error(res?.msg || '接口异常');
+      }
     });
   }, []);
 

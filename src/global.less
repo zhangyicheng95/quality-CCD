@@ -91,6 +91,24 @@ ol {
   }
 }
 
+@media (prefers-color-scheme: light) {
+  //
+}
+
+@media (prefers-color-scheme: dark) {
+  //
+}
+
+.error,
+.NG {
+  background-color: @error-color;
+}
+
+.success,
+.OK {
+  background-color: @success-color;
+}
+
 .ant-form,
 .ant-input,
 .ant-input-number,
@@ -182,6 +200,31 @@ ol {
 
     .ant-modal-title {
       font-size: inherit !important;
+    }
+  }
+}
+
+.ant-tabs {
+  width: 100%;
+  height: 100%;
+  font-size: inherit;
+
+  .ant-tabs-nav {
+    margin: 0;
+    padding: 0 24px;
+
+    .ant-tabs-tab {
+      font-size: inherit;
+    }
+  }
+
+  .ant-tabs-content {
+    width: 100%;
+    height: 100%;
+
+    .ant-tabs-tabpane {
+      width: 100%;
+      height: 100%;
     }
   }
 }
@@ -326,19 +369,30 @@ ol {
 
 .tab-box {
   width: 100%;
-  height: 58px;
+  height: 55px;
   margin-bottom: 8px;
+  background-color: @background-color-base;
+  border-bottom: 1px solid @background-color-base;
 
   .tab-item {
+    height: 100%;
     flex: 1;
-    padding: 16px;
+    padding: 8px;
     text-align: center;
     cursor: pointer;
-    border: 1px solid @border-color-base;
+
+    &:first-child {
+      border-right: 1px solid @background-color-base;
+
+    }
 
     &:hover {
-      background: @item-hover-bg;
+      background: @body-background;
     }
+  }
+
+  .selected {
+    background: @body-background;
   }
 }
 

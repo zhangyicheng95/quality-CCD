@@ -9,6 +9,8 @@ import defaultSettings from '../config/defaultSettings';
 import icon from '@/assets/icon.svg';
 import HomeLayout from '@/components/HomeLayout';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { Provider } from 'react-redux';
+import store from './store';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -88,7 +90,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   return {
     // headerRender: () => null,
     headerHeight: 80,
-    rightContentRender: () => <RightContent />,
+    rightContentRender: () => null,  //<RightContent />,
     disableContentMargin: false,
     waterMarkProps: {
       content: initialState?.currentUser?.name,
@@ -122,7 +124,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       return (
         // @ts-ignore
         <ErrorBoundary>
-          <HomeLayout>{children}</HomeLayout>
+          <Provider store={store}>
+            <HomeLayout>{children}</HomeLayout>
+          </Provider>
           {!props.location?.pathname?.includes('/login') && (
             <SettingDrawer
               disableUrlParams

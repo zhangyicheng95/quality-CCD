@@ -45,7 +45,6 @@
     icon: 'control',
     path: '/control',
     component: './control',
-    access: 'notWeiChai',
   },
   {
     name: 'setting',

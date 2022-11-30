@@ -1,34 +1,33 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import styles from "./index.module.less";
-import { Col, Form, Row, Table } from "antd";
+import { Tabs } from "antd";
 import _ from "lodash";
 import Defect from "./components/Defect";
 import Size from "./components/Size";
 
 const TBJ: React.FC<any> = (props: any) => {
+  const { setActiveTab, ...rest } = props;
 
-  const [tab, setTab] = useState('defect');
   return (
-    <div className={`${styles.tbj} flex-box`}>
-      <div className="tab-box flex-box">
-        <div className="tab-item" style={tab === 'defect' ? { background: '#f5f5f5' } : {}} onClick={() => setTab('defect')}>
-          缺陷检测
-        </div>
-        <div className="tab-item" style={tab === 'size' ? { background: '#f5f5f5' } : {}} onClick={() => setTab('size')} >
-          尺寸测量
-        </div>
-      </div>
-      <div className="tbj-body">
-        {
-          tab === 'defect' ?
-            <Defect />
-            :
-            tab === 'size' ?
-              <Size />
-              :
-              null
-        }
-      </div >
+    <div className={`${styles.tbj}`}>
+      <Tabs
+        defaultActiveKey="1"
+        className="tbj-tabs"
+        onChange={(val) => setActiveTab(val + '')}
+        destroyInactiveTabPane={true}
+        items={[
+          {
+            label: '尺寸测量',
+            key: '1',
+            children: <Size {...rest} />
+          },
+          {
+            label: '缺陷检测',
+            key: '2',
+            children: <Defect {...rest} />
+          },
+        ]}
+      />
     </div>
   );
 };

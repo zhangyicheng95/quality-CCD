@@ -7,7 +7,6 @@ export default function access(initialState: any) {
 
   return {
     canAdmin: true,//currentUser && currentUser.access === 'admin',
-    notWeiChai: type !== 'wc',
     canMark: false,
   };
 }
