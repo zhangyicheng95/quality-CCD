@@ -51,7 +51,7 @@ const HistoryList: React.FC<any> = (props: any) => {
   ];
 
   return (
-    <div className={`${styles.history} page-size`}>
+    <div className={`${styles.history} page-size background-ubv`}>
       <PrimaryTitle title={"工单列表"} />
       <div className="history-content-box">
         <div className="search-box">

@@ -136,6 +136,7 @@ const Defect: React.FC<any> = (props: any) => {
       {
         !_.isEmpty(list) && !_.isEmpty(layout) ?
           <GridLayout
+            margin={[24, 16]}
             edit={edit}
             list={list}
             layout={layout}

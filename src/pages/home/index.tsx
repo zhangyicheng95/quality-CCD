@@ -31,7 +31,7 @@ const Home: React.FC<any> = (props: any) => {
   const socketStateRef = useRef<WebSocket>();
   const [started, setStarted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [infoData, setInfoData] = useState<any>('');
+  const [infoData, setInfoData] = useState<any>(localStorage.getItem("commonInfo") || '');
   const [historyData, setHistoryData] = useState<any>({});
   const [activeTab, setActiveTab] = useState<any>('1');
   const [logData, setLogData] = useState<any>([]);
@@ -47,7 +47,7 @@ const Home: React.FC<any> = (props: any) => {
 
   const gridList: any = [
     <div key={'slider-1'}>
-      <div className="btn-box">
+      <div className="btn-box background-ubv">
         <div className={`common-card-title-box flex-box drag-btn ${started ?
           taskDataConnect ? 'success-message' : 'error-message'
           : ''
@@ -179,7 +179,7 @@ const Home: React.FC<any> = (props: any) => {
       </div>
     </div>,
     <div key={'slider-2'}>
-      <div className="info-box">
+      <div className="info-box background-ubv">
         <div className="common-card-title-box flex-box drag-btn">
           <div className="flex-box common-card-title">
             基本信息
@@ -195,11 +195,15 @@ const Home: React.FC<any> = (props: any) => {
           }} />
         </div>
         <div className="info-box-content">
-          {
-            <TooltipDiv title={infoData} className="info-item">
-              订单号：{infoData}
-            </TooltipDiv>
-          }
+          <div className="info-item">
+            <span>产线信息：</span>{paramData?.commonInfo?.productionInfo}
+          </div>
+          <div className="info-item">
+            <span>工位信息：</span>{paramData?.commonInfo?.stationInfo}
+          </div>
+          <div className="info-item">
+            <span>功能信息：</span>{paramData?.commonInfo?.useInfo}
+          </div>
           {/* {
             Object.entries({ orderId: 'xxxxxxxxx-xxx' }).map((item: any, index: number) => {
               return <TooltipDiv title={item[1]} className="info-item" key={item[0]}>
@@ -211,7 +215,7 @@ const Home: React.FC<any> = (props: any) => {
       </div>
     </div>,
     <div key={'slider-3'}>
-      <div className="info-box message-box">
+      <div className="info-box message-box background-ubv">
         <div className="common-card-title-box flex-box drag-btn success-message">
           <div className="flex-box common-card-title">
             实时信息
@@ -242,7 +246,7 @@ const Home: React.FC<any> = (props: any) => {
     </div>,
     <div key={'content'}>
       <Spin spinning={loading}>
-        <div className="home-content flex-box">
+        <div className="home-content flex-box background-ubv">
           {
             !_.isEmpty(paramData) ?
               type === 'tbj' ?
@@ -285,7 +289,7 @@ const Home: React.FC<any> = (props: any) => {
       </Spin>
     </div>,
     <div key={'footer-1'}>
-      <div className="log-content">
+      <div className="log-content background-ubv">
         <div className="common-card-title-box flex-box drag-btn warning-message">
           <div className="flex-box common-card-title">
             日志信息
@@ -309,7 +313,7 @@ const Home: React.FC<any> = (props: any) => {
       </div>
     </div>,
     <div key={'footer-2'}>
-      <div className="log-content">
+      <div className="log-content background-ubv">
         <div className="common-card-title-box flex-box drag-btn error-message">
           <div className="flex-box common-card-title">
             错误信息

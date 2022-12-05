@@ -8,6 +8,7 @@ import styles from './index.less';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 interface Props {
     dragName?: any;
+    margin?: any;
     list: any;
     layout: any;
     onChange?: any;
@@ -29,7 +30,7 @@ const CustomResizeHandle = React.forwardRef((props: any, ref) => {
 });
 
 const GridLayout: React.FC<Props> = (props: any) => {
-    const { dragName = '.custom-drag', edit, list = [], layout = [], onChange } = props;
+    const { dragName = '.custom-drag', margin = [16, 16], edit, list = [], layout = [], onChange } = props;
 
     //存储拖拽移动的位置到缓存
     const onLayoutChange = (data: any) => {
@@ -62,7 +63,7 @@ const GridLayout: React.FC<Props> = (props: any) => {
                         resizeHandles={['se']}  // 'n', 'e', 's', 'w', 'nw', 'ne', 'se', 'sw'
                         resizeHandle={<CustomResizeHandle />}
                         draggableHandle={dragName}
-                        margin={[8, 8]}
+                        margin={margin}
                     >
                         {
                             list.filter(Boolean).map((item: any) => {

@@ -4,7 +4,7 @@ const Settings: LayoutSettings & {
   pwa?: boolean;
   logo?: string;
 } = {
-  "navTheme": "dark",
+  // "navTheme": "realDark",
   "primaryColor": "#1890ff",
   "layout": "top",
   "contentWidth": "Fluid",

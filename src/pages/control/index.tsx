@@ -83,7 +83,7 @@ const Control: React.FC<any> = (props: any) => {
       });
   };
   return (
-    <div className={`${styles.control} flex-box page-size`}>
+    <div className={`${styles.control} flex-box page-size background-ubv`}>
       <PrimaryTitle title={"参数控制"} />
       <div className="control-body">
         <Form

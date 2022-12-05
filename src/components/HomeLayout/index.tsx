@@ -4,22 +4,14 @@
  * @Date: 2021-12-21 09:38:03
  * @description: answer
  */
-import React, { useEffect, useState, useRef, useMemo } from "react";
-import { Form, Input, message, Modal, notification, Spin } from "antd";
+import React from "react";
+import { notification } from "antd";
 import * as _ from "lodash";
 import styles from "./index.module.less";
-import Header from "./components/Header";
-import Slider from "./components/Slider";
-import Footer from "./components/Footer";
-import { useLocation } from "react-router-dom";
 
 const HomeLayout: React.FC<any> = (props) => {
   const { children } = props;
-  const { pathname } = useLocation();
 
-  const ifShowSlider = useMemo(() => {
-    return ['/setting', '/history', '/control'].includes(pathname);
-  }, [pathname])
 
   return (
     <div className={styles.reportWrap}>

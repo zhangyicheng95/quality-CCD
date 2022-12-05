@@ -133,6 +133,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
               enableDarkTheme
               settings={initialState?.settings}
               onSettingChange={(settings) => {
+                console.log(settings);
                 setInitialState((preInitialState: any) => ({
                   ...preInitialState,
                   settings,

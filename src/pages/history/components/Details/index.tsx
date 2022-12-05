@@ -29,7 +29,7 @@ const HistoryDetail: React.FC<any> = (props: any) => {
   }, [store_path])
 
   return (
-    <div className={`${styles.historyDetail} page-size`}>
+    <div className={`${styles.historyDetail} page-size background-ubv`}>
       <PrimaryTitle title={'历史详情'} />
       <div className="history-detail-box">
         <div className="detail-item flex-box-start">

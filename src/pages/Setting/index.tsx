@@ -24,7 +24,7 @@ const Setting: React.FC<any> = (props) => {
     getParams(localStorage.getItem("ipString") || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
         const { data = {} } = res;
-        const { flowData } = data;
+        const { flowData, commonInfo } = data;
         const { nodes } = flowData;
         let checkedList: any = [];
         const result: any = (nodes || []).map((node: any) => {
@@ -55,7 +55,14 @@ const Setting: React.FC<any> = (props) => {
         setCheckedKeys(checkedList);
         if (!localStorage.getItem("quality_name")) {
           setFieldsValue({ quality_name: data.name });
-        }
+        };
+        if (_.isObject(commonInfo) && !_.isEmpty(commonInfo)) {
+          setFieldsValue({
+            productionInfo: commonInfo['productionInfo'],
+            stationInfo: commonInfo['stationInfo'],
+            useInfo: commonInfo['useInfo'],
+          });
+        };
       } else {
         message.error(res?.msg || '接口异常');
       }
@@ -81,6 +88,7 @@ const Setting: React.FC<any> = (props) => {
   const onFinish = () => {
     validateFields()
       .then((values) => {
+        const { productionInfo, stationInfo, useInfo } = values;
         let nodeList: any = [].concat(paramData?.flowData?.nodes);
         (checkedKeys || []).forEach((key: any) => {
           const id = key.split('@$@');
@@ -103,6 +111,7 @@ const Setting: React.FC<any> = (props) => {
           }
         });
         const result = Object.assign({}, paramData, {
+          commonInfo: { productionInfo, stationInfo, useInfo },
           flowData: Object.assign({}, paramData?.flowData, {
             nodes: nodeList,
           })
@@ -131,7 +140,7 @@ const Setting: React.FC<any> = (props) => {
   }
 
   return (
-    <div className={`${styles.setting} flex-box page-size`}>
+    <div className={`${styles.setting} flex-box page-size background-ubv`}>
       <PrimaryTitle title={"系统配置"} />
       <div className="body">
         <Form
@@ -194,9 +203,29 @@ const Setting: React.FC<any> = (props) => {
             </Button>
           </div>
           <Form.Item
+            name="productionInfo"
+            label="产线信息"
+            rules={[{ required: false, message: "产线信息" }]}
+          >
+            <Input placeholder="" />
+          </Form.Item>
+          <Form.Item
+            name="stationInfo"
+            label="工位信息"
+            rules={[{ required: false, message: "工位信息" }]}
+          >
+            <Input placeholder="" />
+          </Form.Item>
+          <Form.Item
+            name="useInfo"
+            label="功能信息"
+            rules={[{ required: false, message: "功能信息" }]}
+          >
+            <Input placeholder="" />
+          </Form.Item>
+          <Form.Item
             name="params"
             label="参数项管理"
-            initialValue={localStorage.getItem("params") || undefined}
             rules={[{ required: false, message: "参数项管理" }]}
           >
             <Tree

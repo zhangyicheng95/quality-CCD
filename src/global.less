@@ -96,7 +96,9 @@ ol {
 }
 
 @media (prefers-color-scheme: dark) {
-  //
+  .ant-switch-handle::before {
+    background-color: #fff;
+  }
 }
 
 .error,
@@ -309,8 +311,16 @@ ol {
   margin: 24px 0;
   height: calc(100% - 48px);
   padding: 24px;
-  background: @body-background;
   box-shadow: @box-shadow-base;
+}
+
+.background-ubv {
+  background-color: @body-background;
+  // background-color: #273142;
+}
+
+.ant-pro-setting-drawer-handle {
+  // display: none;
 }
 
 .flex-box {

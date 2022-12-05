@@ -3,7 +3,7 @@ import { parseParamsToUrl } from '@/utils/utils';
 export const BASE_IP = localStorage.getItem("ipUrl-history") ?
   `http://${localStorage.getItem("ipUrl-history")}/` : `http://localhost:8888/`;
 
-// 获取所有项目
+// 获取项目列表
 export async function getAllProject(params: any) {
   return fetchGet(`${BASE_IP}projects?${parseParamsToUrl(params)}`);
 }
@@ -13,7 +13,7 @@ export async function getAllHistory(params: any) {
   return fetchGet(`${BASE_IP}history?${parseParamsToUrl(params)}`);
 }
 
-// 根据id获取项目
+// 根据id获取项目详情
 export async function getParams(id: string) {
   return fetchGet(`${BASE_IP}project/${id}`);
 }
@@ -24,7 +24,7 @@ export async function updateParams(params: any) {
   return fetchPut(`${BASE_IP}project/${id}`, { body: data });
 }
 
-// 根据id获取任务状态
+// 根据id获取任务状态（首页轮训执行）
 export async function getFlowStatusService(id: string) {
   return fetchGet(`${BASE_IP}task/${id}`);
 }
@@ -47,9 +47,4 @@ export async function touchFlowService() {
 // 选择文件路径
 export async function selectFilePathService(path: string) {
   return fetchGet(`${BASE_IP}file_browser${path.indexOf('\\') === 0 ? '' : '\\'}${path}`);
-}
-
-// 加载本次磁盘文件
-export async function getFileFromLocalService(path: string) {
-  return fetchGet(`file:/${path}`);
 }
