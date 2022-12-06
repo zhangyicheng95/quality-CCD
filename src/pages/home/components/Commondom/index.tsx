@@ -8,7 +8,7 @@ let timer: string | number | NodeJS.Timeout | null | undefined = null;
 const Common: React.FC<any> = (props: any) => {
   const {
     gridContentList = {}, setGridContentList, paramData, setParamData,
-    setEditWindowData, setAddWindowVisible, edit
+    setEditWindowData, setAddWindowVisible, edit = true
   } = props;
   const [list, setList] = useState([]);
   const [layout, setLayout] = useState([]);

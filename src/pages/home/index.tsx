@@ -31,10 +31,10 @@ const Home: React.FC<any> = (props: any) => {
   const socketStateRef = useRef<WebSocket>();
   const [started, setStarted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [infoData, setInfoData] = useState<any>(localStorage.getItem("commonInfo") || '');
   const [historyData, setHistoryData] = useState<any>({});
   const [activeTab, setActiveTab] = useState<any>('1');
   const [logData, setLogData] = useState<any>([]);
+  const [footerData, setFooterData] = useState<any>([]);
   const [errorData, setErrorData] = useState<Array<any>>([]);
   const [taskDataConnect, setTaskDataConnect] = useState(false);
   const [addWindowVisible, setAddWindowVisible] = useState(false);
@@ -307,7 +307,7 @@ const Home: React.FC<any> = (props: any) => {
         <div
           className="content-item-span"
           dangerouslySetInnerHTML={{
-            __html: logData.map((i: any) => i.data).join(`<br/><br/>`),
+            __html: (logData.slice(logData.length - 50)).map((i: any) => i.data).join(`<br/><br/>`),
           }}
         />
       </div>
@@ -331,7 +331,7 @@ const Home: React.FC<any> = (props: any) => {
         <div className="content-item-span">
           {/* <BasicScrollBar data={errorData}> */}
           {
-            errorData.map((log: any, index: number) => {
+            errorData.slice(errorData.length - 50).map((log: any, index: number) => {
               const { level, node_name, nid, message, time } = log;
               return (
                 <div className="log-item flex-box-start" key={index}>
@@ -465,6 +465,7 @@ const Home: React.FC<any> = (props: any) => {
     socketRef.current = new WebSocket(service);
     socketRef.current.onopen = function () {
       console.log("data ws:open");
+      stateWebSocketInit(`${website.socket}task-state/${ipString}`);
       setTaskDataConnect(true);
       socketRef.current && socketRef.current?.send("PING");
     };
@@ -529,6 +530,27 @@ const Home: React.FC<any> = (props: any) => {
       webSocketInit(service);
     }, 10000);
   };
+  //task-state
+  function stateWebSocketInit(service: string) {
+    //获取节点状态
+    socketStateRef.current = new WebSocket(service);
+    socketStateRef.current.onopen = function () {
+      console.log("state ws:open");
+    };
+    socketStateRef.current.onmessage = function (stateRes) {
+      try {
+        const result = JSON.parse(stateRes.data);
+        setFooterData(result);
+      } catch (err) {
+        // console.log(err);
+      }
+    };
+    socketStateRef.current.onclose = function () {
+      console.log("state ws:close");
+      socketStateRef.current = undefined;
+      // reconnect(service);
+    };
+  }
   // task-error
   let timeErrorConnect = 0;
   function errorWebSocketInit(service: string) {
