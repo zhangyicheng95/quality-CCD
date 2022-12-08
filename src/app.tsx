@@ -1,9 +1,9 @@
 import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
-import { SettingDrawer } from '@ant-design/pro-layout';
+import SettingDrawerWrapper from '@/components/SettingDrawerWrapper';
+// import { SettingDrawer } from '@ant-design/pro-layout';
 import { PageLoading } from '@ant-design/pro-layout';
 import type { RunTimeLayoutConfig } from 'umi';
 import { Link } from 'umi';
-import RightContent from '@/components/RightContent';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import defaultSettings from '../config/defaultSettings';
 import icon from '@/assets/icon.svg';
@@ -25,13 +25,13 @@ export const initialStateConfig = {
 export async function getInitialState(): Promise<{
   type?: any;
   settings?: Partial<LayoutSettings>;
-  currentUser?: API.CurrentUser;
+  currentUser?: any;
   loading?: boolean;
-  routes: Array<string>;
+  routes: any[];
   fetchUserInfo?: () => Promise<any>;
 }> {
   const fetchUserInfo = async () => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       resolve({
         name: '',
         avatar: '',
@@ -51,7 +51,7 @@ export async function getInitialState(): Promise<{
         },
         address: '',
         phone: '',
-      })
+      });
       // try {
       //   const msg = await queryCurrentUser();
       //   return msg.data;
@@ -59,7 +59,7 @@ export async function getInitialState(): Promise<{
 
       //   history.push(loginPath);
       // }
-    })
+    });
   };
   // 如果不是登录页面，执行
   // if (history.location.pathname !== loginPath) {
@@ -77,20 +77,32 @@ export async function getInitialState(): Promise<{
     routes: ['home', 'history', 'control', 'setting'],
     settings: defaultSettings,
   };
-};
+}
 
-const BASE_IP = localStorage.getItem("ipUrl-history") ?
-  `http://${localStorage.getItem("ipUrl-history")}/` : `http://localhost:8888/`;
-const iconDom = <img src={!!localStorage.getItem('quality_icon') ?
-  `${BASE_IP}file_browser${localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'}${localStorage.getItem('quality_icon')}` : icon
-} alt="logo" />
+const BASE_IP = localStorage.getItem('ipUrl-history')
+  ? `http://${localStorage.getItem('ipUrl-history')}/`
+  : `http://localhost:8888/`;
+const iconDom = (
+  <img
+    src={
+      !!localStorage.getItem('quality_icon')
+        ? `${BASE_IP}file_browser${
+            localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'
+          }${localStorage.getItem('quality_icon')}`
+        : icon
+    }
+    alt="logo"
+  />
+);
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
-export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
+export const layout: RunTimeLayoutConfig = (props) => {
+  console.log('layout props', props);
+  const { initialState, setInitialState } = props;
   return {
     // headerRender: () => null,
     headerHeight: 80,
-    rightContentRender: () => null,  //<RightContent />,
+    rightContentRender: () => null, //<RightContent />,
     disableContentMargin: false,
     waterMarkProps: {
       content: initialState?.currentUser?.name,
@@ -105,21 +117,21 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     },
     links: isDev
       ? [
-        <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-          <LinkOutlined />
-          <span>OpenAPI 文档</span>
-        </Link>,
-        <Link to="/~docs" key="docs">
-          <BookOutlined />
-          <span>业务组件文档</span>
-        </Link>,
-      ]
+          <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
+            <LinkOutlined />
+            <span>OpenAPI 文档</span>
+          </Link>,
+          <Link to="/~docs" key="docs">
+            <BookOutlined />
+            <span>业务组件文档</span>
+          </Link>,
+        ]
       : [],
     menuHeaderRender: undefined,
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态
-    childrenRender: (children: any, props: any) => {
+    childrenRender: (children: any, _props: any) => {
       // if (initialState?.loading) return <PageLoading />;
       return (
         // @ts-ignore
@@ -127,25 +139,29 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
           <Provider store={store}>
             <HomeLayout>{children}</HomeLayout>
           </Provider>
-          {!props.location?.pathname?.includes('/login') && (
-            <SettingDrawer
-              disableUrlParams
-              enableDarkTheme
+          {!_props.location?.pathname?.includes('/login') && (
+            <SettingDrawerWrapper
               settings={initialState?.settings}
-              onSettingChange={(settings) => {
-                console.log(settings);
-                setInitialState((preInitialState: any) => ({
-                  ...preInitialState,
-                  settings,
-                }));
-              }}
+              setInitialState={setInitialState}
             />
+            // <SettingDrawer
+            //   disableUrlParams
+            //   enableDarkTheme
+            //   settings={initialState?.settings}
+            //   onSettingChange={(settings) => {
+            //     console.log(settings);
+            //     setInitialState((preInitialState: any) => ({
+            //       ...preInitialState,
+            //       settings,
+            //     }));
+            //   }}
+            // />
           )}
         </ErrorBoundary>
       );
     },
     ...initialState?.settings,
     logo: iconDom,
-    title: localStorage.getItem("quality_name") || 'UBVision',
+    title: localStorage.getItem('quality_name') || 'UBVision',
   };
 };
