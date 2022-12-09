@@ -96,7 +96,7 @@ const Home: React.FC<any> = (props: any) => {
         {
           paramData.id ?
             <Popover placement="right" title={'配置窗口'} trigger="click" content={<Menu items={[
-              { label: `${gridCanEdit ? '锁定' : '解锁'}布局`, key: 'clock', disabled: true, onClick: () => setGridCanEdit(prev => !prev) },
+              { label: `${gridCanEdit ? '锁定' : '解锁'}布局`, key: 'clock', disabled: false, onClick: () => setGridCanEdit(prev => !prev) },
               { label: '添加监控窗口', key: 'add', onClick: () => setAddWindowVisible(true) },
               {
                 label: '显示首页窗口',

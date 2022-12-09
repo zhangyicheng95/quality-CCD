@@ -72,7 +72,7 @@ const Common: React.FC<any> = (props: any) => {
       {
         !_.isEmpty(list) && !_.isEmpty(layout) ?
           <GridLayout
-            edit={edit}
+            edit={true}
             list={list}
             layout={layout}
             onChange={(data: any) => {
