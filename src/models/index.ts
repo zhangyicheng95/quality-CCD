@@ -1,6 +1,8 @@
 export default {
   namespace: 'themeStore',
+
   state: { theme: 'dark' },
+
   effects: {
     *themeAction({ payload }: any, { put }: any) {
       yield put({
@@ -9,6 +11,7 @@ export default {
       });
     },
   },
+
   reducers: {
     set(state: any, { payload }: any) {
       return {
