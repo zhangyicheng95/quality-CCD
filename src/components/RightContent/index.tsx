@@ -1,9 +1,10 @@
 import { Space } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { CompressOutlined, ExpandOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import React from 'react';
 import { useModel, SelectLang } from 'umi';
 import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
+import { exitFullScreen, isFullscreenElement, requestFullScreen } from '@/utils/utils';
 
 export type SiderTheme = 'light' | 'dark';
 
@@ -23,7 +24,7 @@ const GlobalHeaderRight: React.FC = () => {
 
   return (
     <Space className={className}>
-      <HeaderSearch
+      {/* <HeaderSearch
         className={`${styles.action} ${styles.search}`}
         placeholder="站内搜索"
         defaultValue="umi ui"
@@ -57,7 +58,17 @@ const GlobalHeaderRight: React.FC = () => {
       >
         <QuestionCircleOutlined />
       </span>
-      <SelectLang className={styles.action} />
+      <SelectLang className={styles.action} /> */}
+      {
+        isFullscreenElement() ?
+          <CompressOutlined
+            onClick={() => exitFullScreen()}
+          />
+          :
+          <ExpandOutlined
+            onClick={() => requestFullScreen(document.body)}
+          />
+      }
     </Space>
   );
 };

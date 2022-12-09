@@ -121,12 +121,11 @@ const Setting: React.FC<any> = (props) => {
           data: result
         }).then((res: any) => {
           if (res && res.code === 'SUCCESS') {
-            message.success('修改成功')
+            message.success('更新配置成功')
           } else {
             message.error(res?.msg || '接口异常');
           }
         })
-        message.success('更新配置成功');
         localStorage.setItem("quality_icon", values['quality_icon'] || '');
         localStorage.setItem("quality_name", values['quality_name']);
         localStorage.setItem("ipUrl-history", values['ipUrl-history']);
