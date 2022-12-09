@@ -9,8 +9,6 @@ import defaultSettings from '../config/defaultSettings';
 import icon from '@/assets/icon.svg';
 import HomeLayout from '@/components/HomeLayout';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { Provider } from 'react-redux';
-import store from './store';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -86,9 +84,8 @@ const iconDom = (
   <img
     src={
       !!localStorage.getItem('quality_icon')
-        ? `${BASE_IP}file_browser${
-            localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'
-          }${localStorage.getItem('quality_icon')}`
+        ? `${BASE_IP}file_browser${localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'
+        }${localStorage.getItem('quality_icon')}`
         : icon
     }
     alt="logo"
@@ -117,15 +114,15 @@ export const layout: RunTimeLayoutConfig = (props) => {
     },
     links: isDev
       ? [
-          <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-            <LinkOutlined />
-            <span>OpenAPI 文档</span>
-          </Link>,
-          <Link to="/~docs" key="docs">
-            <BookOutlined />
-            <span>业务组件文档</span>
-          </Link>,
-        ]
+        <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
+          <LinkOutlined />
+          <span>OpenAPI 文档</span>
+        </Link>,
+        <Link to="/~docs" key="docs">
+          <BookOutlined />
+          <span>业务组件文档</span>
+        </Link>,
+      ]
       : [],
     menuHeaderRender: undefined,
     // 自定义 403 页面
@@ -136,9 +133,7 @@ export const layout: RunTimeLayoutConfig = (props) => {
       return (
         // @ts-ignore
         <ErrorBoundary>
-          <Provider store={store}>
-            <HomeLayout>{children}</HomeLayout>
-          </Provider>
+          <HomeLayout>{children}</HomeLayout>
           {!_props.location?.pathname?.includes('/login') && (
             <SettingDrawerWrapper
               settings={initialState?.settings}

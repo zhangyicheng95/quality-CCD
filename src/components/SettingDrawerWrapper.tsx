@@ -1,19 +1,20 @@
 import { SettingDrawer } from '@ant-design/pro-layout';
 import { connect } from 'umi';
 
-const SettingDrawerWrapper: React.FC<any> = (props: any) => {
-  console.log('SettingDrawerWrapper props', props);
-  const { settings, setInitialState, dispatch } = props;
+const SettingDrawerWrapper: React.FC = (props: any) => {
+  const { settings, setInitialState, dispatch, themeStore } = props;
+  const { theme } = themeStore;
+  console.log(theme)
   return (
     <SettingDrawer
       disableUrlParams
       enableDarkTheme
       settings={settings}
       onSettingChange={(_settings) => {
-        console.log(_settings);
+        const { navTheme } = _settings;
         dispatch({
-          type: 'index/ef1',
-          payload: 123,
+          type: 'themeStore/themeAction',
+          payload: navTheme,
         });
         setInitialState((preInitialState: any) => ({
           ...preInitialState,
@@ -25,6 +26,6 @@ const SettingDrawerWrapper: React.FC<any> = (props: any) => {
 };
 
 export default connect((state: any) => {
-  console.log('state', state);
+  console.log(state)
   return { ...state };
 })(SettingDrawerWrapper);

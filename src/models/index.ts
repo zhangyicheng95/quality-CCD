@@ -1,16 +1,16 @@
 export default {
-  state: { test: 0 },
+  namespace: 'themeStore',
+  state: { theme: 'dark' },
   effects: {
-    *ef1({ payload }, { put }) {
-      console.log('ef1', payload);
+    *themeAction({ payload }: any, { put }: any) {
       yield put({
         type: 'set',
-        payload: { test: 1 },
+        payload: { theme: payload },
       });
     },
   },
   reducers: {
-    set(state, { payload }) {
+    set(state: any, { payload }: any) {
       return {
         ...state,
         ...payload,

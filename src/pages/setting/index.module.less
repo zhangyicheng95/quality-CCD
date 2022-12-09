@@ -1,0 +1,52 @@
+@import '~antd/es/style/themes/default.less';
+
+.setting {
+  flex-direction: column;
+
+  :global {
+    .title {
+      width: 100%;
+    }
+
+    .body {
+      width: 100%;
+      flex: 1;
+      padding: 0 24px;
+      overflow-y: auto;
+
+      .has-edit-btn {
+        width: 100%;
+        gap: 16px;
+
+        .ant-form-item {
+          flex: 1;
+        }
+
+        .ant-btn {
+          margin-bottom: 24px;
+        }
+      }
+
+      .ant-row {
+        align-items: flex-start;
+      }
+
+      .ant-form-item-label {
+        width: 150px;
+        text-align: left;
+      }
+    }
+
+    .footer {
+      width: 100%;
+      justify-content: center;
+      padding-top: 24px;
+
+      .ant-btn {
+        width: 200px;
+        height: 40px;
+        // line-height: 30px;
+      }
+    }
+  }
+}
