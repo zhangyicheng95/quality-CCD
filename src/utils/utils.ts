@@ -220,7 +220,7 @@ var document: any = window.document;
 export function requestFullScreen(element: any) {
     var requestMethod = element.requestFullscreen || element.webkitRequestFullscreen || element.msRequestFullscreen || element.mozRequestFullScreen;
     if (requestMethod) {
-        requestMethod.appl(element);
+        requestMethod.call(element);
     }
 }
 // 退出/全屏

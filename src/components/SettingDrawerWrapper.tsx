@@ -72,6 +72,5 @@ const SettingDrawerWrapper: React.FC = (props: any) => {
 };
 
 export default connect((state: any) => {
-  console.log(state)
   return { ...state };
 })(SettingDrawerWrapper);

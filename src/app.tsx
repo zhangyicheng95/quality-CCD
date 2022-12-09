@@ -9,6 +9,7 @@ import defaultSettings from '../config/defaultSettings';
 import icon from '@/assets/icon.svg';
 import HomeLayout from '@/components/HomeLayout';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import RightContent from './components/RightContent';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -94,12 +95,11 @@ const iconDom = (
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = (props) => {
-  console.log('layout props', props);
   const { initialState, setInitialState } = props;
   return {
     // headerRender: () => null,
     headerHeight: 80,
-    rightContentRender: () => null, //<RightContent />,
+    rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: {
       content: initialState?.currentUser?.name,

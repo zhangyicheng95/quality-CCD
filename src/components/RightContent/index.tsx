@@ -1,6 +1,6 @@
 import { Space } from 'antd';
 import { CompressOutlined, ExpandOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import React from 'react';
+import React, { Fragment, useMemo } from 'react';
 import { useModel, SelectLang } from 'umi';
 import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
@@ -21,6 +21,10 @@ const GlobalHeaderRight: React.FC = () => {
   if ((navTheme === 'dark' && layout === 'top') || layout === 'mix') {
     className = `${styles.right}  ${styles.dark}`;
   }
+
+  const isIframe = useMemo(() => {
+    return window.location.href.indexOf('iframe') > -1;
+  }, [window.location.href]);
 
   return (
     <Space className={className}>
@@ -57,17 +61,22 @@ const GlobalHeaderRight: React.FC = () => {
         }}
       >
         <QuestionCircleOutlined />
-      </span>
-      <SelectLang className={styles.action} /> */}
+      </span> */}
+      <SelectLang className={styles.action} />
       {
-        isFullscreenElement() ?
-          <CompressOutlined
-            onClick={() => exitFullScreen()}
-          />
-          :
-          <ExpandOutlined
-            onClick={() => requestFullScreen(document.body)}
-          />
+        isIframe ? null :
+          <Fragment>
+            {
+              isFullscreenElement() ?
+                <CompressOutlined
+                  onClick={() => exitFullScreen()}
+                />
+                :
+                <ExpandOutlined
+                  onClick={() => requestFullScreen(document.body)}
+                />
+            }
+          </Fragment>
       }
     </Space>
   );

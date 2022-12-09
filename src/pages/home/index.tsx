@@ -94,7 +94,7 @@ const Home: React.FC<any> = (props: any) => {
           loading={started && loading}
         >停止检测</Button>
         {
-          (paramData.id && !started) ?
+          (paramData.id) ?
             <Popover placement="right" title={'配置窗口'} trigger="click" content={<Menu items={[
               { label: `${gridCanEdit ? '锁定' : '解锁'}布局`, key: 'clock', disabled: false, onClick: () => setGridCanEdit(prev => !prev) },
               { label: '添加监控窗口', key: 'add', onClick: () => setAddWindowVisible(true) },
@@ -142,6 +142,17 @@ const Home: React.FC<any> = (props: any) => {
                       let data = [].concat(prev);
                       data[5] = Object.assign({}, data[5], {
                         w: 3, h: 4, minW: 2, minH: 4,
+                      });
+                      return data;
+                    }),
+                  },
+                  {
+                    label: '显示节点状态信息', key: 'footer-2',
+                    disabled: gridHomeList[6]?.w !== 0,
+                    onClick: () => setGridHomeList((prev: any) => {
+                      let data = [].concat(prev);
+                      data[6] = Object.assign({}, data[6], {
+                        y: 12, w: 12, h: 2, minW: 2, minH: 2,
                       });
                       return data;
                     }),
@@ -363,6 +374,39 @@ const Home: React.FC<any> = (props: any) => {
         </div>
       </div>
     </div>,
+    // <div key={'footer-3'}>
+    //   <div className="log-content background-ubv">
+    //     <div className={`common-card-title-box flex-box drag-btn ${started ? 'success-message' : ''}`}>
+    //       <div className="flex-box common-card-title">
+    //         节点状态信息
+    //       </div>
+    //       <CloseCircleOutlined className="common-card-title-icon" onClick={() => {
+    //         setGridHomeList((prev: any) => {
+    //           let data = [].concat(prev);
+    //           data[6] = Object.assign({}, data[6], {
+    //             w: 0, h: 0, minW: 0, minH: 0
+    //           });
+    //           return data;
+    //         });
+    //       }} />
+    //     </div>
+    //     <div className="flex-box footer-scroll">
+    //       {
+    //         Object.entries(footerData).map((item: any, index: number) => {
+    //           const { Status } = item[1];
+    //           return <div className={`footer-item-box ${Status === 'running' ? 'success' : 'error'}`} key={`footer-3-${index}`}>
+    //             {
+    //               `${!!gridContentList[item[0]] && gridContentList[item[0]]?.nid ||
+    //               item[0] ||
+    //               "未知节点"
+    //               }（${_.toUpper(item[1].Status)}）`
+    //             }
+    //           </div>
+    //         })
+    //       }
+    //     </div>
+    //   </div>
+    // </div >
   ];
 
   const getServiceStatus = () => {
@@ -387,7 +431,7 @@ const Home: React.FC<any> = (props: any) => {
           const { name, alias, id, ports } = node;
           return {
             value: id,
-            label: `${alias || name} - ${id}`,
+            label: `${alias || name}`,
             children: (ports?.items || []).map((port: any) => {
               const { group, label = {} } = port;
               const { name, alias } = label;
@@ -472,14 +516,14 @@ const Home: React.FC<any> = (props: any) => {
     socketRef.current.onmessage = function (res) {
       try {
         const result = JSON.parse(res.data);
-        const { uid = "", orderId = "", data = {} } = result;
+        const { uid = "", orderId = "", data = {}, ...rest } = result;
         if (uid) {
           const newData = (Object.entries(data || {}) || []).reduce(
             (pre: any, cen: any) => {
               return {
                 uid,
                 ...pre,
-                // ...rest,
+                ...rest,
                 [_.toLower(cen[0]?.split("@")[0])]: _.isBoolean(cen[1])
                   ? cen[1]
                     ? "RUNNING"
