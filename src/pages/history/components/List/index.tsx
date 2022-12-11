@@ -1,21 +1,26 @@
-import React, { useEffect, useState } from "react";
-import styles from "./index.module.less";
-import { message, Form, Button, DatePicker } from "antd";
-import _ from "lodash";
-import { guid } from "@/utils/utils";
-import moment from "moment";
-import PrimaryTitle from "@/components/PrimaryTitle";
-import { getAllHistory } from "@/services/api";
-import BasicTable from "@/components/BasicTable";
-import { useHistory } from "react-router";
-import TooltipDiv from "@/components/TooltipDiv";
+import React, { useEffect, useState } from 'react';
+import styles from './index.module.less';
+import { message, Form, Button, DatePicker } from 'antd';
+import _ from 'lodash';
+import { guid } from '@/utils/utils';
+import moment from 'moment';
+import PrimaryTitle from '@/components/PrimaryTitle';
+import { getAllHistory } from '@/services/api';
+import BasicTable from '@/components/BasicTable';
+import { useHistory } from 'react-router';
+import TooltipDiv from '@/components/TooltipDiv';
 
 const RangePicker: any = DatePicker.RangePicker;
 const HistoryList: React.FC<any> = (props: any) => {
   const history = useHistory();
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
-  const [params, setParams] = useState<any>({ pageSize: 20, pageNum: 1, startTime: '', endTime: '' });
+  const [params, setParams] = useState<any>({
+    pageSize: 20,
+    pageNum: 1,
+    startTime: '',
+    endTime: '',
+  });
 
   useEffect(() => {
     getAllHistory(params).then((res: any) => {
@@ -24,26 +29,46 @@ const HistoryList: React.FC<any> = (props: any) => {
       } else {
         message.error(res?.msg || '接口异常');
       }
-    })
+    });
   }, [params]);
   const columns = [
     {
-      key: 'index', dataIndex: 'index', title: '序号', width: 60, align: 'center',
-      render: (text: any, record: any, index: number) => index + 1
+      key: 'index',
+      dataIndex: 'index',
+      title: '序号',
+      width: 60,
+      align: 'center',
+      render: (text: any, record: any, index: number) => index + 1,
     },
     {
-      key: 'orderId', dataIndex: 'orderId', title: '订单号', align: 'center',
-      render: (text: any, record: any,) => <TooltipDiv title={text} placement="top" onClick={() => {
-        history.push({ pathname: `/history/detail`, state: record });
-      }}>{text}</TooltipDiv>
+      key: 'orderId',
+      dataIndex: 'orderId',
+      title: '订单号',
+      align: 'center',
+      render: (text: any, record: any) => (
+        <TooltipDiv
+          title={text}
+          placement="top"
+          onClick={() => {
+            history.push({ pathname: `/history/detail`, state: record });
+          }}
+        >
+          {text}
+        </TooltipDiv>
+      ),
     },
     {
-      key: 'orderTime', dataIndex: 'orderTime', title: '订单时间', align: 'center',
+      key: 'orderTime',
+      dataIndex: 'orderTime',
+      title: '订单时间',
+      align: 'center',
       render: (text: any, record: any, index: number) => {
         const { data = {} } = record;
         const { create_time } = data;
-        return moment(new Date(!!create_time ? Number(create_time) : '')).format('YYYY-MM-DD HH:mm:ss')
-      }
+        return moment(new Date(!!create_time ? Number(create_time) : '')).format(
+          'YYYY-MM-DD HH:mm:ss',
+        );
+      },
     },
     // { key: 'alarmImgCount', dataIndex: 'alarmImgCount', title: '报警图片数量', align: 'center', },
     // { key: 'falsyAlarmImgCount', dataIndex: 'falsyAlarmImgCount', title: '误报图片数量', align: 'center', },
@@ -52,7 +77,7 @@ const HistoryList: React.FC<any> = (props: any) => {
 
   return (
     <div className={`${styles.history} page-size background-ubv`}>
-      <PrimaryTitle title={"工单列表"} />
+      <PrimaryTitle title={'工单列表'} />
       <div className="history-content-box">
         <div className="search-box">
           <Form
@@ -61,10 +86,12 @@ const HistoryList: React.FC<any> = (props: any) => {
             initialValues={{}}
             onFinish={(values) => {
               const { timeRange } = values;
-              setParams((prev: any) => Object.assign({}, prev, {
-                startTime: new Date(timeRange[0]).getTime(),
-                endTime: new Date(timeRange[1]).getTime(),
-              }))
+              setParams((prev: any) =>
+                Object.assign({}, prev, {
+                  startTime: new Date(timeRange[0]).getTime(),
+                  endTime: new Date(timeRange[1]).getTime(),
+                }),
+              );
             }}
           >
             <div className="flex-box">
@@ -85,9 +112,12 @@ const HistoryList: React.FC<any> = (props: any) => {
             onChange={(data: any) => {
               const { current, pageSize } = data;
               console.log(current, pageSize);
-              setParams((prev: any) => Object.assign({}, prev, {
-                pageSize: pageSize, pageNum: current,
-              }))
+              setParams((prev: any) =>
+                Object.assign({}, prev, {
+                  pageSize: pageSize,
+                  pageNum: current,
+                }),
+              );
             }}
           />
         </div>
