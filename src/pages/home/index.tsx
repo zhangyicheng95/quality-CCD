@@ -70,8 +70,9 @@ const Home: React.FC<any> = (props: any) => {
     <div key={'slider-1'}>
       <div className="btn-box background-ubv">
         <div
-          className={`common-card-title-box flex-box drag-btn ${started ? (taskDataConnect ? 'success-message' : 'error-message') : ''
-            }`}
+          className={`common-card-title-box flex-box drag-btn ${
+            started ? (taskDataConnect ? 'success-message' : 'error-message') : ''
+          }`}
         >
           <div className="flex-box common-card-title">
             当前状态：
@@ -125,7 +126,7 @@ const Home: React.FC<any> = (props: any) => {
         >
           停止检测
         </Button>
-        {(paramData.id && !started) ? (
+        {paramData.id && !started ? (
           <Popover
             placement="right"
             title={'配置窗口'}
@@ -370,13 +371,14 @@ const Home: React.FC<any> = (props: any) => {
               <MFD />
             ) : type === 'fc' ? (
               <FC />
-            ) :
+            ) : (
               <Common
                 paramData={paramData}
                 setParamData={setParamData}
                 setEditWindowData={setEditWindowData}
                 setAddWindowVisible={setAddWindowVisible}
               />
+            )
           ) : null}
         </div>
         <div className="drag-btn" />
@@ -557,13 +559,13 @@ const Home: React.FC<any> = (props: any) => {
           !!contentData?.home
             ? contentData?.home
             : [
-              { i: 'slider-1', x: 0, y: 0, w: 2, h: 6, minW: 2, maxW: 4, minH: 4, maxH: 30 },
-              { i: 'slider-2', x: 0, y: 4, w: 2, h: 9, minW: 2, maxW: 4, minH: 4, maxH: 30 },
-              { i: 'slider-3', x: 0, y: 8, w: 2, h: 15, minW: 2, maxW: 4, minH: 4, maxH: 30 },
-              { i: 'content', x: 2, y: 0, w: 10, h: 24, minW: 6, maxW: 12, minH: 4, maxH: 30 },
-              { i: 'footer-1', x: 2, y: 24, w: 7, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 },
-              { i: 'footer-2', x: 9, y: 24, w: 3, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 },
-            ],
+                { i: 'slider-1', x: 0, y: 0, w: 2, h: 6, minW: 2, maxW: 4, minH: 4, maxH: 30 },
+                { i: 'slider-2', x: 0, y: 4, w: 2, h: 9, minW: 2, maxW: 4, minH: 4, maxH: 30 },
+                { i: 'slider-3', x: 0, y: 8, w: 2, h: 15, minW: 2, maxW: 4, minH: 4, maxH: 30 },
+                { i: 'content', x: 2, y: 0, w: 10, h: 24, minW: 6, maxW: 12, minH: 4, maxH: 30 },
+                { i: 'footer-1', x: 2, y: 24, w: 7, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 },
+                { i: 'footer-2', x: 9, y: 24, w: 3, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 },
+              ],
         );
         dispatch({
           type: 'home/set',
@@ -640,7 +642,7 @@ const Home: React.FC<any> = (props: any) => {
   };
   useEffect(() => {
     if (started && ipString && dispatch) {
-      console.log(1)
+      console.log(1);
       // dispatch({ type: 'home/set', payload: {started: true} });
       socketErrorListen.listen(dispatch);
       socketLogListen.listen(dispatch);
@@ -666,26 +668,26 @@ const Home: React.FC<any> = (props: any) => {
             paramData,
             !!paramData.contentData
               ? {
-                contentData: Object.assign(
-                  {},
-                  paramData.contentData,
-                  !!paramData.contentData.content
-                    ? {
-                      content: Object.entries(paramData.contentData.content).reduce(
-                        (pre: any, cen: any) => {
-                          return Object.assign({}, pre, {
-                            [cen[0]]: {
-                              value: cen[1].value,
-                              size: cen[1].size,
+                  contentData: Object.assign(
+                    {},
+                    paramData.contentData,
+                    !!paramData.contentData.content
+                      ? {
+                          content: Object.entries(paramData.contentData.content).reduce(
+                            (pre: any, cen: any) => {
+                              return Object.assign({}, pre, {
+                                [cen[0]]: {
+                                  value: cen[1].value,
+                                  size: cen[1].size,
+                                },
+                              });
                             },
-                          });
-                        },
-                        {},
-                      ),
-                    }
-                    : {},
-                ),
-              }
+                            {},
+                          ),
+                        }
+                      : {},
+                  ),
+                }
               : {},
           ),
         }).then((res: any) => {
@@ -709,8 +711,7 @@ const Home: React.FC<any> = (props: any) => {
               return Object.assign({}, child, {
                 disabled:
                   !_.isEmpty(gridContentList) &&
-                  !!gridContentList[value]
-                  &&
+                  !!gridContentList[value] &&
                   // gridContentList[value]?.type === systemType &&
                   child.value === gridContentList[value].value[1],
               });
@@ -793,6 +794,7 @@ const Home: React.FC<any> = (props: any) => {
                     gridContentList: result,
                   },
                 });
+                dispatch({ type: 'home/snapshot' });
                 setAddWindowVisible(false);
               })
               .catch((err) => {
@@ -818,7 +820,7 @@ const Home: React.FC<any> = (props: any) => {
               <Cascader
                 style={{ width: '100%' }}
                 options={nodeList}
-              // expandTrigger="hover"
+                // expandTrigger="hover"
               />
             </Form.Item>
           </Form>
