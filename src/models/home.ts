@@ -13,10 +13,11 @@ export default {
   namespace: 'home',
 
   state: {
+    started: false, // 服务是否已启动
+    taskDataConnect: false, // 服务已连接
     logStatus: 'failed',
     logData: [],
     dataStatus: 'failed',
-    gridContentList: {},
     historyData: {},
     stateStatus: 'failed',
     footerData: [],
@@ -32,15 +33,23 @@ export default {
   },
 
   effects: {
-    *startLoop(action: any, { call, put }: any) {
+    *startLoop(action: any, { call, put, select }: any) {
       while (true) {
         yield call(delay, 100);
+        yield put({ type: 'takeSnapshot' })
+      }
+    },
+
+    *takeSnapshot(action: any, { put, select }: any) {
+      const started: boolean = yield select((state: any) => state.home.started);
+      if (started) {
         yield put({ type: 'snapshot' });
       }
     },
 
     *logConnect(action: any, { put }: any) {
       const { payload } = action;
+      console.log(payload)
       yield put({ type: 'set', payload });
     },
 
@@ -101,8 +110,8 @@ export default {
             payload.level === 'warning'
               ? logColors.warning
               : payload.level === 'error'
-              ? logColors.error
-              : logColors.critical,
+                ? logColors.error
+                : logColors.critical,
         },
       ];
       yield put({
@@ -115,16 +124,19 @@ export default {
   reducers: {
     set: (state: any, { payload }: any) => ({ ...state, ...payload }),
     update: (state: any, { payload, key }: any) => ({ ...state, [key]: payload }),
-    snapshot: (state: any) => ({
-      ...state,
-      snapshot: {
-        logStr: state.logData.join('<br/>'),
-        historyData: state.historyData,
-        gridContentList: state.gridContentList,
-        footerData: state.footerData,
-        errorData: state.errorData,
-      },
-    }),
+    snapshot: (state: any) => {
+      return {
+        ...state,
+        snapshot: {
+          ...state.snapshot,
+          logStr: state.logData.join('<br/>'),
+          historyData: state.historyData,
+          gridContentList: state.gridContentList,
+          footerData: state.footerData,
+          errorData: state.errorData,
+        },
+      }
+    },
     setGridContentList: (state: any, { payload }: any) => {
       const prev = state.gridContentList;
       const gridContentList = Object.entries(prev).reduce((pre: any, cen: any) => {
@@ -133,8 +145,8 @@ export default {
           pre,
           cen[0] === payload.uid
             ? {
-                [cen[0]]: Object.assign({}, cen[1], payload),
-              }
+              [cen[0]]: Object.assign({}, cen[1], payload),
+            }
             : { [cen[0]]: cen[1] },
         );
       }, {});
@@ -152,15 +164,18 @@ export default {
 
   subscriptions: {
     socket(props: any) {
-      const { dispatch, history } = props;
+      const { dispatch, history, } = props;
       history.listen((ev: any) => {
         const { pathname } = ev;
         if (pathname === '/home') {
-          dispatch({ type: 'startLoop' });
-          socketLogListen(dispatch);
-          socketDataListen(dispatch);
-          socketStateListen(dispatch);
-          socketErrorListen(dispatch);
+          dispatch({ type: 'startLoop' })
+          // dispatch({ type: 'startLoop', payload: true });
+          // socketErrorListen.listen(dispatch);
+          // socketLogListen.listen(dispatch);
+          // socketDataListen.listen(dispatch);
+          // socketStateListen.listen(dispatch);
+        } else {
+          // dispatch({ type: 'startLoop', payload: false });
         }
       });
     },

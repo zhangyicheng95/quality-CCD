@@ -12,10 +12,12 @@ const listen = (action: any) => {
       socket = new WebSocket(path);
       socket.onopen = () => {
         console.log(`${type} ws:open`);
-        // stateWebSocketInit(`${website.socket}task-state/${ipString}`);
-        // setTaskDataConnect(true);
-        // eslint-disable-next-line
-        socket && socket.send('PING');
+        action({
+          type: 'home/set',
+          payload: {
+            taskDataConnect: true,
+          },
+        });
       };
       socket.onmessage = (msg: any) => {
         try {
@@ -34,22 +36,28 @@ const listen = (action: any) => {
                   : cen[1],
               };
             }, {});
-            action({ type: `${type}Message`, payload: newData });
+            action({ type: `home/${type}Message`, payload: newData });
           }
-        } catch (err) {}
+        } catch (err) { }
       };
       socket.onclose = function () {
         console.log(`${type} ws:close`);
+        action({
+          type: 'home/set',
+          payload: {
+            taskDataConnect: false,
+          },
+        });
         socket = undefined;
       };
       socket.onerror = () => reconnect(action);
       action({
-        type: `${type}Connect`,
+        type: `home/${type}Connect`,
         payload: { [`${type}Status`]: 'success' },
       });
     } catch (e) {
       action({
-        type: `${type}Connect`,
+        type: `home/${type}Connect`,
         payload: { [`${type}Status`]: 'failed' },
       });
     }
@@ -64,6 +72,12 @@ function reconnect(action: any) {
   setTimeout(() => {
     listen(action);
   }, 2000);
-}
+};
 
-export default listen;
+const close = (action: any) => {
+  if (socket) {
+    socket.onclose();
+  }
+};
+
+export default { listen, close };

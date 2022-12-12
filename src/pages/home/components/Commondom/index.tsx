@@ -3,83 +3,89 @@ import styles from './index.module.less';
 import { Image, Popconfirm } from 'antd';
 import _ from 'lodash';
 import GridLayout from '@/components/GridLayout';
-let i = 0;
+import { connect } from 'umi';
 
-let timer: string | number | NodeJS.Timeout | null | undefined = null;
 const Common: React.FC<any> = (props: any) => {
-  const {
-    gridContentList = {},
-    setGridContentList,
+  const { dispatch,
+    snapshot,
+    started,
     paramData,
     setParamData,
     setEditWindowData,
-    setAddWindowVisible,
-    edit = true,
-  } = props;
+    setAddWindowVisible, } = props;
+  const { gridContentList } = snapshot;
+
   const [list, setList] = useState([]);
   const [layout, setLayout] = useState([]);
 
   useEffect(() => {
     if (!_.isEmpty(gridContentList)) {
-      timer && clearTimeout(timer);
-      timer = setTimeout(() => {
-        let listData: any = [],
-          layoutData: any = [];
+      let listData: any = [],
+        layoutData: any = [];
 
-        Object.entries(gridContentList)
-          .filter((i: any) => !i[1].type)
-          .forEach((item: any, index: number) => {
-            const key = item[0];
-            if (_.isEmpty(item[1])) {
-              return;
-            }
-            const { size, value } = item[1];
-            listData = listData.concat(
-              <div key={key} className="flex-box drag-item-content-box">
-                <div className="flex-box-center drag-item-btn-box">
-                  <div
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => {
-                      setEditWindowData(item[1]);
-                      setAddWindowVisible(true);
-                    }}
-                  >
-                    编辑
+      Object.entries(gridContentList)
+        .filter((i: any) => !i[1].type)
+        .forEach((item: any, index: number) => {
+          const key = item[0];
+          if (_.isEmpty(item[1])) {
+            return;
+          }
+
+          const { size, value } = item[1];
+          listData = listData.concat(
+            <div key={key} className="flex-box drag-item-content-box">
+              {
+                started ?
+                  null :
+                  <div className="flex-box-center drag-item-btn-box">
+                    <div
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => {
+                        setEditWindowData(item[1]);
+                        setAddWindowVisible(true);
+                      }}
+                    >
+                      编辑
+                    </div>
+                    <Popconfirm
+                      title="确认删除监控窗口吗?"
+                      onConfirm={() => {
+                        const result = _.omit(gridContentList, key);
+                        const params = Object.assign({}, paramData, {
+                          contentData: Object.assign({}, paramData.contentData, { content: result }),
+                        });
+                        dispatch({
+                          type: 'home/set',
+                          payload: {
+                            gridContentList: result,
+                          },
+                        });
+                        setParamData(params);
+                      }}
+                      okText="确认"
+                      cancelText="取消"
+                    >
+                      <div style={{ cursor: 'pointer' }}>删除</div>
+                    </Popconfirm>
                   </div>
-                  <Popconfirm
-                    title="确认删除监控窗口吗?"
-                    onConfirm={() => {
-                      const result = _.omit(gridContentList, key);
-                      const params = Object.assign({}, paramData, {
-                        contentData: Object.assign({}, paramData.contentData, { content: result }),
-                      });
-                      setGridContentList(result);
-                      setParamData(params);
-                    }}
-                    okText="确认"
-                    cancelText="取消"
-                  >
-                    <div style={{ cursor: 'pointer' }}>删除</div>
-                  </Popconfirm>
-                </div>
-                {_.isString(item[1][value[1]]) && item[1][value[1]].indexOf('http') > -1 ? (
-                  <Image
-                    src={item[1][value[1]]}
-                    alt="logo"
-                    style={{ width: '100%', height: 'auto' }}
-                  />
-                ) : null}
-                <div className="custom-drag" />
-              </div>,
-            );
-            layoutData = layoutData.concat(size);
-          });
+              }
+              {_.isString(item[1][value[1]]) && item[1][value[1]].indexOf('http') > -1 ? (
+                <Image
+                  src={item[1][value[1]]}
+                  alt="logo"
+                  style={{ width: '100%', height: 'auto' }}
+                />
+              ) : null}
+              <div className="custom-drag" />
+            </div>,
+          );
+          layoutData = layoutData.concat(size);
+        });
 
-        setList(listData);
-        setLayout(layoutData);
-      }, 100);
+      setList(listData);
+      setLayout(layoutData);
     }
-  }, [gridContentList]);
+  }, [gridContentList, started]);
 
   return (
     <div className={`${styles.common} flex-box`}>
@@ -99,7 +105,12 @@ const Common: React.FC<any> = (props: any) => {
             const params = Object.assign({}, paramData, {
               contentData: Object.assign({}, paramData.contentData, { content: result }),
             });
-            setGridContentList(result);
+            dispatch({
+              type: 'home/set',
+              payload: {
+                gridContentList: result,
+              },
+            });
             setParamData(params);
           }}
         />
@@ -108,4 +119,7 @@ const Common: React.FC<any> = (props: any) => {
   );
 };
 
-export default Common;
+export default connect(({ home }) => ({
+  snapshot: home.snapshot || {},
+  started: home.started || false,
+}))(Common);

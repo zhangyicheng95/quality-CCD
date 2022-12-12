@@ -12,8 +12,9 @@ const listen = (action: any) => {
       socket.onopen = () => console.log(`${type} ws:open`);
       socket.onmessage = (msg: any) => {
         try {
-          action({ type: `${type}Message`, payload: msg.data });
-        } catch (err) {}
+          // console.log(`${type} ws:send`, msg.data);
+          action({ type: `home/${type}Message`, payload: msg.data });
+        } catch (err) { }
       };
       socket.onclose = function () {
         console.log(`${type} ws:close`);
@@ -21,12 +22,12 @@ const listen = (action: any) => {
       };
       socket.onerror = () => reconnect(action);
       action({
-        type: `${type}Connect`,
+        type: `home/${type}Connect`,
         payload: { [`${type}Status`]: 'success' },
       });
     } catch (e) {
       action({
-        type: `${type}Connect`,
+        type: `home/${type}Connect`,
         payload: { [`${type}Status`]: 'failed' },
       });
     }
@@ -43,4 +44,10 @@ function reconnect(action: any) {
   }, 2000);
 }
 
-export default listen;
+const close = (action: any) => {
+  if (socket) {
+    socket.onclose();
+  }
+};
+
+export default { listen, close };

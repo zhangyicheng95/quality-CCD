@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './index.module.less';
 import {
   Spin,
@@ -40,24 +40,25 @@ import {
 import { systemType } from '@/common/constants/globalConstants';
 import { guid } from '@/utils/utils';
 import { connect } from 'umi';
-let i = 0,
-  j = 0,
-  k = 0;
+import socketErrorListen from '@/services/socketError';
+import socketLogListen from '@/services/socketLog';
+import socketDataListen from '@/services/socketData';
+import socketStateListen from '@/services/socketState';
+let i = 0;
 
 let timer: string | number | NodeJS.Timer | null | undefined = null;
 let updateTimer: string | number | NodeJS.Timer | null | undefined = null;
 const Home: React.FC<any> = (props: any) => {
-  const { logStr, historyData, gridContentList, footerData, errorData } = props.snapshot;
-  console.log('home', ++i);
+  const { dispatch, started, taskDataConnect, snapshot } = props;
+  const { logStr, historyData, gridContentList, footerData, errorData } = snapshot;
+  // console.log('home', ++i);
   const [form] = Form.useForm();
   const { validateFields } = form;
   // @ts-ignore
   const { type } = window.QUALITY_CCD_CONFIG;
   const ipString: any = localStorage.getItem('ipString') || '';
-  const [started, setStarted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<any>('1');
-  const [taskDataConnect, setTaskDataConnect] = useState(false);
   const [addWindowVisible, setAddWindowVisible] = useState(false);
   const [editWindowData, setEditWindowData] = useState<any>({});
   const [gridHomeList, setGridHomeList] = useState<any>([]);
@@ -69,9 +70,8 @@ const Home: React.FC<any> = (props: any) => {
     <div key={'slider-1'}>
       <div className="btn-box background-ubv">
         <div
-          className={`common-card-title-box flex-box drag-btn ${
-            started ? (taskDataConnect ? 'success-message' : 'error-message') : ''
-          }`}
+          className={`common-card-title-box flex-box drag-btn ${started ? (taskDataConnect ? 'success-message' : 'error-message') : ''
+            }`}
         >
           <div className="flex-box common-card-title">
             当前状态：
@@ -125,7 +125,7 @@ const Home: React.FC<any> = (props: any) => {
         >
           停止检测
         </Button>
-        {paramData.id ? (
+        {(paramData.id && !started) ? (
           <Popover
             placement="right"
             title={'配置窗口'}
@@ -254,7 +254,7 @@ const Home: React.FC<any> = (props: any) => {
             className="flex-box btn"
             icon={<AndroidOutlined className="btn-icon" />}
             type="link"
-            onClick={() => setInterval(() => touchFlowService(), 1000)}
+            onClick={() => setInterval(() => touchFlowService(), 100)}
             disabled={!started}
             loading={started && loading}
           >
@@ -347,7 +347,14 @@ const Home: React.FC<any> = (props: any) => {
             type === 'tbj' ? (
               <TBJ
                 gridContentList={gridContentList}
-                // setGridContentList={setGridContentList}
+                setGridContentList={(result: any) => {
+                  dispatch({
+                    type: 'home/set',
+                    payload: {
+                      gridContentList: result,
+                    },
+                  });
+                }}
                 paramData={paramData}
                 setParamData={setParamData}
                 setEditWindowData={setEditWindowData}
@@ -363,17 +370,13 @@ const Home: React.FC<any> = (props: any) => {
               <MFD />
             ) : type === 'fc' ? (
               <FC />
-            ) : (
+            ) :
               <Common
-                gridContentList={gridContentList}
-                // setGridContentList={setGridContentList}
                 paramData={paramData}
                 setParamData={setParamData}
                 setEditWindowData={setEditWindowData}
                 setAddWindowVisible={setAddWindowVisible}
-                edit={gridCanEdit}
               />
-            )
           ) : null}
         </div>
         <div className="drag-btn" />
@@ -453,55 +456,64 @@ const Home: React.FC<any> = (props: any) => {
         </div>
       </div>
     </div>,
-    <div key={'footer-3'}>
-      <div className="log-content background-ubv">
-        <div
-          className={`common-card-title-box flex-box drag-btn ${started ? 'success-message' : ''}`}
-        >
-          <div className="flex-box common-card-title">节点状态信息</div>
-          <CloseCircleOutlined
-            className="common-card-title-icon"
-            onClick={() => {
-              setGridHomeList((prev: any) => {
-                let data = [].concat(prev);
-                data[6] = Object.assign({}, data[6], {
-                  w: 0,
-                  h: 0,
-                  minW: 0,
-                  minH: 0,
-                });
-                return data;
-              });
-            }}
-          />
-        </div>
-        <div className="flex-box footer-scroll">
-          {Object.entries(footerData).map((item: any, index: number) => {
-            const { Status } = item[1];
-            return (
-              <div
-                className={`footer-item-box ${Status === 'running' ? 'success' : 'error'}`}
-                key={`footer-3-${index}`}
-              >
-                {`${
-                  (!!gridContentList[item[0]] && gridContentList[item[0]]?.nid) ||
-                  item[0] ||
-                  '未知节点'
-                }（${_.toUpper(item[1].Status)}）`}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>,
+    // <div key={'footer-3'}>
+    //   <div className="log-content background-ubv">
+    //     <div
+    //       className={`common-card-title-box flex-box drag-btn ${started ? 'success-message' : ''}`}
+    //     >
+    //       <div className="flex-box common-card-title">节点状态信息</div>
+    //       <CloseCircleOutlined
+    //         className="common-card-title-icon"
+    //         onClick={() => {
+    //           setGridHomeList((prev: any) => {
+    //             let data = [].concat(prev);
+    //             data[6] = Object.assign({}, data[6], {
+    //               w: 0,
+    //               h: 0,
+    //               minW: 0,
+    //               minH: 0,
+    //             });
+    //             return data;
+    //           });
+    //         }}
+    //       />
+    //     </div>
+    //     <div className="flex-box footer-scroll">
+    //       {Object.entries(footerData).map((item: any, index: number) => {
+    //         const { Status } = item[1];
+    //         return (
+    //           <div
+    //             className={`footer-item-box ${Status === 'running' ? 'success' : 'error'}`}
+    //             key={`footer-3-${index}`}
+    //           >
+    //             {`${(!!gridContentList[item[0]] && gridContentList[item[0]]?.nid) ||
+    //               item[0] ||
+    //               '未知节点'
+    //               }（${_.toUpper(item[1].Status)}）`}
+    //           </div>
+    //         );
+    //       })}
+    //     </div>
+    //   </div>
+    // </div>,
   ];
 
   const getServiceStatus = () => {
     getFlowStatusService(ipString).then((res: any) => {
       if (!!res && _.isObject(res) && !_.isEmpty(res)) {
-        setStarted(true);
+        dispatch({
+          type: 'home/set',
+          payload: {
+            started: true,
+          },
+        });
       } else {
-        setStarted(false);
+        dispatch({
+          type: 'home/set',
+          payload: {
+            started: false,
+          },
+        });
       }
       setLoading(false);
     });
@@ -545,21 +557,20 @@ const Home: React.FC<any> = (props: any) => {
           !!contentData?.home
             ? contentData?.home
             : [
-                { i: 'slider-1', x: 0, y: 0, w: 2, h: 6, minW: 2, maxW: 4, minH: 4, maxH: 30 },
-                { i: 'slider-2', x: 0, y: 4, w: 2, h: 9, minW: 2, maxW: 4, minH: 4, maxH: 30 },
-                { i: 'slider-3', x: 0, y: 8, w: 2, h: 15, minW: 2, maxW: 4, minH: 4, maxH: 30 },
-                { i: 'content', x: 2, y: 0, w: 10, h: 24, minW: 6, maxW: 12, minH: 4, maxH: 30 },
-                { i: 'footer-1', x: 2, y: 24, w: 7, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 },
-                { i: 'footer-2', x: 9, y: 24, w: 3, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 },
-              ],
+              { i: 'slider-1', x: 0, y: 0, w: 2, h: 6, minW: 2, maxW: 4, minH: 4, maxH: 30 },
+              { i: 'slider-2', x: 0, y: 4, w: 2, h: 9, minW: 2, maxW: 4, minH: 4, maxH: 30 },
+              { i: 'slider-3', x: 0, y: 8, w: 2, h: 15, minW: 2, maxW: 4, minH: 4, maxH: 30 },
+              { i: 'content', x: 2, y: 0, w: 10, h: 24, minW: 6, maxW: 12, minH: 4, maxH: 30 },
+              { i: 'footer-1', x: 2, y: 24, w: 7, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 },
+              { i: 'footer-2', x: 9, y: 24, w: 3, h: 6, minW: 2, maxW: 10, minH: 4, maxH: 30 },
+            ],
         );
-        props.dispatch({
+        dispatch({
           type: 'home/set',
           payload: {
-            gridContentList: contentData?.content || {},
+            gridContentList: contentData.content,
           },
         });
-        // setGridContentList(!!contentData?.content ? contentData?.content : {});
       } else {
         message.error(res?.msg || '接口异常');
       }
@@ -583,7 +594,12 @@ const Home: React.FC<any> = (props: any) => {
     startFlowService(ipString || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
         message.success('任务启动成功');
-        setStarted(true);
+        dispatch({
+          type: 'home/set',
+          payload: {
+            started: true,
+          },
+        });
       } else {
         message.error(res?.msg || '接口异常');
       }
@@ -597,7 +613,12 @@ const Home: React.FC<any> = (props: any) => {
     stopFlowService(ipString || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
         message.success('任务停止成功');
-        setStarted(false);
+        dispatch({
+          type: 'home/set',
+          payload: {
+            started: false,
+          },
+        });
       } else {
         message.error(res?.msg || '接口异常');
       }
@@ -608,23 +629,31 @@ const Home: React.FC<any> = (props: any) => {
     });
   };
 
-  // const onclose = () => {
-  //   socketRef.current && socketRef.current.close();
-  //   socketErrorRef.current && socketErrorRef.current.close();
-  //   socketLogRef.current && socketLogRef.current.close();
-  //   socketStateRef.current && socketStateRef.current.close();
-  // };
-  // useEffect(() => {
-  //   if (started && ipString) {
-  //     // errorWebSocketInit(`${website.socket}task-error/${ipString}`);
-  //   } else {
-  //     onclose();
-  //   }
+  const onclose = () => {
+    if (dispatch) {
+      dispatch({ type: 'home/startLoop', payload: false });
+      socketErrorListen.close(dispatch);
+      socketLogListen.close(dispatch);
+      socketDataListen.close(dispatch);
+      socketStateListen.close(dispatch);
+    }
+  };
+  useEffect(() => {
+    if (started && ipString && dispatch) {
+      console.log(1)
+      // dispatch({ type: 'home/set', payload: {started: true} });
+      socketErrorListen.listen(dispatch);
+      socketLogListen.listen(dispatch);
+      socketDataListen.listen(dispatch);
+      socketStateListen.listen(dispatch);
+    } else {
+      onclose();
+    }
 
-  //   return () => {
-  //     onclose();
-  //   };
-  // }, [started]);
+    return () => {
+      // onclose();
+    };
+  }, [started, dispatch]);
 
   useEffect(() => {
     if (!_.isEmpty(paramData) && !!paramData.id) {
@@ -637,26 +666,26 @@ const Home: React.FC<any> = (props: any) => {
             paramData,
             !!paramData.contentData
               ? {
-                  contentData: Object.assign(
-                    {},
-                    paramData.contentData,
-                    !!paramData.contentData.content
-                      ? {
-                          content: Object.entries(paramData.contentData.content).reduce(
-                            (pre: any, cen: any) => {
-                              return Object.assign({}, pre, {
-                                [cen[0]]: {
-                                  value: cen[1].value,
-                                  size: cen[1].size,
-                                },
-                              });
+                contentData: Object.assign(
+                  {},
+                  paramData.contentData,
+                  !!paramData.contentData.content
+                    ? {
+                      content: Object.entries(paramData.contentData.content).reduce(
+                        (pre: any, cen: any) => {
+                          return Object.assign({}, pre, {
+                            [cen[0]]: {
+                              value: cen[1].value,
+                              size: cen[1].size,
                             },
-                            {},
-                          ),
-                        }
-                      : {},
-                  ),
-                }
+                          });
+                        },
+                        {},
+                      ),
+                    }
+                    : {},
+                ),
+              }
               : {},
           ),
         }).then((res: any) => {
@@ -680,8 +709,9 @@ const Home: React.FC<any> = (props: any) => {
               return Object.assign({}, child, {
                 disabled:
                   !_.isEmpty(gridContentList) &&
-                  !!gridContentList[value] &&
-                  gridContentList[value]?.type === systemType &&
+                  !!gridContentList[value]
+                  &&
+                  // gridContentList[value]?.type === systemType &&
                   child.value === gridContentList[value].value[1],
               });
             }),
@@ -757,13 +787,12 @@ const Home: React.FC<any> = (props: any) => {
                 }
                 form.resetFields();
                 setEditWindowData({});
-                props.dispatch({
+                dispatch({
                   type: 'home/set',
                   payload: {
                     gridContentList: result,
                   },
                 });
-                // setGridContentList(result);
                 setAddWindowVisible(false);
               })
               .catch((err) => {
@@ -789,7 +818,7 @@ const Home: React.FC<any> = (props: any) => {
               <Cascader
                 style={{ width: '100%' }}
                 options={nodeList}
-                // expandTrigger="hover"
+              // expandTrigger="hover"
               />
             </Form.Item>
           </Form>
@@ -805,6 +834,8 @@ Home.displayName = 'Home';
 
 export default connect(({ home }) => ({
   snapshot: home.snapshot || {},
+  started: home.started || false,
+  taskDataConnect: home.taskDataConnect || false,
 }))(Home);
 
 // 告警提示框
