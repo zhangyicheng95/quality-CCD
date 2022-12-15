@@ -55,10 +55,11 @@
 
       .info-item {
         padding: 12px;
-        text-align: center;
+        // text-align: center;
 
-        span {
+        div {
           color: @text-color-secondary;
+          margin-bottom: 8px;
         }
       }
     }
@@ -95,15 +96,15 @@
     }
 
     .success-message {
-      border-left-color: @success-color;
+      border-color: @success-color;
     }
 
     .warning-message {
-      border-left-color: @warning-color;
+      border-color: @warning-color;
     }
 
     .error-message {
-      border-left-color: @error-color;
+      border-color: @error-color;
     }
 
     .ant-spin-container {
@@ -115,13 +116,13 @@
         overflow: hidden;
       }
 
-      .drag-btn {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 10px;
-        width: 10px;
-      }
+      // .drag-btn {
+      //   position: absolute;
+      //   top: 0;
+      //   left: 0;
+      //   height: 10px;
+      //   width: 10px;
+      // }
     }
 
     .log-content {
@@ -146,27 +147,24 @@
     }
 
     .drag-item-content-box {
-      justify-content: center;
+      // justify-content: center;
       height: 100%;
       width: 100%;
       position: relative;
 
-      &:hover {
-        .drag-item-btn-box {
-          opacity: 1;
-        }
-      }
+      // &:hover {
+      //   .drag-item-btn-box {
+      //     opacity: 1;
+      //   }
+      // }
 
       .drag-item-btn-box {
         z-index: 99;
         // color: rgba(255, 255, 255, 1);
-        position: absolute;
-        top: 0;
-        right: 8px;
         height: 30px;
         gap: 16px;
         font-size: 14px;
-        opacity: 0;
+        // opacity: 0;
       }
     }
   }

@@ -15,6 +15,8 @@ export default {
   state: {
     started: false, // 服务是否已启动
     taskDataConnect: false, // 服务已连接
+    canvasLock: false,
+    activeTab: '1',
     logStatus: 'failed',
     logData: [],
     dataStatus: 'failed',

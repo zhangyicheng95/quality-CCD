@@ -1,8 +1,10 @@
 
-import React from 'react';
+import { ifCanEdit } from '@/common/constants/globalConstants';
+import React, { useMemo } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+import { connect } from 'umi';
 import styles from './index.less';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -12,7 +14,6 @@ interface Props {
     list: any;
     layout: any;
     onChange?: any;
-    edit?: any;
 }
 const CustomResizeHandle = React.forwardRef((props: any, ref) => {
     const { handleAxis, ...restProps } = props;
@@ -30,8 +31,7 @@ const CustomResizeHandle = React.forwardRef((props: any, ref) => {
 });
 
 const GridLayout: React.FC<Props> = (props: any) => {
-    const { dragName = '.custom-drag', margin = [16, 16], edit, list = [], layout = [], onChange } = props;
-
+    const { dragName = '.custom-drag', margin = [16, 16], list = [], layout = [], onChange } = props;
     //存储拖拽移动的位置到缓存
     const onLayoutChange = (data: any) => {
         const EUlayoutArr: any = [];
@@ -49,13 +49,15 @@ const GridLayout: React.FC<Props> = (props: any) => {
                 {
                     // @ts-ignore
                     <ResponsiveGridLayout
-                        className="layout"
-                        layouts={{ lg: layout.filter(Boolean) }}
+                        className={dragName}
+                        layouts={{
+                            lg: layout.filter(Boolean)
+                        }}
                         rowHeight={30}
                         breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                         cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-                        isResizable={true}
-                        isDraggable={!!edit}
+                        isResizable={ifCanEdit}
+                        isDraggable={ifCanEdit}
                         isBounded={true}
                         allowOverlap={false} // 覆盖
                         autoSize={true}
@@ -77,5 +79,7 @@ const GridLayout: React.FC<Props> = (props: any) => {
     );
 }
 
-export default GridLayout;
+export default connect(({ home }) => ({
+    canvasLock: home.canvasLock || false,
+}))(GridLayout);
 

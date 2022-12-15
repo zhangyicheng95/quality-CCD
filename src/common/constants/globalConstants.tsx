@@ -1,5 +1,6 @@
 
 import _ from 'lodash';
+import { useMemo } from 'react';
 
 export const layoutTransform = {
   0: { i: '0', x: 0, y: 0, w: 5, h: 20, minW: 2, maxW: 10, minH: 4, maxH: 32 },
@@ -13,6 +14,8 @@ export const layoutTransform = {
 
 // @ts-ignore
 export const systemType = window.QUALITY_CCD_CONFIG.type;
+
+export const ifCanEdit = window.location.hash.indexOf('edit') > -1;
 
 export const logColors = {
   warning: 'rgba(245,160,49,1)',

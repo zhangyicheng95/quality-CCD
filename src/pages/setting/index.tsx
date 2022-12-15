@@ -6,9 +6,13 @@ import { getParams, updateParams } from "@/services/api";
 import PrimaryTitle from "@/components/PrimaryTitle";
 import FileManager from "@/components/FileManager";
 import TooltipDiv from "@/components/TooltipDiv";
+import { useHistory } from "umi";
+import { FormOutlined } from "@ant-design/icons";
+import moment from "moment";
 
 const Setting: React.FC<any> = (props) => {
   const [form] = Form.useForm();
+  const history = useHistory();
   const { validateFields, setFieldsValue, getFieldValue } = form;
   const [paramData, setParamData] = useState<any>({});
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
@@ -20,11 +24,51 @@ const Setting: React.FC<any> = (props) => {
     id: false,
   });
 
+  useEffect(() => {
+    const commonData = [
+      {
+        key: '1',
+        content: '完成表格开发',
+        status: '-1',
+        createTime: new Date("2020-11-03 10:00").getTime(),
+        updateTime: new Date("2020-12-23 10:00").getTime()
+      },
+      {
+        key: '2',
+        content: '完成表格开发2',
+        status: '-1',
+        createTime: new Date("2020-12-03 11:00").getTime(),
+        updateTime: new Date("2020-12-23 10:00").getTime()
+      },
+    ];
+    let result = {}
+    commonData.forEach((item: any, index: number) => {
+      const { createTime } = item;
+      const times = moment(createTime).format('YYYY-MM-DD').split('-');
+      times.forEach((time: string, i: number) => {
+        result = Object.assign({}, result, result[times[i]] ? {
+          [times[i]]: {
+            title: times[i],
+            key: `${index}-0`,
+            // children: 
+          }
+        } : {
+          [times[i]]: {
+            title: times[i],
+            key: `${index}-0`,
+            children: []
+          }
+        });
+      });
+    });
+    console.log(result);
+  }, [])
+
   const getData = () => {
     getParams(localStorage.getItem("ipString") || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
         const { data = {} } = res;
-        const { flowData, commonInfo } = data;
+        const { flowData, commonInfo, name } = data;
         const { nodes } = flowData;
         let checkedList: any = [];
         const result: any = (nodes || []).map((node: any) => {
@@ -69,10 +113,6 @@ const Setting: React.FC<any> = (props) => {
     });
   };
   useEffect(() => {
-    if (!localStorage.getItem("quality_name")) {
-      localStorage.setItem("quality_name", 'UBVision');
-      setFieldsValue({ "quality_name": 'UBVision' });
-    }
     if (!localStorage.getItem("ipUrl-history")) {
       localStorage.setItem("ipUrl-history", 'localhost:8866');
       setFieldsValue({ "ipUrl-history": 'localhost:8866' });
@@ -201,6 +241,22 @@ const Setting: React.FC<any> = (props) => {
               {edit.id ? '确认' : '修改'}
             </Button>
           </div>
+          <Form.Item
+            name="canvas"
+            label="配置布局"
+          >
+            <Button
+              // className="flex-box btn"
+              icon={<FormOutlined />}
+              // disabled={started}
+              onClick={() => {
+                history.push({ pathname: `/home/edit` });
+                window.location.reload();
+              }}
+            >
+              前往配置
+            </Button>
+          </Form.Item>
           <Form.Item
             name="productionInfo"
             label="产线信息"

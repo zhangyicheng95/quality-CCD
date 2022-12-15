@@ -4,11 +4,14 @@ import { Image, Popconfirm } from 'antd';
 import _ from 'lodash';
 import GridLayout from '@/components/GridLayout';
 import { connect } from 'umi';
+import TooltipDiv from '@/components/TooltipDiv';
+import { ifCanEdit } from '@/common/constants/globalConstants';
 
 const Common: React.FC<any> = (props: any) => {
   const { dispatch,
     snapshot,
     started,
+    canvasLock,
     paramData,
     setParamData,
     setEditWindowData,
@@ -32,43 +35,48 @@ const Common: React.FC<any> = (props: any) => {
           }
 
           const { size, value } = item[1];
+          const label = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0])[0]?.alias;
           listData = listData.concat(
-            <div key={key} className="flex-box drag-item-content-box">
-              {
-                started ?
-                  null :
-                  <div className="flex-box-center drag-item-btn-box">
-                    <div
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => {
-                        setEditWindowData(item[1]);
-                        setAddWindowVisible(true);
-                      }}
-                    >
-                      编辑
+            <div key={key} className=" drag-item-content-box">
+              <div className="common-card-title-box flex-box custom-drag success-message">
+                <TooltipDiv className="flex-box common-card-title">{`${label} - ${value[1]}`}</TooltipDiv>
+                {
+                  ifCanEdit ?
+                    <div className="flex-box drag-item-btn-box">
+                      <div
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          setEditWindowData(item[1]);
+                          setAddWindowVisible(true);
+                        }}
+                      >
+                        编辑
+                      </div>
+                      <Popconfirm
+                        title="确认删除监控窗口吗?"
+                        onConfirm={() => {
+                          const result = _.omit(gridContentList, key);
+                          const params = Object.assign({}, paramData, {
+                            contentData: Object.assign({}, paramData.contentData, { content: result }),
+                          });
+                          dispatch({
+                            type: 'home/set',
+                            payload: {
+                              gridContentList: result,
+                            },
+                          });
+                          dispatch({ type: 'home/snapshot' });
+                          setParamData(params);
+                        }}
+                        okText="确认"
+                        cancelText="取消"
+                      >
+                        <div style={{ cursor: 'pointer' }}>删除</div>
+                      </Popconfirm>
                     </div>
-                    <Popconfirm
-                      title="确认删除监控窗口吗?"
-                      onConfirm={() => {
-                        const result = _.omit(gridContentList, key);
-                        const params = Object.assign({}, paramData, {
-                          contentData: Object.assign({}, paramData.contentData, { content: result }),
-                        });
-                        dispatch({
-                          type: 'home/set',
-                          payload: {
-                            gridContentList: result,
-                          },
-                        });
-                        setParamData(params);
-                      }}
-                      okText="确认"
-                      cancelText="取消"
-                    >
-                      <div style={{ cursor: 'pointer' }}>删除</div>
-                    </Popconfirm>
-                  </div>
-              }
+                    : null
+                }
+              </div>
               {_.isString(item[1][value[1]]) && item[1][value[1]].indexOf('http') > -1 ? (
                 <Image
                   src={item[1][value[1]]}
@@ -76,7 +84,6 @@ const Common: React.FC<any> = (props: any) => {
                   style={{ width: '100%', height: 'auto' }}
                 />
               ) : null}
-              <div className="custom-drag" />
             </div>,
           );
           layoutData = layoutData.concat(size);
@@ -84,6 +91,8 @@ const Common: React.FC<any> = (props: any) => {
 
       setList(listData);
       setLayout(layoutData);
+    } else {
+      setList([]);
     }
   }, [gridContentList, started]);
 
@@ -91,7 +100,6 @@ const Common: React.FC<any> = (props: any) => {
     <div className={`${styles.common} flex-box`}>
       {!_.isEmpty(list) && !_.isEmpty(layout) ? (
         <GridLayout
-          edit={true}
           list={list}
           layout={layout}
           onChange={(data: any) => {
@@ -111,6 +119,7 @@ const Common: React.FC<any> = (props: any) => {
                 gridContentList: result,
               },
             });
+            dispatch({ type: 'home/snapshot' });
             setParamData(params);
           }}
         />
@@ -122,4 +131,5 @@ const Common: React.FC<any> = (props: any) => {
 export default connect(({ home }) => ({
   snapshot: home.snapshot || {},
   started: home.started || false,
+  canvasLock: home.canvasLock || false,
 }))(Common);

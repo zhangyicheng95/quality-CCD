@@ -5,6 +5,16 @@
     path: '/home',
     // layout: false,
     component: './home',
+    routes: [
+      {
+        path: '/home',
+        redirect: './home/components/Canvas',
+      },
+      {
+        path: '/home/edit',
+        component: './home/components/Canvas',
+      },
+    ],
     access: 'canAdmin',
   },
   {
