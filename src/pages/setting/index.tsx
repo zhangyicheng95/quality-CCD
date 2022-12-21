@@ -24,46 +24,6 @@ const Setting: React.FC<any> = (props) => {
     id: false,
   });
 
-  useEffect(() => {
-    const commonData = [
-      {
-        key: '1',
-        content: '完成表格开发',
-        status: '-1',
-        createTime: new Date("2020-11-03 10:00").getTime(),
-        updateTime: new Date("2020-12-23 10:00").getTime()
-      },
-      {
-        key: '2',
-        content: '完成表格开发2',
-        status: '-1',
-        createTime: new Date("2020-12-03 11:00").getTime(),
-        updateTime: new Date("2020-12-23 10:00").getTime()
-      },
-    ];
-    let result = {}
-    commonData.forEach((item: any, index: number) => {
-      const { createTime } = item;
-      const times = moment(createTime).format('YYYY-MM-DD').split('-');
-      times.forEach((time: string, i: number) => {
-        result = Object.assign({}, result, result[times[i]] ? {
-          [times[i]]: {
-            title: times[i],
-            key: `${index}-0`,
-            // children: 
-          }
-        } : {
-          [times[i]]: {
-            title: times[i],
-            key: `${index}-0`,
-            children: []
-          }
-        });
-      });
-    });
-    console.log(result);
-  }, [])
-
   const getData = () => {
     getParams(localStorage.getItem("ipString") || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
@@ -246,9 +206,8 @@ const Setting: React.FC<any> = (props) => {
             label="配置布局"
           >
             <Button
-              // className="flex-box btn"
               icon={<FormOutlined />}
-              // disabled={started}
+              type="primary"
               onClick={() => {
                 history.push({ pathname: `/home/edit` });
                 window.location.reload();

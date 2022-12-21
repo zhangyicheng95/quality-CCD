@@ -3,7 +3,7 @@ import styles from "./index.module.less";
 import { Col, Form, Popconfirm, Row, Table } from "antd";
 import _ from "lodash";
 import { convertToChinaNum } from "@/utils/utils";
-import PointCharts from "./PointCharts";
+import PointCharts from "../../../Canvas/components/PointCharts";
 import { systemType } from "@/common/constants/globalConstants";
 import GridLayout from "@/components/GridLayout";
 

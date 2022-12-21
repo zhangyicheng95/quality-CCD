@@ -1,13 +1,13 @@
 
 import { ifCanEdit } from '@/common/constants/globalConstants';
 import React, { useMemo } from 'react';
-import { Responsive, WidthProvider } from 'react-grid-layout';
+import RGL, { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { connect } from 'umi';
 import styles from './index.less';
 
-const ResponsiveGridLayout = WidthProvider(Responsive);
+const ResponsiveGridLayout = WidthProvider(RGL);
 interface Props {
     dragName?: any;
     margin?: any;
@@ -50,16 +50,19 @@ const GridLayout: React.FC<Props> = (props: any) => {
                     // @ts-ignore
                     <ResponsiveGridLayout
                         className={dragName}
-                        layouts={{
-                            lg: layout.filter(Boolean)
-                        }}
+                        // layouts={{
+                        //     lg: layout.filter(Boolean)
+                        // }}
                         rowHeight={30}
-                        breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-                        cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                        layout={layout.filter(Boolean)}
+                        cols={12}
+                        // breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                        // cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                         isResizable={ifCanEdit}
                         isDraggable={ifCanEdit}
                         isBounded={true}
-                        allowOverlap={false} // 覆盖
+                        allowOverlap={true} // 覆盖
+                        // preventCollision={true} // 防碰撞
                         autoSize={true}
                         onLayoutChange={onLayoutChange}
                         resizeHandles={['se']}  // 'n', 'e', 's', 'w', 'nw', 'ne', 'se', 'sw'

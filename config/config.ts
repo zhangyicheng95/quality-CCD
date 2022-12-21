@@ -43,6 +43,8 @@ export default defineConfig({
     // 只有设置为 variable， 才能使用 configProvide 动态设置主色调
     // https://ant.design/docs/react/customize-theme-variable-cn
     'root-entry-name': 'variable',
+    "background-color-base": "var(--multi-player-background-color)",
+    "body-background": "var(--multi-player-children-background-color)"
   },
   // esbuild is father build tools
   // https://umijs.org/plugins/plugin-esbuild

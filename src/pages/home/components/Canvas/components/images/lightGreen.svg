@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="8px" height="8px" viewBox="0 0 8 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>矩形</title>
+    <defs>
+        <path d="M0,1.99649336 C0,0.893860523 0.897520781,0 2.00946406,0 L1405.99054,0 C1407.10033,0 1408,0.893523116 1408,1.99649336 L1408,716.003507 C1408,717.106139 1407.10248,718 1405.99054,718 L2.00946406,718 C0.899667702,718 0,717.106477 0,716.003507 L0,1.99649336 Z" id="path-1"></path>
+        <filter x="-7.2%" y="-12.5%" width="114.5%" height="128.4%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="8" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="12" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="24" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.03 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feOffset dx="0" dy="9" in="SourceAlpha" result="shadowOffsetOuter2"></feOffset>
+            <feGaussianBlur stdDeviation="14" in="shadowOffsetOuter2" result="shadowBlurOuter2"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.05 0" type="matrix" in="shadowBlurOuter2" result="shadowMatrixOuter2"></feColorMatrix>
+            <feMorphology radius="4" operator="erode" in="SourceAlpha" result="shadowSpreadOuter3"></feMorphology>
+            <feOffset dx="0" dy="6" in="shadowSpreadOuter3" result="shadowOffsetOuter3"></feOffset>
+            <feGaussianBlur stdDeviation="8" in="shadowOffsetOuter3" result="shadowBlurOuter3"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.08 0" type="matrix" in="shadowBlurOuter3" result="shadowMatrixOuter3"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="shadowMatrixOuter2"></feMergeNode>
+                <feMergeNode in="shadowMatrixOuter3"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="算法实验室/任务管理--单指标预测展示效果" transform="translate(-818.000000, -461.000000)">
+            <g id="编组-4">
+                <rect id="矩形" fill="#000000" opacity="0.25" x="0" y="0" width="1440" height="750"></rect>
+                <g id="Feedback/Modal/Light/Basic" transform="translate(16.000000, 16.000000)">
+                    <g id="bg">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    </g>
+                    <g id="编组-19" transform="translate(24.000000, 120.000000)">
+                        <rect id="矩形" stroke="#E9E9E9" x="0.5" y="0.5" width="1359" height="354" rx="4"></rect>
+                        <g id="编组" transform="translate(433.000000, 319.000000)">
+                            <g id="编组-3">
+                                <g>
+                                    <g>
+                                        <g id="编组-2">
+                                            <g id="图例一" transform="translate(345.000000, 0.000000)">
+                                                <rect id="矩形" fill="#FFFFFF" x="5" y="5" width="10" height="10"></rect>
+                                                <rect id="矩形" fill="#E8F7E0" x="0" y="6" width="8" height="8"></rect>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

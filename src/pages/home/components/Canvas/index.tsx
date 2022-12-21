@@ -1,7 +1,6 @@
-import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import styles from './index.module.less';
 import {
-  Spin,
   Image,
   Button,
   message,
@@ -13,14 +12,10 @@ import {
   Menu,
   Tooltip,
   Popconfirm,
+  Skeleton,
+  Select,
 } from 'antd';
 import _ from 'lodash';
-import TBJ from '../TBJdom';
-import DGH from '../DGHdom';
-import DPJ from '../DPJdom';
-import MFD from '../MFDdom';
-import FC from '../FCdom';
-import Common from '../Commondom';
 import {
   getFlowStatusService,
   getParams,
@@ -32,15 +27,13 @@ import {
 import GridLayout from '@/components/GridLayout';
 import {
   AndroidOutlined,
-  CloseCircleOutlined,
-  FormOutlined,
   LoadingOutlined,
   PauseCircleOutlined,
   PlayCircleOutlined,
   PlusCircleOutlined,
   SafetyOutlined,
 } from '@ant-design/icons';
-import { ifCanEdit, systemType } from '@/common/constants/globalConstants';
+import { ifCanEdit } from '@/common/constants/globalConstants';
 import { guid } from '@/utils/utils';
 import { connect, useHistory } from 'umi';
 import socketErrorListen from '@/services/socketError';
@@ -48,6 +41,11 @@ import socketLogListen from '@/services/socketLog';
 import socketDataListen from '@/services/socketData';
 import socketStateListen from '@/services/socketState';
 import TooltipDiv from '@/components/TooltipDiv';
+import LineCharts from '@/pages/home/components/Canvas/components/LineCharts';
+import PointCharts from '@/pages/home/components/Canvas/components/PointCharts';
+import BarCharts from '@/pages/home/components/Canvas/components/BarCharts';
+import PieCharts from '@/pages/home/components/Canvas/components/PieCharts';
+import TableCharts from '@/pages/home/components/Canvas/components/TableCharts';
 
 let timer: string | number | NodeJS.Timer | null | undefined = null;
 let updateTimer: string | number | NodeJS.Timer | null | undefined = null;
@@ -586,6 +584,49 @@ const Home: React.FC<any> = (props: any) => {
     //   </div>
     // </div>,
   ];
+  // 保存布局状态
+  const saveGridFunc = (data: any) => {
+    let home: any = [],
+      content: any = {};
+    data.forEach((item: any) => {
+      if (['slider-1', 'slider-2', 'slider-3', 'content', 'footer-1', 'footer-2'].includes(item.i)) {
+        home = home.concat({
+          ...item,
+          maxW: 12,
+          minW: 1,
+          maxH: 30,
+          minH: 1,
+        });
+      } else {
+        content = Object.assign({}, content, !!paramData?.contentData?.content[item.i] ? {
+          [item.i]: {
+            ...paramData?.contentData?.content[item.i],
+            size: {
+              ...item,
+              maxW: 12,
+              minW: 1,
+              maxH: 30,
+              minH: 1,
+            }
+          }
+        } : {})
+      }
+    });
+    setGridHomeList(home);
+    dispatch({
+      type: 'home/set',
+      payload: {
+        gridContentList: content,
+      },
+    });
+    dispatch({ type: 'home/snapshot' });
+    if (paramData.id) {
+      const params = Object.assign({}, paramData, {
+        contentData: Object.assign({}, paramData.contentData, { home }, !_.isEmpty(content) ? { content } : {}),
+      });
+      setParamData(params);
+    }
+  };
   // 运行状态
   const getServiceStatus = () => {
     getFlowStatusService(ipString).then((res: any) => {
@@ -680,26 +721,29 @@ const Home: React.FC<any> = (props: any) => {
       timer && clearInterval(timer);
     };
   }, []);
+  // 监控窗口动态添加
   useEffect(() => {
     if (!_.isEmpty(gridContentList) && !_.isEmpty(paramData)) {
       let listData: any = [],
         layoutData: any = [];
-
       Object.entries(gridContentList)
-        .filter((i: any) => !i[1].type)
+        // .filter((i: any) => !i[1].type)
         .forEach((item: any, index: number) => {
           const key = item[0];
           if (_.isEmpty(item[1])) {
             return;
           }
-
-          const { size, value = [] } = item[1];
+          let data: any = [];
+          for (let i = 0; i < 50; i++) {
+            data.push(i);
+          };
+          const { size, value = [], type } = item[1];
           const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
           const label = parent[0]?.alias;
           listData = listData.concat(
-            <div key={key} className=" drag-item-content-box">
+            <div key={key} className=" drag-item-content-box background-ubv">
               <div className="common-card-title-box flex-box drag-btn success-message">
-                <TooltipDiv className="flex-box common-card-title">{`${label} - ${value[1]}`}</TooltipDiv>
+                <TooltipDiv className="flex-box common-card-title">{`${label} - ${value[1] || ''}`}</TooltipDiv>
                 {
                   ifCanEdit ?
                     <div className="flex-box drag-item-btn-box">
@@ -737,13 +781,104 @@ const Home: React.FC<any> = (props: any) => {
                     : null
                 }
               </div>
-              {_.isString(item[1][value[1]]) && item[1][value[1]].indexOf('http') > -1 ? (
-                <Image
-                  src={item[1][value[1]]}
-                  alt="logo"
-                  style={{ width: '100%', height: 'auto' }}
-                />
-              ) : null}
+              <div className="flex-box-center" style={{ height: 'calc(100% - 60px)' }}>
+                {
+                  type === 'line' ?
+                    <LineCharts
+                      id={key}
+                      data={{
+                        upperThreshold: 2.8,
+                        lowerThreshold: 0,
+                        standard: 2,
+                        leftTop: data.map((item: any, index: number) => [index, (index > 20 && index < 30) ? Math.random() * 2 : 1]),
+                        leftBottom: data.map((item: any, index: number) => [index, (index > 20 && index < 30) ? Math.random() * 2 : 0.5]),
+                        rightTop: data.map((item: any, index: number) => [index, (index > 20 && index < 30) ? Math.random() * 2 : 1.3]),
+                        rightBottom: data.map((item: any, index: number) => [index, (index > 20 && index < 30) ? Math.random() * 2 : 1.6]),
+                      }}
+                    />
+                    :
+                    type === 'point' ?
+                      <PointCharts
+                        id={key}
+                        data={{
+                          normal: {
+                            data: [[new Date().getTime(), 10], [new Date().getTime() + 24 * 60 * 60 * 1000, 15]],
+                            upperThreshold: 16,
+                            lowerThreshold: 7,
+                          },
+                          abNormal: {
+                            data: [[new Date().getTime(), 20], [new Date().getTime() + 24 * 60 * 60 * 1000, 30]],
+                            upperThreshold: 32,
+                            lowerThreshold: 19,
+                          },
+                        }}
+                      />
+                      :
+                      type === 'bar' ?
+                        <BarCharts
+                          id={key}
+                          data={{
+                            normal: {
+                              data: [[new Date().getTime(), 10], [new Date().getTime() + 24 * 60 * 60 * 1000, 15]],
+                              upperThreshold: 16,
+                              lowerThreshold: 7,
+                            },
+                            abNormal: {
+                              data: [[new Date().getTime(), 20], [new Date().getTime() + 24 * 60 * 60 * 1000, 30]],
+                              upperThreshold: 32,
+                              lowerThreshold: 19,
+                            },
+                          }}
+                        />
+                        :
+                        type === 'pie' ?
+                          <PieCharts
+                            id={key}
+                            data={{
+                              normal: {
+                                data: [[new Date().getTime(), 10], [new Date().getTime() + 24 * 60 * 60 * 1000, 15]],
+                                upperThreshold: 16,
+                                lowerThreshold: 7,
+                              },
+                              abNormal: {
+                                data: [[new Date().getTime(), 20], [new Date().getTime() + 24 * 60 * 60 * 1000, 30]],
+                                upperThreshold: 32,
+                                lowerThreshold: 19,
+                              },
+                            }}
+                          />
+                          :
+                          type === 'table' ?
+                            <TableCharts
+                              id={key}
+                              data={{
+                                normal: {
+                                  data: [[new Date().getTime(), 10], [new Date().getTime() + 24 * 60 * 60 * 1000, 15]],
+                                  upperThreshold: 16,
+                                  lowerThreshold: 7,
+                                },
+                                abNormal: {
+                                  data: [[new Date().getTime(), 20], [new Date().getTime() + 24 * 60 * 60 * 1000, 30]],
+                                  upperThreshold: 32,
+                                  lowerThreshold: 19,
+                                },
+                              }}
+                            />
+                            :
+                            (
+                              _.isString(item[1][value[1]]) && item[1][value[1]].indexOf('http') > -1 ? (
+                                <Image
+                                  src={item[1][value[1]]}
+                                  alt="logo"
+                                  style={{ width: '100%', height: 'auto' }}
+                                />
+                              ) :
+                                <Skeleton.Image
+                                  active={true}
+                                />
+                            )
+                }
+              </div>
             </div>,
           );
           layoutData = layoutData.concat(size);
@@ -754,7 +889,7 @@ const Home: React.FC<any> = (props: any) => {
     } else {
       setContentList([]);
     }
-  }, [gridContentList, started, paramData]);
+  }, [gridContentList,]);
   // 启动任务
   const start = () => {
     if (!ipString) return;
@@ -823,7 +958,7 @@ const Home: React.FC<any> = (props: any) => {
       // onclose();
     };
   }, [started, dispatch]);
-
+  // 信息变化，走接口更新
   useEffect(() => {
     if (!_.isEmpty(paramData) && !!paramData.id) {
       updateTimer && clearTimeout(updateTimer);
@@ -831,41 +966,9 @@ const Home: React.FC<any> = (props: any) => {
         updateParams({
           id: paramData.id,
           data: paramData,
-          // Object.assign(
-          //   {},
-          //   paramData,
-          //   !!paramData.contentData
-          //     ? {
-          //       contentData: Object.assign(
-          //         {},
-          //         paramData.contentData,
-          //         !!paramData.contentData.content
-          //           ? {
-          //             content: Object.entries(paramData.contentData.content).reduce(
-          //               (pre: any, cen: any) => {
-          //                 return Object.assign({}, pre, {
-          //                   [cen[0]]: {
-          //                     value: cen[1].value,
-          //                     size: {
-          //                       ...cen[1].size,
-          //                       maxW: 12,
-          //                       minW: 1,
-          //                       maxH: 30,
-          //                       minH: 1,
-          //                     },
-          //                   },
-          //                 });
-          //               },
-          //               {},
-          //             ),
-          //           }
-          //           : {},
-          //       ),
-          //     }
-          //     : {},
-          // ),
         }).then((res: any) => {
           if (res && res.code === 'SUCCESS') {
+
           } else {
             message.error(res?.msg || '接口异常');
           }
@@ -873,7 +976,7 @@ const Home: React.FC<any> = (props: any) => {
       }, 500);
     }
   }, [paramData]);
-
+  // 已添加的窗口，可选节点disabled
   useEffect(() => {
     if (nodeList.length) {
       setNodeList((prev: any) =>
@@ -904,48 +1007,10 @@ const Home: React.FC<any> = (props: any) => {
           list={gridList.concat(contentList)}
           layout={gridHomeList.concat(contentLayout)}
           onChange={(data: any) => {
+            if (!ifCanEdit) return;
             updateTimer && clearTimeout(updateTimer);
             updateTimer = setTimeout(() => {
-              let home: any = [],
-                content: any = {};
-              data.forEach((item: any) => {
-                if (['slider-1', 'slider-2', 'slider-3', 'content', 'footer-1', 'footer-2'].includes(item.i)) {
-                  home = home.concat({
-                    ...item,
-                    maxW: 12,
-                    minW: 1,
-                    maxH: 30,
-                    minH: 1,
-                  });
-                } else {
-                  content = Object.assign({}, content, !!paramData?.contentData?.content[item.i] ? {
-                    [item.i]: {
-                      value: paramData?.contentData?.content[item.i]?.value,
-                      size: {
-                        ...item,
-                        maxW: 12,
-                        minW: 1,
-                        maxH: 30,
-                        minH: 1,
-                      }
-                    }
-                  } : {})
-                }
-              });
-              setGridHomeList(home);
-              dispatch({
-                type: 'home/set',
-                payload: {
-                  gridContentList: content,
-                },
-              });
-              dispatch({ type: 'home/snapshot' });
-              if (paramData.id) {
-                const params = Object.assign({}, paramData, {
-                  contentData: Object.assign({}, paramData.contentData, { home }, !_.isEmpty(content) ? { content } : {}),
-                });
-                setParamData(params);
-              }
+              saveGridFunc(data);
             }, 500);
           }}
         />
@@ -967,15 +1032,15 @@ const Home: React.FC<any> = (props: any) => {
                     [cen[0].split('-')[0]]: cen[1],
                   });
                 }, {});
-                const { windowSelect } = values;
+                const { windowSelect, windowSelectType } = values;
                 const id = windowSelect[0];
                 let result = {};
                 if (_.isEmpty(editWindowData)) {
                   result = Object.assign({}, gridContentList, {
                     [id]: {
                       value: windowSelect,
-                      size: { i: id, x: 3, y: 0, w: 3, h: 3, minW: 2, maxW: 12, minH: 2, maxH: 32 },
-                      type: systemType,
+                      size: { i: id, x: 2, y: 0, w: 3, h: 3, minW: 2, maxW: 12, minH: 2, maxH: 32 },
+                      type: windowSelectType,
                       tab: activeTab,
                     },
                   });
@@ -984,6 +1049,8 @@ const Home: React.FC<any> = (props: any) => {
                     [id]: {
                       value: windowSelect,
                       size: Object.assign({}, editWindowData.size, { i: id }),
+                      type: windowSelectType,
+                      tab: activeTab,
                     },
                   });
                 }
@@ -1022,12 +1089,49 @@ const Home: React.FC<any> = (props: any) => {
             <Form.Item
               name={`windowSelect-${guid()}`}
               label="绑定节点"
-              rules={[{ required: false, message: '绑定节点' }]}
+              rules={[{ required: true, message: '绑定节点' }]}
               initialValue={editWindowData.value}
             >
               <Cascader
                 style={{ width: '100%' }}
                 options={nodeList}
+              // expandTrigger="hover"
+              />
+            </Form.Item>
+            <Form.Item
+              name={`windowSelectType-${guid()}`}
+              label="窗口类型"
+              rules={[{ required: true, message: '窗口类型' }]}
+              initialValue={editWindowData.type || 'img'}
+            >
+              <Select
+                style={{ width: '100%' }}
+                options={[
+                  {
+                    value: 'img',
+                    label: '图片窗口',
+                  },
+                  {
+                    value: 'line',
+                    label: '折线趋势图窗口',
+                  },
+                  {
+                    value: 'point',
+                    label: '散点图窗口',
+                  },
+                  {
+                    value: 'bar',
+                    label: '柱状图窗口',
+                  },
+                  {
+                    value: 'pie',
+                    label: '饼状图窗口',
+                  },
+                  {
+                    value: 'table',
+                    label: '图表窗口',
+                  },
+                ]}
               // expandTrigger="hover"
               />
             </Form.Item>

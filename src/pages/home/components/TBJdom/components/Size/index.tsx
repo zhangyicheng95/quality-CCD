@@ -3,7 +3,7 @@ import styles from "./index.module.less";
 import { Table, Image, Popconfirm } from "antd";
 import _ from "lodash";
 import GridLayout from "@/components/GridLayout";
-import LineCharts from "./LineCharts";
+import LineCharts from "../../../Canvas/components/LineCharts";
 import { guid } from "@/utils/utils";
 import { systemType } from "@/common/constants/globalConstants";
 

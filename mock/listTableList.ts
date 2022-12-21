@@ -2237,8 +2237,8 @@ const getParams = (req: Request, res: Response) => {
         "useInfo": "尺寸测量与缺陷检测"
       },
       "contentData": {
-        "home": [{ "i": "slider-1", "x": 0, "y": 0, "w": 2, "h": 8, "minW": 2, "maxW": 4, "minH": 4, "maxH": 30 }, { "i": "slider-2", "x": 0, "y": 4, "w": 2, "h": 9, "minW": 2, "maxW": 4, "minH": 4, "maxH": 30 }, { "i": "slider-3", "x": 0, "y": 15, "w": 2, "h": 5, "minW": 2, "maxW": 4, "minH": 4, "maxH": 30 }, { "i": "content", "x": 2, "y": 0, "w": 10, "h": 18, "minW": 6, "maxW": 12, "minH": 4, "maxH": 30 }, { "i": "footer-1", "x": 2, "y": 24, "w": 7, "h": 4, "minW": 2, "maxW": 10, "minH": 4, "maxH": 30 }, { "i": "footer-2", "x": 9, "y": 24, "w": 3, "h": 4, "minW": 2, "maxW": 10, "minH": 4, "maxH": 30 }],
-        "content": { "45e063e4-8d3e-4e10-a1cd-48be2f78e97a": { "value": ["45e063e4-8d3e-4e10-a1cd-48be2f78e97a", "store_path"], "size": { "i": "45e063e4-8d3e-4e10-a1cd-48be2f78e97a", "x": 0, "y": 0, "w": 3, "h": 3, "minW": 2, "maxW": 10, "minH": 4, "maxH": 32 } } }
+        "home": [{ "i": "slider-1", "x": 0, "y": 0, "w": 2, "h": 8, "minW": 2, "maxW": 4, "minH": 4, "maxH": 30, "autoSize": true }, { "i": "slider-2", "x": 0, "y": 4, "w": 2, "h": 9, "minW": 2, "maxW": 4, "minH": 4, "maxH": 30, "autoSize": true }, { "i": "slider-3", "x": 0, "y": 15, "w": 2, "h": 5, "minW": 2, "maxW": 4, "minH": 4, "maxH": 30, "autoSize": true }, { "i": "content", "x": 2, "y": 0, "w": 10, "h": 18, "minW": 6, "maxW": 12, "minH": 4, "maxH": 30, "autoSize": true }, { "i": "footer-1", "x": 2, "y": 24, "w": 7, "h": 4, "minW": 2, "maxW": 10, "minH": 4, "maxH": 30, "autoSize": true }, { "i": "footer-2", "x": 9, "y": 24, "w": 3, "h": 4, "minW": 2, "maxW": 10, "minH": 4, "maxH": 30, "autoSize": true }],
+        "content": { "45e063e4-8d3e-4e10-a1cd-48be2f78e97a": { "value": ["45e063e4-8d3e-4e10-a1cd-48be2f78e97a", "store_path"], "size": { "i": "45e063e4-8d3e-4e10-a1cd-48be2f78e97a", "x": 2, "y": 0, "w": 10, "h": 6, "minW": 2, "maxW": 10, "minH": 4, "maxH": 32, "autoSize": true } } }
       },
       "environment": {
         "serviceIp": "localhost",

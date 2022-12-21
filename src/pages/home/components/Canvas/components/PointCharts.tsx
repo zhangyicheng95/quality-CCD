@@ -1,7 +1,6 @@
-import React, { useEffect, useContext, useState, useRef, useMemo, useCallback } from 'react';
-import { Tooltip, Form, Modal, Input, message, notification, Switch } from 'antd';
+import React, { useEffect } from 'react';
 import * as echarts from 'echarts';
-import moment from 'moment';
+import options from './commonOptions';
 
 interface Props {
     data: any,
@@ -14,38 +13,8 @@ const PointCharts: React.FC<Props> = (props: any) => {
     useEffect(() => {
         const dom: any = document.getElementById(`echart-${id}`);
         const myChart = echarts.init(dom);
-        const option = {
+        const option = Object.assign({}, options, {
             color: ['rgb(115,171,216)', 'rgb(245,142,94)'],
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    // Use axis to trigger tooltip
-                    type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
-                }
-            },
-            legend: {
-                top: '2%',
-                textStyle: {
-                    color: '#666'
-                    // fontFamily:'serif',
-                },
-            },
-            grid: {
-                left: '3%',
-                right: '4%',
-                bottom: '2%',
-                containLabel: true
-            },
-            xAxis: {
-                splitLine: {
-                    show: false,
-                },
-            },
-            yAxis: {
-                splitLine: {
-                    show: false,
-                },
-            },
             series: [
                 {
                     symbolSize: 15,
@@ -106,7 +75,7 @@ const PointCharts: React.FC<Props> = (props: any) => {
                     type: 'scatter'
                 }
             ]
-        };
+        });
         myChart.setOption(option);
         myChart.resize({
             width: dom.clientWidth,

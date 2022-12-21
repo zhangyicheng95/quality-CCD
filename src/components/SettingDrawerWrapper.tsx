@@ -4,6 +4,19 @@ import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'umi';
 
+const themeList = [
+  {
+    key: '--multi-player-background-color',
+    light: '#fff',
+    dark: '#202735',
+  },
+  {
+    key: '--multi-player-children-background-color',
+    light: 'rgb(235, 234, 234)',
+    dark: '#273142',
+  }
+]
+
 const SettingDrawerWrapper: React.FC = (props: any) => {
   const { settings, setInitialState, dispatch, themeStore } = props;
   const { theme } = themeStore;
@@ -45,6 +58,10 @@ const SettingDrawerWrapper: React.FC = (props: any) => {
           type: 'themeStore/themeAction',
           payload: navTheme,
         });
+        themeList.forEach((theme) => {
+          const { key, light, dark } = theme;
+          document.documentElement.style.setProperty(key, navTheme === 'dark' ? light : dark);
+        })
         setInitialState((preInitialState: any) => ({
           ...preInitialState,
           settings: _settings,

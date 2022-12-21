@@ -5,6 +5,8 @@ import { useModel, SelectLang } from 'umi';
 import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
 import { exitFullScreen, isFullscreenElement, requestFullScreen } from '@/utils/utils';
+import enUS0 from 'antd/es/locale/en_US';
+import lang_enUS0 from "@/locales/en-US";
 
 export type SiderTheme = 'light' | 'dark';
 
@@ -74,7 +76,12 @@ const GlobalHeaderRight: React.FC = () => {
       >
         <QuestionCircleOutlined />
       </span> */}
-      <SelectLang className={styles.action} />
+      <SelectLang
+        className={styles.action}
+        postLocalesData={(list: any) => {
+          return list.filter((i: any) => ["en-US", "zh-CN", "zh-TW"].includes(i.lang)) || [];
+        }}
+      />
       {
         isIframe ? null :
           <Fragment>
