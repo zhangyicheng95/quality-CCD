@@ -786,83 +786,56 @@ const Home: React.FC<any> = (props: any) => {
                   type === 'line' ?
                     <LineCharts
                       id={key}
-                      data={{
-                        upperThreshold: 2.8,
-                        lowerThreshold: 0,
-                        standard: 2,
-                        leftTop: data.map((item: any, index: number) => [index, (index > 20 && index < 30) ? Math.random() * 2 : 1]),
-                        leftBottom: data.map((item: any, index: number) => [index, (index > 20 && index < 30) ? Math.random() * 2 : 0.5]),
-                        rightTop: data.map((item: any, index: number) => [index, (index > 20 && index < 30) ? Math.random() * 2 : 1.3]),
-                        rightBottom: data.map((item: any, index: number) => [index, (index > 20 && index < 30) ? Math.random() * 2 : 1.6]),
-                      }}
+                      data={item[1][value[1]] || [
+                        {
+                          "name": "上限",
+                          "value": 2.2,
+                          "type": "markLine"
+                        },
+                        {
+                          "name": "标准值",
+                          "value": 1.6,
+                          "type": "markLine"
+                        },
+                        {
+                          "name": "下限",
+                          "value": 1.53,
+                          "type": "markLine"
+                        },
+                        {
+                          "name": "data1",
+                          "value": [[0, 1.68], [1, 1.54], [2, 1.89], [3, 1.57], [4, 1.67], [5, 1.89], [6, 1.6], [7, 1.51], [8, 1.55], [9, 1.79], [10, 1.65], [11, 1.6], [12, 1.76], [13, 1.62], [14, 1.76]]
+                        },
+                        {
+                          "name": "data2",
+                          "value": [[0, 1.62], [1, 1.62], [2, 1.53], [3, 1.8], [4, 1.76], [5, 1.83], [6, 1.63], [7, 1.78], [8, 1.85], [9, 1.5], [10, 1.59], [11, 1.7], [12, 1.74], [13, 1.79], [14, 1.69]]
+                        }
+                      ]
+                      }
                     />
                     :
                     type === 'point' ?
                       <PointCharts
                         id={key}
-                        data={{
-                          normal: {
-                            data: [[new Date().getTime(), 10], [new Date().getTime() + 24 * 60 * 60 * 1000, 15]],
-                            upperThreshold: 16,
-                            lowerThreshold: 7,
-                          },
-                          abNormal: {
-                            data: [[new Date().getTime(), 20], [new Date().getTime() + 24 * 60 * 60 * 1000, 30]],
-                            upperThreshold: 32,
-                            lowerThreshold: 19,
-                          },
-                        }}
+                        data={item[1][value[1]]}
                       />
                       :
                       type === 'bar' ?
                         <BarCharts
                           id={key}
-                          data={{
-                            normal: {
-                              data: [[new Date().getTime(), 10], [new Date().getTime() + 24 * 60 * 60 * 1000, 15]],
-                              upperThreshold: 16,
-                              lowerThreshold: 7,
-                            },
-                            abNormal: {
-                              data: [[new Date().getTime(), 20], [new Date().getTime() + 24 * 60 * 60 * 1000, 30]],
-                              upperThreshold: 32,
-                              lowerThreshold: 19,
-                            },
-                          }}
+                          data={item[1][value[1]]}
                         />
                         :
                         type === 'pie' ?
                           <PieCharts
                             id={key}
-                            data={{
-                              normal: {
-                                data: [[new Date().getTime(), 10], [new Date().getTime() + 24 * 60 * 60 * 1000, 15]],
-                                upperThreshold: 16,
-                                lowerThreshold: 7,
-                              },
-                              abNormal: {
-                                data: [[new Date().getTime(), 20], [new Date().getTime() + 24 * 60 * 60 * 1000, 30]],
-                                upperThreshold: 32,
-                                lowerThreshold: 19,
-                              },
-                            }}
+                            data={item[1][value[1]]}
                           />
                           :
                           type === 'table' ?
                             <TableCharts
                               id={key}
-                              data={{
-                                normal: {
-                                  data: [[new Date().getTime(), 10], [new Date().getTime() + 24 * 60 * 60 * 1000, 15]],
-                                  upperThreshold: 16,
-                                  lowerThreshold: 7,
-                                },
-                                abNormal: {
-                                  data: [[new Date().getTime(), 20], [new Date().getTime() + 24 * 60 * 60 * 1000, 30]],
-                                  upperThreshold: 32,
-                                  lowerThreshold: 19,
-                                },
-                              }}
+                              data={item[1][value[1]]}
                             />
                             :
                             (

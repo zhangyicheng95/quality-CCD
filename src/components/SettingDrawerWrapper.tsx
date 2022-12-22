@@ -60,7 +60,7 @@ const SettingDrawerWrapper: React.FC = (props: any) => {
         });
         themeList.forEach((theme) => {
           const { key, light, dark } = theme;
-          document.documentElement.style.setProperty(key, navTheme === 'dark' ? light : dark);
+          document.documentElement.style.setProperty(key, navTheme === 'realDark' ? dark : light);
         })
         setInitialState((preInitialState: any) => ({
           ...preInitialState,

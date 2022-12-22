@@ -3,12 +3,12 @@ const options = {
         trigger: 'axis',
         axisPointer: {
             // Use axis to trigger tooltip
-            type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
+            // type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
         }
     },
     legend: {
         top: '2%',
-        left: '2%',
+        left: '3%',
         itemWidth: 13,
         itemHeight: 3,
         textStyle: {
@@ -18,7 +18,7 @@ const options = {
     },
     grid: {
         left: '3%',
-        right: '10%',
+        right: '50px',
         bottom: '2%',
         containLabel: true
     },
