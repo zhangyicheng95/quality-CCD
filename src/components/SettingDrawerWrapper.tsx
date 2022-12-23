@@ -18,10 +18,9 @@ const themeList = [
 ]
 
 const SettingDrawerWrapper: React.FC = (props: any) => {
-  const { settings, setInitialState, dispatch, themeStore } = props;
-  const { theme } = themeStore;
+  const { settings, setInitialState, dispatch, } = props;
   const [paramData, setParamData] = useState<any>({});
-  // console.log('SettingDrawerWrapper', props)
+
   useEffect(() => {
     if (!localStorage.getItem("ipUrl-history") || !localStorage.getItem("ipString")) return;
     getParams(localStorage.getItem("ipString") || '').then((res: any) => {
@@ -89,5 +88,5 @@ const SettingDrawerWrapper: React.FC = (props: any) => {
 };
 
 export default connect((state: any) => {
-  return { ...state };
+  return {};
 })(SettingDrawerWrapper);

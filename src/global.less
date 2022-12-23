@@ -12,6 +12,20 @@ body,
   filter: invert(80%);
 }
 
+.ant-pro-setting-drawer-handle {
+  position: absolute;
+  top: 0;
+  right: 64px;
+  background-color: transparent;
+  transform: translate(0, -130%);
+  z-index: 999;
+
+  .anticon {
+    font-size: 18px !important;
+    color: inherit !important;
+  }
+}
+
 .ant-layout {
   height: 100vh;
 
@@ -318,10 +332,6 @@ ol {
 .background-ubv {
   background-color: @body-background;
   // background-color: #273142;
-}
-
-.ant-pro-setting-drawer-handle {
-  // display: none;
 }
 
 .flex-box {

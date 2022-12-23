@@ -9,16 +9,17 @@ const options = {
     legend: {
         top: '2%',
         left: '3%',
-        itemWidth: 13,
-        itemHeight: 3,
+        itemWidth: 16,
+        itemHeight: 5,
         textStyle: {
-            color: '#666'
+            color: '#666',
+            fontSize: 16,
             // fontFamily:'serif',
         },
     },
     grid: {
         left: '3%',
-        right: '50px',
+        right: '60px',
         bottom: '2%',
         containLabel: true
     },

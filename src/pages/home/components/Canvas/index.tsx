@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import styles from './index.module.less';
 import {
   Image,
@@ -14,6 +14,7 @@ import {
   Popconfirm,
   Skeleton,
   Select,
+  Input,
 } from 'antd';
 import _ from 'lodash';
 import {
@@ -34,7 +35,6 @@ import {
   SafetyOutlined,
 } from '@ant-design/icons';
 import { ifCanEdit } from '@/common/constants/globalConstants';
-import { guid } from '@/utils/utils';
 import { connect, useHistory } from 'umi';
 import socketErrorListen from '@/services/socketError';
 import socketLogListen from '@/services/socketLog';
@@ -55,7 +55,7 @@ const Home: React.FC<any> = (props: any) => {
   const { logStr, historyData, gridContentList, footerData, errorData } = snapshot;
   // console.log('home', ++i);
   const [form] = Form.useForm();
-  const { validateFields } = form;
+  const { validateFields, setFieldsValue } = form;
   // @ts-ignore
   const { type } = window.QUALITY_CCD_CONFIG;
   const ipString: any = localStorage.getItem('ipString') || '';
@@ -67,6 +67,8 @@ const Home: React.FC<any> = (props: any) => {
   const [contentLayout, setContentLayout] = useState([]);
   const [paramData, setParamData] = useState<any>({});
   const [nodeList, setNodeList] = useState<any>([]);
+  const [windowType, setWindowType] = useState('');
+
   const gridList = [
     <div key={'slider-1'}>
       <div className="btn-box background-ubv">
@@ -107,7 +109,12 @@ const Home: React.FC<any> = (props: any) => {
                 content={
                   <Menu
                     items={[
-                      { label: '添加监控窗口', key: 'add', onClick: () => setAddWindowVisible(true) },
+                      {
+                        label: '添加监控窗口', key: 'add', onClick: () => {
+                          setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined });
+                          setAddWindowVisible(true);
+                        }
+                      },
                       {
                         label: '显示首页窗口',
                         key: 'home-content',
@@ -508,7 +515,7 @@ const Home: React.FC<any> = (props: any) => {
         <div className="content-item-span">
           {/* <BasicScrollBar data={errorData}> */}
           {errorData.map((log: any, index: number) => {
-            const { level, color, node_name, nid, message, time } = log;
+            const { color, node_name, nid, message, time } = log;
             return (
               <div className="log-item flex-box-start" key={index}>
                 <div className="log-item-content">
@@ -737,7 +744,7 @@ const Home: React.FC<any> = (props: any) => {
           for (let i = 0; i < 50; i++) {
             data.push(i);
           };
-          const { size, value = [], type } = item[1];
+          const { size, value = [], type, yName, xName } = item[1];
           const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
           const label = parent[0]?.alias;
           listData = listData.concat(
@@ -748,9 +755,11 @@ const Home: React.FC<any> = (props: any) => {
                   ifCanEdit ?
                     <div className="flex-box drag-item-btn-box">
                       <div
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: 'pointer', 'zIndex': 999 }}
                         onClick={() => {
                           setEditWindowData(item[1]);
+                          setFieldsValue(Object.assign({}, item[1], !item[1]?.yName ? { yName: undefined, xName: undefined } : {}));
+                          setWindowType(item[1]?.type);
                           setAddWindowVisible(true);
                         }}
                       >
@@ -775,7 +784,7 @@ const Home: React.FC<any> = (props: any) => {
                         okText="确认"
                         cancelText="取消"
                       >
-                        <div style={{ cursor: 'pointer' }}>删除</div>
+                        <div style={{ cursor: 'pointer', 'zIndex': 999 }}>删除</div>
                       </Popconfirm>
                     </div>
                     : null
@@ -786,44 +795,28 @@ const Home: React.FC<any> = (props: any) => {
                   type === 'line' ?
                     <LineCharts
                       id={key}
-                      data={item[1][value[1]] || [
-                        {
-                          "name": "上限",
-                          "value": 2.2,
-                          "type": "markLine"
-                        },
-                        {
-                          "name": "标准值",
-                          "value": 1.6,
-                          "type": "markLine"
-                        },
-                        {
-                          "name": "下限",
-                          "value": 1.53,
-                          "type": "markLine"
-                        },
-                        {
-                          "name": "data1",
-                          "value": [[0, 1.68], [1, 1.54], [2, 1.89], [3, 1.57], [4, 1.67], [5, 1.89], [6, 1.6], [7, 1.51], [8, 1.55], [9, 1.79], [10, 1.65], [11, 1.6], [12, 1.76], [13, 1.62], [14, 1.76]]
-                        },
-                        {
-                          "name": "data2",
-                          "value": [[0, 1.62], [1, 1.62], [2, 1.53], [3, 1.8], [4, 1.76], [5, 1.83], [6, 1.63], [7, 1.78], [8, 1.85], [9, 1.5], [10, 1.59], [11, 1.7], [12, 1.74], [13, 1.79], [14, 1.69]]
-                        }
-                      ]
-                      }
+                      data={{
+                        dataValue: item[1][value[1]],
+                        yName, xName,
+                      }}
                     />
                     :
                     type === 'point' ?
                       <PointCharts
                         id={key}
-                        data={item[1][value[1]]}
+                        data={{
+                          dataValue: item[1][value[1]],
+                          yName, xName,
+                        }}
                       />
                       :
                       type === 'bar' ?
                         <BarCharts
                           id={key}
-                          data={item[1][value[1]]}
+                          data={{
+                            dataValue: item[1][value[1]],
+                            yName, xName,
+                          }}
                         />
                         :
                         type === 'pie' ?
@@ -835,7 +828,10 @@ const Home: React.FC<any> = (props: any) => {
                           type === 'table' ?
                             <TableCharts
                               id={key}
-                              data={item[1][value[1]]}
+                              data={{
+                                dataValue: item[1][value[1]],
+                                yName, xName,
+                              }}
                             />
                             :
                             (
@@ -971,16 +967,74 @@ const Home: React.FC<any> = (props: any) => {
       );
     }
   }, [gridContentList]);
+  // 添加监控窗口
+  const addWindow = () => {
+    validateFields()
+      .then((values) => {
+        const { value, type, yName, xName } = values;
+        const id = value[0];
+        let result = {};
+        if (_.isEmpty(editWindowData)) {
+          result = Object.assign({}, gridContentList, {
+            [id]: {
+              value,
+              size: { i: id, x: 2, y: 0, w: 3, h: 3, minW: 2, maxW: 12, minH: 2, maxH: 32 },
+              type,
+              tab: activeTab,
+              yName, xName
+            },
+          });
+        } else {
+          result = Object.assign({}, _.omit(gridContentList, editWindowData.value[0]), {
+            [id]: {
+              value,
+              size: Object.assign({}, editWindowData.size, { i: id }),
+              type,
+              tab: activeTab,
+              yName, xName
+            },
+          });
+        }
+        console.log(result);
+        if (paramData.id) {
+          const params = Object.assign({}, paramData, {
+            contentData: Object.assign({}, paramData.contentData, { content: result }),
+          });
+          setParamData(params);
+        }
+        form.resetFields();
+        setEditWindowData({});
+        dispatch({
+          type: 'home/set',
+          payload: {
+            gridContentList: result,
+          },
+        });
+        dispatch({ type: 'home/snapshot' });
+        onCancel();
+      })
+      .catch((err) => {
+        const { errorFields } = err;
+        _.isArray(errorFields) && message.error(`${errorFields[0]?.errors[0]} 是必填项`);
+      });
+  };
+  // 关闭添加弹框
+  const onCancel = () => {
+    form.resetFields();
+    setEditWindowData({});
+    setWindowType('');
+    setAddWindowVisible(false);
+  };
 
   return (
     <div className={`${styles.home} flex-box`}>
       {!_.isEmpty(gridHomeList) ? (
         <GridLayout
-          dragName={'.drag-btn'}
+          dragName={'.common-card-title'}
           list={gridList.concat(contentList)}
           layout={gridHomeList.concat(contentLayout)}
           onChange={(data: any) => {
-            if (!ifCanEdit) return;
+            // if (!ifCanEdit) return;
             updateTimer && clearTimeout(updateTimer);
             updateTimer = setTimeout(() => {
               saveGridFunc(data);
@@ -997,85 +1051,27 @@ const Home: React.FC<any> = (props: any) => {
           width="50vw"
           open={addWindowVisible}
           // maskClosable={false}
-          onOk={() => {
-            validateFields()
-              .then((values) => {
-                values = Object.entries(values).reduce((pre: any, cen: any) => {
-                  return Object.assign({}, pre, {
-                    [cen[0].split('-')[0]]: cen[1],
-                  });
-                }, {});
-                const { windowSelect, windowSelectType } = values;
-                const id = windowSelect[0];
-                let result = {};
-                if (_.isEmpty(editWindowData)) {
-                  result = Object.assign({}, gridContentList, {
-                    [id]: {
-                      value: windowSelect,
-                      size: { i: id, x: 2, y: 0, w: 3, h: 3, minW: 2, maxW: 12, minH: 2, maxH: 32 },
-                      type: windowSelectType,
-                      tab: activeTab,
-                    },
-                  });
-                } else {
-                  result = Object.assign({}, _.omit(gridContentList, editWindowData.value[0]), {
-                    [id]: {
-                      value: windowSelect,
-                      size: Object.assign({}, editWindowData.size, { i: id }),
-                      type: windowSelectType,
-                      tab: activeTab,
-                    },
-                  });
-                }
-                console.log(result);
-                if (paramData.id) {
-                  const params = Object.assign({}, paramData, {
-                    contentData: Object.assign({}, paramData.contentData, { content: result }),
-                  });
-                  setParamData(params);
-                }
-                form.resetFields();
-                setEditWindowData({});
-                dispatch({
-                  type: 'home/set',
-                  payload: {
-                    gridContentList: result,
-                  },
-                });
-                dispatch({ type: 'home/snapshot' });
-                setAddWindowVisible(false);
-              })
-              .catch((err) => {
-                const { errorFields } = err;
-                _.isArray(errorFields) && message.error(`${errorFields[0]?.errors[0]} 是必填项`);
-              });
-          }}
-          onCancel={() => {
-            form.resetFields();
-            setEditWindowData({});
-            setAddWindowVisible(false);
-          }}
+          onOk={() => addWindow()}
+          onCancel={() => onCancel()}
           getContainer={false}
           destroyOnClose={true}
         >
-          <Form form={form} scrollToFirstError>
+          <Form form={form} scrollToFirstError initialValues={editWindowData}>
             <Form.Item
-              name={`windowSelect-${guid()}`}
+              name={'value'}
               label="绑定节点"
               rules={[{ required: true, message: '绑定节点' }]}
-              initialValue={editWindowData.value}
             >
               <Cascader
                 style={{ width: '100%' }}
                 options={nodeList}
-              // expandTrigger="hover"
               />
             </Form.Item>
             <Form.Item
-              name={`windowSelectType-${guid()}`}
+              name={'type'}
               label="窗口类型"
               rules={[{ required: true, message: '窗口类型' }]}
-              initialValue={editWindowData.type || 'img'}
+              initialValue="img"
             >
               <Select
                 style={{ width: '100%' }}
@@ -1105,9 +1101,31 @@ const Home: React.FC<any> = (props: any) => {
                     label: '图表窗口',
                   },
                 ]}
-              // expandTrigger="hover"
+                onChange={val => {
+                  setWindowType(val);
+                }}
               />
             </Form.Item>
+            {
+              ['point', 'bar', 'line', 'table'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    name={`yName`}
+                    label={windowType === "table" ? "表格key名" : "y 轴名称"}
+                    rules={[{ required: true, message: 'y轴名称' }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+                    name={`xName`}
+                    label={windowType === "table" ? "表格value名" : "x 轴名称"}
+                    rules={[{ required: true, message: 'x轴名称' }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Fragment>
+                : null
+            }
           </Form>
         </Modal>
       ) : null}

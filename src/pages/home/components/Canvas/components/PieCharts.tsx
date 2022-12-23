@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import * as echarts from 'echarts';
-import options from './commonOptions';
+import React, { useEffect } from "react";
+import * as echarts from "echarts";
+import options from "./commonOptions";
 
 interface Props {
     data: any,
@@ -9,28 +9,48 @@ interface Props {
 }
 
 const PieCharts: React.FC<Props> = (props: any) => {
-    const { data = [], id, } = props;
+    const { data = {
+        "OK": 1024,
+        "NG": 389
+    }, id, } = props;
     useEffect(() => {
         const dom: any = document.getElementById(`echart-${id}`);
         const myChart = echarts.init(dom);
         const option = Object.assign({}, options, {
+            legend: Object.assign({}, options.legend, {
+                // orient: "vertical",
+                left: "3%"
+            }),
             xAxis: { show: false },
             yAxis: { show: false },
             series: [
                 {
-                    name: 'Access From',
-                    type: 'pie',
-                    radius: '50%',
-                    data: [
-                        { value: 1048, name: 'OK' },
-                        { value: 735, name: 'NG' },
-                    ],
+                    type: "pie",
+                    radius: "50%",
+                    top: "-30%",
+                    bottom: "-40%",
+                    right: "-50%",
+                    left: "-50%",
+                    label: {
+                        position: "inside",
+                        fontSize: 18
+                    },
+                    data: Object.entries(data).map((item: any) => {
+                        return {
+                            name: item[0],
+                            value: item[1]
+                        }
+                    }),
                     emphasis: {
                         itemStyle: {
                             shadowBlur: 10,
                             shadowOffsetX: 0,
-                            // shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            shadowColor: "rgba(0, 0, 0, 0.5)"
                         }
+                    },
+                    labelLine: {
+                        length: 15,
+                        length2: 10,
                     }
                 }
             ]
@@ -44,7 +64,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
 
     return (
         <div
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: "100%", height: "100%" }}
             id={`echart-${id}`}
         />
     );
