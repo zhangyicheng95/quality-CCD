@@ -34,7 +34,6 @@ import {
   PlusCircleOutlined,
   SafetyOutlined,
 } from '@ant-design/icons';
-import { ifCanEdit } from '@/common/constants/globalConstants';
 import { connect, useHistory } from 'umi';
 import socketErrorListen from '@/services/socketError';
 import socketLogListen from '@/services/socketLog';
@@ -68,6 +67,10 @@ const Home: React.FC<any> = (props: any) => {
   const [paramData, setParamData] = useState<any>({});
   const [nodeList, setNodeList] = useState<any>([]);
   const [windowType, setWindowType] = useState('');
+
+  const ifCanEdit = useMemo(() => {
+    return window.location.hash.indexOf('edit') > -1;
+  }, [window.location.hash]);
 
   const gridList = [
     <div key={'slider-1'}>
@@ -1034,7 +1037,6 @@ const Home: React.FC<any> = (props: any) => {
           list={gridList.concat(contentList)}
           layout={gridHomeList.concat(contentLayout)}
           onChange={(data: any) => {
-            // if (!ifCanEdit) return;
             updateTimer && clearTimeout(updateTimer);
             updateTimer = setTimeout(() => {
               saveGridFunc(data);

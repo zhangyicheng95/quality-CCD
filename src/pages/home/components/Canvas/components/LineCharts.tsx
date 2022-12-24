@@ -118,9 +118,23 @@ const LineCharts: React.FC<Props> = (props: any) => {
         myChart.resize({
             width: dom.clientWidth,
             height: dom.clientHeight,
-        })
-    }, [data]);
+        });
+        window.addEventListener("resize", () => {
+            myChart.resize({
+                width: dom.clientWidth,
+                height: dom.clientHeight,
+            });
+        }, false);
 
+        return () => {
+            window.removeEventListener("resize", () => {
+                myChart.resize({
+                    width: dom.clientWidth,
+                    height: dom.clientHeight,
+                });
+            }, false);
+        }
+    }, [data]);
 
     return (
         <div

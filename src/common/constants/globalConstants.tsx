@@ -15,8 +15,6 @@ export const layoutTransform = {
 // @ts-ignore
 export const systemType = window.QUALITY_CCD_CONFIG.type;
 
-export const ifCanEdit = window.location.hash.indexOf('edit') > -1;
-
 export const logColors = {
   warning: 'rgba(245,160,49,1)',
   WARNING: 'rgba(245,160,49,1)',

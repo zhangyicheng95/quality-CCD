@@ -1,5 +1,5 @@
 import { Space } from 'antd';
-import { CompressOutlined, ExpandOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { CompressOutlined, ExpandOutlined, QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { useModel, SelectLang } from 'umi';
 import HeaderSearch from '../HeaderSearch';
@@ -42,6 +42,7 @@ const GlobalHeaderRight: React.FC = () => {
 
   return (
     <Space className={className}>
+      <SettingOutlined />
       <SelectLang
         className={styles.action}
         postLocalesData={(list: any) => {

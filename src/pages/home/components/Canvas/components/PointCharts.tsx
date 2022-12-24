@@ -61,7 +61,6 @@ const PointCharts: React.FC<Props> = (props: any) => {
         ],
     }, yName, xName } = data;
     useEffect(() => {
-        console.log(data)
         const dom: any = document.getElementById(`echart-${id}`);
         const myChart = echarts.init(dom);
         const option = Object.assign({}, options, {
@@ -90,7 +89,22 @@ const PointCharts: React.FC<Props> = (props: any) => {
         myChart.resize({
             width: dom.clientWidth,
             height: dom.clientHeight,
-        })
+        });
+        window.addEventListener("resize", () => {
+            myChart.resize({
+                width: dom.clientWidth,
+                height: dom.clientHeight,
+            });
+        }, false);
+
+        return () => {
+            window.removeEventListener("resize", () => {
+                myChart.resize({
+                    width: dom.clientWidth,
+                    height: dom.clientHeight,
+                });
+            }, false);
+        }
     }, [data]);
 
     return (

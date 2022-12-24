@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styles from './index.module.less';
 import { Image, Popconfirm } from 'antd';
 import _ from 'lodash';
 import GridLayout from '@/components/GridLayout';
 import { connect } from 'umi';
 import TooltipDiv from '@/components/TooltipDiv';
-import { ifCanEdit } from '@/common/constants/globalConstants';
 
 const Common: React.FC<any> = (props: any) => {
   const { dispatch,
     snapshot,
     started,
-    canvasLock,
     paramData,
     setParamData,
     setEditWindowData,
@@ -20,6 +18,10 @@ const Common: React.FC<any> = (props: any) => {
 
   const [list, setList] = useState([]);
   const [layout, setLayout] = useState([]);
+
+  const ifCanEdit = useMemo(() => {
+    return window.location.hash.indexOf('edit') > -1;
+  }, [window.location.hash]);
 
   useEffect(() => {
     if (!_.isEmpty(gridContentList)) {

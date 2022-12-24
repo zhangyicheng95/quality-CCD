@@ -59,7 +59,22 @@ const PieCharts: React.FC<Props> = (props: any) => {
         myChart.resize({
             width: dom.clientWidth,
             height: dom.clientHeight,
-        })
+        });
+        window.addEventListener("resize", () => {
+            myChart.resize({
+                width: dom.clientWidth,
+                height: dom.clientHeight,
+            });
+        }, false);
+
+        return () => {
+            window.removeEventListener("resize", () => {
+                myChart.resize({
+                    width: dom.clientWidth,
+                    height: dom.clientHeight,
+                });
+            }, false);
+        }
     }, [data]);
 
     return (

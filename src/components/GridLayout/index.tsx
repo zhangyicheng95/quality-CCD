@@ -1,7 +1,6 @@
 
-import { ifCanEdit } from '@/common/constants/globalConstants';
 import React, { useMemo } from 'react';
-import RGL, { Responsive, WidthProvider } from 'react-grid-layout';
+import RGL, { WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { connect } from 'umi';
@@ -32,6 +31,11 @@ const CustomResizeHandle = React.forwardRef((props: any, ref) => {
 
 const GridLayout: React.FC<Props> = (props: any) => {
     const { dragName = '.custom-drag', margin = [16, 16], list = [], layout = [], onChange } = props;
+
+    const ifCanEdit = useMemo(() => {
+        return window.location.hash.indexOf('edit') > -1;
+    }, [window.location.hash]);
+
     //存储拖拽移动的位置到缓存
     const onLayoutChange = (data: any) => {
         const EUlayoutArr: any = [];
