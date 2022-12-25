@@ -9,12 +9,7 @@ interface Props {
 
 const TableCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { dataValue = {
-        "key1": "value1",
-        "key2": "value2",
-        "key3": "value3",
-        "key4": "value4",
-    }, yName, xName } = data;
+    const { dataValue = {}, yName, xName } = data;
     useEffect(() => {
         console.log(data)
     }, [data]);

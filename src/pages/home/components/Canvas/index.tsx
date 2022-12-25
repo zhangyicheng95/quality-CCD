@@ -45,6 +45,7 @@ import PointCharts from '@/pages/home/components/Canvas/components/PointCharts';
 import BarCharts from '@/pages/home/components/Canvas/components/BarCharts';
 import PieCharts from '@/pages/home/components/Canvas/components/PieCharts';
 import TableCharts from '@/pages/home/components/Canvas/components/TableCharts';
+import AlertCharts from '@/pages/home/components/Canvas/components/AlertCharts';
 
 let timer: string | number | NodeJS.Timer | null | undefined = null;
 let updateTimer: string | number | NodeJS.Timer | null | undefined = null;
@@ -605,7 +606,7 @@ const Home: React.FC<any> = (props: any) => {
           maxW: 12,
           minW: 1,
           maxH: 30,
-          minH: 1,
+          minH: 2,
         });
       } else {
         content = Object.assign({}, content, !!paramData?.contentData?.content[item.i] ? {
@@ -616,7 +617,7 @@ const Home: React.FC<any> = (props: any) => {
               maxW: 12,
               minW: 1,
               maxH: 30,
-              minH: 1,
+              minH: 2,
             }
           }
         } : {})
@@ -680,7 +681,7 @@ const Home: React.FC<any> = (props: any) => {
                   const value = alias || name;
                   if (group === 'bottom') {
                     return {
-                      value: value,
+                      value: name,
                       label: value,
                       disabled:
                         !_.isEmpty(contentData) &&
@@ -837,18 +838,24 @@ const Home: React.FC<any> = (props: any) => {
                               }}
                             />
                             :
-                            (
-                              _.isString(item[1][value[1]]) && item[1][value[1]].indexOf('http') > -1 ? (
-                                <Image
-                                  src={item[1][value[1]]}
-                                  alt="logo"
-                                  style={{ width: '100%', height: 'auto' }}
-                                />
-                              ) :
-                                <Skeleton.Image
-                                  active={true}
-                                />
-                            )
+                            type === 'alert' ?
+                              <AlertCharts
+                                id={key}
+                                data={item[1][value[1]]}
+                              />
+                              :
+                              (
+                                _.isString(item[1][value[1]]) && item[1][value[1]].indexOf('http') > -1 ? (
+                                  <Image
+                                    src={item[1][value[1]]}
+                                    alt="logo"
+                                    style={{ width: '100%', height: 'auto' }}
+                                  />
+                                ) :
+                                  <Skeleton.Image
+                                    active={true}
+                                  />
+                              )
                 }
               </div>
             </div>,
@@ -981,7 +988,7 @@ const Home: React.FC<any> = (props: any) => {
           result = Object.assign({}, gridContentList, {
             [id]: {
               value,
-              size: { i: id, x: 2, y: 0, w: 3, h: 3, minW: 2, maxW: 12, minH: 2, maxH: 32 },
+              size: { i: id, x: 2, y: 0, w: 3, h: 3, minW: 2, maxW: 12, minH: 4, maxH: 32 },
               type,
               tab: activeTab,
               yName, xName
@@ -1101,6 +1108,10 @@ const Home: React.FC<any> = (props: any) => {
                   {
                     value: 'table',
                     label: '图表窗口',
+                  },
+                  {
+                    value: 'alert',
+                    label: '状态窗口',
                   },
                 ]}
                 onChange={val => {

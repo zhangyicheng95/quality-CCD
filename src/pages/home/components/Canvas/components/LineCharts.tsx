@@ -1,8 +1,5 @@
 import React, { useEffect } from 'react';
 import * as echarts from 'echarts';
-import blue from "./images/blue.png";
-import green from "./images/green.png";
-import lightGreen from "./images/lightGreen.png";
 import options from './commonOptions';
 
 interface Props {
@@ -13,38 +10,14 @@ interface Props {
 
 const LineCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { dataValue = [
-        {
-            "name": "上限",
-            "value": 2.2,
-            "type": "markLine"
-        },
-        {
-            "name": "标准值",
-            "value": 1.6,
-            "type": "markLine"
-        },
-        {
-            "name": "下限",
-            "value": 1.53,
-            "type": "markLine"
-        },
-        {
-            "name": "data1",
-            "value": [[0, 1.68], [1, 1.54], [2, 1.89], [3, 1.57], [4, 1.67], [5, 1.89], [6, 1.6], [7, 1.51], [8, 1.55], [9, 1.79], [10, 1.65], [11, 1.6], [12, 1.76], [13, 1.62], [14, 1.76]]
-        },
-        {
-            "name": "data2",
-            "value": [[0, 1.62], [1, 1.62], [2, 1.53], [3, 1.8], [4, 1.76], [5, 1.83], [6, 1.63], [7, 1.78], [8, 1.85], [9, 1.5], [10, 1.59], [11, 1.7], [12, 1.74], [13, 1.79], [14, 1.69]]
-        }
-    ], yName, xName } = data;
+    const { dataValue = [], yName, xName } = data;
     useEffect(() => {
         const dom: any = document.getElementById(`echart-${id}`);
         const myChart = echarts.init(dom);
         const option = Object.assign({}, options, {
             legend: Object.assign({}, options.legend, {
                 data: (dataValue || []).map((item: any) => {
-                    const { name, type } = item;
+                    const { name } = item;
                     return name;
                 })
             }),
