@@ -16,7 +16,6 @@ const AlertCharts: React.FC<Props> = (props: any) => {
     useEffect(() => {
         if (!!dom) {
             const minSize = Math.min(dom.clientWidth, dom.clientHeight);
-            console.log(minSize);
             setFontSize(`${minSize / 2}px`);
         }
     }, [dom?.clientHeight, dom?.clientWidth]);

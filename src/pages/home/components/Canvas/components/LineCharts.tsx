@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import * as echarts from 'echarts';
 import options from './commonOptions';
+import _ from 'lodash';
 
 interface Props {
     data: any,
@@ -10,10 +11,55 @@ interface Props {
 
 const LineCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { dataValue = [], yName, xName } = data;
+    const { dataValue = [
+        {
+            "name": "上限",
+            "value": 2.2,
+            "type": "markLine"
+        },
+        {
+            "name": "标准值",
+            "value": 1.6,
+            "type": "markLine"
+        },
+        {
+            "name": "下限",
+            "value": 1.53,
+            "type": "markLine"
+        },
+        {
+            "name": "data1",
+            "value": [[1, 1.54], [2, 1.89], [3, 1.57], [4, 1.67], [5, 1.89], [6, 1.6], [7, 1.51], [8, 1.55], [9, 1.79], [10, 1.65], [11, 1.6], [12, 1.76], [13, 1.62], [14, 1.76]]
+        },
+        {
+            "name": "data2",
+            "value": [[1, 1.62], [2, 1.53], [3, 1.8], [4, 1.76], [5, 1.83], [6, 1.63], [7, 1.78], [8, 1.85], [9, 1.5], [10, 1.59], [11, 1.7], [12, 1.74], [13, 1.79], [14, 1.69]]
+        }
+    ], yName, xName } = data;
     useEffect(() => {
         const dom: any = document.getElementById(`echart-${id}`);
         const myChart = echarts.init(dom);
+        let minValue: any = null,
+            maxValue: any = null;
+        (dataValue || []).forEach((item: any, index: number) => {
+            const { value, type } = item;
+            if (type === 'markLine') {
+                return;
+            } else {
+                if (_.isNull(minValue) || _.isNull(maxValue)) {
+                    minValue = value[0][0];
+                    maxValue = value[value.length - 1][0];
+                    return;
+                }
+                if (value[0][0] < minValue) {
+                    minValue = value[0][0];
+                }
+                if (value[0][0] > maxValue) {
+                    maxValue = value[0][0];
+                }
+            }
+        });
+
         const option = Object.assign({}, options, {
             legend: Object.assign({}, options.legend, {
                 data: (dataValue || []).map((item: any) => {
@@ -30,7 +76,10 @@ const LineCharts: React.FC<Props> = (props: any) => {
             xAxis: Object.assign({}, options.xAxis, {
                 type: 'value',
                 name: xName,
-
+                boundaryGap: [0, 0],
+                min: minValue,
+                max: maxValue,
+                scale: true,
             }),
             series: (dataValue || []).map((item: any) => {
                 const { name, value, type } = item;
@@ -67,7 +116,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
                             silent: false, // 鼠标悬停事件, true悬停不会出现实线
                             symbol: 'none', // 去掉箭头
                         },
-                        data: [[0, value]]
+                        data: [[minValue, value]]
                     }
                 } else {
                     return {

@@ -23,6 +23,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
             xAxis: Object.assign({}, options.xAxis, {
                 type: 'category',
                 name: xName,
+                scale: true,
             }),
             series: Object.entries(dataValue).map((item: any) => {
                 return {

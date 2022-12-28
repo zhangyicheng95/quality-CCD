@@ -171,7 +171,7 @@ const Setting: React.FC<any> = (props) => {
             name="quality_name"
             label="系统名称"
             initialValue={localStorage.getItem("quality_name") || paramData?.name}
-            rules={[{ required: true, message: "系统名称" }]}
+            rules={[{ required: false, message: "系统名称" }]}
           >
             <Input placeholder="系统名称" />
           </Form.Item>

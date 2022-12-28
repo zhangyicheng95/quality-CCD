@@ -54,7 +54,6 @@ const options = {
             },
             // symbol: ['none', 'arrow'],
         },
-        splitNumber: 20,
         splitLine: {
             lineStyle: {
                 color: '#666',
@@ -70,9 +69,9 @@ const options = {
             // interval:99,
             color: '#666',
             fontFamily: 'Helvetica',
-            // formatter: function (val: any) {
-            //     return parseInt(val) ? moment(parseInt(val)).format(`YYYY-MM-DD HH:mm`) : val;
-            // }
+            formatter: function (val: any) {
+                return parseInt(val);
+            }
         },
     },
 }
