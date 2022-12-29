@@ -26,7 +26,7 @@ const AlertCharts: React.FC<Props> = (props: any) => {
             className={`${styles.alertCharts} flex-box-center ${_.isBoolean(data) ? (data ? 'OK' : 'NG') : ''}`}
             style={{ fontSize }}
         >
-            {_.isBoolean(data) ? (data ? 'OK' : 'NG') : 'Default'}
+            {_.isBoolean(data) ? (data ? 'OK' : 'NG') : 'Loading'}
         </div>
     );
 

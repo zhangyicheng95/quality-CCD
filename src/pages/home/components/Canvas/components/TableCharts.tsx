@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styles from '../index.module.less';
 
 interface Props {
@@ -10,9 +10,6 @@ interface Props {
 const TableCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
     const { dataValue = {}, yName, xName } = data;
-    useEffect(() => {
-        console.log(data)
-    }, [data]);
 
     return (
         <div id={`echart-${id}`} className={styles.tableCharts}>

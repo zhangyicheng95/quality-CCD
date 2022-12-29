@@ -8,7 +8,6 @@ import FileManager from "@/components/FileManager";
 import TooltipDiv from "@/components/TooltipDiv";
 import { useHistory } from "umi";
 import { FormOutlined } from "@ant-design/icons";
-import moment from "moment";
 
 const Setting: React.FC<any> = (props) => {
   const [form] = Form.useForm();
@@ -28,7 +27,7 @@ const Setting: React.FC<any> = (props) => {
     getParams(localStorage.getItem("ipString") || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
         const { data = {} } = res;
-        const { flowData, commonInfo, name } = data;
+        const { flowData, commonInfo } = data;
         const { nodes } = flowData;
         let checkedList: any = [];
         const result: any = (nodes || []).map((node: any) => {
