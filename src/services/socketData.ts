@@ -4,7 +4,7 @@ import _ from 'lodash';
 let socket: any = null;
 const type = 'data';
 
-const listen = (action: any) => {
+const listen = (action: any, gridContentListThrottleAndMerge?: any) => {
   if (!socket) {
     try {
       const ipString: string = localStorage.getItem('ipString') || '';
@@ -19,27 +19,28 @@ const listen = (action: any) => {
           },
         });
       };
-      socket.onmessage = (msg: any) => {
-        try {
-          const result = JSON.parse(msg.data);
-          const { uid = '', data = {}, ...rest } = result;
-          if (uid) {
-            const newData = (Object.entries(data || {}) || []).reduce((pre: any, cen: any) => {
-              return {
-                uid,
-                ...pre,
-                ...rest,
-                [_.toLower(cen[0]?.split('@')[0])]: _.isBoolean(cen[1])
-                  ? cen[1]
-                    ? 'RUNNING'
-                    : 'STOPPED'
-                  : cen[1],
-              };
-            }, {});
-            action({ type: `home/${type}Message`, payload: newData });
-          }
-        } catch (err) { }
-      };
+      socket.onmessage = gridContentListThrottleAndMerge;
+      // socket.onmessage = (msg: any) => {
+      //   try {
+      //     const result = JSON.parse(msg.data);
+      //     const { uid = '', data = {}, ...rest } = result;
+      //     if (uid) {
+      //       const newData = (Object.entries(data || {}) || []).reduce((pre: any, cen: any) => {
+      //         return {
+      //           uid,
+      //           ...pre,
+      //           ...rest,
+      //           [_.toLower(cen[0]?.split('@')[0])]: _.isBoolean(cen[1])
+      //             ? cen[1]
+      //               ? 'RUNNING'
+      //               : 'STOPPED'
+      //             : cen[1],
+      //         };
+      //       }, {});
+      //       action({ type: `home/${type}Message`, payload: newData });
+      //     }
+      //   } catch (err) { }
+      // };
       socket.onclose = function () {
         console.log(`${type} ws:close`);
         action({
@@ -50,7 +51,7 @@ const listen = (action: any) => {
         });
         socket = undefined;
       };
-      socket.onerror = () => reconnect(action);
+      socket.onerror = () => reconnect(action, gridContentListThrottleAndMerge);
       action({
         type: `home/${type}Connect`,
         payload: { [`${type}Status`]: 'success' },
@@ -65,12 +66,12 @@ const listen = (action: any) => {
 };
 
 let timeConnect = 0;
-function reconnect(action: any) {
+function reconnect(action: any, gridContentListThrottleAndMerge: any) {
   timeConnect++;
   console.log(`第${timeConnect}次重连`);
   // 进行重连
   setTimeout(() => {
-    listen(action);
+    listen(action, gridContentListThrottleAndMerge);
   }, 2000);
 };
 

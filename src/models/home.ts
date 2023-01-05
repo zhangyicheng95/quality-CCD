@@ -26,7 +26,7 @@ export default {
     errorStatus: [],
     errorData: [],
     // 布局数据
-    gridContentList: {},
+    // gridContentList: {},
     // snapshot: {
     //   logStr: '',
     //   gridContentList: {},
@@ -73,15 +73,15 @@ export default {
       yield put({ type: 'set', payload });
     },
 
-    *dataMessage({ payload }: any, { put, select }: any) {
-      yield put({ type: 'setGridContentList', payload });
-      const imgData = Object.entries(payload).filter((res: any) => {
-        return _.isString(res[1]) ? res[1].indexOf('http') > -1 : false;
-      });
-      if (imgData[0] && imgData[0][1]) {
-        yield put({ type: 'setGridContentList', payload: { uid: payload.uid, imgData } });
-      }
-    },
+    // *dataMessage({ payload }: any, { put, select }: any) {
+    //   yield put({ type: 'setGridContentList', payload });
+    //   const imgData = Object.entries(payload).filter((res: any) => {
+    //     return _.isString(res[1]) ? res[1].indexOf('http') > -1 : false;
+    //   });
+    //   if (imgData[0] && imgData[0][1]) {
+    //     yield put({ type: 'setGridContentList', payload: { uid: payload.uid, imgData } });
+    //   }
+    // },
 
     *stateConnect(action: any, { put }: any) {
       const { payload } = action;
@@ -141,21 +141,21 @@ export default {
     //     },
     //   }
     // },
-    setGridContentList: (state: any, { payload }: any) => {
-      const prev = state.gridContentList;
-      const gridContentList = Object.entries(prev).reduce((pre: any, cen: any) => {
-        return Object.assign(
-          {},
-          pre,
-          cen[0] === payload.uid
-            ? {
-              [cen[0]]: Object.assign({}, cen[1], payload),
-            }
-            : { [cen[0]]: cen[1] },
-        );
-      }, {});
-      return { ...state, gridContentList };
-    },
+    // setGridContentList: (state: any, { payload }: any) => {
+    //   const prev = state.gridContentList;
+    //   const gridContentList = Object.entries(prev).reduce((pre: any, cen: any) => {
+    //     return Object.assign(
+    //       {},
+    //       pre,
+    //       cen[0] === payload.uid
+    //         ? {
+    //           [cen[0]]: Object.assign({}, cen[1], payload),
+    //         }
+    //         : { [cen[0]]: cen[1] },
+    //     );
+    //   }, {});
+    //   return { ...state, gridContentList };
+    // },
     setHistoryData: (state: any, { payload }: any) => {
       const prev = state.historyData;
       const { uid, imgData } = payload;
@@ -172,7 +172,7 @@ export default {
       history.listen((ev: any) => {
         const { pathname } = ev;
         if (pathname === '/home') {
-          dispatch({ type: 'startLoop' })
+          // dispatch({ type: 'startLoop' })
           // dispatch({ type: 'startLoop', payload: true });
           // socketErrorListen.listen(dispatch);
           // socketLogListen.listen(dispatch);

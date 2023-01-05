@@ -56,11 +56,13 @@ let timer: string | number | NodeJS.Timer | null | undefined = null;
 let updateTimer: string | number | NodeJS.Timer | null | undefined = null;
 const Home: React.FC<any> = (props: any) => {
   const history = useHistory();
-  const { dispatch, started, taskDataConnect, activeTab, gridContentList } = props;
+  const { dispatch, started, taskDataConnect, activeTab } = props;
   // const { dispatch, started, taskDataConnect, snapshot, activeTab, } = props;
   // const { logStr, historyData, gridContentList, footerData, errorData } = snapshot;
   const [logStr, setLogStr] = useState<any>([]);
   const [errorData, setErrorData] = useState<any>([]);
+  const [gridContentList, setGridContentList] = useState<any>({});
+  const [currentGridContent, setCurrentGridContent] = useState<any>({});
 
   // console.log('home', ++i);
   const [form] = Form.useForm();
@@ -642,13 +644,14 @@ const Home: React.FC<any> = (props: any) => {
       }
     });
     setGridHomeList(home);
-    dispatch({
-      type: 'home/set',
-      payload: {
-        gridContentList: content,
-      },
-    });
-    dispatch({ type: 'home/snapshot' });
+    setCurrentGridContent(content);
+    // dispatch({
+    //   type: 'home/set',
+    //   payload: {
+    //     gridContentList: content,
+    //   },
+    // });
+    // dispatch({ type: 'home/snapshot' });
     if (paramData.id) {
       const params = Object.assign({}, paramData, {
         contentData: Object.assign({}, paramData.contentData, { home }, !_.isEmpty(content) ? { content } : {}),
@@ -725,13 +728,14 @@ const Home: React.FC<any> = (props: any) => {
               { i: 'footer-2', x: 9, y: 24, w: 3, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
             ])
         );
-        dispatch({
-          type: 'home/set',
-          payload: {
-            gridContentList: contentData.content,
-          },
-        });
-        dispatch({ type: 'home/snapshot' });
+        setCurrentGridContent(contentData.content);
+        // dispatch({
+        //   type: 'home/set',
+        //   payload: {
+        //     gridContentList: contentData.content,
+        //   },
+        // });
+        // dispatch({ type: 'home/snapshot' });
       } else {
         message.error(res?.msg || '接口异常');
       }
@@ -794,13 +798,14 @@ const Home: React.FC<any> = (props: any) => {
                           const params = Object.assign({}, paramData, {
                             contentData: Object.assign({}, paramData.contentData, { content: result }),
                           });
-                          dispatch({
-                            type: 'home/set',
-                            payload: {
-                              gridContentList: result,
-                            },
-                          });
-                          dispatch({ type: 'home/snapshot' });
+                          setCurrentGridContent(result);
+                          // dispatch({
+                          //   type: 'home/set',
+                          //   payload: {
+                          //     gridContentList: result,
+                          //   },
+                          // });
+                          // dispatch({ type: 'home/snapshot' });
                           setParamData(params);
                         }}
                         okText="确认"
@@ -987,13 +992,85 @@ const Home: React.FC<any> = (props: any) => {
   }, 300);
 
 
+  /**
+   * 处理日志布局相关
+   */
+  const gridContentListThrottleAndMerge = useThrottleAndMerge((list) => {
+    try {
+      const newList: any = [];
+      list?.forEach((msg: any)=> {
+        const result = JSON.parse(msg.data);
+        const { uid = '', data = {}, ...rest } = result;
+        if (uid) {
+          // socket 组装数据
+          const newData = (Object.entries(data || {}) || []).reduce((pre: any, cen: any) => {
+            return {
+              uid,
+              ...pre,
+              ...rest,
+              [_.toLower(cen[0]?.split('@')[0])]: _.isBoolean(cen[1])
+                ? cen[1]
+                  ? 'RUNNING'
+                  : 'STOPPED'
+                : cen[1],
+            };
+          }, {});
+
+          newList.push(newData)
+        }
+      });
+      if(newList.length) {
+        setGridContentList((pres: any)=> {
+          const newPres: any = pres;
+          newList.forEach((newDataItem: any)=> {
+            Object.entries(newPres).reduce((pre: any, cen: any) => {
+              return Object.assign(
+                {},
+                pre,
+                cen[0] === newDataItem.uid
+                  ? {
+                    [cen[0]]: Object.assign({}, cen[1], newDataItem),
+                  }
+                  : { [cen[0]]: cen[1] },
+              );
+            }, {});
+          })
+          return newPres
+        });
+      }
+    } catch (e) {
+
+    }
+  }, 300);
+
+  useEffect(()=> {
+    if (!_.isEmpty(currentGridContent)) {
+      setGridContentList((pres: any)=> {
+        return Object.entries(pres).reduce((pre: any, cen: any) => {
+          console.log(pre)
+          return Object.assign(
+            {},
+            pre,
+            cen[0] === currentGridContent.uid
+              ? {
+                [cen[0]]: Object.assign({}, cen[1], currentGridContent),
+              }
+              : { [cen[0]]: cen[1] },
+          );
+        }, {});
+      });
+    }
+  }, [currentGridContent]);
+
+  console.log('gridContentList', gridContentList)
+
   // 监听任务启动，开启socket
   useEffect(() => {
     if (started && ipString && dispatch && !ifCanEdit) {
       // dispatch({ type: 'home/set', payload: {started: true} });
       socketErrorListen.listen(dispatch, errorThrottleAndMerge);
       socketLogListen.listen(dispatch, logThrottleAndMerge);
-      socketDataListen.listen(dispatch);
+      socketDataListen.listen(dispatch, gridContentListThrottleAndMerge);
       socketStateListen.listen(dispatch);
     } else {
       onclose();
@@ -1080,13 +1157,14 @@ const Home: React.FC<any> = (props: any) => {
         }
         form.resetFields();
         setEditWindowData({});
-        dispatch({
-          type: 'home/set',
-          payload: {
-            gridContentList: result,
-          },
-        });
-        dispatch({ type: 'home/snapshot' });
+        setCurrentGridContent(result);
+        // dispatch({
+        //   type: 'home/set',
+        //   payload: {
+        //     gridContentList: result,
+        //   },
+        // });
+        // dispatch({ type: 'home/snapshot' });
         onCancel();
       })
       .catch((err) => {
@@ -1254,7 +1332,7 @@ const Home: React.FC<any> = (props: any) => {
 Home.displayName = 'Home';
 
 export default connect(({ home }) => ({
-  gridContentList: home.gridContentList || {},
+  // gridContentList: home.gridContentList || {},
   started: home.started || false,
   activeTab: home.activeTab || '1',
   taskDataConnect: home.taskDataConnect || false,
