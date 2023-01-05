@@ -23,6 +23,7 @@ const FileManager: React.FC<Props> = (props) => {
   useEffect(() => {
     setLoading(true);
     selectFilePathService(select + '\\').then(res => {
+      console.log(res)
       if (!!res && !!res.items && _.isArray(res.items)) {
         const { items } = res;
         setList(items || []);

@@ -50,11 +50,7 @@ import { useThrottleAndMerge } from "@/utils/useThrottleAndMerge";
 import moment from "moment";
 import { logColors } from "@/common/constants/globalConstants";
 import { isJSON } from "@/utils/utils";
-import tbj from '@/assets/imgs/aim.svg';
-import gyfq from '@/assets/imgs/circle.svg';
-import dpj from '@/assets/imgs/aim.svg';
-import mfd from '@/assets/imgs/circle.svg';
-import dgh from '@/assets/imgs/aim.svg';
+import FileManager from '@/components/FileManager';
 
 let timer: string | number | NodeJS.Timer | null | undefined = null;
 let updateTimer: string | number | NodeJS.Timer | null | undefined = null;
@@ -81,10 +77,17 @@ const Home: React.FC<any> = (props: any) => {
   const [paramData, setParamData] = useState<any>({});
   const [nodeList, setNodeList] = useState<any>([]);
   const [windowType, setWindowType] = useState('img');
+  const [selectPathVisible, setSelectPathVisible] = useState(false);
+  const [selectedPath, setSelectedPath] = useState<any>({});
 
   const ifCanEdit = useMemo(() => {
     return window.location.hash.indexOf('edit') > -1;
   }, [window.location.hash]);
+
+  const isFC = useMemo(() => {
+    // @ts-ignore
+    return window.QUALITY_CCD_CONFIG.type === 'fc';
+  }, []);
 
 
   const gridList = [
@@ -736,7 +739,7 @@ const Home: React.FC<any> = (props: any) => {
   }, []);
   // 轮训获取运行状态
   useEffect(() => {
-    if (!ipString || ifCanEdit) return;
+    if (!ipString || ifCanEdit || isFC) return;
     setLoading(true);
     getServiceStatus();
     timer = setInterval(() => {
@@ -866,45 +869,11 @@ const Home: React.FC<any> = (props: any) => {
                                     alt="logo"
                                     style={{ width: '100%', height: 'auto' }}
                                   />
-                                ) :
-                                  defaultImg === 'tbj' ?
-                                    <Image
-                                      src={tbj}
-                                      alt="logo"
-                                      style={{ width: '100%', height: 'auto' }}
-                                    />
-                                    :
-                                    defaultImg === 'gyfq' ?
-                                      <Image
-                                        src={gyfq}
-                                        alt="logo"
-                                        style={{ width: '100%', height: 'auto' }}
-                                      />
-                                      :
-                                      defaultImg === 'dpj' ?
-                                        <Image
-                                          src={dpj}
-                                          alt="logo"
-                                          style={{ width: '100%', height: 'auto' }}
-                                        />
-                                        :
-                                        defaultImg === 'mfd' ?
-                                          <Image
-                                            src={mfd}
-                                            alt="logo"
-                                            style={{ width: '100%', height: 'auto' }}
-                                          />
-                                          :
-                                          defaultImg === 'dgh' ?
-                                            <Image
-                                              src={dgh}
-                                              alt="logo"
-                                              style={{ width: '100%', height: 'auto' }}
-                                            />
-                                            :
-                                            <Skeleton.Image
-                                              active={true}
-                                            />
+                                )
+                                  :
+                                  <Skeleton.Image
+                                    active={true}
+                                  />
                               )
                 }
               </div>
@@ -1217,39 +1186,22 @@ const Home: React.FC<any> = (props: any) => {
               />
             </Form.Item>
             {
-              ['img'].includes(windowType) ?
-                <Form.Item
-                  name={'defaultImg'}
-                  label="默认图片"
-                  rules={[{ required: false, message: '默认图片' }]}
-                >
-                  <Select
-                    style={{ width: '100%' }}
-                    options={[
-                      {
-                        value: 'tbj',
-                        label: '涂布机',
-                      },
-                      {
-                        value: 'gyfq',
-                        label: '滚压分切',
-                      },
-                      {
-                        value: 'dpj',
-                        label: '叠片机',
-                      },
-                      {
-                        value: 'mfd',
-                        label: '密封钉',
-                      },
-                      {
-                        value: 'dgh',
-                        label: '顶盖焊',
-                      },
-                    ]}
-                  />
-                </Form.Item>
-                : null
+              // ['img'].includes(windowType) ?
+              //   <Form.Item
+              //     name={'defaultImg'}
+              //     label="默认图片"
+              //     rules={[{ required: false, message: '默认图片' }]}
+              //   >
+              //     <Button
+              //       onClick={() => {
+              //         setSelectedPath({ fileType: 'file' });
+              //         setSelectPathVisible(true);
+              //       }}
+              //     >
+              //       选择文件
+              //     </Button>
+              //   </Form.Item>
+              //   : null
             }
             {
               ['point', 'bar', 'line', 'table'].includes(windowType) ?
@@ -1274,6 +1226,25 @@ const Home: React.FC<any> = (props: any) => {
           </Form>
         </Modal>
       ) : null}
+
+      {
+        selectPathVisible ?
+          <FileManager
+            fileType={selectedPath.fileType}
+            data={selectedPath}
+            onOk={(val: any) => {
+              const { id, ...rest } = val;
+              console.log(val);
+              setSelectedPath({});
+              setSelectPathVisible(false);
+            }}
+            onCancel={() => {
+              setSelectPathVisible(false);
+              setSelectedPath({});
+            }}
+          />
+          : null
+      }
     </div>
   );
 };

@@ -107,7 +107,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
                         emphasis: {
                             focus: 'series'
                         },
-                        data: value
+                        data: value.filter((i: any) => !!i[1])
                     }
                 }
             })
