@@ -930,11 +930,12 @@ const Home: React.FC<any> = (props: any) => {
       }, 5000);
     });
   };
-  // 关闭socket
+  // 关闭
+
   const onclose = () => {
     if (dispatch) {
       dispatch({ type: 'home/startLoop', payload: false });
-      socketErrorListen.close(dispatch);
+      'socket'ErrorListen.close(dispatch);
       socketLogListen.close(dispatch);
       socketDataListen.close(dispatch);
       socketStateListen.close(dispatch);
@@ -945,45 +946,45 @@ const Home: React.FC<any> = (props: any) => {
    * 处理日志信息
    */
   const logThrottleAndMerge = useThrottleAndMerge((logs) => {
-    const logContent = logs.map((item: any) => item.data);
-    setLogStr((cur: any) => {
-      const newLogs = [...logContent, ...cur];
-      return newLogs.slice(0, 50);
-    });
+    // const logContent = logs.map((item: any) => item.data);
+    // setLogStr((cur: any) => {
+    //   const newLogs = [...logContent, ...cur];
+    //   return newLogs.slice(0, 50);
+    // });
   }, 300);
 
   /**
    * 处理错误信息
    */
   const errorThrottleAndMerge = useThrottleAndMerge((errors) => {
-    console.log('errors', errors, errors.filter((item: any) => isJSON(item.data)))
-    try {
-      const errorList: any = [];
-      errors.filter((item: any) => isJSON(item.data))?.forEach((msg: any) => {
-        const result = JSON.parse(msg.data);
-        const level = _.toLower(result.level);
-        errorList.push({
-          ...result,
-          level: level,
-          message: _.isArray(result?.message) ? result.message.join(',') : result.message,
-          time: moment(new Date().getTime()).format('YYYY-MM-DD HH:mm:ss'),
-          color:
-            level === 'warning'
-              ? logColors.warning
-              : level === 'error'
-                ? logColors.error
-                : logColors.critical,
-        });
-
-        setErrorData((cur: any[]) => {
-          const newErrors = [...errorList, ...cur];
-          return newErrors.slice(0, 50);
-        });
-      })
-
-    } catch (err) {
-      // console.log(err);
-    }
+    // console.log('errors', errors, errors.filter((item: any) => isJSON(item.data)))
+    // try {
+    //   const errorList: any = [];
+    //   errors.filter((item: any) => isJSON(item.data))?.forEach((msg: any) => {
+    //     const result = JSON.parse(msg.data);
+    //     const level = _.toLower(result.level);
+    //     errorList.push({
+    //       ...result,
+    //       level: level,
+    //       message: _.isArray(result?.message) ? result.message.join(',') : result.message,
+    //       time: moment(new Date().getTime()).format('YYYY-MM-DD HH:mm:ss'),
+    //       color:
+    //         level === 'warning'
+    //           ? logColors.warning
+    //           : level === 'error'
+    //             ? logColors.error
+    //             : logColors.critical,
+    //     });
+    //
+    //     setErrorData((cur: any[]) => {
+    //       const newErrors = [...errorList, ...cur];
+    //       return newErrors.slice(0, 50);
+    //     });
+    //   })
+    //
+    // } catch (err) {
+    //   // console.log(err);
+    // }
   }, 300);
 
 
