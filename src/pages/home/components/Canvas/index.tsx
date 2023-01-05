@@ -1221,7 +1221,7 @@ const Home: React.FC<any> = (props: any) => {
                 <Form.Item
                   name={'defaultImg'}
                   label="默认图片"
-                  rules={[{ required: true, message: '默认图片' }]}
+                  rules={[{ required: false, message: '默认图片' }]}
                 >
                   <Select
                     style={{ width: '100%' }}
