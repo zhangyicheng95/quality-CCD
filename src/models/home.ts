@@ -126,7 +126,31 @@ export default {
     set: (state: any, { payload }: any) => ({ ...state, ...payload }),
     update: (state: any, { payload, key }: any) => ({ ...state, [key]: payload }),
     snapshot: (state: any) => {
-      return {
+      // 此处最下diff
+      const snapshot = state.snapshot;
+      const diffObj = (a: any, b: any)=> {
+        return JSON.stringify(a) !== JSON.stringify(b);
+      }
+      const diff = ()=> {
+        if (state.logData.join('<br/>') !== snapshot.logStr) {
+          return true;
+        }
+        if (diffObj(state.gridContentList, snapshot.gridContentList)) {
+          return true;
+        }
+        // if (diffObj(state.historyData, snapshot.historyData)) {
+        //   return true;
+        // }
+        // if (diffObj(state.footerData, snapshot.footerData)) {
+        //   return true;
+        // }
+        if (diffObj(state.errorData, snapshot.errorData)) {
+          return true;
+        }
+        return false;
+      }
+      // 如果数据没有变更 则不在进行数据copy 防止重复渲染
+      return diff() ? {
         ...state,
         snapshot: {
           ...state.snapshot,
@@ -136,7 +160,7 @@ export default {
           footerData: state.footerData,
           errorData: state.errorData,
         },
-      }
+      } : state
     },
     setGridContentList: (state: any, { payload }: any) => {
       const prev = state.gridContentList;
