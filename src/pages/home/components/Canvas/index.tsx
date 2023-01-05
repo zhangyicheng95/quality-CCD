@@ -935,7 +935,7 @@ const Home: React.FC<any> = (props: any) => {
   const onclose = () => {
     if (dispatch) {
       dispatch({ type: 'home/startLoop', payload: false });
-      'socket'ErrorListen.close(dispatch);
+      socketErrorListen.close(dispatch);
       socketLogListen.close(dispatch);
       socketDataListen.close(dispatch);
       socketStateListen.close(dispatch);
@@ -990,7 +990,7 @@ const Home: React.FC<any> = (props: any) => {
 
   // 监听任务启动，开启socket
   useEffect(() => {
-    if (started && ipString && dispatch && !ifCanEdit) {
+    if ((started && ipString && dispatch && !ifCanEdit) || isFC) {
       // dispatch({ type: 'home/set', payload: {started: true} });
       socketErrorListen.listen(dispatch, errorThrottleAndMerge);
       socketLogListen.listen(dispatch, logThrottleAndMerge);
