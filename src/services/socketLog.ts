@@ -10,13 +10,13 @@ const listen = (action: any, logThrottleAndMerge: any) => {
       const path = `${website.socket}task-${type}/${ipString}?tail=1&n=1`;
       socket = new WebSocket(path);
       socket.onopen = () => console.log(`${type} ws:open`);
-      socket.onmessage = logThrottleAndMerge;
-      // (msg: any) => {
-      //   try {
-      //     // console.log(`${type} ws:send`, msg.data);
-      //     action({ type: `home/${type}Message`, payload: msg.data });
-      //   } catch (err) { }
-      // };
+      // socket.onmessage = logThrottleAndMerge;
+      socket.onmessage = (msg: any) => {
+        try {
+          // console.log(`${type} ws:send`, msg.data);
+          action({ type: `home/${type}Message`, payload: msg.data });
+        } catch (err) { }
+      };
       socket.onclose = function () {
         console.log(`${type} ws:close`);
         socket = undefined;

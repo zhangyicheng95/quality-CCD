@@ -56,11 +56,11 @@ let timer: string | number | NodeJS.Timer | null | undefined = null;
 let updateTimer: string | number | NodeJS.Timer | null | undefined = null;
 const Home: React.FC<any> = (props: any) => {
   const history = useHistory();
-  const { dispatch, started, taskDataConnect, activeTab, gridContentList } = props;
-  // const { dispatch, started, taskDataConnect, snapshot, activeTab, } = props;
-  // const { logStr, historyData, gridContentList, footerData, errorData } = snapshot;
-  const [logStr, setLogStr] = useState<any>([]);
-  const [errorData, setErrorData] = useState<any>([]);
+  // const { dispatch, started, taskDataConnect, activeTab, gridContentList } = props;
+  const { dispatch, started, taskDataConnect, snapshot, activeTab, } = props;
+  const { logStr, historyData, gridContentList, footerData, errorData } = snapshot;
+  // const [logStr, setLogStr] = useState<any>([]);
+  // const [errorData, setErrorData] = useState<any>([]);
 
   // console.log('home', ++i);
   const [form] = Form.useForm();
@@ -497,7 +497,7 @@ const Home: React.FC<any> = (props: any) => {
           className="content-item-span"
           dangerouslySetInnerHTML={{
             // 此处需要处理
-            __html: logStr.join('<br/>'),
+            __html: _.isString(logStr) ? logStr : logStr.join('<br/>'),
           }}
         />
       </div>
@@ -1254,7 +1254,7 @@ const Home: React.FC<any> = (props: any) => {
 Home.displayName = 'Home';
 
 export default connect(({ home }) => ({
-  gridContentList: home.gridContentList || {},
+  snapshot: home.snapshot || {},
   started: home.started || false,
   activeTab: home.activeTab || '1',
   taskDataConnect: home.taskDataConnect || false,

@@ -13,30 +13,30 @@ const listen = (action: any, throttleAndMerge: any) => {
       socket.onopen = () => {
         console.log(`${type} ws:open`);
       };
-      socket.onmessage = throttleAndMerge;
-      //   (msg: any) => {
-      //   try {
-      //     const result = JSON.parse(msg.data);
-      //     const currentData = {
-      //       time: new Date().getTime(),
-      //       ...result,
-      //       level: _.toLower(result.level),
-      //       message: _.isArray(result?.message) ? result.message.join(',') : result.message,
-      //     };
-      //     // console.log('error ws:', currentData)
-      //     action({
-      //       type: 'setErrorData',
-      //       payload: currentData,
-      //     });
-      //   } catch (err) {
-      //     // console.log(err);
-      //   }
-      //   try {
-      //     // console.log('state message', msg.data);
-      //     const payload = JSON.parse(msg.data);
-      //     action({ type: `home/${type}Message`, payload });
-      //   } catch (err) { }
-      // };
+      // socket.onmessage = throttleAndMerge;
+      socket.onmessage = (msg: any) => {
+        try {
+          const result = JSON.parse(msg.data);
+          const currentData = {
+            time: new Date().getTime(),
+            ...result,
+            level: _.toLower(result.level),
+            message: _.isArray(result?.message) ? result.message.join(',') : result.message,
+          };
+          // console.log('error ws:', currentData)
+          action({
+            type: 'setErrorData',
+            payload: currentData,
+          });
+        } catch (err) {
+          // console.log(err);
+        }
+        try {
+          // console.log('state message', msg.data);
+          const payload = JSON.parse(msg.data);
+          action({ type: `home/${type}Message`, payload });
+        } catch (err) { }
+      };
       socket.onclose = function () {
         console.log(`${type} ws:close`);
         socket = undefined;
