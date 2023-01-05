@@ -25,46 +25,48 @@ export default {
     footerData: [],
     errorStatus: [],
     errorData: [],
-    snapshot: {
-      logStr: '',
-      gridContentList: {},
-      historyData: [],
-      footerData: [],
-      errorData: [],
-    },
+    // 布局数据
+    gridContentList: {},
+    // snapshot: {
+    //   logStr: '',
+    //   gridContentList: {},
+    //   historyData: [],
+    //   footerData: [],
+    //   errorData: [],
+    // },
   },
 
   effects: {
-    *startLoop(action: any, { call, put, select }: any) {
-      while (true) {
-        yield call(delay, 100);
-        yield put({ type: 'takeSnapshot' })
-      }
-    },
+    // *startLoop(action: any, { call, put, select }: any) {
+    //   while (true) {
+    //     yield call(delay, 100);
+    //     yield put({ type: 'takeSnapshot' })
+    //   }
+    // },
+    //
+    // *takeSnapshot(action: any, { put, select }: any) {
+    //   const started: boolean = yield select((state: any) => state.home.started);
+    //   if (started) {
+    //     yield put({ type: 'snapshot' });
+    //   }
+    // },
 
-    *takeSnapshot(action: any, { put, select }: any) {
-      const started: boolean = yield select((state: any) => state.home.started);
-      if (started) {
-        yield put({ type: 'snapshot' });
-      }
-    },
+    // *logConnect(action: any, { put }: any) {
+    //   const { payload } = action;
+    //   console.log(payload)
+    //   yield put({ type: 'set', payload });
+    // },
 
-    *logConnect(action: any, { put }: any) {
-      const { payload } = action;
-      console.log(payload)
-      yield put({ type: 'set', payload });
-    },
-
-    *logMessage({ payload }: any, { put, select }: any) {
-      const logData: any[] = yield select((state: any) => state.home.logData);
-      const _logData: any[] = [...logData, payload];
-      yield put({
-        type: 'set',
-        payload: {
-          logData: _logData.slice(_logData.length - 50),
-        },
-      });
-    },
+    // *logMessage({ payload }: any, { put, select }: any) {
+    //   const logData: any[] = yield select((state: any) => state.home.logData);
+    //   const _logData: any[] = [...logData, payload];
+    //   yield put({
+    //     type: 'set',
+    //     payload: {
+    //       logData: _logData.slice(_logData.length - 50),
+    //     },
+    //   });
+    // },
 
     *dataConnect(action: any, { put }: any) {
       const { payload } = action;
@@ -95,50 +97,50 @@ export default {
       });
     },
 
-    *errorConnect(action: any, { put }: any) {
-      const { payload } = action;
-      yield put({ type: 'set', payload });
-    },
-    *errorMessage({ payload }: any, { put, select }: any) {
-      const errorData: any[] = yield select((state: any) => state.home.errorData);
-      errorData.length > 5 && notification.destroy();
-      openNotificationWithIcon(payload);
-      const _errorData = [
-        ...errorData,
-        {
-          ...payload,
-          time: moment(payload.time).format('YYYY-MM-DD HH:mm:ss'),
-          color:
-            payload.level === 'warning'
-              ? logColors.warning
-              : payload.level === 'error'
-                ? logColors.error
-                : logColors.critical,
-        },
-      ];
-      yield put({
-        type: 'set',
-        payload: { errorData: _errorData.slice(_errorData.length - 50) },
-      });
-    },
+    // *errorConnect(action: any, { put }: any) {
+    //   const { payload } = action;
+    //   yield put({ type: 'set', payload });
+    // },
+    // *errorMessage({ payload }: any, { put, select }: any) {
+    //   const errorData: any[] = yield select((state: any) => state.home.errorData);
+    //   errorData.length > 5 && notification.destroy();
+    //   openNotificationWithIcon(payload);
+    //   const _errorData = [
+    //     ...errorData,
+    //     {
+    //       ...payload,
+    //       time: moment(payload.time).format('YYYY-MM-DD HH:mm:ss'),
+    //       color:
+    //         payload.level === 'warning'
+    //           ? logColors.warning
+    //           : payload.level === 'error'
+    //             ? logColors.error
+    //             : logColors.critical,
+    //     },
+    //   ];
+    //   yield put({
+    //     type: 'set',
+    //     payload: { errorData: _errorData.slice(_errorData.length - 50) },
+    //   });
+    // },
   },
 
   reducers: {
     set: (state: any, { payload }: any) => ({ ...state, ...payload }),
     update: (state: any, { payload, key }: any) => ({ ...state, [key]: payload }),
-    snapshot: (state: any) => {
-      return {
-        ...state,
-        snapshot: {
-          ...state.snapshot,
-          logStr: state.logData.join('<br/>'),
-          historyData: state.historyData,
-          gridContentList: state.gridContentList,
-          footerData: state.footerData,
-          errorData: state.errorData,
-        },
-      }
-    },
+    // snapshot: (state: any) => {
+    //   return {
+    //     ...state,
+    //     snapshot: {
+    //       ...state.snapshot,
+    //       logStr: state.logData.join('<br/>'),
+    //       historyData: state.historyData,
+    //       gridContentList: state.gridContentList,
+    //       footerData: state.footerData,
+    //       errorData: state.errorData,
+    //     },
+    //   }
+    // },
     setGridContentList: (state: any, { payload }: any) => {
       const prev = state.gridContentList;
       const gridContentList = Object.entries(prev).reduce((pre: any, cen: any) => {

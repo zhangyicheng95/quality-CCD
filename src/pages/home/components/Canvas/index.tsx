@@ -46,13 +46,21 @@ import BarCharts from '@/pages/home/components/Canvas/components/BarCharts';
 import PieCharts from '@/pages/home/components/Canvas/components/PieCharts';
 import TableCharts from '@/pages/home/components/Canvas/components/TableCharts';
 import AlertCharts from '@/pages/home/components/Canvas/components/AlertCharts';
+import { useThrottleAndMerge } from "@/utils/useThrottleAndMerge";
+import moment from "moment";
+import { logColors } from "@/common/constants/globalConstants";
+import { isJSON } from "@/utils/utils";
 
 let timer: string | number | NodeJS.Timer | null | undefined = null;
 let updateTimer: string | number | NodeJS.Timer | null | undefined = null;
 const Home: React.FC<any> = (props: any) => {
   const history = useHistory();
-  const { dispatch, started, taskDataConnect, snapshot, activeTab, } = props;
-  const { logStr, historyData, gridContentList, footerData, errorData } = snapshot;
+  const { dispatch, started, taskDataConnect, activeTab, gridContentList} = props;
+  // const { dispatch, started, taskDataConnect, snapshot, activeTab, } = props;
+  // const { logStr, historyData, gridContentList, footerData, errorData } = snapshot;
+  const [logStr, setLogStr] = useState<any>([]);
+  const [errorData, setErrorData] = useState<any>([]);
+
   // console.log('home', ++i);
   const [form] = Form.useForm();
   const { validateFields, setFieldsValue } = form;
@@ -72,6 +80,7 @@ const Home: React.FC<any> = (props: any) => {
   const ifCanEdit = useMemo(() => {
     return window.location.hash.indexOf('edit') > -1;
   }, [window.location.hash]);
+
 
   const gridList = [
     <div key={'slider-1'}>
@@ -479,7 +488,8 @@ const Home: React.FC<any> = (props: any) => {
         <div
           className="content-item-span"
           dangerouslySetInnerHTML={{
-            __html: logStr,
+            // 此处需要处理
+            __html: logStr.join('<br/>'),
           }}
         />
       </div>
@@ -659,7 +669,7 @@ const Home: React.FC<any> = (props: any) => {
       setLoading(false);
     });
   };
-  // 拉取方案详情
+  // 拉取方案详情 TODO
   useEffect(() => {
     if (!ipString) return;
     getParams(ipString || '').then((res: any) => {
@@ -921,12 +931,59 @@ const Home: React.FC<any> = (props: any) => {
       socketStateListen.close(dispatch);
     }
   };
+
+  /**
+   * 处理日志信息
+   */
+  const logThrottleAndMerge = useThrottleAndMerge((logs)=> {
+    const logContent = logs.map((item: any)=> item.data);
+    setLogStr((cur: any)=> {
+      const newLogs = [...logContent, ...cur];
+      return newLogs.slice(0, 50);
+    });
+  }, 300);
+
+  /**
+   * 处理错误信息
+   */
+  const errorThrottleAndMerge = useThrottleAndMerge((errors)=> {
+    console.log('errors', errors, errors.filter((item: any)=> isJSON(item.data)))
+    try {
+      const errorList: any = [];
+      errors.filter((item: any)=> isJSON(item.data))?.forEach((msg: any)=> {
+        const result = JSON.parse(msg.data);
+        const level = _.toLower(result.level);
+        errorList.push({
+          ...result,
+          level: level,
+          message: _.isArray(result?.message) ? result.message.join(',') : result.message,
+          time: moment(new Date().getTime()).format('YYYY-MM-DD HH:mm:ss'),
+          color:
+            level === 'warning'
+              ? logColors.warning
+              : level === 'error'
+              ? logColors.error
+              : logColors.critical,
+        });
+
+        setErrorData((cur: any[])=> {
+          const newErrors = [...errorList, ...cur];
+          return newErrors.slice(0, 50);
+        });
+      })
+
+    } catch (err) {
+      // console.log(err);
+    }
+  }, 300);
+
+
   // 监听任务启动，开启socket
   useEffect(() => {
     if (started && ipString && dispatch && !ifCanEdit) {
       // dispatch({ type: 'home/set', payload: {started: true} });
-      socketErrorListen.listen(dispatch);
-      socketLogListen.listen(dispatch);
+      socketErrorListen.listen(dispatch, errorThrottleAndMerge);
+      socketLogListen.listen(dispatch, logThrottleAndMerge);
       socketDataListen.listen(dispatch);
       socketStateListen.listen(dispatch);
     } else {
@@ -1151,7 +1208,7 @@ const Home: React.FC<any> = (props: any) => {
 Home.displayName = 'Home';
 
 export default connect(({ home }) => ({
-  snapshot: home.snapshot || {},
+  gridContentList: home.gridContentList || {},
   started: home.started || false,
   activeTab: home.activeTab || '1',
   taskDataConnect: home.taskDataConnect || false,
