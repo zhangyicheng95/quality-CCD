@@ -30,7 +30,7 @@ const CustomResizeHandle = React.forwardRef((props: any, ref) => {
 });
 
 const GridLayout: React.FC<Props> = (props: any) => {
-    const { dragName = '.custom-drag', margin = [16, 16], list = [], layout = [], onChange } = props;
+    const { dragName = '.custom-drag', margin = [8, 8], list = [], layout = [], onChange } = props;
 
     const ifCanEdit = useMemo(() => {
         return window.location.hash.indexOf('edit') > -1;

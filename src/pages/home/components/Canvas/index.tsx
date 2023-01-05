@@ -50,12 +50,17 @@ import { useThrottleAndMerge } from "@/utils/useThrottleAndMerge";
 import moment from "moment";
 import { logColors } from "@/common/constants/globalConstants";
 import { isJSON } from "@/utils/utils";
+import tbj from '@/assets/imgs/aim.svg';
+import gyfq from '@/assets/imgs/circle.svg';
+import dpj from '@/assets/imgs/aim.svg';
+import mfd from '@/assets/imgs/circle.svg';
+import dgh from '@/assets/imgs/aim.svg';
 
 let timer: string | number | NodeJS.Timer | null | undefined = null;
 let updateTimer: string | number | NodeJS.Timer | null | undefined = null;
 const Home: React.FC<any> = (props: any) => {
   const history = useHistory();
-  const { dispatch, started, taskDataConnect, activeTab, gridContentList} = props;
+  const { dispatch, started, taskDataConnect, activeTab, gridContentList } = props;
   // const { dispatch, started, taskDataConnect, snapshot, activeTab, } = props;
   // const { logStr, historyData, gridContentList, footerData, errorData } = snapshot;
   const [logStr, setLogStr] = useState<any>([]);
@@ -75,7 +80,7 @@ const Home: React.FC<any> = (props: any) => {
   const [contentLayout, setContentLayout] = useState([]);
   const [paramData, setParamData] = useState<any>({});
   const [nodeList, setNodeList] = useState<any>([]);
-  const [windowType, setWindowType] = useState('');
+  const [windowType, setWindowType] = useState('img');
 
   const ifCanEdit = useMemo(() => {
     return window.location.hash.indexOf('edit') > -1;
@@ -758,7 +763,7 @@ const Home: React.FC<any> = (props: any) => {
           for (let i = 0; i < 50; i++) {
             data.push(i);
           };
-          const { size, value = [], type, yName, xName } = item[1];
+          const { size, value = [], type, yName, xName, defaultImg } = item[1];
           const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
           const label = parent[0]?.alias;
           listData = listData.concat(
@@ -862,9 +867,44 @@ const Home: React.FC<any> = (props: any) => {
                                     style={{ width: '100%', height: 'auto' }}
                                   />
                                 ) :
-                                  <Skeleton.Image
-                                    active={true}
-                                  />
+                                  defaultImg === 'tbj' ?
+                                    <Image
+                                      src={tbj}
+                                      alt="logo"
+                                      style={{ width: '100%', height: 'auto' }}
+                                    />
+                                    :
+                                    defaultImg === 'gyfq' ?
+                                      <Image
+                                        src={gyfq}
+                                        alt="logo"
+                                        style={{ width: '100%', height: 'auto' }}
+                                      />
+                                      :
+                                      defaultImg === 'dpj' ?
+                                        <Image
+                                          src={dpj}
+                                          alt="logo"
+                                          style={{ width: '100%', height: 'auto' }}
+                                        />
+                                        :
+                                        defaultImg === 'mfd' ?
+                                          <Image
+                                            src={mfd}
+                                            alt="logo"
+                                            style={{ width: '100%', height: 'auto' }}
+                                          />
+                                          :
+                                          defaultImg === 'dgh' ?
+                                            <Image
+                                              src={dgh}
+                                              alt="logo"
+                                              style={{ width: '100%', height: 'auto' }}
+                                            />
+                                            :
+                                            <Skeleton.Image
+                                              active={true}
+                                            />
                               )
                 }
               </div>
@@ -935,9 +975,9 @@ const Home: React.FC<any> = (props: any) => {
   /**
    * 处理日志信息
    */
-  const logThrottleAndMerge = useThrottleAndMerge((logs)=> {
-    const logContent = logs.map((item: any)=> item.data);
-    setLogStr((cur: any)=> {
+  const logThrottleAndMerge = useThrottleAndMerge((logs) => {
+    const logContent = logs.map((item: any) => item.data);
+    setLogStr((cur: any) => {
       const newLogs = [...logContent, ...cur];
       return newLogs.slice(0, 50);
     });
@@ -946,11 +986,11 @@ const Home: React.FC<any> = (props: any) => {
   /**
    * 处理错误信息
    */
-  const errorThrottleAndMerge = useThrottleAndMerge((errors)=> {
-    console.log('errors', errors, errors.filter((item: any)=> isJSON(item.data)))
+  const errorThrottleAndMerge = useThrottleAndMerge((errors) => {
+    console.log('errors', errors, errors.filter((item: any) => isJSON(item.data)))
     try {
       const errorList: any = [];
-      errors.filter((item: any)=> isJSON(item.data))?.forEach((msg: any)=> {
+      errors.filter((item: any) => isJSON(item.data))?.forEach((msg: any) => {
         const result = JSON.parse(msg.data);
         const level = _.toLower(result.level);
         errorList.push({
@@ -962,11 +1002,11 @@ const Home: React.FC<any> = (props: any) => {
             level === 'warning'
               ? logColors.warning
               : level === 'error'
-              ? logColors.error
-              : logColors.critical,
+                ? logColors.error
+                : logColors.critical,
         });
 
-        setErrorData((cur: any[])=> {
+        setErrorData((cur: any[]) => {
           const newErrors = [...errorList, ...cur];
           return newErrors.slice(0, 50);
         });
@@ -1038,7 +1078,7 @@ const Home: React.FC<any> = (props: any) => {
   const addWindow = () => {
     validateFields()
       .then((values) => {
-        const { value, type, yName, xName } = values;
+        const { value, type, yName, xName, defaultImg } = values;
         const id = value[0];
         let result = {};
         if (_.isEmpty(editWindowData)) {
@@ -1048,7 +1088,7 @@ const Home: React.FC<any> = (props: any) => {
               size: { i: id, x: 2, y: 0, w: 3, h: 3, minW: 2, maxW: 12, minH: 4, maxH: 32 },
               type,
               tab: activeTab,
-              yName, xName
+              yName, xName, defaultImg
             },
           });
         } else {
@@ -1058,7 +1098,7 @@ const Home: React.FC<any> = (props: any) => {
               size: Object.assign({}, editWindowData.size, { i: id }),
               type,
               tab: activeTab,
-              yName, xName
+              yName, xName, defaultImg
             },
           });
         }
@@ -1176,6 +1216,41 @@ const Home: React.FC<any> = (props: any) => {
                 }}
               />
             </Form.Item>
+            {
+              ['img'].includes(windowType) ?
+                <Form.Item
+                  name={'defaultImg'}
+                  label="默认图片"
+                  rules={[{ required: true, message: '默认图片' }]}
+                >
+                  <Select
+                    style={{ width: '100%' }}
+                    options={[
+                      {
+                        value: 'tbj',
+                        label: '涂布机',
+                      },
+                      {
+                        value: 'gyfq',
+                        label: '滚压分切',
+                      },
+                      {
+                        value: 'dpj',
+                        label: '叠片机',
+                      },
+                      {
+                        value: 'mfd',
+                        label: '密封钉',
+                      },
+                      {
+                        value: 'dgh',
+                        label: '顶盖焊',
+                      },
+                    ]}
+                  />
+                </Form.Item>
+                : null
+            }
             {
               ['point', 'bar', 'line', 'table'].includes(windowType) ?
                 <Fragment>
