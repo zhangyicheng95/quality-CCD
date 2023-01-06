@@ -18,6 +18,7 @@ import {
 } from 'antd';
 import _ from 'lodash';
 import {
+  BASE_IP,
   getFlowStatusService,
   getParams,
   startFlowService,
@@ -880,7 +881,7 @@ const Home: React.FC<any> = (props: any) => {
                                   :
                                   !!defaultImg ?
                                     <Image
-                                      src={defaultImg}
+                                      src={`${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}`}
                                       alt="logo"
                                       style={{ width: '100%', height: 'auto' }}
                                     />
@@ -1113,7 +1114,8 @@ const Home: React.FC<any> = (props: any) => {
   const onCancel = () => {
     form.resetFields();
     setEditWindowData({});
-    setWindowType('');
+    setSelectedPath({ fileType: 'file', value: '' });
+    setWindowType('img');
     setAddWindowVisible(false);
   };
 
@@ -1161,7 +1163,6 @@ const Home: React.FC<any> = (props: any) => {
               name={'type'}
               label="窗口类型"
               rules={[{ required: true, message: '窗口类型' }]}
-              initialValue="img"
             >
               <Select
                 style={{ width: '100%' }}
