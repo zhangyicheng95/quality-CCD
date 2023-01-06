@@ -13,7 +13,7 @@ const options = {
         itemHeight: 5,
         textStyle: {
             color: '#666',
-            fontSize: 16,
+            fontSize: 10,
             // fontFamily:'serif',
         },
     },
@@ -37,7 +37,7 @@ const options = {
             },
             // symbol: ['none', 'arrow'],
         },
-        splitNumber: 10,
+        splitNumber: 2,
         splitLine: {
             lineStyle: {
                 color: '#666',

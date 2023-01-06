@@ -772,7 +772,7 @@ const Home: React.FC<any> = (props: any) => {
           listData = listData.concat(
             <div key={key} className=" drag-item-content-box background-ubv">
               <div className="common-card-title-box flex-box drag-btn success-message">
-                <TooltipDiv className="flex-box common-card-title">{`${label} - ${value[1] || ''}`}</TooltipDiv>
+                <TooltipDiv className=" common-card-title">{`${label} - ${value[1] || ''}`}</TooltipDiv>
                 {
                   ifCanEdit ?
                     <div className="flex-box drag-item-btn-box">
@@ -812,7 +812,7 @@ const Home: React.FC<any> = (props: any) => {
                     : null
                 }
               </div>
-              <div className="flex-box-center" style={{ height: 'calc(100% - 60px)' }}>
+              <div className="flex-box-center" style={{ height: 'calc(100% - 50px)' }}>
                 {
                   type === 'line' ?
                     <LineCharts
