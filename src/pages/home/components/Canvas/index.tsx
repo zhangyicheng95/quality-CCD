@@ -48,9 +48,6 @@ import PieCharts from '@/pages/home/components/Canvas/components/PieCharts';
 import TableCharts from '@/pages/home/components/Canvas/components/TableCharts';
 import AlertCharts from '@/pages/home/components/Canvas/components/AlertCharts';
 import { useThrottleAndMerge } from "@/utils/useThrottleAndMerge";
-import moment from "moment";
-import { logColors } from "@/common/constants/globalConstants";
-import { isJSON } from "@/utils/utils";
 import FileManager from '@/components/FileManager';
 
 let timer: string | number | NodeJS.Timer | null | undefined = null;
@@ -1253,8 +1250,6 @@ const Home: React.FC<any> = (props: any) => {
             fileType={selectedPath.fileType}
             data={selectedPath}
             onOk={(val: any) => {
-              const { id, ...rest } = val;
-              console.log(val);
               setFieldsValue({ defaultImg: val?.value });
               setSelectedPath(val);
               setSelectPathVisible(false);

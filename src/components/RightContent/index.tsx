@@ -1,6 +1,6 @@
 import { Space } from 'antd';
-import { CompressOutlined, ExpandOutlined, QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import { CompressOutlined, ExpandOutlined, SettingOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
 import { useModel, SelectLang } from 'umi';
 import styles from './index.less';
 import { exitFullScreen, isFullscreenElement, requestFullScreen } from '@/utils/utils';
@@ -33,10 +33,6 @@ const GlobalHeaderRight: React.FC = () => {
       window.removeEventListener("resize", onEscCancelFull, false);
     }
   }, [])
-
-  const isIframe = useMemo(() => {
-    return window.location.href.indexOf('iframe') > -1;
-  }, [window.location.href]);
 
   return (
     <Space className={className}>
