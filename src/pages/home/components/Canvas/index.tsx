@@ -78,7 +78,7 @@ const Home: React.FC<any> = (props: any) => {
   const [nodeList, setNodeList] = useState<any>([]);
   const [windowType, setWindowType] = useState('img');
   const [selectPathVisible, setSelectPathVisible] = useState(false);
-  const [selectedPath, setSelectedPath] = useState<any>({});
+  const [selectedPath, setSelectedPath] = useState<any>({ fileType: 'file', value: '' });
 
   const ifCanEdit = useMemo(() => {
     return window.location.hash.indexOf('edit') > -1;
@@ -775,7 +775,6 @@ const Home: React.FC<any> = (props: any) => {
           const { size, value = [], type, yName, xName, defaultImg } = item[1];
           const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
           const label = parent[0]?.alias || parent[0]?.name;
-          console.log('defaultImg', defaultImg)
           listData = listData.concat(
             <div key={key} className=" drag-item-content-box background-ubv">
               <div className="common-card-title-box flex-box drag-btn success-message">
@@ -786,6 +785,7 @@ const Home: React.FC<any> = (props: any) => {
                       <div
                         style={{ cursor: 'pointer', 'zIndex': 999 }}
                         onClick={() => {
+                          !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
                           setEditWindowData(item[1]);
                           setFieldsValue(Object.assign({}, item[1], !item[1]?.yName ? { yName: undefined, xName: undefined } : {}));
                           setWindowType(item[1]?.type);
@@ -878,9 +878,16 @@ const Home: React.FC<any> = (props: any) => {
                                   />
                                 )
                                   :
-                                  <Skeleton.Image
-                                    active={true}
-                                  />
+                                  !!defaultImg ?
+                                    <Image
+                                      src={defaultImg}
+                                      alt="logo"
+                                      style={{ width: '100%', height: 'auto' }}
+                                    />
+                                    :
+                                    <Skeleton.Image
+                                      active={true}
+                                    />
                               )
                 }
               </div>
@@ -1200,14 +1207,18 @@ const Home: React.FC<any> = (props: any) => {
                   label="默认图片"
                   rules={[{ required: false, message: '默认图片' }]}
                 >
-                  <Button
-                    onClick={() => {
-                      setSelectedPath({ fileType: 'file' });
-                      setSelectPathVisible(true);
-                    }}
-                  >
-                    选择文件
-                  </Button>
+                  <div className="flex-box">
+                    <TooltipDiv style={{ paddingRight: 10 }}>
+                      {selectedPath.value}
+                    </TooltipDiv>
+                    <Button
+                      onClick={() => {
+                        setSelectPathVisible(true);
+                      }}
+                    >
+                      选择文件
+                    </Button>
+                  </div>
                 </Form.Item>
                 : null
             }
@@ -1243,7 +1254,8 @@ const Home: React.FC<any> = (props: any) => {
             onOk={(val: any) => {
               const { id, ...rest } = val;
               console.log(val);
-              setSelectedPath({});
+              setFieldsValue({ defaultImg: val?.value });
+              setSelectedPath(val);
               setSelectPathVisible(false);
             }}
             onCancel={() => {

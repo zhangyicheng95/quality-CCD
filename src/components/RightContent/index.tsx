@@ -2,12 +2,10 @@ import { Space } from 'antd';
 import { CompressOutlined, ExpandOutlined, QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { useModel, SelectLang } from 'umi';
-import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
 import { exitFullScreen, isFullscreenElement, requestFullScreen } from '@/utils/utils';
-import enUS0 from 'antd/es/locale/en_US';
-import lang_enUS0 from "@/locales/en-US";
 
+const { version } = require('../../../package.json');
 export type SiderTheme = 'light' | 'dark';
 
 const GlobalHeaderRight: React.FC = () => {
@@ -42,6 +40,7 @@ const GlobalHeaderRight: React.FC = () => {
 
   return (
     <Space className={className}>
+      <span style={{ marginRight: 8 }}>v{version}</span>
       <SettingOutlined />
       <SelectLang
         className={styles.action}

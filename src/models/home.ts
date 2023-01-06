@@ -1,7 +1,3 @@
-import socketLogListen from '@/services/socketLog';
-import socketDataListen from '@/services/socketData';
-import socketErrorListen from '@/services/socketError';
-import socketStateListen from '@/services/socketState';
 import { delay } from '@/utils/utils';
 import moment from 'moment';
 import _ from 'lodash';
