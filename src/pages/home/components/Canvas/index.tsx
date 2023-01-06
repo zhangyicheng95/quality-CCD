@@ -1187,22 +1187,22 @@ const Home: React.FC<any> = (props: any) => {
               />
             </Form.Item>
             {
-              // ['img'].includes(windowType) ?
-              //   <Form.Item
-              //     name={'defaultImg'}
-              //     label="默认图片"
-              //     rules={[{ required: false, message: '默认图片' }]}
-              //   >
-              //     <Button
-              //       onClick={() => {
-              //         setSelectedPath({ fileType: 'file' });
-              //         setSelectPathVisible(true);
-              //       }}
-              //     >
-              //       选择文件
-              //     </Button>
-              //   </Form.Item>
-              //   : null
+              ['img'].includes(windowType) ?
+                <Form.Item
+                  name={'defaultImg'}
+                  label="默认图片"
+                  rules={[{ required: false, message: '默认图片' }]}
+                >
+                  <Button
+                    onClick={() => {
+                      setSelectedPath({ fileType: 'file' });
+                      setSelectPathVisible(true);
+                    }}
+                  >
+                    选择文件
+                  </Button>
+                </Form.Item>
+                : null
             }
             {
               ['point', 'bar', 'line', 'table'].includes(windowType) ?

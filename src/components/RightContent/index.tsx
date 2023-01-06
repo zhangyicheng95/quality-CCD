@@ -26,15 +26,15 @@ const GlobalHeaderRight: React.FC = () => {
   }
 
   const onEscCancelFull = () => {
-    setFull(false);
+    setFull(isFullscreenElement());
   };
-  // useEffect(() => {
-  //   window.addEventListener("resize", onEscCancelFull, false);
+  useEffect(() => {
+    window.addEventListener("resize", onEscCancelFull, false);
 
-  //   return () => {
-  //     window.removeEventListener("resize", onEscCancelFull, false);
-  //   }
-  // }, [])
+    return () => {
+      window.removeEventListener("resize", onEscCancelFull, false);
+    }
+  }, [])
 
   const isIframe = useMemo(() => {
     return window.location.href.indexOf('iframe') > -1;

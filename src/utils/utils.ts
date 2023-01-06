@@ -106,13 +106,13 @@ export function titleCase(s: any) {
 }
 
 export function copy2clipbord(str: string) {
-    const input = document.createElement('input');
-    document.body.appendChild(input);
+    const input = document?.createElement('input');
+    document?.body.appendChild(input);
     input.setAttribute('value', str);
     input.select();
-    const res = document.execCommand('copy')
+    const res = document?.execCommand('copy')
     res && message.success('文本复制到剪切板成功!')
-    document.body.removeChild(input);
+    document?.body.removeChild(input);
 }
 // 数字转汉字
 export function convertToChinaNum(num: any) {
@@ -218,36 +218,36 @@ export function formatResponse(res: any) {
 var document: any = window.document;
 // 展开/全屏
 export function requestFullScreen(element: any) {
-    var requestMethod = element.requestFullscreen || element.webkitRequestFullscreen || element.msRequestFullscreen || element.mozRequestFullScreen;
+    var requestMethod = element?.requestFullscreen || element?.webkitRequestFullscreen || element?.msRequestFullscreen || element?.mozRequestFullScreen;
     if (requestMethod) {
         requestMethod.call(element);
     }
 }
 // 退出/全屏
 export function exitFullScreen() {
-    var exitMethod = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen || document.mozCancelFullScreen;
+    var exitMethod = document?.exitFullscreen || document?.webkitExitFullscreen || document?.msExitFullscreen || document?.mozCancelFullScreen;
     if (exitMethod) {
         exitMethod.call(document);
     }
 }
 // 判断是否全屏
 export function isFullscreenElement() {
-    var isFull = document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement || document.mozFullScreenElement;
+    var isFull = document?.fullscreenElement || document?.webkitFullscreenElement || document?.msFullscreenElement || document?.mozFullScreenElement;
     return !!isFull;
 }
 // 判断是否是合法json
-export const isJSON = (val) => {
-  // @ts-ignore
-  let str: string = val;
-  // 开头结尾不一致 也非合法json
-  if (str.startsWith('{') && !str.endsWith('}')) return false;
-  if (str.startsWith('[') && !str.endsWith(']')) return false;
-  // 开头不是{ [ 也不是合法的json
-  if (!str?.startsWith('{') && !str?.startsWith('[')) return false;
-  try {
-    JSON.parse(str);
-    return true;
-  } catch (e) {
-    return false;
-  }
+export const isJSON = (val: any) => {
+    // @ts-ignore
+    let str: string = val;
+    // 开头结尾不一致 也非合法json
+    if (str.startsWith('{') && !str.endsWith('}')) return false;
+    if (str.startsWith('[') && !str.endsWith(']')) return false;
+    // 开头不是{ [ 也不是合法的json
+    if (!str?.startsWith('{') && !str?.startsWith('[')) return false;
+    try {
+        JSON.parse(str);
+        return true;
+    } catch (e) {
+        return false;
+    }
 };
