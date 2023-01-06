@@ -84,9 +84,9 @@ const Home: React.FC<any> = (props: any) => {
     return window.location.hash.indexOf('edit') > -1;
   }, [window.location.hash]);
 
-  const isFC = useMemo(() => {
+  const isVision = useMemo(() => {
     // @ts-ignore
-    return window.QUALITY_CCD_CONFIG.type === 'fc';
+    return window.QUALITY_CCD_CONFIG.type === 'vision';
   }, []);
 
 
@@ -736,10 +736,20 @@ const Home: React.FC<any> = (props: any) => {
         message.error(res?.msg || '接口异常');
       }
     });
+
+    return () => {
+      dispatch({
+        type: 'home/set',
+        payload: {
+          gridContentList: {},
+        },
+      });
+      dispatch({ type: 'home/snapshot' });
+    }
   }, []);
   // 轮训获取运行状态
   useEffect(() => {
-    if (!ipString || ifCanEdit || isFC) return;
+    if (!ipString || ifCanEdit || isVision) return;
     setLoading(true);
     getServiceStatus();
     timer = setInterval(() => {
@@ -762,13 +772,10 @@ const Home: React.FC<any> = (props: any) => {
           if (_.isEmpty(item[1])) {
             return;
           }
-          let data: any = [];
-          for (let i = 0; i < 50; i++) {
-            data.push(i);
-          };
           const { size, value = [], type, yName, xName, defaultImg } = item[1];
           const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
-          const label = parent[0]?.alias;
+          const label = parent[0]?.alias || parent[0]?.name;
+          console.log('defaultImg', defaultImg)
           listData = listData.concat(
             <div key={key} className=" drag-item-content-box background-ubv">
               <div className="common-card-title-box flex-box drag-btn success-message">
@@ -990,7 +997,7 @@ const Home: React.FC<any> = (props: any) => {
 
   // 监听任务启动，开启socket
   useEffect(() => {
-    if ((started && ipString && dispatch && !ifCanEdit) || isFC) {
+    if ((started && ipString && dispatch && !ifCanEdit) || isVision) {
       // dispatch({ type: 'home/set', payload: {started: true} });
       socketErrorListen.listen(dispatch, errorThrottleAndMerge);
       socketLogListen.listen(dispatch, logThrottleAndMerge);
@@ -1187,7 +1194,7 @@ const Home: React.FC<any> = (props: any) => {
               />
             </Form.Item>
             {
-              ['img'].includes(windowType) ?
+              (['img'].includes(windowType) && !isVision) ?
                 <Form.Item
                   name={'defaultImg'}
                   label="默认图片"

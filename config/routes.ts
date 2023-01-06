@@ -54,6 +54,7 @@
     name: 'control',
     icon: 'control',
     path: '/control',
+    access: 'canControl',
     component: './control',
   },
   {

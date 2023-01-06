@@ -1,4 +1,4 @@
-import React, { useEffect, useState, } from "react";
+import React, { useEffect, useMemo, useState, } from "react";
 import { Form, Input, message, Button, Tree } from "antd";
 import * as _ from "lodash";
 import styles from "./index.module.less";
@@ -23,6 +23,11 @@ const Setting: React.FC<any> = (props) => {
     id: false,
   });
 
+  const isVision = useMemo(() => {
+    // @ts-ignore
+    return window.QUALITY_CCD_CONFIG.type === 'vision';
+  }, []);
+
   const getData = () => {
     getParams(localStorage.getItem("ipString") || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
@@ -31,7 +36,7 @@ const Setting: React.FC<any> = (props) => {
         const { nodes } = flowData;
         let checkedList: any = [];
         const result: any = (nodes || []).map((node: any) => {
-          const { alias, name, id, config } = node;
+          const { alias, name, id, config = {} } = node;
           const { initParams = {} } = config;
           if (!!initParams && !_.isEmpty(initParams)) {
             return {
@@ -236,21 +241,25 @@ const Setting: React.FC<any> = (props) => {
           >
             <Input placeholder="" />
           </Form.Item>
-          <Form.Item
-            name="params"
-            label="参数项管理"
-            rules={[{ required: false, message: "参数项管理" }]}
-          >
-            <Tree
-              checkable
-              autoExpandParent={true}
-              showLine={true}
-              // @ts-ignore
-              onCheck={onCheck}
-              checkedKeys={checkedKeys}
-              treeData={treeData}
-            />
-          </Form.Item>
+          {
+            !isVision ?
+              <Form.Item
+                name="params"
+                label="参数项管理"
+                rules={[{ required: false, message: "参数项管理" }]}
+              >
+                <Tree
+                  checkable
+                  autoExpandParent={true}
+                  showLine={true}
+                  // @ts-ignore
+                  onCheck={onCheck}
+                  checkedKeys={checkedKeys}
+                  treeData={treeData}
+                />
+              </Form.Item>
+              : null
+          }
         </Form>
 
       </div>

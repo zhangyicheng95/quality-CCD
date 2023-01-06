@@ -44,7 +44,8 @@ export default {
 
     *takeSnapshot(action: any, { put, select }: any) {
       const started: boolean = yield select((state: any) => state.home.started);
-      if (started) {
+      // @ts-ignore
+      if (started || window.QUALITY_CCD_CONFIG.type === 'vision') {
         yield put({ type: 'snapshot' });
       }
     },
@@ -111,8 +112,8 @@ export default {
             payload.level === 'warning'
               ? logColors.warning
               : payload.level === 'error'
-              ? logColors.error
-              : logColors.critical,
+                ? logColors.error
+                : logColors.critical,
         },
       ];
       yield put({
@@ -128,10 +129,10 @@ export default {
     snapshot: (state: any) => {
       // 此处最下diff
       const snapshot = state.snapshot;
-      const diffObj = (a: any, b: any)=> {
+      const diffObj = (a: any, b: any) => {
         return JSON.stringify(a) !== JSON.stringify(b);
       }
-      const diff = ()=> {
+      const diff = () => {
         if (state.logData.join('<br/>') !== snapshot.logStr) {
           return true;
         }
