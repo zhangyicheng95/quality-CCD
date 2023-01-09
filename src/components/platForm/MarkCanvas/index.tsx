@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Menu, message, Popover, Spin } from 'antd';
+import { Button, Menu, message, Popover, Spin } from 'antd';
 import { PictureOutlined } from "@ant-design/icons";
 // @ts-ignore
 import { saveAs } from "file-saver";
@@ -17,6 +17,7 @@ import polygonIcon from '@/assets/imgs/polygon.svg';
 import lineIcon from '@/assets/imgs/line.svg';
 import rectIcon from '@/assets/imgs/rect.svg';
 import aimIcon from '@/assets/imgs/aim.svg';
+import loadIcon from '@/assets/imgs/down-load.svg';
 import { BASE_IP } from "@/services/api";
 
 interface Props {
@@ -31,23 +32,24 @@ let gMap: any | null = null;
 let gFirstFeatureLayer: any | null = null;
 let gFirstMaskLayer: any | null = null;
 let gFirstImageLayer: any | null = null;
-let drawingStyle: any = {}; // 绘制过程中样式
+let drawingStyle: any = { strokeStyle: '#F00' }; // 绘制过程中样式
 
 const MarkCanvas: React.FC<Props> = (props: any) => {
   const { data, setGetDataFun } = props;
-  const { value, platFormValue } = data;
+  const { value, platFormValue, zoom = 1308 } = data;
   const markRef = useRef<any>();
   const [loading, setLoading] = useState(false);
-  const [selectedBtn, setSelectedBtn] = useState('PAN');
+  const [selectedBtn, setSelectedBtn] = useState('RECT');
 
   useEffect(() => {
     timer && clearTimeout(timer);
     timer = setTimeout(() => {
       const dom: any = document.getElementById(CONTAINER_ID);
-      const width = dom?.clientWidth > 800 ? 800 : dom?.clientWidth,
-        height = dom?.clientHeight > 800 ? 800 : dom?.clientHeight;
+      console.log(dom?.clientWidth, dom?.clientHeight);
+      const width = dom?.clientWidth,
+        height = dom?.clientHeight;
       img = new Image();
-      img.src = `${BASE_IP}file_browser/${value}`;
+      img.src = value.indexOf('http') === 0 ? value : `${BASE_IP}file${(value.indexOf('\\') === 0 || value.indexOf('/') === 0) ? '' : '\\'}${value}`;
       img.title = 'img.png';
       img.width = width;
       img.height = height;
@@ -56,8 +58,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       gMap = new AILabel.Map(CONTAINER_ID, {
         // size: { width: dom?.clientWidth, height: dom?.clientHeight },
         center: { x: width / 2, y: height / 2 },
-        zoom: dom?.clientHeight * 2,
-        mode: 'PAN', // 绘制线段
+        zoom: zoom ? zoom : dom?.clientHeight * 2,
+        mode: 'RECT', // 绘制线段
         refreshDelayWhenZooming: true, // 缩放时是否允许刷新延时，性能更优
         zoomWhenDrawing: true,
         panWhenDrawing: true,
@@ -66,7 +68,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       });
       // 不同的标记功能
       gMap.events.on('drawDone', (type: any, data: any) => {
-        console.log('--type, data--', type, data);
+        console.log('--type, data--', type, data, gMap.zoom);
+        setGetDataFun((prev: any) => ({ ...prev, zoom: gMap.zoom }));
         const relatedTextId = `label-text-id-${+new Date()}`;
         const relatedDeleteMarkerId = `label-marker-id-${+new Date()}`;
         if (type === 'MARKER') {
@@ -314,6 +317,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       // };
       window.addEventListener('resize', () => gMap && gMap.resize());
 
+      setGetDataFun(() => {
+        const feat = getFeatures;
+        const pen = getRle;
+        return { feat, pen, zoom: gMap.zoom };
+      })
+
     }, 300);
 
     return () => {
@@ -381,7 +390,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   }
   function getRle() {
     const rleData = gFirstMaskLayer.getRleData({ x: 0, y: 0, width: 500, height: 354 });
-    console.log('--rleData--', rleData);
+    // console.log('--rleData--', rleData);
     return rleData;
   }
   function setMode(mode: any) {
@@ -402,27 +411,27 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         break;
       }
       case 'CIRCLE': {
-        drawingStyle = { fillStyle: '#9370DB', strokeStyle: '#0000FF', lineWidth: 2 };
+        drawingStyle = { fillStyle: '#9370DB', strokeStyle: '#F00', lineWidth: 2 };
         gMap.setDrawingStyle(drawingStyle);
         break;
       }
       case 'LINE': {
-        drawingStyle = { strokeStyle: '#FF00FF', lineJoin: 'round', lineCap: 'round', lineWidth: 10, arrow: false };
+        drawingStyle = { strokeStyle: '#F00', lineJoin: 'round', lineCap: 'round', lineWidth: 10, arrow: false };
         gMap.setDrawingStyle(drawingStyle);
         break;
       }
       case 'POLYLINE': {
-        drawingStyle = { strokeStyle: '#FF1493', lineJoin: 'round', lineCap: 'round', lineWidth: 10 }
+        drawingStyle = { strokeStyle: '#F00', lineJoin: 'round', lineCap: 'round', lineWidth: 10 }
         gMap.setDrawingStyle(drawingStyle);
         break;
       }
       case 'RECT': {
-        drawingStyle = { strokeStyle: '#0f0', lineWidth: 1 }
+        drawingStyle = { strokeStyle: '#F00', lineWidth: 1 }
         gMap.setDrawingStyle(drawingStyle);
         break;
       }
       case 'POLYGON': {
-        drawingStyle = { strokeStyle: '#00f', fillStyle: '#0f0', globalAlpha: .3, lineWidth: 1, fill: true, stroke: true }
+        drawingStyle = { strokeStyle: '#F00', fillStyle: '#0f0', globalAlpha: .3, lineWidth: 1, fill: true, stroke: true }
         gMap.setDrawingStyle(drawingStyle);
         break;
       }
@@ -441,10 +450,51 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     }
   }
 
+  // 导出图片上护具
+  async function exportImage(type: any) {
+    const shareContent: any = document.getElementById(CONTAINER_ID);
+    const width = shareContent?.offsetWidth;
+    const height = shareContent?.offsetHeight;
+    const scale = 2 || window.devicePixelRatio; // 也可以使用设备像素比
+    // html2canvas(shareContent, {
+    //   scale: scale,
+    //   useCORS: true, // 是否尝试使⽤CORS从服务器加载图像
+    //   allowTaint: false, // 是否允许跨域图像。会污染画布，导致⽆法使⽤canvas.toDataURL ⽅法
+    //   width: width,
+    //   height: height,
+    // }).then((canvas: any) => {
+    //   saveAs(canvas.toDataURL('image/png', { quality: 1 }), 'export.png');
+    // });
+
+    const imagedata = await gMap.exportLayersToImage(
+      { x: 0, y: 0, width: 500, height: 354 },
+      { type, format: 'image/png' }
+    );
+    console.log(imagedata)
+    const imageDom = new Image();
+    if (type === 'base64') {
+      // 导出base64格式
+      imageDom.src = imagedata;
+    } else {
+      // 导出blob格式
+      const url = URL.createObjectURL(imagedata);
+      imageDom.src = url;
+      imageDom.onload = () => { URL.revokeObjectURL(url); }
+    }
+    let aLink = document.createElement('a');
+    aLink.style.display = 'none';
+    aLink.href = imageDom.src;
+    aLink.download = 'export.png';
+    // 触发点击-然后移除
+    document.body.appendChild(aLink);
+    aLink.click();
+    document.body.removeChild(aLink);
+  }
+
   // 获取所有features
   function getFeatures() {
     const allFeatures = gFirstFeatureLayer.getAllFeatures();
-    console.log('--allFeatures--', allFeatures);
+    // console.log('--allFeatures--', allFeatures);
     return allFeatures;
   }
 
@@ -453,15 +503,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     gMap && gMap.destroy();
     window.removeEventListener('resize', () => gMap && gMap.resize());
   }
-  useEffect(() => {
-    if (gFirstMaskLayer && gFirstFeatureLayer) {
-      setGetDataFun(() => {
-        const feat = getFeatures;
-        const pen = getRle;
-        return { feat, pen };
-      })
-    }
-  }, [gFirstFeatureLayer, gFirstMaskLayer])
 
   const lineMenu = (
     <Menu>
@@ -478,18 +519,25 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   );
 
   return <div className={`${styles.markCanvas} flex-box`} ref={markRef}>
+    <div className="canvas-header flex-box-justify-end">
+      <Button onClick={() => getFeatures()} style={{ marginRight: 10 }} >获取标注数据</Button>
+      <Button onClick={() => getRle()} style={{ marginRight: 10 }} >获取rle数据</Button>
+      <Button onClick={() => exportImage('blob')} style={{ marginRight: 10 }} >导出blob图片</Button>
+    </div>
     <div className="canvas-body flex-box-start">
       <div className="btn-box">
         <div className="top">
-          <Popover placement="right" content={lineMenu} style={{ padding: 0 }}>
+          {/* <Popover placement="right" content={lineMenu} style={{ padding: 0 }}>
             {
               selectedBtn === 'LINE' ?
                 <img src={lineIcon} alt="line" className="selected" />
                 :
                 <img src={polyLineIcon} alt="poly-line" className={selectedBtn === 'POLYLINE' ? "selected" : ''} />
             }
-          </Popover>
-          <Popover placement="right" content={rectMenu} >
+          </Popover> */}
+          <img src={circleIcon} alt="circle" onClick={() => { setMode('CIRCLE') }} className={selectedBtn === 'CIRCLE' ? "selected" : ''} />
+          <img src={rectIcon} alt="RECT" onClick={() => { setMode('RECT') }} className={selectedBtn === 'RECT' ? "selected" : ''} />
+          {/* <Popover placement="right" content={rectMenu} >
             {
               selectedBtn === 'CIRCLE' ?
                 <img src={circleIcon} alt="circle" className="selected" />
@@ -499,7 +547,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                   :
                   <img src={polygonIcon} alt="POLYGON" className={selectedBtn === 'POLYGON' ? "selected" : ''} />
             }
-          </Popover>
+          </Popover> */}
           <Popover placement="right" content={"点"} >
             <img
               src={aimIcon}
@@ -545,6 +593,9 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         <div className="bottom" style={{ marginBottom: 0 }}>
           <img src={plusIcon} alt="plus" onClick={() => zoomIn()} />
           <img src={minusIcon} alt="minus" onClick={() => zoomOut()} />
+          <Popover placement="right" content={"下载图片"} >
+            <img src={loadIcon} alt="down-load" onClick={() => exportImage('blob')} />
+          </Popover>
         </div>
       </div>
       <Spin spinning={loading} tip="Loading...">

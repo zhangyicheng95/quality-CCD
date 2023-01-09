@@ -1,6 +1,15 @@
 .markCanvas {
     height: 100%;
     width: 100%;
-    overflow: hidden;
 
+    :global {
+        .search-box {
+            height: 56px;
+        }
+
+        .mark-box {
+            height: calc(100% - 56px);
+            overflow: auto;
+        }
+    }
 }
