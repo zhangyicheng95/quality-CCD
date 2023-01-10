@@ -15,6 +15,7 @@ import {
   Skeleton,
   Select,
   Input,
+  Tree,
 } from 'antd';
 import _ from 'lodash';
 import {
@@ -34,6 +35,7 @@ import {
   PlayCircleOutlined,
   PlusCircleOutlined,
   SafetyOutlined,
+  SelectOutlined,
 } from '@ant-design/icons';
 import { connect, useHistory } from 'umi';
 import socketErrorListen from '@/services/socketError';
@@ -78,6 +80,8 @@ const Home: React.FC<any> = (props: any) => {
   const [windowType, setWindowType] = useState('img');
   const [selectPathVisible, setSelectPathVisible] = useState(false);
   const [selectedPath, setSelectedPath] = useState<any>({ fileType: 'file', value: '' });
+  const [footerSelectVisible, setFooterSelectVisible] = useState(false);
+  const [footerSelectList, setFooterSelectList] = useState<any>([]);
 
   const ifCanEdit = useMemo(() => {
     return window.location.hash.indexOf('edit') > -1;
@@ -87,7 +91,6 @@ const Home: React.FC<any> = (props: any) => {
     // @ts-ignore
     return window.QUALITY_CCD_CONFIG.type === 'vision';
   }, []);
-
 
   const gridList = [
     <div key={'slider-1'}>
@@ -610,38 +613,43 @@ const Home: React.FC<any> = (props: any) => {
       if (res && res.code === 'SUCCESS') {
         const { data = {} } = res;
         const { flowData, contentData = {} } = data;
+        const { home, content, footerSelectList } = contentData;
         const { nodes } = flowData;
         setParamData(data);
-        setNodeList(() =>
-          nodes.map((node: any) => {
-            const { name, alias, id, ports } = node;
-            return {
-              value: id,
-              label: `${alias || name}`,
-              children: (ports?.items || [])
-                .map((port: any) => {
-                  const { group, label = {} } = port;
-                  const { name, alias } = label;
-                  const value = alias || name;
-                  if (group === 'bottom') {
-                    return {
-                      value: name,
-                      label: value,
-                      disabled:
-                        !_.isEmpty(contentData) &&
-                        !!contentData?.content &&
-                        contentData?.content[id]?.value[1] === value,
-                    };
-                  }
-                  return null;
-                })
-                .filter(Boolean),
-            };
-          }),
-        );
+        let ids: any = [];
+        const list = nodes.map((node: any) => {
+          const { name, alias, id, ports } = node;
+          ids.push(id);
+          return {
+            key: id,
+            value: id,
+            title: `${alias || name}`,
+            label: `${alias || name}`,
+            children: (ports?.items || [])
+              .map((port: any) => {
+                const { group, label = {} } = port;
+                const { name, alias } = label;
+                const value = alias || name;
+                if (group === 'bottom') {
+                  return {
+                    value: name,
+                    label: value,
+                    disabled:
+                      !_.isEmpty(contentData) &&
+                      !!content &&
+                      content[id]?.value[1] === value,
+                  };
+                }
+                return null;
+              })
+              .filter(Boolean),
+          };
+        });
+        setNodeList(list);
+        setFooterSelectList(footerSelectList || ids);
         setGridHomeList(
-          (!!contentData?.home
-            ? contentData?.home
+          (!!home
+            ? home
             : [
               { i: 'slider-1', x: 0, y: 0, w: 2, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
               { i: 'slider-2', x: 0, y: 4, w: 2, h: 9, minW: 1, maxW: 12, minH: 1, maxH: 30 },
@@ -654,7 +662,7 @@ const Home: React.FC<any> = (props: any) => {
         dispatch({
           type: 'home/set',
           payload: {
-            gridContentList: contentData.content,
+            gridContentList: content,
           },
         });
         dispatch({ type: 'home/snapshot' });
@@ -1056,6 +1064,7 @@ const Home: React.FC<any> = (props: any) => {
     setSelectedPath({ fileType: 'file', value: '' });
     setWindowType('img');
     setAddWindowVisible(false);
+    setFooterSelectVisible(false);
   };
 
   return (
@@ -1080,16 +1089,63 @@ const Home: React.FC<any> = (props: any) => {
           started ?
             !!footerData && (Object.entries(footerData) || []).map((item: any, index: number) => {
               const { Status } = item[1];
-              return <div key={item[0]} className={`home-footer-item-box ${Status === 'running' ? 'success' : 'error'}`}>
+              if (!footerSelectList.includes(item[0])) {
+                return null;
+              }
+              return <div
+                key={item[0]}
+                className={`home-footer-item-box ${Status === 'running' ? 'success' : 'error'}`}
+                onClick={() => {
+                  ifCanEdit && setFooterSelectVisible(true);
+                }}
+              >
                 {`${nodeList.filter((i: any) => i.value === item[0])[0]?.label}: ${Status === 'running' ? '正常' : '异常'}`}
               </div>
             })
             :
-            <div className="home-footer-item-box success">
+            <div className="home-footer-item-box success" onClick={() => {
+              ifCanEdit && setFooterSelectVisible(true);
+            }}>
               未启动
             </div>
         }
       </div>
+
+      {
+        footerSelectVisible ?
+          <Modal
+            title={'选择底部展示的状态信息'}
+            wrapClassName="history-window-modal"
+            centered
+            width="50vw"
+            open={footerSelectVisible}
+            // maskClosable={false}
+            onOk={() => {
+              if (paramData.id) {
+                const params = Object.assign({}, paramData, {
+                  contentData: Object.assign({}, paramData.contentData, { footerSelectList }),
+                });
+                setParamData(params);
+              }
+              onCancel();
+            }}
+            onCancel={() => onCancel()}
+            getContainer={false}
+            destroyOnClose={true}
+          >
+            <Tree
+              checkable
+              autoExpandParent={true}
+              showLine={true}
+              onCheck={(checkedKeysValue: any) => {
+                setFooterSelectList(checkedKeysValue);
+              }}
+              checkedKeys={footerSelectList}
+              treeData={nodeList.map((item: any) => _.omit(item, 'children'))}
+            />
+          </Modal>
+          : null
+      }
 
       {addWindowVisible ? (
         <Modal
