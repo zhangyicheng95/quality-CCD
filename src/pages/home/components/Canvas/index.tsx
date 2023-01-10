@@ -49,6 +49,7 @@ import TableCharts from '@/pages/home/components/Canvas/components/TableCharts';
 import AlertCharts from '@/pages/home/components/Canvas/components/AlertCharts';
 import { useThrottleAndMerge } from "@/utils/useThrottleAndMerge";
 import FileManager from '@/components/FileManager';
+import { requestFullScreen } from '@/utils/utils';
 
 let timer: string | number | NodeJS.Timer | null | undefined = null;
 let updateTimer: string | number | NodeJS.Timer | null | undefined = null;
@@ -218,27 +219,6 @@ const Home: React.FC<any> = (props: any) => {
                                 })
                               })
                           },
-                          // {
-                          //   label: '显示节点状态信息',
-                          //   key: 'footer-3',
-                          //   disabled: gridHomeList.filter((i: any) => i.i === 'footer-3')[0]?.w !== 0,
-                          //   onClick: () =>
-                          //     setGridHomeList((prev: any) => {
-                          //       return prev.map((item: any) => {
-                          //         if (item.i === 'footer-3') {
-                          //           return {
-                          //             ...item,
-                          //             y: 12,
-                          //             w: 12,
-                          //             h: 2,
-                          //             minW: 2,
-                          //             minH: 2,
-                          //           };
-                          //         }
-                          //         return item;
-                          //       })
-                          //     })
-                          // },
                         ],
                       },
                     ]}
@@ -558,58 +538,6 @@ const Home: React.FC<any> = (props: any) => {
         </div>
       </div>
     </div>,
-    // <div key={'footer-3'}>
-    //   <div className="log-content background-ubv">
-    //     <div
-    //       className={`common-card-title-box flex-box drag-btn ${started ? 'success-message' : ''}`}
-    //     >
-    //       <div className="flex-box common-card-title">节点状态信息</div>
-    // {
-    //   ifCanEdit ?
-    // <Popconfirm
-    //   title="确认删除 错误信息 窗口吗?"
-    //   onConfirm={() => {
-    //     setGridHomeList((prev: any) => {
-    //       return prev.map((item: any) => {
-    //         if (item.i === 'footer-3') {
-    //           return {
-    //             ...item,
-    //             w: 0,
-    //             h: 0,
-    //             minW: 0,
-    //             minH: 0,
-    //           };
-    //         }
-    //         return item;
-    //       })
-    //     });
-    //   }}
-    //   okText="确认"
-    //   cancelText="取消"
-    // >
-    //   <div style={{ cursor: 'pointer', fontSize: 14 }}>删除</div>
-    // </Popconfirm>
-    //       :null
-    // }
-    //     </div>
-    //     <div className="flex-box footer-scroll">
-    //       {Object.entries(footerData).map((item: any, index: number) => {
-    //         const { Status } = item[1];
-    //         return (
-    //           <div
-    //             className={`footer-item-box ${Status === 'running' ? 'success' : 'error'}`}
-    //             key={`footer-3-${index}`}
-    //           >
-    //             {`${(!!gridContentList[item[0]] && gridContentList[item[0]]?.nid) ||
-    //               item[0] ||
-    //               '未知节点'
-    //               }（${_.toUpper(item[1].Status)}）`}
-    //           </div>
-    //         );
-    //       })}
-    //     </div>
-    //   </div>
-    // </div>,
   ];
   // 保存布局状态
   const saveGridFunc = (data: any) => {
@@ -730,6 +658,12 @@ const Home: React.FC<any> = (props: any) => {
           },
         });
         dispatch({ type: 'home/snapshot' });
+
+        // if (document.fullscreenEnabled && window.location.href?.indexOf('full') > -1) {
+        //   setTimeout(() => {
+        //     requestFullScreen();
+        //   }, 2000);
+        // }
       } else {
         message.error(res?.msg || '接口异常');
       }
@@ -1004,8 +938,16 @@ const Home: React.FC<any> = (props: any) => {
   useEffect(() => {
     if ((started && ipString && dispatch && !ifCanEdit) || isVision) {
       // dispatch({ type: 'home/set', payload: {started: true} });
-      socketErrorListen.listen(dispatch, errorThrottleAndMerge);
-      socketLogListen.listen(dispatch, logThrottleAndMerge);
+      const logModal = gridHomeList.filter((item: any) => item.i === 'footer-1')[0],
+        errorModal = gridHomeList.filter((item: any) => item.i === 'footer-2')[0];
+      // 没有日志窗口，就不开启日志的socket
+      if (!!logModal && logModal?.w) {
+        socketLogListen.listen(dispatch, logThrottleAndMerge);
+      }
+      // 没有错误信息窗口，就不开启错误信息的socket
+      if (!!errorModal && errorModal?.w) {
+        socketErrorListen.listen(dispatch, errorThrottleAndMerge);
+      }
       socketDataListen.listen(dispatch);
       socketStateListen.listen(dispatch);
     } else {
@@ -1117,20 +1059,37 @@ const Home: React.FC<any> = (props: any) => {
   };
 
   return (
-    <div className={`${styles.home} flex-box`}>
-      {!_.isEmpty(gridHomeList) ? (
-        <GridLayout
-          dragName={'.common-card-title'}
-          list={gridList.concat(contentList)}
-          layout={gridHomeList.concat(contentLayout)}
-          onChange={(data: any) => {
-            updateTimer && clearTimeout(updateTimer);
-            updateTimer = setTimeout(() => {
-              saveGridFunc(data);
-            }, 500);
-          }}
-        />
-      ) : null}
+    <div className={`${styles.home}`}>
+      <div className="home-body">
+        {!_.isEmpty(gridHomeList) ? (
+          <GridLayout
+            dragName={'.common-card-title'}
+            list={gridList.concat(contentList)}
+            layout={gridHomeList.concat(contentLayout)}
+            onChange={(data: any) => {
+              updateTimer && clearTimeout(updateTimer);
+              updateTimer = setTimeout(() => {
+                saveGridFunc(data);
+              }, 500);
+            }}
+          />
+        ) : null}
+      </div>
+      <div className="flex-box home-footer">
+        {
+          started ?
+            !!footerData && (Object.entries(footerData) || []).map((item: any, index: number) => {
+              const { Status } = item[1];
+              return <div key={item[0]} className={`home-footer-item-box ${Status === 'running' ? 'success' : 'error'}`}>
+                {`${nodeList.filter((i: any) => i.value === item[0])[0]?.label}: ${Status === 'running' ? '正常' : '异常'}`}
+              </div>
+            })
+            :
+            <div className="home-footer-item-box success">
+              未启动
+            </div>
+        }
+      </div>
 
       {addWindowVisible ? (
         <Modal

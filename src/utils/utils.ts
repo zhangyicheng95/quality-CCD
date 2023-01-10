@@ -217,7 +217,8 @@ export function formatResponse(res: any) {
 
 var document: any = window.document;
 // 展开/全屏
-export function requestFullScreen(element: any) {
+export function requestFullScreen() {
+    const element = document.body;
     var requestMethod = element?.requestFullscreen || element?.webkitRequestFullscreen || element?.msRequestFullscreen || element?.mozRequestFullScreen;
     if (requestMethod) {
         requestMethod.call(element);

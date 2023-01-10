@@ -18,14 +18,14 @@ export default {
     dataStatus: 'failed',
     historyData: {},
     stateStatus: 'failed',
-    footerData: [],
+    footerData: {},
     errorStatus: [],
     errorData: [],
     snapshot: {
       logStr: '',
       gridContentList: {},
       historyData: [],
-      footerData: [],
+      footerData: {},
       errorData: [],
     },
   },
@@ -138,9 +138,9 @@ export default {
         // if (diffObj(state.historyData, snapshot.historyData)) {
         //   return true;
         // }
-        // if (diffObj(state.footerData, snapshot.footerData)) {
-        //   return true;
-        // }
+        if (diffObj(state.footerData, snapshot.footerData)) {
+          return true;
+        }
         if (diffObj(state.errorData, snapshot.errorData)) {
           return true;
         }

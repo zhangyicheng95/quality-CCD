@@ -32,7 +32,7 @@ const GlobalHeaderRight: React.FC = () => {
     return () => {
       window.removeEventListener("resize", onEscCancelFull, false);
     }
-  }, [])
+  }, []);
 
   return (
     <Space className={className}>
@@ -56,7 +56,7 @@ const GlobalHeaderRight: React.FC = () => {
           <ExpandOutlined
             onClick={() => {
               setFull(true);
-              requestFullScreen(document.body);
+              requestFullScreen();
             }}
           />
       }
