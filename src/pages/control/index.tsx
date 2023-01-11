@@ -243,6 +243,7 @@ const FormatWidgetToDom = (props: any) => {
     require,
     type,
     value,
+    localPath,
     description,
     widget = {},
     default: defaultValue,
@@ -585,12 +586,12 @@ const FormatWidgetToDom = (props: any) => {
             shouldUpdate
             name={name}
             tooltip={description}
-            initialValue={value || undefined}
+            initialValue={localPath || undefined}
             valuePropName="file"
             rules={[{ required: require, message: `${alias}` }]}
           >
-            <TooltipDiv title={value}>
-              {value}
+            <TooltipDiv title={localPath}>
+              {localPath}
             </TooltipDiv>
           </FormItem>
           <div className='flex-box'>

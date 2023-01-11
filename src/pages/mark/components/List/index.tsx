@@ -41,8 +41,8 @@ const MarkList: React.FC = (props: any) => {
         history.push({
           pathname: `/mark/detail`,
           state: {
-            value: 'https://seopic.699pic.com/photo/40015/5662.jpg_wh1200.jpg',
-            platFormValue: [
+            localPath: 'https://seopic.699pic.com/photo/40015/5662.jpg_wh1200.jpg',
+            value: [
               { "id": "1667626430557", "type": "POINT", "props": { "name": "点状矢量图层", "textId": "label-text-id-1667626430557", "deleteMarkerId": "label-marker-id-1667626430557" }, "style": { "opacity": 1, "fillStyle": "#9370DB", "lineWidth": 1, "strokeStyle": "#000" }, "option": { "active": false }, "shape": { "x": 100.17761989342807, "y": 34.928952042628765, "sr": 3 } },
               { "id": "1667626431009", "type": "POINT", "props": { "name": "点状矢量图层", "textId": "label-text-id-1667626431009", "deleteMarkerId": "label-marker-id-1667626431009" }, "style": { "opacity": 1, "fillStyle": "#9370DB", "lineWidth": 1, "strokeStyle": "#000" }, "option": { "active": false }, "shape": { "x": 216.696269982238, "y": 36.34991119005328, "sr": 3 } },
               { "id": "1667626431412", "type": "POINT", "props": { "name": "点状矢量图层", "textId": "label-text-id-1667626431412", "deleteMarkerId": "label-marker-id-1667626431412" }, "style": { "opacity": 1, "fillStyle": "#9370DB", "lineWidth": 1, "strokeStyle": "#000" }, "option": { "active": false }, "shape": { "x": 164.83126110124334, "y": 132.26465364120781, "sr": 3 } },
@@ -67,8 +67,8 @@ const MarkList: React.FC = (props: any) => {
                 history.push({
                   pathname: `/mark/detail`,
                   state: {
-                    value: 'https://seopic.699pic.com/photo/40015/5662.jpg_wh1200.jpg',
-                    platFormValue: [
+                    localPath: 'https://seopic.699pic.com/photo/40015/5662.jpg_wh1200.jpg',
+                    value: [
                       { "id": "1667626430557", "type": "POINT", "props": { "name": "点状矢量图层", "textId": "label-text-id-1667626430557", "deleteMarkerId": "label-marker-id-1667626430557" }, "style": { "opacity": 1, "fillStyle": "#9370DB", "lineWidth": 1, "strokeStyle": "#000" }, "option": { "active": false }, "shape": { "x": 100.17761989342807, "y": 34.928952042628765, "sr": 3 } },
                       { "id": "1667626431009", "type": "POINT", "props": { "name": "点状矢量图层", "textId": "label-text-id-1667626431009", "deleteMarkerId": "label-marker-id-1667626431009" }, "style": { "opacity": 1, "fillStyle": "#9370DB", "lineWidth": 1, "strokeStyle": "#000" }, "option": { "active": false }, "shape": { "x": 216.696269982238, "y": 36.34991119005328, "sr": 3 } },
                       { "id": "1667626431412", "type": "POINT", "props": { "name": "点状矢量图层", "textId": "label-text-id-1667626431412", "deleteMarkerId": "label-marker-id-1667626431412" }, "style": { "opacity": 1, "fillStyle": "#9370DB", "lineWidth": 1, "strokeStyle": "#000" }, "option": { "active": false }, "shape": { "x": 164.83126110124334, "y": 132.26465364120781, "sr": 3 } },

@@ -54,16 +54,16 @@ const FileManager: React.FC<Props> = (props) => {
     >
       <div className={styles.fileManagerBox}>
         <div className="file-managet-title">
+          <a onClick={() => {
+            setSelect('');
+          }}>
+            <HomeOutlined style={{ marginRight: 8 }} />
+          </a>
           {selectList.map((item: string, index: number) => {
             if (!item) return null;
             return <a key={item} onClick={() => {
               setSelect(selectList.slice(0, index + 1).join('\\'));
             }}>
-              {
-                index === 0 ?
-                  <HomeOutlined style={{ marginRight: 8 }} />
-                  : null
-              }
               {item}&nbsp;{`   ${index + 1 === (select + '').split(`\\`).length ? '' : '/'}   `}&nbsp;
             </a>
           })}

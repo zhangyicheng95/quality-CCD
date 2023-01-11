@@ -9,14 +9,7 @@ interface Props {
 }
 
 const AlertCharts: React.FC<Props> = (props: any) => {
-    const { data = [
-        { name: '节点1', value: true },
-        { name: '节点1', value: true },
-        { name: '节点1', value: false },
-        { name: '节点1', value: true },
-        { name: '节点1', value: true },
-        { name: '节点1', value: true },
-    ], id, } = props;
+    const { data = [], id, } = props;
     const [fontSize, setFontSize] = useState('60px');
     const dom = document.getElementById(`echart-${id}`);
 

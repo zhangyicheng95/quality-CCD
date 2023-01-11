@@ -2405,6 +2405,23 @@ const getParams = (req: Request, res: Response) => {
                   "type": "Radio",
                   "options": [".jpg", ".png", ".bmp"]
                 }
+              },
+              "platForm_723b3e19": {
+                "name": "platForm_723b3e19",
+                "alias": "platForm_723b3e19",
+                "orderId": 5,
+                "require": false,
+                "default": "/Users/wilr/Downloads/201656991026_.pic_hd.jpg",
+                "localPath": "https://seopic.699pic.com/photo/40015/5662.jpg_wh1200.jpg",
+                "value": [
+                  {
+                    "id": "1673425116332",
+                    "type": "RECT",
+                    "props": { "name": "矩形矢量图形", "textId": "label-text-id-1673425116332", "deleteMarkerId": "label-marker-id-1673425116332", "label": "缺陷" },
+                    "style": { "opacity": 1, "fillStyle": "rgba(255, 0, 0, 0)", "lineWidth": 1, "strokeStyle": "#F00" },
+                    "shape": { "x": 331.7559993018706, "y": 157.17094700662133, "width": 87.26617870328407, "height": 45.616411594898494 }
+                  },
+                  { "id": "1673425118679", "type": "CIRCLE", "props": { "name": "圆形矢量图层", "textId": "label-text-id-1673425118679", "deleteMarkerId": "label-marker-id-1673425118679", "label": "缺陷" }, "style": { "opacity": 1, "fillStyle": "#9370DB", "lineWidth": 2, "strokeStyle": "#F00" }, "option": { "active": false }, "shape": { "cx": 531.0798847491444, "cy": 130.39609672265917, "r": 41.5197036429828 } }], "type": "File", "description": "标注", "widget": { "type": "platForm", "id": "platForm_723b3e19" }
               }
             },
             "input": {

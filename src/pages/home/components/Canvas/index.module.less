@@ -203,9 +203,11 @@
       .charts-header-item {
         padding: 2px 8px;
         flex: 1;
+        border-right: 3px solid @body-background;
+        overflow: hidden;
 
-        &:first-child {
-          border-right: 3px solid @body-background;
+        &:last-child {
+          border-right: 0;
         }
       }
     }
@@ -218,6 +220,7 @@
         .charts-body-td {
           padding: 2px 8px;
           flex: 1;
+          overflow: hidden;
         }
 
         &:nth-child(even) {

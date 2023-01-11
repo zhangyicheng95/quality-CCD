@@ -36,7 +36,7 @@ const GlobalHeaderRight: React.FC = () => {
 
   return (
     <Space className={className}>
-      <span style={{ marginRight: 8 }}>v{version}</span>
+      <span className='version'>v{version}</span>
       <SettingOutlined />
       <SelectLang
         className={styles.action}
