@@ -9,7 +9,7 @@ interface Props {
 
 const TableCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { dataValue = {}, yName, xName } = data;
+    const { dataValue = [], yName, xName } = data;
 
     return (
         <div id={`echart-${id}`} className={styles.tableCharts}>
@@ -23,10 +23,11 @@ const TableCharts: React.FC<Props> = (props: any) => {
             </div>
             <div className="charts-body-box">
                 {
-                    Object.entries(dataValue).map((item: any, index: number) => {
+                    (dataValue || []).map((item: any, index: number) => {
+                        const { name, value } = item;
                         return <div className="charts-body-tr flex-box" key={`echart-${id}-tr-${index}`}>
-                            <div className="charts-body-td flex-box-center">{item[0]}</div>
-                            <div className="charts-body-td flex-box-center">{item[1]}</div>
+                            <div className="charts-body-td flex-box-center">{name}</div>
+                            <div className="charts-body-td flex-box-center">{value}</div>
                         </div>
                     })
                 }

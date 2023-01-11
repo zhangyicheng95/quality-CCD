@@ -10,7 +10,7 @@ interface Props {
 
 const PointCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { dataValue = {}, yName, xName } = data;
+    const { dataValue = [], yName, xName } = data;
     useEffect(() => {
         const dom: any = document.getElementById(`echart-${id}`);
         const myChart = echarts.init(dom);
@@ -27,12 +27,13 @@ const PointCharts: React.FC<Props> = (props: any) => {
             xAxis: Object.assign({}, options.xAxis, {
                 name: xName,
             }),
-            series: Object.entries(dataValue).map((item: any) => {
+            series: (dataValue || []).map((item: any) => {
+                const { name, value } = item;
                 return {
                     symbolSize: 15,
-                    name: item[0],
+                    name: name,
                     type: "scatter",
-                    data: item[1]
+                    data: value
                 }
             })
         });

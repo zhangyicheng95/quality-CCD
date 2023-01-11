@@ -32,10 +32,11 @@ const PieCharts: React.FC<Props> = (props: any) => {
                         position: "inside",
                         fontSize: 18
                     },
-                    data: Object.entries(data).map((item: any) => {
+                    data: (data || []).map((item: any) => {
+                        const { name, value } = item;
                         return {
-                            name: item[0],
-                            value: item[1]
+                            name: name,
+                            value: value
                         }
                     }),
                     emphasis: {

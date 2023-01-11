@@ -10,7 +10,7 @@ interface Props {
 
 const BarCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { dataValue = {}, yName, xName } = data;
+    const { dataValue = [], yName, xName } = data;
     useEffect(() => {
         const dom: any = document.getElementById(`echart-${id}`);
         const myChart = echarts.init(dom);
@@ -25,11 +25,12 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 name: xName,
                 scale: true,
             }),
-            series: Object.entries(dataValue).map((item: any) => {
+            series: (dataValue || []).map((item: any) => {
+                const { name, value } = item;
                 return {
-                    name: item[0],
+                    name: name,
                     type: 'bar',
-                    data: item[1]
+                    data: value
                 }
             })
         });
