@@ -1102,21 +1102,23 @@ const Home: React.FC<any> = (props: any) => {
         {
           useMemo(() => {
             return started ?
-              !!footerData && (Object.entries(footerData) || []).map((item: any, index: number) => {
-                const { Status } = item[1];
-                if (!footerSelectList.includes(item[0])) {
-                  return null;
-                }
-                return <div
-                  key={item[0]}
-                  className={`home-footer-item-box ${Status === 'running' ? 'success' : 'error'}`}
-                  onClick={() => {
-                    ifCanEdit && setFooterSelectVisible(true);
-                  }}
-                >
-                  {`${nodeList.filter((i: any) => i.value === item[0])[0]?.label}: ${Status === 'running' ? '正常' : '异常'}`}
-                </div>
-              })
+              (
+                !!footerData && (Object.entries(footerData) || []).map((item: any, index: number) => {
+                  const { Status } = item[1];
+                  if (!footerSelectList.includes(item[0])) {
+                    return null;
+                  }
+                  return <div
+                    key={item[0]}
+                    className={`home-footer-item-box ${Status === 'running' ? 'success' : 'error'}`}
+                    onClick={() => {
+                      ifCanEdit && setFooterSelectVisible(true);
+                    }}
+                  >
+                    {`${nodeList.filter((i: any) => i.value === item[0])[0]?.label}: ${Status === 'running' ? '正常' : '异常'}`}
+                  </div>
+                })
+              )
               :
               <div className="home-footer-item-box success" onClick={() => {
                 ifCanEdit && setFooterSelectVisible(true);

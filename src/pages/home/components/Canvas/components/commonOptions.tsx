@@ -26,6 +26,7 @@ const options = {
     yAxis: {
         type: 'value',
         fontSize: 14,
+        scale: true,
         axisLabel: {
             color: '#666'
             // fontFamily:'serif',
@@ -47,6 +48,7 @@ const options = {
     },
     xAxis: {
         type: 'value',
+        scale: true,
         axisLine: {
             show: true,
             lineStyle: {

@@ -15,6 +15,9 @@ const BarCharts: React.FC<Props> = (props: any) => {
         const dom: any = document.getElementById(`echart-${id}`);
         const myChart = echarts.init(dom);
         const option = Object.assign({}, options, {
+            grid: Object.assign({}, options.grid, {
+                right: `${xName.length * 16}px`
+            }),
             yAxis: Object.assign({}, options.yAxis, {
                 name: yName,
                 boundaryGap: ['5%', '5%'],

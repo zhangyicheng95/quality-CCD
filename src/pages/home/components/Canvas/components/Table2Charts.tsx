@@ -38,8 +38,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                     return <TooltipDiv
                                         className="charts-body-td"
                                         key={`echart-${id}-tr-td-${sIndex}`}
-                                        style={val.length > 20 ? { fontSize: 18 } : {}}
-                                        title={val}
+                                        title={val.length > 15 ? val : ''}
                                     >
                                         {val}
                                     </TooltipDiv>

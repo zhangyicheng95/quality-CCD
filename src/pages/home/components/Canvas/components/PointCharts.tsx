@@ -19,10 +19,12 @@ const PointCharts: React.FC<Props> = (props: any) => {
             legend: Object.assign({}, options.legend, {
                 itemHeight: 8,
             }),
+            grid: Object.assign({}, options.grid, {
+                right: `${xName.length * 16}px`
+            }),
             yAxis: Object.assign({}, options.yAxis, {
                 name: yName,
-                boundaryGap: ["5%", "5%"],
-                scale: true,
+                boundaryGap: false
             }),
             xAxis: Object.assign({}, options.xAxis, {
                 name: xName,

@@ -43,6 +43,9 @@ const LineCharts: React.FC<Props> = (props: any) => {
                     return name;
                 })
             }),
+            grid: Object.assign({}, options.grid, {
+                right: `${xName.length * 16}px`
+            }),
             yAxis: Object.assign({}, options.yAxis, {
                 type: 'value',
                 name: yName,
