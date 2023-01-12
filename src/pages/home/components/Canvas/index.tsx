@@ -53,6 +53,7 @@ import { useThrottleAndMerge } from "@/utils/useThrottleAndMerge";
 import FileManager from '@/components/FileManager';
 import { requestFullScreen } from '@/utils/utils';
 import Table2Charts from './components/Table2Charts';
+import ImgsCharts from './components/ImgsCharts';
 
 let timer: string | number | NodeJS.Timer | null | undefined = null;
 let updateTimer: string | number | NodeJS.Timer | null | undefined = null;
@@ -816,26 +817,32 @@ const Home: React.FC<any> = (props: any) => {
                                   data={item[1][value[1]]}
                                 />
                                 :
-                                (
-                                  _.isString(item[1][value[1]]) && item[1][value[1]].indexOf('http') > -1 ? (
-                                    <Image
-                                      src={item[1][value[1]]}
-                                      alt="logo"
-                                      style={{ width: '100%', height: 'auto' }}
-                                    />
-                                  )
-                                    :
-                                    !!defaultImg ?
+                                type === 'imgs' ?
+                                  <ImgsCharts
+                                    id={key}
+                                    data={item[1][value[1]]}
+                                  />
+                                  :
+                                  (
+                                    _.isString(item[1][value[1]]) && item[1][value[1]].indexOf('http') > -1 ? (
                                       <Image
-                                        src={`${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}`}
+                                        src={item[1][value[1]]}
                                         alt="logo"
                                         style={{ width: '100%', height: 'auto' }}
                                       />
+                                    )
                                       :
-                                      <Skeleton.Image
-                                        active={true}
-                                      />
-                                )
+                                      !!defaultImg ?
+                                        <Image
+                                          src={`${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}`}
+                                          alt="logo"
+                                          style={{ width: '100%', height: 'auto' }}
+                                        />
+                                        :
+                                        <Skeleton.Image
+                                          active={true}
+                                        />
+                                  )
                 }
               </div>
             </div>,
@@ -1191,6 +1198,10 @@ const Home: React.FC<any> = (props: any) => {
                   {
                     value: 'img',
                     label: '图片窗口',
+                  },
+                  {
+                    value: 'imgs',
+                    label: '图片列表窗口',
                   },
                   {
                     value: 'line',
