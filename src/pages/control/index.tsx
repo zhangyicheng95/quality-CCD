@@ -209,9 +209,9 @@ const Control: React.FC<any> = (props: any) => {
             fileType={selectedPath.fileType}
             data={selectedPath}
             onOk={(val: any) => {
-              const { id, ...rest } = val;
+              const { id, value, ...rest } = val;
               console.log(val);
-              widgetChange(id, rest);
+              widgetChange(id, { ...rest, localPath: value });
               setSelectedPath({});
               setSelectPathVisible(false);
             }}
@@ -597,7 +597,7 @@ const FormatWidgetToDom = (props: any) => {
           <div className='flex-box'>
             <Button
               onClick={() => {
-                setSelectedPath(Object.assign({ id: name, fileType: 'file' }, config[1]));
+                setSelectedPath(Object.assign({ id: name, fileType: 'file' }, { ..._.omit(config[1], 'value'), value: config[1].localPath }));
                 setSelectPathVisible(true);
               }}
               disabled={disabled}

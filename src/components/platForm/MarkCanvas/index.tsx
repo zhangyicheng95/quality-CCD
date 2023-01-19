@@ -42,7 +42,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   const [selectedBtn, setSelectedBtn] = useState('RECT');
 
   useEffect(() => {
-    console.log(new Date().getTime());
     const dom: any = document.getElementById(CONTAINER_ID);
     const width = dom?.clientWidth,
       height = dom?.clientHeight;
@@ -423,7 +422,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         break;
       }
       case 'LINE': {
-        drawingStyle = { strokeStyle: '#F00', lineJoin: 'round', lineCap: 'round', lineWidth: 10, arrow: false };
+        drawingStyle = { strokeStyle: '#F00', lineJoin: 'round', lineCap: 'round', lineWidth: 1, arrow: false };
         gMap.setDrawingStyle(drawingStyle);
         break;
       }
@@ -534,6 +533,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     <div className="canvas-body flex-box-start">
       <div className="btn-box">
         <div className="top">
+          <img src={polyLineIcon} alt="poly-line" onClick={() => { setMode('LINE') }} className={selectedBtn === 'LINE' ? "selected" : ''} />
           {/* <Popover placement="right" content={lineMenu} style={{ padding: 0 }}>
             {
               selectedBtn === 'LINE' ?
@@ -555,14 +555,14 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                   <img src={polygonIcon} alt="POLYGON" className={selectedBtn === 'POLYGON' ? "selected" : ''} />
             }
           </Popover> */}
-          <Popover placement="right" content={"点"} >
-            <img
-              src={aimIcon}
-              alt="cursor-default"
-              className={selectedBtn === 'POINT' ? "selected" : ''}
-              onClick={() => setMode('POINT')}
-            />
-          </Popover>
+          {/* <Popover placement="right" content={"点"} > */}
+          <img
+            src={aimIcon}
+            alt="cursor-default"
+            className={selectedBtn === 'POINT' ? "selected" : ''}
+            onClick={() => setMode('POINT')}
+          />
+          {/* </Popover> */}
           {/* <Popover placement="right" content={"画笔"} >
             <img
               src={maskIcon}
