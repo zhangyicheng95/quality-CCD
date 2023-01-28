@@ -1,14 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import styles from './index.module.less';
-import { message, Form, Button, DatePicker } from 'antd';
+import { message, Form, Button, DatePicker, Segmented, Select, Input } from 'antd';
 import _ from 'lodash';
 import { guid } from '@/utils/utils';
 import moment from 'moment';
 import PrimaryTitle from '@/components/PrimaryTitle';
-import { getAllHistory } from '@/services/api';
+import { getAllHistory, getAllHistorySize } from '@/services/api';
 import BasicTable from '@/components/BasicTable';
 import { useHistory } from 'react-router';
 import TooltipDiv from '@/components/TooltipDiv';
+
+const LABEL_RESULT = {
+  "OK": "正常",
+  "": "未审核",
+  "NG": "异常",
+};
+const CLASS_RESULT = {
+  "OK": "success-font",
+  "": "normal-font",
+  "NG": "error-font",
+};
 
 const RangePicker: any = DatePicker.RangePicker;
 const HistoryList: React.FC<any> = (props: any) => {
@@ -20,17 +31,34 @@ const HistoryList: React.FC<any> = (props: any) => {
     pageNum: 1,
     startTime: '',
     endTime: '',
+    type: 'size',
   });
 
+  const updateFun = (res: any) => {
+    if (res?.code === 'SUCCESS' || res?.code === 200) {
+      const { list, pageNum, pageSize, total, } = res.result;
+      setData(list);
+      setParams((prev: any) => Object.assign({}, prev, { pageNum, pageSize, total }));
+    } else {
+      message.error(res?.msg || '接口异常');
+    }
+  };
+
+  const getList = (param: any) => {
+    if (param.type === 'size') {
+      getAllHistorySize(param).then((res: any) => {
+        updateFun(res);
+      });
+    } else {
+      getAllHistory(param).then((res: any) => {
+        updateFun(res);
+      });
+    }
+  };
   useEffect(() => {
-    getAllHistory(params).then((res: any) => {
-      if (res && res.code === 'SUCCESS') {
-        setData(res.data);
-      } else {
-        message.error(res?.msg || '接口异常');
-      }
-    });
-  }, [params]);
+    getList(params);
+  }, []);
+
   const columns = [
     {
       key: 'index',
@@ -41,64 +69,125 @@ const HistoryList: React.FC<any> = (props: any) => {
       render: (text: any, record: any, index: number) => index + 1,
     },
     {
-      key: 'orderId',
-      dataIndex: 'orderId',
-      title: '订单号',
+      key: 'materialCode',
+      dataIndex: 'materialCode',
+      title: '物料号',
+      width: 150,
       align: 'center',
       render: (text: any, record: any) => (
         <TooltipDiv
           title={text}
           placement="top"
-          onClick={() => {
-            history.push({ pathname: `/history/detail`, state: record });
-          }}
+        // onClick={() => {
+        //   history.push({ pathname: `/history/detail`, state: record });
+        // }}
         >
           {text}
         </TooltipDiv>
       ),
     },
     {
-      key: 'orderTime',
-      dataIndex: 'orderTime',
-      title: '订单时间',
+      key: 'deviceCode',
+      dataIndex: 'deviceCode',
+      title: '相机IP',
+      width: 150,
       align: 'center',
-      render: (text: any, record: any, index: number) => {
-        const { data = {} } = record;
-        const { create_time } = data;
-        return moment(new Date(!!create_time ? Number(create_time) : '')).format(
-          'YYYY-MM-DD HH:mm:ss',
-        );
+      render: (text: any, record: any) => (
+        <TooltipDiv
+          title={text}
+          placement="top"
+        >
+          {text}
+        </TooltipDiv>
+      ),
+    },
+    {
+      key: 'captureTime',
+      dataIndex: 'captureTime',
+      title: '检测时间',
+      align: 'center',
+      // render: (text: any, record: any, index: number) => {
+      //   const { data = {} } = record;
+      //   const { create_time } = data;
+      //   return moment(new Date(!!create_time ? Number(create_time) : '')).format(
+      //     'YYYY-MM-DD HH:mm:ss',
+      //   );
+      // },
+    },
+    {
+      key: 'location',
+      dataIndex: 'location',
+      title: '位置信息（米）',
+      width: 130,
+      align: 'center',
+      render: (text: any, record: any) => text,
+    },
+    {
+      key: 'imageName',
+      dataIndex: 'imageName',
+      title: '图片URL',
+      width: 200,
+      align: 'center',
+      render: (text: any, record: any) => {
+        const { imageUrl } = record;
+        return <TooltipDiv
+          title={text}
+          placement="top"
+          onClick={() => {
+            window.open(imageUrl);
+          }}
+        >
+          {text}
+        </TooltipDiv>
       },
     },
-    // { key: 'alarmImgCount', dataIndex: 'alarmImgCount', title: '报警图片数量', align: 'center', },
-    // { key: 'falsyAlarmImgCount', dataIndex: 'falsyAlarmImgCount', title: '误报图片数量', align: 'center', },
-    // { key: 'confirmedAlarmImgCount', dataIndex: 'confirmedAlarmImgCount', title: '异常图片数量', align: 'center', },
+    {
+      key: 'algStatus',
+      dataIndex: 'algStatus',
+      title: '检测状态',
+      width: 100,
+      align: 'center',
+      render: (text: any, record: any) => {
+        return <span className={CLASS_RESULT[text]}>
+          {LABEL_RESULT[text]}
+        </span>
+      },
+    },
   ];
 
   return (
-    <div className={`${styles.history} page-size background-ubv`}>
+    <div className={`${styles.historyList} page-size background-ubv`}>
       <PrimaryTitle title={'历史记录'} />
-      <div className="history-content-box">
+      <div className="history-content-box flex-box">
         <div className="search-box">
           <Form
             form={form}
             className="page-history-order-query"
             initialValues={{}}
             onFinish={(values) => {
-              const { timeRange } = values;
-              setParams((prev: any) =>
-                Object.assign({}, prev, {
-                  startTime: new Date(timeRange[0]).getTime(),
-                  endTime: new Date(timeRange[1]).getTime(),
-                }),
-              );
+              const { timeRange, ...rest } = values;
+              const result = Object.assign({}, params, rest, !!timeRange ? {
+                startTime: new Date(timeRange[0]).getTime(),
+                endTime: new Date(timeRange[1]).getTime(),
+              } : {});
+              getList(result);
+              setParams(result);
             }}
           >
             <div className="flex-box">
               <Form.Item label="时间" name="timeRange">
                 <RangePicker showTime size="large" />
               </Form.Item>
-              <Button type="primary" ghost htmlType="submit">
+              <Form.Item label="类型" name="type" initialValue={"size"}>
+                <Select size="large" options={[
+                  { label: '尺寸', value: 'size' },
+                  { label: '缺陷', value: 'defect' }
+                ]} style={{ width: 200 }} />
+              </Form.Item>
+              <Form.Item label="物料号" name="materialCode">
+                <Input />
+              </Form.Item>
+              <Button type="primary" htmlType="submit">
                 搜索
               </Button>
             </div>

@@ -8,9 +8,13 @@ export async function getAllProject(params?: any) {
   return fetchGet(`${BASE_IP}projects?timestamp${new Date().getTime()}`);
 }
 
-// 获取历史记录
+// 获取历史记录 //缺陷
 export async function getAllHistory(params: any) {
-  return fetchGet(`${BASE_IP}history?${parseParamsToUrl(params)}`);
+  return fetchPost(`${BASE_IP}track/track/list/v1`, { body: params });
+}
+// 获取历史记录 //尺寸
+export async function getAllHistorySize(params: any) {
+  return fetchPost(`${BASE_IP}track/size/list/v1`, { body: params });
 }
 
 // 根据id获取项目详情

@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect, Route, Router, Switch, useHistory, useLocation } from "react-router";
+import { Route, Router, Switch, useHistory } from "react-router";
 import List from './components/List';
 import Detail from './components/Details';
 
