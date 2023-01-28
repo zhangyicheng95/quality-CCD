@@ -200,13 +200,12 @@ const HistoryList: React.FC<any> = (props: any) => {
             rowKey={(record: any) => record?.id || guid()}
             onChange={(data: any) => {
               const { current, pageSize } = data;
-              console.log(current, pageSize);
-              setParams((prev: any) =>
-                Object.assign({}, prev, {
-                  pageSize: pageSize,
-                  pageNum: current,
-                }),
-              );
+              const result = Object.assign({}, params, {
+                pageSize: pageSize,
+                pageNum: current,
+              });
+              getList(result);
+              setParams(result);
             }}
           />
         </div>
