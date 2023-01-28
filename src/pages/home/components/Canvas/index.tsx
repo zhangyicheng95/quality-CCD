@@ -35,7 +35,6 @@ import {
   PlayCircleOutlined,
   PlusCircleOutlined,
   SafetyOutlined,
-  SelectOutlined,
 } from '@ant-design/icons';
 import { connect, useHistory } from 'umi';
 import socketErrorListen from '@/services/socketError';
@@ -51,7 +50,6 @@ import TableCharts from '@/pages/home/components/Canvas/components/TableCharts';
 import AlertCharts from '@/pages/home/components/Canvas/components/AlertCharts';
 import { useThrottleAndMerge } from "@/utils/useThrottleAndMerge";
 import FileManager from '@/components/FileManager';
-import { requestFullScreen } from '@/utils/utils';
 import Table2Charts from './components/Table2Charts';
 import ImgsCharts from './components/ImgsCharts';
 
@@ -97,10 +95,7 @@ const Home: React.FC<any> = (props: any) => {
   const gridList = [
     <div key={'slider-1'}>
       <div className="btn-box background-ubv">
-        <div
-          className={`common-card-title-box flex-box drag-btn ${started ? (taskDataConnect ? 'success-message' : 'error-message') : ''
-            }`}
-        >
+        <div className={`common-card-title-box flex-box drag-btn}`}>
           <div className="flex-box common-card-title">
             当前状态：
             {started ? (
@@ -324,7 +319,7 @@ const Home: React.FC<any> = (props: any) => {
                 okText="确认"
                 cancelText="取消"
               >
-                <div style={{ cursor: 'pointer', fontSize: 14 }}>删除</div>
+                <div className='common-btn'>删除</div>
               </Popconfirm>
               : null
           }
@@ -354,7 +349,7 @@ const Home: React.FC<any> = (props: any) => {
     </div>,
     <div key={'slider-3'}>
       <div className="info-box message-box background-ubv">
-        <div className="common-card-title-box flex-box drag-btn success-message">
+        <div className="common-card-title-box flex-box drag-btn">
           <div className="flex-box common-card-title">实时信息</div>
           {
             ifCanEdit ?
@@ -379,7 +374,7 @@ const Home: React.FC<any> = (props: any) => {
                 okText="确认"
                 cancelText="取消"
               >
-                <div style={{ cursor: 'pointer', fontSize: 14 }}>删除</div>
+                <div className='common-btn'>删除</div>
               </Popconfirm>
               : null
           }
@@ -401,7 +396,7 @@ const Home: React.FC<any> = (props: any) => {
     // <div key={'content'}>
     //   <Spin spinning={loading}>
     //     <div className="info-box background-ubv">
-    //       <div className="common-card-title-box flex-box drag-btn success-message" style={{ borderColor: '#13c2c2' }}>
+    //       <div className="common-card-title-box flex-box drag-btn" style={{ borderColor: '#13c2c2' }}>
     //         <div className="flex-box common-card-title">结果信息</div>
     //       </div>
     //       <div className="home-content flex-box">
@@ -446,7 +441,7 @@ const Home: React.FC<any> = (props: any) => {
     // </div>,
     <div key={'footer-1'}>
       <div className="log-content background-ubv">
-        <div className="common-card-title-box flex-box drag-btn warning-message">
+        <div className="common-card-title-box flex-box drag-btn">
           <div className="flex-box common-card-title">日志信息</div>
           {
             ifCanEdit ?
@@ -471,7 +466,7 @@ const Home: React.FC<any> = (props: any) => {
                 okText="确认"
                 cancelText="取消"
               >
-                <div style={{ cursor: 'pointer', fontSize: 14 }}>删除</div>
+                <div className='common-btn'>删除</div>
               </Popconfirm>
               : null
           }
@@ -487,7 +482,7 @@ const Home: React.FC<any> = (props: any) => {
     </div>,
     <div key={'footer-2'}>
       <div className="log-content background-ubv">
-        <div className="common-card-title-box flex-box drag-btn error-message">
+        <div className="common-card-title-box flex-box drag-btn">
           <div className="flex-box common-card-title">错误信息</div>
           {
             ifCanEdit ?
@@ -512,7 +507,7 @@ const Home: React.FC<any> = (props: any) => {
                 okText="确认"
                 cancelText="取消"
               >
-                <div style={{ cursor: 'pointer', fontSize: 14 }}>删除</div>
+                <div className='common-btn'>删除</div>
               </Popconfirm>
               : null
           }
@@ -719,13 +714,13 @@ const Home: React.FC<any> = (props: any) => {
           const label = parent[0]?.alias || parent[0]?.name;
           listData = listData.concat(
             <div key={key} className=" drag-item-content-box background-ubv">
-              <div className="common-card-title-box flex-box drag-btn success-message">
+              <div className="common-card-title-box flex-box drag-btn">
                 <TooltipDiv className=" common-card-title">{`${label} - ${value[1] || ''}`}</TooltipDiv>
                 {
                   ifCanEdit ?
                     <div className="flex-box drag-item-btn-box">
                       <div
-                        style={{ cursor: 'pointer', 'zIndex': 999 }}
+                        className='common-btn'
                         onClick={() => {
                           !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
                           setEditWindowData(item[1]);
@@ -755,7 +750,7 @@ const Home: React.FC<any> = (props: any) => {
                         okText="确认"
                         cancelText="取消"
                       >
-                        <div style={{ cursor: 'pointer', 'zIndex': 999 }}>删除</div>
+                        <div className='common-btn'>删除</div>
                       </Popconfirm>
                     </div>
                     : null

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Image } from 'antd';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
@@ -11,7 +11,6 @@ interface Props {
 
 const ImgsCharts: React.FC<Props> = (props: any) => {
     const { data = [], id, } = props;
-    const dom = document.getElementById(`echart-${id}`);
 
     return (
         <div
@@ -27,7 +26,7 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
                     >
                         <Image
                             src={value}
-                            alt="logo"
+                            alt={name || 'logo'}
                             style={{ width: '100%', height: 'auto' }}
                         />
                     </div>
