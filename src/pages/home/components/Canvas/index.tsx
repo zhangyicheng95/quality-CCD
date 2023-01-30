@@ -1124,7 +1124,7 @@ const Home: React.FC<any> = (props: any) => {
               }}>
                 未启动
               </div>
-          }, [footerData, footerSelectList])
+          }, [started, footerData, footerSelectList])
         }
       </div>
 
