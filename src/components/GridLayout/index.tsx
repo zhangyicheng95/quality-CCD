@@ -13,7 +13,8 @@ interface Props {
     list: any;
     layout: any;
     onChange?: any;
-}
+};
+
 const CustomResizeHandle = React.forwardRef((props: any, ref) => {
     const { handleAxis, ...restProps } = props;
     return (
@@ -44,7 +45,7 @@ const GridLayout: React.FC<Props> = (props: any) => {
             const { i, x, y, w, h, minW, maxW, minH, maxH } = item;
             index++;
             EUlayoutArr[index] = { i, x, y, w, h, minW, maxW, minH, maxH }
-        })
+        });
         onChange && onChange(EUlayoutArr);
     }
     return (
@@ -68,7 +69,8 @@ const GridLayout: React.FC<Props> = (props: any) => {
                         allowOverlap={true} // 覆盖
                         // preventCollision={true} // 防碰撞
                         autoSize={true}
-                        onLayoutChange={onLayoutChange}
+                        onResizeStop={onLayoutChange}
+                        onDragStop={onLayoutChange}
                         resizeHandles={['se']}  // 'n', 'e', 's', 'w', 'nw', 'ne', 'se', 'sw'
                         resizeHandle={<CustomResizeHandle />}
                         draggableHandle={dragName}

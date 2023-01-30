@@ -1087,10 +1087,7 @@ const Home: React.FC<any> = (props: any) => {
             list={gridList.concat(contentList)}
             layout={gridHomeList.concat(contentLayout)}
             onChange={(data: any) => {
-              updateTimer && clearTimeout(updateTimer);
-              updateTimer = setTimeout(() => {
-                saveGridFunc(data);
-              }, 500);
+              saveGridFunc(data);
             }}
           />
         ) : null}
