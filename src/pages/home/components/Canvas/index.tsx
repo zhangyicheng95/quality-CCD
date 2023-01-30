@@ -132,7 +132,6 @@ const Home: React.FC<any> = (props: any) => {
                     items={[
                       {
                         label: '添加监控窗口', key: 'add', onClick: () => {
-                          setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24 });
                           setAddWindowVisible(true);
                         }
                       },
@@ -616,31 +615,26 @@ const Home: React.FC<any> = (props: any) => {
         setParamData(data);
         let ids: any = [];
         const list = nodes.map((node: any) => {
-          const { name, alias, id, ports } = node;
+          const { name, alias, id, config = {} } = node;
+          const { output = {} } = config;
           ids.push(id);
           return {
             key: id,
             value: id,
             title: `${alias || name}`,
             label: `${alias || name}`,
-            children: (ports?.items || [])
+            children: Object.entries(output)
               .map((port: any) => {
-                const { group, label = {} } = port;
-                const { name, alias } = label;
-                const value = alias || name;
-                if (group === 'bottom') {
-                  return {
-                    value: name,
-                    label: value,
-                    disabled:
-                      !_.isEmpty(contentData) &&
-                      !!content &&
-                      content[id]?.value[1] === value,
-                  };
-                }
-                return null;
-              })
-              .filter(Boolean),
+                const value = port[1]?.alias || port[0];
+                return {
+                  value: port[0],
+                  label: value,
+                  disabled:
+                    !_.isEmpty(contentData) &&
+                    !!content &&
+                    content[id]?.value[1] === port[0],
+                };
+              }),
           };
         });
         setNodeList(list);
@@ -712,11 +706,14 @@ const Home: React.FC<any> = (props: any) => {
           }
           const { size, value = [], type, yName, xName, defaultImg, fontSize } = item[1];
           const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
-          const label = parent[0]?.alias || parent[0]?.name;
+          const { alias, name, config = {} } = parent[0];
+          const { output = {} } = config;
           listData = listData.concat(
             <div key={key} className=" drag-item-content-box background-ubv">
               <div className="common-card-title-box flex-box drag-btn">
-                <TooltipDiv className=" common-card-title">{`${label} - ${value[1] || ''}`}</TooltipDiv>
+                <TooltipDiv className=" common-card-title">
+                  {`${alias || name} - ${output[value[1]]?.alias || value[1] || ''}`}
+                </TooltipDiv>
                 {
                   ifCanEdit ?
                     <div className="flex-box drag-item-btn-box">
@@ -1075,6 +1072,7 @@ const Home: React.FC<any> = (props: any) => {
     form.resetFields();
     setEditWindowData({});
     setSelectedPath({ fileType: 'file', value: '' });
+    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24 });
     setWindowType('img');
     setAddWindowVisible(false);
     setFooterSelectVisible(false);

@@ -2444,7 +2444,7 @@ const getParams = (req: Request, res: Response) => {
             "output": {
               "status": {
                 "type": "bool",
-                "alias": "status"
+                "alias": "status123123123qwe"
               },
               "category": {
                 "type": "string",
