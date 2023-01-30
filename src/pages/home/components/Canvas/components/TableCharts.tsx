@@ -9,10 +9,10 @@ interface Props {
 
 const TableCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { dataValue = [], yName, xName } = data;
+    const { dataValue = [], yName, xName, fontSize } = data;
 
     return (
-        <div id={`echart-${id}`} className={styles.tableCharts}>
+        <div id={`echart-${id}`} className={styles.tableCharts} style={{ fontSize }}>
             <div className="charts-header-box flex-box">
                 <div className="charts-header-item flex-box-center">
                     {yName}

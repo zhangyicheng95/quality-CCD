@@ -10,13 +10,14 @@ interface Props {
 }
 
 const Table2Charts: React.FC<Props> = (props: any) => {
-    const { data = [], id, } = props;
+    const { data = {}, id, } = props;
+    const { dataValue = [], fontSize } = data;
 
     return (
-        <div id={`echart-${id}`} className={styles.table2Charts}>
+        <div id={`echart-${id}`} className={styles.table2Charts} style={{ fontSize }}>
             <div className="charts-header-box flex-box">
                 {
-                    (data || []).map((item: any, index: number) => {
+                    (dataValue || []).map((item: any, index: number) => {
                         const { name } = item;
                         return <div className="charts-header-item flex-box-center" key={`echart-${id}-tr-th-${index}`}>
                             {name}
@@ -26,12 +27,12 @@ const Table2Charts: React.FC<Props> = (props: any) => {
             </div>
             <div className="charts-body-box flex-box">
                 {
-                    (data || []).map((item: any, index: number) => {
+                    (dataValue || []).map((item: any, index: number) => {
                         const { value } = item;
                         return <div
                             className="charts-body-tr"
                             key={`echart-${id}-tr-${index}`}
-                            style={{ width: `${100 / data?.length}%` }}
+                            style={{ width: `${100 / dataValue?.length}%` }}
                         >
                             {
                                 (value || []).map((val: any, sIndex: number) => {

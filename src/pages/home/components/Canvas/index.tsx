@@ -16,6 +16,7 @@ import {
   Select,
   Input,
   Tree,
+  InputNumber,
 } from 'antd';
 import _ from 'lodash';
 import {
@@ -131,7 +132,7 @@ const Home: React.FC<any> = (props: any) => {
                     items={[
                       {
                         label: '添加监控窗口', key: 'add', onClick: () => {
-                          setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined });
+                          setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24 });
                           setAddWindowVisible(true);
                         }
                       },
@@ -709,7 +710,7 @@ const Home: React.FC<any> = (props: any) => {
           if (_.isEmpty(item[1])) {
             return;
           }
-          const { size, value = [], type, yName, xName, defaultImg } = item[1];
+          const { size, value = [], type, yName, xName, defaultImg, fontSize } = item[1];
           const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
           const label = parent[0]?.alias || parent[0]?.name;
           listData = listData.concat(
@@ -796,14 +797,17 @@ const Home: React.FC<any> = (props: any) => {
                               id={key}
                               data={{
                                 dataValue: item[1][value[1]],
-                                yName, xName,
+                                yName, xName, fontSize
                               }}
                             />
                             :
                             type === 'table2' ?
                               <Table2Charts
                                 id={key}
-                                data={item[1][value[1]]}
+                                data={{
+                                  dataValue: item[1][value[1]],
+                                  fontSize
+                                }}
                               />
                               :
                               type === 'alert' ?
@@ -1019,7 +1023,7 @@ const Home: React.FC<any> = (props: any) => {
   const addWindow = () => {
     validateFields()
       .then((values) => {
-        const { value, type, yName, xName, defaultImg } = values;
+        const { value, type, yName, xName, fontSize, defaultImg } = values;
         const id = value[0];
         let result = {};
         if (_.isEmpty(editWindowData)) {
@@ -1029,7 +1033,7 @@ const Home: React.FC<any> = (props: any) => {
               size: { i: id, x: 2, y: 0, w: 3, h: 3, minW: 2, maxW: 12, minH: 4, maxH: 32 },
               type,
               tab: activeTab,
-              yName, xName, defaultImg
+              yName, xName, defaultImg, fontSize
             },
           });
         } else {
@@ -1039,7 +1043,7 @@ const Home: React.FC<any> = (props: any) => {
               size: Object.assign({}, editWindowData.size, { i: id }),
               type,
               tab: activeTab,
-              yName, xName, defaultImg
+              yName, xName, defaultImg, fontSize
             },
           });
         }
@@ -1273,6 +1277,20 @@ const Home: React.FC<any> = (props: any) => {
                     rules={[{ required: true, message: 'x轴名称' }]}
                   >
                     <Input />
+                  </Form.Item>
+                </Fragment>
+                : null
+            }
+            {
+              ['table2', 'table'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    name={`fontSize`}
+                    label={'字体大小'}
+                    rules={[{ required: true, message: '字体大小' }]}
+                    initialValue={24}
+                  >
+                    <InputNumber />
                   </Form.Item>
                 </Fragment>
                 : null
