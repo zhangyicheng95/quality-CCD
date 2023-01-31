@@ -18,7 +18,7 @@ import {
   Tree,
   InputNumber,
 } from 'antd';
-import _ from 'lodash';
+import _, { rest } from 'lodash';
 import {
   BASE_IP,
   getFlowStatusService,
@@ -74,6 +74,7 @@ const Home: React.FC<any> = (props: any) => {
   const [addWindowVisible, setAddWindowVisible] = useState(false);
   const [editWindowData, setEditWindowData] = useState<any>({});
   const [gridHomeList, setGridHomeList] = useState<any>([]);
+  const [addContentList, setAddContentList] = useState<any>([]);
   const [contentList, setContentList] = useState([]);
   const [contentLayout, setContentLayout] = useState([]);
   const [paramData, setParamData] = useState<any>({});
@@ -631,10 +632,6 @@ const Home: React.FC<any> = (props: any) => {
                 return {
                   value: name,
                   label: value,
-                  disabled:
-                    !_.isEmpty(contentData) &&
-                    !!content &&
-                    content[id]?.value[1] === name,
                 };
               }),
           };
@@ -648,30 +645,52 @@ const Home: React.FC<any> = (props: any) => {
               { i: 'slider-1', x: 0, y: 0, w: 2, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
               { i: 'slider-2', x: 0, y: 4, w: 2, h: 9, minW: 1, maxW: 12, minH: 1, maxH: 30 },
               { i: 'slider-3', x: 0, y: 8, w: 2, h: 15, minW: 1, maxW: 12, minH: 1, maxH: 30 },
-              // { i: 'content', x: 2, y: 0, w: 0, h: 24, minW: 6, maxW: 12, minH: 1, maxH: 30 },
               { i: 'footer-1', x: 2, y: 24, w: 7, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
               { i: 'footer-2', x: 9, y: 24, w: 3, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
             ])
         );
-        dispatch({
-          type: 'home/set',
-          payload: {
-            gridContentList: content,
-          },
-        });
-        dispatch({ type: 'home/snapshot' });
-
-        // if (document.fullscreenEnabled && window.location.href?.indexOf('full') > -1) {
-        //   setTimeout(() => {
-        //     requestFullScreen();
-        //   }, 2000);
-        // }
+        if (_.isObject(content)) {
+          const result = Object.entries(content).map((item: any) => {
+            const { value, type, size } = item[1];
+            const id = `${value.join('$$')}$$${type}`;
+            return {
+              ...item[1],
+              id,
+              size: Object.assign({}, size, {
+                i: id,
+              })
+            }
+          });
+          dispatch({
+            type: 'home/set',
+            payload: {
+              gridContentList: content,
+            },
+          });
+          dispatch({ type: 'home/snapshot' });
+          setAddContentList(result);
+        } else {
+          dispatch({
+            type: 'home/set',
+            payload: {
+              gridContentList: content.reduce((pre: any, cen: any) => {
+                const { id, ...rest } = cen;
+                return Object.assign({}, pre, {
+                  [id.split('$$')[0]]: rest
+                });
+              }, {}),
+            },
+          });
+          dispatch({ type: 'home/snapshot' });
+          setAddContentList(content);
+        }
       } else {
         message.error(res?.msg || '接口异常');
       }
     });
 
     return () => {
+      setAddContentList([]);
       dispatch({
         type: 'home/set',
         payload: {
@@ -696,165 +715,163 @@ const Home: React.FC<any> = (props: any) => {
   }, []);
   // 监控窗口动态添加
   useEffect(() => {
-    if (!_.isEmpty(gridContentList) && !_.isEmpty(paramData)) {
+    if (!_.isEmpty(addContentList) && !_.isEmpty(paramData)) {
       let listData: any = [],
         layoutData: any = [];
-      Object.entries(gridContentList)
-        // .filter((i: any) => !i[1].type)
-        .forEach((item: any, index: number) => {
-          const key = item[0];
-          if (_.isEmpty(item[1])) {
-            return;
-          }
-          const { size, value = [], type, yName, xName, defaultImg, fontSize, reverse } = item[1];
-          const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
-          const { alias, name, ports = {} } = parent[0];
-          const { items = [] } = ports;
-          const SecLabel = items.filter((i: any) => i.group === 'bottom' && (i?.label?.name === value[1]))[0];
-          listData = listData.concat(
-            <div key={key} className=" drag-item-content-box background-ubv">
-              <div className="common-card-title-box flex-box drag-btn">
-                <TooltipDiv className=" common-card-title">
-                  {`${alias || name} - ${(SecLabel?.label?.alias) || value[1] || ''}`}
-                </TooltipDiv>
-                {
-                  ifCanEdit ?
-                    <div className="flex-box drag-item-btn-box">
-                      <div
-                        className='common-btn'
-                        onClick={() => {
-                          !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
-                          setEditWindowData(item[1]);
-                          setFieldsValue(Object.assign({}, item[1], !item[1]?.yName ? { yName: undefined, xName: undefined } : {}));
-                          setWindowType(item[1]?.type);
-                          setAddWindowVisible(true);
-                        }}
-                      >
-                        编辑
-                      </div>
-                      <Popconfirm
-                        title="确认删除监控窗口吗?"
-                        onConfirm={() => {
-                          const result = _.omit(gridContentList, key);
-                          const params = Object.assign({}, paramData, {
-                            contentData: Object.assign({}, paramData.contentData, { content: result }),
-                          });
-                          dispatch({
-                            type: 'home/set',
-                            payload: {
-                              gridContentList: result,
-                            },
-                          });
-                          dispatch({ type: 'home/snapshot' });
-                          setParamData(params);
-                        }}
-                        okText="确认"
-                        cancelText="取消"
-                      >
-                        <div className='common-btn'>删除</div>
-                      </Popconfirm>
+      addContentList.forEach((item: any, index: number) => {
+        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse } = item;
+        const id = key.split('$$')[0];
+        const gridValue = gridContentList[id];
+        const dataValue = !!gridValue ? gridValue[value[1]] : undefined;
+        const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
+        const { alias, name, ports = {} } = parent[0];
+        const { items = [] } = ports;
+        const SecLabel = items.filter((i: any) => i.group === 'bottom' && (i?.label?.name === value[1]))[0];
+
+        listData = listData.concat(
+          <div key={key} className=" drag-item-content-box background-ubv">
+            <div className="common-card-title-box flex-box drag-btn">
+              <TooltipDiv className=" common-card-title">
+                {`${alias || name} - ${(SecLabel?.label?.alias) || value[1] || ''}`}
+              </TooltipDiv>
+              {
+                ifCanEdit ?
+                  <div className="flex-box drag-item-btn-box">
+                    <div
+                      className='common-btn'
+                      onClick={() => {
+                        !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
+                        setEditWindowData(item);
+                        setFieldsValue(item);
+                        setWindowType(type);
+                        setAddWindowVisible(true);
+                      }}
+                    >
+                      编辑
                     </div>
-                    : null
-                }
-              </div>
-              <div className="flex-box-center" style={{ height: 'calc(100% - 50px)' }}>
-                {
-                  type === 'line' ?
-                    <LineCharts
+                    <Popconfirm
+                      title="确认删除监控窗口吗?"
+                      onConfirm={() => {
+                        const result = _.omit(gridContentList, key);
+                        const params = Object.assign({}, paramData, {
+                          contentData: Object.assign({}, paramData.contentData, { content: result }),
+                        });
+                        dispatch({
+                          type: 'home/set',
+                          payload: {
+                            gridContentList: result,
+                          },
+                        });
+                        dispatch({ type: 'home/snapshot' });
+                        setParamData(params);
+                      }}
+                      okText="确认"
+                      cancelText="取消"
+                    >
+                      <div className='common-btn'>删除</div>
+                    </Popconfirm>
+                  </div>
+                  : null
+              }
+            </div>
+            <div className="flex-box-center" style={{ height: 'calc(100% - 50px)' }}>
+              {
+                type === 'line' ?
+                  <LineCharts
+                    id={key}
+                    data={{
+                      dataValue: dataValue,
+                      yName, xName,
+                    }}
+                  />
+                  :
+                  type === 'point' ?
+                    <PointCharts
                       id={key}
                       data={{
-                        dataValue: item[1][value[1]],
+                        dataValue: dataValue,
                         yName, xName,
                       }}
                     />
                     :
-                    type === 'point' ?
-                      <PointCharts
+                    type === 'bar' ?
+                      <BarCharts
                         id={key}
                         data={{
-                          dataValue: item[1][value[1]],
+                          dataValue: dataValue,
                           yName, xName,
                         }}
                       />
                       :
-                      type === 'bar' ?
-                        <BarCharts
+                      type === 'pie' ?
+                        <PieCharts
                           id={key}
-                          data={{
-                            dataValue: item[1][value[1]],
-                            yName, xName,
-                          }}
+                          data={dataValue}
                         />
                         :
-                        type === 'pie' ?
-                          <PieCharts
+                        type === 'table' ?
+                          <TableCharts
                             id={key}
-                            data={item[1][value[1]]}
+                            data={{
+                              dataValue: dataValue,
+                              yName, xName, fontSize, reverse
+                            }}
                           />
                           :
-                          type === 'table' ?
-                            <TableCharts
+                          type === 'table2' ?
+                            <Table2Charts
                               id={key}
                               data={{
-                                dataValue: item[1][value[1]],
-                                yName, xName, fontSize, reverse
+                                dataValue: dataValue,
+                                fontSize, reverse
                               }}
                             />
                             :
-                            type === 'table2' ?
-                              <Table2Charts
+                            type === 'alert' ?
+                              <AlertCharts
                                 id={key}
-                                data={{
-                                  dataValue: item[1][value[1]],
-                                  fontSize, reverse
-                                }}
+                                data={dataValue}
                               />
                               :
-                              type === 'alert' ?
-                                <AlertCharts
+                              type === 'imgs' ?
+                                <ImgsCharts
                                   id={key}
-                                  data={item[1][value[1]]}
+                                  data={dataValue}
                                 />
                                 :
-                                type === 'imgs' ?
-                                  <ImgsCharts
-                                    id={key}
-                                    data={item[1][value[1]]}
-                                  />
-                                  :
-                                  (
-                                    _.isString(item[1][value[1]]) && item[1][value[1]].indexOf('http') > -1 ? (
+                                (
+                                  _.isString(dataValue) && dataValue.indexOf('http') > -1 ? (
+                                    <Image
+                                      src={dataValue}
+                                      alt="logo"
+                                      style={{ width: '100%', height: 'auto' }}
+                                    />
+                                  )
+                                    :
+                                    !!defaultImg ?
                                       <Image
-                                        src={item[1][value[1]]}
+                                        src={`${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}`}
                                         alt="logo"
                                         style={{ width: '100%', height: 'auto' }}
                                       />
-                                    )
                                       :
-                                      !!defaultImg ?
-                                        <Image
-                                          src={`${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}`}
-                                          alt="logo"
-                                          style={{ width: '100%', height: 'auto' }}
-                                        />
-                                        :
-                                        <Skeleton.Image
-                                          active={true}
-                                        />
-                                  )
-                }
-              </div>
-            </div>,
-          );
-          layoutData = layoutData.concat(size);
-        });
+                                      <Skeleton.Image
+                                        active={true}
+                                      />
+                                )
+              }
+            </div>
+          </div>,
+        );
+        layoutData = layoutData.concat(size);
+      });
 
       setContentList(listData);
       setContentLayout(layoutData);
     } else {
       setContentList([]);
     }
-  }, [gridContentList,]);
+  }, [gridContentList, addContentList]);
   // 启动任务
   const start = () => {
     if (!ipString) return;
@@ -997,57 +1014,43 @@ const Home: React.FC<any> = (props: any) => {
       }, 500);
     }
   }, [paramData]);
-  // 已添加的窗口，可选节点disabled
-  useEffect(() => {
-    if (nodeList.length) {
-      setNodeList((prev: any) =>
-        prev.map((item: any) => {
-          const { value, children } = item;
-          return Object.assign({}, item, {
-            children: children.map((child: any) => {
-              return Object.assign({}, child, {
-                disabled:
-                  !_.isEmpty(gridContentList) &&
-                  !!gridContentList[value] &&
-                  // gridContentList[value]?.type === systemType &&
-                  child.value === (gridContentList[value]?.value ? gridContentList[value]?.value[1] : ''),
-              });
-            }),
-          });
-          return item;
-        }),
-      );
-    }
-  }, [gridContentList]);
   // 添加监控窗口
   const addWindow = () => {
     validateFields()
       .then((values) => {
         const { value, type, yName, xName, fontSize, defaultImg, reverse } = values;
-        const id = value[0];
-        let result = {};
+        const id = `${value.join('$$')}$$${type}`;
+        if (addContentList.filter((i: any) => i.id === id).length) {
+          message.error('已存在，请求改 “模块，节点，类型” 中的任一项');
+          return;
+        }
+        let result = [];
         if (_.isEmpty(editWindowData)) {
-          result = Object.assign({}, gridContentList, {
-            [id]: {
-              value,
-              size: { i: id, x: 2, y: 0, w: 3, h: 3, minW: 2, maxW: 12, minH: 4, maxH: 32 },
-              type,
-              tab: activeTab,
-              yName, xName, defaultImg, fontSize, reverse
-            },
+          result = addContentList.concat({
+            id,
+            value,
+            size: { i: id, x: 2, y: 0, w: 3, h: 3, minW: 2, maxW: 12, minH: 4, maxH: 32 },
+            type,
+            tab: activeTab,
+            yName, xName, defaultImg, fontSize, reverse
           });
         } else {
-          result = Object.assign({}, _.omit(gridContentList, editWindowData.value[0]), {
-            [id]: {
-              value,
-              size: Object.assign({}, editWindowData.size, { i: id }),
-              type,
-              tab: activeTab,
-              yName, xName, defaultImg, fontSize, reverse
-            },
-          });
+          result = (addContentList || []).map((item: any) => {
+            if (item.id === `${editWindowData?.value?.join('$$')}$$${editWindowData.type}`) {
+              return {
+                id,
+                value,
+                size: Object.assign({}, editWindowData.size, { i: id }),
+                type,
+                tab: activeTab,
+                yName, xName, defaultImg, fontSize, reverse
+              };
+            };
+            return item;
+          })
         }
         console.log(result);
+        setAddContentList(result);
         if (paramData.id) {
           const params = Object.assign({}, paramData, {
             contentData: Object.assign({}, paramData.contentData, { content: result }),
@@ -1056,13 +1059,13 @@ const Home: React.FC<any> = (props: any) => {
         }
         form.resetFields();
         setEditWindowData({});
-        dispatch({
-          type: 'home/set',
-          payload: {
-            gridContentList: result,
-          },
-        });
-        dispatch({ type: 'home/snapshot' });
+        // dispatch({
+        //   type: 'home/set',
+        //   payload: {
+        //     gridContentList: result,
+        //   },
+        // });
+        // dispatch({ type: 'home/snapshot' });
         onCancel();
       })
       .catch((err) => {

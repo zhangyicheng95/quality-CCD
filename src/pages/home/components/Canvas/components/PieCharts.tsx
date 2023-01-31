@@ -9,7 +9,7 @@ interface Props {
 }
 
 const PieCharts: React.FC<Props> = (props: any) => {
-    const { data = {}, id, } = props;
+    const { data = [], id, } = props;
     useEffect(() => {
         const dom: any = document.getElementById(`echart-${id}`);
         const myChart = echarts.init(dom);
