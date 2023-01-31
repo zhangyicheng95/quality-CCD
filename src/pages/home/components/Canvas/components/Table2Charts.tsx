@@ -11,7 +11,7 @@ interface Props {
 
 const Table2Charts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { dataValue = [], fontSize } = data;
+    const { dataValue = [], fontSize, reverse } = data;
 
     return (
         <div id={`echart-${id}`} className={styles.table2Charts} style={{ fontSize }}>
@@ -28,14 +28,14 @@ const Table2Charts: React.FC<Props> = (props: any) => {
             <div className="charts-body-box flex-box">
                 {
                     (dataValue || []).map((item: any, index: number) => {
-                        const { value } = item;
+                        const { value = [] } = item;
                         return <div
                             className="charts-body-tr"
                             key={`echart-${id}-tr-${index}`}
                             style={{ width: `${100 / dataValue?.length}%` }}
                         >
                             {
-                                (value || []).map((val: any, sIndex: number) => {
+                                (!!reverse ? value.reverse() : value).map((val: any, sIndex: number) => {
                                     return <TooltipDiv
                                         className="charts-body-td"
                                         key={`echart-${id}-tr-td-${sIndex}`}

@@ -615,24 +615,26 @@ const Home: React.FC<any> = (props: any) => {
         setParamData(data);
         let ids: any = [];
         const list = nodes.map((node: any) => {
-          const { name, alias, id, config = {} } = node;
-          const { output = {} } = config;
+          const { name, alias, id, ports = {} } = node;
+          const { items = [] } = ports;
           ids.push(id);
           return {
             key: id,
             value: id,
             title: `${alias || name}`,
             label: `${alias || name}`,
-            children: Object.entries(output)
+            children: items.filter((i: any) => i.group === 'bottom')
               .map((port: any) => {
-                const value = port[1]?.alias || port[0];
+                const { label } = port;
+                const { name, alias } = label;
+                const value = alias || name;
                 return {
-                  value: port[0],
+                  value: name,
                   label: value,
                   disabled:
                     !_.isEmpty(contentData) &&
                     !!content &&
-                    content[id]?.value[1] === port[0],
+                    content[id]?.value[1] === name,
                 };
               }),
           };
@@ -704,15 +706,16 @@ const Home: React.FC<any> = (props: any) => {
           if (_.isEmpty(item[1])) {
             return;
           }
-          const { size, value = [], type, yName, xName, defaultImg, fontSize } = item[1];
+          const { size, value = [], type, yName, xName, defaultImg, fontSize, reverse } = item[1];
           const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
-          const { alias, name, config = {} } = parent[0];
-          const { output = {} } = config;
+          const { alias, name, ports = {} } = parent[0];
+          const { items = [] } = ports;
+          const SecLabel = items.filter((i: any) => i.group === 'bottom' && (i?.label?.name === value[1]))[0];
           listData = listData.concat(
             <div key={key} className=" drag-item-content-box background-ubv">
               <div className="common-card-title-box flex-box drag-btn">
                 <TooltipDiv className=" common-card-title">
-                  {`${alias || name} - ${output[value[1]]?.alias || value[1] || ''}`}
+                  {`${alias || name} - ${(SecLabel?.label?.alias) || value[1] || ''}`}
                 </TooltipDiv>
                 {
                   ifCanEdit ?
@@ -794,7 +797,7 @@ const Home: React.FC<any> = (props: any) => {
                               id={key}
                               data={{
                                 dataValue: item[1][value[1]],
-                                yName, xName, fontSize
+                                yName, xName, fontSize, reverse
                               }}
                             />
                             :
@@ -803,7 +806,7 @@ const Home: React.FC<any> = (props: any) => {
                                 id={key}
                                 data={{
                                   dataValue: item[1][value[1]],
-                                  fontSize
+                                  fontSize, reverse
                                 }}
                               />
                               :
@@ -1020,7 +1023,7 @@ const Home: React.FC<any> = (props: any) => {
   const addWindow = () => {
     validateFields()
       .then((values) => {
-        const { value, type, yName, xName, fontSize, defaultImg } = values;
+        const { value, type, yName, xName, fontSize, defaultImg, reverse } = values;
         const id = value[0];
         let result = {};
         if (_.isEmpty(editWindowData)) {
@@ -1030,7 +1033,7 @@ const Home: React.FC<any> = (props: any) => {
               size: { i: id, x: 2, y: 0, w: 3, h: 3, minW: 2, maxW: 12, minH: 4, maxH: 32 },
               type,
               tab: activeTab,
-              yName, xName, defaultImg, fontSize
+              yName, xName, defaultImg, fontSize, reverse
             },
           });
         } else {
@@ -1040,7 +1043,7 @@ const Home: React.FC<any> = (props: any) => {
               size: Object.assign({}, editWindowData.size, { i: id }),
               type,
               tab: activeTab,
-              yName, xName, defaultImg, fontSize
+              yName, xName, defaultImg, fontSize, reverse
             },
           });
         }
@@ -1072,7 +1075,7 @@ const Home: React.FC<any> = (props: any) => {
     form.resetFields();
     setEditWindowData({});
     setSelectedPath({ fileType: 'file', value: '' });
-    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24 });
+    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false });
     setWindowType('img');
     setAddWindowVisible(false);
     setFooterSelectVisible(false);
@@ -1286,6 +1289,26 @@ const Home: React.FC<any> = (props: any) => {
                     initialValue={24}
                   >
                     <InputNumber />
+                  </Form.Item>
+                  <Form.Item
+                    name={`reverse`}
+                    label={'数据倒叙'}
+                    rules={[{ required: true, message: '数据倒叙' }]}
+                    initialValue={false}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      options={[
+                        {
+                          value: false,
+                          label: '正序显示',
+                        },
+                        {
+                          value: true,
+                          label: '倒叙显示',
+                        }
+                      ]}
+                    />
                   </Form.Item>
                 </Fragment>
                 : null

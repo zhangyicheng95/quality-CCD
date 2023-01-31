@@ -47,7 +47,8 @@ const GridLayout: React.FC<Props> = (props: any) => {
             EUlayoutArr[index] = { i, x, y, w, h, minW, maxW, minH, maxH }
         });
         onChange && onChange(EUlayoutArr);
-    }
+    };
+
     return (
         <>
             <div className={styles.dashboardContent}>
