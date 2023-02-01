@@ -538,7 +538,8 @@ const Home: React.FC<any> = (props: any) => {
   // 保存布局状态
   const saveGridFunc = (data: any) => {
     let home: any = [],
-      content: any = {};
+      content: any = [];
+    console.log(data);
     data.forEach((item: any) => {
       if (['slider-1', 'slider-2', 'slider-3', 'content', 'footer-1', 'footer-2'].includes(item.i)) {
         home = home.concat({
@@ -549,21 +550,36 @@ const Home: React.FC<any> = (props: any) => {
           minH: 2,
         });
       } else {
-        content = Object.assign({}, content, !!paramData?.contentData?.content[item.i] ? {
-          [item.i]: {
-            ...paramData?.contentData?.content[item.i],
-            size: {
-              ...item,
-              maxW: 12,
-              minW: 1,
-              maxH: 30,
-              minH: 2,
-            }
+        const preContent = _.isArray(paramData?.contentData?.content) ?
+          paramData?.contentData?.content?.filter((i: any) => i.id === item.i)[0]
+          :
+          paramData?.contentData?.content[item.i];
+        content = content.concat({
+          ...preContent,
+          size: {
+            ...item,
+            maxW: 12,
+            minW: 1,
+            maxH: 30,
+            minH: 2,
           }
-        } : {})
+        });
+        // Object.assign({}, content, !!paramData?.contentData?.content[item.i] ? {
+        //   [item.i]: {
+        //     ...paramData?.contentData?.content[item.i],
+        //     size: {
+        //       ...item,
+        //       maxW: 12,
+        //       minW: 1,
+        //       maxH: 30,
+        //       minH: 2,
+        //     }
+        //   }
+        // } : {})
       }
     });
     setGridHomeList(home);
+    setAddContentList(content)
     dispatch({
       type: 'home/set',
       payload: {
@@ -647,7 +663,7 @@ const Home: React.FC<any> = (props: any) => {
         if (_.isObject(content)) {
           const result = Object.entries(content).map((item: any) => {
             const { value, type, size } = item[1];
-            const id = `${value.join('$$')}$$${type}`;
+            const id = `${value?.join('$$')}$$${type}`;
             return {
               ...item[1],
               id,
@@ -719,7 +735,7 @@ const Home: React.FC<any> = (props: any) => {
         const gridValue = gridContentList[id];
         const dataValue = !!gridValue ? gridValue[value[1]] : undefined;
         const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
-        const { alias, name, ports = {} } = parent[0];
+        const { alias, name, ports = {} } = parent[0] || {};
         const { items = [] } = ports;
         const SecLabel = items.filter((i: any) => i.group === 'bottom' && (i?.label?.name === value[1]))[0];
 
@@ -747,10 +763,11 @@ const Home: React.FC<any> = (props: any) => {
                     <Popconfirm
                       title="确认删除监控窗口吗?"
                       onConfirm={() => {
-                        const result = _.omit(gridContentList, key);
+                        const result = addContentList.filter((item: any) => item.id !== key);
                         const params = Object.assign({}, paramData, {
                           contentData: Object.assign({}, paramData.contentData, { content: result }),
                         });
+                        setAddContentList(result);
                         dispatch({
                           type: 'home/set',
                           payload: {
@@ -1014,7 +1031,7 @@ const Home: React.FC<any> = (props: any) => {
     validateFields()
       .then((values) => {
         const { value, type, yName, xName, fontSize, defaultImg, reverse } = values;
-        const id = `${value.join('$$')}$$${type}`;
+        const id = `${value?.join('$$')}$$${type}`;
         if (addContentList.filter((i: any) => i.id === id).length) {
           message.error('已存在，请求改 “模块，节点，类型” 中的任一项');
           return;
