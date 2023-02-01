@@ -28,6 +28,10 @@ const SettingDrawerWrapper: React.FC = (props: any) => {
         const { contentData } = data;
         setParamData(data);
         if (!!contentData && !!contentData.theme) {
+          themeList.forEach((theme) => {
+            const { key, light, dark } = theme;
+            document.documentElement.style.setProperty(key, contentData.theme === 'realDark' ? dark : light);
+          })
           dispatch({
             type: 'themeStore/themeAction',
             payload: contentData.theme,
