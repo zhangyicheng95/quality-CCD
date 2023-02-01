@@ -18,7 +18,7 @@ import {
   Tree,
   InputNumber,
 } from 'antd';
-import _, { rest } from 'lodash';
+import * as _ from 'lodash';
 import {
   BASE_IP,
   getFlowStatusService,
@@ -58,13 +58,8 @@ let timer: string | number | NodeJS.Timer | null | undefined = null;
 let updateTimer: string | number | NodeJS.Timer | null | undefined = null;
 const Home: React.FC<any> = (props: any) => {
   const history = useHistory();
-  // const { dispatch, started, taskDataConnect, activeTab, gridContentList } = props;
   const { dispatch, started, taskDataConnect, snapshot, activeTab, } = props;
-  const { logStr, historyData, gridContentList, footerData, errorData } = snapshot;
-  // const [logStr, setLogStr] = useState<any>([]);
-  // const [errorData, setErrorData] = useState<any>([]);
-
-  // console.log('home', ++i);
+  const { logStr, gridContentList, footerData, errorData } = snapshot;
   const [form] = Form.useForm();
   const { validateFields, setFieldsValue } = form;
   // @ts-ignore
