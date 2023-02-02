@@ -72,7 +72,7 @@ const Setting: React.FC<any> = (props) => {
           });
         };
       } else {
-        message.error(res?.msg || '接口异常');
+        message.error(res?.msg || res?.message || '接口异常');
       }
     });
   };
@@ -127,7 +127,7 @@ const Setting: React.FC<any> = (props) => {
           if (res && res.code === 'SUCCESS') {
             message.success('更新配置成功')
           } else {
-            message.error(res?.msg || '接口异常');
+            message.error(res?.msg || res?.message || '接口异常');
           }
         })
         localStorage.setItem("quality_icon", values['quality_icon'] || '');

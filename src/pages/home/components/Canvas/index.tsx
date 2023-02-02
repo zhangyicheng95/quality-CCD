@@ -597,13 +597,24 @@ const Home: React.FC<any> = (props: any) => {
   // 运行状态
   const getServiceStatus = () => {
     getFlowStatusService(ipString).then((res: any) => {
-      if (!!res && _.isObject(res) && !_.isEmpty(res)) {
-        dispatch({
-          type: 'home/set',
-          payload: {
-            started: true,
-          },
-        });
+      if (!!res && res.code === 'SUCCESS') {
+        if (_.isObject(res?.data)) {
+          if (!_.isEmpty(res?.data)) {
+            dispatch({
+              type: 'home/set',
+              payload: {
+                started: true,
+              },
+            });
+          } else {
+            dispatch({
+              type: 'home/set',
+              payload: {
+                started: false,
+              },
+            });
+          }
+        }
       } else {
         dispatch({
           type: 'home/set',
@@ -611,6 +622,7 @@ const Home: React.FC<any> = (props: any) => {
             started: false,
           },
         });
+        message.error(res?.msg || res?.message || '接口异常');
       }
       setLoading(false);
     });
@@ -696,7 +708,7 @@ const Home: React.FC<any> = (props: any) => {
           setAddContentList(content);
         }
       } else {
-        message.error(res?.msg || '接口异常');
+        message.error(res?.msg || res?.message || '接口异常');
       }
     });
 
@@ -898,7 +910,7 @@ const Home: React.FC<any> = (props: any) => {
           },
         });
       } else {
-        message.error(res?.msg || '接口异常');
+        message.error(res?.msg || res?.message || '接口异常');
       }
       setLoading(false);
     });
@@ -918,7 +930,7 @@ const Home: React.FC<any> = (props: any) => {
           },
         });
       } else {
-        message.error(res?.msg || '接口异常');
+        message.error(res?.msg || res?.message || '接口异常');
       }
       setLoading(false);
       timer = setInterval(() => {
@@ -1020,7 +1032,7 @@ const Home: React.FC<any> = (props: any) => {
           if (res && res.code === 'SUCCESS') {
 
           } else {
-            message.error(res?.msg || '接口异常');
+            message.error(res?.msg || res?.message || '接口异常');
           }
         });
       }, 500);

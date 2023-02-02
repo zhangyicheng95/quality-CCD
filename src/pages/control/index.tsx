@@ -36,7 +36,7 @@ const Control: React.FC<any> = (props: any) => {
         setParamData(data);
         setNodeList(nodes);
       } else {
-        message.error(res?.msg || '接口异常');
+        message.error(res?.msg || res?.message || '接口异常');
       }
     });
   }, []);
@@ -73,7 +73,7 @@ const Control: React.FC<any> = (props: any) => {
           if (res && res.code === 'SUCCESS') {
             message.success('修改成功')
           } else {
-            message.error(res?.msg || '接口异常');
+            message.error(res?.msg || res?.message || '接口异常');
           }
         })
       })

@@ -44,7 +44,7 @@ const SettingDrawerWrapper: React.FC = (props: any) => {
           }));
         }
       } else {
-        message.error(res?.msg || '接口异常');
+        message.error(res?.msg || res?.message || '接口异常');
       }
     });
   }, []);
@@ -81,7 +81,7 @@ const SettingDrawerWrapper: React.FC = (props: any) => {
             if (res && res.code === 'SUCCESS') {
 
             } else {
-              message.error(res?.msg || '接口异常');
+              message.error(res?.msg || res?.message || '接口异常');
             }
           });
         }

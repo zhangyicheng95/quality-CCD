@@ -26,7 +26,7 @@ const MarkList: React.FC = (props: any) => {
       if (res && res.code === 'SUCCESS') {
         setList(res?.data);
       } else {
-        message.error(res?.msg || '接口异常');
+        message.error(res?.msg || res?.message || '接口异常');
       }
     });
   }, []);
