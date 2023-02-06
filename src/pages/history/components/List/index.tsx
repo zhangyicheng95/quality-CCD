@@ -123,21 +123,20 @@ const HistoryList: React.FC<any> = (props: any) => {
       render: (text: any, record: any) => text,
     },
     {
-      key: 'imageName',
-      dataIndex: 'imageName',
+      key: 'imageUrl',
+      dataIndex: 'imageUrl',
       title: '图片URL',
       width: 200,
       align: 'center',
       render: (text: any, record: any) => {
-        const { imageUrl } = record;
         return <TooltipDiv
           title={text}
           placement="top"
           onClick={() => {
-            window.open(imageUrl);
+            window.open(text);
           }}
         >
-          {text}
+          {text?.split('/')[text?.split('/').length - 1]}
         </TooltipDiv>
       },
     },

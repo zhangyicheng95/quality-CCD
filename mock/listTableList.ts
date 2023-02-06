@@ -4521,6 +4521,9 @@ const getParams = (req: Request, res: Response) => {
 
 const getFlowStatusService = (req: Request, res: Response) => {
   res.json({
+    "code": "SUCCESS",
+    "msg": "",
+    "data": {}
   });
 };
 

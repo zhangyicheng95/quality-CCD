@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState, } from "react";
-import { Form, Input, message, Button, Tree } from "antd";
+import { Form, Input, message, Button, Tree, Select } from "antd";
 import * as _ from "lodash";
 import styles from "./index.module.less";
-import { getParams, updateParams } from "@/services/api";
+import { getAllProject, getParams, updateParams } from "@/services/api";
 import PrimaryTitle from "@/components/PrimaryTitle";
 import FileManager from "@/components/FileManager";
 import TooltipDiv from "@/components/TooltipDiv";
@@ -13,6 +13,7 @@ const Setting: React.FC<any> = (props) => {
   const [form] = Form.useForm();
   const history = useHistory();
   const { validateFields, setFieldsValue, getFieldValue } = form;
+  const [list, setList] = useState([]);
   const [paramData, setParamData] = useState<any>({});
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
   const [treeData, setTreeData] = useState([]);
@@ -20,6 +21,7 @@ const Setting: React.FC<any> = (props) => {
   const [selectedPath, setSelectedPath] = useState<any>('');
   const [edit, setEdit] = useState({
     ip: false,
+    historyIp: false,
     id: false,
   });
 
@@ -27,12 +29,33 @@ const Setting: React.FC<any> = (props) => {
     // @ts-ignore
     return window.QUALITY_CCD_CONFIG.type === 'vision';
   }, []);
-
+  // 已添加的tabs
+  const ipList = useMemo(() => {
+    return JSON.parse(localStorage.getItem('ipList') || "[]");
+  }, [localStorage.getItem('ipList')]);
+  // 获取方案列表
+  const getDataList = () => {
+    getAllProject().then((res: any) => {
+      if (res && res.code === 'SUCCESS') {
+        setList(() => (res?.data || []).map((item: any) => {
+          const { name, id } = item;
+          return {
+            value: id,
+            label: name,
+            disabled: ipList.filter((i: any) => i.key === id).length,
+          };
+        }));
+      } else {
+        message.error(res?.msg || res?.message || '接口异常');
+      }
+    });
+  };
+  // 获取数据信息
   const getData = () => {
     getParams(localStorage.getItem("ipString") || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
         const { data = {} } = res;
-        const { flowData, commonInfo } = data;
+        const { quality_name, name, flowData, commonInfo } = data;
         const { nodes } = flowData;
         let checkedList: any = [];
         const result: any = (nodes || []).map((node: any) => {
@@ -61,8 +84,8 @@ const Setting: React.FC<any> = (props) => {
         setParamData(data);
         setTreeData(result);
         setCheckedKeys(checkedList);
-        if (!localStorage.getItem("quality_name")) {
-          setFieldsValue({ quality_name: data.name });
+        if (!quality_name) {
+          setFieldsValue({ quality_name: name });
         };
         if (_.isObject(commonInfo) && !_.isEmpty(commonInfo)) {
           setFieldsValue({
@@ -76,12 +99,19 @@ const Setting: React.FC<any> = (props) => {
       }
     });
   };
+  // 设置服务端IP
   useEffect(() => {
     if (!localStorage.getItem("ipUrl-history")) {
-      localStorage.setItem("ipUrl-history", 'localhost:8866');
-      setFieldsValue({ "ipUrl-history": 'localhost:8866' });
+      localStorage.setItem("ipUrl-history", 'localhost:8867');
+      setFieldsValue({ "ipUrl-history": 'localhost:8867' });
     }
-    if (!localStorage.getItem("ipUrl-history") || !localStorage.getItem("ipString")) return;
+    if (!localStorage.getItem("ipUrl-realtime")) {
+      localStorage.setItem("ipUrl-realtime", 'localhost:8866');
+      setFieldsValue({ "ipUrl-realtime": 'localhost:8866' });
+      return;
+    }
+    getDataList();
+    if (!localStorage.getItem("ipString")) return;
     getData();
   }, []);
 
@@ -92,7 +122,7 @@ const Setting: React.FC<any> = (props) => {
   const onFinish = () => {
     validateFields()
       .then((values) => {
-        const { productionInfo, stationInfo, useInfo } = values;
+        const { quality_icon, quality_name, productionInfo, stationInfo, useInfo } = values;
         let nodeList: any = [].concat(paramData?.flowData?.nodes);
         (checkedKeys || []).forEach((key: any) => {
           const id = key.split('@$@');
@@ -115,6 +145,7 @@ const Setting: React.FC<any> = (props) => {
           }
         });
         const result = Object.assign({}, paramData, {
+          quality_name,
           commonInfo: { productionInfo, stationInfo, useInfo },
           flowData: Object.assign({}, paramData?.flowData, {
             nodes: nodeList,
@@ -130,9 +161,18 @@ const Setting: React.FC<any> = (props) => {
             message.error(res?.msg || res?.message || '接口异常');
           }
         })
-        localStorage.setItem("quality_icon", values['quality_icon'] || '');
-        localStorage.setItem("quality_name", values['quality_name']);
+        !!quality_icon && localStorage.setItem("quality_icon", quality_icon || '');
+        localStorage.setItem("ipUrl-realtime", values['ipUrl-realtime']);
         localStorage.setItem("ipUrl-history", values['ipUrl-history']);
+        try {
+          const result = ipList.map((item: any) => {
+            if (item.key === localStorage.getItem('ipString')) {
+              return Object.assign({}, item, { key: values['ipString'] });
+            }
+            return item;
+          });
+          localStorage.setItem("ipList", JSON.stringify(result));
+        } catch (err) { }
         localStorage.setItem("ipString", values['ipString']);
         window.location.reload();
       })
@@ -174,16 +214,16 @@ const Setting: React.FC<any> = (props) => {
           <Form.Item
             name="quality_name"
             label="系统名称"
-            initialValue={localStorage.getItem("quality_name") || paramData?.name}
+            initialValue={paramData?.quality_name || paramData?.name}
             rules={[{ required: false, message: "系统名称" }]}
           >
             <Input placeholder="系统名称" />
           </Form.Item>
           <div className="flex-box has-edit-btn">
             <Form.Item
-              name="ipUrl-history"
+              name="ipUrl-realtime"
               label="服务端地址"
-              initialValue={localStorage.getItem("ipUrl-history") || undefined}
+              initialValue={localStorage.getItem("ipUrl-realtime") || undefined}
               rules={[{ required: true, message: "服务端地址" }]}
             >
               <Input placeholder="localhost:8866" disabled={!edit.ip} />
@@ -194,17 +234,30 @@ const Setting: React.FC<any> = (props) => {
           </div>
           <div className="flex-box has-edit-btn">
             <Form.Item
-              name="ipString"
-              label="方案ID绑定"
-              initialValue={localStorage.getItem("ipString") || undefined}
-              rules={[{ required: true, message: "方案ID绑定" }]}
+              name="ipUrl-history"
+              label="历史记录地址"
+              initialValue={localStorage.getItem("ipUrl-history") || undefined}
+              rules={[{ required: true, message: "历史记录服务端地址" }]}
             >
-              <Input placeholder="方案ID" disabled={!edit.id} />
+              <Input placeholder="localhost:8867" disabled={!edit.historyIp} />
             </Form.Item>
-            <Button type="primary" onClick={() => setEdit(prev => Object.assign({ id: !prev.id }))}>
-              {edit.id ? '确认' : '修改'}
+            <Button type="primary" onClick={() => setEdit(prev => Object.assign({ historyIp: !prev.historyIp }))}>
+              {edit.ip ? '确认' : '修改'}
             </Button>
           </div>
+          <Form.Item
+            name="ipString"
+            label="方案ID绑定"
+            initialValue={localStorage.getItem("ipString") || undefined}
+            rules={[{ required: true, message: "方案ID绑定" }]}
+          >
+            <Select
+              style={{ width: '100%' }}
+              size="large"
+              options={list}
+              placeholder="方案ID"
+            />
+          </Form.Item>
           <Form.Item
             name="canvas"
             label="配置布局"
@@ -273,7 +326,6 @@ const Setting: React.FC<any> = (props) => {
             data={{ value: selectedPath }}
             onOk={(val: any) => {
               const { value } = val;
-              console.log(value);
               setFieldsValue({ quality_icon: value })
               setSelectPathVisible(false);
               setSelectedPath('');

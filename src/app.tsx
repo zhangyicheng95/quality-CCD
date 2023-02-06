@@ -10,6 +10,7 @@ import icon from '@/assets/icon.svg';
 import HomeLayout from '@/components/HomeLayout';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import RightContent from './components/RightContent';
+import { getParams } from './services/api';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -26,6 +27,8 @@ export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
   currentUser?: any;
   loading?: boolean;
+  params?: any;
+  title?: string;
   routes: any[];
   fetchUserInfo?: () => Promise<any>;
 }> {
@@ -60,6 +63,26 @@ export async function getInitialState(): Promise<{
       // }
     });
   };
+
+  let params: any = {};
+  let title: any = '';
+  if (!localStorage.getItem("ipUrl-history")) {
+    localStorage.setItem("ipUrl-history", 'localhost:8867');
+  }
+  if (!localStorage.getItem("ipUrl-realtime")) {
+    localStorage.setItem("ipUrl-realtime", 'localhost:8866');
+  } else {
+    if (localStorage.getItem("ipString")) {
+      const res = await getParams(localStorage.getItem("ipString") || '');
+      if (res && res.code === 'SUCCESS') {
+        params = res?.data || {};
+        title = res?.data?.quality_name || res?.data?.name;
+        const { contentData = {} } = params;
+        const { theme } = contentData;
+        defaultSettings.navTheme = theme || 'realDark';
+      }
+    }
+  }
   // 如果不是登录页面，执行
   // if (history.location.pathname !== loginPath) {
   //   const currentUser = await fetchUserInfo();
@@ -75,12 +98,14 @@ export async function getInitialState(): Promise<{
     fetchUserInfo,
     routes: ['home', 'history', 'control', 'setting'],
     settings: defaultSettings,
+    title,
+    params,
   };
 }
 
-const BASE_IP = localStorage.getItem('ipUrl-history')
-  ? `http://${localStorage.getItem('ipUrl-history')}/`
-  : `http://localhost:8888/`;
+const BASE_IP = localStorage.getItem('ipUrl-realtime')
+  ? `http://${localStorage.getItem('ipUrl-realtime')}/`
+  : `http://localhost:8866/`;
 const iconDom = (
   <img
     src={
@@ -133,10 +158,10 @@ export const layout: RunTimeLayoutConfig = (props) => {
       return (
         // @ts-ignore
         <ErrorBoundary>
-          <HomeLayout>{children}</HomeLayout>
+          <HomeLayout initialState={initialState}>{children}</HomeLayout>
           {!_props.location?.pathname?.includes('/login') && (
             <SettingDrawerWrapper
-              settings={initialState?.settings}
+              initialState={initialState}
               setInitialState={setInitialState}
             />
             // <SettingDrawer
@@ -157,6 +182,6 @@ export const layout: RunTimeLayoutConfig = (props) => {
     },
     ...initialState?.settings,
     logo: iconDom,
-    title: localStorage.getItem('quality_name') || 'UBVision',
+    title: initialState?.title || 'UBVision',
   };
 };

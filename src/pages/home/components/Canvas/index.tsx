@@ -634,7 +634,7 @@ const Home: React.FC<any> = (props: any) => {
       if (res && res.code === 'SUCCESS') {
         const { data = {} } = res;
         const { flowData, contentData = {} } = data;
-        const { home, content, footerSelectList } = contentData;
+        const { home = [], content = {}, footerSelectList = [] } = contentData;
         const { nodes } = flowData;
         setParamData(data);
         let ids: any = [];
@@ -699,7 +699,7 @@ const Home: React.FC<any> = (props: any) => {
               gridContentList: content.reduce((pre: any, cen: any) => {
                 const { id, ...rest } = cen;
                 return Object.assign({}, pre, {
-                  [id.split('$$')[0]]: rest
+                  [id?.split('$$')[0]]: rest
                 });
               }, {}),
             },
@@ -743,7 +743,7 @@ const Home: React.FC<any> = (props: any) => {
         layoutData: any = [];
       addContentList.forEach((item: any, index: number) => {
         const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse } = item;
-        const id = key.split('$$')[0];
+        const id = key?.split('$$')[0];
         const gridValue = gridContentList[id];
         const dataValue = !!gridValue ? gridValue[value[1]] : undefined;
         const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);

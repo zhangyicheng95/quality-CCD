@@ -1,6 +1,7 @@
 import { getParams, updateParams } from '@/services/api';
 import { SettingDrawer } from '@ant-design/pro-layout';
 import { message } from 'antd';
+import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'umi';
 
@@ -18,36 +19,31 @@ const themeList = [
 ]
 
 const SettingDrawerWrapper: React.FC = (props: any) => {
-  const { settings, setInitialState, dispatch, } = props;
+  const { initialState, setInitialState, dispatch, } = props;
+  const { params, settings } = initialState;
   const [paramData, setParamData] = useState<any>({});
   useEffect(() => {
-    if (!localStorage.getItem("ipUrl-history") || !localStorage.getItem("ipString")) return;
-    getParams(localStorage.getItem("ipString") || '').then((res: any) => {
-      if (res && res.code === 'SUCCESS') {
-        const { data = {} } = res;
-        const { contentData } = data;
-        setParamData(data);
-        if (!!contentData && !!contentData.theme) {
-          themeList.forEach((theme) => {
-            const { key, light, dark } = theme;
-            document.documentElement.style.setProperty(key, contentData.theme === 'realDark' ? dark : light);
-          });
-          dispatch({
-            type: 'themeStore/themeAction',
-            payload: contentData.theme,
-          });
-          setInitialState((preInitialState: any) => ({
-            ...preInitialState,
-            settings: Object.assign({}, settings, {
-              navTheme: contentData.theme
-            }),
-          }));
-        }
-      } else {
-        message.error(res?.msg || res?.message || '接口异常');
+    if (!_.isEmpty(params)) {
+      const { contentData } = params;
+      setParamData(params);
+      if (!!contentData && !!contentData.theme) {
+        themeList.forEach((theme) => {
+          const { key, light, dark } = theme;
+          document.documentElement.style.setProperty(key, contentData.theme === 'realDark' ? dark : light);
+        });
+        dispatch({
+          type: 'themeStore/themeAction',
+          payload: contentData.theme,
+        });
+        setInitialState((preInitialState: any) => ({
+          ...preInitialState,
+          settings: Object.assign({}, settings, {
+            navTheme: contentData.theme
+          }),
+        }));
       }
-    });
-  }, []);
+    }
+  }, [params]);
 
   return (
     <SettingDrawer

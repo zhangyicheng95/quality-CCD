@@ -27,7 +27,7 @@ const Control: React.FC<any> = (props: any) => {
   const [selectedPath, setSelectedPath] = useState<any>({});
 
   useEffect(() => {
-    if (!localStorage.getItem("ipUrl-history") || !localStorage.getItem("ipString")) return;
+    if (!localStorage.getItem("ipUrl-realtime") || !localStorage.getItem("ipString")) return;
     getParams(localStorage.getItem("ipString") || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
         const { data = {} } = res;
@@ -62,14 +62,15 @@ const Control: React.FC<any> = (props: any) => {
   const onFinish = () => {
     validateFields()
       .then((values) => {
-        updateParams({
+        const params = {
           id: paramData.id,
           data: Object.assign({}, paramData, {
             flowData: Object.assign({}, paramData.flowData, {
               nodes: nodeList
             })
           })
-        }).then((res: any) => {
+        };
+        updateParams(params).then((res: any) => {
           if (res && res.code === 'SUCCESS') {
             message.success('修改成功')
           } else {
@@ -457,7 +458,7 @@ const FormatWidgetToDom = (props: any) => {
               disabled={disabled}
               onBlur={(e: any) => {
                 const value = e.target.value;
-                widgetChange(name, value < max ? value : max);
+                widgetChange(name, Number(value < max ? value : max));
               }}
             />
           </FormItem>
@@ -479,7 +480,7 @@ const FormatWidgetToDom = (props: any) => {
             onChange={(e: any) => {
               !!updateTimer?.current && clearTimeout(updateTimer?.current);
               updateTimer.current = setTimeout(() => {
-                widgetChange(name, e)
+                widgetChange(name, Number(e))
               }, 300)
             }}
           />

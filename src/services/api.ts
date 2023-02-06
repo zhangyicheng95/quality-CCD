@@ -1,20 +1,21 @@
 import { fetchGet, fetchPost, fetchPut, fetchDelete } from '@/services/fetch';
-import { parseParamsToUrl } from '@/utils/utils';
-export const BASE_IP = localStorage.getItem("ipUrl-history") ?
-  `http://${localStorage.getItem("ipUrl-history")}/` : `http://localhost:8888/`;
+export const BASE_IP = localStorage.getItem("ipUrl-realtime") ?
+  `http://${localStorage.getItem("ipUrl-realtime")}/` : `http://localhost:8866/`;
+export const BASE_HISTORY_IP = localStorage.getItem("ipUrl-history") ?
+  `http://${localStorage.getItem("ipUrl-history")}/` : `http://localhost:8867/`;
 
 // 获取项目列表
 export async function getAllProject(params?: any) {
-  return fetchGet(`${BASE_IP}projects?timestamp${new Date().getTime()}`);
+  return fetchGet(`${BASE_IP}projects`);
 }
 
 // 获取历史记录 //缺陷
 export async function getAllHistory(params: any) {
-  return fetchPost(`${BASE_IP}track/track/list/v1`, { body: params });
+  return fetchPost(`${BASE_HISTORY_IP}track/list/v1`, { body: params });
 }
 // 获取历史记录 //尺寸
 export async function getAllHistorySize(params: any) {
-  return fetchPost(`${BASE_IP}track/size/list/v1`, { body: params });
+  return fetchPost(`${BASE_HISTORY_IP}size/list/v1`, { body: params });
 }
 
 // 根据id获取项目详情
