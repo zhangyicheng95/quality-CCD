@@ -84,9 +84,7 @@ const Setting: React.FC<any> = (props) => {
         setParamData(data);
         setTreeData(result);
         setCheckedKeys(checkedList);
-        if (!quality_name) {
-          setFieldsValue({ quality_name: name });
-        };
+        setFieldsValue({ quality_name: quality_name || name });
         if (_.isObject(commonInfo) && !_.isEmpty(commonInfo)) {
           setFieldsValue({
             productionInfo: commonInfo['productionInfo'],

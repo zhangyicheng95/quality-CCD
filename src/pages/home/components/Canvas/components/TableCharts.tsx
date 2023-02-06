@@ -1,3 +1,5 @@
+import TooltipDiv from '@/components/TooltipDiv';
+import _ from 'lodash';
 import React from 'react';
 import styles from '../index.module.less';
 
@@ -25,9 +27,12 @@ const TableCharts: React.FC<Props> = (props: any) => {
                 {
                     (!!reverse ? dataValue.reverse() : dataValue).map((item: any, index: number) => {
                         const { name, value } = item;
+                        const text = _.isArray(value) ? value.join(',') : value;
                         return <div className="charts-body-tr flex-box" key={`echart-${id}-tr-${index}`}>
                             <div className="charts-body-td flex-box-center">{name}</div>
-                            <div className="charts-body-td flex-box-center">{value}</div>
+                            <TooltipDiv className="charts-body-td flex-box-center" title={text.length > 10 ? text : ''}>
+                                {text}
+                            </TooltipDiv>
                         </div>
                     })
                 }

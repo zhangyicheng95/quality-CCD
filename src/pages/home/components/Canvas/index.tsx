@@ -277,7 +277,7 @@ const Home: React.FC<any> = (props: any) => {
                   className="flex-box btn"
                   icon={<AndroidOutlined className="btn-icon" />}
                   type="link"
-                  onClick={() => setInterval(() => touchFlowService(), 100)}
+                  onClick={() => touchFlowService()}
                   disabled={!started}
                   loading={started && loading}
                 >
@@ -672,7 +672,21 @@ const Home: React.FC<any> = (props: any) => {
               { i: 'footer-2', x: 9, y: 24, w: 3, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
             ])
         );
-        if (_.isObject(content)) {
+        if (_.isArray(content)) {
+          dispatch({
+            type: 'home/set',
+            payload: {
+              gridContentList: content.reduce((pre: any, cen: any) => {
+                const { id, ...rest } = cen;
+                return Object.assign({}, pre, {
+                  [id?.split('$$')[0]]: rest
+                });
+              }, {}),
+            },
+          });
+          dispatch({ type: 'home/snapshot' });
+          setAddContentList(content);
+        } else {
           const result = Object.entries(content).map((item: any) => {
             const { value, type, size } = item[1];
             const id = `${value?.join('$$')}$$${type}`;
@@ -692,20 +706,6 @@ const Home: React.FC<any> = (props: any) => {
           });
           dispatch({ type: 'home/snapshot' });
           setAddContentList(result);
-        } else {
-          dispatch({
-            type: 'home/set',
-            payload: {
-              gridContentList: content.reduce((pre: any, cen: any) => {
-                const { id, ...rest } = cen;
-                return Object.assign({}, pre, {
-                  [id?.split('$$')[0]]: rest
-                });
-              }, {}),
-            },
-          });
-          dispatch({ type: 'home/snapshot' });
-          setAddContentList(content);
         }
       } else {
         message.error(res?.msg || res?.message || '接口异常');

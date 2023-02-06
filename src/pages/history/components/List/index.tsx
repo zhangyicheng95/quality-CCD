@@ -129,15 +129,19 @@ const HistoryList: React.FC<any> = (props: any) => {
       width: 200,
       align: 'center',
       render: (text: any, record: any) => {
-        return <TooltipDiv
-          title={text}
-          placement="top"
-          onClick={() => {
-            window.open(text);
-          }}
-        >
-          {text?.split('/')[text?.split('/').length - 1]}
-        </TooltipDiv>
+        const result = text?.split('/');
+        return !!result ?
+          <TooltipDiv
+            title={text}
+            placement="top"
+            onClick={() => {
+              window.open(text);
+            }}
+          >
+            {result[result.length - 1]}
+          </TooltipDiv>
+          :
+          null
       },
     },
     {

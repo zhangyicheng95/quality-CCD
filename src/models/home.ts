@@ -145,7 +145,7 @@ export default {
           return true;
         }
         return false;
-      }
+      };
       // 如果数据没有变更 则不在进行数据copy 防止重复渲染
       return diff() ? {
         ...state,
