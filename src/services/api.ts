@@ -9,6 +9,11 @@ export async function getAllProject(params?: any) {
   return fetchGet(`${BASE_IP}projects`);
 }
 
+// 获取列表任务状态
+export const getListStatusService = () => {
+  return fetchGet(`${BASE_IP}tasks`);
+};
+
 // 获取历史记录 //缺陷
 export async function getAllHistory(params: any) {
   return fetchPost(`${BASE_HISTORY_IP}track/list/v1`, { body: params });

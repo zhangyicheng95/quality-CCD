@@ -1,4 +1,4 @@
-import { getParams, updateParams } from '@/services/api';
+import { updateParams } from '@/services/api';
 import { SettingDrawer } from '@ant-design/pro-layout';
 import { message } from 'antd';
 import _ from 'lodash';

@@ -21,8 +21,6 @@ import {
 import * as _ from 'lodash';
 import {
   BASE_IP,
-  getFlowStatusService,
-  getParams,
   startFlowService,
   stopFlowService,
   touchFlowService,
@@ -54,11 +52,12 @@ import FileManager from '@/components/FileManager';
 import Table2Charts from './components/Table2Charts';
 import ImgsCharts from './components/ImgsCharts';
 
-let timer: string | number | NodeJS.Timer | null | undefined = null;
 let updateTimer: string | number | NodeJS.Timer | null | undefined = null;
 const Home: React.FC<any> = (props: any) => {
   const history = useHistory();
-  const { dispatch, started, taskDataConnect, snapshot, activeTab, } = props;
+  const {
+    dispatch, started, taskDataConnect, snapshot, activeTab, paramsData, projectStatus
+  } = props;
   const { logStr, gridContentList, footerData, errorData } = snapshot;
   const [form] = Form.useForm();
   const { validateFields, setFieldsValue } = form;
@@ -596,121 +595,94 @@ const Home: React.FC<any> = (props: any) => {
   };
   // 运行状态
   const getServiceStatus = () => {
-    getFlowStatusService(ipString).then((res: any) => {
-      if (!!res && res.code === 'SUCCESS') {
-        if (_.isObject(res?.data)) {
-          if (!_.isEmpty(res?.data)) {
-            dispatch({
-              type: 'home/set',
-              payload: {
-                started: true,
-              },
-            });
-          } else {
-            dispatch({
-              type: 'home/set',
-              payload: {
-                started: false,
-              },
-            });
-          }
-        }
-      } else {
-        dispatch({
-          type: 'home/set',
-          payload: {
-            started: false,
-          },
-        });
-        message.error(res?.msg || res?.message || '接口异常');
-      }
-      setLoading(false);
-    });
+    const data: any = (projectStatus || [])?.filter((i: any) => i.value === ipString)[0];
+    if (_.isObject(data)) {
+      dispatch({
+        type: 'home/set',
+        payload: {
+          // @ts-ignore
+          started: !!data?.running,
+        },
+      });
+    }
   };
   // 拉取方案详情 TODO
   useEffect(() => {
     if (!ipString) return;
-    getParams(ipString || '').then((res: any) => {
-      if (res && res.code === 'SUCCESS') {
-        const { data = {} } = res;
-        const { flowData, contentData = {} } = data;
-        const { home = [], content = {}, footerSelectList = [] } = contentData;
-        const { nodes } = flowData;
-        setParamData(data);
-        let ids: any = [];
-        const list = nodes.map((node: any) => {
-          const { name, alias, id, ports = {} } = node;
-          const { items = [] } = ports;
-          ids.push(id);
-          return {
-            key: id,
-            value: id,
-            title: `${alias || name}`,
-            label: `${alias || name}`,
-            children: items.filter((i: any) => i.group === 'bottom')
-              .map((port: any) => {
-                const { label } = port;
-                const { name, alias } = label;
-                const value = alias || name;
-                return {
-                  value: name,
-                  label: value,
-                };
-              }),
-          };
-        });
-        setNodeList(list);
-        setFooterSelectList(footerSelectList || ids);
-        setGridHomeList(
-          (!!home
-            ? home
-            : [
-              { i: 'slider-1', x: 0, y: 0, w: 2, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
-              { i: 'slider-2', x: 0, y: 4, w: 2, h: 9, minW: 1, maxW: 12, minH: 1, maxH: 30 },
-              { i: 'slider-3', x: 0, y: 8, w: 2, h: 15, minW: 1, maxW: 12, minH: 1, maxH: 30 },
-              { i: 'footer-1', x: 2, y: 24, w: 7, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
-              { i: 'footer-2', x: 9, y: 24, w: 3, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
-            ])
-        );
-        if (_.isArray(content)) {
-          dispatch({
-            type: 'home/set',
-            payload: {
-              gridContentList: content.reduce((pre: any, cen: any) => {
-                const { id, ...rest } = cen;
-                return Object.assign({}, pre, {
-                  [id?.split('$$')[0]]: rest
-                });
-              }, {}),
-            },
-          });
-          dispatch({ type: 'home/snapshot' });
-          setAddContentList(content);
-        } else {
-          const result = Object.entries(content).map((item: any) => {
-            const { value, type, size } = item[1];
-            const id = `${value?.join('$$')}$$${type}`;
+    const { flowData, contentData = {} } = paramsData;
+    const { home = [], content = {}, footerSelectList = [] } = contentData;
+    const { nodes } = flowData;
+    setParamData(paramsData);
+    let ids: any = [];
+    const list = nodes.map((node: any) => {
+      const { name, alias, id, ports = {} } = node;
+      const { items = [] } = ports;
+      ids.push(id);
+      return {
+        key: id,
+        value: id,
+        title: `${alias || name}`,
+        label: `${alias || name}`,
+        children: items.filter((i: any) => i.group === 'bottom')
+          .map((port: any) => {
+            const { label } = port;
+            const { name, alias } = label;
+            const value = alias || name;
             return {
-              ...item[1],
-              id,
-              size: Object.assign({}, size, {
-                i: id,
-              })
-            }
-          });
-          dispatch({
-            type: 'home/set',
-            payload: {
-              gridContentList: content,
-            },
-          });
-          dispatch({ type: 'home/snapshot' });
-          setAddContentList(result);
-        }
-      } else {
-        message.error(res?.msg || res?.message || '接口异常');
-      }
+              value: name,
+              label: value,
+            };
+          }),
+      };
     });
+    setNodeList(list);
+    setFooterSelectList(footerSelectList || ids);
+    setGridHomeList(
+      (!!home
+        ? home
+        : [
+          { i: 'slider-1', x: 0, y: 0, w: 2, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
+          { i: 'slider-2', x: 0, y: 4, w: 2, h: 9, minW: 1, maxW: 12, minH: 1, maxH: 30 },
+          { i: 'slider-3', x: 0, y: 8, w: 2, h: 15, minW: 1, maxW: 12, minH: 1, maxH: 30 },
+          { i: 'footer-1', x: 2, y: 24, w: 7, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
+          { i: 'footer-2', x: 9, y: 24, w: 3, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
+        ])
+    );
+    if (_.isArray(content)) {
+      dispatch({
+        type: 'home/set',
+        payload: {
+          gridContentList: content.reduce((pre: any, cen: any) => {
+            const { id, ...rest } = cen;
+            return Object.assign({}, pre, {
+              [id?.split('$$')[0]]: rest
+            });
+          }, {}),
+        },
+      });
+      dispatch({ type: 'home/snapshot' });
+      setAddContentList(content);
+    } else {
+      const result = Object.entries(content).map((item: any) => {
+        const { value, type, size } = item[1];
+        const id = `${value?.join('$$')}$$${type}`;
+        return {
+          ...item[1],
+          id,
+          size: Object.assign({}, size, {
+            i: id,
+          })
+        }
+      });
+      dispatch({
+        type: 'home/set',
+        payload: {
+          gridContentList: content,
+        },
+      });
+      dispatch({ type: 'home/snapshot' });
+      setAddContentList(result);
+    }
 
     return () => {
       setAddContentList([]);
@@ -726,16 +698,8 @@ const Home: React.FC<any> = (props: any) => {
   // 轮训获取运行状态
   useEffect(() => {
     if (!ipString || ifCanEdit || isVision) return;
-    setLoading(true);
     getServiceStatus();
-    timer = setInterval(() => {
-      getServiceStatus();
-    }, 5000);
-
-    return () => {
-      timer && clearInterval(timer);
-    };
-  }, []);
+  }, [projectStatus]);
   // 监控窗口动态添加
   useEffect(() => {
     if (!_.isEmpty(addContentList) && !_.isEmpty(paramData)) {
@@ -903,12 +867,12 @@ const Home: React.FC<any> = (props: any) => {
     startFlowService(ipString || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
         message.success('任务启动成功');
-        dispatch({
-          type: 'home/set',
-          payload: {
-            started: true,
-          },
-        });
+        // dispatch({
+        //   type: 'home/set',
+        //   payload: {
+        //     started: true,
+        //   },
+        // });
       } else {
         message.error(res?.msg || res?.message || '接口异常');
       }
@@ -918,24 +882,20 @@ const Home: React.FC<any> = (props: any) => {
   // 停止任务
   const end = () => {
     if (!ipString) return;
-    timer && clearInterval(timer);
     setLoading(true);
     stopFlowService(ipString || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
         message.success('任务停止成功');
-        dispatch({
-          type: 'home/set',
-          payload: {
-            started: false,
-          },
-        });
+        // dispatch({
+        //   type: 'home/set',
+        //   payload: {
+        //     started: false,
+        //   },
+        // });
       } else {
         message.error(res?.msg || res?.message || '接口异常');
       }
       setLoading(false);
-      timer = setInterval(() => {
-        getServiceStatus();
-      }, 5000);
     });
   };
   // 关闭
@@ -1369,11 +1329,13 @@ const Home: React.FC<any> = (props: any) => {
 
 Home.displayName = 'Home';
 
-export default connect(({ home }) => ({
+export default connect(({ home, themeStore }) => ({
   snapshot: home.snapshot || {},
   started: home.started || false,
   activeTab: home.activeTab || '1',
   taskDataConnect: home.taskDataConnect || false,
+  paramsData: themeStore.paramsData,
+  projectStatus: themeStore.projectStatus,
 }))(Home);
 
 // 告警提示框

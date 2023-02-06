@@ -2,18 +2,18 @@ import React, { useEffect, useMemo, useState, } from "react";
 import { Form, Input, message, Button, Tree, Select } from "antd";
 import * as _ from "lodash";
 import styles from "./index.module.less";
-import { getAllProject, getParams, updateParams } from "@/services/api";
+import { updateParams } from "@/services/api";
 import PrimaryTitle from "@/components/PrimaryTitle";
 import FileManager from "@/components/FileManager";
 import TooltipDiv from "@/components/TooltipDiv";
-import { useHistory } from "umi";
+import { connect, useHistory } from "umi";
 import { FormOutlined } from "@ant-design/icons";
 
 const Setting: React.FC<any> = (props) => {
+  const { paramsData, projectStatus } = props;
   const [form] = Form.useForm();
   const history = useHistory();
   const { validateFields, setFieldsValue, getFieldValue } = form;
-  const [list, setList] = useState([]);
   const [paramData, setParamData] = useState<any>({});
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
   const [treeData, setTreeData] = useState([]);
@@ -33,70 +33,48 @@ const Setting: React.FC<any> = (props) => {
   const ipList = useMemo(() => {
     return JSON.parse(localStorage.getItem('ipList') || "[]");
   }, [localStorage.getItem('ipList')]);
-  // 获取方案列表
-  const getDataList = () => {
-    getAllProject().then((res: any) => {
-      if (res && res.code === 'SUCCESS') {
-        setList(() => (res?.data || []).map((item: any) => {
-          const { name, id } = item;
-          return {
-            value: id,
-            label: name,
-            disabled: ipList.filter((i: any) => i.key === id).length,
-          };
-        }));
-      } else {
-        message.error(res?.msg || res?.message || '接口异常');
-      }
-    });
-  };
   // 获取数据信息
-  const getData = () => {
-    getParams(localStorage.getItem("ipString") || '').then((res: any) => {
-      if (res && res.code === 'SUCCESS') {
-        const { data = {} } = res;
-        const { quality_name, name, flowData, commonInfo } = data;
-        const { nodes } = flowData;
-        let checkedList: any = [];
-        const result: any = (nodes || []).map((node: any) => {
-          const { alias, name, id, config = {} } = node;
-          const { initParams = {} } = config;
-          if (!!initParams && !_.isEmpty(initParams)) {
-            return {
-              title: alias || name,
-              key: id,
-              children: Object.entries(initParams).map((param: any) => {
-                const { alias, name, onHidden } = param[1];
-                const key = `${id}@$@${param[0]}`;
-                if (!onHidden) {
-                  checkedList = checkedList.concat(key)
-                }
-                return {
-                  title: alias || name,
-                  key: key,
-                  checked: true,
-                };
-              }),
-            }
-          };
-          return null;
-        }).filter(Boolean);
-        setParamData(data);
-        setTreeData(result);
-        setCheckedKeys(checkedList);
-        setFieldsValue({ quality_name: quality_name || name });
-        if (_.isObject(commonInfo) && !_.isEmpty(commonInfo)) {
-          setFieldsValue({
-            productionInfo: commonInfo['productionInfo'],
-            stationInfo: commonInfo['stationInfo'],
-            useInfo: commonInfo['useInfo'],
-          });
+  useEffect(() => {
+    if (!_.isEmpty(paramsData)) {
+      const { quality_name, name, flowData, commonInfo } = paramsData;
+      const { nodes } = flowData;
+      let checkedList: any = [];
+      const result: any = (nodes || []).map((node: any) => {
+        const { alias, name, id, config = {} } = node;
+        const { initParams = {} } = config;
+        if (!!initParams && !_.isEmpty(initParams)) {
+          return {
+            title: alias || name,
+            key: id,
+            children: Object.entries(initParams).map((param: any) => {
+              const { alias, name, onHidden } = param[1];
+              const key = `${id}@$@${param[0]}`;
+              if (!onHidden) {
+                checkedList = checkedList.concat(key)
+              }
+              return {
+                title: alias || name,
+                key: key,
+                checked: true,
+              };
+            }),
+          }
         };
-      } else {
-        message.error(res?.msg || res?.message || '接口异常');
-      }
-    });
-  };
+        return null;
+      }).filter(Boolean);
+      setParamData(paramsData);
+      setTreeData(result);
+      setCheckedKeys(checkedList);
+      setFieldsValue({ quality_name: quality_name || name });
+      if (_.isObject(commonInfo) && !_.isEmpty(commonInfo)) {
+        setFieldsValue({
+          productionInfo: commonInfo['productionInfo'],
+          stationInfo: commonInfo['stationInfo'],
+          useInfo: commonInfo['useInfo'],
+        });
+      };
+    }
+  }, [paramsData]);
   // 设置服务端IP
   useEffect(() => {
     if (!localStorage.getItem("ipUrl-history")) {
@@ -106,11 +84,7 @@ const Setting: React.FC<any> = (props) => {
     if (!localStorage.getItem("ipUrl-realtime")) {
       localStorage.setItem("ipUrl-realtime", 'localhost:8866');
       setFieldsValue({ "ipUrl-realtime": 'localhost:8866' });
-      return;
     }
-    getDataList();
-    if (!localStorage.getItem("ipString")) return;
-    getData();
   }, []);
 
   const onCheck = (checkedKeysValue: React.Key[]) => {
@@ -252,7 +226,7 @@ const Setting: React.FC<any> = (props) => {
             <Select
               style={{ width: '100%' }}
               size="large"
-              options={list}
+              options={projectStatus}
               placeholder="方案ID"
             />
           </Form.Item>
@@ -339,4 +313,7 @@ const Setting: React.FC<any> = (props) => {
   );
 };
 
-export default Setting;
+export default connect(({ home, themeStore }) => ({
+  paramsData: themeStore.paramsData,
+  projectStatus: themeStore.projectStatus,
+}))(Setting);

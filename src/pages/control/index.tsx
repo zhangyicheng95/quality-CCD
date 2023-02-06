@@ -1,8 +1,8 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import styles from "./index.module.less";
-import { Button, message, Form, Input, Radio, Select, Checkbox, InputNumber, Switch, Upload, } from "antd";
+import { Button, message, Form, Input, Radio, Select, Checkbox, InputNumber, Switch, } from "antd";
 import * as _ from "lodash";
-import { getParams, updateParams } from "@/services/api";
+import { updateParams } from "@/services/api";
 import { CaretDownOutlined, CaretRightOutlined } from "@ant-design/icons";
 import PrimaryTitle from "@/components/PrimaryTitle";
 import IpInput from "@/components/IpInputGroup";
@@ -11,9 +11,11 @@ import TooltipDiv from "@/components/TooltipDiv";
 import MonacoEditor from "@/components/MonacoEditor";
 import PlatFormModal from "@/components/platForm";
 import FileManager from "@/components/FileManager";
+import { connect } from "umi";
 
 const FormItem = Form.Item;
 const Control: React.FC<any> = (props: any) => {
+  const { paramsData } = props;
   const [form] = Form.useForm();
   const { validateFields, } = form;
   const [paramData, setParamData] = useState<any>({});
@@ -27,19 +29,13 @@ const Control: React.FC<any> = (props: any) => {
   const [selectedPath, setSelectedPath] = useState<any>({});
 
   useEffect(() => {
-    if (!localStorage.getItem("ipUrl-realtime") || !localStorage.getItem("ipString")) return;
-    getParams(localStorage.getItem("ipString") || '').then((res: any) => {
-      if (res && res.code === 'SUCCESS') {
-        const { data = {} } = res;
-        const { flowData } = data;
-        const { nodes } = flowData;
-        setParamData(data);
-        setNodeList(nodes);
-      } else {
-        message.error(res?.msg || res?.message || '接口异常');
-      }
-    });
-  }, []);
+    if (!_.isEmpty(paramsData)) {
+      const { flowData } = paramsData;
+      const { nodes } = flowData;
+      setParamData(paramsData);
+      setNodeList(nodes);
+    }
+  }, [paramsData]);
   const widgetChange = (key: any, value: any) => {
     key = key.split('@$@');
     setNodeList((prev: any) => {
@@ -227,7 +223,9 @@ const Control: React.FC<any> = (props: any) => {
   );
 };
 
-export default Control;
+export default connect(({ home, themeStore }) => ({
+  paramsData: themeStore.paramsData,
+}))(Control);
 
 const FormatWidgetToDom = (props: any) => {
   const {
