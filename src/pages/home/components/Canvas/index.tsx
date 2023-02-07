@@ -608,7 +608,7 @@ const Home: React.FC<any> = (props: any) => {
   };
   // 拉取方案详情 TODO
   useEffect(() => {
-    if (!ipString) return;
+    if (!ipString || _.isEmpty(paramsData)) return;
     const { flowData, contentData = {} } = paramsData;
     const { home = [], content = {}, footerSelectList = [] } = contentData;
     const { nodes } = flowData;
@@ -677,7 +677,7 @@ const Home: React.FC<any> = (props: any) => {
       dispatch({
         type: 'home/set',
         payload: {
-          gridContentList: content,
+          gridContentList: result,
         },
       });
       dispatch({ type: 'home/snapshot' });

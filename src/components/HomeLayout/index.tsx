@@ -17,6 +17,12 @@ const HomeLayout: React.FC<any> = (props) => {
   const [list, setList] = useState<any>([]);
   const [projectList, setProjectList] = useState([]);
   const [addItemsVisible, setAddItemsVisible] = useState(false);
+
+  const isVision = useMemo(() => {
+    // @ts-ignore
+    return window.QUALITY_CCD_CONFIG.type === 'vision';
+  }, []);
+
   // 详情信息存在dva中
   useEffect(() => {
     if (!_.isEmpty(params)) {
@@ -28,6 +34,7 @@ const HomeLayout: React.FC<any> = (props) => {
   }, [params])
   // 获取方案列表
   useEffect(() => {
+    if (isVision) return;
     getAllProject().then((res: any) => {
       if (res && res.code === 'SUCCESS') {
         const result = (res?.data || []).map((item: any) => {
@@ -53,6 +60,7 @@ const HomeLayout: React.FC<any> = (props) => {
   }, [items]);
   // 启动循环列表状态
   useEffect(() => {
+    if (isVision) return;
     loopGetStatus(projectList);
     !!timerRef.current && clearInterval(timerRef.current);
     if (projectList.length) {

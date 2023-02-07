@@ -214,7 +214,7 @@ const Setting: React.FC<any> = (props) => {
               <Input placeholder="localhost:8867" disabled={!edit.historyIp} />
             </Form.Item>
             <Button type="primary" onClick={() => setEdit(prev => Object.assign({ historyIp: !prev.historyIp }))}>
-              {edit.ip ? '确认' : '修改'}
+              {edit.historyIp ? '确认' : '修改'}
             </Button>
           </div>
           <Form.Item
@@ -223,12 +223,17 @@ const Setting: React.FC<any> = (props) => {
             initialValue={localStorage.getItem("ipString") || undefined}
             rules={[{ required: true, message: "方案ID绑定" }]}
           >
-            <Select
-              style={{ width: '100%' }}
-              size="large"
-              options={projectStatus}
-              placeholder="方案ID"
-            />
+            {
+              isVision ?
+                <Input placeholder="方案ID" />
+                :
+                <Select
+                  style={{ width: '100%' }}
+                  size="large"
+                  options={projectStatus}
+                  placeholder="方案ID"
+                />
+            }
           </Form.Item>
           <Form.Item
             name="canvas"
