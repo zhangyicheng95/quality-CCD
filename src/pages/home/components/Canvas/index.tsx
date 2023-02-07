@@ -612,7 +612,6 @@ const Home: React.FC<any> = (props: any) => {
     const { flowData, contentData = {} } = paramsData;
     const { home = [], content = {}, footerSelectList = [] } = contentData;
     const { nodes } = flowData;
-    setParamData(paramsData);
     let ids: any = [];
     const list = nodes.map((node: any) => {
       const { name, alias, id, ports = {} } = node;
@@ -638,12 +637,12 @@ const Home: React.FC<any> = (props: any) => {
     setNodeList(list);
     setFooterSelectList(footerSelectList || ids);
     setGridHomeList(
-      (!!home
+      (!!home?.length
         ? home
         : [
-          { i: 'slider-1', x: 0, y: 0, w: 2, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
+          { i: 'slider-1', x: 0, y: 0, w: 2, h: 4, minW: 1, maxW: 12, minH: 1, maxH: 30 },
           { i: 'slider-2', x: 0, y: 4, w: 2, h: 9, minW: 1, maxW: 12, minH: 1, maxH: 30 },
-          { i: 'slider-3', x: 0, y: 8, w: 2, h: 15, minW: 1, maxW: 12, minH: 1, maxH: 30 },
+          { i: 'slider-3', x: 0, y: 13, w: 2, h: 15, minW: 1, maxW: 12, minH: 1, maxH: 30 },
           { i: 'footer-1', x: 2, y: 24, w: 7, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
           { i: 'footer-2', x: 9, y: 24, w: 3, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
         ])
@@ -662,6 +661,7 @@ const Home: React.FC<any> = (props: any) => {
       });
       dispatch({ type: 'home/snapshot' });
       setAddContentList(content);
+      setParamData(paramsData);
     } else {
       const result = Object.entries(content).map((item: any) => {
         const { value, type, size } = item[1];
@@ -682,6 +682,16 @@ const Home: React.FC<any> = (props: any) => {
       });
       dispatch({ type: 'home/snapshot' });
       setAddContentList(result);
+      const newParams = Object.assign({}, paramsData, {
+        contentData: Object.assign({}, contentData, {
+          content: result,
+        })
+      });
+      dispatch({
+        type: 'themeStore/paramsAction',
+        payload: newParams
+      });
+      setParamData(newParams);
     }
 
     return () => {
@@ -1004,7 +1014,7 @@ const Home: React.FC<any> = (props: any) => {
       .then((values) => {
         const { value, type, yName, xName, fontSize, defaultImg, reverse } = values;
         const id = `${value?.join('$$')}$$${type}`;
-        if (addContentList.filter((i: any) => i.id === id).length) {
+        if (_.isEmpty(editWindowData) && addContentList.filter((i: any) => i.id === id).length) {
           message.error('已存在，请求改 “模块，节点，类型” 中的任一项');
           return;
         }
