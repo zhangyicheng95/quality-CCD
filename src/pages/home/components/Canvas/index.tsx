@@ -610,13 +610,11 @@ const Home: React.FC<any> = (props: any) => {
   useEffect(() => {
     if (!ipString || _.isEmpty(paramsData)) return;
     const { flowData, contentData = {} } = paramsData;
-    const { home = [], content = {}, footerSelectList = [] } = contentData;
+    const { home = [], content = {}, footerSelectList } = contentData;
     const { nodes } = flowData;
-    let ids: any = [];
     const list = nodes.map((node: any) => {
       const { name, alias, id, ports = {} } = node;
       const { items = [] } = ports;
-      ids.push(id);
       return {
         key: id,
         value: id,
@@ -635,7 +633,7 @@ const Home: React.FC<any> = (props: any) => {
       };
     });
     setNodeList(list);
-    setFooterSelectList(footerSelectList || ids);
+    setFooterSelectList(footerSelectList || []);
     setGridHomeList(
       (!!home?.length
         ? home
@@ -1147,13 +1145,20 @@ const Home: React.FC<any> = (props: any) => {
           >
             <Tree
               checkable
-              autoExpandParent={true}
+              defaultExpandAll
               showLine={true}
               onCheck={(checkedKeysValue: any) => {
-                setFooterSelectList(checkedKeysValue);
+                console.log(_.pull(checkedKeysValue, 'footer_001'))
+                setFooterSelectList(_.pull(checkedKeysValue, 'footer_001'));
               }}
               checkedKeys={footerSelectList}
-              treeData={nodeList.map((item: any) => _.omit(item, 'children'))}
+              treeData={[{
+                key: 'footer_001',
+                value: 'footer_001',
+                title: '节点状态列表',
+                label: '节点状态列表',
+                children: nodeList.map((item: any) => _.omit(item, 'children'))
+              }]}
             />
           </Modal>
           : null

@@ -144,6 +144,42 @@
       .ant-modal {
         max-width: 800px;
       }
+
+      .ant-tree-list-holder-inner {
+        .ant-tree-treenode {
+          font-size: inherit !important;
+
+          .ant-tree-checkbox {
+            font-size: inherit !important;
+            margin-top: 3px;
+
+            .ant-tree-checkbox-inner {
+              width: 22px;
+              height: 24px;
+
+              &::after {
+                width: 14px;
+                height: 14px;
+              }
+            }
+          }
+
+          .ant-tree-checkbox-checked .ant-tree-checkbox-inner::after {
+            width: 8px;
+            height: 12px;
+          }
+
+          .ant-tree-switcher {
+            margin-right: 4px;
+            line-height: initial !important;
+            font-size: 24px !important;
+
+            .ant-tree-switcher-icon {
+              font-size: inherit !important;
+            }
+          }
+        }
+      }
     }
 
     .drag-item-content-box {
