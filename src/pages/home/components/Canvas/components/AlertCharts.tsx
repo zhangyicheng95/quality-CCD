@@ -10,15 +10,6 @@ interface Props {
 
 const AlertCharts: React.FC<Props> = (props: any) => {
     const { data = [], id, } = props;
-    const [fontSize, setFontSize] = useState('60px');
-    const dom = document.getElementById(`echart-${id}`);
-
-    useEffect(() => {
-        if (!!dom) {
-            const minSize = Math.min(dom.clientWidth, dom.clientHeight);
-            setFontSize(`${minSize / 1.5}px`);
-        }
-    }, [dom?.clientHeight, dom?.clientWidth]);
 
     return (
         <div
@@ -30,10 +21,10 @@ const AlertCharts: React.FC<Props> = (props: any) => {
                     const { name, value } = item;
                     return <div
                         id={`echart-${id}`}
-                        className={`flex-box-center alert-item ${_.isBoolean(value) ? (value ? 'OK' : 'NG') : ''}`}
-                    // style={{ fontSize }}
+                        className={`flex-box-center alert-item ${!!value ? 'OK' : 'NG'}`}
                     >
-                        {name || 'Loading'}
+                        <span style={{ position: 'absolute', left: 4, top: 4, fontSize: 12 }}>{name}</span>
+                        {!!value ? 'OK' : 'NG'}
                     </div>
                 })
             }

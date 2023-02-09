@@ -1146,7 +1146,7 @@ const Home: React.FC<any> = (props: any) => {
             <Tree
               checkable
               defaultExpandAll
-              showLine={true}
+              showLine
               onCheck={(checkedKeysValue: any) => {
                 console.log(_.pull(checkedKeysValue, 'footer_001'))
                 setFooterSelectList(_.pull(checkedKeysValue, 'footer_001'));
