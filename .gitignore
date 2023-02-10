@@ -21,7 +21,6 @@ package-lock.json
 pnpm-lock.yaml
 *bak
 
-
 # visual studio code
 .history
 *.log
@@ -38,5 +37,4 @@ screenshot
 .eslintcache
 
 dist
-quality
-quality.zip
+quality*
