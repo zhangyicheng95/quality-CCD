@@ -38,8 +38,8 @@ const Control: React.FC<any> = (props: any) => {
     if (!_.isEmpty(paramsData)) {
       const { flowData, contentData } = paramsData;
       const { nodes } = flowData;
-      const { lineType = 'line' } = contentData;
-      setListType(lineType);
+      const { listTyoe } = contentData;
+      setListType(listTyoe || 'line');
       setParamData(paramsData);
       setNodeList(nodes.map((item: any, index: number) => {
         if (_.isUndefined(item.sortId)) {
