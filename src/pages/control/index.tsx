@@ -3,7 +3,7 @@ import styles from "./index.module.less";
 import { Button, message, Form, Input, Radio, Select, Checkbox, InputNumber, Switch, } from "antd";
 import * as _ from "lodash";
 import { updateParams } from "@/services/api";
-import { CaretDownOutlined, CaretRightOutlined } from "@ant-design/icons";
+import { AppstoreOutlined, CaretDownOutlined, CaretRightOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import PrimaryTitle from "@/components/PrimaryTitle";
 import IpInput from "@/components/IpInputGroup";
 import SliderGroup from "@/components/SliderGroup";
@@ -11,11 +11,16 @@ import TooltipDiv from "@/components/TooltipDiv";
 import MonacoEditor from "@/components/MonacoEditor";
 import PlatFormModal from "@/components/platForm";
 import FileManager from "@/components/FileManager";
-import { connect } from "umi";
+import { connect, useModel } from "umi";
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
+import DropSortableItem from "@/components/DragComponents/DropSortableItem";
+import DragSortableItem from "@/components/DragComponents/DragSortableItem";
 
 const FormItem = Form.Item;
 const Control: React.FC<any> = (props: any) => {
-  const { paramsData } = props;
+  const { initialState, setInitialState } = useModel<any>('@@initialState');
+  const { params: paramsData } = initialState;
   const [form] = Form.useForm();
   const { validateFields, } = form;
   const [paramData, setParamData] = useState<any>({});
@@ -27,15 +32,24 @@ const Control: React.FC<any> = (props: any) => {
   const [platFormValue, setPlatFormValue] = useState<any>({});
   const [selectPathVisible, setSelectPathVisible] = useState(false);
   const [selectedPath, setSelectedPath] = useState<any>({});
+  const [listTyoe, setListType] = useState('line');
 
   useEffect(() => {
     if (!_.isEmpty(paramsData)) {
-      const { flowData } = paramsData;
+      const { flowData, contentData } = paramsData;
       const { nodes } = flowData;
+      const { lineType = 'line' } = contentData;
+      setListType(lineType);
       setParamData(paramsData);
-      setNodeList(nodes);
+      setNodeList(nodes.map((item: any, index: number) => {
+        if (_.isUndefined(item.sortId)) {
+          return { ...item, sortId: index };
+        }
+        return item;
+      }));
     }
   }, [paramsData]);
+  // 参数值改变
   const widgetChange = (key: any, value: any) => {
     key = key.split('@$@');
     setNodeList((prev: any) => {
@@ -55,6 +69,18 @@ const Control: React.FC<any> = (props: any) => {
       })
     });
   };
+  // 拖拽排序
+  const sortCommonFun = (dragIndex: any, hoverIndex: any) => {
+    const source = nodeList.filter((i: any) => i.sortId === dragIndex)[0];
+    const target = nodeList.filter((i: any) => i.sortId === hoverIndex)[0];
+    setNodeList((prev: any) => {
+      const list = _.cloneDeep(prev);
+      list[dragIndex] = { ...target, sortId: dragIndex };
+      list[hoverIndex] = { ...source, sortId: hoverIndex };
+      return list;
+    });
+  };
+  // 提交表单
   const onFinish = () => {
     validateFields()
       .then((values) => {
@@ -63,7 +89,10 @@ const Control: React.FC<any> = (props: any) => {
           data: Object.assign({}, paramData, {
             flowData: Object.assign({}, paramData.flowData, {
               nodes: nodeList
-            })
+            }),
+            contentData: Object.assign({}, paramData.contentData, {
+              listTyoe
+            }),
           })
         };
         updateParams(params).then((res: any) => {
@@ -79,110 +108,156 @@ const Control: React.FC<any> = (props: any) => {
         errorFields?.length && message.error(`${errorFields[0]?.errors[0]} 是必填项`);
       });
   };
+
   return (
     <div className={`${styles.control} flex-box page-size background-ubv`}>
-      <PrimaryTitle title={"参数控制"} />
+      <PrimaryTitle title={"参数控制"} >
+        <div className="flex-box title-btn-box">
+          <UnorderedListOutlined
+            className={listTyoe === 'line' ? 'selected' : ''}
+            onClick={() => setListType('line')}
+          />
+          <AppstoreOutlined
+            className={listTyoe === 'block' ? 'selected' : ''}
+            onClick={() => setListType('block')}
+          />
+        </div>
+      </PrimaryTitle>
       <div className="control-body">
-        <Form
-          form={form}
-          scrollToFirstError
-        >
-          {
-            (nodeList || []).map((node: any, index: any) => {
-              const { id, alias, name, config = {}, hidden } = node;
-              const { initParams = {} } = config;
-              if (!!initParams && !_.isEmpty(initParams)) {
-                if (Object.entries(initParams).filter((i: any) => !i[1].onHidden).length === 0) return null;
-                const TagRadioList = Object.entries(initParams).reduce((pre: any, cen: any) => {
-                  const { widget } = cen[1];
-                  if (widget?.type === 'TagRadio') {
-                    const ids = (widget?.options || []).reduce((optionP: any, optionC: any) => {
-                      const { children } = optionC;
-                      const childIds = children.map((item: any) => item.id);
-                      return optionP.concat(childIds);
-                    }, []);
-                    return pre.concat(ids)
-                  }
-                  return pre;
-                }, []);
-                return <div key={id} className="control-item">
-                  <div className="item-title flex-box" onClick={() => {
-                    setNodeList((prev: any) => {
-                      return prev.map((pre: any) => {
-                        if (pre.id === id) {
-                          return Object.assign({}, pre, {
-                            hidden: !hidden,
-                          });
-                        }
-                        return pre;
-                      })
-                    })
-                  }}>
-                    {hidden ? <CaretRightOutlined /> : <CaretDownOutlined />}
-                    {alias || name}
-                  </div>
-                  {
-                    !hidden && (Object.entries(initParams) || []).map((item: any) => {
-                      const { alias, name, widget, onHidden } = item[1];
-                      const { type } = widget;
-                      if (onHidden || TagRadioList.includes(item[0])) return null;
-                      return <div className="flex-box param-item" key={`${id}@$@${item[0]}`}>
-                        <div className="icon-box flex-box">
-                          {_.toUpper(type.slice(0, 1))}
-                          {/* <BlockOutlined className="item-icon" /> */}
-                        </div>
-                        <div className="title-box">
-                          <div>{alias}</div>
-                          <span>{name}</span>
-                        </div>
-                        <div className="value-box">
-                          <FormatWidgetToDom
-                            id={`${id}@$@${item[0]}`}
-                            config={item}
-                            form={form}
-                            disabled={false}
-                            selectedOption={selectedOption}
-                            setSelectedOption={setSelectedOption}
-                            widgetChange={widgetChange}
-                            setEditorVisible={setEditorVisible}
-                            setEditorValue={setEditorValue}
-                            setPlatFormVisible={setPlatFormVisible}
-                            setPlatFormValue={setPlatFormValue}
-                            setSelectPathVisible={setSelectPathVisible}
-                            setSelectedPath={setSelectedPath}
-                          />
-                        </div>
+        <DndProvider backend={HTML5Backend}>
+          <Form
+            form={form}
+            scrollToFirstError
+          >
+            <Form.Item
+              name="path-value"
+              label="配置文件"
+              initialValue={"default" || undefined}
+              rules={[{ required: false, message: "历史记录服务端地址" }]}
+            >
+              <Select
+                style={{ width: '100%' }}
+                size="large"
+                options={[
+                  { label: '默认配置', value: 'default' }
+                ]}
+                placeholder="方案ID"
+              />
+            </Form.Item>
+            {
+              (nodeList || []).sort((a: any, b: any) => a.sortId - b.sortId).map((node: any, index: any) => {
+                const { id, alias, name, config = {}, hidden, sortId } = node;
+                const { initParams = {} } = config;
+                if (!!initParams && !_.isEmpty(initParams)) {
+                  if (Object.entries(initParams).filter((i: any) => !i[1].onHidden).length === 0) return null;
+                  const TagRadioList = Object.entries(initParams).reduce((pre: any, cen: any) => {
+                    const { widget } = cen[1];
+                    if (widget?.type === 'TagRadio') {
+                      const ids = (widget?.options || []).reduce((optionP: any, optionC: any) => {
+                        const { children } = optionC;
+                        const childIds = children.map((item: any) => item.id);
+                        return optionP.concat(childIds);
+                      }, []);
+                      return pre.concat(ids)
+                    }
+                    return pre;
+                  }, []);
+                  return <div key={id} className={`control-item ${listTyoe === 'block' ? 'block' : ''}`}>
+                    <DropSortableItem
+                      name={name}
+                      index={sortId}
+                      moveCard={sortCommonFun}
+                    >
+                      <div>
+                        <DragSortableItem
+                          name={name}
+                          index={sortId}
+                        >
+                          <div>
+                            <div className="item-title flex-box" onClick={() => {
+                              setNodeList((prev: any) => {
+                                return prev.map((pre: any) => {
+                                  if (pre.id === id) {
+                                    return Object.assign({}, pre, {
+                                      hidden: !hidden,
+                                    });
+                                  }
+                                  return pre;
+                                })
+                              })
+                            }}>
+                              {hidden ? <CaretRightOutlined /> : <CaretDownOutlined />}
+                              {alias || name}
+                            </div>
+                            {
+                              !hidden && (Object.entries(initParams) || []).map((item: any) => {
+                                const { alias, name, widget, onHidden } = item[1];
+                                const { type } = widget;
+                                if (onHidden || TagRadioList.includes(item[0])) return null;
+                                return <div className="flex-box param-item" key={`${id}@$@${item[0]}`}>
+                                  <div className="icon-box flex-box">
+                                    {_.toUpper(type.slice(0, 1))}
+                                    {/* <BlockOutlined className="item-icon" /> */}
+                                  </div>
+                                  <div className="title-box">
+                                    <div>{alias}</div>
+                                    <span>{name}</span>
+                                  </div>
+                                  <div className="value-box">
+                                    <FormatWidgetToDom
+                                      id={`${id}@$@${item[0]}`}
+                                      config={item}
+                                      form={form}
+                                      disabled={false}
+                                      selectedOption={selectedOption}
+                                      setSelectedOption={setSelectedOption}
+                                      widgetChange={widgetChange}
+                                      setEditorVisible={setEditorVisible}
+                                      setEditorValue={setEditorValue}
+                                      setPlatFormVisible={setPlatFormVisible}
+                                      setPlatFormValue={setPlatFormValue}
+                                      setSelectPathVisible={setSelectPathVisible}
+                                      setSelectedPath={setSelectedPath}
+                                    />
+                                  </div>
+                                </div>
+                              })
+                            }
+                          </div>
+                        </DragSortableItem>
                       </div>
-                    })
-                  }
-                </div>
-              }
-              return null;
-            })
-          }
-        </Form>
+                    </DropSortableItem>
+                  </div>
+                }
+                return null;
+              })
+            }
+          </Form>
+        </DndProvider>
       </div>
       <div className="control-footer flex-box">
         <Button type="primary" onClick={() => onFinish()}>确认</Button>
       </div>
 
-      {editorVisible ? (
-        <MonacoEditor
-          id={editorValue.id}
-          defaultValue={editorValue.value}
-          language={editorValue.language}
-          visible={editorVisible}
-          onOk={(val: any) => {
-            const { id, value, language } = val;
-            widgetChange(id, { value, language });
-            setEditorValue({});
-            setEditorVisible(false);
-          }}
-          onCancel={() => {
-            setEditorVisible(false);
-          }}
-        />
-      ) : null}
+      {
+        editorVisible ? (
+          <MonacoEditor
+            id={editorValue.id}
+            defaultValue={editorValue.value}
+            language={editorValue.language}
+            visible={editorVisible}
+            onOk={(val: any) => {
+              const { id, value, language } = val;
+              widgetChange(id, { value, language });
+              setEditorValue({});
+              setEditorVisible(false);
+            }}
+            onCancel={() => {
+              setEditorVisible(false);
+            }}
+          />
+        ) : null
+      }
       {
         platFormVisible ? (
           <PlatFormModal
@@ -219,12 +294,12 @@ const Control: React.FC<any> = (props: any) => {
           />
           : null
       }
-    </div>
+    </div >
   );
 };
 
 export default connect(({ home, themeStore }) => ({
-  paramsData: themeStore.paramsData,
+
 }))(Control);
 
 const FormatWidgetToDom = (props: any) => {
@@ -620,4 +695,30 @@ const FormatWidgetToDom = (props: any) => {
     default:
       return null;
   }
+};
+
+// 拖放节点的外层
+const ParentDiv = (props: any) => {
+  const { typeId, children, typeName, index, sortGroupFun, setStartDrag } = props;
+  // @ts-ignore
+  return <DropSortableItem
+    key={index}
+    index={index}
+    name={typeName}
+    moveCard={(dragIndex: any, hoverIndex: any) => {
+      sortGroupFun(dragIndex, hoverIndex, 'allGroupSort')
+    }}
+    setStartDrag={setStartDrag}
+  >
+    <div>
+      {/* <DragSortableItem
+        key={index}
+        index={index}
+        name={typeName}
+      > */}
+      {children}
+      {/* </DragSortableItem> */}
+    </div>
+  </DropSortableItem>
+
 };

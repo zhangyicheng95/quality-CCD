@@ -35,7 +35,7 @@ import {
   PlusCircleOutlined,
   SafetyOutlined,
 } from '@ant-design/icons';
-import { connect, useHistory } from 'umi';
+import { connect, useHistory, useModel } from 'umi';
 import socketErrorListen from '@/services/socketError';
 import socketLogListen from '@/services/socketLog';
 import socketDataListen from '@/services/socketData';
@@ -54,9 +54,11 @@ import ImgsCharts from './components/ImgsCharts';
 
 let updateTimer: string | number | NodeJS.Timer | null | undefined = null;
 const Home: React.FC<any> = (props: any) => {
+  const { initialState, setInitialState } = useModel<any>('@@initialState');
+  const { params: paramsData } = initialState;
   const history = useHistory();
   const {
-    dispatch, started, taskDataConnect, snapshot, activeTab, paramsData, projectStatus
+    dispatch, started, taskDataConnect, snapshot, activeTab, projectStatus
   } = props;
   const { logStr, gridContentList, footerData, errorData } = snapshot;
   const [form] = Form.useForm();
@@ -685,10 +687,10 @@ const Home: React.FC<any> = (props: any) => {
           content: result,
         })
       });
-      dispatch({
-        type: 'themeStore/paramsAction',
-        payload: newParams
-      });
+      setInitialState((preInitialState: any) => ({
+        ...preInitialState,
+        params: newParams,
+      }));
       setParamData(newParams);
     }
 
@@ -1148,7 +1150,6 @@ const Home: React.FC<any> = (props: any) => {
               defaultExpandAll
               showLine
               onCheck={(checkedKeysValue: any) => {
-                console.log(_.pull(checkedKeysValue, 'footer_001'))
                 setFooterSelectList(_.pull(checkedKeysValue, 'footer_001'));
               }}
               checkedKeys={footerSelectList}
@@ -1349,7 +1350,6 @@ export default connect(({ home, themeStore }) => ({
   started: home.started || false,
   activeTab: home.activeTab || '1',
   taskDataConnect: home.taskDataConnect || false,
-  paramsData: themeStore.paramsData,
   projectStatus: themeStore.projectStatus,
 }))(Home);
 

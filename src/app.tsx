@@ -32,36 +32,25 @@ export async function getInitialState(): Promise<{
   routes: any[];
   fetchUserInfo?: () => Promise<any>;
 }> {
-  const fetchUserInfo = async () => {
-    return new Promise((resolve) => {
-      resolve({
-        name: '',
-        avatar: '',
-        userid: '',
-        email: '',
-        signature: '',
-        title: '',
-        group: '',
-        tags: { key: '', label: '' },
-        notifyCount: 1,
-        unreadCount: 1,
-        country: '',
-        access: '',
-        geographic: {
-          province: { label: '', key: '' },
-          city: { label: '', key: '' },
-        },
-        address: '',
-        phone: '',
-      });
-      // try {
-      //   const msg = await queryCurrentUser();
-      //   return msg.data;
-      // } catch (error) {
-
-      //   history.push(loginPath);
-      // }
-    });
+  const currentUser = {
+    name: '章三',
+    avatar: '',
+    userid: '',
+    email: '',
+    signature: '',
+    title: '',
+    group: '',
+    tags: { key: '', label: '' },
+    notifyCount: 1,
+    unreadCount: 1,
+    country: '',
+    access: '',
+    geographic: {
+      province: { label: '', key: '' },
+      city: { label: '', key: '' },
+    },
+    address: '',
+    phone: '',
   };
 
   let params: any = {};
@@ -95,7 +84,7 @@ export async function getInitialState(): Promise<{
   return {
     // @ts-ignore
     type: window.QUALITY_CCD_CONFIG.type,
-    fetchUserInfo,
+    currentUser,
     routes: ['home', 'history', 'control', 'setting'],
     settings: defaultSettings,
     title,
@@ -158,7 +147,12 @@ export const layout: RunTimeLayoutConfig = (props) => {
       return (
         // @ts-ignore
         <ErrorBoundary>
-          <HomeLayout initialState={initialState}>{children}</HomeLayout>
+          {
+            !_props.location?.pathname?.includes('/login') ?
+              <HomeLayout initialState={initialState}>{children}</HomeLayout>
+              :
+              children
+          }
           {!_props.location?.pathname?.includes('/login') && (
             <SettingDrawerWrapper
               initialState={initialState}

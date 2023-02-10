@@ -58,3 +58,13 @@ export async function touchFlowService() {
 export async function selectFilePathService(path: string) {
   return fetchGet(`${BASE_IP}file_browser${path.indexOf('\\') === 0 ? '' : '\\'}${path}`);
 }
+
+// 登录
+export async function login(params: any) {
+
+}
+
+// 退出登录
+export async function outLogin() {
+
+}

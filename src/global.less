@@ -15,14 +15,15 @@ body,
 .ant-pro-setting-drawer-handle {
   position: absolute;
   top: 8px;
-  right: 63px;
+  right: 80px;
   background-color: transparent;
   transform: translate(0, -130%);
   z-index: 999;
+  width: auto;
 
   .anticon {
     font-size: 14px !important;
-    color: inherit !important;
+    color: transparent !important;
   }
 }
 
@@ -32,6 +33,10 @@ body,
   .ant-layout-header {
     height: 60px !important;
     line-height: 60px !important;
+
+    .ant-pro-global-header {
+      padding-right: 8px;
+    }
 
     .ant-pro-menu-item {
       font-size: 24px;
@@ -380,8 +385,8 @@ ol {
 .page-size {
   width: calc(100% - 48px);
   max-width: 1200px;
-  margin: 8px auto;
-  height: calc(100% - 48px);
+  margin: 0 auto 8px auto;
+  height: calc(100% - 8px);
   padding: 24px;
   box-shadow: @box-shadow-base;
 }

@@ -9,16 +9,33 @@
       width: 100%;
     }
 
+    .title-btn-box {
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .selected {
+      color: @primary-color;
+    }
+
     .control-body {
       width: 100%;
       flex: 1;
-      margin-top: -24px;
-      padding-top: 12px;
+      // margin-top: -24px;
+      padding: 0 24px;
       overflow-y: auto;
 
+      .block {
+        float: left;
+        width: 49%;
+
+        &:nth-child(even) {
+          margin-right: 2%;
+        }
+      }
+
       .control-item {
-        width: calc(100% - 48px);
-        margin: 0 24px 24px;
+        margin-bottom: 24px;
         padding: 0 24px;
         background-color: @background-color-base;
         box-shadow: @box-shadow-base;

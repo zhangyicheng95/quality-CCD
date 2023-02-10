@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useModel, SelectLang } from 'umi';
 import styles from './index.less';
 import { exitFullScreen, isFullscreenElement, requestFullScreen } from '@/utils/utils';
+import Avatar from './AvatarDropdown';
 
 const { version } = require('../../../package.json');
 export type SiderTheme = 'light' | 'dark';
@@ -37,6 +38,7 @@ const GlobalHeaderRight: React.FC = () => {
   return (
     <Space className={className}>
       <span className='version'>v{version}</span>
+      <Avatar menu={false} />
       <SettingOutlined />
       <SelectLang
         className={styles.action}

@@ -3,7 +3,6 @@ export default {
 
   state: {
     theme: 'dark',
-    paramsData: {},
     projectStatus: [],
   },
 
@@ -12,12 +11,6 @@ export default {
       yield put({
         type: 'set',
         payload: { theme: payload },
-      });
-    },
-    *paramsAction({ payload }: any, { put }: any) {
-      yield put({
-        type: 'set',
-        payload: { paramsData: payload },
       });
     },
     *statusAction({ payload }: any, { put }: any) {

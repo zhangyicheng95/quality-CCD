@@ -6,11 +6,13 @@ import { updateParams } from "@/services/api";
 import PrimaryTitle from "@/components/PrimaryTitle";
 import FileManager from "@/components/FileManager";
 import TooltipDiv from "@/components/TooltipDiv";
-import { connect, useHistory } from "umi";
+import { connect, useHistory, useModel } from "umi";
 import { FormOutlined } from "@ant-design/icons";
 
 const Setting: React.FC<any> = (props) => {
-  const { paramsData, projectStatus } = props;
+  const { initialState, setInitialState } = useModel<any>('@@initialState');
+  const { params: paramsData } = initialState;
+  const { projectStatus } = props;
   const [form] = Form.useForm();
   const history = useHistory();
   const { validateFields, setFieldsValue, getFieldValue } = form;
@@ -319,6 +321,5 @@ const Setting: React.FC<any> = (props) => {
 };
 
 export default connect(({ home, themeStore }) => ({
-  paramsData: themeStore.paramsData,
   projectStatus: themeStore.projectStatus,
 }))(Setting);

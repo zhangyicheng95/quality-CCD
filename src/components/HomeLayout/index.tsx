@@ -22,16 +22,6 @@ const HomeLayout: React.FC<any> = (props) => {
     // @ts-ignore
     return window.QUALITY_CCD_CONFIG.type === 'vision';
   }, []);
-
-  // 详情信息存在dva中
-  useEffect(() => {
-    if (!_.isEmpty(params)) {
-      dispatch({
-        type: 'themeStore/paramsAction',
-        payload: params
-      });
-    }
-  }, [params])
   // 获取方案列表
   useEffect(() => {
     if (isVision) return;

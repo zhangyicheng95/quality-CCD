@@ -1,5 +1,19 @@
 ﻿export default [
   {
+    path: '/user',
+    layout: false,
+    routes: [
+      {
+        name: 'login',
+        path: '/user/login',
+        component: './user/Login',
+      },
+      {
+        component: './404',
+      },
+    ],
+  },
+  {
     name: 'home',
     icon: 'home',
     path: '/home',
@@ -35,7 +49,7 @@
   },
   {
     name: 'mark',
-    // icon: 'trademark',
+    icon: 'highlight',
     path: '/mark',
     component: './mark',
     access: 'canMark',

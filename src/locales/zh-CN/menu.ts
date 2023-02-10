@@ -4,6 +4,7 @@ export default {
   'menu.home': '首页',
   'menu.history': '历史记录',
   'menu.control': '参数控制',
+  'menu.settingAlgorithm': '算法参数',
   'menu.setting': '设置',
   'menu.mark': '数据标注',
   'menu.admin': '管理页',
