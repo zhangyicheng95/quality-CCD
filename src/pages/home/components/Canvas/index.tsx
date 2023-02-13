@@ -728,8 +728,9 @@ const Home: React.FC<any> = (props: any) => {
         listData = listData.concat(
           <div key={key} className=" drag-item-content-box background-ubv">
             <div className="common-card-title-box flex-box drag-btn">
-              <TooltipDiv className=" common-card-title">
-                {`${alias || name} - ${(SecLabel?.label?.alias) || value[1] || ''}`}
+              <TooltipDiv className="flex-box common-card-title">
+                {`${alias || name}`}
+                <span>{`- ${SecLabel?.label?.alias || value[1] || ''}`}</span>
               </TooltipDiv>
               {
                 ifCanEdit ?

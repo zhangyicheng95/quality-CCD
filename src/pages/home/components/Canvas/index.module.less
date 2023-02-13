@@ -207,6 +207,20 @@
 
     .home-body {
       height: calc(100% - 34px);
+
+      .common-card-title {
+
+        &:hover {
+          span {
+            visibility: visible;
+          }
+        }
+
+        span {
+          padding-left: 4px;
+          visibility: hidden;
+        }
+      }
     }
 
     .home-footer {
