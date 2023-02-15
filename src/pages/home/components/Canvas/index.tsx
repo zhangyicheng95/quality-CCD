@@ -716,7 +716,7 @@ const Home: React.FC<any> = (props: any) => {
       let listData: any = [],
         layoutData: any = [];
       addContentList.forEach((item: any, index: number) => {
-        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse } = item;
+        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction } = item;
         const id = key?.split('$$')[0];
         const gridValue = gridContentList[id];
         const dataValue = !!gridValue ? gridValue[value[1]] : undefined;
@@ -798,7 +798,7 @@ const Home: React.FC<any> = (props: any) => {
                         id={key}
                         data={{
                           dataValue: dataValue,
-                          yName, xName,
+                          yName, xName, direction
                         }}
                       />
                       :
@@ -1013,7 +1013,7 @@ const Home: React.FC<any> = (props: any) => {
   const addWindow = () => {
     validateFields()
       .then((values) => {
-        const { value, type, yName, xName, fontSize, defaultImg, reverse } = values;
+        const { value, type, yName, xName, fontSize, defaultImg, reverse, direction } = values;
         const id = `${value?.join('$$')}$$${type}`;
         if (_.isEmpty(editWindowData) && addContentList.filter((i: any) => i.id === id).length) {
           message.error('已存在，请求改 “模块，节点，类型” 中的任一项');
@@ -1027,7 +1027,7 @@ const Home: React.FC<any> = (props: any) => {
             size: { i: id, x: 2, y: 0, w: 3, h: 3, minW: 2, maxW: 12, minH: 4, maxH: 32 },
             type,
             tab: activeTab,
-            yName, xName, defaultImg, fontSize, reverse
+            yName, xName, defaultImg, fontSize, reverse, direction
           });
         } else {
           result = (addContentList || []).map((item: any) => {
@@ -1038,7 +1038,7 @@ const Home: React.FC<any> = (props: any) => {
                 size: Object.assign({}, editWindowData.size, { i: id }),
                 type,
                 tab: activeTab,
-                yName, xName, defaultImg, fontSize, reverse
+                yName, xName, defaultImg, fontSize, reverse, direction
               };
             };
             return item;
@@ -1073,7 +1073,7 @@ const Home: React.FC<any> = (props: any) => {
     form.resetFields();
     setEditWindowData({});
     setSelectedPath({ fileType: 'file', value: '' });
-    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false });
+    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false, direction: 'column' });
     setWindowType('img');
     setAddWindowVisible(false);
     setFooterSelectVisible(false);
@@ -1281,6 +1281,29 @@ const Home: React.FC<any> = (props: any) => {
                     <Input />
                   </Form.Item>
                 </Fragment>
+                : null
+            }
+            {
+              ['bar'].includes(windowType) ?
+                <Form.Item
+                  name={`direction`}
+                  label={'柱状图方向'}
+                  rules={[{ required: false, message: '柱状图方向' }]}
+                >
+                  <Select
+                    style={{ width: '100%' }}
+                    options={[
+                      {
+                        value: 'rows',
+                        label: '横向',
+                      },
+                      {
+                        value: 'column',
+                        label: '纵向',
+                      }
+                    ]}
+                  />
+                </Form.Item>
                 : null
             }
             {
