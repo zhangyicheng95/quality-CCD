@@ -20,7 +20,7 @@ const PointCharts: React.FC<Props> = (props: any) => {
                 itemHeight: 8,
             }),
             grid: Object.assign({}, options.grid, {
-                right: `${xName.length * 16}px`
+                right: `${xName.length * (xName.length < 4 ? 20 : 16)}px`,
             }),
             yAxis: Object.assign({}, options.yAxis, {
                 name: yName,

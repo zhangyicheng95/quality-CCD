@@ -148,8 +148,8 @@ const Home: React.FC<any> = (props: any) => {
                                       ...item,
                                       w: 2,
                                       h: 4,
-                                      minW: 2,
-                                      minH: 4,
+                                      minW: 1,
+                                      minH: 2,
                                     };
                                   }
                                   return item;
@@ -168,8 +168,28 @@ const Home: React.FC<any> = (props: any) => {
                                       ...item,
                                       w: 2,
                                       h: 4,
-                                      minW: 2,
-                                      minH: 4,
+                                      minW: 1,
+                                      minH: 2,
+                                    };
+                                  }
+                                  return item;
+                                })
+                              })
+                          },
+                          {
+                            label: '显示方案列表',
+                            key: 'slider-4',
+                            disabled: gridHomeList.filter((i: any) => i.i === 'slider-4')[0]?.w !== 0,
+                            onClick: () =>
+                              setGridHomeList((prev: any) => {
+                                return prev.map((item: any) => {
+                                  if (item.i === 'slider-4') {
+                                    return {
+                                      ...item,
+                                      w: 2,
+                                      h: 4,
+                                      minW: 1,
+                                      minH: 2,
                                     };
                                   }
                                   return item;
@@ -188,8 +208,8 @@ const Home: React.FC<any> = (props: any) => {
                                       ...item,
                                       w: 7,
                                       h: 4,
-                                      minW: 2,
-                                      minH: 4,
+                                      minW: 1,
+                                      minH: 2,
                                     };
                                   }
                                   return item;
@@ -208,8 +228,8 @@ const Home: React.FC<any> = (props: any) => {
                                       ...item,
                                       w: 3,
                                       h: 4,
-                                      minW: 2,
-                                      minH: 4,
+                                      minW: 1,
+                                      minH: 2,
                                     };
                                   }
                                   return item;
@@ -390,52 +410,80 @@ const Home: React.FC<any> = (props: any) => {
         </div>
       </div>
     </div>,
-    // <div key={'content'}>
-    //   <Spin spinning={loading}>
-    //     <div className="info-box background-ubv">
-    //       <div className="common-card-title-box flex-box drag-btn" style={{ borderColor: '#13c2c2' }}>
-    //         <div className="flex-box common-card-title">结果信息</div>
-    //       </div>
-    //       <div className="home-content flex-box">
-    //         {!_.isEmpty(paramData) ? (
-    //           type === 'tbj' ? (
-    //             <TBJ
-    //               gridContentList={gridContentList}
-    //               setGridContentList={(result: any) => {
-    //                 dispatch({
-    //                   type: 'home/set',
-    //                   payload: {
-    //                     gridContentList: result,
-    //                   },
-    //                 });
-    //               }}
-    //               paramData={paramData}
-    //               setParamData={setParamData}
-    //               setEditWindowData={setEditWindowData}
-    //               setAddWindowVisible={setAddWindowVisible}
-    //               setActiveTab={setActiveTab}
-    //             />
-    //           ) : type === 'dgh' ? (
-    //             <DGH />
-    //           ) : type === 'dpj' ? (
-    //             <DPJ />
-    //           ) : type === 'mfd' ? (
-    //             <MFD />
-    //           ) : type === 'fc' ? (
-    //             <FC />
-    //           ) : (
-    //             <Common
-    //               paramData={paramData}
-    //               setParamData={setParamData}
-    //               setEditWindowData={setEditWindowData}
-    //               setAddWindowVisible={setAddWindowVisible}
-    //             />
-    //           )
-    //         ) : null}
-    //       </div>
-    //     </div>
-    //   </Spin>
-    // </div>,
+    <div key={'slider-4'}>
+      <div className="info-box message-box drag-item-content-box background-ubv">
+        <div className="common-card-title-box flex-box drag-btn">
+          <div className="flex-box common-card-title">方案列表</div>
+          {
+            ifCanEdit ?
+              <div className="flex-box drag-item-btn-box">
+                {/* <div className='common-btn' onClick={() => {
+                  setGridHomeList((prev: any) => {
+                    return prev.map((item: any) => {
+                      if (item.i === 'slider-4') {
+                        return {
+                          ...item,
+                          direction: item?.direction === 'rows' ? 'column' : 'rows',
+                        };
+                      }
+                      return item;
+                    })
+                  });
+                }}>切换</div> */}
+                <Popconfirm
+                  title="确认删除 方案列表 窗口吗?"
+                  onConfirm={() => {
+                    setGridHomeList((prev: any) => {
+                      return prev.map((item: any) => {
+                        if (item.i === 'slider-4') {
+                          return {
+                            ...item,
+                            w: 0,
+                            h: 0,
+                            minW: 0,
+                            minH: 0,
+                          };
+                        }
+                        return item;
+                      })
+                    });
+                  }}
+                  okText="确认"
+                  cancelText="取消"
+                >
+                  <div className='common-btn'>删除</div>
+                </Popconfirm>
+              </div>
+              : null
+          }
+        </div>
+        <div className={`info-box-content tabs-box`}>
+          {
+            JSON.parse(localStorage.getItem('ipList') || "[]").map((item: any, index: number) => {
+              const { label, key } = item;
+              return <div
+                className={`flex-box tabs-box-item-box ${localStorage.getItem('ipString') === key ? 'active' : ''} ${gridHomeList.filter((i: any) => i.i === 'slider-4')[0]?.w >= 3 ? 'tabs-box-item-box-rows' : ''}`}
+                key={`tabs-${key}`}
+                onClick={() => {
+                  localStorage.setItem('ipString', key);
+                  window.location.reload();
+                }}
+              >
+                {
+                  projectStatus.filter((i: any) => i.value === item.key)[0]?.running ?
+                    <div className="flex-box" style={{ gap: 8 }}>
+                      <Badge color={'green'} />
+                      {label}
+                    </div>
+                    :
+                    label
+                }
+              </div>
+            })
+          }
+        </div>
+      </div>
+    </div>,
     <div key={'footer-1'}>
       <div className="log-content background-ubv">
         <div className="common-card-title-box flex-box drag-btn">
@@ -540,9 +588,9 @@ const Home: React.FC<any> = (props: any) => {
   const saveGridFunc = (data: any) => {
     let home: any = [],
       content: any = [];
-    console.log(data);
+
     data.forEach((item: any) => {
-      if (['slider-1', 'slider-2', 'slider-3', 'content', 'footer-1', 'footer-2'].includes(item.i)) {
+      if (['slider-1', 'slider-2', 'slider-3', 'slider-4', 'content', 'footer-1', 'footer-2'].includes(item.i)) {
         home = home.concat({
           ...item,
           maxW: 12,
@@ -642,9 +690,9 @@ const Home: React.FC<any> = (props: any) => {
         : [
           { i: 'slider-1', x: 0, y: 0, w: 2, h: 4, minW: 1, maxW: 12, minH: 1, maxH: 30 },
           { i: 'slider-2', x: 0, y: 4, w: 2, h: 9, minW: 1, maxW: 12, minH: 1, maxH: 30 },
-          { i: 'slider-3', x: 0, y: 13, w: 2, h: 15, minW: 1, maxW: 12, minH: 1, maxH: 30 },
-          { i: 'footer-1', x: 2, y: 24, w: 7, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
-          { i: 'footer-2', x: 9, y: 24, w: 3, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
+          { i: 'slider-4', x: 0, y: 13, w: 2, h: 15, minW: 1, maxW: 12, minH: 1, maxH: 30 },
+          { i: 'footer-1', x: 2, y: 22, w: 7, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
+          { i: 'footer-2', x: 9, y: 22, w: 3, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
         ])
     );
     if (_.isArray(content)) {
@@ -1024,7 +1072,7 @@ const Home: React.FC<any> = (props: any) => {
           result = addContentList.concat({
             id,
             value,
-            size: { i: id, x: 2, y: 0, w: 3, h: 3, minW: 2, maxW: 12, minH: 4, maxH: 32 },
+            size: { i: id, x: 2, y: 0, w: 3, h: 3, minW: 1, maxW: 12, minH: 2, maxH: 32 },
             type,
             tab: activeTab,
             yName, xName, defaultImg, fontSize, reverse, direction

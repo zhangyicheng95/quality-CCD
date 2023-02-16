@@ -147,17 +147,20 @@ export default {
         return false;
       };
       // 如果数据没有变更 则不在进行数据copy 防止重复渲染
-      return diff() ? {
-        ...state,
-        snapshot: {
-          ...state.snapshot,
-          logStr: state.logData.join('<br/>'),
-          historyData: state.historyData,
-          gridContentList: state.gridContentList,
-          footerData: state.footerData,
-          errorData: state.errorData,
-        },
-      } : state
+      if (diff()) {
+        return {
+          ...state,
+          snapshot: {
+            ...state.snapshot,
+            logStr: state.logData.join('<br/>'),
+            historyData: state.historyData,
+            gridContentList: state.gridContentList,
+            footerData: state.footerData,
+            errorData: state.errorData,
+          },
+        };
+      };
+      return state;
     },
     setGridContentList: (state: any, { payload }: any) => {
       const prev = state.gridContentList;

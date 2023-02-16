@@ -29,6 +29,7 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
                             alt={name || 'logo'}
                             style={{ width: '100%', height: 'auto' }}
                         />
+                        <span style={{ position: 'absolute', bottom: 4, fontSize: 16 }}>{name}</span>
                     </div>
                 })
             }

@@ -14,12 +14,16 @@ const PieCharts: React.FC<Props> = (props: any) => {
         const dom: any = document.getElementById(`echart-${id}`);
         const myChart = echarts.init(dom);
         const option = Object.assign({}, options, {
-            legend: Object.assign({}, options.legend, {
-                // orient: "vertical",
+            legend: {
+                ...options.legend,
                 left: "3%"
-            }),
+            },
             xAxis: { show: false },
             yAxis: { show: false },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b0}<br />{c0}（{d0}%）'
+            },
             series: [
                 {
                     type: "pie",
@@ -30,7 +34,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
                     left: "-50%",
                     label: {
                         position: "inside",
-                        fontSize: 18
+                        fontSize: 15
                     },
                     data: (data || []).map((item: any) => {
                         const { name, value } = item;

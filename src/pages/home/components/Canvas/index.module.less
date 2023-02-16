@@ -221,6 +221,23 @@
           visibility: hidden;
         }
       }
+
+      .tabs-box {
+        .tabs-box-item-box {
+          cursor: pointer;
+          padding: 8px 12px;
+          border-bottom: 1px solid @border-color-base;
+        }
+
+        .tabs-box-item-box-rows {
+          float: left;
+          border-right: 1px solid @border-color-base;
+        }
+
+        .active {
+          color: @primary-color;
+        }
+      }
     }
 
     .home-footer {
@@ -366,6 +383,7 @@
       max-width: 20%;
       padding: 4px;
       border: 1px solid #fff;
+      position: relative;
     }
   }
 }
