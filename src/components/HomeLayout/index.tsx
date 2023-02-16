@@ -183,13 +183,13 @@ const HomeLayout: React.FC<any> = (props) => {
   return (
     <div className={styles.reportWrap}>
       <div className="box flex-box">
-        <Tabs
+        {/* <Tabs
           type="editable-card"
           onChange={onChange}
           activeKey={activeKey}
           onEdit={onEdit}
           items={items}
-        />
+        /> */}
         <div className="content-box">
           {children}
         </div>
