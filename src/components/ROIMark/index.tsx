@@ -79,6 +79,7 @@ const ROIMark: React.FC<Props> = (props: any) => {
           return <div key={index} className="flex-box-center item-input-box">
             <div
               className={`input-name ${focus[`refnum_${index}`] ? 'focus' : ''} ${titleColor ? 'bgColor' : ''}`}
+              onClick={() => refList[index]?.current?.focus()}
             >{item}</div>
             <InputNumber
               disabled={disabled}
