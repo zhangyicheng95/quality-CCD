@@ -306,7 +306,7 @@ export default connect(({ home, themeStore }) => ({
 const FormatWidgetToDom = (props: any) => {
   const {
     id, config = [], disabled, widgetChange,
-    selectedOption, setSelectedOption,
+    setSelectedOption,
     setEditorVisible, setEditorValue,
     setPlatFormVisible, setPlatFormValue,
     setSelectPathVisible, setSelectedPath,
@@ -712,30 +712,4 @@ const FormatWidgetToDom = (props: any) => {
     default:
       return null;
   }
-};
-
-// 拖放节点的外层
-const ParentDiv = (props: any) => {
-  const { typeId, children, typeName, index, sortGroupFun, setStartDrag } = props;
-  // @ts-ignore
-  return <DropSortableItem
-    key={index}
-    index={index}
-    name={typeName}
-    moveCard={(dragIndex: any, hoverIndex: any) => {
-      sortGroupFun(dragIndex, hoverIndex, 'allGroupSort')
-    }}
-    setStartDrag={setStartDrag}
-  >
-    <div>
-      {/* <DragSortableItem
-        key={index}
-        index={index}
-        name={typeName}
-      > */}
-      {children}
-      {/* </DragSortableItem> */}
-    </div>
-  </DropSortableItem>
-
 };

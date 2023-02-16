@@ -1,5 +1,5 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
-import { Input, InputNumber } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { InputNumber } from 'antd';
 import * as _ from 'lodash';
 import styles from './index.less'
 
@@ -63,7 +63,7 @@ const ROIMark: React.FC<Props> = (props: any) => {
       }
     }
     //右箭头、回车键、空格键、冒号均向右跳转，右一不做任何措施
-    if (e.keyCode === 39 || e.keyCode === 13 || e.keyCode === 32 || e.keyCode === 9) {
+    if (e.keyCode === 39 || e.keyCode === 13 || e.keyCode === 32) {
       if (type === 3) {
         return;
       } else {
