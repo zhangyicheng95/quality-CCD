@@ -1,0 +1,42 @@
+@import '~antd/es/style/themes/default.less';
+
+.roi-mark {
+  gap: 4px;
+  flex: 1;
+
+  &:hover {
+    border: none;
+    outline: 0;
+  }
+
+  :global {
+    .item-input-box {
+      position: relative;
+      flex: 1;
+
+      .self_input {
+        border-radius: 4px;
+
+        .ant-input-number-handler-wrap {
+          display: none;
+        }
+      }
+
+      .input-name {
+        position: absolute;
+        color: @text-color;
+        font-size: 12px;
+        z-index: 1;
+      }
+
+      .focus {
+        top: -6px;
+        height: 14px;
+        line-height: 1;
+        padding: 0 2px;
+        z-index: 1;
+        background-color: @background-color-base;
+      }
+    }
+  }
+}

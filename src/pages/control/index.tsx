@@ -16,6 +16,7 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import DropSortableItem from "@/components/DragComponents/DropSortableItem";
 import DragSortableItem from "@/components/DragComponents/DragSortableItem";
+import ROIMark from "@/components/ROIMark";
 
 const FormItem = Form.Item;
 const Control: React.FC<any> = (props: any) => {
@@ -691,6 +692,22 @@ const FormatWidgetToDom = (props: any) => {
             </Button>
           </div>
         </>
+      );
+    case 'ROIMark':
+      return (
+        <Form.Item
+          name={name}
+          tooltip={description}
+          initialValue={value || undefined}
+          rules={[{ required: require, message: `${alias}` }]}
+        >
+          <ROIMark
+            disabled={disabled}
+            onChange={(val: any) => {
+              widgetChange(name, val);
+            }}
+          />
+        </Form.Item>
       );
     default:
       return null;

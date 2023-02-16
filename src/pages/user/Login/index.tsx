@@ -59,6 +59,29 @@ const Login: React.FC = () => {
       //   await fetchUserInfo();
       /** 此方法会跳转到 redirect 参数所在的位置 */
       if (!history) return;
+      await setInitialState((s: any) => ({
+        ...s,
+        currentUser: {
+          name: 'admin',
+          avatar: '',
+          userid: '',
+          email: '',
+          signature: '',
+          title: '',
+          group: '',
+          tags: { key: '', label: '' },
+          notifyCount: 1,
+          unreadCount: 1,
+          country: '',
+          access: '',
+          geographic: {
+            province: { label: '', key: '' },
+            city: { label: '', key: '' },
+          },
+          address: '',
+          phone: '',
+        },
+      }));
       const { query } = history.location;
       const { redirect } = query as { redirect: string };
       history.push(redirect || '/');
@@ -90,7 +113,7 @@ const Login: React.FC = () => {
         <LoginForm
           logo={<img alt="logo" src="/favicon.ico" />}
           title="通用型视觉大屏"
-          subTitle={"CCD视觉大屏是可根据业务自行拖拉配置的通用大屏"}
+          subTitle={" "}
           initialValues={{
             autoLogin: false,
           }}
@@ -108,7 +131,7 @@ const Login: React.FC = () => {
             await handleSubmit(values as API.LoginParams);
           }}
         >
-          <Tabs activeKey={type} onChange={setType}>
+          {/* <Tabs activeKey={type} onChange={setType}>
             <Tabs.TabPane
               key="account"
               tab={intl.formatMessage({
@@ -123,7 +146,7 @@ const Login: React.FC = () => {
                 defaultMessage: '手机号登录',
               })}
             />
-          </Tabs>
+          </Tabs> */}
 
           {status === 'error' && loginType === 'account' && (
             <LoginMessage
@@ -264,7 +287,7 @@ const Login: React.FC = () => {
               />
             </>
           )}
-          <div
+          {/* <div
             style={{
               marginBottom: 24,
             }}
@@ -279,7 +302,7 @@ const Login: React.FC = () => {
             >
               <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码" />
             </a>
-          </div>
+          </div> */}
         </LoginForm>
       </div>
       <Footer />

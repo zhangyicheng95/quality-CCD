@@ -132,7 +132,7 @@ export default {
         if (state.logData.join('<br/>') !== snapshot.logStr) {
           return true;
         }
-        if (diffObj(state.gridContentList, snapshot.gridContentList)) {
+        if (!_.isEqual(state.gridContentList, snapshot.gridContentList)) {
           return true;
         }
         // if (diffObj(state.historyData, snapshot.historyData)) {

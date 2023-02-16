@@ -10,10 +10,7 @@ interface Props {
 
 const BarCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { dataValue = [
-        { "name": "data1", "value": [[10.0, 8.04], [8.07, 6.95], [13.0, 7.58]] },
-        { "name": "data2", "value": [[10.0, 8.04], [8.07, 6.95], [13.0, 7.58]] }
-    ], yName, xName, direction } = data;
+    const { dataValue = [], yName, xName, direction } = data;
     useEffect(() => {
         const dom: any = document.getElementById(`echart-${id}`);
         const myChart = echarts.init(dom);
@@ -48,7 +45,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
                     name: name,
                     type: 'bar',
                     data: direction === 'rows' ? value.map((item: any) => {
-                        return item.reverse()
+                        return item?.reverse()
                     }) : value,
                 }
             })

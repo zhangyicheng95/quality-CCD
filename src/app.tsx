@@ -33,7 +33,7 @@ export async function getInitialState(): Promise<{
   fetchUserInfo?: () => Promise<any>;
 }> {
   const currentUser = {
-    name: '章三',
+    name: 'admin',
     avatar: '',
     userid: '',
     email: '',
