@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import styles from "./index.module.less";
-import { Button, message, Form, Input, Radio, Select, Checkbox, InputNumber, Switch, } from "antd";
+import { Button, message, Form, Input, Radio, Select, Checkbox, InputNumber, Switch, Modal, } from "antd";
 import * as _ from "lodash";
 import { updateParams } from "@/services/api";
 import { AppstoreOutlined, CaretDownOutlined, CaretRightOutlined, UnorderedListOutlined } from "@ant-design/icons";
@@ -17,13 +17,14 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 import DropSortableItem from "@/components/DragComponents/DropSortableItem";
 import DragSortableItem from "@/components/DragComponents/DragSortableItem";
 import ROIMark from "@/components/ROIMark";
+import { guid } from "@/utils/utils";
 
 const FormItem = Form.Item;
 const Control: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
   const { params: paramsData } = initialState;
   const [form] = Form.useForm();
-  const { validateFields, } = form;
+  const { validateFields, setFieldsValue, getFieldValue } = form;
   const [paramData, setParamData] = useState<any>({});
   const [nodeList, setNodeList] = useState<any>([]);
   const [selectedOption, setSelectedOption] = useState<any>([]);
@@ -33,14 +34,14 @@ const Control: React.FC<any> = (props: any) => {
   const [platFormValue, setPlatFormValue] = useState<any>({});
   const [selectPathVisible, setSelectPathVisible] = useState(false);
   const [selectedPath, setSelectedPath] = useState<any>({});
-  const [listTyoe, setListType] = useState('line');
+  const [listType, setListType] = useState('line');
+  const [configList, setConfigList] = useState<any>([]);
+  const [addConfigVisible, setAddConfigVisible] = useState(false);
 
   useEffect(() => {
     if (!_.isEmpty(paramsData)) {
-      const { flowData, contentData } = paramsData;
+      const { flowData, configList, selectedConfig } = paramsData;
       const { nodes } = flowData;
-      const { listTyoe } = contentData;
-      setListType(listTyoe || 'line');
       setParamData(paramsData);
       setNodeList(nodes.map((item: any, index: number) => {
         if (_.isUndefined(item.sortId)) {
@@ -48,6 +49,22 @@ const Control: React.FC<any> = (props: any) => {
         }
         return item;
       }));
+      if (!!configList?.length) {
+        setConfigList([{ label: '默认配置', value: 'default', data: nodes, listType: 'line' }].concat(configList));
+        if (!!selectedConfig) {
+          const { data, listType = 'line' } = configList.filter((i: any) => i.value === selectedConfig)[0];
+          setListType(listType);
+          setFieldsValue({ 'config-value': selectedConfig });
+          if (!!data?.length) {
+            setNodeList(data.map((item: any, index: number) => {
+              if (_.isUndefined(item.sortId)) {
+                return { ...item, sortId: index };
+              }
+              return item;
+            }));
+          }
+        }
+      }
     }
   }, [paramsData]);
   // 参数值改变
@@ -81,6 +98,39 @@ const Control: React.FC<any> = (props: any) => {
       return list;
     });
   };
+  // 切换排列方式
+  const onChangeView = (type: string) => {
+    setListType(type);
+    setConfigList((prev: any) => {
+      return prev.map((item: any) => {
+        if (item.value === getFieldValue('config-value')) {
+          return Object.assign({}, item, {
+            listType: type,
+          })
+        };
+        return item;
+      })
+    })
+  };
+  // 另存为配置
+  const onAddNewConfig = () => {
+    validateFields()
+      .then((values) => {
+        const id = guid();
+        setConfigList((prev: any) => prev.concat({
+          label: values['config-name'],
+          value: id,
+          data: nodeList,
+          listType: 'line'
+        }));
+        setFieldsValue({ 'config-value': id });
+        setAddConfigVisible(false);
+      })
+      .catch((err) => {
+        const { errorFields } = err;
+        errorFields?.length && message.error(`${errorFields[0]?.errors[0]} 是必填项`);
+      });
+  };
   // 提交表单
   const onFinish = () => {
     validateFields()
@@ -91,9 +141,13 @@ const Control: React.FC<any> = (props: any) => {
             flowData: Object.assign({}, paramData.flowData, {
               nodes: nodeList
             }),
-            contentData: Object.assign({}, paramData.contentData, {
-              listTyoe
+            configList: configList.map((item: any) => {
+              if (item.value === values['config-value']) {
+                return Object.assign({}, item, { data: nodeList });
+              }
+              return item;
             }),
+            selectedConfig: values['config-value'],
           })
         };
         updateParams(params).then((res: any) => {
@@ -115,12 +169,12 @@ const Control: React.FC<any> = (props: any) => {
       <PrimaryTitle title={"参数控制"} >
         <div className="flex-box title-btn-box">
           <UnorderedListOutlined
-            className={listTyoe === 'line' ? 'selected' : ''}
-            onClick={() => setListType('line')}
+            className={listType === 'line' ? 'selected' : ''}
+            onClick={() => onChangeView('line')}
           />
           <AppstoreOutlined
-            className={listTyoe === 'block' ? 'selected' : ''}
-            onClick={() => setListType('block')}
+            className={listType === 'block' ? 'selected' : ''}
+            onClick={() => onChangeView('block')}
           />
         </div>
       </PrimaryTitle>
@@ -131,18 +185,26 @@ const Control: React.FC<any> = (props: any) => {
             scrollToFirstError
           >
             <Form.Item
-              name="path-value"
+              name="config-value"
               label="配置文件"
-              initialValue={"default" || undefined}
+              initialValue={"default"}
               rules={[{ required: false, message: "历史记录服务端地址" }]}
             >
               <Select
                 style={{ width: '100%' }}
                 size="large"
-                options={[
-                  { label: '默认配置', value: 'default' }
-                ]}
+                options={configList}
                 placeholder="方案ID"
+                onChange={(val, option: any) => {
+                  const { data, listType = 'line' } = option;
+                  setListType(listType);
+                  setNodeList(data.map((item: any, index: number) => {
+                    if (_.isUndefined(item.sortId)) {
+                      return { ...item, sortId: index };
+                    }
+                    return item;
+                  }));
+                }}
               />
             </Form.Item>
             {
@@ -163,7 +225,7 @@ const Control: React.FC<any> = (props: any) => {
                     }
                     return pre;
                   }, []);
-                  return <div key={id} className={`control-item ${listTyoe === 'block' ? 'block' : ''}`}>
+                  return <div key={id} className={`control-item ${listType === 'block' ? 'block' : ''}`}>
                     <DropSortableItem
                       name={name}
                       index={sortId}
@@ -237,7 +299,8 @@ const Control: React.FC<any> = (props: any) => {
         </DndProvider>
       </div>
       <div className="control-footer flex-box">
-        <Button type="primary" onClick={() => onFinish()}>确认</Button>
+        <Button onClick={() => setAddConfigVisible(true)}>另存为新配置</Button>
+        <Button type="primary" onClick={() => onFinish()}>保存</Button>
       </div>
 
       {
@@ -293,6 +356,34 @@ const Control: React.FC<any> = (props: any) => {
               setSelectedPath({});
             }}
           />
+          : null
+      }
+      {
+        addConfigVisible ?
+          <Modal
+            title={'另存为配置'}
+            open={addConfigVisible}
+            onOk={() => {
+              onAddNewConfig()
+            }}
+            onCancel={() => {
+              setAddConfigVisible(false);
+            }}
+            getContainer={false}
+          >
+            <Form
+              form={form}
+              scrollToFirstError
+            >
+              <Form.Item
+                name="config-name"
+                label="新增配置名称"
+                rules={[{ required: true, message: "新增配置名称" }]}
+              >
+                <Input />
+              </Form.Item>
+            </Form>
+          </Modal>
           : null
       }
     </div >

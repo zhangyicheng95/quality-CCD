@@ -6743,6 +6743,17 @@ const getParams = (req: Request, res: Response) => {
           }
         }]
       },
+      "configList": [
+        {
+          "label": "配置1",
+          "value": "826wcjd2",
+          "data": [
+
+          ],
+          "listType": "block"
+        }
+      ],
+      // "selectedConfig": "826wcjd2",
       "commonInfo": {
         "productionInfo": "涂布机正极",
         "stationInfo": "工位1A面",

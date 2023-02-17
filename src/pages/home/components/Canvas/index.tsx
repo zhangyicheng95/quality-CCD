@@ -96,25 +96,32 @@ const Home: React.FC<any> = (props: any) => {
         <div className={`common-card-title-box flex-box drag-btn}`}>
           <div className="flex-box common-card-title">
             当前状态：
-            {started ? (
-              taskDataConnect ? (
+            {
+              isVision ?
                 <Tooltip title={'服务已连接'} placement={'bottom'}>
                   <Badge status="processing" className="status-icon" />
                 </Tooltip>
-              ) : (
-                <Tooltip title={'socket未连接'} placement={'bottom'}>
-                  <Badge status="error" className="status-icon" />
-                </Tooltip>
-              )
-            ) : loading ? (
-              <Tooltip title={'启动中'} placement={'bottom'}>
-                <LoadingOutlined style={{ fontSize: 15 }} />
-              </Tooltip>
-            ) : (
-              <Tooltip title={'未启动'} placement={'bottom'}>
-                <Badge status="default" className="status-icon" />
-              </Tooltip>
-            )}
+                :
+                (started ? (
+                  taskDataConnect ? (
+                    <Tooltip title={'服务已连接'} placement={'bottom'}>
+                      <Badge status="processing" className="status-icon" />
+                    </Tooltip>
+                  ) : (
+                    <Tooltip title={'socket未连接'} placement={'bottom'}>
+                      <Badge status="error" className="status-icon" />
+                    </Tooltip>
+                  )
+                ) : loading ? (
+                  <Tooltip title={'启动中'} placement={'bottom'}>
+                    <LoadingOutlined style={{ fontSize: 15 }} />
+                  </Tooltip>
+                ) : (
+                  <Tooltip title={'未启动'} placement={'bottom'}>
+                    <Badge status="default" className="status-icon" />
+                  </Tooltip>
+                ))
+            }
           </div>
         </div>
         {
@@ -263,49 +270,63 @@ const Home: React.FC<any> = (props: any) => {
               </Button>
             </Fragment>
             :
-            <Fragment>
+            isVision ?
               <Button
                 className="flex-box btn"
                 icon={
-                  started ? (
-                    <div style={{ height: 30, width: 30, marginRight: 8 }}>
-                      <div className="k-loader" />
-                    </div>
-                  ) : (
-                    <PlayCircleOutlined className="btn-icon" />
-                  )
+                  <div style={{ height: 30, width: 30, marginRight: 8 }}>
+                    <div className="k-loader" />
+                  </div>
                 }
                 type="link"
-                onClick={() => start()}
-                disabled={started}
-                loading={!started && loading}
+                disabled
               >
-                {started ? '检测中' : '启动检测'}
+                {'检测中'}
               </Button>
-              <Button
-                className="flex-box btn"
-                danger
-                icon={<PauseCircleOutlined className="btn-icon" />}
-                type="text"
-                onClick={() => end()}
-                disabled={!started}
-                loading={started && loading}
-              >
-                停止检测
-              </Button>
-              {process.env.NODE_ENV === 'development' ? (
+              :
+              <Fragment>
                 <Button
                   className="flex-box btn"
-                  icon={<AndroidOutlined className="btn-icon" />}
+                  icon={
+                    started ? (
+                      <div style={{ height: 30, width: 30, marginRight: 8 }}>
+                        <div className="k-loader" />
+                      </div>
+                    ) : (
+                      <PlayCircleOutlined className="btn-icon" />
+                    )
+                  }
                   type="link"
-                  onClick={() => touchFlowService()}
+                  onClick={() => start()}
+                  disabled={started}
+                  loading={!started && loading}
+                >
+                  {started ? '检测中' : '启动检测'}
+                </Button>
+                <Button
+                  className="flex-box btn"
+                  danger
+                  icon={<PauseCircleOutlined className="btn-icon" />}
+                  type="text"
+                  onClick={() => end()}
                   disabled={!started}
                   loading={started && loading}
                 >
-                  自助触发
+                  停止检测
                 </Button>
-              ) : null}
-            </Fragment>
+                {process.env.NODE_ENV === 'development' ? (
+                  <Button
+                    className="flex-box btn"
+                    icon={<AndroidOutlined className="btn-icon" />}
+                    type="link"
+                    onClick={() => touchFlowService()}
+                    disabled={!started}
+                    loading={started && loading}
+                  >
+                    自助触发
+                  </Button>
+                ) : null}
+              </Fragment>
         }
       </div>
     </div>,
@@ -778,7 +799,7 @@ const Home: React.FC<any> = (props: any) => {
             <div className="common-card-title-box flex-box drag-btn">
               <TooltipDiv className="flex-box common-card-title">
                 {`${alias || name}`}
-                <span>{`- ${SecLabel?.label?.alias || value[1] || ''}`}</span>
+                <span className='title-span'>{`- ${SecLabel?.label?.alias || value[1] || ''}`}</span>
               </TooltipDiv>
               {
                 ifCanEdit ?
