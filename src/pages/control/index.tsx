@@ -434,7 +434,7 @@ const FormatWidgetToDom = (props: any) => {
     case 'Input':
       return (
         <FormItem
-          name={name}
+          name={`${name}$$${guid()}`}
           tooltip={description}
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
@@ -451,7 +451,7 @@ const FormatWidgetToDom = (props: any) => {
     case 'IpInput':
       return (
         <Form.Item
-          name={name}
+          name={`${name}$$${guid()}`}
           tooltip={description}
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
@@ -467,7 +467,7 @@ const FormatWidgetToDom = (props: any) => {
     case 'Radio':
       return (
         <FormItem
-          name={name}
+          name={`${name}$$${guid()}`}
           tooltip={description}
           initialValue={(_.isArray(value) ? value[0] : value) || undefined}
           rules={[{ required: require, message: `${alias}` }]}
@@ -490,7 +490,7 @@ const FormatWidgetToDom = (props: any) => {
       return (
         <>
           <FormItem
-            name={name}
+            name={`${name}$$${guid()}`}
             tooltip={description}
             initialValue={(_.isArray(value) ? value[0] : value) || undefined}
             rules={[{ required: require, message: `${alias}` }]}
@@ -537,7 +537,7 @@ const FormatWidgetToDom = (props: any) => {
     case 'Select':
       return (
         <FormItem
-          name={name}
+          name={`${name}$$${guid()}`}
           tooltip={description}
           initialValue={(_.isArray(value) ? value[0] : value) || false}
           rules={[{ required: require, message: `${alias}` }]}
@@ -563,7 +563,7 @@ const FormatWidgetToDom = (props: any) => {
     case 'MultiSelect':
       return (
         <FormItem
-          name={name}
+          name={`${name}$$${guid()}`}
           tooltip={description}
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
@@ -590,7 +590,7 @@ const FormatWidgetToDom = (props: any) => {
     case 'Checkbox':
       return (
         <FormItem
-          name={name}
+          name={`${name}$$${guid()}`}
           tooltip={description}
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
@@ -608,7 +608,7 @@ const FormatWidgetToDom = (props: any) => {
       return (
         <Fragment>
           <FormItem
-            name={name}
+            name={`${name}$$${guid()}`}
             tooltip={description}
             initialValue={(value || value == 0) ? value : defaultValue}
             rules={[{ required: require, message: `${alias}` }]}
@@ -632,7 +632,7 @@ const FormatWidgetToDom = (props: any) => {
     case 'Slider':
       return (
         <FormItem
-          name={name}
+          name={`${name}$$${guid()}`}
           tooltip={description}
           initialValue={(value || value == 0) ? value : defaultValue}
           rules={[{ required: require, message: `${alias}` }]}
@@ -654,7 +654,7 @@ const FormatWidgetToDom = (props: any) => {
     case 'Switch':
       return (
         <FormItem
-          name={name}
+          name={`${name}$$${guid()}`}
           tooltip={description}
           initialValue={value || false}
           valuePropName="checked"
@@ -672,7 +672,7 @@ const FormatWidgetToDom = (props: any) => {
       return (
         <FormItem
           shouldUpdate
-          name={name}
+          name={`${name}$$${guid()}`}
           tooltip={description}
           initialValue={value || undefined}
           valuePropName="file"
@@ -697,7 +697,7 @@ const FormatWidgetToDom = (props: any) => {
     case 'Dir':
       return (
         <FormItem
-          name={name}
+          name={`${name}$$${guid()}`}
           tooltip={description}
           initialValue={value || undefined}
           valuePropName="file"
@@ -729,7 +729,7 @@ const FormatWidgetToDom = (props: any) => {
       );
     case 'codeEditor':
       return (
-        <FormItem name={name} tooltip={description}>
+        <FormItem name={`${name}$$${guid()}`} tooltip={description}>
           <Button
             onClick={() => {
               setEditorValue({
@@ -750,7 +750,7 @@ const FormatWidgetToDom = (props: any) => {
         <>
           <FormItem
             shouldUpdate
-            name={name}
+            name={`${name}$$${guid()}`}
             tooltip={description}
             initialValue={localPath || undefined}
             valuePropName="file"
@@ -787,7 +787,7 @@ const FormatWidgetToDom = (props: any) => {
     case 'ROIMark':
       return (
         <Form.Item
-          name={name}
+          name={`${name}$$${guid()}`}
           tooltip={description}
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
