@@ -227,6 +227,17 @@
           cursor: pointer;
           padding: 8px 12px;
           border-bottom: 1px solid @border-color-base;
+          gap: 8px;
+
+          &:hover {
+            .tabs-box-item-close {
+              visibility: visible;
+            }
+          }
+
+          .tabs-box-item-close {
+            visibility: hidden;
+          }
         }
 
         .tabs-box-item-box-rows {

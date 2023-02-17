@@ -29,6 +29,7 @@ import {
 import GridLayout from '@/components/GridLayout';
 import {
   AndroidOutlined,
+  CloseOutlined,
   LoadingOutlined,
   PauseCircleOutlined,
   PlayCircleOutlined,
@@ -80,6 +81,7 @@ const Home: React.FC<any> = (props: any) => {
   const [selectedPath, setSelectedPath] = useState<any>({ fileType: 'file', value: '' });
   const [footerSelectVisible, setFooterSelectVisible] = useState(false);
   const [footerSelectList, setFooterSelectList] = useState<any>([]);
+  const [addItemsVisible, setAddItemsVisible] = useState(false);
 
   const ifCanEdit = useMemo(() => {
     return window.location.hash.indexOf('edit') > -1;
@@ -479,26 +481,55 @@ const Home: React.FC<any> = (props: any) => {
           }
         </div>
         <div className={`info-box-content tabs-box`}>
+          <div
+            className={`flex-box-center tabs-box-item-box ${gridHomeList.filter((i: any) => i.i === 'slider-4')[0]?.w >= 3 ? 'tabs-box-item-box-rows' : ''}`}
+            onClick={() => {
+              setAddItemsVisible(true);
+            }}
+          >
+            +
+          </div>
           {
             JSON.parse(localStorage.getItem('ipList') || "[]").map((item: any, index: number) => {
               const { label, key } = item;
               return <div
                 className={`flex-box tabs-box-item-box ${localStorage.getItem('ipString') === key ? 'active' : ''} ${gridHomeList.filter((i: any) => i.i === 'slider-4')[0]?.w >= 3 ? 'tabs-box-item-box-rows' : ''}`}
                 key={`tabs-${key}`}
-                onClick={() => {
+              >
+                <div onClick={() => {
                   localStorage.setItem('ipString', key);
                   window.location.reload();
-                }}
-              >
-                {
-                  projectStatus.filter((i: any) => i.value === item.key)[0]?.running ?
-                    <div className="flex-box" style={{ gap: 8 }}>
-                      <Badge color={'green'} />
-                      {label}
-                    </div>
-                    :
-                    label
-                }
+                }} className="tabs-box-item-title">
+                  {
+                    projectStatus.filter((i: any) => i.value === item.key)[0]?.running ?
+                      <div className="flex-box" style={{ gap: 8 }}>
+                        <Badge color={'green'} />
+                        {label}
+                      </div>
+                      :
+                      label
+                  }
+                </div>
+                <CloseOutlined onClick={() => {
+                  let newActiveKey: string = localStorage.getItem('ipString') || '';
+                  let lastIndex = -1;
+                  JSON.parse(localStorage.getItem('ipList') || "[]").forEach((item: any, i: any) => {
+                    if (item.key === key) {
+                      lastIndex = i - 1;
+                    }
+                  });
+                  const newPanes = JSON.parse(localStorage.getItem('ipList') || "[]").filter((item: any) => item.key !== key);
+                  if (newPanes.length && newActiveKey === key) {
+                    if (lastIndex >= 0) {
+                      newActiveKey = newPanes[lastIndex]?.key;
+                    } else {
+                      newActiveKey = newPanes[0].key;
+                    }
+                  }
+                  localStorage.setItem('ipString', newActiveKey);
+                  localStorage.setItem('ipList', JSON.stringify(newPanes));
+                  window.location.reload();
+                }} className="tabs-box-item-close" />
               </div>
             })
           }
@@ -1428,6 +1459,50 @@ const Home: React.FC<any> = (props: any) => {
               setSelectedPath({});
             }}
           />
+          : null
+      }
+      {
+        addItemsVisible ?
+          <Modal
+            title={`添加方案窗口`}
+            wrapClassName="history-window-modal"
+            centered
+            width="50vw"
+            open={addItemsVisible}
+            // maskClosable={false}
+            onOk={() => {
+              validateFields().then(values => {
+                const { value } = values;
+                const { label, key } = value;
+                const newActiveKey = key + '';
+                const newPanes = [...JSON.parse(localStorage.getItem('ipList') || "[]")];
+                newPanes.push({ label: label, children: null, key: newActiveKey });
+                localStorage.setItem('ipString', newActiveKey);
+                localStorage.setItem('ipList', JSON.stringify(newPanes));
+                window.location.reload();
+              });
+            }}
+            onCancel={() => setAddItemsVisible(false)}
+            getContainer={false}
+            destroyOnClose={true}
+          >
+            <Form form={form} scrollToFirstError>
+              <Form.Item
+                name={'value'}
+                label="绑定方案"
+                rules={[{ required: true, message: '绑定方案' }]}
+              >
+                <Select
+                  style={{ width: '100%' }}
+                  size="large"
+                  labelInValue
+                  options={projectStatus}
+                  placeholder="方案ID"
+                />
+              </Form.Item>
+
+            </Form>
+          </Modal>
           : null
       }
     </div>

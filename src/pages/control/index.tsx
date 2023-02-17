@@ -117,14 +117,34 @@ const Control: React.FC<any> = (props: any) => {
     validateFields()
       .then((values) => {
         const id = guid();
-        setConfigList((prev: any) => prev.concat({
+        const result = configList.concat({
           label: values['config-name'],
           value: id,
           data: nodeList,
           listType: 'line'
-        }));
+        });
+        setConfigList(result);
         setFieldsValue({ 'config-value': id });
         setAddConfigVisible(false);
+
+        const params = {
+          id: paramData.id,
+          data: Object.assign({}, paramData, {
+            flowData: Object.assign({}, paramData.flowData, {
+              nodes: nodeList
+            }),
+            configList: result,
+            selectedConfig: id,
+          })
+        };
+        updateParams(params).then((res: any) => {
+          if (res && res.code === 'SUCCESS') {
+            message.success('修改成功')
+          } else {
+            message.error(res?.msg || res?.message || '接口异常');
+          }
+        });
+
       })
       .catch((err) => {
         const { errorFields } = err;
@@ -156,7 +176,7 @@ const Control: React.FC<any> = (props: any) => {
           } else {
             message.error(res?.msg || res?.message || '接口异常');
           }
-        })
+        });
       })
       .catch((err) => {
         const { errorFields } = err;

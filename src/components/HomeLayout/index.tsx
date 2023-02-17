@@ -10,13 +10,9 @@ const HomeLayout: React.FC<any> = (props) => {
   const { params = {} } = initialState;
   const { quality_name, name, id } = params;
   const timerRef = useRef<any>();
-  const [form] = Form.useForm();
-  const { validateFields } = form;
-  const [activeKey, setActiveKey] = useState('1');
   const [items, setItems] = useState<any>([]);
   const [list, setList] = useState<any>([]);
   const [projectList, setProjectList] = useState([]);
-  const [addItemsVisible, setAddItemsVisible] = useState(false);
 
   const isVision = useMemo(() => {
     // @ts-ignore
@@ -114,119 +110,22 @@ const HomeLayout: React.FC<any> = (props) => {
         });
         setItems(data);
       } catch (err) { }
-      setActiveKey(localStorage.getItem('ipString') || '');
     } else {
       const list = [
         { label: quality_name || name, name: quality_name || name, children: null, key: id },
       ];
       setItems(list);
-      setActiveKey(id);
       localStorage.setItem('ipList', JSON.stringify(list));
     }
   }, [localStorage.getItem('ipString'), list]);
-  // 点击不同标签页
-  const onChange = (newActiveKey: string) => {
-    localStorage.setItem('ipString', newActiveKey);
-    window.location.reload();
-  };
-  // 添加tabs
-  const add = () => {
-    validateFields().then(values => {
-      const { value } = values;
-      const { label, key } = value;
-      const newActiveKey = key + '';
-      const newPanes = [...items];
-      newPanes.push({ label: label, children: null, key: newActiveKey });
-      localStorage.setItem('ipString', newActiveKey);
-      localStorage.setItem('ipList', JSON.stringify(newPanes));
-      window.location.reload();
-    });
-  };
-  // 删除tabs
-  const remove = (targetKey: any) => {
-    let newActiveKey = activeKey;
-    let lastIndex = -1;
-    items.forEach((item: any, i: any) => {
-      if (item.key === targetKey) {
-        lastIndex = i - 1;
-      }
-    });
-    const newPanes = items.filter((item: any) => item.key !== targetKey);
-    if (newPanes.length && newActiveKey === targetKey) {
-      if (lastIndex >= 0) {
-        newActiveKey = newPanes[lastIndex]?.key;
-      } else {
-        newActiveKey = newPanes[0].key;
-      }
-    }
-    localStorage.setItem('ipString', newActiveKey);
-    localStorage.setItem('ipList', JSON.stringify(newPanes));
-    window.location.reload();
-  };
-  // 编辑tabs的统一入口
-  const onEdit = (
-    targetKey: React.MouseEvent | React.KeyboardEvent | string,
-    action: 'add' | 'remove',
-  ) => {
-    if (action === 'add') {
-      setAddItemsVisible(true);
-    } else {
-      remove(targetKey);
-    }
-  };
-  // 关闭添加弹框
-  const onCancel = () => {
-    form.resetFields();
-    setAddItemsVisible(false);
-  };
 
   return (
     <div className={styles.reportWrap}>
       <div className="box flex-box">
-        {/* <Tabs
-          type="editable-card"
-          onChange={onChange}
-          activeKey={activeKey}
-          onEdit={onEdit}
-          items={items}
-        /> */}
         <div className="content-box">
           {children}
         </div>
       </div>
-      {
-        addItemsVisible ?
-          <Modal
-            title={`添加方案窗口`}
-            wrapClassName="history-window-modal"
-            centered
-            width="50vw"
-            open={addItemsVisible}
-            // maskClosable={false}
-            onOk={() => add()}
-            onCancel={() => onCancel()}
-            getContainer={false}
-            destroyOnClose={true}
-          >
-            <Form form={form} scrollToFirstError>
-              <Form.Item
-                name={'value'}
-                label="绑定方案"
-                rules={[{ required: true, message: '绑定方案' }]}
-              >
-                <Select
-                  style={{ width: '100%' }}
-                  size="large"
-                  labelInValue
-                  options={list}
-                  placeholder="方案ID"
-                />
-              </Form.Item>
-
-            </Form>
-          </Modal>
-          : null
-      }
     </div>
   );
 };
