@@ -35,6 +35,7 @@
     name: 'history',
     icon: 'history',
     path: '/history',
+    access: 'canHistory',
     component: './history',
     routes: [
       {

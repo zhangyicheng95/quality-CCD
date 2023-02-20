@@ -17,6 +17,7 @@ import {
   Input,
   Tree,
   InputNumber,
+  Switch,
 } from 'antd';
 import * as _ from 'lodash';
 import {
@@ -85,7 +86,7 @@ const Home: React.FC<any> = (props: any) => {
 
   const ifCanEdit = useMemo(() => {
     return window.location.hash.indexOf('edit') > -1;
-  }, [window.location.hash]);
+  }, [window.location.hash, paramData]);
 
   const isVision = useMemo(() => {
     // @ts-ignore
@@ -198,7 +199,7 @@ const Home: React.FC<any> = (props: any) => {
                                       w: 2,
                                       h: 4,
                                       minW: 1,
-                                      minH: 2,
+                                      minH: 1,
                                     };
                                   }
                                   return item;
@@ -333,37 +334,61 @@ const Home: React.FC<any> = (props: any) => {
       </div>
     </div>,
     <div key={'slider-2'}>
-      <div className="info-box background-ubv">
-        <div className="common-card-title-box flex-box drag-btn">
-          <div className="flex-box common-card-title">基本信息</div>
-          {
-            ifCanEdit ?
-              <Popconfirm
-                title="确认删除 基本信息 窗口吗?"
-                onConfirm={() => {
-                  setGridHomeList((prev: any) => {
-                    return prev.map((item: any) => {
-                      if (item.i === 'slider-2') {
-                        return {
-                          ...item,
-                          w: 0,
-                          h: 0,
-                          minW: 0,
-                          minH: 0,
-                        };
-                      }
-                      return item;
-                    })
-                  });
-                }}
-                okText="确认"
-                cancelText="取消"
-              >
-                <div className='common-btn'>删除</div>
-              </Popconfirm>
-              : null
-          }
-        </div>
+      <div className="info-box message-box drag-item-content-box background-ubv">
+        {
+          (ifCanEdit || paramData?.contentData?.contentHeader['slider-2']) ?
+            <div className="common-card-title-box flex-box drag-btn">
+              <div className="flex-box common-card-title">基本信息</div>
+              {
+                ifCanEdit ?
+                  <div className="flex-box drag-item-btn-box">
+                    <Switch
+                      size="small"
+                      checkedChildren="显示"
+                      unCheckedChildren="隐藏"
+                      defaultChecked={paramData?.contentData?.contentHeader['slider-2']}
+                      onChange={(e) => {
+                        setParamData((prev: any) => {
+                          return Object.assign({}, prev, {
+                            contentData: Object.assign({}, prev?.contentData, {
+                              contentHeader: e ?
+                                Object.assign({}, prev?.contentData?.contentHeader, { ['slider-2']: e })
+                                :
+                                _.omit(prev?.contentData?.contentHeader, 'slider-2')
+                            })
+                          })
+                        })
+                      }}
+                    />
+                    <Popconfirm
+                      title="确认删除 基本信息 窗口吗?"
+                      onConfirm={() => {
+                        setGridHomeList((prev: any) => {
+                          return prev.map((item: any) => {
+                            if (item.i === 'slider-2') {
+                              return {
+                                ...item,
+                                w: 0,
+                                h: 0,
+                                minW: 0,
+                                minH: 0,
+                              };
+                            }
+                            return item;
+                          })
+                        });
+                      }}
+                      okText="确认"
+                      cancelText="取消"
+                    >
+                      <div className='common-btn'>删除</div>
+                    </Popconfirm>
+                  </div>
+                  : null
+              }
+            </div>
+            : null
+        }
         <div className="info-box-content">
           <div className="info-item">
             <div>产线信息：</div>
@@ -388,37 +413,61 @@ const Home: React.FC<any> = (props: any) => {
       </div>
     </div>,
     <div key={'slider-3'}>
-      <div className="info-box message-box background-ubv">
-        <div className="common-card-title-box flex-box drag-btn">
-          <div className="flex-box common-card-title">实时信息</div>
-          {
-            ifCanEdit ?
-              <Popconfirm
-                title="确认删除 实时信息 窗口吗?"
-                onConfirm={() => {
-                  setGridHomeList((prev: any) => {
-                    return prev.map((item: any) => {
-                      if (item.i === 'slider-3') {
-                        return {
-                          ...item,
-                          w: 0,
-                          h: 0,
-                          minW: 0,
-                          minH: 0,
-                        };
-                      }
-                      return item;
-                    })
-                  });
-                }}
-                okText="确认"
-                cancelText="取消"
-              >
-                <div className='common-btn'>删除</div>
-              </Popconfirm>
-              : null
-          }
-        </div>
+      <div className="info-box message-box drag-item-content-box background-ubv">
+        {
+          (ifCanEdit || paramData?.contentData?.contentHeader['slider-3']) ?
+            <div className="common-card-title-box flex-box drag-btn">
+              <div className="flex-box common-card-title">实时信息</div>
+              {
+                ifCanEdit ?
+                  <div className="flex-box drag-item-btn-box">
+                    <Switch
+                      size="small"
+                      checkedChildren="显示"
+                      unCheckedChildren="隐藏"
+                      defaultChecked={paramData?.contentData?.contentHeader['slider-3']}
+                      onChange={(e) => {
+                        setParamData((prev: any) => {
+                          return Object.assign({}, prev, {
+                            contentData: Object.assign({}, prev?.contentData, {
+                              contentHeader: e ?
+                                Object.assign({}, prev?.contentData?.contentHeader, { ['slider-3']: e })
+                                :
+                                _.omit(prev?.contentData?.contentHeader, 'slider-3')
+                            })
+                          })
+                        })
+                      }}
+                    />
+                    <Popconfirm
+                      title="确认删除 实时信息 窗口吗?"
+                      onConfirm={() => {
+                        setGridHomeList((prev: any) => {
+                          return prev.map((item: any) => {
+                            if (item.i === 'slider-3') {
+                              return {
+                                ...item,
+                                w: 0,
+                                h: 0,
+                                minW: 0,
+                                minH: 0,
+                              };
+                            }
+                            return item;
+                          })
+                        });
+                      }}
+                      okText="确认"
+                      cancelText="取消"
+                    >
+                      <div className='common-btn'>删除</div>
+                    </Popconfirm>
+                  </div>
+                  : null
+              }
+            </div>
+            : null
+        }
         <div className="info-box-content">
           {/* {
           Object.entries(historyData).map((item: any, index: number) => {
@@ -435,52 +484,63 @@ const Home: React.FC<any> = (props: any) => {
     </div>,
     <div key={'slider-4'}>
       <div className="info-box message-box drag-item-content-box background-ubv">
-        <div className="common-card-title-box flex-box drag-btn">
-          <div className="flex-box common-card-title">方案列表</div>
-          {
-            ifCanEdit ?
-              <div className="flex-box drag-item-btn-box">
-                {/* <div className='common-btn' onClick={() => {
-                  setGridHomeList((prev: any) => {
-                    return prev.map((item: any) => {
-                      if (item.i === 'slider-4') {
-                        return {
-                          ...item,
-                          direction: item?.direction === 'rows' ? 'column' : 'rows',
-                        };
-                      }
-                      return item;
-                    })
-                  });
-                }}>切换</div> */}
-                <Popconfirm
-                  title="确认删除 方案列表 窗口吗?"
-                  onConfirm={() => {
-                    setGridHomeList((prev: any) => {
-                      return prev.map((item: any) => {
-                        if (item.i === 'slider-4') {
-                          return {
-                            ...item,
-                            w: 0,
-                            h: 0,
-                            minW: 0,
-                            minH: 0,
-                          };
-                        }
-                        return item;
-                      })
-                    });
-                  }}
-                  okText="确认"
-                  cancelText="取消"
-                >
-                  <div className='common-btn'>删除</div>
-                </Popconfirm>
-              </div>
-              : null
-          }
-        </div>
-        <div className={`info-box-content tabs-box`}>
+        {
+          (ifCanEdit || paramData?.contentData?.contentHeader['slider-4']) ?
+            <div className="common-card-title-box flex-box drag-btn">
+              <div className="flex-box common-card-title">方案列表</div>
+              {
+                ifCanEdit ?
+                  <div className="flex-box drag-item-btn-box">
+                    <Switch
+                      size="small"
+                      checkedChildren="显示"
+                      unCheckedChildren="隐藏"
+                      defaultChecked={paramData?.contentData?.contentHeader['slider-4']}
+                      onChange={(e) => {
+                        setParamData((prev: any) => {
+                          return Object.assign({}, prev, {
+                            contentData: Object.assign({}, prev?.contentData, {
+                              contentHeader: e ?
+                                Object.assign({}, prev?.contentData?.contentHeader, { ['slider-4']: e })
+                                :
+                                _.omit(prev?.contentData?.contentHeader, 'slider-4')
+                            })
+                          })
+                        })
+                      }}
+                    />
+                    <Popconfirm
+                      title="确认删除 方案列表 窗口吗?"
+                      onConfirm={() => {
+                        setGridHomeList((prev: any) => {
+                          return prev.map((item: any) => {
+                            if (item.i === 'slider-4') {
+                              return {
+                                ...item,
+                                w: 0,
+                                h: 0,
+                                minW: 0,
+                                minH: 0,
+                              };
+                            }
+                            return item;
+                          })
+                        });
+                      }}
+                      okText="确认"
+                      cancelText="取消"
+                    >
+                      <div className='common-btn'>删除</div>
+                    </Popconfirm>
+                  </div>
+                  : null
+              }
+            </div>
+            : null
+        }
+        <div className={`info-box-content tabs-box`} style={(ifCanEdit || paramData?.contentData?.contentHeader['slider-4']) ? {} : {
+          display: 'flex', alignItems: 'center', padding: 8
+        }}>
           <div
             className={`flex-box-center tabs-box-item-box ${gridHomeList.filter((i: any) => i.i === 'slider-4')[0]?.w >= 3 ? 'tabs-box-item-box-rows' : ''}`}
             onClick={() => {
@@ -537,37 +597,62 @@ const Home: React.FC<any> = (props: any) => {
       </div>
     </div>,
     <div key={'footer-1'}>
-      <div className="log-content background-ubv">
-        <div className="common-card-title-box flex-box drag-btn">
-          <div className="flex-box common-card-title">日志信息</div>
-          {
-            ifCanEdit ?
-              <Popconfirm
-                title="确认删除 日志信息 窗口吗?"
-                onConfirm={() => {
-                  setGridHomeList((prev: any) => {
-                    return prev.map((item: any) => {
-                      if (item.i === 'footer-1') {
-                        return {
-                          ...item,
-                          w: 0,
-                          h: 0,
-                          minW: 0,
-                          minH: 0,
-                        };
-                      }
-                      return item;
-                    })
-                  });
-                }}
-                okText="确认"
-                cancelText="取消"
-              >
-                <div className='common-btn'>删除</div>
-              </Popconfirm>
-              : null
-          }
-        </div>
+      <div className="log-content message-box drag-item-content-box background-ubv">
+        {
+          (ifCanEdit || paramData?.contentData?.contentHeader['footer-1']) ?
+            <div className="common-card-title-box flex-box drag-btn">
+              <div className="flex-box common-card-title">日志信息</div>
+              {
+                ifCanEdit ?
+                  <div className="flex-box drag-item-btn-box">
+                    <Switch
+                      size="small"
+                      checkedChildren="显示"
+                      unCheckedChildren="隐藏"
+                      defaultChecked={paramData?.contentData?.contentHeader['footer-1']}
+                      onChange={(e) => {
+                        setParamData((prev: any) => {
+                          return Object.assign({}, prev, {
+                            contentData: Object.assign({}, prev?.contentData, {
+                              contentHeader: e ?
+                                Object.assign({}, prev?.contentData?.contentHeader, { ['footer-1']: e })
+                                :
+                                _.omit(prev?.contentData?.contentHeader, 'footer-1')
+                            })
+                          })
+                        })
+                      }}
+                    />
+                    <Popconfirm
+                      title="确认删除 日志信息 窗口吗?"
+                      onConfirm={() => {
+                        setGridHomeList((prev: any) => {
+                          return prev.map((item: any) => {
+                            if (item.i === 'footer-1') {
+                              return {
+                                ...item,
+                                w: 0,
+                                h: 0,
+                                minW: 0,
+                                minH: 0,
+                              };
+                            }
+                            return item;
+                          })
+                        });
+                      }}
+                      okText="确认"
+                      cancelText="取消"
+                    >
+                      <div className='common-btn'>删除</div>
+                    </Popconfirm>
+                  </div>
+                  :
+                  null
+              }
+            </div>
+            : null
+        }
         <div
           className="content-item-span"
           dangerouslySetInnerHTML={{
@@ -578,37 +663,61 @@ const Home: React.FC<any> = (props: any) => {
       </div>
     </div>,
     <div key={'footer-2'}>
-      <div className="log-content background-ubv">
-        <div className="common-card-title-box flex-box drag-btn">
-          <div className="flex-box common-card-title">错误信息</div>
-          {
-            ifCanEdit ?
-              <Popconfirm
-                title="确认删除 错误信息 窗口吗?"
-                onConfirm={() => {
-                  setGridHomeList((prev: any) => {
-                    return prev.map((item: any) => {
-                      if (item.i === 'footer-2') {
-                        return {
-                          ...item,
-                          w: 0,
-                          h: 0,
-                          minW: 0,
-                          minH: 0,
-                        };
-                      }
-                      return item;
-                    })
-                  });
-                }}
-                okText="确认"
-                cancelText="取消"
-              >
-                <div className='common-btn'>删除</div>
-              </Popconfirm>
-              : null
-          }
-        </div>
+      <div className="log-content message-box drag-item-content-box background-ubv">
+        {
+          (ifCanEdit || paramData?.contentData?.contentHeader['footer-2']) ?
+            <div className="common-card-title-box flex-box drag-btn">
+              <div className="flex-box common-card-title">错误信息</div>
+              {
+                ifCanEdit ?
+                  <div className="flex-box drag-item-btn-box">
+                    <Switch
+                      size="small"
+                      checkedChildren="显示"
+                      unCheckedChildren="隐藏"
+                      defaultChecked={paramData?.contentData?.contentHeader['footer-2']}
+                      onChange={(e) => {
+                        setParamData((prev: any) => {
+                          return Object.assign({}, prev, {
+                            contentData: Object.assign({}, prev?.contentData, {
+                              contentHeader: e ?
+                                Object.assign({}, prev?.contentData?.contentHeader, { ['footer-2']: e })
+                                :
+                                _.omit(prev?.contentData?.contentHeader, 'footer-2')
+                            })
+                          })
+                        })
+                      }}
+                    />
+                    <Popconfirm
+                      title="确认删除 错误信息 窗口吗?"
+                      onConfirm={() => {
+                        setGridHomeList((prev: any) => {
+                          return prev.map((item: any) => {
+                            if (item.i === 'footer-2') {
+                              return {
+                                ...item,
+                                w: 0,
+                                h: 0,
+                                minW: 0,
+                                minH: 0,
+                              };
+                            }
+                            return item;
+                          })
+                        });
+                      }}
+                      okText="确认"
+                      cancelText="取消"
+                    >
+                      <div className='common-btn'>删除</div>
+                    </Popconfirm>
+                  </div>
+                  : null
+              }
+            </div>
+            : null
+        }
         <div className="content-item-span">
           {/* <BasicScrollBar data={errorData}> */}
           {errorData.map((log: any, index: number) => {
@@ -712,7 +821,7 @@ const Home: React.FC<any> = (props: any) => {
   useEffect(() => {
     if (!ipString || _.isEmpty(paramsData)) return;
     const { flowData, contentData = {} } = paramsData;
-    const { home = [], content = {}, footerSelectList } = contentData;
+    const { home = [], content = {}, footerSelectList, contentHeader = {} } = contentData;
     const { nodes } = flowData;
     const list = nodes.map((node: any) => {
       const { name, alias, id, ports = {} } = node;
@@ -747,6 +856,18 @@ const Home: React.FC<any> = (props: any) => {
           { i: 'footer-2', x: 9, y: 22, w: 3, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
         ])
     );
+    let newParams = paramsData;
+    if (!_.isObject(contentHeader) || _.isEmpty(contentHeader)) {
+      const header = {};
+      home.forEach((item: any) => header[item.i] = true);
+      content.forEach((item: any) => header[item.id] = true);
+
+      newParams = Object.assign({}, paramsData, {
+        contentData: Object.assign({}, contentData, {
+          contentHeader: header,
+        })
+      });
+    }
     if (_.isArray(content)) {
       dispatch({
         type: 'home/set',
@@ -761,7 +882,7 @@ const Home: React.FC<any> = (props: any) => {
       });
       dispatch({ type: 'home/snapshot' });
       setAddContentList(content);
-      setParamData(paramsData);
+      setParamData(newParams);
     } else {
       const result = Object.entries(content).map((item: any) => {
         const { value, type, size } = item[1];
@@ -782,16 +903,16 @@ const Home: React.FC<any> = (props: any) => {
       });
       dispatch({ type: 'home/snapshot' });
       setAddContentList(result);
-      const newParams = Object.assign({}, paramsData, {
+      const resultParams = Object.assign({}, newParams, {
         contentData: Object.assign({}, contentData, {
           content: result,
         })
       });
       setInitialState((preInitialState: any) => ({
         ...preInitialState,
-        params: newParams,
+        params: resultParams,
       }));
-      setParamData(newParams);
+      setParamData(resultParams);
     }
 
     return () => {
@@ -827,53 +948,78 @@ const Home: React.FC<any> = (props: any) => {
 
         listData = listData.concat(
           <div key={key} className=" drag-item-content-box background-ubv">
-            <div className="common-card-title-box flex-box drag-btn">
-              <TooltipDiv className="flex-box common-card-title">
-                {`${alias || name}`}
-                <span className='title-span'>{`- ${SecLabel?.label?.alias || value[1] || ''}`}</span>
-              </TooltipDiv>
-              {
-                ifCanEdit ?
-                  <div className="flex-box drag-item-btn-box">
-                    <div
-                      className='common-btn'
-                      onClick={() => {
-                        !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
-                        setEditWindowData(item);
-                        setFieldsValue(item);
-                        setWindowType(type);
-                        setAddWindowVisible(true);
-                      }}
-                    >
-                      编辑
-                    </div>
-                    <Popconfirm
-                      title="确认删除监控窗口吗?"
-                      onConfirm={() => {
-                        const result = addContentList.filter((item: any) => item.id !== key);
-                        const params = Object.assign({}, paramData, {
-                          contentData: Object.assign({}, paramData.contentData, { content: result }),
-                        });
-                        setAddContentList(result);
-                        dispatch({
-                          type: 'home/set',
-                          payload: {
-                            gridContentList: result,
-                          },
-                        });
-                        dispatch({ type: 'home/snapshot' });
-                        setParamData(params);
-                      }}
-                      okText="确认"
-                      cancelText="取消"
-                    >
-                      <div className='common-btn'>删除</div>
-                    </Popconfirm>
-                  </div>
-                  : null
-              }
-            </div>
-            <div className="flex-box-center" style={{ height: 'calc(100% - 50px)' }}>
+            {
+              (ifCanEdit || paramData?.contentData?.contentHeader[key]) ?
+                <div className="common-card-title-box flex-box drag-btn">
+                  <TooltipDiv className="flex-box common-card-title">
+                    {`${alias || name}`}
+                    <span className='title-span'>{`- ${SecLabel?.label?.alias || value[1] || ''}`}</span>
+                  </TooltipDiv>
+                  {
+                    ifCanEdit ?
+                      <div className="flex-box drag-item-btn-box">
+                        <Switch
+                          size="small"
+                          checkedChildren="显示"
+                          unCheckedChildren="隐藏"
+                          defaultChecked={paramData?.contentData?.contentHeader[key]}
+                          onChange={(e) => {
+                            setParamData((prev: any) => {
+                              return Object.assign({}, prev, {
+                                contentData: Object.assign({}, prev?.contentData, {
+                                  contentHeader: e ?
+                                    Object.assign({}, prev?.contentData?.contentHeader, { [key]: e })
+                                    :
+                                    _.omit(prev?.contentData?.contentHeader, key)
+                                })
+                              })
+                            })
+                          }}
+                        />
+                        <div
+                          className='common-btn'
+                          onClick={() => {
+                            !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
+                            setEditWindowData(item);
+                            setFieldsValue(item);
+                            setWindowType(type);
+                            setAddWindowVisible(true);
+                          }}
+                        >
+                          编辑
+                        </div>
+                        <Popconfirm
+                          title="确认删除监控窗口吗?"
+                          onConfirm={() => {
+                            const result = addContentList.filter((item: any) => item.id !== key);
+                            const params = Object.assign({}, paramData, {
+                              contentData: Object.assign({}, paramData.contentData, { content: result }),
+                            });
+                            setAddContentList(result);
+                            dispatch({
+                              type: 'home/set',
+                              payload: {
+                                gridContentList: result,
+                              },
+                            });
+                            dispatch({ type: 'home/snapshot' });
+                            setParamData(params);
+                          }}
+                          okText="确认"
+                          cancelText="取消"
+                        >
+                          <div className='common-btn'>删除</div>
+                        </Popconfirm>
+                      </div>
+                      : null
+                  }
+                </div>
+                :
+                null
+            }
+            <div className="flex-box-center"
+              style={paramData?.contentData?.contentHeader[id] ? { height: 'calc(100% - 50px)' } : { height: '100%' }}
+            >
               {
                 type === 'line' ?
                   <LineCharts

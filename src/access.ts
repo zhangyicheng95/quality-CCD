@@ -7,6 +7,7 @@ export default function access(initialState: any) {
   return {
     canAdmin: true,//currentUser && currentUser.access === 'admin',
     canMark: false,
+    canHistory: type !== 'vision',
     canControl: type !== 'vision',
   };
 }
