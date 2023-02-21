@@ -67,7 +67,7 @@ const GridLayout: React.FC<Props> = (props: any) => {
                         isResizable={ifCanEdit}
                         isDraggable={ifCanEdit}
                         isBounded={true}
-                        allowOverlap={false} // 覆盖
+                        allowOverlap={true} // 覆盖
                         preventCollision={false} // 防碰撞
                         autoSize={true}
                         onResizeStop={onLayoutChange}

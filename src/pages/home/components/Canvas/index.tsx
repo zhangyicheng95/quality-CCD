@@ -1029,7 +1029,7 @@ const Home: React.FC<any> = (props: any) => {
                 null
             }
             <div className="flex-box-center"
-              style={paramData?.contentData?.contentHeader?.[id] ? { height: 'calc(100% - 50px)' } : { height: '100%' }}
+              style={paramData?.contentData?.contentHeader?.[key] ? { height: 'calc(100% - 50px)' } : { height: '100%' }}
             >
               {
                 type === 'line' ?
@@ -1286,7 +1286,7 @@ const Home: React.FC<any> = (props: any) => {
           result = addContentList.concat({
             id,
             value,
-            size: { i: id, x: 2, y: 0, w: 3, h: 3, minW: 1, maxW: 100, minH: 2, maxH: 100 },
+            size: { i: id, x: 8, y: 0, w: 10, h: 4, minW: 1, maxW: 100, minH: 2, maxH: 100 },
             type,
             tab: activeTab,
             yName, xName, defaultImg, fontSize, reverse, direction
