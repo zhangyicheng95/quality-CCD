@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Image } from 'antd';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
+import TooltipDiv from '@/components/TooltipDiv';
 
 interface Props {
     data: any,
@@ -22,7 +23,7 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
                 setFontSize('auto')
             } else {
                 // 个数超过一行
-                const width: number = document.getElementById(`echart-${id}-0`)?.clientWidth || 150;
+                const width: number = dom?.current?.firstElementChild?.clientWidth || 150;
                 setFontSize(width + 'px')
             }
         }
@@ -44,9 +45,9 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
                         className={`flex-box img-item`}
                         style={fontSize === 'auto' ? {} : { width: fontSize, maxWidth: fontSize }}
                     >
-                        <div className="img-item-left">
+                        {/* <div className="img-item-left">
                             {name}
-                        </div>
+                        </div> */}
                         <div className="img-item-right">
                             <div className="img-item-right-top flex-box-center">
                                 <Image
@@ -55,7 +56,7 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
                                     style={{ width: '100%', height: 'auto' }}
                                 />
                             </div>
-                            {/* <div className="img-item-right-bottom"></div> */}
+                            <TooltipDiv title={name} className="img-item-right-bottom">{name}</TooltipDiv>
                         </div>
                     </div>
                 })

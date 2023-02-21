@@ -111,11 +111,15 @@ const HomeLayout: React.FC<any> = (props) => {
         setItems(data);
       } catch (err) { }
     } else {
-      const list = [
-        { label: quality_name || name, name: quality_name || name, children: null, key: id },
-      ];
-      setItems(list);
-      localStorage.setItem('ipList', JSON.stringify(list));
+      if (!!quality_name || !!name) {
+        const list = [
+          { label: quality_name || name, name: quality_name || name, children: null, key: id },
+        ];
+        setItems(list);
+        localStorage.setItem('ipList', JSON.stringify(list));
+      } else {
+        localStorage.setItem('ipList', JSON.stringify([]));
+      }
     }
   }, [localStorage.getItem('ipString'), list]);
 

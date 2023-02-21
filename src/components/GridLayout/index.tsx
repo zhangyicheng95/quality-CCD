@@ -59,16 +59,16 @@ const GridLayout: React.FC<Props> = (props: any) => {
                         // layouts={{
                         //     lg: layout.filter(Boolean)
                         // }}
-                        rowHeight={30}
+                        rowHeight={14}
                         layout={layout.filter(Boolean)}
-                        cols={12}
+                        cols={96}
                         // breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                         // cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                         isResizable={ifCanEdit}
                         isDraggable={ifCanEdit}
                         isBounded={true}
-                        allowOverlap={true} // 覆盖
-                        // preventCollision={true} // 防碰撞
+                        allowOverlap={false} // 覆盖
+                        preventCollision={false} // 防碰撞
                         autoSize={true}
                         onResizeStop={onLayoutChange}
                         onDragStop={onLayoutChange}

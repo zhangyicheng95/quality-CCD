@@ -138,15 +138,15 @@ const Setting: React.FC<any> = (props) => {
         !!quality_icon && localStorage.setItem("quality_icon", quality_icon || '');
         localStorage.setItem("ipUrl-realtime", values['ipUrl-realtime']);
         localStorage.setItem("ipUrl-history", values['ipUrl-history']);
-        try {
-          const result = ipList.map((item: any) => {
-            if (item.key === localStorage.getItem('ipString')) {
-              return Object.assign({}, item, { key: values['ipString'] });
-            }
-            return item;
-          });
-          localStorage.setItem("ipList", JSON.stringify(result));
-        } catch (err) { }
+        // try {
+        //   const result = ipList.map((item: any) => {
+        //     if (item.key === localStorage.getItem('ipString')) {
+        //       return Object.assign({}, item, { key: values['ipString'] });
+        //     }
+        //     return item;
+        //   });
+        //   localStorage.setItem("ipList", JSON.stringify(result));
+        // } catch (err) { }
         localStorage.setItem("ipString", values['ipString']);
         window.location.reload();
       })
@@ -232,7 +232,7 @@ const Setting: React.FC<any> = (props) => {
                 <Select
                   style={{ width: '100%' }}
                   size="large"
-                  options={projectStatus}
+                  options={projectStatus.map((item: any) => _.omit(item, 'disabled'))}
                   placeholder="方案ID"
                 />
             }

@@ -6,6 +6,16 @@ import proxy from './proxy';
 import routes from './routes';
 
 const { REACT_APP_ENV } = process.env;
+const { version } = require('../package.json');
+
+function OutputPathName(env: string) {
+  if (env) {
+    return `quality-${env}`
+
+  }
+  return 'quality'
+
+};
 
 export default defineConfig({
   hash: true,
@@ -78,5 +88,6 @@ export default defineConfig({
   mfsu: {},
   webpack5: {},
   exportStatic: {},
-  plugins: []
+  plugins: [],
+  outputPath: "quality"
 });

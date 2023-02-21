@@ -336,7 +336,7 @@ const Home: React.FC<any> = (props: any) => {
     <div key={'slider-2'}>
       <div className="info-box message-box drag-item-content-box background-ubv">
         {
-          (ifCanEdit || paramData?.contentData?.contentHeader['slider-2']) ?
+          (ifCanEdit || paramData?.contentData?.contentHeader?.['slider-2']) ?
             <div className="common-card-title-box flex-box drag-btn">
               <div className="flex-box common-card-title">基本信息</div>
               {
@@ -344,9 +344,9 @@ const Home: React.FC<any> = (props: any) => {
                   <div className="flex-box drag-item-btn-box">
                     <Switch
                       size="small"
-                      checkedChildren="显示"
-                      unCheckedChildren="隐藏"
-                      defaultChecked={paramData?.contentData?.contentHeader['slider-2']}
+                      checkedChildren="显示头"
+                      unCheckedChildren="隐藏头"
+                      defaultChecked={paramData?.contentData?.contentHeader?.['slider-2']}
                       onChange={(e) => {
                         setParamData((prev: any) => {
                           return Object.assign({}, prev, {
@@ -415,7 +415,7 @@ const Home: React.FC<any> = (props: any) => {
     <div key={'slider-3'}>
       <div className="info-box message-box drag-item-content-box background-ubv">
         {
-          (ifCanEdit || paramData?.contentData?.contentHeader['slider-3']) ?
+          (ifCanEdit || paramData?.contentData?.contentHeader?.['slider-3']) ?
             <div className="common-card-title-box flex-box drag-btn">
               <div className="flex-box common-card-title">实时信息</div>
               {
@@ -423,9 +423,9 @@ const Home: React.FC<any> = (props: any) => {
                   <div className="flex-box drag-item-btn-box">
                     <Switch
                       size="small"
-                      checkedChildren="显示"
-                      unCheckedChildren="隐藏"
-                      defaultChecked={paramData?.contentData?.contentHeader['slider-3']}
+                      checkedChildren="显示头"
+                      unCheckedChildren="隐藏头"
+                      defaultChecked={paramData?.contentData?.contentHeader?.['slider-3']}
                       onChange={(e) => {
                         setParamData((prev: any) => {
                           return Object.assign({}, prev, {
@@ -485,7 +485,7 @@ const Home: React.FC<any> = (props: any) => {
     <div key={'slider-4'}>
       <div className="info-box message-box drag-item-content-box background-ubv">
         {
-          (ifCanEdit || paramData?.contentData?.contentHeader['slider-4']) ?
+          (ifCanEdit || paramData?.contentData?.contentHeader?.['slider-4']) ?
             <div className="common-card-title-box flex-box drag-btn">
               <div className="flex-box common-card-title">方案列表</div>
               {
@@ -493,9 +493,9 @@ const Home: React.FC<any> = (props: any) => {
                   <div className="flex-box drag-item-btn-box">
                     <Switch
                       size="small"
-                      checkedChildren="显示"
-                      unCheckedChildren="隐藏"
-                      defaultChecked={paramData?.contentData?.contentHeader['slider-4']}
+                      checkedChildren="显示头"
+                      unCheckedChildren="隐藏头"
+                      defaultChecked={paramData?.contentData?.contentHeader?.['slider-4']}
                       onChange={(e) => {
                         setParamData((prev: any) => {
                           return Object.assign({}, prev, {
@@ -538,11 +538,11 @@ const Home: React.FC<any> = (props: any) => {
             </div>
             : null
         }
-        <div className={`info-box-content tabs-box`} style={(ifCanEdit || paramData?.contentData?.contentHeader['slider-4']) ? {} : {
-          display: 'flex', alignItems: 'center', padding: 8
+        <div className={`info-box-content tabs-box`} style={(ifCanEdit || paramData?.contentData?.contentHeader?.['slider-4']) ? {} : {
+          display: 'flex', alignItems: 'center', padding: '0 8px'
         }}>
           <div
-            className={`flex-box-center tabs-box-item-box ${gridHomeList.filter((i: any) => i.i === 'slider-4')[0]?.w >= 3 ? 'tabs-box-item-box-rows' : ''}`}
+            className={`flex-box-center tabs-box-item-box ${gridHomeList.filter((i: any) => i.i === 'slider-4')[0]?.w >= 20 ? 'tabs-box-item-box-rows' : ''}`}
             onClick={() => {
               setAddItemsVisible(true);
             }}
@@ -599,7 +599,7 @@ const Home: React.FC<any> = (props: any) => {
     <div key={'footer-1'}>
       <div className="log-content message-box drag-item-content-box background-ubv">
         {
-          (ifCanEdit || paramData?.contentData?.contentHeader['footer-1']) ?
+          (ifCanEdit || paramData?.contentData?.contentHeader?.['footer-1']) ?
             <div className="common-card-title-box flex-box drag-btn">
               <div className="flex-box common-card-title">日志信息</div>
               {
@@ -607,9 +607,9 @@ const Home: React.FC<any> = (props: any) => {
                   <div className="flex-box drag-item-btn-box">
                     <Switch
                       size="small"
-                      checkedChildren="显示"
-                      unCheckedChildren="隐藏"
-                      defaultChecked={paramData?.contentData?.contentHeader['footer-1']}
+                      checkedChildren="显示头"
+                      unCheckedChildren="隐藏头"
+                      defaultChecked={paramData?.contentData?.contentHeader?.['footer-1']}
                       onChange={(e) => {
                         setParamData((prev: any) => {
                           return Object.assign({}, prev, {
@@ -665,7 +665,7 @@ const Home: React.FC<any> = (props: any) => {
     <div key={'footer-2'}>
       <div className="log-content message-box drag-item-content-box background-ubv">
         {
-          (ifCanEdit || paramData?.contentData?.contentHeader['footer-2']) ?
+          (ifCanEdit || paramData?.contentData?.contentHeader?.['footer-2']) ?
             <div className="common-card-title-box flex-box drag-btn">
               <div className="flex-box common-card-title">错误信息</div>
               {
@@ -673,9 +673,9 @@ const Home: React.FC<any> = (props: any) => {
                   <div className="flex-box drag-item-btn-box">
                     <Switch
                       size="small"
-                      checkedChildren="显示"
-                      unCheckedChildren="隐藏"
-                      defaultChecked={paramData?.contentData?.contentHeader['footer-2']}
+                      checkedChildren="显示头"
+                      unCheckedChildren="隐藏头"
+                      defaultChecked={paramData?.contentData?.contentHeader?.['footer-2']}
                       onChange={(e) => {
                         setParamData((prev: any) => {
                           return Object.assign({}, prev, {
@@ -754,10 +754,10 @@ const Home: React.FC<any> = (props: any) => {
       if (['slider-1', 'slider-2', 'slider-3', 'slider-4', 'content', 'footer-1', 'footer-2'].includes(item.i)) {
         home = home.concat({
           ...item,
-          maxW: 12,
           minW: 1,
-          maxH: 30,
           minH: 2,
+          maxW: 100,
+          maxH: 100
         });
       } else {
         const preContent = _.isArray(paramData?.contentData?.content) ?
@@ -768,10 +768,10 @@ const Home: React.FC<any> = (props: any) => {
           ...preContent,
           size: {
             ...item,
-            maxW: 12,
             minW: 1,
-            maxH: 30,
             minH: 2,
+            maxW: 100,
+            maxH: 100
           }
         });
         // Object.assign({}, content, !!paramData?.contentData?.content[item.i] ? {
@@ -779,9 +779,9 @@ const Home: React.FC<any> = (props: any) => {
         //     ...paramData?.contentData?.content[item.i],
         //     size: {
         //       ...item,
-        //       maxW: 12,
+        //       maxW: 100,
         //       minW: 1,
-        //       maxH: 30,
+        //       maxH: 100,
         //       minH: 2,
         //     }
         //   }
@@ -821,7 +821,14 @@ const Home: React.FC<any> = (props: any) => {
   useEffect(() => {
     if (!ipString || _.isEmpty(paramsData)) return;
     const { flowData, contentData = {} } = paramsData;
-    const { home = [], content = {}, footerSelectList, contentHeader = {} } = contentData;
+    const { home = [
+      { "i": "slider-1", "x": 0, "y": 0, "w": 7, "h": 8, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
+      { "i": "slider-2", "x": 0, "y": 8, "w": 7, "h": 18, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
+      { "i": "slider-3", "x": 0, "y": 0, "w": 0, "h": 9, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
+      { "i": "slider-4", "x": 7, "y": 0, "w": 89, "h": 3, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
+      { "i": "footer-1", "x": 7, "y": 0, "w": 0, "h": 0, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
+      { "i": "footer-2", "x": 0, "y": 26, "w": 7, "h": 17, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }
+    ], content = {}, footerSelectList, contentHeader = {} } = contentData;
     const { nodes } = flowData;
     const list = nodes.map((node: any) => {
       const { name, alias, id, ports = {} } = node;
@@ -845,29 +852,27 @@ const Home: React.FC<any> = (props: any) => {
     });
     setNodeList(list);
     setFooterSelectList(footerSelectList || []);
-    setGridHomeList(
-      (!!home?.length
-        ? home
-        : [
-          { i: 'slider-1', x: 0, y: 0, w: 2, h: 4, minW: 1, maxW: 12, minH: 1, maxH: 30 },
-          { i: 'slider-2', x: 0, y: 4, w: 2, h: 9, minW: 1, maxW: 12, minH: 1, maxH: 30 },
-          { i: 'slider-4', x: 0, y: 13, w: 2, h: 15, minW: 1, maxW: 12, minH: 1, maxH: 30 },
-          { i: 'footer-1', x: 2, y: 22, w: 7, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
-          { i: 'footer-2', x: 9, y: 22, w: 3, h: 6, minW: 1, maxW: 12, minH: 1, maxH: 30 },
-        ])
-    );
+    setGridHomeList(home);
     let newParams = paramsData;
     if (!_.isObject(contentHeader) || _.isEmpty(contentHeader)) {
       const header = {};
-      home.forEach((item: any) => header[item.i] = true);
-      content.forEach((item: any) => header[item.id] = true);
+      home.forEach((item: any) => header[item.i] = item.i !== 'slider-4');
+      if (_.isArray(content)) {
+        content.forEach((item: any) => header[item.id] = true);
+      } else {
+        Object.entries(content).forEach((item: any) => {
+          const { value, type } = item[1];
+          const id = `${value?.join('$$')}$$${type}`;
+          header[id] = true;
+        });
+      };
 
       newParams = Object.assign({}, paramsData, {
         contentData: Object.assign({}, contentData, {
           contentHeader: header,
         })
       });
-    }
+    };
     if (_.isArray(content)) {
       dispatch({
         type: 'home/set',
@@ -913,7 +918,7 @@ const Home: React.FC<any> = (props: any) => {
         params: resultParams,
       }));
       setParamData(resultParams);
-    }
+    };
 
     return () => {
       setAddContentList([]);
@@ -924,7 +929,7 @@ const Home: React.FC<any> = (props: any) => {
         },
       });
       dispatch({ type: 'home/snapshot' });
-    }
+    };
   }, []);
   // 轮训获取运行状态
   useEffect(() => {
@@ -934,13 +939,19 @@ const Home: React.FC<any> = (props: any) => {
   // 监控窗口动态添加
   useEffect(() => {
     if (!_.isEmpty(addContentList) && !_.isEmpty(paramData)) {
+      const newGridContentList = !!localStorage.getItem(`localGridContentList-${paramData.id}`) ?
+        JSON.parse(localStorage.getItem(`localGridContentList-${paramData.id}`) || "{}")
+        : {};
       let listData: any = [],
-        layoutData: any = [];
+        layoutData: any = [],
+        resultData: any = {};
       addContentList.forEach((item: any, index: number) => {
         const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction } = item;
         const id = key?.split('$$')[0];
-        const gridValue = gridContentList[id];
-        const dataValue = !!gridValue ? gridValue[value[1]] : undefined;
+        const gridValue = gridContentList[id] || {};
+        const newGridValue = newGridContentList[id] || {};
+        // socket有数据就渲染新的，没有就渲染localStorage缓存的
+        const dataValue = gridValue[value[1]] || newGridValue[value[1]] || undefined;
         const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
         const { alias, name, ports = {} } = parent[0] || {};
         const { items = [] } = ports;
@@ -949,7 +960,7 @@ const Home: React.FC<any> = (props: any) => {
         listData = listData.concat(
           <div key={key} className=" drag-item-content-box background-ubv">
             {
-              (ifCanEdit || paramData?.contentData?.contentHeader[key]) ?
+              (ifCanEdit || paramData?.contentData?.contentHeader?.[key]) ?
                 <div className="common-card-title-box flex-box drag-btn">
                   <TooltipDiv className="flex-box common-card-title">
                     {`${alias || name}`}
@@ -960,9 +971,9 @@ const Home: React.FC<any> = (props: any) => {
                       <div className="flex-box drag-item-btn-box">
                         <Switch
                           size="small"
-                          checkedChildren="显示"
-                          unCheckedChildren="隐藏"
-                          defaultChecked={paramData?.contentData?.contentHeader[key]}
+                          checkedChildren="显示头"
+                          unCheckedChildren="隐藏头"
+                          defaultChecked={paramData?.contentData?.contentHeader?.[key]}
                           onChange={(e) => {
                             setParamData((prev: any) => {
                               return Object.assign({}, prev, {
@@ -1018,7 +1029,7 @@ const Home: React.FC<any> = (props: any) => {
                 null
             }
             <div className="flex-box-center"
-              style={paramData?.contentData?.contentHeader[id] ? { height: 'calc(100% - 50px)' } : { height: '100%' }}
+              style={paramData?.contentData?.contentHeader?.[id] ? { height: 'calc(100% - 50px)' } : { height: '100%' }}
             >
               {
                 type === 'line' ?
@@ -1109,7 +1120,12 @@ const Home: React.FC<any> = (props: any) => {
           </div>,
         );
         layoutData = layoutData.concat(size);
+        resultData[id] = !!dataValue ? {
+          ...item,
+          [value[1]]: dataValue
+        } : item;
       });
+      localStorage.setItem(`localGridContentList-${paramData.id}`, JSON.stringify(resultData));
 
       setContentList(listData);
       setContentLayout(layoutData);
@@ -1270,7 +1286,7 @@ const Home: React.FC<any> = (props: any) => {
           result = addContentList.concat({
             id,
             value,
-            size: { i: id, x: 2, y: 0, w: 3, h: 3, minW: 1, maxW: 12, minH: 2, maxH: 32 },
+            size: { i: id, x: 2, y: 0, w: 3, h: 3, minW: 1, maxW: 100, minH: 2, maxH: 100 },
             type,
             tab: activeTab,
             yName, xName, defaultImg, fontSize, reverse, direction
@@ -1623,9 +1639,10 @@ const Home: React.FC<any> = (props: any) => {
                 const newActiveKey = key + '';
                 const newPanes = [...JSON.parse(localStorage.getItem('ipList') || "[]")];
                 newPanes.push({ label: label, children: null, key: newActiveKey });
-                localStorage.setItem('ipString', newActiveKey);
+                // localStorage.setItem('ipString', newActiveKey);
                 localStorage.setItem('ipList', JSON.stringify(newPanes));
-                window.location.reload();
+                // window.location.reload();
+                setAddItemsVisible(false)
               });
             }}
             onCancel={() => setAddItemsVisible(false)}

@@ -227,7 +227,7 @@
       .tabs-box {
         .tabs-box-item-box {
           cursor: pointer;
-          padding: 8px 12px;
+          padding: 4px 8px;
           gap: 8px;
 
           &:hover {
@@ -397,7 +397,7 @@
       align-items: flex-start;
 
       .img-item-left {
-        height: 100%; //calc(100% - 24px);
+        height: calc(100% - 24px);
         font-size: 16px;
         width: 24px;
         padding: 4px;
@@ -413,17 +413,16 @@
         .img-item-right-top {
           padding: 4px;
           border: 1px solid #fff;
-          height: 100%; //calc(100% - 24px);
+          height: calc(100% - 24px);
         }
 
         .img-item-right-bottom {
           font-size: 16px;
           padding: 4px;
           height: 24px;
+          line-height: 1;
           background-color: @background-color-base;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          overflow: hidden;
+          text-align: center;
         }
       }
     }
