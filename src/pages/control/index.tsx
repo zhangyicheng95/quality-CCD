@@ -50,7 +50,7 @@ const Control: React.FC<any> = (props: any) => {
         return item;
       }));
       if (!!configList?.length) {
-        setConfigList([{ label: '默认配置', value: 'default', data: nodes, listType: 'line' }].concat(configList));
+        setConfigList(configList);
         if (!!selectedConfig) {
           const { data, listType = 'line' } = configList.filter((i: any) => i.value === selectedConfig)[0];
           setListType(listType);
@@ -64,6 +64,8 @@ const Control: React.FC<any> = (props: any) => {
             }));
           }
         }
+      } else {
+        setConfigList([{ label: '默认配置', value: 'default', data: nodes, listType: 'line' }]);
       }
     }
   }, [paramsData]);

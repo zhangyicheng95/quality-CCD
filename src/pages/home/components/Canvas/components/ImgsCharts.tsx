@@ -18,16 +18,16 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
 
     useEffect(() => {
         if (!!dom) {
-            if (dom?.current?.clientWidth > data.length * 200) {
+            if (dom?.current?.clientWidth > data.length * (dom?.current?.firstElementChild?.clientWidth || 150)) {
                 // 说明个数不足一行
-                setFontSize('auto')
+                setFontSize('auto');
             } else {
                 // 个数超过一行
                 const width: number = dom?.current?.firstElementChild?.clientWidth || 150;
-                setFontSize(width + 'px')
+                setFontSize(width + 'px');
             }
         }
-    }, [dom]);
+    }, [dom?.current?.clientWidth, dom?.current?.clientHeight]);
 
     return (
         <div
