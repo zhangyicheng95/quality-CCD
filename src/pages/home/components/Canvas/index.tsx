@@ -1255,7 +1255,7 @@ const Home: React.FC<any> = (props: any) => {
   }, [started, dispatch]);
   // 信息变化，走接口更新
   useEffect(() => {
-    if (!_.isEmpty(paramData) && !!paramData.id) {
+    if (!_.isEmpty(paramData) && !!paramData.id && ifCanEdit) {
       updateTimer && clearTimeout(updateTimer);
       updateTimer = setTimeout(() => {
         updateParams({

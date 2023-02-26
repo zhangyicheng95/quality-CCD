@@ -44,7 +44,7 @@ const Control: React.FC<any> = (props: any) => {
       const { nodes } = flowData;
       setParamData(paramsData);
       setNodeList(nodes.map((item: any, index: number) => {
-        if (_.isUndefined(item.sortId)) {
+        if (!item.sortId || item.sortId !== 0) {
           return { ...item, sortId: index };
         }
         return item;
@@ -57,7 +57,7 @@ const Control: React.FC<any> = (props: any) => {
           setFieldsValue({ 'config-value': selectedConfig });
           if (!!data?.length) {
             setNodeList(data.map((item: any, index: number) => {
-              if (_.isUndefined(item.sortId)) {
+              if (!item.sortId || item.sortId !== 0) {
                 return { ...item, sortId: index };
               }
               return item;
@@ -93,12 +93,16 @@ const Control: React.FC<any> = (props: any) => {
   const sortCommonFun = (dragIndex: any, hoverIndex: any) => {
     const source = nodeList.filter((i: any) => i.sortId === dragIndex)[0];
     const target = nodeList.filter((i: any) => i.sortId === hoverIndex)[0];
-    setNodeList((prev: any) => {
-      const list = _.cloneDeep(prev);
-      list[dragIndex] = { ...target, sortId: dragIndex };
-      list[hoverIndex] = { ...source, sortId: hoverIndex };
-      return list;
-    });
+    if (source && target) {
+      setNodeList((prev: any) => {
+        const list = _.cloneDeep(prev);
+        list[dragIndex] = { ...target, sortId: dragIndex };
+        list[hoverIndex] = { ...source, sortId: hoverIndex };
+        return list;
+      });
+    } else {
+      message.warning('排序出错，请联系开发人员。');
+    }
   };
   // 切换排列方式
   const onChangeView = (type: string) => {
@@ -139,9 +143,10 @@ const Control: React.FC<any> = (props: any) => {
             selectedConfig: id,
           })
         };
+        setInitialState({ ...initialState, params: params.data });
         updateParams(params).then((res: any) => {
           if (res && res.code === 'SUCCESS') {
-            message.success('修改成功')
+            message.success('修改成功');
           } else {
             message.error(res?.msg || res?.message || '接口异常');
           }
@@ -172,9 +177,10 @@ const Control: React.FC<any> = (props: any) => {
             selectedConfig: values['config-value'],
           })
         };
+        setInitialState({ ...initialState, params: params.data });
         updateParams(params).then((res: any) => {
           if (res && res.code === 'SUCCESS') {
-            message.success('修改成功')
+            message.success('修改成功');
           } else {
             message.error(res?.msg || res?.message || '接口异常');
           }
@@ -220,12 +226,37 @@ const Control: React.FC<any> = (props: any) => {
                 onChange={(val, option: any) => {
                   const { data, listType = 'line' } = option;
                   setListType(listType);
-                  setNodeList(data.map((item: any, index: number) => {
-                    if (_.isUndefined(item.sortId)) {
+                  const result = data.map((item: any, index: number) => {
+                    if (!item.sortId || item.sortId !== 0) {
                       return { ...item, sortId: index };
                     }
                     return item;
-                  }));
+                  });
+                  setNodeList(result);
+
+                  const params = {
+                    id: paramData.id,
+                    data: Object.assign({}, paramData, {
+                      flowData: Object.assign({}, paramData.flowData, {
+                        nodes: result
+                      }),
+                      configList: configList.map((item: any) => {
+                        if (item.value === val) {
+                          return Object.assign({}, item, { data: result });
+                        }
+                        return item;
+                      }),
+                      selectedConfig: val,
+                    })
+                  };
+                  updateParams(params).then((res: any) => {
+                    if (res && res.code === 'SUCCESS') {
+                      setInitialState(params.data);
+                      message.success('修改成功');
+                    } else {
+                      message.error(res?.msg || res?.message || '接口异常');
+                    }
+                  });
                 }}
               />
             </Form.Item>
@@ -258,60 +289,58 @@ const Control: React.FC<any> = (props: any) => {
                           name={name}
                           index={sortId}
                         >
-                          <div>
-                            <div className="item-title flex-box" onClick={() => {
-                              setNodeList((prev: any) => {
-                                return prev.map((pre: any) => {
-                                  if (pre.id === id) {
-                                    return Object.assign({}, pre, {
-                                      hidden: !hidden,
-                                    });
-                                  }
-                                  return pre;
-                                })
+                          <div className="item-title flex-box" onClick={() => {
+                            setNodeList((prev: any) => {
+                              return prev.map((pre: any) => {
+                                if (pre.id === id) {
+                                  return Object.assign({}, pre, {
+                                    hidden: !hidden,
+                                  });
+                                }
+                                return pre;
                               })
-                            }}>
-                              {hidden ? <CaretRightOutlined /> : <CaretDownOutlined />}
-                              {alias || name}
-                            </div>
-                            {
-                              !hidden && (Object.entries(initParams) || []).map((item: any) => {
-                                const { alias, name, widget, onHidden } = item[1];
-                                const { type } = widget;
-                                if (onHidden || TagRadioList.includes(item[0])) return null;
-                                return <div className="flex-box param-item" key={`${id}@$@${item[0]}`}>
-                                  <div className="icon-box flex-box">
-                                    {_.toUpper(type.slice(0, 1))}
-                                    {/* <BlockOutlined className="item-icon" /> */}
-                                  </div>
-                                  <div className="title-box">
-                                    <div>{alias}</div>
-                                    <span>{name}</span>
-                                  </div>
-                                  <div className="value-box">
-                                    <FormatWidgetToDom
-                                      id={`${id}@$@${item[0]}`}
-                                      config={item}
-                                      form={form}
-                                      disabled={false}
-                                      selectedOption={selectedOption}
-                                      setSelectedOption={setSelectedOption}
-                                      widgetChange={widgetChange}
-                                      setEditorVisible={setEditorVisible}
-                                      setEditorValue={setEditorValue}
-                                      setPlatFormVisible={setPlatFormVisible}
-                                      setPlatFormValue={setPlatFormValue}
-                                      setSelectPathVisible={setSelectPathVisible}
-                                      setSelectedPath={setSelectedPath}
-                                    />
-                                  </div>
-                                </div>
-                              })
-                            }
+                            })
+                          }}>
+                            {hidden ? <CaretRightOutlined /> : <CaretDownOutlined />}
+                            {alias || name}
                           </div>
                         </DragSortableItem>
                       </div>
                     </DropSortableItem>
+                    {
+                      !hidden && (Object.entries(initParams) || []).map((item: any) => {
+                        const { alias, name, widget, onHidden } = item[1];
+                        const { type } = widget;
+                        if (onHidden || TagRadioList.includes(item[0])) return null;
+                        return <div className="flex-box param-item" key={`${id}@$@${item[0]}`}>
+                          <div className="icon-box flex-box">
+                            {_.toUpper(type.slice(0, 1))}
+                            {/* <BlockOutlined className="item-icon" /> */}
+                          </div>
+                          <div className="title-box">
+                            <div>{alias}</div>
+                            <span>{name}</span>
+                          </div>
+                          <div className="value-box">
+                            <FormatWidgetToDom
+                              id={`${id}@$@${item[0]}`}
+                              config={item}
+                              form={form}
+                              disabled={false}
+                              selectedOption={selectedOption}
+                              setSelectedOption={setSelectedOption}
+                              widgetChange={widgetChange}
+                              setEditorVisible={setEditorVisible}
+                              setEditorValue={setEditorValue}
+                              setPlatFormVisible={setPlatFormVisible}
+                              setPlatFormValue={setPlatFormValue}
+                              setSelectPathVisible={setSelectPathVisible}
+                              setSelectedPath={setSelectedPath}
+                            />
+                          </div>
+                        </div>
+                      })
+                    }
                   </div>
                 }
                 return null;
