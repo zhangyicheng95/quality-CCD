@@ -20,7 +20,7 @@ const MonacoEditor: React.FC<Props> = (props) => {
   const {
     id = '',
     defaultValue = '',
-    language = 'typescript',
+    language = 'json',
     visible,
     onOk,
     onCancel,
@@ -31,7 +31,19 @@ const MonacoEditor: React.FC<Props> = (props) => {
   });
   const [editorValue, setEditorValue] = useState('');
   const [editorLanguage, setEditorLanguage] = useState('');
+  useEffect(() => {
+    document.oncontextmenu = function (e) {/*屏蔽浏览器默认右键事件*/
+      e = e || window.event;
+      return false;
+    };
 
+    return () => {
+      document.oncontextmenu = function (e) {/*允许浏览器默认右键事件*/
+        e = e || window.event;
+        return true;
+      };
+    }
+  }, [])
   useEffect(() => {
     setEditorValue(defaultValue);
   }, [defaultValue]);
@@ -43,7 +55,7 @@ const MonacoEditor: React.FC<Props> = (props) => {
     <Modal
       title={
         <div className="flex-box">
-          monaco Editor
+          编辑器
           <Select
             style={{ width: 200, margin: '0 24px' }}
             onChange={(val) => {

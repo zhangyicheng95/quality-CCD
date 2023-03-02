@@ -1,9 +1,9 @@
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import styles from "./index.module.less";
 import { Button, message, Form, Input, Radio, Select, Checkbox, InputNumber, Switch, Modal, } from "antd";
 import * as _ from "lodash";
 import { updateParams } from "@/services/api";
-import { AppstoreOutlined, CaretDownOutlined, CaretRightOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import { AppstoreOutlined, CaretDownOutlined, CaretRightOutlined, MinusCircleOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import PrimaryTitle from "@/components/PrimaryTitle";
 import IpInput from "@/components/IpInputGroup";
 import SliderGroup from "@/components/SliderGroup";
@@ -17,9 +17,10 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 import DropSortableItem from "@/components/DragComponents/DropSortableItem";
 import DragSortableItem from "@/components/DragComponents/DragSortableItem";
 import Measurement from "@/components/Measurement";
-import { guid } from "@/utils/utils";
+import { formatJson, guid } from "@/utils/utils";
 
 const FormItem = Form.Item;
+const { confirm } = Modal;
 const Control: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
   const { params: paramsData } = initialState;
@@ -52,7 +53,7 @@ const Control: React.FC<any> = (props: any) => {
       if (!!configList?.length) {
         setConfigList(configList);
         if (!!selectedConfig) {
-          const { data, listType = 'line' } = configList.filter((i: any) => i.value === selectedConfig)[0];
+          const { data, listType = 'line' } = configList.filter((i: any) => i.value === selectedConfig)[0] || {};
           setListType(listType);
           setFieldsValue({ 'config-value': selectedConfig });
           if (!!data?.length) {
@@ -78,9 +79,38 @@ const Control: React.FC<any> = (props: any) => {
           return Object.assign({}, item, {
             config: Object.assign({}, item.config, {
               initParams: Object.assign({}, item.config.initParams, {
-                [key[1]]: Object.assign({}, item.config.initParams[key[1]], _.isObject(value) ? value : {
-                  value
-                })
+                [key[1]]: Object.assign({},
+                  item.config.initParams?.[key[1]], _.isObject(value) ? value : { value },
+                  item.config.initParams[key[1]]?.widget?.type === 'codeEditor'
+                    ? {
+                      value: value?.language === 'json' ?
+                        (
+                          _.isString(value?.value) ?
+                            JSON.parse(value?.value) :
+                            value?.value
+                        )
+                        :
+                        value?.value,
+                    }
+                    : {},
+                  item.config.initParams[key[1]]?.widget?.type === 'platForm'
+                    ? {
+                      platFormValue: value?.platFormValue,
+                    }
+                    : {},
+                  // item.config.initParams[key[1]]?.widget?.type === 'TagRadio' ? {
+                  //   widget: Object.assign({}, item.config.initParams[key[1]]?.widget, {
+                  //     options: item.config.initParams[key[1]]?.widget?.options?.map((option: any) => {
+                  //       if (option.name === values[cent[0]]) {
+                  //         return Object.assign({}, option, {
+                  //           children: selectedOption
+                  //         })
+                  //       }
+                  //       return option;
+                  //     })
+                  //   })
+                  // } : {}
+                )
               })
             })
           })
@@ -191,6 +221,57 @@ const Control: React.FC<any> = (props: any) => {
         errorFields?.length && message.error(`${errorFields[0]?.errors[0]} 是必填项`);
       });
   };
+  // 配置文件改变
+  const selectUpdate = (val: any, option: any) => {
+    const { data, listType = 'line' } = option;
+    const result = data.map((item: any, index: number) => {
+      if (!item.sortId || item.sortId !== 0) {
+        return { ...item, sortId: index };
+      }
+      return item;
+    });
+
+    const params = {
+      id: paramData.id,
+      data: Object.assign({}, paramData, {
+        flowData: Object.assign({}, paramData.flowData, {
+          nodes: result
+        }),
+        configList: configList.map((item: any) => {
+          if (item.value === val?.value) {
+            return Object.assign({}, item, { data: result });
+          }
+          return item;
+        }),
+        selectedConfig: val?.value,
+      })
+    };
+    updateParams(params).then((res: any) => {
+      if (res && res.code === 'SUCCESS') {
+        setInitialState({ ...initialState, params: params.data });
+        message.success('修改成功');
+      } else {
+        message.error(res?.msg || res?.message || '接口异常');
+      }
+    });
+  };
+  // 配置文件列表删除
+  const selectDelete = (val: string) => {
+    const params = {
+      id: paramData.id,
+      data: Object.assign({}, paramData, {
+        configList: configList.filter((item: any) => item.value !== val),
+      })
+    };
+    updateParams(params).then((res: any) => {
+      if (res && res.code === 'SUCCESS') {
+        setInitialState({ ...initialState, params: params.data });
+        message.success('修改成功');
+      } else {
+        message.error(res?.msg || res?.message || '接口异常');
+      }
+    });
+  }
 
   return (
     <div className={`${styles.control} flex-box page-size background-ubv`}>
@@ -221,44 +302,48 @@ const Control: React.FC<any> = (props: any) => {
               <Select
                 style={{ width: '100%' }}
                 size="large"
-                options={configList}
+                // options={configList}
                 placeholder="方案ID"
-                onChange={(val, option: any) => {
-                  const { data, listType = 'line' } = option;
-                  setListType(listType);
-                  const result = data.map((item: any, index: number) => {
-                    if (!item.sortId || item.sortId !== 0) {
-                      return { ...item, sortId: index };
-                    }
-                    return item;
-                  });
-                  setNodeList(result);
-
-                  const params = {
-                    id: paramData.id,
-                    data: Object.assign({}, paramData, {
-                      flowData: Object.assign({}, paramData.flowData, {
-                        nodes: result
-                      }),
-                      configList: configList.map((item: any) => {
-                        if (item.value === val) {
-                          return Object.assign({}, item, { data: result });
-                        }
-                        return item;
-                      }),
-                      selectedConfig: val,
-                    })
-                  };
-                  updateParams(params).then((res: any) => {
-                    if (res && res.code === 'SUCCESS') {
-                      setInitialState(params.data);
-                      message.success('修改成功');
-                    } else {
-                      message.error(res?.msg || res?.message || '接口异常');
-                    }
-                  });
+                showSearch
+                labelInValue
+                filterOption={(inputValue: any, option: any) => {
+                  return option?.label?.indexOf(inputValue) > -1;
                 }}
-              />
+                onChange={(val, option: any) => {
+                  selectUpdate(val, option?.option)
+                }}
+              >
+                {
+                  configList.map((item: any) => {
+                    const { value, label } = item;
+                    return <Select.Option value={value} option={item} key={value}>
+                      <div className="flex-box">
+                        <div style={{ flex: 1 }}>{label}</div>
+                        {
+                          paramsData?.selectedConfig === value ?
+                            null
+                            :
+                            <MinusCircleOutlined onClick={(e) => {
+                              // 组织鼠标击穿
+                              e.preventDefault();
+                              e.stopPropagation();
+                              confirm({
+                                title: <div>确定删除配置 <span style={{ color: "#1890ff" }}>{label}</span>?</div>,
+                                content: '删除后无法恢复',
+                                onOk() {
+                                  selectDelete(value);
+                                },
+                                onCancel() {
+
+                                },
+                              });
+                            }} />
+                        }
+                      </div>
+                    </Select.Option>
+                  })
+                }
+              </Select>
             </Form.Item>
             {
               (nodeList || []).sort((a: any, b: any) => a.sortId - b.sortId).map((node: any, index: any) => {
@@ -460,6 +545,7 @@ const FormatWidgetToDom = (props: any) => {
     require,
     type,
     value,
+    language = 'json',
     localPath,
     description,
     widget = {},
@@ -780,13 +866,24 @@ const FormatWidgetToDom = (props: any) => {
       );
     case 'codeEditor':
       return (
-        <FormItem name={`${name}$$${guid()}`} tooltip={description}>
+        <FormItem name={`${name}$$${guid()}`} tooltip={description} className="codeEditor">
+          {
+            !!value ?
+              <Input.TextArea
+                autoSize={{ maxRows: 5 }}
+                value={(language === 'json' && _.isObject(value)) ? formatJson(value) : value}
+                style={{ marginBottom: 8 }}
+                disabled
+              />
+              :
+              null
+          }
           <Button
             onClick={() => {
               setEditorValue({
                 id: name,
-                value: config[1].value,
-                language: config[1].language,
+                value: (language === 'json' && _.isObject(value)) ? formatJson(value) : value,
+                language: language || 'json',
               });
               setEditorVisible(true);
             }}

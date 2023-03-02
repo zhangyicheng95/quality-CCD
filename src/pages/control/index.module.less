@@ -25,6 +25,14 @@
       padding: 0 24px;
       overflow-y: auto;
 
+      .ant-select-selector {
+        .ant-select-selection-item {
+          .anticon-minus-circle {
+            display: none;
+          }
+        }
+      }
+
       .block {
         float: left;
         width: 49%;
@@ -113,6 +121,12 @@
 
               .dir {
                 gap: 12px;
+              }
+            }
+
+            .codeEditor {
+              .ant-form-item-control {
+                height: auto;
               }
             }
           }
