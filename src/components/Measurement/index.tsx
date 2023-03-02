@@ -11,7 +11,7 @@ interface Props {
   titleColor?: Boolean,
 };
 
-const ROIMark: React.FC<Props> = (props: any) => {
+const Measurement: React.FC<Props> = (props: any) => {
   const { onChange = null, value = '', disabled, className = '', titleColor } = props;
   const refnum_0 = useRef();
   const refnum_1 = useRef();
@@ -98,4 +98,4 @@ const ROIMark: React.FC<Props> = (props: any) => {
   )
 };
 
-export default ROIMark;
+export default Measurement;

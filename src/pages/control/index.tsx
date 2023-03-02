@@ -16,7 +16,7 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import DropSortableItem from "@/components/DragComponents/DropSortableItem";
 import DragSortableItem from "@/components/DragComponents/DragSortableItem";
-import ROIMark from "@/components/ROIMark";
+import Measurement from "@/components/Measurement";
 import { guid } from "@/utils/utils";
 
 const FormItem = Form.Item;
@@ -835,7 +835,7 @@ const FormatWidgetToDom = (props: any) => {
           </div>
         </>
       );
-    case 'ROIMark':
+    case 'Measurement':
       return (
         <Form.Item
           name={`${name}$$${guid()}`}
@@ -843,7 +843,7 @@ const FormatWidgetToDom = (props: any) => {
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
         >
-          <ROIMark
+          <Measurement
             disabled={disabled}
             onChange={(val: any) => {
               widgetChange(name, val);
