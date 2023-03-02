@@ -307,7 +307,7 @@ const Control: React.FC<any> = (props: any) => {
                 showSearch
                 labelInValue
                 filterOption={(inputValue: any, option: any) => {
-                  return option?.label?.indexOf(inputValue) > -1;
+                  return option?.option?.label?.indexOf(inputValue) > -1;
                 }}
                 onChange={(val, option: any) => {
                   selectUpdate(val, option?.option)
