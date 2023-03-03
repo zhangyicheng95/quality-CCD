@@ -149,10 +149,10 @@ const Home: React.FC<any> = (props: any) => {
                           {
                             label: '显示基本信息',
                             key: 'slider-2',
-                            disabled: gridHomeList.filter((i: any) => i.i === 'slider-2')[0]?.w !== 0,
+                            disabled: gridHomeList?.filter((i: any) => i.i === 'slider-2')[0]?.w !== 0,
                             onClick: () =>
                               setGridHomeList((prev: any) => {
-                                return prev.map((item: any) => {
+                                return prev?.map((item: any) => {
                                   if (item.i === 'slider-2') {
                                     return {
                                       ...item,
@@ -169,10 +169,10 @@ const Home: React.FC<any> = (props: any) => {
                           {
                             label: '显示实时信息',
                             key: 'slider-3',
-                            disabled: gridHomeList.filter((i: any) => i.i === 'slider-3')[0]?.w !== 0,
+                            disabled: gridHomeList?.filter((i: any) => i.i === 'slider-3')[0]?.w !== 0,
                             onClick: () =>
                               setGridHomeList((prev: any) => {
-                                return prev.map((item: any) => {
+                                return prev?.map((item: any) => {
                                   if (item.i === 'slider-3') {
                                     return {
                                       ...item,
@@ -189,10 +189,10 @@ const Home: React.FC<any> = (props: any) => {
                           {
                             label: '显示方案列表',
                             key: 'slider-4',
-                            disabled: gridHomeList.filter((i: any) => i.i === 'slider-4')[0]?.w !== 0,
+                            disabled: gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w !== 0,
                             onClick: () =>
                               setGridHomeList((prev: any) => {
-                                return prev.map((item: any) => {
+                                return prev?.map((item: any) => {
                                   if (item.i === 'slider-4') {
                                     return {
                                       ...item,
@@ -209,10 +209,10 @@ const Home: React.FC<any> = (props: any) => {
                           {
                             label: '显示日志信息',
                             key: 'footer-1',
-                            disabled: gridHomeList.filter((i: any) => i.i === 'footer-1')[0]?.w !== 0,
+                            disabled: gridHomeList?.filter((i: any) => i.i === 'footer-1')[0]?.w !== 0,
                             onClick: () =>
                               setGridHomeList((prev: any) => {
-                                return prev.map((item: any) => {
+                                return prev?.map((item: any) => {
                                   if (item.i === 'footer-1') {
                                     return {
                                       ...item,
@@ -229,10 +229,10 @@ const Home: React.FC<any> = (props: any) => {
                           {
                             label: '显示错误信息',
                             key: 'footer-2',
-                            disabled: gridHomeList.filter((i: any) => i.i === 'footer-2')[0]?.w !== 0,
+                            disabled: gridHomeList?.filter((i: any) => i.i === 'footer-2')[0]?.w !== 0,
                             onClick: () =>
                               setGridHomeList((prev: any) => {
-                                return prev.map((item: any) => {
+                                return prev?.map((item: any) => {
                                   if (item.i === 'footer-2') {
                                     return {
                                       ...item,
@@ -364,7 +364,7 @@ const Home: React.FC<any> = (props: any) => {
                       title="确认删除 基本信息 窗口吗?"
                       onConfirm={() => {
                         setGridHomeList((prev: any) => {
-                          return prev.map((item: any) => {
+                          return prev?.map((item: any) => {
                             if (item.i === 'slider-2') {
                               return {
                                 ...item,
@@ -403,7 +403,7 @@ const Home: React.FC<any> = (props: any) => {
             {paramData?.commonInfo?.useInfo}
           </div>
           {/* {
-          Object.entries({ orderId: 'xxxxxxxxx-xxx' }).map((item: any, index: number) => {
+          Object.entries({ orderId: 'xxxxxxxxx-xxx' })?.map((item: any, index: number) => {
             return <TooltipDiv title={item[1]} className="info-item" key={item[0]}>
               订单号：{item[1]}
             </TooltipDiv>
@@ -443,7 +443,7 @@ const Home: React.FC<any> = (props: any) => {
                       title="确认删除 实时信息 窗口吗?"
                       onConfirm={() => {
                         setGridHomeList((prev: any) => {
-                          return prev.map((item: any) => {
+                          return prev?.map((item: any) => {
                             if (item.i === 'slider-3') {
                               return {
                                 ...item,
@@ -470,7 +470,7 @@ const Home: React.FC<any> = (props: any) => {
         }
         <div className="info-box-content">
           {/* {
-          Object.entries(historyData).map((item: any, index: number) => {
+          Object.entries(historyData)?.map((item: any, index: number) => {
             return <div className="message-item" key={index} onClick={() => {
               // setHistoryImg(item[1]);
               // setHistoryImgTitle(item[0]);
@@ -513,7 +513,7 @@ const Home: React.FC<any> = (props: any) => {
                       title="确认删除 方案列表 窗口吗?"
                       onConfirm={() => {
                         setGridHomeList((prev: any) => {
-                          return prev.map((item: any) => {
+                          return prev?.map((item: any) => {
                             if (item.i === 'slider-4') {
                               return {
                                 ...item,
@@ -542,7 +542,7 @@ const Home: React.FC<any> = (props: any) => {
           display: 'flex', alignItems: 'center', padding: '0 8px'
         }}>
           <div
-            className={`flex-box-center tabs-box-item-box ${gridHomeList.filter((i: any) => i.i === 'slider-4')[0]?.w >= 20 ? 'tabs-box-item-box-rows' : ''}`}
+            className={`flex-box-center tabs-box-item-box ${gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 20 ? 'tabs-box-item-box-rows' : ''}`}
             onClick={() => {
               setAddItemsVisible(true);
             }}
@@ -550,10 +550,10 @@ const Home: React.FC<any> = (props: any) => {
             +
           </div>
           {
-            JSON.parse(localStorage.getItem('ipList') || "[]").map((item: any, index: number) => {
+            JSON.parse(localStorage.getItem('ipList') || "[]")?.map((item: any, index: number) => {
               const { label, key } = item;
               return <div
-                className={`flex-box tabs-box-item-box ${localStorage.getItem('ipString') === key ? 'active' : ''} ${gridHomeList.filter((i: any) => i.i === 'slider-4')[0]?.w >= 3 ? 'tabs-box-item-box-rows' : ''}`}
+                className={`flex-box tabs-box-item-box ${localStorage.getItem('ipString') === key ? 'active' : ''} ${gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 3 ? 'tabs-box-item-box-rows' : ''}`}
                 key={`tabs-${key}`}
               >
                 <div onClick={() => {
@@ -561,7 +561,7 @@ const Home: React.FC<any> = (props: any) => {
                   window.location.reload();
                 }} className="tabs-box-item-title">
                   {
-                    projectStatus.filter((i: any) => i.value === item.key)[0]?.running ?
+                    projectStatus?.filter((i: any) => i.value === item.key)[0]?.running ?
                       <div className="flex-box" style={{ gap: 8 }}>
                         <Badge color={'green'} />
                         {label}
@@ -573,12 +573,12 @@ const Home: React.FC<any> = (props: any) => {
                 <CloseOutlined onClick={() => {
                   let newActiveKey: string = localStorage.getItem('ipString') || '';
                   let lastIndex = -1;
-                  JSON.parse(localStorage.getItem('ipList') || "[]").forEach((item: any, i: any) => {
+                  JSON.parse(localStorage.getItem('ipList') || "[]")?.forEach((item: any, i: any) => {
                     if (item.key === key) {
                       lastIndex = i - 1;
                     }
                   });
-                  const newPanes = JSON.parse(localStorage.getItem('ipList') || "[]").filter((item: any) => item.key !== key);
+                  const newPanes = JSON.parse(localStorage.getItem('ipList') || "[]")?.filter((item: any) => item.key !== key);
                   if (newPanes.length && newActiveKey === key) {
                     if (lastIndex >= 0) {
                       newActiveKey = newPanes[lastIndex]?.key;
@@ -627,7 +627,7 @@ const Home: React.FC<any> = (props: any) => {
                       title="确认删除 日志信息 窗口吗?"
                       onConfirm={() => {
                         setGridHomeList((prev: any) => {
-                          return prev.map((item: any) => {
+                          return prev?.map((item: any) => {
                             if (item.i === 'footer-1') {
                               return {
                                 ...item,
@@ -693,7 +693,7 @@ const Home: React.FC<any> = (props: any) => {
                       title="确认删除 错误信息 窗口吗?"
                       onConfirm={() => {
                         setGridHomeList((prev: any) => {
-                          return prev.map((item: any) => {
+                          return prev?.map((item: any) => {
                             if (item.i === 'footer-2') {
                               return {
                                 ...item,
@@ -720,7 +720,7 @@ const Home: React.FC<any> = (props: any) => {
         }
         <div className="content-item-span">
           {/* <BasicScrollBar data={errorData}> */}
-          {errorData.map((log: any, index: number) => {
+          {errorData?.map((log: any, index: number) => {
             const { color, node_name, nid, message, time } = log;
             return (
               <div className="log-item flex-box-start" key={index}>
@@ -750,12 +750,12 @@ const Home: React.FC<any> = (props: any) => {
     let home: any = [],
       content: any = [];
 
-    data.forEach((item: any) => {
+    data?.forEach((item: any) => {
       if (['slider-1', 'slider-2', 'slider-3', 'slider-4', 'content', 'footer-1', 'footer-2'].includes(item.i)) {
         home = home.concat({
           ...item,
-          minW: 1,
-          minH: 2,
+          minW: 0,
+          minH: 0,
           maxW: 100,
           maxH: 100
         });
@@ -830,7 +830,7 @@ const Home: React.FC<any> = (props: any) => {
       { "i": "footer-2", "x": 0, "y": 26, "w": 7, "h": 17, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }
     ], content = {}, footerSelectList, contentHeader = {} } = contentData;
     const { nodes } = flowData;
-    const list = nodes.map((node: any) => {
+    const list = nodes?.map((node: any) => {
       const { name, alias, id, ports = {} } = node;
       const { items = [] } = ports;
       return {
@@ -838,8 +838,8 @@ const Home: React.FC<any> = (props: any) => {
         value: id,
         title: `${alias || name}`,
         label: `${alias || name}`,
-        children: items.filter((i: any) => i.group === 'bottom')
-          .map((port: any) => {
+        children: items?.filter((i: any) => i.group === 'bottom')
+          ?.map((port: any) => {
             const { label } = port;
             const { name, alias } = label;
             const value = alias || name;
@@ -856,11 +856,11 @@ const Home: React.FC<any> = (props: any) => {
     let newParams = paramsData;
     if (!_.isObject(contentHeader) || _.isEmpty(contentHeader)) {
       const header = {};
-      home.forEach((item: any) => header[item.i] = item.i !== 'slider-4');
+      home?.forEach((item: any) => header[item.i] = item.i !== 'slider-4');
       if (_.isArray(content)) {
-        content.forEach((item: any) => header[item.id] = true);
+        content?.forEach((item: any) => header[item.id] = true);
       } else {
-        Object.entries(content).forEach((item: any) => {
+        Object.entries(content)?.forEach((item: any) => {
           const { value, type } = item[1];
           const id = `${value?.join('$$')}$$${type}`;
           header[id] = true;
@@ -889,7 +889,7 @@ const Home: React.FC<any> = (props: any) => {
       setAddContentList(content);
       setParamData(newParams);
     } else {
-      const result = Object.entries(content).map((item: any) => {
+      const result = Object.entries(content)?.map((item: any) => {
         const { value, type, size } = item[1];
         const id = `${value?.join('$$')}$$${type}`;
         return {
@@ -945,7 +945,7 @@ const Home: React.FC<any> = (props: any) => {
       let listData: any = [],
         layoutData: any = [],
         resultData: any = {};
-      addContentList.forEach((item: any, index: number) => {
+      addContentList?.forEach((item: any, index: number) => {
         const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction } = item;
         const id = key?.split('$$')[0];
         const gridValue = gridContentList[id] || {};
@@ -955,7 +955,7 @@ const Home: React.FC<any> = (props: any) => {
         const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
         const { alias, name, ports = {} } = parent[0] || {};
         const { items = [] } = ports;
-        const SecLabel = items.filter((i: any) => i.group === 'bottom' && (i?.label?.name === value[1]))[0];
+        const SecLabel = items?.filter((i: any) => i.group === 'bottom' && (i?.label?.name === value[1]))[0];
 
         listData = listData.concat(
           <div key={key} className=" drag-item-content-box background-ubv">
@@ -1002,7 +1002,7 @@ const Home: React.FC<any> = (props: any) => {
                         <Popconfirm
                           title="确认删除监控窗口吗?"
                           onConfirm={() => {
-                            const result = addContentList.filter((item: any) => item.id !== key);
+                            const result = addContentList?.filter((item: any) => item.id !== key);
                             const params = Object.assign({}, paramData, {
                               contentData: Object.assign({}, paramData.contentData, { content: result }),
                             });
@@ -1187,7 +1187,7 @@ const Home: React.FC<any> = (props: any) => {
    * 处理日志信息
    */
   const logThrottleAndMerge = useThrottleAndMerge((logs) => {
-    // const logContent = logs.map((item: any) => item.data);
+    // const logContent = logs?.map((item: any) => item.data);
     // setLogStr((cur: any) => {
     //   const newLogs = [...logContent, ...cur];
     //   return newLogs.slice(0, 50);
@@ -1198,10 +1198,10 @@ const Home: React.FC<any> = (props: any) => {
    * 处理错误信息
    */
   const errorThrottleAndMerge = useThrottleAndMerge((errors) => {
-    // console.log('errors', errors, errors.filter((item: any) => isJSON(item.data)))
+    // console.log('errors', errors, errors?.filter((item: any) => isJSON(item.data)))
     // try {
     //   const errorList: any = [];
-    //   errors.filter((item: any) => isJSON(item.data))?.forEach((msg: any) => {
+    //   errors?.filter((item: any) => isJSON(item.data))?.forEach((msg: any) => {
     //     const result = JSON.parse(msg.data);
     //     const level = _.toLower(result.level);
     //     errorList.push({
@@ -1233,8 +1233,8 @@ const Home: React.FC<any> = (props: any) => {
   useEffect(() => {
     if ((started && ipString && dispatch && !ifCanEdit) || isVision) {
       // dispatch({ type: 'home/set', payload: {started: true} });
-      const logModal = gridHomeList.filter((item: any) => item.i === 'footer-1')[0],
-        errorModal = gridHomeList.filter((item: any) => item.i === 'footer-2')[0];
+      const logModal = gridHomeList?.filter((item: any) => item.i === 'footer-1')[0],
+        errorModal = gridHomeList?.filter((item: any) => item.i === 'footer-2')[0];
       // 没有日志窗口，就不开启日志的socket
       if (!!logModal && logModal?.w) {
         socketLogListen.listen(dispatch, logThrottleAndMerge);
@@ -1277,7 +1277,7 @@ const Home: React.FC<any> = (props: any) => {
       .then((values) => {
         const { value, type, yName, xName, fontSize, defaultImg, reverse, direction } = values;
         const id = `${value?.join('$$')}$$${type}`;
-        if (_.isEmpty(editWindowData) && addContentList.filter((i: any) => i.id === id).length) {
+        if (_.isEmpty(editWindowData) && addContentList?.filter((i: any) => i.id === id).length) {
           message.error('已存在，请求改 “模块，节点，类型” 中的任一项');
           return;
         }
@@ -1292,7 +1292,7 @@ const Home: React.FC<any> = (props: any) => {
             yName, xName, defaultImg, fontSize, reverse, direction
           });
         } else {
-          result = (addContentList || []).map((item: any) => {
+          result = (addContentList || [])?.map((item: any) => {
             if (item.id === `${editWindowData?.value?.join('$$')}$$${editWindowData.type}`) {
               return {
                 id,
@@ -1360,7 +1360,7 @@ const Home: React.FC<any> = (props: any) => {
           useMemo(() => {
             return started ?
               (
-                !!footerData && (Object.entries(footerData) || []).map((item: any, index: number) => {
+                !!footerData && (Object.entries(footerData) || [])?.map((item: any, index: number) => {
                   const { Status } = item[1];
                   if (!footerSelectList.includes(item[0])) {
                     return null;
@@ -1372,7 +1372,7 @@ const Home: React.FC<any> = (props: any) => {
                       ifCanEdit && setFooterSelectVisible(true);
                     }}
                   >
-                    {`${nodeList.filter((i: any) => i.value === item[0])[0]?.label}: ${Status === 'running' ? '正常' : '异常'}`}
+                    {`${nodeList?.filter((i: any) => i.value === item[0])[0]?.label}: ${Status === 'running' ? '正常' : '异常'}`}
                   </div>
                 })
               )
@@ -1421,7 +1421,7 @@ const Home: React.FC<any> = (props: any) => {
                 value: 'footer_001',
                 title: '节点状态列表',
                 label: '节点状态列表',
-                children: nodeList.map((item: any) => _.omit(item, 'children'))
+                children: nodeList?.map((item: any) => _.omit(item, 'children'))
               }]}
             />
           </Modal>

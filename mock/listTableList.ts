@@ -2238,9 +2238,236 @@ const getProjectsList = (req: Request, res: Response) => {
           "useInfo": "尺寸测量与缺陷检测"
         },
         "contentData": {
-          "home": [{ "i": "slider-1", "x": 0, "y": 0, "w": 2, "h": 4, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }, { "i": "slider-2", "x": 0, "y": 4, "w": 2, "h": 9, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }, { "i": "slider-3", "x": 0, "y": 15, "w": 0, "h": 0, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }, { "i": "footer-1", "x": 2, "y": 14, "w": 10, "h": 4, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }, { "i": "footer-2", "x": 0, "y": 13, "w": 2, "h": 5, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }],
-          "content": { "45e063e4-8d3e-4e10-a1cd-48be2f78e97a": { "value": ["45e063e4-8d3e-4e10-a1cd-48be2f78e97a", "store_path"], "type": "alert", "size": { "i": "45e063e4-8d3e-4e10-a1cd-48be2f78e97a", "x": 2, "y": 0, "w": 5, "h": 8, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 } }, "b4f890bc-3254-4e03-a4bb-7e16b8d5534d": { "value": ["b4f890bc-3254-4e03-a4bb-7e16b8d5534d"], "size": { "i": "b4f890bc-3254-4e03-a4bb-7e16b8d5534d", "x": 2, "y": 8, "w": 5, "h": 6, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }, "type": "bar", "tab": "1", "yName": "qwe", "xName": "asd" }, "56284350-1bc5-465f-b7d4-2c7fbe94097d": { "value": ["56284350-1bc5-465f-b7d4-2c7fbe94097d", "store_path"], "size": { "i": "56284350-1bc5-465f-b7d4-2c7fbe94097d", "x": 7, "y": 0, "w": 5, "h": 8, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }, "type": "point", "tab": "1", "yName": "123", "xName": "sdf" }, "3e41e3d3-2ef4-44fc-9771-d352e634dfdf": { "value": ["3e41e3d3-2ef4-44fc-9771-d352e634dfdf", "heart"], "size": { "i": "3e41e3d3-2ef4-44fc-9771-d352e634dfdf", "x": 7, "y": 8, "w": 5, "h": 6, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }, "type": "line", "tab": "1", "yName": "sdfdfv", "xName": "r5y4gr" } },
-          "footerSelectList": ["45e063e4-8d3e-4e10-a1cd-48be2f78e97a"]
+          "home": [
+            {
+              "i": "slider-1",
+              "x": 0,
+              "y": 0,
+              "w": 16,
+              "h": 8,
+              "minW": 1,
+              "maxW": 12,
+              "minH": 2,
+              "maxH": 30
+            },
+            {
+              "i": "slider-2",
+              "x": 0,
+              "y": 8,
+              "w": 16,
+              "h": 14,
+              "minW": 1,
+              "maxW": 12,
+              "minH": 2,
+              "maxH": 30
+            },
+            {
+              "i": "slider-3",
+              "x": 0,
+              "y": 22,
+              "w": 0,
+              "h": 0,
+              "minW": 0,
+              "maxW": 12,
+              "minH": 0,
+              "maxH": 30
+            },
+            {
+              "i": "footer-1",
+              "x": 16,
+              "y": 28,
+              "w": 0,
+              "h": 0,
+              "minW": 0,
+              "maxW": 12,
+              "minH": 0,
+              "maxH": 30
+            },
+            {
+              "i": "footer-2",
+              "x": 0,
+              "y": 36,
+              "w": 16,
+              "h": 12,
+              "minW": 1,
+              "maxW": 12,
+              "minH": 2,
+              "maxH": 30
+            }
+          ],
+          "content": [
+            {
+              "value": [
+                "2a70d16c-b7b9-4c16-ab56-b3300868978a",
+                "filepath"
+              ],
+              "size": {
+                "i": "2a70d16c-b7b9-4c16-ab56-b3300868978a$$filepath$$img",
+                "x": 56,
+                "y": 0,
+                "w": 40,
+                "h": 16,
+                "minW": 1,
+                "maxW": 12,
+                "minH": 2,
+                "maxH": 30
+              },
+              "type": "img",
+              "tab": "1",
+              "id": "2a70d16c-b7b9-4c16-ab56-b3300868978a$$filepath$$img"
+            },
+            {
+              "value": [
+                "a1a484e9-62f5-47e1-8ee7-e7cc70321f83",
+                "filepath"
+              ],
+              "size": {
+                "i": "a1a484e9-62f5-47e1-8ee7-e7cc70321f83$$filepath$$img",
+                "x": 16,
+                "y": 0,
+                "w": 40,
+                "h": 16,
+                "minW": 1,
+                "maxW": 12,
+                "minH": 2,
+                "maxH": 30
+              },
+              "type": "img",
+              "tab": "1",
+              "id": "a1a484e9-62f5-47e1-8ee7-e7cc70321f83$$filepath$$img"
+            },
+            {
+              "value": [
+                "26f998e5-35fd-4df4-80d9-9c4d508258a8",
+                "data"
+              ],
+              "size": {
+                "i": "26f998e5-35fd-4df4-80d9-9c4d508258a8$$data$$line",
+                "x": 16,
+                "y": 34,
+                "w": 40,
+                "h": 14,
+                "minW": 1,
+                "maxW": 12,
+                "minH": 2,
+                "maxH": 30
+              },
+              "type": "line",
+              "tab": "1",
+              "yName": "y",
+              "xName": "x",
+              "id": "26f998e5-35fd-4df4-80d9-9c4d508258a8$$data$$line"
+            },
+            {
+              "value": [
+                "2ee757df-57c4-4c44-b5de-64393579dc27",
+                "data"
+              ],
+              "size": {
+                "i": "2ee757df-57c4-4c44-b5de-64393579dc27$$data$$line",
+                "x": 56,
+                "y": 34,
+                "w": 40,
+                "h": 14,
+                "minW": 1,
+                "maxW": 12,
+                "minH": 2,
+                "maxH": 30
+              },
+              "type": "line",
+              "tab": "1",
+              "yName": "y",
+              "xName": "x",
+              "id": "2ee757df-57c4-4c44-b5de-64393579dc27$$data$$line"
+            },
+            {
+              "id": "288dbda3-9ea2-426d-b858-9c7be9787909$$data$$table",
+              "value": [
+                "288dbda3-9ea2-426d-b858-9c7be9787909",
+                "data"
+              ],
+              "size": {
+                "i": "288dbda3-9ea2-426d-b858-9c7be9787909$$data$$table",
+                "x": 0,
+                "y": 22,
+                "w": 16,
+                "h": 14,
+                "minW": 1,
+                "maxW": 12,
+                "minH": 2,
+                "maxH": 30
+              },
+              "type": "table",
+              "tab": "1",
+              "yName": "\u8d44\u6e90\u540d\u79f0",
+              "xName": "\u72b6\u6001",
+              "fontSize": 14,
+              "reverse": false
+            },
+            {
+              "value": [
+                "6a14a210-10f7-4d3b-92e1-a6741a7783fd",
+                "data"
+              ],
+              "size": {
+                "i": "6a14a210-10f7-4d3b-92e1-a6741a7783fd$$data$$table2",
+                "x": 56,
+                "y": 16,
+                "w": 40,
+                "h": 18,
+                "minW": 1,
+                "maxW": 12,
+                "minH": 2,
+                "maxH": 30
+              },
+              "type": "table2",
+              "tab": "1",
+              "fontSize": 18,
+              "id": "6a14a210-10f7-4d3b-92e1-a6741a7783fd$$data$$table2"
+            },
+            {
+              "id": "a1a484e9-62f5-47e1-8ee7-e7cc70321f83$$filepath$$table2",
+              "value": [
+                "a1a484e9-62f5-47e1-8ee7-e7cc70321f83",
+                "filepath"
+              ],
+              "size": {
+                "i": "a1a484e9-62f5-47e1-8ee7-e7cc70321f83$$filepath$$table2",
+                "x": 16,
+                "y": 16,
+                "w": 40,
+                "h": 18,
+                "minW": 1,
+                "maxW": 12,
+                "minH": 2,
+                "maxH": 30
+              },
+              "type": "table2",
+              "tab": "1",
+              "fontSize": 18,
+              "reverse": false
+            }
+          ],
+          "footerSelectList": [
+            "4385f168-11c3-4fbd-8f10-968cf710723a",
+            "a7e08edd-dd68-4a29-b612-fa448dfab080",
+            "00693b57-6c82-4250-8e78-4b06c92202bb"
+          ],
+          "theme": "realDark",
+          "contentHeader": {
+            "slider-1": true,
+            "slider-2": true,
+            "slider-3": true,
+            "footer-1": true,
+            "footer-2": true,
+            "2a70d16c-b7b9-4c16-ab56-b3300868978a$$filepath$$img": true,
+            "a1a484e9-62f5-47e1-8ee7-e7cc70321f83$$filepath$$img": true,
+            "26f998e5-35fd-4df4-80d9-9c4d508258a8$$data$$line": true,
+            "2ee757df-57c4-4c44-b5de-64393579dc27$$data$$line": true,
+            "288dbda3-9ea2-426d-b858-9c7be9787909$$data$$table": true,
+            "6a14a210-10f7-4d3b-92e1-a6741a7783fd$$data$$table2": true,
+            "0e8b8d48-f657-459f-adce-38b971b69c30$$data$$table2": true
+          }
         },
         "environment": {
           "serviceIp": "localhost",
@@ -4481,7 +4708,7 @@ const getProjectsList = (req: Request, res: Response) => {
           "useInfo": "尺寸测量与缺陷检测"
         },
         "contentData": {
-          "home": [{ "i": "slider-1", "x": 0, "y": 0, "w": 2, "h": 4, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }, { "i": "slider-2", "x": 0, "y": 4, "w": 2, "h": 9, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }, { "i": "slider-3", "x": 0, "y": 15, "w": 0, "h": 0, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }, { "i": "footer-1", "x": 2, "y": 14, "w": 10, "h": 4, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }, { "i": "footer-2", "x": 0, "y": 13, "w": 2, "h": 5, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }],
+          "home": [{ "i": "slider-1", "x": 0, "y": 0, "w": 2, "h": 4, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }, { "i": "slider-2", "x": 0, "y": 4, "w": 2, "h": 9, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }, { "i": "slider-3", "x": 0, "y": 15, "w": 0, "h": 0, "minW": 0, "maxW": 12, "minH": 0, "maxH": 30 }, { "i": "footer-1", "x": 2, "y": 14, "w": 10, "h": 4, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }, { "i": "footer-2", "x": 0, "y": 13, "w": 2, "h": 5, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }],
           "content": { "45e063e4-8d3e-4e10-a1cd-48be2f78e97a": { "value": ["45e063e4-8d3e-4e10-a1cd-48be2f78e97a", "store_path"], "type": "alert", "size": { "i": "45e063e4-8d3e-4e10-a1cd-48be2f78e97a", "x": 2, "y": 0, "w": 5, "h": 8, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 } }, "b4f890bc-3254-4e03-a4bb-7e16b8d5534d": { "value": ["b4f890bc-3254-4e03-a4bb-7e16b8d5534d"], "size": { "i": "b4f890bc-3254-4e03-a4bb-7e16b8d5534d", "x": 2, "y": 8, "w": 5, "h": 6, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }, "type": "bar", "tab": "1", "yName": "qwe", "xName": "asd" }, "56284350-1bc5-465f-b7d4-2c7fbe94097d": { "value": ["56284350-1bc5-465f-b7d4-2c7fbe94097d", "store_path"], "size": { "i": "56284350-1bc5-465f-b7d4-2c7fbe94097d", "x": 7, "y": 0, "w": 5, "h": 8, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }, "type": "point", "tab": "1", "yName": "123", "xName": "sdf" }, "3e41e3d3-2ef4-44fc-9771-d352e634dfdf": { "value": ["3e41e3d3-2ef4-44fc-9771-d352e634dfdf", "heart"], "size": { "i": "3e41e3d3-2ef4-44fc-9771-d352e634dfdf", "x": 7, "y": 8, "w": 5, "h": 6, "minW": 1, "maxW": 12, "minH": 2, "maxH": 30 }, "type": "line", "tab": "1", "yName": "sdfdfv", "xName": "r5y4gr" } },
           "footerSelectList": ["45e063e4-8d3e-4e10-a1cd-48be2f78e97a"]
         },
@@ -8549,9 +8776,9 @@ const getParams = (req: Request, res: Response) => {
         "home": [
           { "i": "slider-1", "x": 0, "y": 0, "w": 9, "h": 10, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
           { "i": "slider-2", "x": 0, "y": 10, "w": 9, "h": 22, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
-          { "i": "slider-3", "x": 0, "y": 15, "w": 0, "h": 0, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
+          { "i": "slider-3", "x": 0, "y": 15, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
           { "i": "slider-4", "x": 9, "y": 0, "w": 87, "h": 2, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
-          { "i": "footer-1", "x": 2, "y": 14, "w": 0, "h": 0, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
+          { "i": "footer-1", "x": 2, "y": 14, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
           { "i": "footer-2", "x": 0, "y": 32, "w": 9, "h": 12, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }
         ]
         ,

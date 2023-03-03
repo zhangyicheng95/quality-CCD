@@ -87,12 +87,12 @@ const Control: React.FC<any> = (props: any) => {
       return prev.map((item: any, index: any) => {
         if (item.id === key[0]) {
           return Object.assign({}, item, {
-            config: Object.assign({}, item.config, {
-              initParams: Object.assign({}, item.config.initParams, {
+            config: Object.assign({}, item?.config, {
+              initParams: Object.assign({}, item?.config?.initParams, {
                 [key[1]]: Object.assign({},
-                  item.config.initParams?.[key[1]],
-                  (_.isObject(value) && item.config.initParams[key[1]]?.widget?.type !== "Measurement") ? value : { value },
-                  item.config.initParams[key[1]]?.widget?.type === 'codeEditor'
+                  item?.config?.initParams?.[key[1]],
+                  (_.isObject(value) && item?.config?.initParams[key[1]]?.widget?.type !== "Measurement") ? value : { value },
+                  item?.config?.initParams?.[key[1]]?.widget?.type === 'codeEditor'
                     ? {
                       value: value?.language === 'json' ?
                         (
@@ -104,9 +104,9 @@ const Control: React.FC<any> = (props: any) => {
                         value?.value,
                     }
                     : {},
-                  // item.config.initParams[key[1]]?.widget?.type === 'TagRadio' ? {
-                  //   widget: Object.assign({}, item.config.initParams[key[1]]?.widget, {
-                  //     options: item.config.initParams[key[1]]?.widget?.options?.map((option: any) => {
+                  // item?.config?.initParams?.[key[1]]?.widget?.type === 'TagRadio' ? {
+                  //   widget: Object.assign({}, item?.config?.initParams?.[key[1]]?.widget, {
+                  //     options: item?.config?.initParams?.[key[1]]?.widget?.options?.map((option: any) => {
                   //       if (option.name === values[cent[0]]) {
                   //         return Object.assign({}, option, {
                   //           children: selectedOption
