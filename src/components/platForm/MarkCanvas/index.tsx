@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Menu, message, Popover, Spin } from 'antd';
+import { Menu, message, Popover, Spin } from 'antd';
 import { PictureOutlined } from "@ant-design/icons";
 // @ts-ignore
 import { saveAs } from "file-saver";
+import html2canvas from 'html2canvas';
 import * as _ from "lodash";
 import styles from "./index.less";
 import markIcon from '@/assets/imgs/marker.png';
@@ -13,8 +14,6 @@ import plusIcon from '@/assets/imgs/magnifier-plus.svg';
 import minusIcon from '@/assets/imgs/magnifier-minus.svg';
 import circleIcon from '@/assets/imgs/circle.svg';
 import polyLineIcon from '@/assets/imgs/poly-line.svg';
-import polygonIcon from '@/assets/imgs/polygon.svg';
-import lineIcon from '@/assets/imgs/line.svg';
 import rectIcon from '@/assets/imgs/rect.svg';
 import aimIcon from '@/assets/imgs/aim.svg';
 import loadIcon from '@/assets/imgs/down-load.svg';
@@ -46,7 +45,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     const width = dom?.clientWidth,
       height = dom?.clientHeight;
     img = new Image();
-    img.src = localPath.indexOf('http') === 0 ? localPath : `${BASE_IP}file${(localPath.indexOf('\\') === 0 || localPath.indexOf('/') === 0) ? '' : '\\'}${localPath}`;
+    img.src = localPath?.indexOf('http') === 0 ? localPath : `${BASE_IP}file${(localPath?.indexOf('\\') === 0 || localPath?.indexOf('/') === 0) ? '' : '\\'}${localPath}`;
     img.title = 'img.png';
     img.width = width;
     img.height = height;
@@ -144,7 +143,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       } else if (type === 'POLYGON') {
         let xList: any = [],
           yList: any = [];
-        data.forEach((item: any) => {
+        data?.forEach((item: any) => {
           xList.push(item.x);
           yList.push(item.y);
         })
@@ -327,54 +326,56 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       );
       gFirstTextLayer.addText(gFirstText);
     };
-    (value || []).forEach((plat: any) => {
-      const { type, id, shape, props, style, ...rest } = plat;
-      // const position = type === 'RECT' ? feature.getPoints()[1] :
-      // type === 'CIRCLE' ? { x: shape.cx + shape.r, y: shape.cy - shape.r } :
-      //   type === 'POLYGON' ? location : {},
-      if (type === "LINE") {
-        const gFirstFeatureLine = new AILabel.Feature.Line(
-          id, shape, props, style
-        );
-        gFirstFeatureLayer.addFeature(gFirstFeatureLine);
-      } else if (type === "POLYLINE") {
-        const polylineFeature = new AILabel.Feature.Polyline(
-          id, shape, props, style
-        );
-        gFirstFeatureLayer.addFeature(polylineFeature);
-      } else if (type === "RECT") {
-        const gFirstFeatureRect = new AILabel.Feature.Rect(
-          id, shape, props, style
-        );
-        gFirstFeatureLayer.addFeature(gFirstFeatureRect);
-        addFeatureText(shape, props.textId, props.label);
-      } else if (type === "POLYGON") {
-        const gFirstFeaturePolygon = new AILabel.Feature.Polygon(
-          id, shape, props, style
-        );
-        gFirstFeatureLayer.addFeature(gFirstFeaturePolygon);
-      } else if (type === "CIRCLE") {
-        const gFirstFeatureCircle = new AILabel.Feature.Circle(
-          id, shape, props, style
-        );
-        gFirstFeatureLayer.addFeature(gFirstFeatureCircle);
-        addFeatureText({ x: shape.cx - shape.r, y: shape.cy - shape.r }, props.textId, props.label);
-      } else if (type === "POINT") {
-        const polylineFeature = new AILabel.Feature.Point(
-          id, shape, props, style
-        );
-        gFirstFeatureLayer.addFeature(polylineFeature);
-      } else {
-        // const scale = gMap.getScale();
-        // const width = drawingStyle.lineWidth / scale;
-        console.log(rest)
-        // const drawMaskAction = new AILabel.Mask.Draw(
-        //   `${+new Date()}`, // id
-        //   { ...rest },
-        // );
-        // gFirstMaskLayer.addAction(drawMaskAction);
-      }
-    });
+    if (_.isArray(value)) {
+      (value || [])?.forEach((plat: any) => {
+        const { type, id, shape, props, style, ...rest } = plat;
+        // const position = type === 'RECT' ? feature.getPoints()[1] :
+        // type === 'CIRCLE' ? { x: shape.cx + shape.r, y: shape.cy - shape.r } :
+        //   type === 'POLYGON' ? location : {},
+        if (type === "LINE") {
+          const gFirstFeatureLine = new AILabel.Feature.Line(
+            id, shape, props, style
+          );
+          gFirstFeatureLayer.addFeature(gFirstFeatureLine);
+        } else if (type === "POLYLINE") {
+          const polylineFeature = new AILabel.Feature.Polyline(
+            id, shape, props, style
+          );
+          gFirstFeatureLayer.addFeature(polylineFeature);
+        } else if (type === "RECT") {
+          const gFirstFeatureRect = new AILabel.Feature.Rect(
+            id, shape, props, style
+          );
+          gFirstFeatureLayer.addFeature(gFirstFeatureRect);
+          addFeatureText(shape, props.textId, props.label);
+        } else if (type === "POLYGON") {
+          const gFirstFeaturePolygon = new AILabel.Feature.Polygon(
+            id, shape, props, style
+          );
+          gFirstFeatureLayer.addFeature(gFirstFeaturePolygon);
+        } else if (type === "CIRCLE") {
+          const gFirstFeatureCircle = new AILabel.Feature.Circle(
+            id, shape, props, style
+          );
+          gFirstFeatureLayer.addFeature(gFirstFeatureCircle);
+          addFeatureText({ x: shape.cx - shape.r, y: shape.cy - shape.r }, props.textId, props.label);
+        } else if (type === "POINT") {
+          const polylineFeature = new AILabel.Feature.Point(
+            id, shape, props, style
+          );
+          gFirstFeatureLayer.addFeature(polylineFeature);
+        } else {
+          // const scale = gMap.getScale();
+          // const width = drawingStyle.lineWidth / scale;
+          console.log(rest)
+          // const drawMaskAction = new AILabel.Mask.Draw(
+          //   `${+new Date()}`, // id
+          //   { ...rest },
+          // );
+          // gFirstMaskLayer.addAction(drawMaskAction);
+        }
+      });
+    }
     setGetDataFun(() => {
       const feat = getFeatures;
       const pen = getRle;

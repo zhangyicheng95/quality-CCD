@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import { Input } from 'antd';
+import { Input, InputNumber } from 'antd';
 import styles from './index.less'
 
 interface Props {
@@ -40,11 +40,16 @@ const IpInput: React.FC<Props> = (props: any) => {
     if (isNaN(number)) {
       return;
     };
+    setSelfValue((prev: any) => {
+      return Object.assign({}, prev, {
+        [type]: number
+      });
+    });
     let Obj: any = selfValue;
     Obj[`${type}`] = number;
-    setSelfValue(Obj);
     triggerChange(Object.values(Obj).join('.'));
   };
+
   const triggerChange = (changedValue: any) => {
     if (onChange) {
       onChange(changedValue);
@@ -70,18 +75,20 @@ const IpInput: React.FC<Props> = (props: any) => {
   }
 
   return (
-    <Input.Group compact className={styles.inputGroup} style={disabled ? { backgroundColor: 'rgba(255, 255, 255, 0.08)' } : {}}>
+    <div className={`flex-box-center ${styles.inputGroup}`} style={Object.assign({},
+      { height: '100%' },
+      disabled ? { backgroundColor: 'rgba(255, 255, 255, 0.08)' } : {}
+    )}>
       {
-        [0, 1, 2, 3].map((item: any, index: number) => {
+        Object.entries(selfValue).map((item: any, index: number) => {
           return <Fragment key={index}>
-            <Input
+            <InputNumber
               disabled={disabled}
-              style={{ width: '24%', border: 0, background: 'none' }}
               className={`self_input ${className}`}
               ref={refList[index]}
-              value={selfValue[`ip_${index}`]}
+              value={item[1]}
               maxLength={3}
-              onChange={(e) => { handleNumberChange(e, `ip_${index}`) }}
+              onBlur={(e) => { handleNumberChange(e, item[0]) }}
               onKeyUp={(e) => turnIpPOS(e, index)}
             />
             {
@@ -92,7 +99,7 @@ const IpInput: React.FC<Props> = (props: any) => {
           </Fragment>
         })
       }
-    </Input.Group>
+    </div>
   )
 };
 

@@ -33,7 +33,6 @@ const PlatFormModal: React.FC<Props> = (props) => {
         const data1 = (feat && feat().map((item: any) => _.omit(item, 'layer'))) || [];
         const data2 = (pen && pen()) || [];
         const params = Object.assign({}, data, { value: _.uniqBy(data1, 'id').concat(data2) });
-        console.log(JSON.stringify(params));
         onOk(params);
       }}
       onCancel={() => {

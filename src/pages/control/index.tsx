@@ -51,18 +51,28 @@ const Control: React.FC<any> = (props: any) => {
         return item;
       }));
       if (!!configList?.length) {
-        setConfigList(configList);
+        setConfigList(configList.map((config: any) => {
+          if (config.value === 'default') {
+            return {
+              ...config,
+              data: (config?.data?.length > nodes?.length) ? config?.data : nodes
+            };
+          };
+          return config;
+        }));
         if (!!selectedConfig) {
-          const { data, listType = 'line' } = configList.filter((i: any) => i.value === selectedConfig)[0] || {};
+          const { data, value, listType = 'line' } = configList?.filter((i: any) => i.value === selectedConfig)[0] || {};
           setListType(listType);
           setFieldsValue({ 'config-value': selectedConfig });
-          if (!!data?.length) {
-            setNodeList(data.map((item: any, index: number) => {
-              if (!item.sortId || item.sortId !== 0) {
-                return { ...item, sortId: index };
-              }
-              return item;
-            }));
+          if (!!data?.length && _.isArray(data)) {
+            setNodeList((value === 'default' ? ((data?.length > nodes?.length) ? data : nodes) : data)
+              .map((item: any, index: number) => {
+                if (!item.sortId || item.sortId !== 0) {
+                  return { ...item, sortId: index };
+                }
+                return item;
+              })
+            );
           }
         }
       } else {
@@ -80,7 +90,8 @@ const Control: React.FC<any> = (props: any) => {
             config: Object.assign({}, item.config, {
               initParams: Object.assign({}, item.config.initParams, {
                 [key[1]]: Object.assign({},
-                  item.config.initParams?.[key[1]], _.isObject(value) ? value : { value },
+                  item.config.initParams?.[key[1]],
+                  (_.isObject(value) && item.config.initParams[key[1]]?.widget?.type !== "Measurement") ? value : { value },
                   item.config.initParams[key[1]]?.widget?.type === 'codeEditor'
                     ? {
                       value: value?.language === 'json' ?
@@ -91,11 +102,6 @@ const Control: React.FC<any> = (props: any) => {
                         )
                         :
                         value?.value,
-                    }
-                    : {},
-                  item.config.initParams[key[1]]?.widget?.type === 'platForm'
-                    ? {
-                      platFormValue: value?.platFormValue,
                     }
                     : {},
                   // item.config.initParams[key[1]]?.widget?.type === 'TagRadio' ? {
@@ -352,7 +358,7 @@ const Control: React.FC<any> = (props: any) => {
                 if (!!initParams && !_.isEmpty(initParams)) {
                   if (Object.entries(initParams).filter((i: any) => !i[1].onHidden).length === 0) return null;
                   const TagRadioList = Object.entries(initParams).reduce((pre: any, cen: any) => {
-                    const { widget } = cen[1];
+                    const { widget } = cen[1] || {};
                     if (widget?.type === 'TagRadio') {
                       const ids = (widget?.options || []).reduce((optionP: any, optionC: any) => {
                         const { children } = optionC;
@@ -395,8 +401,8 @@ const Control: React.FC<any> = (props: any) => {
                     {
                       !hidden && (Object.entries(initParams) || []).map((item: any) => {
                         const { alias, name, widget, onHidden } = item[1];
-                        const { type } = widget;
-                        if (onHidden || TagRadioList.includes(item[0])) return null;
+                        const { type } = widget || {};
+                        if (!widget || onHidden || TagRadioList.includes(item[0])) return null;
                         return <div className="flex-box param-item" key={`${id}@$@${item[0]}`}>
                           <div className="icon-box flex-box">
                             {_.toUpper(type.slice(0, 1))}
@@ -482,7 +488,6 @@ const Control: React.FC<any> = (props: any) => {
             data={selectedPath}
             onOk={(val: any) => {
               const { id, value, ...rest } = val;
-              console.log(val);
               widgetChange(id, { ...rest, localPath: value });
               setSelectedPath({});
               setSelectPathVisible(false);
@@ -911,21 +916,21 @@ const FormatWidgetToDom = (props: any) => {
           <div className='flex-box'>
             <Button
               onClick={() => {
-                setSelectedPath(Object.assign({ id: name, fileType: 'file' }, { ..._.omit(config[1], 'value'), value: config[1].localPath }));
+                setSelectedPath(Object.assign(_.omit(config[1], 'value'), { id: name, fileType: 'file' }));
                 setSelectPathVisible(true);
               }}
               disabled={disabled}
               style={{ marginRight: 8 }}
             >
-              选择标注文件
+              选择文件
             </Button>
             <Button
               type='primary'
               onClick={() => {
-                setPlatFormValue(Object.assign({ id: name }, config[1]));
+                setPlatFormValue(Object.assign({}, config[1], { id: name }));
                 setPlatFormVisible(true);
               }}
-              disabled={disabled}
+              disabled={!localPath}
             >
               开始标注
             </Button>
@@ -937,7 +942,12 @@ const FormatWidgetToDom = (props: any) => {
         <Form.Item
           name={`${name}$$${guid()}`}
           tooltip={description}
-          initialValue={value || undefined}
+          initialValue={value || defaultValue || {
+            num_0: undefined,
+            num_1: undefined,
+            num_2: undefined,
+            num_3: undefined,
+          }}
           rules={[{ required: require, message: `${alias}` }]}
         >
           <Measurement

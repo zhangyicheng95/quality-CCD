@@ -86,10 +86,13 @@ const Measurement: React.FC<Props> = (props: any) => {
               className={`self_input ${className}`}
               ref={refList[index]}
               value={selfValue[`num_${index}`]}
-              onChange={(e) => { handleNumberChange(e, `num_${index}`, index) }}
+              // onChange={(e) => { handleNumberChange(e, `num_${index}`, index) }}
               onKeyUp={(e) => turnIpPOS(e, index)}
               onFocus={() => setFocus((prev: any) => Object.assign({}, prev, { [`refnum_${index}`]: true }))}
-              onBlur={() => setFocus((prev: any) => Object.assign({}, prev, { [`refnum_${index}`]: !!selfValue[`num_${index}`] }))}
+              onBlur={(e) => {
+                setFocus((prev: any) => Object.assign({}, prev, { [`refnum_${index}`]: !!selfValue[`num_${index}`] }));
+                handleNumberChange(e?.target?.value, `num_${index}`, index)
+              }}
             />
           </div>
         })
