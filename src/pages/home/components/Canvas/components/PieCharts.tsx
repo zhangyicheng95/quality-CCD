@@ -76,6 +76,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
                     height: dom.clientHeight,
                 });
             }, false);
+            myChart && myChart.dispose();
         }
     }, [data]);
 

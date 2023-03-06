@@ -149,14 +149,17 @@ const Home: React.FC<any> = (props: any) => {
                           {
                             label: '显示基本信息',
                             key: 'slider-2',
-                            disabled: gridHomeList?.filter((i: any) => i.i === 'slider-2')[0]?.w !== 0,
+                            disabled: (
+                              gridHomeList?.filter((i: any) => i.i === 'slider-2')[0]?.w !== 0 &&
+                              gridHomeList?.filter((i: any) => i.i === 'slider-2')[0]?.h !== 0
+                            ),
                             onClick: () =>
                               setGridHomeList((prev: any) => {
                                 return prev?.map((item: any) => {
                                   if (item.i === 'slider-2') {
                                     return {
                                       ...item,
-                                      w: 2,
+                                      w: 9,
                                       h: 4,
                                       minW: 1,
                                       minH: 2,
@@ -169,14 +172,17 @@ const Home: React.FC<any> = (props: any) => {
                           {
                             label: '显示实时信息',
                             key: 'slider-3',
-                            disabled: gridHomeList?.filter((i: any) => i.i === 'slider-3')[0]?.w !== 0,
+                            disabled: (
+                              gridHomeList?.filter((i: any) => i.i === 'slider-3')[0]?.w !== 0 &&
+                              gridHomeList?.filter((i: any) => i.i === 'slider-3')[0]?.h !== 0
+                            ),
                             onClick: () =>
                               setGridHomeList((prev: any) => {
                                 return prev?.map((item: any) => {
                                   if (item.i === 'slider-3') {
                                     return {
                                       ...item,
-                                      w: 2,
+                                      w: 9,
                                       h: 4,
                                       minW: 1,
                                       minH: 2,
@@ -189,14 +195,17 @@ const Home: React.FC<any> = (props: any) => {
                           {
                             label: '显示方案列表',
                             key: 'slider-4',
-                            disabled: gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w !== 0,
+                            disabled: (
+                              gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w !== 0 &&
+                              gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.h !== 0
+                            ),
                             onClick: () =>
                               setGridHomeList((prev: any) => {
                                 return prev?.map((item: any) => {
                                   if (item.i === 'slider-4') {
                                     return {
                                       ...item,
-                                      w: 2,
+                                      w: 9,
                                       h: 4,
                                       minW: 1,
                                       minH: 1,
@@ -209,14 +218,17 @@ const Home: React.FC<any> = (props: any) => {
                           {
                             label: '显示日志信息',
                             key: 'footer-1',
-                            disabled: gridHomeList?.filter((i: any) => i.i === 'footer-1')[0]?.w !== 0,
+                            disabled: (
+                              gridHomeList?.filter((i: any) => i.i === 'footer-1')[0]?.w !== 0 &&
+                              gridHomeList?.filter((i: any) => i.i === 'footer-1')[0]?.h !== 0
+                            ),
                             onClick: () =>
                               setGridHomeList((prev: any) => {
                                 return prev?.map((item: any) => {
                                   if (item.i === 'footer-1') {
                                     return {
                                       ...item,
-                                      w: 7,
+                                      w: 9,
                                       h: 4,
                                       minW: 1,
                                       minH: 2,
@@ -229,14 +241,17 @@ const Home: React.FC<any> = (props: any) => {
                           {
                             label: '显示错误信息',
                             key: 'footer-2',
-                            disabled: gridHomeList?.filter((i: any) => i.i === 'footer-2')[0]?.w !== 0,
+                            disabled: (
+                              gridHomeList?.filter((i: any) => i.i === 'footer-2')[0]?.w !== 0 &&
+                              gridHomeList?.filter((i: any) => i.i === 'footer-2')[0]?.h !== 0
+                            ),
                             onClick: () =>
                               setGridHomeList((prev: any) => {
                                 return prev?.map((item: any) => {
                                   if (item.i === 'footer-2') {
                                     return {
                                       ...item,
-                                      w: 3,
+                                      w: 9,
                                       h: 4,
                                       minW: 1,
                                       minH: 2,
@@ -357,26 +372,30 @@ const Home: React.FC<any> = (props: any) => {
                                 _.omit(prev?.contentData?.contentHeader, 'slider-2')
                             })
                           })
-                        })
+                        });
                       }}
                     />
                     <Popconfirm
                       title="确认删除 基本信息 窗口吗?"
                       onConfirm={() => {
-                        setGridHomeList((prev: any) => {
-                          return prev?.map((item: any) => {
-                            if (item.i === 'slider-2') {
-                              return {
-                                ...item,
-                                w: 0,
-                                h: 0,
-                                minW: 0,
-                                minH: 0,
-                              };
-                            }
-                            return item;
+                        const home = gridHomeList?.map((item: any) => {
+                          if (item.i === 'slider-2') {
+                            return {
+                              ...item,
+                              w: 0,
+                              h: 0,
+                              minW: 0,
+                              minH: 0,
+                            };
+                          }
+                          return item;
+                        });
+                        setParamData((prev: any) => {
+                          return Object.assign({}, prev, {
+                            contentData: Object.assign({}, prev?.contentData, { home })
                           })
                         });
+                        setGridHomeList(home);
                       }}
                       okText="确认"
                       cancelText="取消"
@@ -442,20 +461,24 @@ const Home: React.FC<any> = (props: any) => {
                     <Popconfirm
                       title="确认删除 实时信息 窗口吗?"
                       onConfirm={() => {
-                        setGridHomeList((prev: any) => {
-                          return prev?.map((item: any) => {
-                            if (item.i === 'slider-3') {
-                              return {
-                                ...item,
-                                w: 0,
-                                h: 0,
-                                minW: 0,
-                                minH: 0,
-                              };
-                            }
-                            return item;
+                        const home = gridHomeList?.map((item: any) => {
+                          if (item.i === 'slider-3') {
+                            return {
+                              ...item,
+                              w: 0,
+                              h: 0,
+                              minW: 0,
+                              minH: 0,
+                            };
+                          }
+                          return item;
+                        });
+                        setParamData((prev: any) => {
+                          return Object.assign({}, prev, {
+                            contentData: Object.assign({}, prev?.contentData, { home })
                           })
                         });
+                        setGridHomeList(home);
                       }}
                       okText="确认"
                       cancelText="取消"
@@ -512,20 +535,24 @@ const Home: React.FC<any> = (props: any) => {
                     <Popconfirm
                       title="确认删除 方案列表 窗口吗?"
                       onConfirm={() => {
-                        setGridHomeList((prev: any) => {
-                          return prev?.map((item: any) => {
-                            if (item.i === 'slider-4') {
-                              return {
-                                ...item,
-                                w: 0,
-                                h: 0,
-                                minW: 0,
-                                minH: 0,
-                              };
-                            }
-                            return item;
+                        const home = gridHomeList?.map((item: any) => {
+                          if (item.i === 'slider-4') {
+                            return {
+                              ...item,
+                              w: 0,
+                              h: 0,
+                              minW: 0,
+                              minH: 0,
+                            };
+                          }
+                          return item;
+                        });
+                        setParamData((prev: any) => {
+                          return Object.assign({}, prev, {
+                            contentData: Object.assign({}, prev?.contentData, { home })
                           })
                         });
+                        setGridHomeList(home);
                       }}
                       okText="确认"
                       cancelText="取消"
@@ -626,20 +653,24 @@ const Home: React.FC<any> = (props: any) => {
                     <Popconfirm
                       title="确认删除 日志信息 窗口吗?"
                       onConfirm={() => {
-                        setGridHomeList((prev: any) => {
-                          return prev?.map((item: any) => {
-                            if (item.i === 'footer-1') {
-                              return {
-                                ...item,
-                                w: 0,
-                                h: 0,
-                                minW: 0,
-                                minH: 0,
-                              };
-                            }
-                            return item;
+                        const home = gridHomeList?.map((item: any) => {
+                          if (item.i === 'footer-1') {
+                            return {
+                              ...item,
+                              w: 0,
+                              h: 0,
+                              minW: 0,
+                              minH: 0,
+                            };
+                          }
+                          return item;
+                        });
+                        setParamData((prev: any) => {
+                          return Object.assign({}, prev, {
+                            contentData: Object.assign({}, prev?.contentData, { home })
                           })
                         });
+                        setGridHomeList(home);
                       }}
                       okText="确认"
                       cancelText="取消"
@@ -692,20 +723,24 @@ const Home: React.FC<any> = (props: any) => {
                     <Popconfirm
                       title="确认删除 错误信息 窗口吗?"
                       onConfirm={() => {
-                        setGridHomeList((prev: any) => {
-                          return prev?.map((item: any) => {
-                            if (item.i === 'footer-2') {
-                              return {
-                                ...item,
-                                w: 0,
-                                h: 0,
-                                minW: 0,
-                                minH: 0,
-                              };
-                            }
-                            return item;
+                        const home = gridHomeList?.map((item: any) => {
+                          if (item.i === 'footer-2') {
+                            return {
+                              ...item,
+                              w: 0,
+                              h: 0,
+                              minW: 0,
+                              minH: 0,
+                            };
+                          }
+                          return item;
+                        });
+                        setParamData((prev: any) => {
+                          return Object.assign({}, prev, {
+                            contentData: Object.assign({}, prev?.contentData, { home })
                           })
                         });
+                        setGridHomeList(home);
                       }}
                       okText="确认"
                       cancelText="取消"
@@ -754,8 +789,8 @@ const Home: React.FC<any> = (props: any) => {
       if (['slider-1', 'slider-2', 'slider-3', 'slider-4', 'content', 'footer-1', 'footer-2'].includes(item.i)) {
         home = home.concat({
           ...item,
-          minW: 0,
-          minH: 0,
+          minW: 1,
+          minH: 1,
           maxW: 100,
           maxH: 100
         });
@@ -946,7 +981,7 @@ const Home: React.FC<any> = (props: any) => {
         layoutData: any = [],
         resultData: any = {};
       addContentList?.forEach((item: any, index: number) => {
-        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction } = item;
+        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction, symbol } = item;
         const id = key?.split('$$')[0];
         const gridValue = gridContentList[id] || {};
         const newGridValue = newGridContentList[id] || {};
@@ -1046,7 +1081,7 @@ const Home: React.FC<any> = (props: any) => {
                       id={key}
                       data={{
                         dataValue: dataValue,
-                        yName, xName,
+                        yName, xName, direction, symbol
                       }}
                     />
                     :
@@ -1275,7 +1310,7 @@ const Home: React.FC<any> = (props: any) => {
   const addWindow = () => {
     validateFields()
       .then((values) => {
-        const { value, type, yName, xName, fontSize, defaultImg, reverse, direction } = values;
+        const { value, type, yName, xName, fontSize, defaultImg, reverse, direction, symbol } = values;
         const id = `${value?.join('$$')}$$${type}`;
         if (_.isEmpty(editWindowData) && addContentList?.filter((i: any) => i.id === id).length) {
           message.error('已存在，请求改 “模块，节点，类型” 中的任一项');
@@ -1289,7 +1324,7 @@ const Home: React.FC<any> = (props: any) => {
             size: { i: id, x: 8, y: 0, w: 10, h: 4, minW: 1, maxW: 100, minH: 2, maxH: 100 },
             type,
             tab: activeTab,
-            yName, xName, defaultImg, fontSize, reverse, direction
+            yName, xName, defaultImg, fontSize, reverse, direction, symbol
           });
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1300,13 +1335,12 @@ const Home: React.FC<any> = (props: any) => {
                 size: Object.assign({}, editWindowData.size, { i: id }),
                 type,
                 tab: activeTab,
-                yName, xName, defaultImg, fontSize, reverse, direction
+                yName, xName, defaultImg, fontSize, reverse, direction, symbol
               };
             };
             return item;
           })
         }
-        console.log(result);
         setAddContentList(result);
         if (paramData.id) {
           const params = Object.assign({}, paramData, {
@@ -1335,7 +1369,7 @@ const Home: React.FC<any> = (props: any) => {
     form.resetFields();
     setEditWindowData({});
     setSelectedPath({ fileType: 'file', value: '' });
-    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false, direction: 'column' });
+    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false, direction: 'column', symbol: 'rect' });
     setWindowType('img');
     setAddWindowVisible(false);
     setFooterSelectVisible(false);
@@ -1344,16 +1378,20 @@ const Home: React.FC<any> = (props: any) => {
   return (
     <div className={`${styles.home}`}>
       <div className="home-body">
-        {!_.isEmpty(gridHomeList) ? (
-          <GridLayout
-            dragName={'.common-card-title'}
-            list={gridList.concat(contentList)}
-            layout={gridHomeList.concat(contentLayout)}
-            onChange={(data: any) => {
-              saveGridFunc(data);
-            }}
-          />
-        ) : null}
+        {
+          useMemo(() => {
+            return !_.isEmpty(gridHomeList) ? (
+              <GridLayout
+                dragName={'.common-card-title'}
+                list={gridList.concat(contentList)}
+                layout={gridHomeList.concat(contentLayout)}
+                onChange={(data: any) => {
+                  saveGridFunc(data);
+                }}
+              />
+            ) : null
+          }, [gridHomeList, contentLayout, gridList, contentList])
+        }
       </div>
       <div className="flex-box home-footer">
         {
@@ -1546,11 +1584,11 @@ const Home: React.FC<any> = (props: any) => {
                 : null
             }
             {
-              ['bar'].includes(windowType) ?
+              ['point', 'bar'].includes(windowType) ?
                 <Form.Item
                   name={`direction`}
-                  label={'柱状图方向'}
-                  rules={[{ required: false, message: '柱状图方向' }]}
+                  label={'图形方向'}
+                  rules={[{ required: false, message: '图形方向' }]}
                 >
                   <Select
                     style={{ width: '100%' }}
@@ -1562,6 +1600,50 @@ const Home: React.FC<any> = (props: any) => {
                       {
                         value: 'column',
                         label: '纵向',
+                      }
+                    ]}
+                  />
+                </Form.Item>
+                : null
+            }
+            {
+              ['point'].includes(windowType) ?
+                <Form.Item
+                  name={`symbol`}
+                  label={'散点形状'}
+                  rules={[{ required: true, message: '散点形状' }]}
+                  initialValue={'rect'}
+                >
+                  <Select
+                    style={{ width: '100%' }}
+                    options={[
+                      {
+                        value: 'circle',
+                        label: '圆点',
+                      },
+                      {
+                        value: 'rect',
+                        label: '正方形',
+                      },
+                      {
+                        value: 'roundRect',
+                        label: '圆角正方形',
+                      },
+                      {
+                        value: 'triangle',
+                        label: '三角形',
+                      },
+                      {
+                        value: 'diamond',
+                        label: '菱形',
+                      },
+                      {
+                        value: 'pin',
+                        label: '小气球',
+                      },
+                      {
+                        value: 'arrow',
+                        label: '箭头',
                       }
                     ]}
                   />

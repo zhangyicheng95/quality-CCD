@@ -18,12 +18,15 @@ const BarCharts: React.FC<Props> = (props: any) => {
             const { name, value } = item;
             seriesData = seriesData.concat(value);
             yData = yData.concat(name);
-        })
+        });
         const dom: any = document.getElementById(`echart-${id}`);
         const myChart = echarts.init(dom);
         const option = Object.assign({}, options, {
+            legend: {
+                show: false
+            },
             grid: Object.assign({}, options.grid, {
-                right: `${xName.length * (xName.length < 4 ? 20 : 16)}px`,
+                right: `${xName.length * (xName.length < 4 ? 24 : 16)}px`,
             }),
             yAxis: Object.assign({}, options.yAxis, {
                 type: direction === 'rows' ? 'category' : 'value',
@@ -31,7 +34,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 boundaryGap: ['5%', '5%'],
                 splitNumber: 3,
                 scale: false,
-            }),
+            }, direction === 'rows' ? { data: yData } : {}),
             xAxis: Object.assign({}, options.xAxis, {
                 axisLabel: Object.assign({}, options.xAxis?.axisLabel, {
                     formatter: function (val: any) {
@@ -42,15 +45,13 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 splitNumber: 3,
                 name: direction === 'rows' ? yName : xName,
                 scale: false,
-            }),
-            series: (dataValue || []).map((item: any) => {
-                const { name, value } = item;
-                return {
-                    name: name,
-                    type: 'bar',
-                    data: [direction === 'rows' ? [value, name] : [name, value]]
-                };
-            })
+            }, direction === 'rows' ? {} : { data: yData }),
+            series: {
+                name: 'name',
+                type: 'bar',
+                colorBy: 'data',
+                data: seriesData,
+            }
         });
 
         myChart.setOption(option);
@@ -72,6 +73,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
                     height: dom.clientHeight,
                 });
             }, false);
+            myChart && myChart.dispose();
         }
     }, [data]);
 

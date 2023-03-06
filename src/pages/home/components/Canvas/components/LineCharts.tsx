@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import * as echarts from 'echarts';
 import options from './commonOptions';
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 interface Props {
     data: any,
@@ -44,7 +44,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
                 })
             }),
             grid: Object.assign({}, options.grid, {
-                right: `${xName.length * (xName.length < 4 ? 20 : 16)}px`,
+                right: `${xName.length * (xName.length < 4 ? 24 : 16)}px`,
             }),
             yAxis: Object.assign({}, options.yAxis, {
                 type: 'value',
@@ -134,6 +134,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
                     height: dom.clientHeight,
                 });
             }, false);
+            myChart && myChart.dispose();
         }
     }, [data]);
 

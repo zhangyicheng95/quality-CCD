@@ -1,5 +1,5 @@
 import { Space } from 'antd';
-import { CompressOutlined, ExpandOutlined, SettingOutlined } from '@ant-design/icons';
+import { CompressOutlined, ExpandOutlined, SettingOutlined, ClearOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useModel, SelectLang } from 'umi';
 import styles from './index.less';
@@ -11,13 +11,14 @@ export type SiderTheme = 'light' | 'dark';
 
 const GlobalHeaderRight: React.FC = () => {
   const [full, setFull] = useState(false);
-  const { initialState } = useModel('@@initialState');
+  const { initialState } = useModel<any>('@@initialState');
 
   if (!initialState || !initialState.settings) {
     return null;
   }
 
-  const { navTheme, layout } = initialState.settings;
+  const { params, settings } = initialState;
+  const { navTheme, layout } = settings;
   let className = styles.right;
 
   if ((navTheme === 'dark' && layout === 'top') || layout === 'mix') {
@@ -39,6 +40,12 @@ const GlobalHeaderRight: React.FC = () => {
     <Space className={className}>
       <span className='version'>v{version}</span>
       <Avatar menu={false} />
+      <ClearOutlined style={{ marginRight: 12 }} onClick={() => {
+        if (!!localStorage.getItem(`localGridContentList-${params.id}`)) {
+          localStorage.removeItem(`localGridContentList-${params.id}`);
+          window.location.reload();
+        }
+      }} />
       <SettingOutlined />
       <SelectLang
         className={styles.action}
