@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Image } from 'antd';
+import { Image, message } from 'antd';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import TooltipDiv from '@/components/TooltipDiv';
+import { useModel } from 'umi';
 
 interface Props {
     data: any,
@@ -12,11 +13,18 @@ interface Props {
 
 const ImgsCharts: React.FC<Props> = (props: any) => {
     const { data = [], id, } = props;
+    const { initialState } = useModel<any>('@@initialState');
+    const { params } = initialState;
 
     const [fontSize, setFontSize] = useState('auto');
     const dom = useRef<any>();
 
     useEffect(() => {
+        if (!_.isArray(data)) {
+            message.error('数据格式不正确，请检查');
+            localStorage.removeItem(`localGridContentList-${params.id}`);
+            return;
+        }
         if (!!dom) {
             if (dom?.current?.clientWidth > data.length * (dom?.current?.firstElementChild?.clientWidth || 150)) {
                 // 说明个数不足一行
@@ -37,7 +45,7 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
             ref={dom}
         >
             {
-                (data || []).map((item: any, index: number) => {
+                _.isArray(data) && (data || []).map((item: any, index: number) => {
                     const { name, value } = item;
                     return <div
                         key={`echart-${id}-${index}`}

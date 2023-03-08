@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
 import * as echarts from "echarts";
 import options from "./commonOptions";
+import _ from "lodash";
+import { message } from "antd";
+import { useModel } from "umi";
 
 interface Props {
     data: any,
@@ -10,7 +13,15 @@ interface Props {
 
 const PieCharts: React.FC<Props> = (props: any) => {
     const { data = [], id, } = props;
+    const { initialState } = useModel<any>('@@initialState');
+    const { params } = initialState;
+
     useEffect(() => {
+        if (!_.isArray(data)) {
+            message.error('');
+            localStorage.removeItem(`localGridContentList-${params.id}`);
+            return;
+        }
         const dom: any = document.getElementById(`echart-${id}`);
         const myChart = echarts.init(dom);
         const option = Object.assign({}, options, {
@@ -27,14 +38,49 @@ const PieCharts: React.FC<Props> = (props: any) => {
             series: [
                 {
                     type: "pie",
-                    radius: "50%",
-                    top: "-30%",
-                    bottom: "-40%",
-                    right: "-50%",
-                    left: "-50%",
+                    radius: ["20%", "70%"],
+                    // top: "-30%",
+                    // bottom: "-40%",
+                    // right: "-50%",
+                    // left: "-50%",
+                    // label: {
+                    //     position: "inside",
+                    //     fontSize: 15,
+                    //     formatter: `{b0}\n（{d0}%）`
+                    // },
+                    // labelLine: {
+                    //     length: 15,
+                    //     length2: 10,
+                    // }
                     label: {
-                        position: "inside",
-                        fontSize: 15
+                        alignTo: 'edge',
+                        fontSize: 15,
+                        formatter: '{name|{b}}\n{time|{d} %}',
+                        minMargin: 5,
+                        edgeDistance: 10,
+                        lineHeight: 16,
+                        rich: {
+                            time: {
+                                fontSize: 10,
+                                color: '#999'
+                            }
+                        }
+                    },
+                    labelLine: {
+                        length: 15,
+                        length2: 0,
+                        maxSurfaceAngle: 80
+                    },
+                    labelLayout: function (params: any) {
+                        const isLeft = params.labelRect.x < myChart.getWidth() / 2;
+                        const points = params.labelLinePoints;
+                        // Update the end point.
+                        points[2][0] = isLeft
+                            ? params.labelRect.x
+                            : params.labelRect.x + params.labelRect.width;
+                        return {
+                            labelLinePoints: points
+                        };
                     },
                     data: (data || []).map((item: any) => {
                         const { name, value } = item;
@@ -50,10 +96,6 @@ const PieCharts: React.FC<Props> = (props: any) => {
                             shadowColor: "rgba(0, 0, 0, 0.5)"
                         }
                     },
-                    labelLine: {
-                        length: 15,
-                        length2: 10,
-                    }
                 }
             ]
         });

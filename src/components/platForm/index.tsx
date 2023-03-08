@@ -29,10 +29,13 @@ const PlatFormModal: React.FC<Props> = (props) => {
       open={visible}
       maskClosable={false}
       onOk={() => {
-        const { feat, pen } = getDataFun;
+        const { feat, pen, zoom } = getDataFun;
         const data1 = (feat && feat().map((item: any) => _.omit(item, 'layer'))) || [];
         const data2 = (pen && pen()) || [];
-        const params = Object.assign({}, data, { value: _.uniqBy(data1, 'id').concat(data2) });
+        const params = Object.assign({}, data,
+          // { zoom },
+          { value: _.uniqBy(data1, 'id').concat(data2) }
+        );
         onOk(params);
       }}
       onCancel={() => {

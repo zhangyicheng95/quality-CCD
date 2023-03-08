@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import * as echarts from "echarts";
 import options from "./commonOptions";
 import * as _ from 'lodash';
+import { useModel } from "umi";
+import { message } from "antd";
 
 interface Props {
     data: any,
@@ -12,7 +14,15 @@ interface Props {
 const PointCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
     const { dataValue = [], yName, xName, direction, symbol = "rect" } = data;
+    const { initialState } = useModel<any>('@@initialState');
+    const { params } = initialState;
+
     useEffect(() => {
+        if (!_.isArray(dataValue)) {
+            message.error('数据格式不正确，请检查');
+            localStorage.removeItem(`localGridContentList-${params.id}`);
+            return;
+        }
         const dom: any = document.getElementById(`echart-${id}`);
         const myChart = echarts.init(dom);
         let minValueX: any = null,

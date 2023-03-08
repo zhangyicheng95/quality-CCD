@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 import * as echarts from 'echarts';
 import options from './commonOptions';
+import { useModel } from 'umi';
+import { message } from 'antd';
+import _ from "lodash";
 
 interface Props {
     data: any,
@@ -11,7 +14,15 @@ interface Props {
 const BarCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
     const { dataValue = [], yName, xName, direction } = data;
+    const { initialState } = useModel<any>('@@initialState');
+    const { params } = initialState;
+
     useEffect(() => {
+        if (!_.isArray(dataValue)) {
+            message.error('数据格式不正确，请检查');
+            localStorage.removeItem(`localGridContentList-${params.id}`);
+            return;
+        }
         let seriesData: any = [],
             yData: any = [];
         dataValue.forEach((item: any) => {
@@ -50,6 +61,9 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 name: 'name',
                 type: 'bar',
                 colorBy: 'data',
+                label: {
+                    show: true
+                },
                 data: seriesData,
             }
         });

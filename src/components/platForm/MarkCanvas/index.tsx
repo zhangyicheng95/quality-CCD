@@ -35,7 +35,7 @@ let drawingStyle: any = { strokeStyle: '#F00' }; // 绘制过程中样式
 
 const MarkCanvas: React.FC<Props> = (props: any) => {
   const { data, setGetDataFun } = props;
-  const { value, localPath, zoom = 1308 } = data;
+  const { value, localPath, zoom } = data;
   const markRef = useRef<any>();
   const [loading, setLoading] = useState(false);
   const [selectedBtn, setSelectedBtn] = useState('RECT');
@@ -44,6 +44,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     const dom: any = document.getElementById(CONTAINER_ID);
     const width = dom?.clientWidth,
       height = dom?.clientHeight;
+
     img = new Image();
     img.src = localPath?.indexOf('http') === 0 ? localPath : `${BASE_IP}file${(localPath?.indexOf('\\') === 0 || localPath?.indexOf('/') === 0) ? '' : '\\'}${localPath}`;
     img.title = 'img.png';
@@ -55,7 +56,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     gMap = new AILabel.Map(CONTAINER_ID, {
       // size: { width: dom?.clientWidth, height: dom?.clientHeight },
       center: { x: width / 2, y: height / 2 },
-      zoom: zoom ? zoom : dom?.clientHeight * 2,
+      zoom: zoom ? zoom : height * 3.5,
       mode: 'RECT', // 绘制线段
       refreshDelayWhenZooming: true, // 缩放时是否允许刷新延时，性能更优
       zoomWhenDrawing: true,

@@ -1,6 +1,8 @@
 import TooltipDiv from '@/components/TooltipDiv';
+import { message } from 'antd';
 import _ from 'lodash';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useModel } from 'umi';
 import styles from '../index.module.less';
 
 interface Props {
@@ -12,7 +14,16 @@ interface Props {
 const TableCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
     const { dataValue = [], yName, xName, fontSize, reverse } = data;
+    const { initialState } = useModel<any>('@@initialState');
+    const { params } = initialState;
 
+    useEffect(() => {
+        if (!_.isArray(dataValue)) {
+            message.error('数据格式不正确，请检查');
+            localStorage.removeItem(`localGridContentList-${params.id}`);
+            return;
+        }
+    }, [dataValue]);
     return (
         <div id={`echart-${id}`} className={styles.tableCharts} style={{ fontSize }}>
             <div className="charts-header-box flex-box">
@@ -25,7 +36,7 @@ const TableCharts: React.FC<Props> = (props: any) => {
             </div>
             <div className="charts-body-box">
                 {
-                    (!!reverse ? dataValue.reverse() : dataValue).map((item: any, index: number) => {
+                    _.isArray(dataValue) && (!!reverse ? dataValue.reverse() : dataValue).map((item: any, index: number) => {
                         const { name, value } = item;
                         const text = _.isArray(value) ? value.join(',') : value;
                         return <div className="charts-body-tr flex-box" key={`echart-${id}-tr-${index}`}>
