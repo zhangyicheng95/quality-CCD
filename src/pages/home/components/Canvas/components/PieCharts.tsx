@@ -18,7 +18,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
 
     useEffect(() => {
         if (!_.isArray(data)) {
-            message.error('');
+            message.error('数据格式不正确，请检查');
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
