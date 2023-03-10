@@ -22,6 +22,7 @@ import {
 import * as _ from 'lodash';
 import {
   BASE_IP,
+  btnFetch,
   startFlowService,
   stopFlowService,
   touchFlowService,
@@ -53,6 +54,7 @@ import { useThrottleAndMerge } from "@/utils/useThrottleAndMerge";
 import FileManager from '@/components/FileManager';
 import Table2Charts from './components/Table2Charts';
 import ImgsCharts from './components/ImgsCharts';
+import ButtonCharts from './components/ButtonCharts';
 
 let updateTimer: string | number | NodeJS.Timer | null | undefined = null;
 const Home: React.FC<any> = (props: any) => {
@@ -981,7 +983,7 @@ const Home: React.FC<any> = (props: any) => {
         layoutData: any = [],
         resultData: any = {};
       addContentList?.forEach((item: any, index: number) => {
-        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction, symbol } = item;
+        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams } = item;
         const id = key?.split('$$')[0];
         const gridValue = gridContentList[id] || {};
         const newGridValue = newGridContentList[id] || {};
@@ -1071,7 +1073,7 @@ const Home: React.FC<any> = (props: any) => {
                   <LineCharts
                     id={key}
                     data={{
-                      dataValue: dataValue,
+                      dataValue: dataValue || [],
                       yName, xName,
                     }}
                   />
@@ -1080,7 +1082,7 @@ const Home: React.FC<any> = (props: any) => {
                     <PointCharts
                       id={key}
                       data={{
-                        dataValue: dataValue,
+                        dataValue: dataValue || [],
                         yName, xName, direction, symbol
                       }}
                     />
@@ -1089,7 +1091,7 @@ const Home: React.FC<any> = (props: any) => {
                       <BarCharts
                         id={key}
                         data={{
-                          dataValue: dataValue,
+                          dataValue: dataValue || [],
                           yName, xName, direction
                         }}
                       />
@@ -1097,14 +1099,14 @@ const Home: React.FC<any> = (props: any) => {
                       type === 'pie' ?
                         <PieCharts
                           id={key}
-                          data={dataValue}
+                          data={dataValue || []}
                         />
                         :
                         type === 'table' ?
                           <TableCharts
                             id={key}
                             data={{
-                              dataValue: dataValue,
+                              dataValue: dataValue || [],
                               yName, xName, fontSize, reverse
                             }}
                           />
@@ -1113,7 +1115,7 @@ const Home: React.FC<any> = (props: any) => {
                             <Table2Charts
                               id={key}
                               data={{
-                                dataValue: dataValue,
+                                dataValue: dataValue || [],
                                 fontSize, reverse
                               }}
                             />
@@ -1121,35 +1123,55 @@ const Home: React.FC<any> = (props: any) => {
                             type === 'alert' ?
                               <AlertCharts
                                 id={key}
-                                data={dataValue}
+                                data={dataValue || []}
                               />
                               :
                               type === 'imgs' ?
                                 <ImgsCharts
                                   id={key}
-                                  data={dataValue}
+                                  data={dataValue || []}
                                 />
                                 :
-                                (
-                                  _.isString(dataValue) && dataValue.indexOf('http') > -1 ? (
-                                    <Image
-                                      src={dataValue}
-                                      alt="logo"
-                                      style={{ width: '100%', height: 'auto' }}
+                                type === 'button' ?
+                                  <Button
+                                    type={'primary'}
+                                    id={key}
+                                    onClick={() => {
+                                      btnFetch(fetchType, xName, JSON.parse(fetchParams));
+                                      console.log(dataValue, xName, fetchType, fetchParams)
+                                    }}
+                                  >
+                                    {yName}
+                                  </Button>
+                                  :
+                                  type === 'buttonInp' ?
+                                    <ButtonCharts
+                                      id={key}
+                                      data={{
+                                        yName, xName, fetchType
+                                      }}
                                     />
-                                  )
                                     :
-                                    !!defaultImg ?
-                                      <Image
-                                        src={`${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}`}
-                                        alt="logo"
-                                        style={{ width: '100%', height: 'auto' }}
-                                      />
-                                      :
-                                      <Skeleton.Image
-                                        active={true}
-                                      />
-                                )
+                                    (
+                                      _.isString(dataValue) && dataValue.indexOf('http') > -1 ? (
+                                        <Image
+                                          src={dataValue}
+                                          alt="logo"
+                                          style={{ width: '100%', height: 'auto' }}
+                                        />
+                                      )
+                                        :
+                                        !!defaultImg ?
+                                          <Image
+                                            src={`${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}`}
+                                            alt="logo"
+                                            style={{ width: '100%', height: 'auto' }}
+                                          />
+                                          :
+                                          <Skeleton.Image
+                                            active={true}
+                                          />
+                                    )
               }
             </div>
           </div>,
@@ -1310,7 +1332,16 @@ const Home: React.FC<any> = (props: any) => {
   const addWindow = () => {
     validateFields()
       .then((values) => {
-        const { value, type, yName, xName, fontSize, defaultImg, reverse, direction, symbol } = values;
+        const { value, type, yName, xName, fontSize, defaultImg, reverse, direction, symbol, fetchType, fetchParams } = values;
+        if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
+          try {
+            JSON.parse(fetchParams);
+          } catch (e) {
+            console.log(e, fetchParams)
+            message.error('传递参数 格式不正确');
+            return;
+          }
+        };
         const id = `${value?.join('$$')}$$${type}`;
         if (_.isEmpty(editWindowData) && addContentList?.filter((i: any) => i.id === id).length) {
           message.error('已存在，请求改 “模块，节点，类型” 中的任一项');
@@ -1324,7 +1355,7 @@ const Home: React.FC<any> = (props: any) => {
             size: { i: id, x: 8, y: 0, w: 10, h: 4, minW: 1, maxW: 100, minH: 2, maxH: 100 },
             type,
             tab: activeTab,
-            yName, xName, defaultImg, fontSize, reverse, direction, symbol
+            yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams
           });
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1335,7 +1366,7 @@ const Home: React.FC<any> = (props: any) => {
                 size: Object.assign({}, editWindowData.size, { i: id }),
                 type,
                 tab: activeTab,
-                yName, xName, defaultImg, fontSize, reverse, direction, symbol
+                yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams
               };
             };
             return item;
@@ -1369,7 +1400,7 @@ const Home: React.FC<any> = (props: any) => {
     form.resetFields();
     setEditWindowData({});
     setSelectedPath({ fileType: 'file', value: '' });
-    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false, direction: 'column', symbol: 'rect' });
+    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false, direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined });
     setWindowType('img');
     setAddWindowVisible(false);
     setFooterSelectVisible(false);
@@ -1534,6 +1565,14 @@ const Home: React.FC<any> = (props: any) => {
                     value: 'alert',
                     label: '状态窗口',
                   },
+                  {
+                    value: 'button',
+                    label: '按钮组件',
+                  },
+                  {
+                    value: 'buttonInp',
+                    label: '参数按钮组件',
+                  },
                 ]}
                 onChange={val => {
                   setWindowType(val);
@@ -1571,14 +1610,14 @@ const Home: React.FC<any> = (props: any) => {
                     label={windowType === "table" ? "表格key名" : "y 轴名称"}
                     rules={[{ required: true, message: 'y轴名称' }]}
                   >
-                    <Input />
+                    <Input size='large' />
                   </Form.Item>
                   <Form.Item
                     name={`xName`}
                     label={windowType === "table" ? "表格value名" : "x 轴名称"}
                     rules={[{ required: true, message: 'x轴名称' }]}
                   >
-                    <Input />
+                    <Input size='large' />
                   </Form.Item>
                 </Fragment>
                 : null
@@ -1681,6 +1720,50 @@ const Home: React.FC<any> = (props: any) => {
                       ]}
                     />
                   </Form.Item>
+                </Fragment>
+                : null
+            }
+            {
+              ['button', 'buttonInp'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    name={`yName`}
+                    label={"按钮名称"}
+                    rules={[{ required: true, message: '按钮名称' }]}
+                  >
+                    <Input size='large' />
+                  </Form.Item>
+                  <Form.Item
+                    name={`fetchType`}
+                    label={"http类型"}
+                    rules={[{ required: true, message: 'http类型' }]}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      options={['get', 'post', 'put', 'delete'].map((item: any) => ({ value: item, label: _.toUpper(item) }))}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name={`xName`}
+                    label={"接口地址"}
+                    rules={[{ required: true, message: '接口地址' }]}
+                  >
+                    <Input size='large' />
+                  </Form.Item>
+                  {
+                    ['button'].includes(windowType) ?
+                      <Form.Item
+                        name={`fetchParams`}
+                        label={"传递参数"}
+                        rules={[{ required: false, message: '传递参数' }]}
+                      >
+                        <Input.TextArea
+                          size='large'
+                          autoSize={{ minRows: 1, maxRows: 5 }}
+                        />
+                      </Form.Item>
+                      : null
+                  }
                 </Fragment>
                 : null
             }

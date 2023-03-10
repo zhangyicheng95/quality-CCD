@@ -1,4 +1,3 @@
-import React from "react";
 import { Route, Router, Switch, useHistory, } from "react-router";
 import Canvas from './components/Canvas';
 import { useReloadAfterStationary } from "@/utils/useReloadAfterStationary";

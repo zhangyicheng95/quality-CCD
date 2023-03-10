@@ -1,4 +1,5 @@
 import { fetchGet, fetchPost, fetchPut, fetchDelete } from '@/services/fetch';
+import _ from 'lodash';
 export const BASE_IP = localStorage.getItem("ipUrl-realtime") ?
   `http://${localStorage.getItem("ipUrl-realtime")}/` : `http://localhost:8866/`;
 export const BASE_HISTORY_IP = localStorage.getItem("ipUrl-history") ?
@@ -67,4 +68,28 @@ export async function login(params: any) {
 // 退出登录
 export async function outLogin() {
 
+}
+
+export async function btnFetch(type: string, url: string, params: any) {
+  if (type === 'get') {
+    if (_.isObject(params)) {
+      return fetchGet(url, { params, });
+    }
+    return fetchGet(`${url}/${params}`);
+  } if (type === 'delete') {
+    if (_.isObject(params)) {
+      return fetchDelete(url, { params, });
+    }
+    return fetchDelete(`${url}/${params}`);
+  } else if (type === 'post') {
+    if (_.isObject(params)) {
+      return fetchPost(url, { body: params });
+    }
+    return fetchPost(`${url}/${params}`);
+  } else if (type === 'put') {
+    if (_.isObject(params)) {
+      return fetchPut(url, { body: params });
+    }
+    return fetchPut(`${url}/${params}`);
+  }
 }
