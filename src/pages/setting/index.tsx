@@ -135,7 +135,11 @@ const Setting: React.FC<any> = (props) => {
             message.error(res?.msg || res?.message || '接口异常');
           }
         })
-        !!quality_icon && localStorage.setItem("quality_icon", quality_icon || '');
+        if (!!quality_icon) {
+          localStorage.setItem("quality_icon", quality_icon || '');
+        } else {
+          localStorage.removeItem("quality_icon");
+        }
         localStorage.setItem("ipUrl-realtime", values['ipUrl-realtime']);
         localStorage.setItem("ipUrl-history", values['ipUrl-history']);
         // try {
@@ -179,10 +183,17 @@ const Setting: React.FC<any> = (props) => {
                   </TooltipDiv>
                   : null
               }
-              <Button style={{ height: 40 }} onClick={() => {
-                setSelectedPath(localStorage.getItem("quality_icon") || '');
-                setSelectPathVisible(true)
-              }}>选择系统图标</Button>
+              {
+                getFieldValue("quality_icon") ?
+                  <Button style={{ height: 40 }} onClick={() => {
+                    setFieldsValue({ "quality_icon": undefined });
+                  }}>移除</Button>
+                  :
+                  <Button style={{ height: 40 }} onClick={() => {
+                    setSelectedPath(localStorage.getItem("quality_icon") || '');
+                    setSelectPathVisible(true);
+                  }}>选择系统图标</Button>
+              }
             </div>
           </Form.Item>
           <Form.Item

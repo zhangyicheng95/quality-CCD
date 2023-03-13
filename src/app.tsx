@@ -6,7 +6,7 @@ import type { RunTimeLayoutConfig } from 'umi';
 import { Link } from 'umi';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import defaultSettings from '../config/defaultSettings';
-import icon from '@/assets/icon.svg';
+import icon from '@/assets/sany-logo.svg';
 import HomeLayout from '@/components/HomeLayout';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import RightContent from './components/RightContent';

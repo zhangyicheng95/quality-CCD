@@ -32,7 +32,6 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
                     return;
                 }
                 btnFetch(fetchType, xName, JSON.parse(value));
-                console.log(xName, fetchType, value)
             }}>{yName}</Button>
         </div>
     );

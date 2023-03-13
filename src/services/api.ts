@@ -71,6 +71,9 @@ export async function outLogin() {
 }
 
 export async function btnFetch(type: string, url: string, params: any) {
+  if (url.indexOf('http') < 0) {
+    url = 'http://' + url;
+  }
   if (type === 'get') {
     if (_.isObject(params)) {
       return fetchGet(url, { params, });

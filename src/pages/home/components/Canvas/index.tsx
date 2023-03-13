@@ -1138,7 +1138,6 @@ const Home: React.FC<any> = (props: any) => {
                                     id={key}
                                     onClick={() => {
                                       btnFetch(fetchType, xName, JSON.parse(fetchParams));
-                                      console.log(dataValue, xName, fetchType, fetchParams)
                                     }}
                                   >
                                     {yName}
