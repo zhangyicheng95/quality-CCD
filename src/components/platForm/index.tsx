@@ -29,12 +29,53 @@ const PlatFormModal: React.FC<Props> = (props) => {
       open={visible}
       maskClosable={false}
       onOk={() => {
-        const { feat, pen, zoom } = getDataFun;
-        const data1 = (feat && feat().map((item: any) => _.omit(item, 'layer'))) || [];
+        const { feat, pen, zoom, value } = getDataFun;
+        const data1 = ((feat && feat().map((item: any) => _.omit(item, 'layer'))) || []).map((item: any) => {
+          return Object.assign({}, item, {
+            props: Object.assign({}, item?.props, {
+              initParams: value?.[item.id]
+            })
+          })
+        });
         const data2 = (pen && pen()) || [];
         const params = Object.assign({}, data,
-          // { zoom },
-          { value: _.uniqBy(data1, 'id').concat(data2) }
+          {
+            zoom,
+            platFormValue: _.uniqBy(data1, 'id').concat(data2),
+            value: _.uniqBy(data1, 'id').concat(data2).map((item: any) => {
+              const { props, shape, type, id } = item;
+              const { initParams } = props;
+              if (type === 'RECT') {
+                return {
+                  id,
+                  type: "RECT",
+                  roi: shape,
+                  ...initParams
+                }
+              } else if (type === 'LINE') {
+                return {
+                  id,
+                  type: "LINE",
+                  roi: shape,
+                  ...initParams
+                }
+              } else if (type === 'CIRCLE') {
+                return {
+                  id,
+                  type: "CIRCLE",
+                  roi: shape,
+                  ...initParams
+                }
+              } else if (type === 'POINT') {
+                return {
+                  id,
+                  type: "POINT",
+                  roi: shape,
+                  ...initParams
+                }
+              }
+            })
+          }
         );
         onOk(params);
       }}

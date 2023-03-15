@@ -1,6 +1,5 @@
 
 import _ from 'lodash';
-import { useMemo } from 'react';
 
 export const layoutTransform = {
   0: { i: '0', x: 0, y: 0, w: 5, h: 20, minW: 2, maxW: 10, minH: 4, maxH: 32 },
@@ -154,7 +153,7 @@ export const outputTypeObj: any = {
       title: 'File 文件选择器',
     },
     {
-      widget: 'platForm',
+      widget: 'ImageLabelField',
       title: '图片标注',
     },
     // {

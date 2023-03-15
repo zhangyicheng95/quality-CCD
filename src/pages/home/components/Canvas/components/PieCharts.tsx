@@ -27,8 +27,9 @@ const PieCharts: React.FC<Props> = (props: any) => {
         const option = Object.assign({}, options, {
             legend: {
                 ...options.legend,
-                left: "3%"
+                left: "3%",
             },
+            grid: { ...options.grid, top: "bottom", },
             xAxis: { show: false },
             yAxis: { show: false },
             tooltip: {
@@ -54,7 +55,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
                     // }
                     label: {
                         alignTo: 'edge',
-                        fontSize: 15,
+                        fontSize: data?.length > 6 ? 11 : 13,
                         formatter: '{name|{b}}\n{time|{d} %}',
                         minMargin: 5,
                         edgeDistance: 10,

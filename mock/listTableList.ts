@@ -4891,7 +4891,7 @@ const getParams = (req: Request, res: Response) => {
                     "style": { "opacity": 1, "fillStyle": "rgba(255, 0, 0, 0)", "lineWidth": 1, "strokeStyle": "#F00" },
                     "shape": { "x": 331.7559993018706, "y": 157.17094700662133, "width": 87.26617870328407, "height": 45.616411594898494 }
                   },
-                  { "id": "1673425118679", "type": "CIRCLE", "props": { "name": "圆形矢量图层", "textId": "label-text-id-1673425118679", "deleteMarkerId": "label-marker-id-1673425118679", "label": "缺陷" }, "style": { "opacity": 1, "fillStyle": "#9370DB", "lineWidth": 2, "strokeStyle": "#F00" }, "option": { "active": false }, "shape": { "cx": 531.0798847491444, "cy": 130.39609672265917, "r": 41.5197036429828 } }], "type": "File", "description": "标注", "widget": { "type": "platForm", "id": "platForm_723b3e19" }
+                  { "id": "1673425118679", "type": "CIRCLE", "props": { "name": "圆形矢量图层", "textId": "label-text-id-1673425118679", "deleteMarkerId": "label-marker-id-1673425118679", "label": "缺陷" }, "style": { "opacity": 1, "fillStyle": "#9370DB", "lineWidth": 2, "strokeStyle": "#F00" }, "option": { "active": false }, "shape": { "cx": 531.0798847491444, "cy": 130.39609672265917, "r": 41.5197036429828 } }], "type": "File", "description": "标注", "widget": { "type": "ImageLabelField", "id": "platForm_723b3e19" }
               }
             },
             "input": {
@@ -7024,7 +7024,7 @@ const getParams = (req: Request, res: Response) => {
                       "style": { "opacity": 1, "fillStyle": "rgba(255, 0, 0, 0)", "lineWidth": 1, "strokeStyle": "#F00" },
                       "shape": { "x": 331.7559993018706, "y": 157.17094700662133, "width": 87.26617870328407, "height": 45.616411594898494 }
                     },
-                    { "id": "1673425118679", "type": "CIRCLE", "props": { "name": "圆形矢量图层", "textId": "label-text-id-1673425118679", "deleteMarkerId": "label-marker-id-1673425118679", "label": "缺陷" }, "style": { "opacity": 1, "fillStyle": "#9370DB", "lineWidth": 2, "strokeStyle": "#F00" }, "option": { "active": false }, "shape": { "cx": 531.0798847491444, "cy": 130.39609672265917, "r": 41.5197036429828 } }], "type": "File", "description": "标注", "widget": { "type": "platForm", "id": "platForm_723b3e19" }
+                    { "id": "1673425118679", "type": "CIRCLE", "props": { "name": "圆形矢量图层", "textId": "label-text-id-1673425118679", "deleteMarkerId": "label-marker-id-1673425118679", "label": "缺陷" }, "style": { "opacity": 1, "fillStyle": "#9370DB", "lineWidth": 2, "strokeStyle": "#F00" }, "option": { "active": false }, "shape": { "cx": 531.0798847491444, "cy": 130.39609672265917, "r": 41.5197036429828 } }], "type": "File", "description": "标注", "widget": { "type": "ImageLabelField", "id": "platForm_723b3e19" }
                 }
               },
               "input": {

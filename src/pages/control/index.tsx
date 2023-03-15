@@ -1,4 +1,4 @@
-import React, { Fragment, ReactNode, useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import styles from "./index.module.less";
 import { Button, message, Form, Input, Radio, Select, Checkbox, InputNumber, Switch, Modal, } from "antd";
 import * as _ from "lodash";
@@ -63,7 +63,7 @@ const Control: React.FC<any> = (props: any) => {
         if (!!selectedConfig) {
           const { data, value, listType = 'line' } = configList?.filter((i: any) => i.value === selectedConfig)[0] || {};
           setListType(listType);
-          setFieldsValue({ 'config-value': selectedConfig });
+          setFieldsValue({ 'config-value': { value: selectedConfig } });
           if (!!data?.length && _.isArray(data)) {
             setNodeList((value === 'default' ? ((data?.length > nodes?.length) ? data : nodes) : data)
               .map((item: any, index: number) => {
@@ -204,12 +204,7 @@ const Control: React.FC<any> = (props: any) => {
             flowData: Object.assign({}, paramData.flowData, {
               nodes: nodeList
             }),
-            configList: configList.map((item: any) => {
-              if (item.value === values['config-value']) {
-                return Object.assign({}, item, { data: nodeList });
-              }
-              return item;
-            }),
+            configList: [],
             selectedConfig: values['config-value'],
           })
         };
@@ -302,14 +297,14 @@ const Control: React.FC<any> = (props: any) => {
             <Form.Item
               name="config-value"
               label="配置文件"
-              initialValue={"default"}
+              initialValue={{ value: "default" }}
               rules={[{ required: false, message: "历史记录服务端地址" }]}
             >
               <Select
                 style={{ width: '100%' }}
                 size="large"
                 // options={configList}
-                placeholder="方案ID"
+                placeholder="配置文件"
                 showSearch
                 labelInValue
                 filterOption={(inputValue: any, option: any) => {
@@ -370,34 +365,33 @@ const Control: React.FC<any> = (props: any) => {
                     return pre;
                   }, []);
                   return <div key={id} className={`control-item ${listType === 'block' ? 'block' : ''}`}>
-                    <DropSortableItem
-                      name={name}
-                      index={sortId}
-                      moveCard={sortCommonFun}
-                    >
-                      <div>
-                        <DragSortableItem
-                          name={name}
-                          index={sortId}
-                        >
-                          <div className="item-title flex-box" onClick={() => {
-                            setNodeList((prev: any) => {
-                              return prev.map((pre: any) => {
-                                if (pre.id === id) {
-                                  return Object.assign({}, pre, {
-                                    hidden: !hidden,
-                                  });
-                                }
-                                return pre;
-                              })
-                            })
-                          }}>
-                            {hidden ? <CaretRightOutlined /> : <CaretDownOutlined />}
-                            {alias || name}
-                          </div>
-                        </DragSortableItem>
-                      </div>
-                    </DropSortableItem>
+                    {
+                      // @ts-ignore
+                      <DropSortableItem name={name} index={sortId} moveCard={sortCommonFun} >
+                        <div>
+                          {
+                            // @ts-ignore
+                            <DragSortableItem name={name} index={sortId} >
+                              <div className="item-title flex-box" onClick={() => {
+                                setNodeList((prev: any) => {
+                                  return prev.map((pre: any) => {
+                                    if (pre.id === id) {
+                                      return Object.assign({}, pre, {
+                                        hidden: !hidden,
+                                      });
+                                    }
+                                    return pre;
+                                  })
+                                })
+                              }}>
+                                {hidden ? <CaretRightOutlined /> : <CaretDownOutlined />}
+                                {alias || name}
+                              </div>
+                            </DragSortableItem>
+                          }
+                        </div>
+                      </DropSortableItem>
+                    }
                     {
                       !hidden && (Object.entries(initParams) || []).map((item: any) => {
                         const { alias, name, widget, onHidden } = item[1];
@@ -409,8 +403,8 @@ const Control: React.FC<any> = (props: any) => {
                             {/* <BlockOutlined className="item-icon" /> */}
                           </div>
                           <div className="title-box">
-                            <div>{alias}</div>
-                            <span>{name}</span>
+                            <TooltipDiv className="first">{alias}</TooltipDiv>
+                            <TooltipDiv className="second">{name}</TooltipDiv>
                           </div>
                           <div className="value-box">
                             <FormatWidgetToDom
@@ -535,9 +529,9 @@ export default connect(({ home, themeStore }) => ({
 
 }))(Control);
 
-const FormatWidgetToDom = (props: any) => {
+export const FormatWidgetToDom = (props: any) => {
   const {
-    id, config = [], disabled, widgetChange,
+    id, label = '', config = [], disabled, widgetChange,
     setSelectedOption,
     setEditorVisible, setEditorValue,
     setPlatFormVisible, setPlatFormValue,
@@ -577,6 +571,7 @@ const FormatWidgetToDom = (props: any) => {
       return (
         <FormItem
           name={`${name}$$${guid()}`}
+          label={label}
           tooltip={description}
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
@@ -585,7 +580,7 @@ const FormatWidgetToDom = (props: any) => {
             placeholder={`请输入${alias}`}
             disabled={disabled}
             onBlur={(e) => {
-              widgetChange(name, e.target.value);
+              widgetChange?.(name, e.target.value);
             }}
           />
         </FormItem>
@@ -594,6 +589,7 @@ const FormatWidgetToDom = (props: any) => {
       return (
         <Form.Item
           name={`${name}$$${guid()}`}
+          label={label}
           tooltip={description}
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
@@ -601,7 +597,7 @@ const FormatWidgetToDom = (props: any) => {
           <IpInput
             disabled={disabled}
             onChange={(val: string) => {
-              widgetChange(name, val);
+              widgetChange?.(name, val);
             }}
           />
         </Form.Item>
@@ -610,12 +606,13 @@ const FormatWidgetToDom = (props: any) => {
       return (
         <FormItem
           name={`${name}$$${guid()}`}
+          label={label}
           tooltip={description}
           initialValue={(_.isArray(value) ? value[0] : value) || undefined}
           rules={[{ required: require, message: `${alias}` }]}
         >
           <Radio.Group onChange={(e) => {
-            widgetChange(name, e.target.value);
+            widgetChange?.(name, e.target.value);
           }}>
             {options.map((option: any, index: any) => {
               const { label, value } = option;
@@ -633,6 +630,7 @@ const FormatWidgetToDom = (props: any) => {
         <>
           <FormItem
             name={`${name}$$${guid()}`}
+            label={label}
             tooltip={description}
             initialValue={(_.isArray(value) ? value[0] : value) || undefined}
             rules={[{ required: require, message: `${alias}` }]}
@@ -643,7 +641,7 @@ const FormatWidgetToDom = (props: any) => {
                 const { value, propsKey } = e.target;
                 const { children = [] } = JSON.parse(propsKey);
                 setSelectedOption(children);
-                widgetChange(name, value);
+                widgetChange?.(name, value);
               }}
             >
               {options.map((option: any, index: any) => {
@@ -680,6 +678,7 @@ const FormatWidgetToDom = (props: any) => {
       return (
         <FormItem
           name={`${name}$$${guid()}`}
+          label={label}
           tooltip={description}
           initialValue={(_.isArray(value) ? value[0] : value) || false}
           rules={[{ required: require, message: `${alias}` }]}
@@ -688,7 +687,7 @@ const FormatWidgetToDom = (props: any) => {
             placeholder={`${alias}`}
             disabled={disabled}
             onChange={(e: any) => {
-              widgetChange(name, e)
+              widgetChange?.(name, e)
             }}
           >
             {options.map((option: any, index: any) => {
@@ -706,6 +705,7 @@ const FormatWidgetToDom = (props: any) => {
       return (
         <FormItem
           name={`${name}$$${guid()}`}
+          label={label}
           tooltip={description}
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
@@ -715,7 +715,7 @@ const FormatWidgetToDom = (props: any) => {
             mode="multiple"
             disabled={disabled}
             onChange={(e) => {
-              widgetChange(name, e)
+              widgetChange?.(name, e)
             }}
           >
             {options.map((option: any, index: any) => {
@@ -733,6 +733,7 @@ const FormatWidgetToDom = (props: any) => {
       return (
         <FormItem
           name={`${name}$$${guid()}`}
+          label={label}
           tooltip={description}
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
@@ -741,7 +742,7 @@ const FormatWidgetToDom = (props: any) => {
             options={options}
             disabled={disabled}
             onChange={(e) => {
-              widgetChange(name, e)
+              widgetChange?.(name, e)
             }}
           />
         </FormItem>
@@ -751,6 +752,7 @@ const FormatWidgetToDom = (props: any) => {
         <Fragment>
           <FormItem
             name={`${name}$$${guid()}`}
+            label={label}
             tooltip={description}
             initialValue={(value || value == 0) ? value : defaultValue}
             rules={[{ required: require, message: `${alias}` }]}
@@ -765,7 +767,7 @@ const FormatWidgetToDom = (props: any) => {
               disabled={disabled}
               onBlur={(e: any) => {
                 const value = e.target.value;
-                widgetChange(name, Number(value < max ? value : max));
+                widgetChange?.(name, Number(value < max ? value : max));
               }}
             />
           </FormItem>
@@ -775,6 +777,7 @@ const FormatWidgetToDom = (props: any) => {
       return (
         <FormItem
           name={`${name}$$${guid()}`}
+          label={label}
           tooltip={description}
           initialValue={(value || value == 0) ? value : defaultValue}
           rules={[{ required: require, message: `${alias}` }]}
@@ -787,7 +790,7 @@ const FormatWidgetToDom = (props: any) => {
             onChange={(e: any) => {
               !!updateTimer?.current && clearTimeout(updateTimer?.current);
               updateTimer.current = setTimeout(() => {
-                widgetChange(name, Number(e))
+                widgetChange?.(name, Number(e))
               }, 300)
             }}
           />
@@ -797,6 +800,7 @@ const FormatWidgetToDom = (props: any) => {
       return (
         <FormItem
           name={`${name}$$${guid()}`}
+          label={label}
           tooltip={description}
           initialValue={value || false}
           valuePropName="checked"
@@ -805,7 +809,7 @@ const FormatWidgetToDom = (props: any) => {
           <Switch
             disabled={disabled}
             onChange={(e) => {
-              widgetChange(name, e)
+              widgetChange?.(name, e)
             }}
           />
         </FormItem>
@@ -815,6 +819,7 @@ const FormatWidgetToDom = (props: any) => {
         <FormItem
           shouldUpdate
           name={`${name}$$${guid()}`}
+          label={label}
           tooltip={description}
           initialValue={value || undefined}
           valuePropName="file"
@@ -840,6 +845,7 @@ const FormatWidgetToDom = (props: any) => {
       return (
         <FormItem
           name={`${name}$$${guid()}`}
+          label={label}
           tooltip={description}
           initialValue={value || undefined}
           valuePropName="file"
@@ -871,7 +877,12 @@ const FormatWidgetToDom = (props: any) => {
       );
     case 'codeEditor':
       return (
-        <FormItem name={`${name}$$${guid()}`} tooltip={description} className="codeEditor">
+        <FormItem
+          name={`${name}$$${guid()}`}
+          label={label}
+          tooltip={description}
+          className="codeEditor"
+        >
           {
             !!value ?
               <Input.TextArea
@@ -898,12 +909,13 @@ const FormatWidgetToDom = (props: any) => {
           </Button>
         </FormItem>
       );
-    case 'platForm':
+    case 'ImageLabelField':
       return (
         <>
           <FormItem
             shouldUpdate
             name={`${name}$$${guid()}`}
+            label={label}
             tooltip={description}
             initialValue={localPath || undefined}
             valuePropName="file"
@@ -941,6 +953,7 @@ const FormatWidgetToDom = (props: any) => {
       return (
         <Form.Item
           name={`${name}$$${guid()}`}
+          label={label}
           tooltip={description}
           initialValue={value || defaultValue || {
             num_0: undefined,
@@ -953,7 +966,7 @@ const FormatWidgetToDom = (props: any) => {
           <Measurement
             disabled={disabled}
             onChange={(val: any) => {
-              widgetChange(name, val);
+              widgetChange?.(name, val);
             }}
           />
         </Form.Item>

@@ -134,11 +134,8 @@ const HistoryList: React.FC<any> = (props: any) => {
           <TooltipDiv
             title={text}
             placement="top"
-            onClick={() => {
-              window.open(text);
-            }}
           >
-            {result[result.length - 1]}
+            <a href={text} target="_blank">{result[result.length - 1]}</a>
           </TooltipDiv>
           :
           null
@@ -170,8 +167,8 @@ const HistoryList: React.FC<any> = (props: any) => {
             onFinish={(values) => {
               const { timeRange, ...rest } = values;
               const result = Object.assign({}, params, rest, !!timeRange ? {
-                startTime: new Date(timeRange[0]).getTime(),
-                endTime: new Date(timeRange[1]).getTime(),
+                captureBeginTime: timeRange[0].format('YYYY-MM-DD HH:mm:ss'),
+                captureEndTime: timeRange[1].format('YYYY-MM-DD HH:mm:ss'),
               } : {});
               getList(result);
               setParams(result);

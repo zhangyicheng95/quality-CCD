@@ -83,14 +83,17 @@
           .title-box {
             width: 200px;
 
-            div {
+            .first {
               font-size: 20px;
-              margin-bottom: -12px;
+              margin-bottom: -8px;
             }
 
-            span {
+            .second {
               font-size: 18px;
               color: @text-color-secondary;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
             }
           }
 

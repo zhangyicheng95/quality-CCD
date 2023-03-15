@@ -72,7 +72,11 @@ const SettingDrawerWrapper: React.FC = (props: any) => {
               contentData: Object.assign({}, paramData.contentData, {
                 theme: navTheme
               })
-            } : {}),
+            } : {
+              contentData: {
+                theme: navTheme
+              }
+            }),
           }).then((res: any) => {
             if (res && res.code === 'SUCCESS') {
 
