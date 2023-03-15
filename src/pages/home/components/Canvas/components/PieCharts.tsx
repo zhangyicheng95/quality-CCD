@@ -55,8 +55,9 @@ const PieCharts: React.FC<Props> = (props: any) => {
                     // }
                     label: {
                         alignTo: 'edge',
-                        fontSize: data?.length > 6 ? 11 : 13,
+                        fontSize: data?.length > 4 ? 9 : 11,
                         formatter: '{name|{b}}\n{time|{d} %}',
+                        // textBorderWidth: 3,
                         minMargin: 5,
                         edgeDistance: 10,
                         lineHeight: 16,
