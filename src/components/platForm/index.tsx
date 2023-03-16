@@ -86,6 +86,7 @@ const PlatFormModal: React.FC<Props> = (props) => {
       <MarkCanvas
         data={data}
         setGetDataFun={setGetDataFun}
+        getDataFun={getDataFun}
       />
     </Modal>
   );

@@ -861,9 +861,9 @@ const Home: React.FC<any> = (props: any) => {
     const { home = [
       { "i": "slider-1", "x": 0, "y": 0, "w": 7, "h": 8, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
       { "i": "slider-2", "x": 0, "y": 8, "w": 7, "h": 18, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
-      { "i": "slider-3", "x": 0, "y": 0, "w": 0, "h": 9, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
+      { "i": "slider-3", "x": 0, "y": 0, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
       { "i": "slider-4", "x": 7, "y": 0, "w": 89, "h": 3, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
-      { "i": "footer-1", "x": 7, "y": 0, "w": 0, "h": 0, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
+      { "i": "footer-1", "x": 7, "y": 0, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
       { "i": "footer-2", "x": 0, "y": 26, "w": 7, "h": 17, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }
     ], content = {}, footerSelectList, contentHeader = {} } = contentData;
     const { nodes } = flowData;

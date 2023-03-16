@@ -376,3 +376,25 @@ export function formatJson(jsonObj: any, callback?: any) {
     // 返回的数据需要去除两边的空格
     return formatted.trim();
 }
+
+/**
+ * 公共导出方法，支持ie10
+ * @param data
+ * @param name
+ */
+export function downFileFun(data = '{}', name = '') {
+    const blob = new Blob([data], { type: 'application/x-sql;charset=UTF-8' });
+    // @ts-ignore
+    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+        // @ts-ignore
+        window.navigator.msSaveOrOpenBlob(blob, name);
+    } else {
+        const a = document.createElement('a');
+        a.download = name;
+        a.style.display = 'none';
+        a.href = URL.createObjectURL(blob);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+}

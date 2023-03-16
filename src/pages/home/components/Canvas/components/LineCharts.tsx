@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import * as echarts from 'echarts';
 import options from './commonOptions';
 import * as _ from 'lodash';
-import { useModel } from 'umi';
+import { connect, useModel } from 'umi';
 import { message } from 'antd';
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const LineCharts: React.FC<Props> = (props: any) => {
-    const { data = {}, id, } = props;
+    const { data = {}, id, legend, dispatch } = props;
     const { dataValue = [], yName, xName } = data;
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
@@ -47,12 +47,16 @@ const LineCharts: React.FC<Props> = (props: any) => {
         });
 
         const option = Object.assign({}, options, {
-            legend: Object.assign({}, options.legend, {
-                data: (dataValue || []).map((item: any) => {
-                    const { name } = item;
-                    return name;
-                })
-            }),
+            legend: Object.assign(
+                {}, options.legend,
+                {
+                    data: (dataValue || []).map((item: any) => {
+                        const { name } = item;
+                        return name;
+                    })
+                },
+                legend[id] ? { selected: legend[id], } : {}
+            ),
             grid: Object.assign({}, options.grid, {
                 right: `${xName.length * (xName.length < 4 ? 24 : 16)}px`,
             }),
@@ -125,6 +129,13 @@ const LineCharts: React.FC<Props> = (props: any) => {
                 }
             })
         });
+        myChart.on('legendselectchanged', function (obj: any) {
+            const { selected } = obj;
+            dispatch({
+                type: 'themeStore/shortTimeAction',
+                payload: { [id]: selected }
+            });
+        });
         myChart.setOption(option);
         myChart.resize({
             width: dom.clientWidth,
@@ -146,7 +157,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
             }, false);
             myChart && myChart.dispose();
         }
-    }, [data]);
+    }, [data, legend]);
 
     return (
         <div
@@ -157,4 +168,6 @@ const LineCharts: React.FC<Props> = (props: any) => {
 
 };
 
-export default LineCharts;
+export default connect(({ home, themeStore }) => ({
+    legend: themeStore.legend,
+}))(LineCharts);

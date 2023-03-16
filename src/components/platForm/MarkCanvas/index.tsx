@@ -20,11 +20,12 @@ import loadIcon from '@/assets/imgs/down-load.svg';
 import { BASE_IP } from "@/services/api";
 import e from "express";
 import { FormatWidgetToDom } from "@/pages/control";
-import { guid } from "@/utils/utils";
+import { downFileFun, guid } from "@/utils/utils";
 
 interface Props {
   data?: any;
   setGetDataFun?: any;
+  getDataFun?: any;
 }
 const AILabel = require('ailabel');
 const CONTAINER_ID = 'mark-canvas';
@@ -39,7 +40,7 @@ let drawingStyle: any = { strokeStyle: '#F00' }; // 绘制过程中样式
 const MarkCanvas: React.FC<Props> = (props: any) => {
   const [form] = Form.useForm();
   const { validateFields, resetFields } = form;
-  const { data, setGetDataFun } = props;
+  const { data, setGetDataFun, getDataFun } = props;
   const { platFormValue, localPath, zoom, widget } = data;
   const { options } = widget;
   const markRef = useRef<any>();
@@ -53,7 +54,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     // const dom: any = document.getElementById(CONTAINER_ID);
     // const width = dom?.clientWidth,
     // height = dom?.clientHeight;
-
     img = new Image();
     img.src = localPath?.indexOf('http') === 0 ? localPath : `${BASE_IP}file${(localPath?.indexOf('\\') === 0 || localPath?.indexOf('/') === 0) ? '' : '\\'}${localPath}`;
     img.title = 'img.png';
@@ -477,6 +477,59 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     }
   }
 
+  // 导出数据
+  const exportData = () => {
+    const data1 = ((getFeatures().map((item: any) => _.omit(item, 'layer'))) || []).map((item: any) => {
+      return Object.assign({}, item, {
+        props: Object.assign({}, item?.props, {
+          initParams: getDataFun?.value?.[item.id]
+        })
+      })
+    });
+    const data2 = getRle() || [];
+    const params = Object.assign({}, data,
+      {
+        zoom,
+        platFormValue: _.uniqBy(data1, 'id').concat(data2),
+        value: _.uniqBy(data1, 'id').concat(data2).map((item: any) => {
+          const { props, shape, type, id } = item;
+          const { initParams } = props;
+          if (type === 'RECT') {
+            return {
+              id,
+              type: "RECT",
+              roi: shape,
+              ...initParams
+            }
+          } else if (type === 'LINE') {
+            return {
+              id,
+              type: "LINE",
+              roi: shape,
+              ...initParams
+            }
+          } else if (type === 'CIRCLE') {
+            return {
+              id,
+              type: "CIRCLE",
+              roi: shape,
+              ...initParams
+            }
+          } else if (type === 'POINT') {
+            return {
+              id,
+              type: "POINT",
+              roi: shape,
+              ...initParams
+            }
+          }
+        })
+      }
+    );
+    const { value } = params;
+    downFileFun(JSON.stringify(value), `${data?.nodeName}_ROI.json`);
+  }
+
   // 导出图片上护具
   async function exportImage(type: any) {
     const shareContent: any = document.getElementById(CONTAINER_ID);
@@ -535,6 +588,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     setSelectedOptionType({});
     resetFields();
   };
+
   return <div className={`${styles.markCanvas} flex-box`} ref={markRef}>
     {/* <div className="canvas-header flex-box-justify-end">
       <Button onClick={() => getFeatures()} style={{ marginRight: 10 }} >获取标注数据</Button>
@@ -617,9 +671,9 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         <div className="bottom background-ubv" style={{ marginBottom: 0 }}>
           <img src={plusIcon} alt="plus" onClick={() => zoomIn()} />
           <img src={minusIcon} alt="minus" onClick={() => zoomOut()} />
-          {/* <Popover placement="right" content={"下载图片"} >
-            <img src={loadIcon} alt="down-load" onClick={() => exportImage('blob')} />
-          </Popover> */}
+          <Popover placement="right" content={"导出数据"} >
+            <img src={loadIcon} alt="down-load" onClick={() => exportData()} />
+          </Popover>
         </div>
       </div>
       <Spin spinning={loading} tip="Loading...">
@@ -650,7 +704,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         return { label: res[0], value: res[0], };
                       }) : []}
                       placeholder="参数类型"
-                      showSearch
                       onChange={(val, option: any) => {
                         setSelectedOptionType(_.cloneDeep(options)[val]);
                       }}
@@ -694,14 +747,24 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                     .then((values) => {
                       const value = Object.entries(values).reduce((pre: any, cen: any) => {
                         const key = cen[0].split('$$');
-                        const item = { ...selectedOptionType[key[0]], value: cen[1] };
+                        const item = Object.assign({}, selectedOptionType[key[0]],
+                          (key[0] === 'option_type' && _.isObject(cen[1])) ? cen[1] : { value: cen[1] }
+                        );
                         return Object.assign({}, pre, {
                           [key[0]]: item
                         })
                       }, {});
                       const result = {
                         ...featureList,
-                        [selectedFeature]: value
+                        [selectedFeature]: Object.entries(featureList[selectedFeature] || selectedOptionType)?.reduce((pre: any, cen: any) => {
+                          debugger
+                          return Object.assign({}, pre, {
+                            [cen[0]]: {
+                              ...cen[1],
+                              value: value[cen[0]]?.value
+                            }
+                          })
+                        }, { option_type: { value: value?.['option_type']?.value } })
                       };
                       setGetDataFun((prev: any) => ({
                         ...prev, zoom: gMap.zoom, value: Object.assign({}, prev?.value, result)
@@ -709,6 +772,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       setFeatureList(result);
                       onCancel();
                     }).catch((err) => {
+                      console.log(err)
                     });
                 }}>保存</Button>
               </div>

@@ -4,6 +4,7 @@ export default {
   state: {
     theme: 'dark',
     projectStatus: [],
+    legend: {},
   },
 
   effects: {
@@ -17,6 +18,13 @@ export default {
       yield put({
         type: 'set',
         payload: { projectStatus: payload },
+      });
+    },
+    *shortTimeAction({ payload }: any, { put, select }: any) {
+      const legend: boolean = yield select((state: any) => state.themeStore.legend);
+      yield put({
+        type: 'set',
+        payload: { legend: Object.assign({}, legend, payload) },
       });
     },
   },

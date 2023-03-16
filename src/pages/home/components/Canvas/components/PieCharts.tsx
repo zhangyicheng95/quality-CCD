@@ -3,7 +3,7 @@ import * as echarts from "echarts";
 import options from "./commonOptions";
 import _ from "lodash";
 import { message } from "antd";
-import { useModel } from "umi";
+import { connect, useModel } from "umi";
 
 interface Props {
     data: any,
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const PieCharts: React.FC<Props> = (props: any) => {
-    const { data = [], id, } = props;
+    const { data = [], id, legend, dispatch } = props;
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
 
@@ -25,10 +25,10 @@ const PieCharts: React.FC<Props> = (props: any) => {
         const dom: any = document.getElementById(`echart-${id}`);
         const myChart = echarts.init(dom);
         const option = Object.assign({}, options, {
-            legend: {
-                ...options.legend,
-                left: "3%",
-            },
+            legend: Object.assign({}, options.legend,
+                { left: "3%" },
+                legend[id] ? { selected: legend[id], } : {}
+            ),
             grid: { ...options.grid, top: "bottom", },
             xAxis: { show: false },
             yAxis: { show: false },
@@ -101,6 +101,13 @@ const PieCharts: React.FC<Props> = (props: any) => {
                 }
             ]
         });
+        myChart.on('legendselectchanged', function (obj: any) {
+            const { selected } = obj;
+            dispatch({
+                type: 'themeStore/shortTimeAction',
+                payload: { [id]: selected }
+            });
+        });
         myChart.setOption(option);
         myChart.resize({
             width: dom.clientWidth,
@@ -122,7 +129,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
             }, false);
             myChart && myChart.dispose();
         }
-    }, [data]);
+    }, [data, legend]);
 
     return (
         <div
@@ -133,4 +140,6 @@ const PieCharts: React.FC<Props> = (props: any) => {
 
 };
 
-export default PieCharts;
+export default connect(({ home, themeStore }) => ({
+    legend: themeStore.legend,
+}))(PieCharts);

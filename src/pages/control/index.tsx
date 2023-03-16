@@ -409,6 +409,7 @@ const Control: React.FC<any> = (props: any) => {
                           <div className="value-box">
                             <FormatWidgetToDom
                               id={`${id}@$@${item[0]}`}
+                              node={node}
                               config={item}
                               form={form}
                               disabled={false}
@@ -531,7 +532,7 @@ export default connect(({ home, themeStore }) => ({
 
 export const FormatWidgetToDom = (props: any) => {
   const {
-    id, label = '', config = [], disabled, widgetChange,
+    id, label = '', node, config = [], disabled, widgetChange,
     setSelectedOption,
     setEditorVisible, setEditorValue,
     setPlatFormVisible, setPlatFormValue,
@@ -939,7 +940,7 @@ export const FormatWidgetToDom = (props: any) => {
             <Button
               type='primary'
               onClick={() => {
-                setPlatFormValue(Object.assign({}, config[1], { id: name }));
+                setPlatFormValue({ ...config[1], id: name, nodeName: node?.alias || node?.name });
                 setPlatFormVisible(true);
               }}
               disabled={!localPath}

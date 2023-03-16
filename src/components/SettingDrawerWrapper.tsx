@@ -18,7 +18,7 @@ const themeList = [
   }
 ]
 
-const SettingDrawerWrapper: React.FC = (props: any) => {
+const SettingDrawerWrapper: React.FC<any> = (props: any) => {
   const { initialState, setInitialState, dispatch, } = props;
   const { params, settings } = initialState;
   const [paramData, setParamData] = useState<any>({});
