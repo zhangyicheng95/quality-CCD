@@ -69,11 +69,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         zoom: zoom ? zoom : height * 3.5,
         mode: 'RECT', // 绘制线段
         refreshDelayWhenZooming: true, // 缩放时是否允许刷新延时，性能更优
+
         zoomWhenDrawing: true,
-        panWhenDrawing: true,
         zoomWheelRatio: 8, // 控制滑轮缩放缩率[0, 10), 值越小，则缩放越快，反之越慢
         withHotKeys: true // 关闭快捷键
       });
+
       // 不同的标记功能
       gMap.events.on('drawDone', (type: any, data: any) => {
         console.log('--type, data--', type, data, gMap.zoom);
@@ -398,7 +399,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         const pen = getRle;
         return {
           feat, pen, zoom: gMap.zoom,
-          value: Object.assign({}, prev?.value, obj)
+          value: Object.assign({}, prev?.value, obj),
+          gMap,
         };
       });
 
@@ -411,9 +413,15 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
 
   function zoomIn() {
     gMap.zoomIn();
+    setGetDataFun((prev: any) => ({
+      ...prev, zoom: gMap.zoom
+    }));
   }
   function zoomOut() {
     gMap.zoomOut();
+    setGetDataFun((prev: any) => ({
+      ...prev, zoom: gMap.zoom
+    }));
   }
   function getRle() {
     const rleData = gFirstMaskLayer.getRleData({ x: 0, y: 0, width: 500, height: 354 });
@@ -487,47 +495,45 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       })
     });
     const data2 = getRle() || [];
-    const params = Object.assign({}, data,
-      {
-        zoom,
-        platFormValue: _.uniqBy(data1, 'id').concat(data2),
-        value: _.uniqBy(data1, 'id').concat(data2).map((item: any) => {
-          const { props, shape, type, id } = item;
-          const { initParams } = props;
-          if (type === 'RECT') {
-            return {
-              id,
-              type: "RECT",
-              roi: shape,
-              ...initParams
-            }
-          } else if (type === 'LINE') {
-            return {
-              id,
-              type: "LINE",
-              roi: shape,
-              ...initParams
-            }
-          } else if (type === 'CIRCLE') {
-            return {
-              id,
-              type: "CIRCLE",
-              roi: shape,
-              ...initParams
-            }
-          } else if (type === 'POINT') {
-            return {
-              id,
-              type: "POINT",
-              roi: shape,
-              ...initParams
-            }
-          }
-        })
+    const params = _.uniqBy(data1, 'id').concat(data2).map((item: any) => {
+      const { props, shape, type, id } = item;
+      const { initParams = {} } = props;
+      const initValue = Object.entries(initParams)?.reduce((pre: any, cen: any) => {
+        return Object.assign({}, pre, {
+          [cen[0]]: cen[1]?.value,
+        });
+      }, {});
+      if (type === 'RECT') {
+        return {
+          id,
+          type: "RECT",
+          roi: shape,
+          ...initValue
+        }
+      } else if (type === 'LINE') {
+        return {
+          id,
+          type: "LINE",
+          roi: shape,
+          ...initValue
+        }
+      } else if (type === 'CIRCLE') {
+        return {
+          id,
+          type: "CIRCLE",
+          roi: shape,
+          ...initValue
+        }
+      } else if (type === 'POINT') {
+        return {
+          id,
+          type: "POINT",
+          roi: shape,
+          ...initValue
+        }
       }
-    );
-    const { value } = params;
-    downFileFun(JSON.stringify(value), `${data?.nodeName}_ROI.json`);
+    });
+    downFileFun(JSON.stringify(params), `${data?.nodeName}_ROI.json`);
   }
 
   // 导出图片上护具
@@ -716,7 +722,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           return <FormatWidgetToDom
                             key={item[0]}
                             id={item[0]}
-                            label={item[0]}
+                            label={item?.[1]?.alias || item[0]}
                             config={item}
                             form={form}
                             disabled={false}
@@ -728,7 +734,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         return <FormatWidgetToDom
                           key={item[0]}
                           id={item[0]}
-                          label={item[0]}
+                          label={item?.[1]?.alias || item[0]}
                           config={item}
                           form={form}
                           disabled={false}
@@ -757,7 +763,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       const result = {
                         ...featureList,
                         [selectedFeature]: Object.entries(featureList[selectedFeature] || selectedOptionType)?.reduce((pre: any, cen: any) => {
-                          debugger
                           return Object.assign({}, pre, {
                             [cen[0]]: {
                               ...cen[1],

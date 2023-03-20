@@ -73,7 +73,7 @@ const GridLayout: React.FC<Props> = (props: any) => {
                         onResizeStop={onLayoutChange}
                         onDragStop={onLayoutChange}
                         resizeHandles={['se']}  // 'n', 'e', 's', 'w', 'nw', 'ne', 'se', 'sw'
-                        resizeHandle={<CustomResizeHandle />}
+                        resizeHandle={!!dragName ? <CustomResizeHandle /> : null}
                         draggableHandle={dragName}
                         margin={margin}
                     >

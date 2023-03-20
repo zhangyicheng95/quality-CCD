@@ -1,18 +1,21 @@
-import React, { useEffect } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import * as echarts from 'echarts';
 import options from './commonOptions';
 import * as _ from 'lodash';
 import { connect, useModel } from 'umi';
 import { message } from 'antd';
+import { CompressOutlined } from '@ant-design/icons';
 
 interface Props {
     data: any,
     id: any,
+    setMyChartVisible?: any,
     onClick?: any,
 }
 
 const LineCharts: React.FC<Props> = (props: any) => {
-    const { data = {}, id, legend, dispatch } = props;
+    let myChart: any = null;
+    const { data = {}, id, legend, dispatch, setMyChartVisible } = props;
     const { dataValue = [], yName, xName } = data;
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
@@ -24,7 +27,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
             return;
         }
         const dom: any = document.getElementById(`echart-${id}`);
-        const myChart = echarts.init(dom);
+        myChart = echarts.init(dom);
         let minValue: any = null,
             maxValue: any = null;
         (dataValue || []).forEach((item: any, index: number) => {
@@ -160,10 +163,21 @@ const LineCharts: React.FC<Props> = (props: any) => {
     }, [data, legend]);
 
     return (
-        <div
-            style={{ width: '100%', height: '100%' }}
-            id={`echart-${id}`}
-        />
+        <Fragment>
+            <div
+                style={{ width: '100%', height: '100%' }}
+                id={`echart-${id}`}
+            />
+            <div className="preview-box flex-box-center">
+                <CompressOutlined className='preview-icon' onClick={() => {
+                    if (!!myChart) {
+                        const options = myChart?.getOption?.();
+                        setMyChartVisible(options);
+                    }
+                }} />
+            </div>
+
+        </Fragment>
     );
 
 };

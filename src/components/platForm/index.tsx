@@ -29,7 +29,8 @@ const PlatFormModal: React.FC<Props> = (props) => {
       open={visible}
       maskClosable={false}
       onOk={() => {
-        const { feat, pen, zoom, value } = getDataFun;
+        const { feat, pen, zoom, value, gMap, } = getDataFun;
+        console.log(gMap?.getLayers?.())
         const data1 = ((feat && feat().map((item: any) => _.omit(item, 'layer'))) || []).map((item: any) => {
           return Object.assign({}, item, {
             props: Object.assign({}, item?.props, {
@@ -44,34 +45,39 @@ const PlatFormModal: React.FC<Props> = (props) => {
             platFormValue: _.uniqBy(data1, 'id').concat(data2),
             value: _.uniqBy(data1, 'id').concat(data2).map((item: any) => {
               const { props, shape, type, id } = item;
-              const { initParams } = props;
+              const { initParams = {} } = props;
+              const initValue = Object.entries(initParams)?.reduce((pre: any, cen: any) => {
+                return Object.assign({}, pre, {
+                  [cen[0]]: cen[1]?.value,
+                });
+              }, {});
               if (type === 'RECT') {
                 return {
                   id,
                   type: "RECT",
                   roi: shape,
-                  ...initParams
+                  ...initValue
                 }
               } else if (type === 'LINE') {
                 return {
                   id,
                   type: "LINE",
                   roi: shape,
-                  ...initParams
+                  ...initValue
                 }
               } else if (type === 'CIRCLE') {
                 return {
                   id,
                   type: "CIRCLE",
                   roi: shape,
-                  ...initParams
+                  ...initValue
                 }
               } else if (type === 'POINT') {
                 return {
                   id,
                   type: "POINT",
                   roi: shape,
-                  ...initParams
+                  ...initValue
                 }
               }
             })

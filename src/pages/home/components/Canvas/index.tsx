@@ -55,6 +55,7 @@ import FileManager from '@/components/FileManager';
 import Table2Charts from './components/Table2Charts';
 import ImgsCharts from './components/ImgsCharts';
 import ButtonCharts from './components/ButtonCharts';
+import ChartPreviewModal from './components/ChartPreviewModal';
 
 let updateTimer: string | number | NodeJS.Timer | null | undefined = null;
 const Home: React.FC<any> = (props: any) => {
@@ -85,6 +86,7 @@ const Home: React.FC<any> = (props: any) => {
   const [footerSelectVisible, setFooterSelectVisible] = useState(false);
   const [footerSelectList, setFooterSelectList] = useState<any>([]);
   const [addItemsVisible, setAddItemsVisible] = useState(false);
+  const [myChartVisible, setMyChartVisible] = useState<any>(null);
 
   const ifCanEdit = useMemo(() => {
     return window.location.hash.indexOf('edit') > -1;
@@ -983,7 +985,7 @@ const Home: React.FC<any> = (props: any) => {
         layoutData: any = [],
         resultData: any = {};
       addContentList?.forEach((item: any, index: number) => {
-        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams } = item;
+        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor = 'default' } = item;
         const id = key?.split('$$')[0];
         const gridValue = gridContentList[id] || {};
         const newGridValue = newGridContentList[id] || {};
@@ -995,7 +997,7 @@ const Home: React.FC<any> = (props: any) => {
         const SecLabel = items?.filter((i: any) => i.group === 'bottom' && (i?.label?.name === value[1]))[0];
 
         listData = listData.concat(
-          <div key={key} className=" drag-item-content-box background-ubv">
+          <div key={key} className={` drag-item-content-box ${backgroundColor === 'default' ? "background-ubv" : ""}`}>
             {
               (ifCanEdit || paramData?.contentData?.contentHeader?.[key]) ?
                 <div className="common-card-title-box flex-box drag-btn">
@@ -1065,113 +1067,119 @@ const Home: React.FC<any> = (props: any) => {
                 :
                 null
             }
-            <div className="flex-box-center"
-              style={paramData?.contentData?.contentHeader?.[key] ? { height: 'calc(100% - 50px)' } : { height: '100%' }}
-            >
-              {
-                type === 'line' ?
-                  <LineCharts
-                    id={key}
-                    data={{
-                      dataValue: dataValue || [],
-                      yName, xName,
-                    }}
-                  />
-                  :
-                  type === 'point' ?
-                    <PointCharts
+            <div className="card-body-box">
+              <div className="flex-box-center"
+                style={paramData?.contentData?.contentHeader?.[key] ? { height: 'calc(100% - 50px)' } : { height: '100%' }}
+              >
+                {
+                  type === 'line' ?
+                    <LineCharts
                       id={key}
+                      setMyChartVisible={setMyChartVisible}
                       data={{
                         dataValue: dataValue || [],
-                        yName, xName, direction, symbol
+                        yName, xName,
                       }}
                     />
                     :
-                    type === 'bar' ?
-                      <BarCharts
+                    type === 'point' ?
+                      <PointCharts
                         id={key}
+                        setMyChartVisible={setMyChartVisible}
                         data={{
                           dataValue: dataValue || [],
-                          yName, xName, direction
+                          yName, xName, direction, symbol
                         }}
                       />
                       :
-                      type === 'pie' ?
-                        <PieCharts
+                      type === 'bar' ?
+                        <BarCharts
                           id={key}
-                          data={dataValue || []}
+                          setMyChartVisible={setMyChartVisible}
+                          data={{
+                            dataValue: dataValue || [],
+                            yName, xName, direction, align
+                          }}
                         />
                         :
-                        type === 'table' ?
-                          <TableCharts
+                        type === 'pie' ?
+                          <PieCharts
                             id={key}
-                            data={{
-                              dataValue: dataValue || [],
-                              yName, xName, fontSize, reverse
-                            }}
+                            setMyChartVisible={setMyChartVisible}
+                            data={dataValue || []}
                           />
                           :
-                          type === 'table2' ?
-                            <Table2Charts
+                          type === 'table' ?
+                            <TableCharts
                               id={key}
                               data={{
                                 dataValue: dataValue || [],
-                                fontSize, reverse
+                                yName, xName, fontSize, reverse
                               }}
                             />
                             :
-                            type === 'alert' ?
-                              <AlertCharts
+                            type === 'table2' ?
+                              <Table2Charts
                                 id={key}
-                                data={dataValue || []}
+                                data={{
+                                  dataValue: dataValue || [],
+                                  fontSize, reverse
+                                }}
                               />
                               :
-                              type === 'imgs' ?
-                                <ImgsCharts
+                              type === 'alert' ?
+                                <AlertCharts
                                   id={key}
                                   data={dataValue || []}
                                 />
                                 :
-                                type === 'button' ?
-                                  <Button
-                                    type={'primary'}
+                                type === 'imgs' ?
+                                  <ImgsCharts
                                     id={key}
-                                    onClick={() => {
-                                      btnFetch(fetchType, xName, JSON.parse(fetchParams));
-                                    }}
-                                  >
-                                    {yName}
-                                  </Button>
+                                    data={dataValue || []}
+                                  />
                                   :
-                                  type === 'buttonInp' ?
-                                    <ButtonCharts
+                                  type === 'button' ?
+                                    <Button
+                                      type={'primary'}
                                       id={key}
-                                      data={{
-                                        yName, xName, fetchType
+                                      onClick={() => {
+                                        btnFetch(fetchType, xName, JSON.parse(fetchParams));
                                       }}
-                                    />
+                                    >
+                                      {yName}
+                                    </Button>
                                     :
-                                    (
-                                      _.isString(dataValue) && dataValue.indexOf('http') > -1 ? (
-                                        <Image
-                                          src={dataValue}
-                                          alt="logo"
-                                          style={{ width: '100%', height: 'auto' }}
-                                        />
-                                      )
-                                        :
-                                        !!defaultImg ?
+                                    type === 'buttonInp' ?
+                                      <ButtonCharts
+                                        id={key}
+                                        data={{
+                                          yName, xName, fetchType
+                                        }}
+                                      />
+                                      :
+                                      (
+                                        _.isString(dataValue) && dataValue.indexOf('http') > -1 ? (
                                           <Image
-                                            src={`${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}`}
+                                            src={dataValue}
                                             alt="logo"
                                             style={{ width: '100%', height: 'auto' }}
                                           />
+                                        )
                                           :
-                                          <Skeleton.Image
-                                            active={true}
-                                          />
-                                    )
-              }
+                                          !!defaultImg ?
+                                            <Image
+                                              src={`${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}`}
+                                              alt="logo"
+                                              style={{ width: '100%', height: 'auto' }}
+                                            />
+                                            :
+                                            <Skeleton.Image
+                                              active={true}
+                                            />
+                                      )
+                }
+              </div>
             </div>
           </div>,
         );
@@ -1189,6 +1197,7 @@ const Home: React.FC<any> = (props: any) => {
       setContentList([]);
     }
   }, [gridContentList, addContentList]);
+
   // 启动任务
   const start = () => {
     if (!ipString) return;
@@ -1331,7 +1340,7 @@ const Home: React.FC<any> = (props: any) => {
   const addWindow = () => {
     validateFields()
       .then((values) => {
-        const { value, type, yName, xName, fontSize, defaultImg, reverse, direction, symbol, fetchType, fetchParams } = values;
+        const { value, type, yName, xName, fontSize, defaultImg, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
             JSON.parse(fetchParams);
@@ -1354,7 +1363,7 @@ const Home: React.FC<any> = (props: any) => {
             size: { i: id, x: 8, y: 0, w: 10, h: 4, minW: 1, maxW: 100, minH: 2, maxH: 100 },
             type,
             tab: activeTab,
-            yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams
+            yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor
           });
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1365,7 +1374,7 @@ const Home: React.FC<any> = (props: any) => {
                 size: Object.assign({}, editWindowData.size, { i: id }),
                 type,
                 tab: activeTab,
-                yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams
+                yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor
               };
             };
             return item;
@@ -1399,7 +1408,7 @@ const Home: React.FC<any> = (props: any) => {
     form.resetFields();
     setEditWindowData({});
     setSelectedPath({ fileType: 'file', value: '' });
-    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false, direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined });
+    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false, direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined, align: 'left', backgroundColor: 'default' });
     setWindowType('img');
     setAddWindowVisible(false);
     setFooterSelectVisible(false);
@@ -1412,7 +1421,7 @@ const Home: React.FC<any> = (props: any) => {
           useMemo(() => {
             return !_.isEmpty(gridHomeList) ? (
               <GridLayout
-                dragName={'.common-card-title'}
+                dragName={ifCanEdit ? '.common-card-title' : ''}
                 list={gridList.concat(contentList)}
                 layout={gridHomeList.concat(contentLayout)}
                 onChange={(data: any) => {
@@ -1578,6 +1587,26 @@ const Home: React.FC<any> = (props: any) => {
                 }}
               />
             </Form.Item>
+            <Form.Item
+              name={`backgroundColor`}
+              label={'窗口背景色'}
+              initialValue={"default"}
+              rules={[{ required: false, message: '窗口背景色' }]}
+            >
+              <Select
+                style={{ width: '100%' }}
+                options={[
+                  {
+                    value: 'default',
+                    label: '默认',
+                  },
+                  {
+                    value: 'transparent',
+                    label: '透明色',
+                  }
+                ]}
+              />
+            </Form.Item>
             {
               (['img'].includes(windowType) && !isVision) ?
                 <Form.Item
@@ -1638,6 +1667,30 @@ const Home: React.FC<any> = (props: any) => {
                       {
                         value: 'column',
                         label: '纵向',
+                      }
+                    ]}
+                  />
+                </Form.Item>
+                : null
+            }
+            {
+              ['bar'].includes(windowType) ?
+                <Form.Item
+                  name={`align`}
+                  label={'对齐方向'}
+                  initialValue={"left"}
+                  rules={[{ required: false, message: '对齐方向' }]}
+                >
+                  <Select
+                    style={{ width: '100%' }}
+                    options={[
+                      {
+                        value: 'left',
+                        label: '左对齐',
+                      },
+                      {
+                        value: 'right',
+                        label: '右对齐',
                       }
                     ]}
                   />
@@ -1830,6 +1883,14 @@ const Home: React.FC<any> = (props: any) => {
 
             </Form>
           </Modal>
+          : null
+      }
+      {
+        (_.isObject(myChartVisible) && !_.isEmpty(myChartVisible)) ?
+          <ChartPreviewModal
+            option={myChartVisible}
+            onCancel={() => setMyChartVisible(null)}
+          />
           : null
       }
     </div>

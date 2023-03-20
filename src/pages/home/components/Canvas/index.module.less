@@ -183,6 +183,20 @@
       }
     }
 
+    .chart-preview-modal {
+      .ant-modal {
+        height: 90vh;
+
+        .ant-modal-content {
+          height: 100%;
+
+          .ant-modal-body {
+            height: 90%;
+          }
+        }
+      }
+    }
+
     .drag-item-content-box {
       // justify-content: center;
       display: flex;
@@ -221,6 +235,23 @@
         .title-span {
           padding-left: 4px;
           visibility: hidden;
+        }
+      }
+
+      .card-body-box {
+        height: 100%;
+        width: 100%;
+        position: relative;
+
+        .preview-box {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+
+          .preview-icon {
+            font-size: 14px;
+            cursor: pointer;
+          }
         }
       }
 

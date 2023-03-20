@@ -1,18 +1,21 @@
-import React, { useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 import * as echarts from "echarts";
 import options from "./commonOptions";
 import _ from "lodash";
 import { message } from "antd";
 import { connect, useModel } from "umi";
+import { CompressOutlined } from "@ant-design/icons";
 
 interface Props {
     data: any,
     id: any,
+    setMyChartVisible?: any,
     onClick?: any,
 }
 
 const PieCharts: React.FC<Props> = (props: any) => {
-    const { data = [], id, legend, dispatch } = props;
+    let myChart: any = null;
+    const { data = {}, id, legend, dispatch, setMyChartVisible } = props;
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
 
@@ -23,7 +26,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
             return;
         }
         const dom: any = document.getElementById(`echart-${id}`);
-        const myChart = echarts.init(dom);
+        myChart = echarts.init(dom);
         const option = Object.assign({}, options, {
             legend: Object.assign({}, options.legend,
                 { left: "3%" },
@@ -132,10 +135,21 @@ const PieCharts: React.FC<Props> = (props: any) => {
     }, [data, legend]);
 
     return (
-        <div
-            style={{ width: "100%", height: "100%" }}
-            id={`echart-${id}`}
-        />
+        <Fragment>
+            <div
+                style={{ width: '100%', height: '100%' }}
+                id={`echart-${id}`}
+            />
+            <div className="preview-box flex-box-center">
+                <CompressOutlined className='preview-icon' onClick={() => {
+                    if (!!myChart) {
+                        const options = myChart?.getOption?.();
+                        setMyChartVisible(options);
+                    }
+                }} />
+            </div>
+
+        </Fragment>
     );
 
 };
