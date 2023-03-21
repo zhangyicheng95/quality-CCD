@@ -39,7 +39,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
             legend: {
                 show: false
             },
-            grid: Object.assign({}, options.grid, align === 'right' ? {
+            grid: Object.assign({ top: '35px', }, options.grid, align === 'right' ? {
                 left: `${xName.length * (xName.length < 4 ? 24 : 16)}px`,
                 right: '3%'
             } : {
@@ -70,7 +70,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 type: 'bar',
                 colorBy: 'data',
                 label: {
-                    show: true
+                    show: seriesData?.length < 10
                 },
                 data: seriesData,
             }

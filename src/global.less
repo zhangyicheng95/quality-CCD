@@ -357,6 +357,52 @@ ol {
   }
 }
 
+.label-style {
+  line-height: 32px;
+  justify-content: flex-end;
+  -webkit-justify-content: flex-end;
+  word-break: break-all;
+  padding-right: 8px;
+}
+
+.wrapper-style {
+  flex: 1;
+
+  .top-content {
+    flex: 1;
+    width: 100%;
+    line-height: 32px;
+    margin-bottom: 8px;
+  }
+
+  .plugin-style {
+    flex: 1;
+    word-break: break-word;
+  }
+
+  .plugin-icon {
+    // padding-top: 8px;
+    margin-left: 16px;
+    cursor: pointer;
+  }
+
+  .text-style {
+    // word-break: break-all;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+
+.mask-style {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
 .ant-slider {
   height: 100% !important;
   display: flex;

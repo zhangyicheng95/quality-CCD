@@ -1069,7 +1069,7 @@ const Home: React.FC<any> = (props: any) => {
             }
             <div className="card-body-box">
               <div className="flex-box-center"
-                style={paramData?.contentData?.contentHeader?.[key] ? { height: 'calc(100% - 50px)' } : { height: '100%' }}
+                style={paramData?.contentData?.contentHeader?.[key] ? { height: 'calc(100% - 14px)' } : { height: '100%' }}
               >
                 {
                   type === 'line' ?

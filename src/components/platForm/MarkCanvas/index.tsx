@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { Button, Form, message, Popover, Select, Spin } from 'antd';
 import { PictureOutlined } from "@ant-design/icons";
 // @ts-ignore
@@ -18,9 +18,8 @@ import rectIcon from '@/assets/imgs/rect.svg';
 import aimIcon from '@/assets/imgs/aim.svg';
 import loadIcon from '@/assets/imgs/down-load.svg';
 import { BASE_IP } from "@/services/api";
-import e from "express";
 import { FormatWidgetToDom } from "@/pages/control";
-import { downFileFun, guid } from "@/utils/utils";
+import { downFileFun, } from "@/utils/utils";
 
 interface Props {
   data?: any;
