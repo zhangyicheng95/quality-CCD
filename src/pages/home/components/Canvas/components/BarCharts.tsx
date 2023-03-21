@@ -16,7 +16,7 @@ interface Props {
 const BarCharts: React.FC<Props> = (props: any) => {
     let myChart: any = null;
     const { data = {}, id, setMyChartVisible, } = props;
-    const { dataValue = [], yName, xName, direction, align } = data;
+    const { dataValue = [], yName, xName, direction, align, barColor } = data;
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
 
@@ -65,15 +65,16 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 scale: false,
                 inverse: align === 'right',
             }, direction === 'rows' ? {} : { data: yData }),
-            series: {
+            series: Object.assign({
                 name: 'name',
                 type: 'bar',
-                colorBy: 'data',
                 label: {
                     show: seriesData?.length < 10
                 },
                 data: seriesData,
-            }
+            }, barColor === 'default' ? { colorBy: 'data', } : {
+                itemStyle: { color: barColor }
+            })
         });
 
         myChart.setOption(option);

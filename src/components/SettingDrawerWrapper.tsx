@@ -60,23 +60,25 @@ const SettingDrawerWrapper: React.FC<any> = (props: any) => {
           const { key, light, dark } = theme;
           document.documentElement.style.setProperty(key, navTheme === 'realDark' ? dark : light);
         });
+        const params = Object.assign({}, paramData, !!paramData.contentData ? {
+          contentData: Object.assign({}, paramData.contentData, {
+            theme: navTheme
+          })
+        } : {
+          contentData: {
+            theme: navTheme
+          }
+        });
         setInitialState((preInitialState: any) => ({
           ...preInitialState,
           settings: _settings,
+          params
         }));
+        // 把主题色存到接口中
         if (!!paramData.id) {
-          // 把主题色存到接口中
           updateParams({
             id: paramData.id,
-            data: Object.assign({}, paramData, !!paramData.contentData ? {
-              contentData: Object.assign({}, paramData.contentData, {
-                theme: navTheme
-              })
-            } : {
-              contentData: {
-                theme: navTheme
-              }
-            }),
+            data: params,
           }).then((res: any) => {
             if (res && res.code === 'SUCCESS') {
 

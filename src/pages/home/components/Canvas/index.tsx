@@ -284,8 +284,17 @@ const Home: React.FC<any> = (props: any) => {
                 icon={<SafetyOutlined className="btn-icon" />}
                 type="link"
                 onClick={() => {
-                  history.push({ pathname: `/home` });
-                  window.location.reload();
+                  updateParams({
+                    id: paramData.id,
+                    data: paramData,
+                  }).then((res: any) => {
+                    if (res && res.code === 'SUCCESS') {
+                      history.push({ pathname: `/home` });
+                      window.location.reload();
+                    } else {
+                      message.error(res?.msg || res?.message || '接口异常');
+                    }
+                  });
                 }}
               >
                 保存并返回
@@ -828,7 +837,7 @@ const Home: React.FC<any> = (props: any) => {
       }
     });
     setGridHomeList(home);
-    setAddContentList(content)
+    setAddContentList(content);
     dispatch({
       type: 'home/set',
       payload: {
@@ -985,7 +994,7 @@ const Home: React.FC<any> = (props: any) => {
         layoutData: any = [],
         resultData: any = {};
       addContentList?.forEach((item: any, index: number) => {
-        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor = 'default' } = item;
+        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor = 'default', barColor = 'default' } = item;
         const id = key?.split('$$')[0];
         const gridValue = gridContentList[id] || {};
         const newGridValue = newGridContentList[id] || {};
@@ -1098,7 +1107,7 @@ const Home: React.FC<any> = (props: any) => {
                           setMyChartVisible={setMyChartVisible}
                           data={{
                             dataValue: dataValue || [],
-                            yName, xName, direction, align
+                            yName, xName, direction, align, barColor
                           }}
                         />
                         :
@@ -1293,7 +1302,6 @@ const Home: React.FC<any> = (props: any) => {
     // }
   }, 300);
 
-
   // 监听任务启动，开启socket
   useEffect(() => {
     if ((started && ipString && dispatch && !ifCanEdit) || isVision) {
@@ -1319,28 +1327,28 @@ const Home: React.FC<any> = (props: any) => {
     };
   }, [started, dispatch]);
   // 信息变化，走接口更新
-  useEffect(() => {
-    if (!_.isEmpty(paramData) && !!paramData.id && ifCanEdit) {
-      updateTimer && clearTimeout(updateTimer);
-      updateTimer = setTimeout(() => {
-        updateParams({
-          id: paramData.id,
-          data: paramData,
-        }).then((res: any) => {
-          if (res && res.code === 'SUCCESS') {
+  // useEffect(() => {
+  //   if (!_.isEmpty(paramData) && !!paramData.id && ifCanEdit) {
+  //     updateTimer && clearTimeout(updateTimer);
+  //     updateTimer = setTimeout(() => {
+  //       updateParams({
+  //         id: paramData.id,
+  //         data: paramData,
+  //       }).then((res: any) => {
+  //         if (res && res.code === 'SUCCESS') {
 
-          } else {
-            message.error(res?.msg || res?.message || '接口异常');
-          }
-        });
-      }, 500);
-    }
-  }, [paramData]);
+  //         } else {
+  //           message.error(res?.msg || res?.message || '接口异常');
+  //         }
+  //       });
+  //     }, 500);
+  //   }
+  // }, [paramData]);
   // 添加监控窗口
   const addWindow = () => {
     validateFields()
       .then((values) => {
-        const { value, type, yName, xName, fontSize, defaultImg, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor } = values;
+        const { value, type, yName, xName, fontSize, defaultImg, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
             JSON.parse(fetchParams);
@@ -1363,7 +1371,7 @@ const Home: React.FC<any> = (props: any) => {
             size: { i: id, x: 8, y: 0, w: 10, h: 4, minW: 1, maxW: 100, minH: 2, maxH: 100 },
             type,
             tab: activeTab,
-            yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor
+            yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor
           });
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1374,16 +1382,16 @@ const Home: React.FC<any> = (props: any) => {
                 size: Object.assign({}, editWindowData.size, { i: id }),
                 type,
                 tab: activeTab,
-                yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor
+                yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor
               };
             };
             return item;
           })
         }
         setAddContentList(result);
-        if (paramData.id) {
-          const params = Object.assign({}, paramData, {
-            contentData: Object.assign({}, paramData.contentData, { content: result }),
+        if (paramsData.id) {
+          const params = Object.assign({}, paramsData, {
+            contentData: Object.assign({}, paramsData.contentData, { content: result }),
           });
           setParamData(params);
         }
@@ -1408,7 +1416,7 @@ const Home: React.FC<any> = (props: any) => {
     form.resetFields();
     setEditWindowData({});
     setSelectedPath({ fileType: 'file', value: '' });
-    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false, direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined, align: 'left', backgroundColor: 'default' });
+    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false, direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined, align: 'left', backgroundColor: 'default', barColor: 'default' });
     setWindowType('img');
     setAddWindowVisible(false);
     setFooterSelectVisible(false);
@@ -1675,26 +1683,52 @@ const Home: React.FC<any> = (props: any) => {
             }
             {
               ['bar'].includes(windowType) ?
-                <Form.Item
-                  name={`align`}
-                  label={'对齐方向'}
-                  initialValue={"left"}
-                  rules={[{ required: false, message: '对齐方向' }]}
-                >
-                  <Select
-                    style={{ width: '100%' }}
-                    options={[
-                      {
-                        value: 'left',
-                        label: '左对齐',
-                      },
-                      {
-                        value: 'right',
-                        label: '右对齐',
-                      }
-                    ]}
-                  />
-                </Form.Item>
+                <Fragment>
+                  <Form.Item
+                    name={`align`}
+                    label={'对齐方向'}
+                    initialValue={"left"}
+                    rules={[{ required: false, message: '对齐方向' }]}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      options={[
+                        {
+                          value: 'left',
+                          label: '左对齐',
+                        },
+                        {
+                          value: 'right',
+                          label: '右对齐',
+                        }
+                      ]}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name={`barColor`}
+                    label={'图形颜色'}
+                    initialValue={"default"}
+                    rules={[{ required: false, message: '图形颜色' }]}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      options={[
+                        { value: 'default', label: '默认' },
+                        { value: '#73c0de', label: '蓝色' },
+                        { value: '#5470c6', label: '深蓝' },
+                        { value: '#91cc75', label: '绿色' },
+                        { value: '#3ba272', label: '深绿' },
+                        { value: '#fac858', label: '黄色' },
+                        { value: '#ee6666', label: '红色' },
+                        { value: '#fc8452', label: '橘红' },
+                        { value: '#9a60b4', label: '紫色' },
+                        { value: '#ea7ccc', label: '粉色' },
+                        { value: '#000000', label: '黑色' },
+                        { value: '#ffffff', label: '白色' }
+                      ]}
+                    />
+                  </Form.Item>
+                </Fragment>
                 : null
             }
             {
