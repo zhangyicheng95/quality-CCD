@@ -57,7 +57,6 @@ import ImgsCharts from './components/ImgsCharts';
 import ButtonCharts from './components/ButtonCharts';
 import ChartPreviewModal from './components/ChartPreviewModal';
 
-let updateTimer: string | number | NodeJS.Timer | null | undefined = null;
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
   const { params: paramsData } = initialState;
@@ -1712,20 +1711,22 @@ const Home: React.FC<any> = (props: any) => {
                   >
                     <Select
                       style={{ width: '100%' }}
-                      options={[
-                        { value: 'default', label: '默认' },
-                        { value: '#73c0de', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#73c0de' }} />蓝色</div> },
-                        { value: '#5470c6', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#5470c6' }} />深蓝</div> },
-                        { value: '#91cc75', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#91cc75' }} />绿色</div> },
-                        { value: '#3ba272', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#3ba272' }} />深绿</div> },
-                        { value: '#fac858', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#fac858' }} />黄色</div> },
-                        { value: '#ee6666', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#ee6666' }} />红色</div> },
-                        { value: '#fc8452', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#fc8452' }} />橘红</div> },
-                        { value: '#9a60b4', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#9a60b4' }} />紫色</div> },
-                        { value: '#ea7ccc', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#ea7ccc' }} />粉色</div> },
-                        { value: '#000000', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#000000' }} />黑色</div> },
-                        { value: '#ffffff', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#ffffff' }} />白色</div> }
-                      ]}
+                      options={[['default', '默认'], ['#73c0de', '蓝色'],
+                      ['#5470c6', '深蓝'], ['#91cc75', '绿色'],
+                      ['#3ba272', '深绿'], ['#fac858', '黄色'],
+                      ['#ee6666', '红色'], ['#fc8452', '橘红'],
+                      ['#9a60b4', '紫色'], ['#ea7ccc', '粉色'],
+                      ['#000', '黑色'], ['#fff', '白色']]
+                        .map((item: any, index: number) => {
+                          return {
+                            value: item[0],
+                            label: index === 0 ? '默认' : <div className='flex-box'>
+                              <div className='item-label-icon' style={{ backgroundColor: item[0] }} />
+                              {item[1]}
+                            </div>
+                          }
+                        })
+                      }
                     />
                   </Form.Item>
                 </Fragment>
