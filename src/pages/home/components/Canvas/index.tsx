@@ -1720,7 +1720,7 @@ const Home: React.FC<any> = (props: any) => {
                         .map((item: any, index: number) => {
                           return {
                             value: item[0],
-                            label: index === 0 ? '默认' : <div className='flex-box'>
+                            label: index === 0 ? item[1] : <div className='flex-box'>
                               <div className='item-label-icon' style={{ backgroundColor: item[0] }} />
                               {item[1]}
                             </div>

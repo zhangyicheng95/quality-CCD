@@ -43,8 +43,8 @@ const SliderGroup: React.FC<Props> = (props: any) => {
           min={min}
           precision={precision}
           value={selfValue}
-          onBlur={(e) => {
-            onChange && onChange(e.target.value)
+          onChange={(e) => {
+            onChange && onChange(e)
           }}
         />
       </Col>

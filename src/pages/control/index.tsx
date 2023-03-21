@@ -321,7 +321,7 @@ const Control: React.FC<any> = (props: any) => {
                       <div className="flex-box">
                         <div style={{ flex: 1 }}>{label}</div>
                         {
-                          paramsData?.selectedConfig === value ?
+                          (paramsData?.selectedConfig === value || value === 'default') ?
                             null
                             :
                             <MinusCircleOutlined onClick={(e) => {
