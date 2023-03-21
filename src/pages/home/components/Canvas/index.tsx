@@ -1714,17 +1714,17 @@ const Home: React.FC<any> = (props: any) => {
                       style={{ width: '100%' }}
                       options={[
                         { value: 'default', label: '默认' },
-                        { value: '#73c0de', label: '蓝色' },
-                        { value: '#5470c6', label: '深蓝' },
-                        { value: '#91cc75', label: '绿色' },
-                        { value: '#3ba272', label: '深绿' },
-                        { value: '#fac858', label: '黄色' },
-                        { value: '#ee6666', label: '红色' },
-                        { value: '#fc8452', label: '橘红' },
-                        { value: '#9a60b4', label: '紫色' },
-                        { value: '#ea7ccc', label: '粉色' },
-                        { value: '#000000', label: '黑色' },
-                        { value: '#ffffff', label: '白色' }
+                        { value: '#73c0de', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#73c0de' }} />蓝色</div> },
+                        { value: '#5470c6', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#5470c6' }} />深蓝</div> },
+                        { value: '#91cc75', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#91cc75' }} />绿色</div> },
+                        { value: '#3ba272', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#3ba272' }} />深绿</div> },
+                        { value: '#fac858', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#fac858' }} />黄色</div> },
+                        { value: '#ee6666', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#ee6666' }} />红色</div> },
+                        { value: '#fc8452', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#fc8452' }} />橘红</div> },
+                        { value: '#9a60b4', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#9a60b4' }} />紫色</div> },
+                        { value: '#ea7ccc', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#ea7ccc' }} />粉色</div> },
+                        { value: '#000000', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#000000' }} />黑色</div> },
+                        { value: '#ffffff', label: <div className='flex-box'><div className='item-label-icon' style={{ backgroundColor: '#ffffff' }} />白色</div> }
                       ]}
                     />
                   </Form.Item>
