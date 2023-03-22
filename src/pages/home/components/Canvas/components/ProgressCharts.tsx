@@ -12,7 +12,7 @@ interface Props {
 
 const ProgressCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { dataValue = 0, barColor, progressType } = data;
+    const { dataValue = 0, barColor, progressType, progressSize } = data;
     const dom = useRef<any>();
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
@@ -36,6 +36,7 @@ const ProgressCharts: React.FC<Props> = (props: any) => {
         <div
             id={`echart-${id}`}
             className={`${styles.progressCharts} ${progressType === 'line' ? 'flex-box' : 'flex-box-center'}`}
+            style={progressType === 'line' ? { height: progressSize } : {}}
             // @ts-ignore
             ref={dom}
         >

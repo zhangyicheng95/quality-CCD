@@ -472,12 +472,25 @@
 
 .progressCharts {
   width: 100%;
-  height: 100%;
   padding: 0 8px;
 
   :global {
     .ant-progress-line {
       width: calc(100% - 30px);
+      height: inherit;
+      line-height: 1;
+
+      .ant-progress-outer {
+        height: inherit;
+
+        .ant-progress-inner {
+          height: inherit;
+
+          .ant-progress-bg {
+            height: inherit !important;
+          }
+        }
+      }
     }
   }
 }

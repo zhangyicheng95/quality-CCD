@@ -23,19 +23,10 @@ const listen = (action: any, throttleAndMerge: any) => {
             level: _.toLower(result.level),
             message: _.isArray(result?.message) ? result.message.join(',') : result.message,
           };
-          // console.log('error ws:', currentData)
-          action({
-            type: 'setErrorData',
-            payload: currentData,
-          });
+          action({ type: `home/${type}Message`, payload: currentData });
         } catch (err) {
           // console.log(err);
         }
-        try {
-          // console.log('state message', msg.data);
-          const payload = JSON.parse(msg.data);
-          action({ type: `home/${type}Message`, payload });
-        } catch (err) { }
       };
       socket.onclose = function () {
         console.log(`${type} ws:close`);

@@ -994,7 +994,7 @@ const Home: React.FC<any> = (props: any) => {
         layoutData: any = [],
         resultData: any = {};
       addContentList?.forEach((item: any, index: number) => {
-        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor = 'default', barColor = 'default', progressType = 'line' } = item;
+        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor = 'default', barColor = 'default', progressType = 'line', progressSize = 8 } = item;
         const id = key?.split('$$')[0];
         const gridValue = gridContentList[id] || {};
         const newGridValue = newGridContentList[id] || {};
@@ -1152,7 +1152,7 @@ const Home: React.FC<any> = (props: any) => {
                                     <ProgressCharts
                                       id={key}
                                       data={{
-                                        dataValue: dataValue || 0.9835, barColor, progressType
+                                        dataValue: dataValue || 0.9867, barColor, progressType, progressSize
                                       }}
                                     />
                                     :
@@ -1356,7 +1356,7 @@ const Home: React.FC<any> = (props: any) => {
   const addWindow = () => {
     validateFields()
       .then((values) => {
-        const { value, type, yName, xName, fontSize, defaultImg, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType } = values;
+        const { value, type, yName, xName, fontSize, defaultImg, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType, progressSize } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
             JSON.parse(fetchParams);
@@ -1379,7 +1379,7 @@ const Home: React.FC<any> = (props: any) => {
             size: { i: id, x: 8, y: 0, w: 10, h: 4, minW: 1, maxW: 100, minH: 2, maxH: 100 },
             type,
             tab: activeTab,
-            yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType
+            yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType, progressSize
           });
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1390,7 +1390,7 @@ const Home: React.FC<any> = (props: any) => {
                 size: Object.assign({}, editWindowData.size, { i: id }),
                 type,
                 tab: activeTab,
-                yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType
+                yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType, progressSize
               };
             };
             return item;
@@ -1424,7 +1424,7 @@ const Home: React.FC<any> = (props: any) => {
     form.resetFields();
     setEditWindowData({});
     setSelectedPath({ fileType: 'file', value: '' });
-    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false, direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined, align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line' });
+    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false, direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined, align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line', progressSize: 8 });
     setWindowType('img');
     setAddWindowVisible(false);
     setFooterSelectVisible(false);
@@ -1751,30 +1751,40 @@ const Home: React.FC<any> = (props: any) => {
             }
             {
               ['progress'].includes(windowType) ?
-                <Form.Item
-                  name={`progressType`}
-                  label={'进度条形状'}
-                  initialValue={"line"}
-                  rules={[{ required: false, message: '进度条形状' }]}
-                >
-                  <Select
-                    style={{ width: '100%' }}
-                    options={[
-                      {
-                        value: 'line',
-                        label: '直线'
-                      },
-                      {
-                        value: 'circle',
-                        label: '环形'
-                      },
-                      {
-                        value: 'dashboard',
-                        label: '仪表盘'
-                      }
-                    ]}
-                  />
-                </Form.Item>
+                <Fragment>
+                  <Form.Item
+                    name={`progressType`}
+                    label={'进度条形状'}
+                    initialValue={"line"}
+                    rules={[{ required: false, message: '进度条形状' }]}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      options={[
+                        {
+                          value: 'line',
+                          label: '直线'
+                        },
+                        {
+                          value: 'circle',
+                          label: '环形'
+                        },
+                        {
+                          value: 'dashboard',
+                          label: '仪表盘'
+                        }
+                      ]}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name={`progressSize`}
+                    label={'进度条尺寸'}
+                    initialValue={8}
+                    rules={[{ required: false, message: '进度条尺寸' }]}
+                  >
+                    <InputNumber min={2} max={99} step={1} />
+                  </Form.Item>
+                </Fragment>
                 : null
             }
             {

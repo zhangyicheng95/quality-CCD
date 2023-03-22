@@ -105,11 +105,11 @@ export default {
           ...payload,
           time: moment(payload.time).format('YYYY-MM-DD HH:mm:ss'),
           color:
-            payload.level === 'warning'
-              ? logColors.warning
-              : payload.level === 'error'
-                ? logColors.error
-                : logColors.critical,
+            payload.level === 'error'
+              ? logColors.error
+              : payload.level === 'critical'
+                ? logColors.critical
+                : logColors.warning,
         },
       ];
       yield put({

@@ -38,26 +38,28 @@ const Table2Charts: React.FC<Props> = (props: any) => {
             </div>
             <div className="charts-body-box flex-box">
                 {
-                    _.isArray(dataValue) && (dataValue || []).map((item: any, index: number) => {
-                        const { value = [] } = item;
-                        return <div
-                            className="charts-body-tr"
-                            key={`echart-${id}-tr-${index}`}
-                            style={{ width: `${100 / dataValue?.length}%` }}
-                        >
-                            {
-                                (!!reverse ? value.reverse() : value).map((val: any, sIndex: number) => {
-                                    return <TooltipDiv
-                                        className="charts-body-td"
-                                        key={`echart-${id}-tr-td-${sIndex}`}
-                                        title={val.length > 15 ? val : ''}
-                                    >
-                                        {val}
-                                    </TooltipDiv>
-                                })
-                            }
-                        </div>
-                    })
+                    _.isArray(dataValue) ?
+                        (dataValue || []).map((item: any, index: number) => {
+                            const { value = [] } = item;
+                            return <div
+                                className="charts-body-tr"
+                                key={`echart-${id}-tr-${index}`}
+                                style={{ width: `${100 / dataValue?.length}%` }}
+                            >
+                                {
+                                    (!!reverse ? _.cloneDeep(value).reverse() : value).map((val: any, sIndex: number) => {
+                                        return <TooltipDiv
+                                            className="charts-body-td"
+                                            key={`echart-${id}-tr-td-${sIndex}`}
+                                            title={val.length > 15 ? val : ''}
+                                        >
+                                            {val}
+                                        </TooltipDiv>
+                                    })
+                                }
+                            </div>
+                        })
+                        : null
                 }
             </div>
         </div>
