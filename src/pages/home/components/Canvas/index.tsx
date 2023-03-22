@@ -1152,7 +1152,7 @@ const Home: React.FC<any> = (props: any) => {
                                     <ProgressCharts
                                       id={key}
                                       data={{
-                                        dataValue: dataValue || 0.9867, barColor, progressType, progressSize
+                                        dataValue: dataValue || 0, barColor, progressType, progressSize
                                       }}
                                     />
                                     :
