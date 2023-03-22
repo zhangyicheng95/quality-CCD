@@ -35,7 +35,7 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
                 setFontSize(width + 'px');
             }
         }
-    }, [dom?.current?.clientWidth, dom?.current?.clientHeight]);
+    }, [data, dom?.current?.clientWidth, dom?.current?.clientHeight]);
 
     return (
         <div

@@ -29,8 +29,7 @@ const PlatFormModal: React.FC<Props> = (props) => {
       open={visible}
       maskClosable={false}
       onOk={() => {
-        const { feat, pen, zoom, value, gMap, } = getDataFun;
-        console.log(gMap?.getLayers?.())
+        const { feat, pen, zoom, value, } = getDataFun;
         const data1 = ((feat && feat().map((item: any) => _.omit(item, 'layer'))) || []).map((item: any) => {
           return Object.assign({}, item, {
             props: Object.assign({}, item?.props, {

@@ -56,6 +56,7 @@ import Table2Charts from './components/Table2Charts';
 import ImgsCharts from './components/ImgsCharts';
 import ButtonCharts from './components/ButtonCharts';
 import ChartPreviewModal from './components/ChartPreviewModal';
+import ProgressCharts from './components/ProgressCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -993,7 +994,7 @@ const Home: React.FC<any> = (props: any) => {
         layoutData: any = [],
         resultData: any = {};
       addContentList?.forEach((item: any, index: number) => {
-        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor = 'default', barColor = 'default' } = item;
+        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor = 'default', barColor = 'default', progressType = 'line' } = item;
         const id = key?.split('$$')[0];
         const gridValue = gridContentList[id] || {};
         const newGridValue = newGridContentList[id] || {};
@@ -1147,45 +1148,53 @@ const Home: React.FC<any> = (props: any) => {
                                     data={dataValue || []}
                                   />
                                   :
-                                  type === 'button' ?
-                                    <Button
-                                      type={'primary'}
+                                  type === 'progress' ?
+                                    <ProgressCharts
                                       id={key}
-                                      onClick={() => {
-                                        btnFetch(fetchType, xName, JSON.parse(fetchParams));
+                                      data={{
+                                        dataValue: dataValue || 0.9835, barColor, progressType
                                       }}
-                                    >
-                                      {yName}
-                                    </Button>
+                                    />
                                     :
-                                    type === 'buttonInp' ?
-                                      <ButtonCharts
+                                    type === 'button' ?
+                                      <Button
+                                        type={'primary'}
                                         id={key}
-                                        data={{
-                                          yName, xName, fetchType
+                                        onClick={() => {
+                                          btnFetch(fetchType, xName, JSON.parse(fetchParams));
                                         }}
-                                      />
+                                      >
+                                        {yName}
+                                      </Button>
                                       :
-                                      (
-                                        _.isString(dataValue) && dataValue.indexOf('http') > -1 ? (
-                                          <Image
-                                            src={dataValue}
-                                            alt="logo"
-                                            style={{ width: '100%', height: 'auto' }}
-                                          />
-                                        )
-                                          :
-                                          !!defaultImg ?
+                                      type === 'buttonInp' ?
+                                        <ButtonCharts
+                                          id={key}
+                                          data={{
+                                            yName, xName, fetchType
+                                          }}
+                                        />
+                                        :
+                                        (
+                                          _.isString(dataValue) && dataValue.indexOf('http') > -1 ? (
                                             <Image
-                                              src={`${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}`}
+                                              src={dataValue}
                                               alt="logo"
                                               style={{ width: '100%', height: 'auto' }}
                                             />
+                                          )
                                             :
-                                            <Skeleton.Image
-                                              active={true}
-                                            />
-                                      )
+                                            !!defaultImg ?
+                                              <Image
+                                                src={`${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}`}
+                                                alt="logo"
+                                                style={{ width: '100%', height: 'auto' }}
+                                              />
+                                              :
+                                              <Skeleton.Image
+                                                active={true}
+                                              />
+                                        )
                 }
               </div>
             </div>
@@ -1347,7 +1356,7 @@ const Home: React.FC<any> = (props: any) => {
   const addWindow = () => {
     validateFields()
       .then((values) => {
-        const { value, type, yName, xName, fontSize, defaultImg, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor } = values;
+        const { value, type, yName, xName, fontSize, defaultImg, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
             JSON.parse(fetchParams);
@@ -1370,7 +1379,7 @@ const Home: React.FC<any> = (props: any) => {
             size: { i: id, x: 8, y: 0, w: 10, h: 4, minW: 1, maxW: 100, minH: 2, maxH: 100 },
             type,
             tab: activeTab,
-            yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor
+            yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType
           });
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1381,7 +1390,7 @@ const Home: React.FC<any> = (props: any) => {
                 size: Object.assign({}, editWindowData.size, { i: id }),
                 type,
                 tab: activeTab,
-                yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor
+                yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType
               };
             };
             return item;
@@ -1415,7 +1424,7 @@ const Home: React.FC<any> = (props: any) => {
     form.resetFields();
     setEditWindowData({});
     setSelectedPath({ fileType: 'file', value: '' });
-    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false, direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined, align: 'left', backgroundColor: 'default', barColor: 'default' });
+    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false, direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined, align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line' });
     setWindowType('img');
     setAddWindowVisible(false);
     setFooterSelectVisible(false);
@@ -1588,6 +1597,10 @@ const Home: React.FC<any> = (props: any) => {
                     value: 'buttonInp',
                     label: '参数按钮组件',
                   },
+                  {
+                    value: 'progress',
+                    label: '进度条组件',
+                  },
                 ]}
                 onChange={val => {
                   setWindowType(val);
@@ -1703,33 +1716,65 @@ const Home: React.FC<any> = (props: any) => {
                       ]}
                     />
                   </Form.Item>
-                  <Form.Item
-                    name={`barColor`}
-                    label={'图形颜色'}
-                    initialValue={"default"}
-                    rules={[{ required: false, message: '图形颜色' }]}
-                  >
-                    <Select
-                      style={{ width: '100%' }}
-                      options={[['default', '默认'], ['#73c0de', '蓝色'],
-                      ['#5470c6', '深蓝'], ['#91cc75', '绿色'],
-                      ['#3ba272', '深绿'], ['#fac858', '黄色'],
-                      ['#ee6666', '红色'], ['#fc8452', '橘红'],
-                      ['#9a60b4', '紫色'], ['#ea7ccc', '粉色'],
-                      ['#000', '黑色'], ['#fff', '白色']]
-                        .map((item: any, index: number) => {
-                          return {
-                            value: item[0],
-                            label: index === 0 ? item[1] : <div className='flex-box'>
-                              <div className='item-label-icon' style={{ backgroundColor: item[0] }} />
-                              {item[1]}
-                            </div>
-                          }
-                        })
-                      }
-                    />
-                  </Form.Item>
                 </Fragment>
+                : null
+            }
+            {
+              ['bar', 'progress'].includes(windowType) ?
+                <Form.Item
+                  name={`barColor`}
+                  label={'图形颜色'}
+                  initialValue={"default"}
+                  rules={[{ required: false, message: '图形颜色' }]}
+                >
+                  <Select
+                    style={{ width: '100%' }}
+                    options={[['default', '默认'], ['#73c0de', '蓝色'],
+                    ['#5470c6', '深蓝'], ['#91cc75', '绿色'],
+                    ['#3ba272', '深绿'], ['#fac858', '黄色'],
+                    ['#ee6666', '红色'], ['#fc8452', '橘红'],
+                    ['#9a60b4', '紫色'], ['#ea7ccc', '粉色'],
+                    ['#000', '黑色'], ['#fff', '白色']]
+                      .map((item: any, index: number) => {
+                        return {
+                          value: item[0],
+                          label: index === 0 ? item[1] : <div className='flex-box'>
+                            <div className='item-label-icon' style={{ backgroundColor: item[0] }} />
+                            {item[1]}
+                          </div>
+                        }
+                      })
+                    }
+                  />
+                </Form.Item>
+                : null
+            }
+            {
+              ['progress'].includes(windowType) ?
+                <Form.Item
+                  name={`progressType`}
+                  label={'进度条形状'}
+                  initialValue={"line"}
+                  rules={[{ required: false, message: '进度条形状' }]}
+                >
+                  <Select
+                    style={{ width: '100%' }}
+                    options={[
+                      {
+                        value: 'line',
+                        label: '直线'
+                      },
+                      {
+                        value: 'circle',
+                        label: '环形'
+                      },
+                      {
+                        value: 'dashboard',
+                        label: '仪表盘'
+                      }
+                    ]}
+                  />
+                </Form.Item>
                 : null
             }
             {

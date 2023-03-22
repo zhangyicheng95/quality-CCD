@@ -31,6 +31,7 @@ const CONTAINER_ID = 'mark-canvas';
 // let timer: NodeJS.Timeout | null = null;
 let img: any = null;
 let gMap: any | null = null;
+let gFirstTextLayer: any | null = null;
 let gFirstFeatureLayer: any | null = null;
 let gFirstMaskLayer: any | null = null;
 let gFirstImageLayer: any | null = null;
@@ -320,76 +321,20 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       );
       gMap.addLayer(gFirstMaskLayer);
       // 用于添加text层
-      const gFirstTextLayer = new AILabel.Layer.Text(
+      gFirstTextLayer = new AILabel.Layer.Text(
         'first-layer-text', // id
         { name: '文本图层' }, // props
         { zIndex: 12, opacity: 1 } // style
       );
       gMap.addLayer(gFirstTextLayer);
-      // 添加text公共方法
-      const addFeatureText = (data: any, relatedTextId: string, text: string) => {
-        // 添加feature标签名
-        const { x: ltx, y: lty, } = data;
-        const gFirstText = new AILabel.Text(
-          relatedTextId, // id
-          { text, position: { x: ltx, y: lty }, offset: { x: 0, y: 0 } }, // shape, 左上角
-          { name: '文本对象' }, // props
-          { fillStyle: '#F4A460', strokeStyle: '#D2691E', background: true, globalAlpha: 1, fontColor: '#0f0' } // style
-        );
-        gFirstTextLayer.addText(gFirstText);
-      };
       let obj = {};
       if (_.isArray(platFormValue)) {
         (platFormValue || [])?.forEach((plat: any) => {
           const { type, id, shape, props, style, ...rest } = plat;
           obj = Object.assign({}, obj, {
             [id]: props?.initParams,
-          })
-          // const position = type === 'RECT' ? feature.getPoints()[1] :
-          // type === 'CIRCLE' ? { x: shape.cx + shape.r, y: shape.cy - shape.r } :
-          //   type === 'POLYGON' ? location : {},
-          if (type === "LINE") {
-            const gFirstFeatureLine = new AILabel.Feature.Line(
-              id, shape, props, style
-            );
-            gFirstFeatureLayer.addFeature(gFirstFeatureLine);
-          } else if (type === "POLYLINE") {
-            const polylineFeature = new AILabel.Feature.Polyline(
-              id, shape, props, style
-            );
-            gFirstFeatureLayer.addFeature(polylineFeature);
-          } else if (type === "RECT") {
-            const gFirstFeatureRect = new AILabel.Feature.Rect(
-              id, shape, props, style
-            );
-            gFirstFeatureLayer.addFeature(gFirstFeatureRect);
-            addFeatureText(shape, props.textId, props.label);
-          } else if (type === "POLYGON") {
-            const gFirstFeaturePolygon = new AILabel.Feature.Polygon(
-              id, shape, props, style
-            );
-            gFirstFeatureLayer.addFeature(gFirstFeaturePolygon);
-          } else if (type === "CIRCLE") {
-            const gFirstFeatureCircle = new AILabel.Feature.Circle(
-              id, shape, props, style
-            );
-            gFirstFeatureLayer.addFeature(gFirstFeatureCircle);
-            addFeatureText({ x: shape.cx - shape.r, y: shape.cy - shape.r }, props.textId, props.label);
-          } else if (type === "POINT") {
-            const polylineFeature = new AILabel.Feature.Point(
-              id, shape, props, style
-            );
-            gFirstFeatureLayer.addFeature(polylineFeature);
-            addFeatureText(shape, props.textId, props.label);
-          } else {
-            // const scale = gMap.getScale();
-            // const width = drawingStyle.lineWidth / scale;
-            // const drawMaskAction = new AILabel.Mask.Draw(
-            //   `${+new Date()}`, // id
-            //   { ...rest },
-            // );
-            // gFirstMaskLayer.addAction(drawMaskAction);
-          }
+          });
+          addFeature(type, id, shape, props, style);
         });
         setFeatureList(obj);
       }
@@ -409,7 +354,63 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       destroy();
     }
   }, [localPath, platFormValue]);
-
+  // 添加text公共方法
+  const addFeatureText = (data: any, relatedTextId: string, text: string) => {
+    // 添加feature标签名
+    const { x: ltx, y: lty, } = data;
+    const gFirstText = new AILabel.Text(
+      relatedTextId, // id
+      { text, position: { x: ltx, y: lty }, offset: { x: 0, y: 0 } }, // shape, 左上角
+      { name: '文本对象' }, // props
+      { fillStyle: '#F4A460', strokeStyle: '#D2691E', background: true, globalAlpha: 1, fontColor: '#0f0' } // style
+    );
+    gFirstTextLayer.addText(gFirstText);
+  };
+  // 添加feature公共方法
+  const addFeature = (type: any, id: any, shape: any, props: any, style: any) => {
+    if (type === "LINE") {
+      const gFirstFeatureLine = new AILabel.Feature.Line(
+        id, shape, props, style
+      );
+      gFirstFeatureLayer.addFeature(gFirstFeatureLine);
+    } else if (type === "POLYLINE") {
+      const polylineFeature = new AILabel.Feature.Polyline(
+        id, shape, props, style
+      );
+      gFirstFeatureLayer.addFeature(polylineFeature);
+    } else if (type === "RECT") {
+      const gFirstFeatureRect = new AILabel.Feature.Rect(
+        id, shape, props, style
+      );
+      gFirstFeatureLayer.addFeature(gFirstFeatureRect);
+      addFeatureText(shape, props.textId, props.label);
+    } else if (type === "POLYGON") {
+      const gFirstFeaturePolygon = new AILabel.Feature.Polygon(
+        id, shape, props, style
+      );
+      gFirstFeatureLayer.addFeature(gFirstFeaturePolygon);
+    } else if (type === "CIRCLE") {
+      const gFirstFeatureCircle = new AILabel.Feature.Circle(
+        id, shape, props, style
+      );
+      gFirstFeatureLayer.addFeature(gFirstFeatureCircle);
+      addFeatureText({ x: shape.cx - shape.r, y: shape.cy - shape.r }, props.textId, props.label);
+    } else if (type === "POINT") {
+      const polylineFeature = new AILabel.Feature.Point(
+        id, shape, props, style
+      );
+      gFirstFeatureLayer.addFeature(polylineFeature);
+      addFeatureText(shape, props.textId, props.label);
+    } else {
+      // const scale = gMap.getScale();
+      // const width = drawingStyle.lineWidth / scale;
+      // const drawMaskAction = new AILabel.Mask.Draw(
+      //   `${+new Date()}`, // id
+      //   { ...rest },
+      // );
+      // gFirstMaskLayer.addAction(drawMaskAction);
+    }
+  };
   function zoomIn() {
     gMap.zoomIn();
     setGetDataFun((prev: any) => ({
@@ -711,6 +712,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       placeholder="参数类型"
                       onChange={(val, option: any) => {
                         setSelectedOptionType(_.cloneDeep(options)[val]);
+                        const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
+                        const { id, shape, props, style, type } = feature;
+                        gFirstFeatureLayer.removeFeatureById(id);
+                        gFirstTextLayer.removeTextById(props?.textId);
+                        addFeature(type, id, shape, { ...props, label: val }, style);
                       }}
                     />
                   </Form.Item>

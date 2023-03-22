@@ -12,6 +12,7 @@ interface Props {
     setMyChartVisible?: any,
     onClick?: any,
 }
+const colorOption = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'];
 
 const BarCharts: React.FC<Props> = (props: any) => {
     let myChart: any = null;
@@ -27,12 +28,18 @@ const BarCharts: React.FC<Props> = (props: any) => {
             return;
         }
         let seriesData: any = [],
+            markLineData: any = [],
             yData: any = [];
         dataValue.forEach((item: any) => {
-            const { name, value } = item;
+            const { name, value, type } = item;
+            if (type === 'markLine') {
+                markLineData = markLineData.concat(item);
+                return;
+            }
             seriesData = seriesData.concat(value);
             yData = yData.concat(name);
         });
+
         const dom: any = document.getElementById(`echart-${id}`);
         myChart = echarts.init(dom);
         const option = Object.assign({}, options, {
@@ -72,6 +79,28 @@ const BarCharts: React.FC<Props> = (props: any) => {
                     show: seriesData?.length < 10
                 },
                 data: seriesData,
+                markLine: {
+                    data: markLineData?.map((mark: any, index: number) => {
+                        const { value, name, color } = mark;
+                        return Object.assign({}, {
+                            name: name,
+                            type: "median",
+                            lineStyle: {
+                                width: 1,
+                                color: color || colorOption[index],
+                            },
+                            label: {
+                                show: true,
+                                position: 'middle',
+                                distance: 5,
+                                color: color || colorOption[index],
+                                formatter: `${name}：${value}`
+                            },
+                        }, direction === 'rows' ? { xAxis: value, } : { yAxis: value, })
+                    }),
+                    silent: false, // 鼠标悬停事件, true悬停不会出现实线
+                    symbol: 'none', // 去掉箭头
+                },
             }, barColor === 'default' ? { colorBy: 'data', } : {
                 itemStyle: { color: barColor }
             })
