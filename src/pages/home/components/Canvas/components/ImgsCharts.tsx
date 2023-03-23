@@ -61,7 +61,7 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
                                 <Image
                                     src={value}
                                     alt={name || 'logo'}
-                                    style={{ width: '100%', height: 'auto', maxHeight: dom?.current?.clientHeight }}
+                                    style={{ width: '100%', height: 'auto', maxHeight: dom?.current?.clientHeight / 2 }}
                                 />
                             </div>
                             <TooltipDiv title={name} className="img-item-right-bottom">{name}</TooltipDiv>

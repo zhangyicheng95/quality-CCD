@@ -32,6 +32,7 @@ import GridLayout from '@/components/GridLayout';
 import {
   AndroidOutlined,
   CloseOutlined,
+  DeleteOutlined,
   LoadingOutlined,
   PauseCircleOutlined,
   PlayCircleOutlined,
@@ -57,6 +58,7 @@ import ImgsCharts from './components/ImgsCharts';
 import ButtonCharts from './components/ButtonCharts';
 import ChartPreviewModal from './components/ChartPreviewModal';
 import ProgressCharts from './components/ProgressCharts';
+import ImgCharts from './components/ImgCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -994,7 +996,7 @@ const Home: React.FC<any> = (props: any) => {
         layoutData: any = [],
         resultData: any = {};
       addContentList?.forEach((item: any, index: number) => {
-        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor = 'default', barColor = 'default', progressType = 'line', progressSize = 8 } = item;
+        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor = 'default', barColor = 'default', progressType = 'line', progressSize = 8, windowControl } = item;
         const id = key?.split('$$')[0];
         const gridValue = gridContentList[id] || {};
         const newGridValue = newGridContentList[id] || {};
@@ -1177,23 +1179,23 @@ const Home: React.FC<any> = (props: any) => {
                                         :
                                         (
                                           _.isString(dataValue) && dataValue.indexOf('http') > -1 ? (
-                                            <Image
-                                              src={dataValue}
-                                              alt="logo"
-                                              style={{ width: '100%', height: 'auto' }}
+                                            <ImgCharts
+                                              id={key}
+                                              data={{
+                                                dataValue, windowControl,
+                                                setContentList
+                                              }}
                                             />
                                           )
                                             :
-                                            !!defaultImg ?
-                                              <Image
-                                                src={`${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}`}
-                                                alt="logo"
-                                                style={{ width: '100%', height: 'auto' }}
-                                              />
-                                              :
-                                              <Skeleton.Image
-                                                active={true}
-                                              />
+                                            <ImgCharts
+                                              id={key}
+                                              data={{
+                                                dataValue: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                windowControl,
+                                                setContentList
+                                              }}
+                                            />
                                         )
                 }
               </div>
@@ -1356,7 +1358,7 @@ const Home: React.FC<any> = (props: any) => {
   const addWindow = () => {
     validateFields()
       .then((values) => {
-        const { value, type, yName, xName, fontSize, defaultImg, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType, progressSize } = values;
+        const { value, type, yName, xName, fontSize, defaultImg, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType, progressSize, windowControl } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
             JSON.parse(fetchParams);
@@ -1379,7 +1381,7 @@ const Home: React.FC<any> = (props: any) => {
             size: { i: id, x: 8, y: 0, w: 10, h: 4, minW: 1, maxW: 100, minH: 2, maxH: 100 },
             type,
             tab: activeTab,
-            yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType, progressSize
+            yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType, progressSize, windowControl
           });
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1390,7 +1392,7 @@ const Home: React.FC<any> = (props: any) => {
                 size: Object.assign({}, editWindowData.size, { i: id }),
                 type,
                 tab: activeTab,
-                yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType, progressSize
+                yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType, progressSize, windowControl
               };
             };
             return item;
@@ -1424,7 +1426,7 @@ const Home: React.FC<any> = (props: any) => {
     form.resetFields();
     setEditWindowData({});
     setSelectedPath({ fileType: 'file', value: '' });
-    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false, direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined, align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line', progressSize: 8 });
+    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false, direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined, align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line', progressSize: 8, windowControl: undefined });
     setWindowType('img');
     setAddWindowVisible(false);
     setFooterSelectVisible(false);
@@ -1629,25 +1631,60 @@ const Home: React.FC<any> = (props: any) => {
             </Form.Item>
             {
               (['img'].includes(windowType) && !isVision) ?
-                <Form.Item
-                  name={'defaultImg'}
-                  label="默认图片"
-                  rules={[{ required: false, message: '默认图片' }]}
-                >
-                  <div className="flex-box">
-                    <TooltipDiv style={{ paddingRight: 10 }}>
-                      {selectedPath.value}
-                    </TooltipDiv>
-                    <Button
-                      onClick={() => {
-                        setFieldsValue({ defaultImg: undefined });
-                        setSelectPathVisible(true);
-                      }}
-                    >
-                      选择文件
-                    </Button>
-                  </div>
-                </Form.Item>
+                <Fragment>
+                  <Form.Item
+                    name={`windowControl`}
+                    label={'窗口控制'}
+                    tooltip={"控制其他窗口的显示与隐藏"}
+                    rules={[{ required: false, message: '窗口控制' }]}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      allowClear
+                      options={contentList.map((dom: any) => {
+                        const { key, props } = dom;
+                        const { children } = props;
+                        const keySp = key?.split("$$");
+                        const name = `${children?.[0]?.props?.children?.[0]?.props?.children?.[0]} - ${keySp?.[1]} - ${keySp?.[2]}`
+                        return {
+                          value: key,
+                          label: name
+                        }
+                      })}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name={'defaultImg'}
+                    label="默认图片"
+                    rules={[{ required: false, message: '默认图片' }]}
+                  >
+                    <div className="flex-box">
+                      <TooltipDiv style={{ paddingRight: 10 }}>
+                        {selectedPath.value}
+                      </TooltipDiv>
+                      {
+                        !selectedPath.value ?
+                          <Button
+                            onClick={() => {
+                              setFieldsValue({ defaultImg: undefined });
+                              setSelectPathVisible(true);
+                            }}
+                          >
+                            选择文件
+                          </Button>
+                          :
+                          <Button
+                            type="link"
+                            icon={<DeleteOutlined />}
+                            onClick={() => {
+                              setFieldsValue({ defaultImg: undefined });
+                              setSelectedPath({ fileType: 'file', value: '' });
+                            }}
+                          />
+                      }
+                    </div>
+                  </Form.Item>
+                </Fragment>
                 : null
             }
             {
