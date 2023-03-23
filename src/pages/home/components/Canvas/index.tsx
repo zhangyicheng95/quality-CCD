@@ -1598,7 +1598,8 @@ const Home: React.FC<any> = (props: any) => {
                         const name = `${children?.[0]?.props?.children?.[0]?.props?.children?.[0]} - ${windowTypeList?.filter((i: any) => i.value === keySp?.[2])?.[0]?.label}`
                         return {
                           value: key,
-                          label: name
+                          label: name,
+                          disabled: key === editWindowData?.id
                         }
                       })}
                     />
