@@ -13,7 +13,56 @@ export const layoutTransform = {
 
 // @ts-ignore
 export const systemType = window.QUALITY_CCD_CONFIG.type;
-
+export const windowTypeList: any = [
+  {
+    value: 'img',
+    label: '图片窗口',
+  },
+  {
+    value: 'imgs',
+    label: '图片列表窗口',
+  },
+  {
+    value: 'line',
+    label: '折线趋势图窗口',
+  },
+  {
+    value: 'point',
+    label: '散点图窗口',
+  },
+  {
+    value: 'bar',
+    label: '柱状图窗口',
+  },
+  {
+    value: 'pie',
+    label: '饼状图窗口',
+  },
+  {
+    value: 'table',
+    label: '双列表格窗口',
+  },
+  {
+    value: 'table2',
+    label: '通用表格窗口',
+  },
+  {
+    value: 'alert',
+    label: '状态窗口',
+  },
+  {
+    value: 'button',
+    label: '按钮组件',
+  },
+  {
+    value: 'buttonInp',
+    label: '参数按钮组件',
+  },
+  {
+    value: 'progress',
+    label: '进度条组件',
+  },
+];
 export const logColors = {
   warning: 'rgba(245,160,49,1)',
   WARNING: 'rgba(245,160,49,1)',

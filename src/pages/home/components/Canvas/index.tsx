@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import styles from './index.module.less';
 import {
-  Image,
   Button,
   message,
   Modal,
@@ -12,7 +11,6 @@ import {
   Menu,
   Tooltip,
   Popconfirm,
-  Skeleton,
   Select,
   Input,
   Tree,
@@ -59,6 +57,7 @@ import ButtonCharts from './components/ButtonCharts';
 import ChartPreviewModal from './components/ChartPreviewModal';
 import ProgressCharts from './components/ProgressCharts';
 import ImgCharts from './components/ImgCharts';
+import { windowTypeList, } from '@/common/constants/globalConstants';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -1554,56 +1553,7 @@ const Home: React.FC<any> = (props: any) => {
             >
               <Select
                 style={{ width: '100%' }}
-                options={[
-                  {
-                    value: 'img',
-                    label: '图片窗口',
-                  },
-                  {
-                    value: 'imgs',
-                    label: '图片列表窗口',
-                  },
-                  {
-                    value: 'line',
-                    label: '折线趋势图窗口',
-                  },
-                  {
-                    value: 'point',
-                    label: '散点图窗口',
-                  },
-                  {
-                    value: 'bar',
-                    label: '柱状图窗口',
-                  },
-                  {
-                    value: 'pie',
-                    label: '饼状图窗口',
-                  },
-                  {
-                    value: 'table',
-                    label: '双列表格窗口',
-                  },
-                  {
-                    value: 'table2',
-                    label: '通用表格窗口',
-                  },
-                  {
-                    value: 'alert',
-                    label: '状态窗口',
-                  },
-                  {
-                    value: 'button',
-                    label: '按钮组件',
-                  },
-                  {
-                    value: 'buttonInp',
-                    label: '参数按钮组件',
-                  },
-                  {
-                    value: 'progress',
-                    label: '进度条组件',
-                  },
-                ]}
+                options={windowTypeList}
                 onChange={val => {
                   setWindowType(val);
                 }}
@@ -1645,7 +1595,7 @@ const Home: React.FC<any> = (props: any) => {
                         const { key, props } = dom;
                         const { children } = props;
                         const keySp = key?.split("$$");
-                        const name = `${children?.[0]?.props?.children?.[0]?.props?.children?.[0]} - ${keySp?.[1]} - ${keySp?.[2]}`
+                        const name = `${children?.[0]?.props?.children?.[0]?.props?.children?.[0]} - ${windowTypeList?.filter((i: any) => i.value === keySp?.[2])?.[0]?.label}`
                         return {
                           value: key,
                           label: name
