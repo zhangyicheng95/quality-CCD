@@ -781,7 +781,7 @@ const Home: React.FC<any> = (props: any) => {
                       className="content-item-span"
                       style={{ color }}
                       dangerouslySetInnerHTML={{
-                        __html: `节点${node_name || ''}（${nid || ''}）发生错误：${message}`,
+                        __html: `节点${node_name || ''}（${nid || ''}）${message}`,
                       }}
                     />
                   </div>
