@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Image, message, Skeleton } from 'antd';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
-import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
+import { EyeOutlined } from '@ant-design/icons';
 
 interface Props {
     data: any,
