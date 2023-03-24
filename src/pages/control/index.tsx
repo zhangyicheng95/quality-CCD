@@ -40,7 +40,7 @@ const Control: React.FC<any> = (props: any) => {
   const [addConfigVisible, setAddConfigVisible] = useState(false);
 
   useEffect(() => {
-    if (!_.isEmpty(paramsData)) {
+    if (!_.isEmpty(paramsData) && !_.isEmpty(paramsData?.flowData)) {
       const { flowData, configList, selectedConfig } = paramsData;
       const { nodes } = flowData;
       setParamData(paramsData);

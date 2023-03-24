@@ -30,6 +30,7 @@ import GridLayout from '@/components/GridLayout';
 import {
   AndroidOutlined,
   CloseOutlined,
+  CompressOutlined,
   DeleteOutlined,
   LoadingOutlined,
   PauseCircleOutlined,
@@ -58,6 +59,7 @@ import ChartPreviewModal from './components/ChartPreviewModal';
 import ProgressCharts from './components/ProgressCharts';
 import ImgCharts from './components/ImgCharts';
 import { windowTypeList, } from '@/common/constants/globalConstants';
+import LogPreviewModal from './components/LogPreviewModal';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -88,6 +90,7 @@ const Home: React.FC<any> = (props: any) => {
   const [footerSelectList, setFooterSelectList] = useState<any>([]);
   const [addItemsVisible, setAddItemsVisible] = useState(false);
   const [myChartVisible, setMyChartVisible] = useState<any>(null);
+  const [logDataVisible, setLogDataVisible] = useState('');
 
   const ifCanEdit = useMemo(() => {
     return window.location.hash.indexOf('edit') > -1;
@@ -698,13 +701,20 @@ const Home: React.FC<any> = (props: any) => {
             </div>
             : null
         }
-        <div
-          className="content-item-span"
-          dangerouslySetInnerHTML={{
-            // 此处需要处理
-            __html: _.isString(logStr) ? logStr : logStr.join('<br/>'),
-          }}
-        />
+        <div className="card-body-box">
+          <div
+            className="content-item-span"
+            dangerouslySetInnerHTML={{
+              // 此处需要处理
+              __html: _.isString(logStr) ? logStr : logStr.join('<br/>'),
+            }}
+          />
+          <div className="preview-box flex-box-center">
+            <CompressOutlined className='preview-icon' onClick={() => {
+              setLogDataVisible('log');
+            }} />
+          </div>
+        </div>
       </div>
     </div>,
     <div key={'footer-2'}>
@@ -767,7 +777,7 @@ const Home: React.FC<any> = (props: any) => {
             </div>
             : null
         }
-        <div className="content-item-span">
+        <div className="content-item-span card-body-box">
           {/* <BasicScrollBar data={errorData}> */}
           {errorData?.map((log: any, index: number) => {
             const { color, node_name, nid, message, time } = log;
@@ -790,6 +800,11 @@ const Home: React.FC<any> = (props: any) => {
             );
           })}
           {/* </BasicScrollBar> */}
+          <div className="preview-box flex-box-center">
+            <CompressOutlined className='preview-icon' onClick={() => {
+              setLogDataVisible('error');
+            }} />
+          </div>
         </div>
       </div>
     </div>,
@@ -1968,6 +1983,14 @@ const Home: React.FC<any> = (props: any) => {
           <ChartPreviewModal
             option={myChartVisible}
             onCancel={() => setMyChartVisible(null)}
+          />
+          : null
+      }
+      {
+        !!logDataVisible ?
+          <LogPreviewModal
+            type={logDataVisible}
+            onCancel={() => setLogDataVisible('')}
           />
           : null
       }

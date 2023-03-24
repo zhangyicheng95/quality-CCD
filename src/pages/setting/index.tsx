@@ -37,7 +37,7 @@ const Setting: React.FC<any> = (props) => {
   }, [localStorage.getItem('ipList')]);
   // 获取数据信息
   useEffect(() => {
-    if (!_.isEmpty(paramsData)) {
+    if (!_.isEmpty(paramsData) && !_.isEmpty(paramsData?.flowData)) {
       const { quality_name, name, flowData, commonInfo } = paramsData;
       const { nodes } = flowData;
       let checkedList: any = [];

@@ -29,12 +29,26 @@ const BarCharts: React.FC<Props> = (props: any) => {
         }
         let seriesData: any = [],
             markLineData: any = [],
-            yData: any = [];
+            yData: any = [],
+            minValue: any = 0,
+            maxValue: any = 0;
         dataValue.forEach((item: any) => {
             const { name, value, type } = item;
             if (type === 'markLine') {
                 markLineData = markLineData.concat(item);
                 return;
+            } else {
+                if (_.isNull(minValue) || _.isNull(maxValue)) {
+                    minValue = value;
+                    maxValue = value;
+                    return;
+                }
+                if (value < minValue) {
+                    minValue = value;
+                }
+                if (value > maxValue) {
+                    maxValue = value;
+                }
             }
             seriesData = seriesData.concat(value);
             yData = yData.concat(name);
@@ -70,7 +84,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 splitNumber: 3,
                 name: direction === 'rows' ? yName : xName,
                 scale: false,
-                inverse: align === 'right',
+                inverse: ((align === 'right' && minValue >= 0) || (align === 'left' && minValue < 0)),
             }, direction === 'rows' ? {} : { data: yData }),
             series: Object.assign({
                 name: 'name',

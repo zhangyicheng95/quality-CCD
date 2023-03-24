@@ -47,6 +47,7 @@ const HomeLayout: React.FC<any> = (props) => {
   // 启动循环列表状态
   useEffect(() => {
     if (isVision) return;
+    if (_.isEmpty(projectList)) return;
     loopGetStatus(projectList);
     !!timerRef.current && clearInterval(timerRef.current);
     if (projectList.length) {
