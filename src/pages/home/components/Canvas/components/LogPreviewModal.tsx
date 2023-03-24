@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import * as echarts from 'echarts';
-import styles from '../index.module.less';
+import React from 'react';
 import * as _ from 'lodash';
 import { Modal } from 'antd';
 import { connect } from 'umi';
