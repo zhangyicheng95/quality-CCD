@@ -74,10 +74,16 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         zoomWheelRatio: 8, // 控制滑轮缩放缩率[0, 10), 值越小，则缩放越快，反之越慢
         withHotKeys: true // 关闭快捷键
       });
-
       // 不同的标记功能
       gMap.events.on('drawDone', (type: any, data: any) => {
         console.log('--type, data--', type, data, gMap.zoom);
+        if (
+          Math.min(data.x, data.y) < 0 ||
+          (data.x + data.width) > width ||
+          (data.y + data.height) > height
+        ) {
+          return message.warning('标注位置 不能超出图片范围！');
+        }
         setGetDataFun((prev: any) => ({ ...prev, zoom: gMap.zoom }));
         const relatedTextId = `label-text-id-${+new Date()}`;
         const relatedDeleteMarkerId = `label-marker-id-${+new Date()}`;
