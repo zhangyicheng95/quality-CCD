@@ -17,7 +17,7 @@ const colorOption = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3b
 const BarCharts: React.FC<Props> = (props: any) => {
     let myChart: any = null;
     const { data = {}, id, setMyChartVisible, } = props;
-    const { dataValue = [], yName, xName, direction, align, barColor, threshold_start, threshold_end } = data;
+    const { dataValue = [], yName, xName, direction, align, barColor } = data;
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
 
@@ -31,29 +31,33 @@ const BarCharts: React.FC<Props> = (props: any) => {
             markLineData: any = [],
             yData: any = [],
             minValue: any = 0,
-            maxValue: any = 0;
+            maxValue: any = 0,
+            threshold_start,
+            threshold_end;
         dataValue.forEach((item: any) => {
             const { name, value, type } = item;
             if (type === 'markLine') {
                 markLineData = markLineData.concat(item);
-                return;
+            } else if (type === 'start') {
+                threshold_start = value;
+            } else if (type === 'end') {
+                threshold_end = value;
             } else {
-                if (_.isNull(minValue) || _.isNull(maxValue)) {
-                    minValue = value;
-                    maxValue = value;
-                    return;
-                }
-                if (value < minValue) {
-                    minValue = value;
-                }
-                if (value > maxValue) {
-                    maxValue = value;
-                }
+                seriesData = seriesData.concat(value);
+                yData = yData.concat(name);
             }
-            seriesData = seriesData.concat(value);
-            yData = yData.concat(name);
+            if (_.isNull(minValue) || _.isNull(maxValue)) {
+                minValue = value;
+                maxValue = value;
+                return;
+            }
+            if (value < minValue) {
+                minValue = value;
+            }
+            if (value > maxValue) {
+                maxValue = value;
+            }
         });
-
         const dom: any = document.getElementById(`echart-${id}`);
         myChart = echarts.init(dom);
         const option = Object.assign({}, options, {
@@ -73,7 +77,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 splitNumber: 3,
                 scale: false,
                 position: align || 'left',
-            }, direction === 'rows' ? { data: yData } : { min: threshold_start, max: threshold_end }),
+            }, direction === 'rows' ? { data: yData } : { min: threshold_start, max: threshold_end || (maxValue * 1.05).toFixed(1) }),
             xAxis: Object.assign({}, options.xAxis, {
                 axisLabel: Object.assign({}, options.xAxis?.axisLabel, {
                     formatter: function (val: any) {
@@ -85,7 +89,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 name: direction === 'rows' ? yName : xName,
                 scale: false,
                 inverse: ((align === 'right' && minValue >= 0) || (align === 'left' && minValue < 0)),
-            }, direction === 'rows' ? { min: threshold_start, max: threshold_end } : { data: yData }),
+            }, direction === 'rows' ? { min: threshold_start, max: threshold_end || (maxValue * 1.05).toFixed(1) } : { data: yData }),
             series: Object.assign({
                 name: 'name',
                 type: 'bar',
