@@ -21,6 +21,7 @@ import { BASE_IP } from "@/services/api";
 import { FormatWidgetToDom } from "@/pages/control";
 import { downFileFun, guid, } from "@/utils/utils";
 import Measurement from "@/components/Measurement";
+import { includes } from "lodash";
 
 interface Props {
   data?: any;
@@ -391,7 +392,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   };
   // 添加feature公共方法
   const addFeature = (type: any, id: any, shape: any, props: any, style: any) => {
-
     if (type === "LINE") {
       const gFirstFeatureLine = new AILabel.Feature.Line(
         id, shape, props, style
@@ -884,8 +884,13 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           ?.reduce((pre: any, cen: any) => {
                             if (cen[0] === 'roi') {
                               let { value: val, } = value[cen[0]];
-                              if ((val?.x && val?.height)) {
-                                if (((featureList[selectedFeature]?.['range']?.value - range) / 90) % 2 !== 0) {
+                              if (val?.x && val?.height) {
+                                const preVal = featureList[selectedFeature]?.['range']?.value || 0;
+                                if (
+                                  (_.isUndefined(preVal) && ![0, 180, 360].includes(range))
+                                  ||
+                                  (((preVal - range) / 90) % 2 !== 0)
+                                ) {
                                   // 矩形，有旋转
                                   val = {
                                     x: { ...val?.x, value: val?.x?.value + val?.width?.value / 2 - val?.height?.value / 2 },
@@ -910,6 +915,9 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                 message.warning('标注位置 不能超出图片范围！');
                               } else {
                                 feature.updateShape(shape);
+                                const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
+                                targetText?.updatePosition({ x: shape.x, y: shape.y });
+                                gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
                               }
                               /****************通过roi更新图层******************/
                               return Object.assign({}, pre, {
