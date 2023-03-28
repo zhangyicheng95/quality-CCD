@@ -19,7 +19,8 @@ import aimIcon from '@/assets/imgs/aim.svg';
 import loadIcon from '@/assets/imgs/down-load.svg';
 import { BASE_IP } from "@/services/api";
 import { FormatWidgetToDom } from "@/pages/control";
-import { downFileFun, } from "@/utils/utils";
+import { downFileFun, guid, } from "@/utils/utils";
+import Measurement from "@/components/Measurement";
 
 interface Props {
   data?: any;
@@ -338,7 +339,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         (platFormValue || [])?.forEach((plat: any) => {
           const { type, id, shape, props, style, ...rest } = plat;
           obj = Object.assign({}, obj, {
-            [id]: props?.initParams,
+            [id]: { roi: shape, ...props?.initParams },
           });
           addFeature(type, id, shape, props, style);
         });
@@ -707,7 +708,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                   <Form.Item
                     name={`option_type`}
                     label="参数类型"
-                    initialValue={featureList[selectedFeature] ? featureList[selectedFeature]?.['option_type'] : undefined}
+                    initialValue={featureList?.[selectedFeature] ? featureList?.[selectedFeature]?.['option_type'] : undefined}
                     rules={[{ required: true, message: "参数类型" }]}
                   >
                     <Select
@@ -717,8 +718,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       }) : []}
                       placeholder="参数类型"
                       onChange={(val, option: any) => {
-                        setSelectedOptionType(_.cloneDeep(options)[val]);
                         const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
+                        setSelectedOptionType({ roi: feature?.shape, ..._.cloneDeep(options)[val] });
                         const { id, shape, props, style, type } = feature;
                         gFirstFeatureLayer.removeFeatureById(id);
                         gFirstTextLayer.removeTextById(props?.textId);
@@ -730,6 +731,53 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                     _.isEmpty(selectedOptionType) ?
                       (!!featureList[selectedFeature] ?
                         Object.entries(featureList[selectedFeature])?.map((item: any) => {
+                          if (item[0] === 'roi') {
+                            let value = {},
+                              lables: any = [];
+                            if (!!item[1].width && !item[1]?.start) {
+                              value = {
+                                num_0: item[1].x,
+                                num_1: item[1].y,
+                                num_2: item[1].width,
+                                num_3: item[1].height
+                              };
+                              lables = ["x", "y", "width", "height"];
+                            } else if (!!item[1]?.start) {
+                              value = {
+                                num_0: item[1]?.start?.x,
+                                num_1: item[1]?.start?.y,
+                                num_2: item[1]?.end?.x,
+                                num_3: item[1]?.end?.y
+                              };
+                              lables = ["sx", "sy", "ex", "ey"];
+                            } else if (!!item[1].r) {
+                              value = {
+                                num_0: item[1].cx,
+                                num_1: item[1].cy,
+                                num_2: item[1].r
+                              };
+                              lables = ["cx", "cy", "r"];
+                            } else {
+                              value = {
+                                num_0: item[1].x,
+                                num_1: item[1].y
+                              };
+                              lables = ["x", "y"];
+                            }
+                            return <Form.Item
+                              name={`${item[0]}$$${guid()}`}
+                              label={"位置信息"}
+                              initialValue={value || {
+                                num_0: undefined,
+                                num_1: undefined,
+                                num_2: undefined,
+                                num_3: undefined,
+                              }}
+                              rules={[{ required: true, message: "位置信息" }]}
+                            >
+                              <Measurement />
+                            </Form.Item>
+                          }
                           return <FormatWidgetToDom
                             key={item[0]}
                             id={item[0]}
@@ -742,6 +790,53 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         : null)
                       :
                       Object.entries(selectedOptionType)?.map((item: any) => {
+                        if (item[0] === 'roi') {
+                          let value = {},
+                            lables: any = [];
+                          if (!!item[1].width && !item[1]?.start) {
+                            value = {
+                              num_0: item[1].x,
+                              num_1: item[1].y,
+                              num_2: item[1].width,
+                              num_3: item[1].height
+                            };
+                            lables = ["x", "y", "width", "height"];
+                          } else if (!!item[1]?.start) {
+                            value = {
+                              num_0: item[1]?.start?.x,
+                              num_1: item[1]?.start?.y,
+                              num_2: item[1]?.end?.x,
+                              num_3: item[1]?.end?.y
+                            };
+                            lables = ["sx", "sy", "ex", "ey"];
+                          } else if (!!item[1].r) {
+                            value = {
+                              num_0: item[1].cx,
+                              num_1: item[1].cy,
+                              num_2: item[1].r
+                            };
+                            lables = ["cx", "cy", "r"];
+                          } else {
+                            value = {
+                              num_0: item[1].x,
+                              num_1: item[1].y
+                            };
+                            lables = ["x", "y"];
+                          }
+                          return <Form.Item
+                            name={`${item[0]}$$${guid()}`}
+                            label={"位置信息"}
+                            initialValue={value || {
+                              num_0: undefined,
+                              num_1: undefined,
+                              num_2: undefined,
+                              num_3: undefined,
+                            }}
+                            rules={[{ required: true, message: "位置信息" }]}
+                          >
+                            <Measurement />
+                          </Form.Item>
+                        }
                         return <FormatWidgetToDom
                           key={item[0]}
                           id={item[0]}
@@ -773,7 +868,30 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       }, {});
                       const result = {
                         ...featureList,
-                        [selectedFeature]: Object.entries(featureList[selectedFeature] || selectedOptionType)?.reduce((pre: any, cen: any) => {
+                        [selectedFeature]: Object.entries(!_.isEmpty(selectedOptionType) ? selectedOptionType : featureList[selectedFeature])?.reduce((pre: any, cen: any) => {
+                          if (cen[0] === 'roi' && Object.keys(value[cen[0]]?.value)?.[0]?.indexOf('num') > -1) {
+                            const { value: val, ...rest } = value[cen[0]];
+                            const keys = Object.keys(value[cen[0]]?.value);
+                            const result = Object.keys(!_.isEmpty(rest) ? rest : _.omit(featureList[selectedFeature]['roi'], 'value')).reduce((pre: any, cen: any, index: number) => {
+                              return Object.assign({}, pre, {
+                                [cen]: val[keys[index]]
+                              })
+                            }, {});
+                            /****************通过roi更新图层******************/
+                            const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
+                            const { id, props, style, type } = feature;
+                            gFirstFeatureLayer.removeFeatureById(id);
+                            gFirstTextLayer.removeTextById(props?.textId);
+                            debugger
+                            addFeature(type, id, result, { ...props, label: val }, style);
+                            /****************通过roi更新图层******************/
+                            return Object.assign({}, pre, {
+                              [cen[0]]: {
+                                ...cen[1],
+                                value: result
+                              }
+                            })
+                          };
                           return Object.assign({}, pre, {
                             [cen[0]]: {
                               ...cen[1],
@@ -782,6 +900,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           })
                         }, { option_type: { value: value?.['option_type']?.value } })
                       };
+
                       setGetDataFun((prev: any) => ({
                         ...prev, zoom: gMap.zoom, value: Object.assign({}, prev?.value, result)
                       }));

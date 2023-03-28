@@ -95,7 +95,7 @@ const FileManager: React.FC<Props> = (props) => {
                           {
                             fileType === 'file' ?
                               <span onClick={() => {
-                                setSelect((prev: string) => `${prev}\\${name}`);
+                                setSelect((prev: string) => !!prev ? `${prev}\\${name}` : name);
                                 setList([]);
                               }}>{name}</span>
                               : <div className='can-not-select'>{name}</div>
@@ -105,7 +105,7 @@ const FileManager: React.FC<Props> = (props) => {
                         <Fragment>
                           <FolderOpenOutlined className='dir-icon' />
                           <a onClick={() => {
-                            setSelect((prev: string) => `${prev}\\${name}`)
+                            setSelect((prev: string) => !!prev ? `${prev}\\${name}` : name)
                           }}>{name}/</a>
                         </Fragment>
                     }

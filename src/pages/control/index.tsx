@@ -63,7 +63,7 @@ const Control: React.FC<any> = (props: any) => {
         if (!!selectedConfig) {
           const { data, value, listType = 'line' } = configList?.filter((i: any) => i.value === selectedConfig)[0] || {};
           setListType(listType);
-          setFieldsValue({ 'config-value': { value: selectedConfig } });
+          setFieldsValue({ 'config-value': _.isObject(selectedConfig) ? selectedConfig : { value: selectedConfig } });
           if (!!data?.length && _.isArray(data)) {
             setNodeList((value === 'default' ? ((data?.length > nodes?.length) ? data : nodes) : data)
               .map((item: any, index: number) => {
@@ -204,8 +204,13 @@ const Control: React.FC<any> = (props: any) => {
             flowData: Object.assign({}, paramData.flowData, {
               nodes: nodeList
             }),
-            configList: [],
-            selectedConfig: values['config-value'],
+            configList: configList.map((item: any) => {
+              if (item.value === paramData.selectedConfig) {
+                return Object.assign({}, item, { data: nodeList });
+              }
+              return item;
+            }),
+            selectedConfig: values['config-value']?.value,
           })
         };
         setInitialState({ ...initialState, params: params.data });
@@ -584,7 +589,7 @@ const Control: React.FC<any> = (props: any) => {
             data={selectedPath}
             onOk={(val: any) => {
               const { id, value, ...rest } = val;
-              widgetChange(id, { ...rest, localPath: value });
+              widgetChange(id, { value, ...rest, localPath: value });
               setSelectedPath({});
               setSelectPathVisible(false);
             }}
@@ -933,7 +938,7 @@ export const FormatWidgetToDom = (props: any) => {
             </TooltipDiv>
             <Button
               onClick={() => {
-                setSelectedPath(Object.assign({ id: name, fileType: 'file' }, config[1]));
+                setSelectedPath(Object.assign(config[1], { id: name, fileType: 'file' }));
                 setSelectPathVisible(true);
               }}
               disabled={disabled}
@@ -966,7 +971,7 @@ export const FormatWidgetToDom = (props: any) => {
             </TooltipDiv>
             <Button
               onClick={() => {
-                setSelectedPath(Object.assign({ id: name, fileType: 'dir' }, config[1]));
+                setSelectedPath(Object.assign(config[1], { id: name, fileType: 'dir' }));
                 setSelectPathVisible(true);
               }}
               disabled={disabled}
