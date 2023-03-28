@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { Button, Form, message, Popover, Select, Spin } from 'antd';
 import { PictureOutlined } from "@ant-design/icons";
 // @ts-ignore
@@ -508,6 +508,10 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         break;
     }
   }
+  // 选中的图层
+  const feature = useMemo(() => {
+    return gFirstFeatureLayer?.getFeatureById?.(selectedFeature);
+  }, [gFirstFeatureLayer, selectedFeature]);
 
   // 导出数据
   const exportData = () => {
@@ -744,28 +748,50 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       }}
                     />
                   </Form.Item>
-                  <Form.Item
-                    name={`range`}
-                    label="旋转"
-                    initialValue={featureList?.[selectedFeature] ? featureList?.[selectedFeature]?.['range']?.value : 0}
-                    rules={[{ required: true, message: "旋转角度" }]}
-                  >
-                    <Select
-                      style={{ width: '100%' }}
-                      options={[0, 90].map((res: any) => {
-                        return { label: res, value: res, };
-                      })}
-                      placeholder="旋转角度"
-                    />
-                  </Form.Item>
+                  {
+                    // feature?.type === 'RECT' ?
+                    <Form.Item
+                      name={`旋转角度`}
+                      label="旋转角度"
+                      initialValue={featureList?.[selectedFeature] ? featureList?.[selectedFeature]?.['旋转角度']?.value : 0}
+                      rules={[{ required: true, message: "旋转角度" }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={[0, 90, 180, 270, 360].map((res: any) => {
+                          return { label: res, value: res, };
+                        })}
+                        placeholder="旋转角度"
+                      />
+                    </Form.Item>
+                    // :
+                    // null
+                  }
                   {
                     _.isEmpty(selectedOptionType) ?
                       (!!featureList[selectedFeature] ?
                         Object.entries(featureList[selectedFeature])?.map((item: any) => {
+                          if (item[0] === '找线方向') return null;
                           if (item[0] === 'roi') {
                             let value = {};
                             if (_.isObject(item[1]?.realValue) && !_.isEmpty(item[1].realValue)) {
-                              value = item[1].realValue;
+                              if (!!item[1]?.realValue?.x && !!item[1]?.realValue?.width) {
+                                // 矩形
+                                value = {
+                                  ...item[1].realValue,
+                                  x: {
+                                    alias: "cx",
+                                    value: item[1].realValue?.x?.value
+                                  },
+                                  y: {
+                                    alias: "cy",
+                                    value: item[1].realValue?.y?.value
+                                  }
+                                }
+                              } else {
+                                // 其他
+                                value = item[1].realValue;
+                              }
                             } else {
                               if (!!item[1]?.start) {
                                 value = {
@@ -811,10 +837,34 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         : null)
                       :
                       Object.entries(selectedOptionType)?.map((item: any) => {
+                        if (item[0] === '找线方向') return null;
                         if (item[0] === 'roi') {
                           let value = {};
-                          if (_.isObject(item[1]?.value) && !_.isEmpty(item[1].value)) {
-                            value = item[1].value;
+                          if (!_.isEmpty(item[1])) {
+                            if (!!item[1]?.x && !!item[1]?.width) {
+                              // 矩形
+                              value = {
+                                x: {
+                                  alias: "cx",
+                                  value: item[1]?.x
+                                },
+                                y: {
+                                  alias: "cy",
+                                  value: item[1]?.y
+                                },
+                                width: {
+                                  alias: "width",
+                                  value: item[1]?.width
+                                },
+                                height: {
+                                  alias: "height",
+                                  value: item[1]?.height
+                                }
+                              }
+                            } else {
+                              // 其他
+                              value = item[1].realValue;
+                            }
                           } else {
                             if (!!item[1]?.start) {
                               value = {
@@ -877,7 +927,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           [key[0]]: item
                         })
                       }, {});
-                      const range = value?.['range']?.value;
+                      const range = value?.['旋转角度']?.value;
                       const result = {
                         ...featureList,
                         [selectedFeature]: Object.entries(!_.isEmpty(selectedOptionType) ? selectedOptionType : featureList[selectedFeature])
@@ -891,7 +941,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                 height: { ...val?.height }
                               };
                               if (val?.x && val?.height) {
-                                if (range == 90) {
+                                if ([90, 270].includes(range)) {
                                   // 矩形，有旋转
                                   val = {
                                     x: { ...val?.x, value: val?.x?.value + val?.width?.value / 2 - val?.height?.value / 2 },
@@ -935,7 +985,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                 value: value[cen[0]]?.value
                               }
                             })
-                          }, { option_type: { value: value?.['option_type']?.value }, range: { value: range } })
+                          }, { option_type: { value: value?.['option_type']?.value }, "旋转角度": { value: range } })
                       };
                       setGetDataFun((prev: any) => ({
                         ...prev, zoom: gMap.zoom, value: Object.assign({}, prev?.value, result)

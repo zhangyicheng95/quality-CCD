@@ -47,7 +47,19 @@ const PlatFormModal: React.FC<Props> = (props) => {
               const { initParams = {} } = props;
               const initValue = Object.entries(initParams)?.reduce((pre: any, cen: any) => {
                 return Object.assign({}, pre, {
-                  [cen[0]]: cen[0] === 'roi' ? cen[1]?.realValue : cen[1]?.value,
+                  [cen[0]]: cen[0] === 'roi' ?
+                    {
+                      cx: {
+                        alias: "cx",
+                        value: cen[1]?.realValue?.x?.value
+                      },
+                      cy: {
+                        alias: "cy",
+                        value: cen[1]?.realValue?.y?.value
+                      },
+                      ..._.omit(_.omit(cen[1]?.realValue, "x"), "y"),
+                    }
+                    : cen[1]?.value,
                 });
               }, {});
               if (type === 'RECT') {
