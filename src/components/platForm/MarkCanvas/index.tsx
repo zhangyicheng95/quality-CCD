@@ -752,7 +752,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                   >
                     <Select
                       style={{ width: '100%' }}
-                      options={[0, 90, 180, 270, 360].map((res: any) => {
+                      options={[0, 90].map((res: any) => {
                         return { label: res, value: res, };
                       })}
                       placeholder="旋转角度"
@@ -764,8 +764,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         Object.entries(featureList[selectedFeature])?.map((item: any) => {
                           if (item[0] === 'roi') {
                             let value = {};
-                            if (_.isObject(item[1]?.value) && !_.isEmpty(item[1].value)) {
-                              value = item[1].value;
+                            if (_.isObject(item[1]?.realValue) && !_.isEmpty(item[1].realValue)) {
+                              value = item[1].realValue;
                             } else {
                               if (!!item[1]?.start) {
                                 value = {
@@ -884,13 +884,14 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           ?.reduce((pre: any, cen: any) => {
                             if (cen[0] === 'roi') {
                               let { value: val, } = value[cen[0]];
+                              let realValue = {
+                                x: { ...val?.x, },
+                                y: { ...val?.y, },
+                                width: { ...val?.width },
+                                height: { ...val?.height }
+                              };
                               if (val?.x && val?.height) {
-                                const preVal = featureList[selectedFeature]?.['range']?.value || 0;
-                                if (
-                                  (_.isUndefined(preVal) && ![0, 180, 360].includes(range))
-                                  ||
-                                  (((preVal - range) / 90) % 2 !== 0)
-                                ) {
+                                if (range == 90) {
                                   // 矩形，有旋转
                                   val = {
                                     x: { ...val?.x, value: val?.x?.value + val?.width?.value / 2 - val?.height?.value / 2 },
@@ -923,7 +924,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                               return Object.assign({}, pre, {
                                 [cen[0]]: {
                                   // ...cen[1],
-                                  value: val
+                                  value: val,
+                                  realValue: realValue
                                 }
                               });
                             };
