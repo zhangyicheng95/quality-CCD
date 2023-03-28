@@ -250,9 +250,25 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       });
       // 圆形/矩形 框选更新
       gMap.events.on('featureUpdated', (feature: any, shape: any) => {
-        const { type } = feature;
+        const { id, type } = feature;
         feature.updateShape(shape);
-
+        if (type === 'RECT') {
+          setFeatureList((prev: any) => {
+            return Object.entries(prev).reduce((pre: any, cen: any) => {
+              return Object.assign({}, pre, {
+                [cen[0]]: Object.assign({}, cen[1], cen[0] === id ? {
+                  roi: {
+                    value: Object.entries(cen[1]?.roi?.value).reduce((p: any, c: any) => {
+                      return Object.assign({}, p, {
+                        [c[0]]: { ...c[1], value: shape[c[0]] }
+                      });
+                    }, {})
+                  }
+                } : {})
+              })
+            }, {});
+          });
+        }
         const markerId = feature.props.deleteMarkerId;
         const textId = feature.props.textId;
         // 更新marker位置
@@ -375,6 +391,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   };
   // 添加feature公共方法
   const addFeature = (type: any, id: any, shape: any, props: any, style: any) => {
+
     if (type === "LINE") {
       const gFirstFeatureLine = new AILabel.Feature.Line(
         id, shape, props, style
@@ -708,7 +725,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                   <Form.Item
                     name={`option_type`}
                     label="参数类型"
-                    initialValue={featureList?.[selectedFeature] ? featureList?.[selectedFeature]?.['option_type'] : undefined}
+                    initialValue={featureList?.[selectedFeature] ? featureList?.[selectedFeature]?.['option_type']?.value : undefined}
                     rules={[{ required: true, message: "参数类型" }]}
                   >
                     <Select
@@ -727,42 +744,46 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       }}
                     />
                   </Form.Item>
+                  <Form.Item
+                    name={`range`}
+                    label="旋转"
+                    initialValue={featureList?.[selectedFeature] ? featureList?.[selectedFeature]?.['range']?.value : 0}
+                    rules={[{ required: true, message: "旋转角度" }]}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      options={[0, 90, 180, 270, 360].map((res: any) => {
+                        return { label: res, value: res, };
+                      })}
+                      placeholder="旋转角度"
+                    />
+                  </Form.Item>
                   {
                     _.isEmpty(selectedOptionType) ?
                       (!!featureList[selectedFeature] ?
                         Object.entries(featureList[selectedFeature])?.map((item: any) => {
                           if (item[0] === 'roi') {
-                            let value = {},
-                              lables: any = [];
-                            if (!!item[1].width && !item[1]?.start) {
-                              value = {
-                                num_0: item[1].x,
-                                num_1: item[1].y,
-                                num_2: item[1].width,
-                                num_3: item[1].height
-                              };
-                              lables = ["x", "y", "width", "height"];
-                            } else if (!!item[1]?.start) {
-                              value = {
-                                num_0: item[1]?.start?.x,
-                                num_1: item[1]?.start?.y,
-                                num_2: item[1]?.end?.x,
-                                num_3: item[1]?.end?.y
-                              };
-                              lables = ["sx", "sy", "ex", "ey"];
-                            } else if (!!item[1].r) {
-                              value = {
-                                num_0: item[1].cx,
-                                num_1: item[1].cy,
-                                num_2: item[1].r
-                              };
-                              lables = ["cx", "cy", "r"];
+                            let value = {};
+                            if (_.isObject(item[1]?.value) && !_.isEmpty(item[1].value)) {
+                              value = item[1].value;
                             } else {
-                              value = {
-                                num_0: item[1].x,
-                                num_1: item[1].y
-                              };
-                              lables = ["x", "y"];
+                              if (!!item[1]?.start) {
+                                value = {
+                                  "起点x": { alias: "起点x", value: item[1]?.start?.x },
+                                  "起点y": { alias: "起点y", value: item[1]?.start?.y },
+                                  "终点x": { alias: "终点x", value: item[1]?.end?.x },
+                                  "终点y": { alias: "终点y", value: item[1]?.end?.y }
+                                };
+                              } else {
+                                value = Object.entries(_.omit(item[1], "value")).reduce((pre: any, cen: any) => {
+                                  return Object.assign({}, pre, {
+                                    [cen[0]]: {
+                                      alias: cen[0],
+                                      value: cen[1]
+                                    }
+                                  });
+                                }, {});
+                              }
                             }
                             return <Form.Item
                               name={`${item[0]}$$${guid()}`}
@@ -791,37 +812,27 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       :
                       Object.entries(selectedOptionType)?.map((item: any) => {
                         if (item[0] === 'roi') {
-                          let value = {},
-                            lables: any = [];
-                          if (!!item[1].width && !item[1]?.start) {
-                            value = {
-                              num_0: item[1].x,
-                              num_1: item[1].y,
-                              num_2: item[1].width,
-                              num_3: item[1].height
-                            };
-                            lables = ["x", "y", "width", "height"];
-                          } else if (!!item[1]?.start) {
-                            value = {
-                              num_0: item[1]?.start?.x,
-                              num_1: item[1]?.start?.y,
-                              num_2: item[1]?.end?.x,
-                              num_3: item[1]?.end?.y
-                            };
-                            lables = ["sx", "sy", "ex", "ey"];
-                          } else if (!!item[1].r) {
-                            value = {
-                              num_0: item[1].cx,
-                              num_1: item[1].cy,
-                              num_2: item[1].r
-                            };
-                            lables = ["cx", "cy", "r"];
+                          let value = {};
+                          if (_.isObject(item[1]?.value) && !_.isEmpty(item[1].value)) {
+                            value = item[1].value;
                           } else {
-                            value = {
-                              num_0: item[1].x,
-                              num_1: item[1].y
-                            };
-                            lables = ["x", "y"];
+                            if (!!item[1]?.start) {
+                              value = {
+                                "起点x": { alias: "起点x", value: item[1]?.start?.x },
+                                "起点y": { alias: "起点y", value: item[1]?.start?.y },
+                                "终点x": { alias: "终点x", value: item[1]?.end?.x },
+                                "终点y": { alias: "终点y", value: item[1]?.end?.y }
+                              };
+                            } else {
+                              value = Object.entries(_.omit(item[1], "value")).reduce((pre: any, cen: any) => {
+                                return Object.assign({}, pre, {
+                                  [cen[0]]: {
+                                    alias: cen[0],
+                                    value: cen[1]
+                                  }
+                                });
+                              }, {});
+                            }
                           }
                           return <Form.Item
                             name={`${item[0]}$$${guid()}`}
@@ -866,41 +877,56 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           [key[0]]: item
                         })
                       }, {});
+                      const range = value?.['range']?.value;
                       const result = {
                         ...featureList,
-                        [selectedFeature]: Object.entries(!_.isEmpty(selectedOptionType) ? selectedOptionType : featureList[selectedFeature])?.reduce((pre: any, cen: any) => {
-                          if (cen[0] === 'roi' && Object.keys(value[cen[0]]?.value)?.[0]?.indexOf('num') > -1) {
-                            const { value: val, ...rest } = value[cen[0]];
-                            const keys = Object.keys(value[cen[0]]?.value);
-                            const result = Object.keys(!_.isEmpty(rest) ? rest : _.omit(featureList[selectedFeature]['roi'], 'value')).reduce((pre: any, cen: any, index: number) => {
+                        [selectedFeature]: Object.entries(!_.isEmpty(selectedOptionType) ? selectedOptionType : featureList[selectedFeature])
+                          ?.reduce((pre: any, cen: any) => {
+                            if (cen[0] === 'roi') {
+                              let { value: val, } = value[cen[0]];
+                              if ((val?.x && val?.height)) {
+                                if (((featureList[selectedFeature]?.['range']?.value - range) / 90) % 2 !== 0) {
+                                  // 矩形，有旋转
+                                  val = {
+                                    x: { ...val?.x, value: val?.x?.value + val?.width?.value / 2 - val?.height?.value / 2 },
+                                    y: { ...val?.y, value: val?.y?.value - val?.width?.value / 2 + val?.height?.value / 2 },
+                                    width: { ...val?.width, value: val?.height?.value },
+                                    height: { ...val?.height, value: val?.width?.value }
+                                  };
+                                };
+                              };
+                              /****************通过roi更新图层******************/
+                              const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
+                              const shape = Object.entries(val).reduce((pre: any, cen: any) => {
+                                return Object.assign({}, pre, {
+                                  [cen[0]]: cen[1]?.value
+                                });
+                              }, {});
+                              if (
+                                Math.min(shape?.x, shape?.y) < 0 ||
+                                (shape?.x + shape?.width) > img?.width ||
+                                (shape?.y + shape?.height) > img?.height
+                              ) {
+                                message.warning('标注位置 不能超出图片范围！');
+                              } else {
+                                feature.updateShape(shape);
+                              }
+                              /****************通过roi更新图层******************/
                               return Object.assign({}, pre, {
-                                [cen]: val[keys[index]]
-                              })
-                            }, {});
-                            /****************通过roi更新图层******************/
-                            const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
-                            const { id, props, style, type } = feature;
-                            gFirstFeatureLayer.removeFeatureById(id);
-                            gFirstTextLayer.removeTextById(props?.textId);
-                            debugger
-                            addFeature(type, id, result, { ...props, label: val }, style);
-                            /****************通过roi更新图层******************/
+                                [cen[0]]: {
+                                  // ...cen[1],
+                                  value: val
+                                }
+                              });
+                            };
                             return Object.assign({}, pre, {
                               [cen[0]]: {
                                 ...cen[1],
-                                value: result
+                                value: value[cen[0]]?.value
                               }
                             })
-                          };
-                          return Object.assign({}, pre, {
-                            [cen[0]]: {
-                              ...cen[1],
-                              value: value[cen[0]]?.value
-                            }
-                          })
-                        }, { option_type: { value: value?.['option_type']?.value } })
+                          }, { option_type: { value: value?.['option_type']?.value }, range: { value: range } })
                       };
-
                       setGetDataFun((prev: any) => ({
                         ...prev, zoom: gMap.zoom, value: Object.assign({}, prev?.value, result)
                       }));
