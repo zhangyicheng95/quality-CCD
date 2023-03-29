@@ -46,23 +46,26 @@ const PlatFormModal: React.FC<Props> = (props) => {
               const { props, shape, type, id } = item;
               const { initParams = {} } = props;
               const initValue = Object.entries(initParams)?.reduce((pre: any, cen: any) => {
-                return Object.assign({}, pre, {
-                  [cen[0]]: cen[0] === 'roi' ?
+                return Object.assign({}, pre, (cen[0] === 'roi') ?
+                  (_.isNumber(cen[1]?.realValue?.x?.value) || _.isString(cen[1]?.realValue?.x?.value)) ?
                     {
-                      cx: {
-                        alias: "cx",
-                        value: cen[1]?.realValue?.x?.value
-                      },
-                      cy: {
-                        alias: "cy",
-                        value: cen[1]?.realValue?.y?.value
-                      },
-                      ..._.omit(_.omit(cen[1]?.realValue, "x"), "y"),
+                      [cen[0]]: {
+                        cx: {
+                          alias: "cx",
+                          value: cen[1]?.realValue?.x?.value
+                        },
+                        cy: {
+                          alias: "cy",
+                          value: cen[1]?.realValue?.y?.value
+                        },
+                        ..._.omit(_.omit(cen[1]?.realValue, "x"), "y"),
+                      }
                     }
-                    : cen[1]?.value,
-                });
+                    : {}
+                  :
+                  { [cen[0]]: cen[1]?.value });
               }, {});
-              if (type === 'RECT') {
+              if (type === 'RECT' && !_.isEmpty(initValue?.['roi'])) {
                 return {
                   id,
                   type: "RECT",
@@ -91,7 +94,7 @@ const PlatFormModal: React.FC<Props> = (props) => {
                   ...initValue
                 }
               }
-            })
+            }).filter(Boolean)
           }
         );
         onOk(params);

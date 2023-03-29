@@ -91,6 +91,7 @@ const Home: React.FC<any> = (props: any) => {
   const [addItemsVisible, setAddItemsVisible] = useState(false);
   const [myChartVisible, setMyChartVisible] = useState<any>(null);
   const [logDataVisible, setLogDataVisible] = useState('');
+  const [commonInfoVisible, setCommonInfoVisible] = useState<any>(false);
 
   const ifCanEdit = useMemo(() => {
     return window.location.hash.indexOf('edit') > -1;
@@ -101,7 +102,7 @@ const Home: React.FC<any> = (props: any) => {
     return window.QUALITY_CCD_CONFIG.type === 'vision';
   }, []);
 
-  const gridList = [
+  const gridList = useMemo(() => ([
     <div key={'slider-1'}>
       <div className="btn-box background-ubv">
         <div className={`common-card-title-box flex-box drag-btn}`}>
@@ -392,6 +393,14 @@ const Home: React.FC<any> = (props: any) => {
                         });
                       }}
                     />
+                    <div
+                      className='common-btn'
+                      onClick={() => {
+                        setCommonInfoVisible(true);
+                      }}
+                    >
+                      编辑
+                    </div>
                     <Popconfirm
                       title="确认删除 基本信息 窗口吗?"
                       onConfirm={() => {
@@ -808,7 +817,7 @@ const Home: React.FC<any> = (props: any) => {
         </div>
       </div>
     </div>,
-  ];
+  ]), [paramData]);
   // 保存布局状态
   const saveGridFunc = (data: any) => {
     let home: any = [],
@@ -994,7 +1003,7 @@ const Home: React.FC<any> = (props: any) => {
       });
       dispatch({ type: 'home/snapshot' });
     };
-  }, []);
+  }, [paramsData]);
   // 轮训获取运行状态
   useEffect(() => {
     if (!ipString || ifCanEdit || isVision) return;
@@ -1230,7 +1239,6 @@ const Home: React.FC<any> = (props: any) => {
       setContentList([]);
     }
   }, [gridContentList, addContentList]);
-
   // 启动任务
   const start = () => {
     if (!ipString) return;
@@ -1270,7 +1278,6 @@ const Home: React.FC<any> = (props: any) => {
     });
   };
   // 关闭
-
   const onclose = () => {
     if (dispatch) {
       dispatch({ type: 'home/startLoop', payload: false });
@@ -1280,7 +1287,6 @@ const Home: React.FC<any> = (props: any) => {
       socketStateListen.close(dispatch);
     }
   };
-
   /**
    * 处理日志信息
    */
@@ -1291,7 +1297,6 @@ const Home: React.FC<any> = (props: any) => {
     //   return newLogs.slice(0, 50);
     // });
   }, 300);
-
   /**
    * 处理错误信息
    */
@@ -1325,7 +1330,6 @@ const Home: React.FC<any> = (props: any) => {
     //   // console.log(err);
     // }
   }, 300);
-
   // 监听任务启动，开启socket
   useEffect(() => {
     if ((started && ipString && dispatch && !ifCanEdit) || isVision) {
@@ -1992,6 +1996,56 @@ const Home: React.FC<any> = (props: any) => {
             type={logDataVisible}
             onCancel={() => setLogDataVisible('')}
           />
+          : null
+      }
+      {
+        !!commonInfoVisible ?
+          <Modal
+            title={`基本信息`}
+            wrapClassName="history-window-modal"
+            centered
+            width="50vw"
+            open={!!commonInfoVisible}
+            // maskClosable={false}
+            onOk={() => {
+              validateFields().then(values => {
+                const { productionInfo, stationInfo, useInfo } = values;
+                const result = Object.assign({}, paramData, {
+                  commonInfo: { productionInfo, stationInfo, useInfo },
+                });
+                setInitialState({ ...initialState, params: result });
+                setParamData(result);
+                setCommonInfoVisible(false);
+              });
+            }}
+            onCancel={() => setCommonInfoVisible(false)}
+            getContainer={false}
+            destroyOnClose={true}
+          >
+            <Form form={form} scrollToFirstError initialValues={paramData?.commonInfo}>
+              <Form.Item
+                name="productionInfo"
+                label="产线信息"
+                rules={[{ required: false, message: "产线信息" }]}
+              >
+                <Input placeholder="" />
+              </Form.Item>
+              <Form.Item
+                name="stationInfo"
+                label="工位信息"
+                rules={[{ required: false, message: "工位信息" }]}
+              >
+                <Input placeholder="" />
+              </Form.Item>
+              <Form.Item
+                name="useInfo"
+                label="功能信息"
+                rules={[{ required: false, message: "功能信息" }]}
+              >
+                <Input placeholder="" />
+              </Form.Item>
+            </Form>
+          </Modal>
           : null
       }
     </div>

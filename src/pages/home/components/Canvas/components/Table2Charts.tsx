@@ -40,11 +40,13 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                 {
                     _.isArray(dataValue) ?
                         (dataValue || []).map((item: any, index: number) => {
-                            const { value = [] } = item;
+                            const { value = [], color } = item;
                             return <div
                                 className="charts-body-tr"
                                 key={`echart-${id}-tr-${index}`}
-                                style={{ width: `${100 / dataValue?.length}%` }}
+                                style={Object.assign({ width: `${100 / dataValue?.length}%` },
+                                    !!color ? { color } : {}
+                                )}
                             >
                                 {
                                     (!!reverse ? _.cloneDeep(value).reverse() : value).map((val: any, sIndex: number) => {

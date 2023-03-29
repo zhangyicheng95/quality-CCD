@@ -38,7 +38,7 @@ const Setting: React.FC<any> = (props) => {
   // 获取数据信息
   useEffect(() => {
     if (!_.isEmpty(paramsData) && !_.isEmpty(paramsData?.flowData)) {
-      const { quality_name, name, flowData, commonInfo } = paramsData;
+      const { quality_name, name, flowData } = paramsData;
       const { nodes } = flowData;
       let checkedList: any = [];
       const result: any = (nodes || []).map((node: any) => {
@@ -68,13 +68,6 @@ const Setting: React.FC<any> = (props) => {
       setTreeData(result);
       setCheckedKeys(checkedList);
       setFieldsValue({ quality_name: quality_name || name });
-      if (_.isObject(commonInfo) && !_.isEmpty(commonInfo)) {
-        setFieldsValue({
-          productionInfo: commonInfo['productionInfo'],
-          stationInfo: commonInfo['stationInfo'],
-          useInfo: commonInfo['useInfo'],
-        });
-      };
     }
   }, [paramsData]);
   // 设置服务端IP
@@ -96,7 +89,7 @@ const Setting: React.FC<any> = (props) => {
   const onFinish = () => {
     validateFields()
       .then((values) => {
-        const { quality_icon, quality_name, productionInfo, stationInfo, useInfo } = values;
+        const { quality_icon, quality_name, } = values;
         let nodeList: any = [].concat(paramData?.flowData?.nodes);
         (checkedKeys || []).forEach((key: any) => {
           const id = key.split('@$@');
@@ -120,7 +113,6 @@ const Setting: React.FC<any> = (props) => {
         });
         const result = Object.assign({}, paramData, {
           quality_name,
-          commonInfo: { productionInfo, stationInfo, useInfo },
           flowData: Object.assign({}, paramData?.flowData, {
             nodes: nodeList,
           })
@@ -262,27 +254,6 @@ const Setting: React.FC<any> = (props) => {
             >
               前往配置
             </Button>
-          </Form.Item>
-          <Form.Item
-            name="productionInfo"
-            label="产线信息"
-            rules={[{ required: false, message: "产线信息" }]}
-          >
-            <Input placeholder="" />
-          </Form.Item>
-          <Form.Item
-            name="stationInfo"
-            label="工位信息"
-            rules={[{ required: false, message: "工位信息" }]}
-          >
-            <Input placeholder="" />
-          </Form.Item>
-          <Form.Item
-            name="useInfo"
-            label="功能信息"
-            rules={[{ required: false, message: "功能信息" }]}
-          >
-            <Input placeholder="" />
           </Form.Item>
           {
             !isVision ?

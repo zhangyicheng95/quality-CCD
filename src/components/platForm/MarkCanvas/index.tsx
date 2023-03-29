@@ -256,9 +256,22 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         if (type === 'RECT') {
           setFeatureList((prev: any) => {
             return Object.entries(prev).reduce((pre: any, cen: any) => {
+              const range = cen[1]?.['旋转角度']?.value;
               return Object.assign({}, pre, {
                 [cen[0]]: Object.assign({}, cen[1], cen[0] === id ? {
                   roi: {
+                    realValue: [90, 270].includes(range) ? {
+                      // 矩形，有旋转
+                      x: { alias: "cx", value: shape.x + shape.width / 2 },
+                      y: { alias: "cy", value: shape.y + shape.height / 2 },
+                      width: { alias: "width", value: shape.height },
+                      height: { alias: "height", value: shape.width }
+                    } : {
+                      x: { alias: "cx", value: shape.x + shape.width / 2 },
+                      y: { alias: "cy", value: shape.y + shape.height / 2 },
+                      width: { alias: "width", value: shape.width },
+                      height: { alias: "height", value: shape.height }
+                    },
                     value: Object.entries(cen[1]?.roi?.value).reduce((p: any, c: any) => {
                       return Object.assign({}, p, {
                         [c[0]]: { ...c[1], value: shape[c[0]] }
@@ -934,12 +947,18 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           ?.reduce((pre: any, cen: any) => {
                             if (cen[0] === 'roi') {
                               let { value: val, } = value[cen[0]];
+                              // realValue：没旋转的 中心点x,y
                               let realValue = {
                                 x: { ...val?.x, },
                                 y: { ...val?.y, },
                                 width: { ...val?.width },
                                 height: { ...val?.height }
                               };
+                              val = {
+                                ...val,
+                                x: { ...val?.x, value: val?.x?.value - val?.width?.value / 2 },
+                                y: { ...val?.y, value: val?.y?.value - val?.height?.value / 2 }
+                              }
                               if (val?.x && val?.height) {
                                 if ([90, 270].includes(range)) {
                                   // 矩形，有旋转

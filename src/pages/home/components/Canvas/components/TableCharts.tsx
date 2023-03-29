@@ -38,11 +38,15 @@ const TableCharts: React.FC<Props> = (props: any) => {
                 {
                     _.isArray(dataValue) ?
                         (!!reverse ? _.cloneDeep(dataValue).reverse() : dataValue).map((item: any, index: number) => {
-                            const { name, value } = item;
+                            const { name, value, color } = item;
                             const text = _.isArray(value) ? value.join(',') : value;
                             return <div className="charts-body-tr flex-box" key={`echart-${id}-tr-${index}`}>
                                 <div className="charts-body-td flex-box-center">{name}</div>
-                                <TooltipDiv className="charts-body-td flex-box-center" title={text.length > 10 ? text : ''}>
+                                <TooltipDiv
+                                    className="charts-body-td flex-box-center"
+                                    title={text.length > 10 ? text : ''}
+                                    style={!!color ? { color } : {}}
+                                >
                                     {text}
                                 </TooltipDiv>
                             </div>
