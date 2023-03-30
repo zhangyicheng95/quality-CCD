@@ -16,6 +16,9 @@ import {
   Tree,
   InputNumber,
   Switch,
+  Col,
+  Row,
+  Descriptions,
 } from 'antd';
 import * as _ from 'lodash';
 import {
@@ -33,9 +36,11 @@ import {
   CompressOutlined,
   DeleteOutlined,
   LoadingOutlined,
+  MinusOutlined,
   PauseCircleOutlined,
   PlayCircleOutlined,
   PlusCircleOutlined,
+  PlusOutlined,
   SafetyOutlined,
 } from '@ant-design/icons';
 import { connect, useHistory, useModel } from 'umi';
@@ -60,6 +65,7 @@ import ProgressCharts from './components/ProgressCharts';
 import ImgCharts from './components/ImgCharts';
 import { windowTypeList, } from '@/common/constants/globalConstants';
 import LogPreviewModal from './components/LogPreviewModal';
+import { guid } from '@/utils/utils';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -92,6 +98,7 @@ const Home: React.FC<any> = (props: any) => {
   const [myChartVisible, setMyChartVisible] = useState<any>(null);
   const [logDataVisible, setLogDataVisible] = useState('');
   const [commonInfoVisible, setCommonInfoVisible] = useState<any>(false);
+  const [commonInfoData, setCommonInfoData] = useState<any>([]);
 
   const ifCanEdit = useMemo(() => {
     return window.location.hash.indexOf('edit') > -1;
@@ -101,7 +108,21 @@ const Home: React.FC<any> = (props: any) => {
     // @ts-ignore
     return window.QUALITY_CCD_CONFIG.type === 'vision';
   }, []);
-
+  useEffect(() => {
+    if (_.isArray(paramData?.commonInfo?.data)) {
+      setCommonInfoData(paramData?.commonInfo?.data);
+    } else if (_.isObject(paramData?.commonInfo)) {
+      const result = Object.entries(paramData?.commonInfo)?.map((res: any, index: number) => {
+        return {
+          id: guid(),
+          name: res[0] === 'productionInfo' ? '产线信息' : res[0] === 'stationInfo' ? '工位信息' : res[0] === 'useInfo' ? '功能信息' : res[0],
+          value: res[1]
+        }
+      });
+      setCommonInfoData(result);
+    }
+  }, [paramData?.commonInfo]);
+  // 基础组件
   const gridList = useMemo(() => ([
     <div key={'slider-1'}>
       <div className="btn-box background-ubv">
@@ -435,25 +456,39 @@ const Home: React.FC<any> = (props: any) => {
             : null
         }
         <div className="info-box-content">
-          <div className="info-item">
-            <div>产线信息：</div>
-            {paramData?.commonInfo?.productionInfo}
-          </div>
-          <div className="info-item">
-            <div>工位信息：</div>
-            {paramData?.commonInfo?.stationInfo}
-          </div>
-          <div className="info-item">
-            <div>功能信息：</div>
-            {paramData?.commonInfo?.useInfo}
-          </div>
-          {/* {
-          Object.entries({ orderId: 'xxxxxxxxx-xxx' })?.map((item: any, index: number) => {
-            return <TooltipDiv title={item[1]} className="info-item" key={item[0]}>
-              订单号：{item[1]}
-            </TooltipDiv>
-          })
-        } */}
+          {
+            _.isArray(paramData?.commonInfo?.data) ?
+              <Descriptions
+                bordered={paramData?.commonInfo?.setting?.bordered || false}
+                column={paramData?.commonInfo?.setting?.column || 2}
+                layout={paramData?.commonInfo?.setting?.layout || 'horizontal'}
+                size={paramData?.commonInfo?.setting?.size || 'default'}
+              >
+                {
+                  paramData?.commonInfo?.data.map((item: any, index: number) => {
+                    const { id, name, value } = item;
+                    return <Descriptions.Item label={name} key={id}>
+                      {value}
+                    </Descriptions.Item>
+                  })
+                }
+              </Descriptions>
+              :
+              <Fragment>
+                <div className="info-item">
+                  <div>产线信息：</div>
+                  {paramData?.commonInfo?.productionInfo}
+                </div>
+                <div className="info-item">
+                  <div>工位信息：</div>
+                  {paramData?.commonInfo?.stationInfo}
+                </div>
+                <div className="info-item">
+                  <div>功能信息：</div>
+                  {paramData?.commonInfo?.useInfo}
+                </div>
+              </Fragment>
+          }
         </div>
       </div>
     </div>,
@@ -2009,9 +2044,12 @@ const Home: React.FC<any> = (props: any) => {
             // maskClosable={false}
             onOk={() => {
               validateFields().then(values => {
-                const { productionInfo, stationInfo, useInfo } = values;
+                const { bordered, column, layout, size } = values;
                 const result = Object.assign({}, paramData, {
-                  commonInfo: { productionInfo, stationInfo, useInfo },
+                  commonInfo: {
+                    data: commonInfoData,
+                    setting: { bordered, column, layout, size },
+                  },
                 });
                 setInitialState({ ...initialState, params: result });
                 setParamData(result);
@@ -2022,28 +2060,120 @@ const Home: React.FC<any> = (props: any) => {
             getContainer={false}
             destroyOnClose={true}
           >
-            <Form form={form} scrollToFirstError initialValues={paramData?.commonInfo}>
+            {
+              _.isArray(commonInfoData) ?
+                commonInfoData.map((item: any, index: number) => {
+                  if (!item || _.isEmpty(item)) return null;
+
+                  const { id, name, value } = item;
+                  return <Row
+                    key={`commonInfo-${id || index}`}
+                    gutter={8}
+                    style={{ marginBottom: 8, height: '27px', }}
+                  >
+                    <Col flex={1}>
+                      <Input
+                        placeholder='key'
+                        value={name}
+                        onChange={e => {
+                          const val = e?.target?.value;
+                          setCommonInfoData((prev: any) => {
+                            return prev.map((info: any) => {
+                              if (info.id === id) {
+                                return { ...info, name: val }
+                              }
+                              return info;
+                            })
+                          });
+                        }}
+                      />
+                    </Col>
+                    <Col flex={2}>
+                      <Input
+                        placeholder='value'
+                        value={value}
+                        onChange={e => {
+                          const val = e?.target?.value;
+                          setCommonInfoData((prev: any) => {
+                            return prev.map((info: any) => {
+                              if (info.id === id) {
+                                return { ...info, value: val }
+                              }
+                              return info;
+                            })
+                          });
+                        }}
+                      />
+                    </Col>
+                    <Col style={{ height: '100%' }}>
+                      <Button
+                        style={{ height: '100%' }}
+                        icon={<MinusOutlined />}
+                        onClick={() => {
+                          setCommonInfoData((prev: any) => {
+                            return prev.filter((i: any) => i.id !== id)?.length ?
+                              prev.filter((i: any) => i.id !== id) :
+                              [{ id: guid(), name: '', value: '' }]
+                          })
+                        }}
+                      />
+                    </Col>
+                  </Row>
+                })
+                :
+                null
+            }
+            <Button
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setCommonInfoData((prev: any) => prev.concat({ id: guid(), name: '', value: '' }))
+              }}
+            />
+            <Form form={form} scrollToFirstError initialValues={paramData?.commonInfo?.setting}>
               <Form.Item
-                name="productionInfo"
-                label="产线信息"
-                rules={[{ required: false, message: "产线信息" }]}
+                name="bordered"
+                label="是否展示边框"
+                valuePropName="checked"
+                style={{ marginBottom: 8 }}
               >
-                <Input placeholder="" />
+                <Switch />
               </Form.Item>
               <Form.Item
-                name="stationInfo"
-                label="工位信息"
-                rules={[{ required: false, message: "工位信息" }]}
+                name="column"
+                label="列数"
+                style={{ marginBottom: 8 }}
               >
-                <Input placeholder="" />
+                <InputNumber />
               </Form.Item>
               <Form.Item
-                name="useInfo"
-                label="功能信息"
-                rules={[{ required: false, message: "功能信息" }]}
+                name="layout"
+                label="布局方向"
+                style={{ marginBottom: 8 }}
               >
-                <Input placeholder="" />
+                <Select
+                  options={[
+                    { label: '横向', value: 'horizontal' },
+                    { label: '纵向', value: 'vertical' }
+                  ]}
+                />
               </Form.Item>
+              {
+                !!form.getFieldValue('bordered') ?
+                  <Form.Item
+                    name="size"
+                    label="布局大小"
+                    style={{ marginBottom: 8 }}
+                  >
+                    <Select
+                      options={[
+                        { label: '自适应', value: 'default' },
+                        { label: '中', value: 'middle' },
+                        { label: '小', value: 'small' }
+                      ]}
+                    />
+                  </Form.Item>
+                  : null
+              }
             </Form>
           </Modal>
           : null
