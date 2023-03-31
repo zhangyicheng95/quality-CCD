@@ -66,7 +66,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
             yAxis: Object.assign({}, options.yAxis, {
                 type: 'value',
                 name: yName,
-                boundaryGap: ['5%', '5%'],
+                boundaryGap: false,
                 scale: true,
             }),
             xAxis: Object.assign({}, options.xAxis, {

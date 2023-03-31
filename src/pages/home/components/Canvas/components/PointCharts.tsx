@@ -28,27 +28,6 @@ const PointCharts: React.FC<Props> = (props: any) => {
         }
         const dom: any = document.getElementById(`echart-${id}`);
         myChart = echarts.init(dom);
-        let minValueX: any = null,
-            minValueY: any = null;
-        (dataValue || []).forEach((item: any, index: number) => {
-            const { value, type } = item;
-            if (type === 'markLine') {
-                return;
-            } else {
-                if (_.isNull(minValueX)) {
-                    minValueX = value[0][0];
-                }
-                if (_.isNull(minValueY)) {
-                    minValueY = value[0][1];
-                }
-                if (value[0][0] < minValueX) {
-                    minValueX = value[0][0];
-                }
-                if (value[0][1] < minValueY) {
-                    minValueY = value[0][1];
-                }
-            }
-        });
 
         const option = Object.assign({}, options, {
             // color: ["rgb(115,171,216)", "rgb(245,142,94)"],
@@ -59,9 +38,14 @@ const PointCharts: React.FC<Props> = (props: any) => {
                 right: `${xName.length * (xName.length < 4 ? 24 : 16)}px`,
             }, direction === 'rows' ? { left: 30, } : { bottom: 30, }),
             yAxis: Object.assign({}, options.yAxis, {
-                type: direction === 'rows' ? 'category' : 'value',
+                type: 'value',//direction === 'rows' ? 'category' : 'value',
                 name: direction === 'rows' ? xName : yName,
-                boundaryGap: ['5%', '5%'],
+                boundaryGap: false, //['5%', '5%'],
+                axisLabel: Object.assign({}, options.xAxis?.axisLabel, {
+                    formatter: function (val: any) {
+                        return val;
+                    }
+                }),
                 splitLine: {
                     show: false,
                 },
@@ -108,12 +92,13 @@ const PointCharts: React.FC<Props> = (props: any) => {
                 axisTick: {
                     show: false,
                 },
-                type: direction === 'rows' ? 'value' : 'category',
+                type: 'value',//direction === 'rows' ? 'value' : 'category',
                 name: direction === 'rows' ? yName : xName,
                 scale: false,
             }),
+            seriesLayoutBy: "row",
             series: (dataValue || []).map((item: any) => {
-                const { name, value, type } = item;
+                const { name, value, type, color } = item;
                 if (type === 'markLine') {
                     return {
                         symbolSize: 1,
@@ -122,12 +107,10 @@ const PointCharts: React.FC<Props> = (props: any) => {
                         tooltip: {
                             show: false
                         },
-                        data: [direction === 'rows' ? [value, minValueY] : [minValueX, value]],
                         markLine: {
                             symbolSize: 1,
                             lineStyle: {
-                                type: 'solid',
-                                width: 12,
+                                width: 1,
                             },
                             data: [
                                 { type: 'average', name: name },
@@ -140,8 +123,14 @@ const PointCharts: React.FC<Props> = (props: any) => {
                         symbolSize: 8,
                         symbol: symbol || 'rect', //散点形状设置symbol: circle 圆, rect 方, roundRect 圆角方, triangle 三角, diamond 菱形, pin 气球, arrow 箭头
                         name: name,
+                        // color: color,
                         type: "scatter",
-                        data: value
+                        data: value.map((item: any) => {
+                            if (direction === 'rows') {
+                                return item.reverse();
+                            }
+                            return item;
+                        }),
                     };
                 }
             })

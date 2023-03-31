@@ -352,7 +352,7 @@
 
   :global {
     .charts-header-box {
-      width: 100%;
+      width: calc(100% - 13px);
       background-color: @background-color-base;
 
       .charts-header-item {
@@ -384,6 +384,7 @@
           height: 38px;
           line-height: 38px;
           text-align: center;
+          border-right: 3px solid transparent;
 
           &:nth-child(even) {
             background-color: rgba(144, 144, 144, .6);
