@@ -12,7 +12,7 @@ interface Props {
 
 const ProgressCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { dataValue = 0, barColor, progressType, progressSize } = data;
+    const { dataValue = 0, barColor, progressType, progressSize, progressSteps } = data;
     const dom = useRef<any>();
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
@@ -46,6 +46,7 @@ const ProgressCharts: React.FC<Props> = (props: any) => {
                 type={progressType}
                 strokeColor={barColor !== 'default' ? barColor : ''}
                 status="active"
+                steps={progressSteps}
             />
         </div>
     );

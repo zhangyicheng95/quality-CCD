@@ -51,7 +51,7 @@ const GridLayout: React.FC<Props> = (props: any) => {
 
     return (
         <>
-            <div className={styles.dashboardContent}>
+            <div className={styles.dashboardContent} id="dashboardContent">
                 {
                     // @ts-ignore
                     <ResponsiveGridLayout

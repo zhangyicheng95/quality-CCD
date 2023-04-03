@@ -42,6 +42,7 @@ import {
   PlusCircleOutlined,
   PlusOutlined,
   SafetyOutlined,
+  UpOutlined,
 } from '@ant-design/icons';
 import { connect, useHistory, useModel } from 'umi';
 import socketErrorListen from '@/services/socketError';
@@ -1057,7 +1058,12 @@ const Home: React.FC<any> = (props: any) => {
         layoutData: any = [],
         resultData: any = {};
       addContentList?.forEach((item: any, index: number) => {
-        const { id: key, size, value = [], type, yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor = 'default', barColor = 'default', progressType = 'line', progressSize = 8, windowControl } = item;
+        const {
+          id: key, size, value = [], type, yName, xName, defaultImg, fontSize,
+          reverse, direction, symbol, fetchType, fetchParams, align,
+          backgroundColor = 'default', barColor = 'default', progressType = 'line',
+          progressSize = 8, progressSteps = 5, windowControl, ifLocalStorage
+        } = item;
         const id = key?.split('$$')[0];
         const gridValue = gridContentList[id] || {};
         const newGridValue = newGridContentList[id] || {};
@@ -1215,7 +1221,7 @@ const Home: React.FC<any> = (props: any) => {
                                     <ProgressCharts
                                       id={key}
                                       data={{
-                                        dataValue: dataValue || 0, barColor, progressType, progressSize
+                                        dataValue: dataValue || 0, barColor, progressType, progressSize, progressSteps
                                       }}
                                     />
                                     :
@@ -1264,10 +1270,12 @@ const Home: React.FC<any> = (props: any) => {
           </div>,
         );
         layoutData = layoutData.concat(size);
-        resultData[id] = !!dataValue ? {
-          ...item,
-          [value[1]]: dataValue
-        } : item;
+        if (ifLocalStorage || !_.isBoolean(ifLocalStorage)) {
+          resultData[id] = !!dataValue ? {
+            ...item,
+            [value[1]]: dataValue
+          } : item;
+        }
       });
       localStorage.setItem(`localGridContentList-${paramData.id}`, JSON.stringify(resultData));
 
@@ -1414,7 +1422,11 @@ const Home: React.FC<any> = (props: any) => {
   const addWindow = () => {
     validateFields()
       .then((values) => {
-        const { value, type, yName, xName, fontSize, defaultImg, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType, progressSize, windowControl } = values;
+        const {
+          value, type, yName, xName, fontSize, defaultImg, reverse, direction, symbol,
+          fetchType, fetchParams, align, backgroundColor, barColor,
+          progressType, progressSize, progressSteps, windowControl, ifLocalStorage
+        } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
             JSON.parse(fetchParams);
@@ -1437,7 +1449,9 @@ const Home: React.FC<any> = (props: any) => {
             size: { i: id, x: 8, y: 0, w: 10, h: 4, minW: 1, maxW: 100, minH: 2, maxH: 100 },
             type,
             tab: activeTab,
-            yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType, progressSize, windowControl
+            yName, xName, defaultImg, fontSize, reverse, direction, symbol,
+            fetchType, fetchParams, align, backgroundColor, barColor,
+            progressType, progressSize, progressSteps, windowControl, ifLocalStorage
           });
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1448,7 +1462,9 @@ const Home: React.FC<any> = (props: any) => {
                 size: Object.assign({}, editWindowData.size, { i: id }),
                 type,
                 tab: activeTab,
-                yName, xName, defaultImg, fontSize, reverse, direction, symbol, fetchType, fetchParams, align, backgroundColor, barColor, progressType, progressSize, windowControl
+                yName, xName, defaultImg, fontSize, reverse, direction, symbol,
+                fetchType, fetchParams, align, backgroundColor, barColor,
+                progressType, progressSize, progressSteps, windowControl, ifLocalStorage
               };
             };
             return item;
@@ -1482,11 +1498,28 @@ const Home: React.FC<any> = (props: any) => {
     form.resetFields();
     setEditWindowData({});
     setSelectedPath({ fileType: 'file', value: '' });
-    setFieldsValue({ value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false, direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined, align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line', progressSize: 8, windowControl: undefined });
+    setFieldsValue({
+      value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false,
+      direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined,
+      align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line',
+      progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: false
+    });
     setWindowType('img');
     setAddWindowVisible(false);
     setFooterSelectVisible(false);
   };
+
+  const homeDom = useMemo(() => {
+    return document.getElementById('dashboardContent');
+  }, [document.getElementById('dashboardContent')]);
+  const homePageIcon = useMemo(() => {
+    const length = Math.ceil((homeDom?.scrollHeight || 0) / (homeDom?.clientHeight || 1));
+    let arr: any = [];
+    for (let i = 0; i < length; i++) {
+      arr = arr.concat(i + 1)
+    }
+    return arr;
+  }, [homeDom]);
 
   return (
     <div className={`${styles.home}`}>
@@ -1536,7 +1569,19 @@ const Home: React.FC<any> = (props: any) => {
           }, [started, footerData, footerSelectList])
         }
       </div>
-
+      <div className="home-affix-box">
+        {
+          homePageIcon.map((item: any, index: number) => {
+            return <div className="flex-box-center home-page-affix"
+              onClick={(e) => {
+                homeDom?.scrollTo({ top: (homeDom?.clientHeight || 1) * index });
+              }}
+            >
+              {index + 1}
+            </div>
+          })
+        }
+      </div>
       {
         footerSelectVisible ?
           <Modal
@@ -1823,12 +1868,25 @@ const Home: React.FC<any> = (props: any) => {
                   </Form.Item>
                   <Form.Item
                     name={`progressSize`}
-                    label={'进度条尺寸'}
+                    label={'进度条高度'}
                     initialValue={8}
-                    rules={[{ required: false, message: '进度条尺寸' }]}
+                    rules={[{ required: false, message: '进度条高度' }]}
                   >
                     <InputNumber min={2} max={99} step={1} />
                   </Form.Item>
+                  {
+                    form.getFieldValue('progressType') === 'line' ?
+                      <Form.Item
+                        name={`progressSteps`}
+                        label={'进度格数'}
+                        initialValue={5}
+                        rules={[{ required: false, message: '进度格数' }]}
+                      >
+                        <InputNumber min={0} max={99} step={1} />
+                      </Form.Item>
+                      :
+                      null
+                  }
                 </Fragment>
                 : null
             }
@@ -1954,6 +2012,15 @@ const Home: React.FC<any> = (props: any) => {
                 </Fragment>
                 : null
             }
+            <Form.Item
+              name="ifLocalStorage"
+              label="是否开启缓存"
+              initialValue={true}
+              valuePropName="checked"
+              style={{ marginBottom: 8 }}
+            >
+              <Switch />
+            </Form.Item>
           </Form>
         </Modal>
       ) : null}

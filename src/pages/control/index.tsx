@@ -403,136 +403,140 @@ const Control: React.FC<any> = (props: any) => {
                       </DropSortableItem>
                     }
                     {
-                      !hidden ? (Object.entries(initParams) || [])
-                        ?.sort((a: any, b: any) => {
-                          return a[1]?.orderId - b[1]?.orderId
-                        }).map((item: any) => {
-                          const { alias, name, widget, onHidden } = item[1];
-                          const { type } = widget || {};
-                          if (!widget || onHidden || TagRadioList.includes(item[0]) || ifInGroup?.includes(item[0])) return null;
-                          return <div className="flex-box param-item" key={`${id}@$@${item[0]}`}>
-                            <div className="icon-box flex-box">
-                              {_.toUpper(type.slice(0, 1))}
-                              {/* <BlockOutlined className="item-icon" /> */}
-                            </div>
-                            <div className="title-box">
-                              <TooltipDiv className="first">{alias}</TooltipDiv>
-                              <TooltipDiv className="second">{name}</TooltipDiv>
-                            </div>
-                            <div className="value-box">
-                              <FormatWidgetToDom
-                                id={`${id}@$@${item[0]}`}
-                                node={node}
-                                config={item}
-                                form={form}
-                                disabled={false}
-                                selectedOption={selectedOption}
-                                setSelectedOption={setSelectedOption}
-                                widgetChange={widgetChange}
-                                setEditorVisible={setEditorVisible}
-                                setEditorValue={setEditorValue}
-                                setPlatFormVisible={setPlatFormVisible}
-                                setPlatFormValue={setPlatFormValue}
-                                setSelectPathVisible={setSelectPathVisible}
-                                setSelectedPath={setSelectedPath}
-                              />
-                            </div>
-                          </div>
-                        })
-                        : null
-                    }
-                    {
-                      !hidden ? group?.map((grou: any) => {
-                        const { name, id, open, children } = grou;
-                        return (
-                          <div key={`${name}_${id}`}>
-                            <Row style={{ marginBottom: 8 }}>
-                              <Col className='label-style' style={{ flex: 1, cursor: 'pointer', paddingRight: 0 }} onClick={() => {
-                                setNodeList((prev: any) => {
-                                  return prev.map((item: any) => {
-                                    if (item.id === node.id) {
-                                      return Object.assign({}, item, {
-                                        config: Object.assign({}, item.config, {
-                                          group: item.config?.group.map((grou: any) => {
-                                            if (grou?.id === id) {
-                                              return Object.assign({}, grou, { open: !open })
-                                            }
-                                            return grou;
-                                          })
-                                        })
-                                      });
-                                    }
-                                    return item;
-                                  })
-                                })
-                              }}>
-                                <div className="flex-box-justify-between config-box-item">
-                                  <div className="flex-box" style={{ width: '90%' }}>
-                                    {open ? (
-                                      <FolderOpenOutlined />
-                                    ) : (
-                                      <FolderOutlined />
-                                    )}
-                                    <TooltipDiv title={name} style={{ margin: '0 16px 0 4px' }}>
-                                      {name}
-                                    </TooltipDiv>
+                      !hidden ?
+                        <Fragment>
+                          {
+                            (Object.entries(initParams) || [])
+                              ?.sort((a: any, b: any) => {
+                                return a[1]?.orderId - b[1]?.orderId
+                              }).map((item: any) => {
+                                const { alias, name, widget, onHidden } = item[1];
+                                const { type } = widget || {};
+                                if (!widget || onHidden || TagRadioList.includes(item[0]) || ifInGroup?.includes(item[0])) return null;
+                                return <div className="flex-box param-item" key={`${id}@$@${item[0]}`}>
+                                  <div className="icon-box flex-box">
+                                    {_.toUpper(type.slice(0, 1))}
+                                    {/* <BlockOutlined className="item-icon" /> */}
                                   </div>
-                                  {open ? (
-                                    <DownOutlined />
-                                  ) : (
-                                    <RightOutlined />
-                                  )}
+                                  <div className="title-box">
+                                    <TooltipDiv className="first">{alias}</TooltipDiv>
+                                    <TooltipDiv className="second">{name}</TooltipDiv>
+                                  </div>
+                                  <div className="value-box">
+                                    <FormatWidgetToDom
+                                      id={`${id}@$@${item[0]}`}
+                                      node={node}
+                                      config={item}
+                                      form={form}
+                                      disabled={false}
+                                      selectedOption={selectedOption}
+                                      setSelectedOption={setSelectedOption}
+                                      widgetChange={widgetChange}
+                                      setEditorVisible={setEditorVisible}
+                                      setEditorValue={setEditorValue}
+                                      setPlatFormVisible={setPlatFormVisible}
+                                      setPlatFormValue={setPlatFormValue}
+                                      setSelectPathVisible={setSelectPathVisible}
+                                      setSelectedPath={setSelectedPath}
+                                    />
+                                  </div>
                                 </div>
-                              </Col>
-                            </Row>
-                            <div style={open ? {} : { display: 'none' }}>
-                              {
-                                children.map((child: any) => {
-                                  const parent = initParams;
-                                  let item: any = {};
-                                  if (parent[child]) {
-                                    item = {
-                                      ...parent[child]
-                                    };
-                                  } else {
-                                    return null;
-                                  }
-                                  const { alias, name, widget, } = item;
-                                  const { type } = widget || {};
-                                  return <div className="flex-box param-item" key={`${id}@$@${child}`}>
-                                    <div className="icon-box flex-box">
-                                      {_.toUpper(type.slice(0, 1))}
-                                      {/* <BlockOutlined className="item-icon" /> */}
-                                    </div>
-                                    <div className="title-box">
-                                      <TooltipDiv className="first">{alias}</TooltipDiv>
-                                      <TooltipDiv className="second">{name}</TooltipDiv>
-                                    </div>
-                                    <div className="value-box">
-                                      <FormatWidgetToDom
-                                        id={`${node.id}@$@${child}`}
-                                        node={node}
-                                        config={[child, item]}
-                                        form={form}
-                                        disabled={false}
-                                        selectedOption={selectedOption}
-                                        setSelectedOption={setSelectedOption}
-                                        widgetChange={widgetChange}
-                                        setEditorVisible={setEditorVisible}
-                                        setEditorValue={setEditorValue}
-                                        setPlatFormVisible={setPlatFormVisible}
-                                        setPlatFormValue={setPlatFormValue}
-                                        setSelectPathVisible={setSelectPathVisible}
-                                        setSelectedPath={setSelectedPath}
-                                      />
-                                    </div>
+                              })
+                          }
+                          {
+                            group?.map((grou: any) => {
+                              const { name, id, open, children } = grou;
+                              return (
+                                <div key={`${name}_${id}`} style={{ marginLeft: 24 }}>
+                                  <Row style={{ marginBottom: 8 }}>
+                                    <Col className='label-style' style={{ flex: 1, cursor: 'pointer', paddingRight: 0 }} onClick={() => {
+                                      setNodeList((prev: any) => {
+                                        return prev.map((item: any) => {
+                                          if (item.id === node.id) {
+                                            return Object.assign({}, item, {
+                                              config: Object.assign({}, item.config, {
+                                                group: item.config?.group.map((grou: any) => {
+                                                  if (grou?.id === id) {
+                                                    return Object.assign({}, grou, { open: !open })
+                                                  }
+                                                  return grou;
+                                                })
+                                              })
+                                            });
+                                          }
+                                          return item;
+                                        })
+                                      })
+                                    }}>
+                                      <div className="flex-box-justify-between config-box-item">
+                                        <div className="flex-box" style={{ width: '90%' }}>
+                                          {open ? (
+                                            <FolderOpenOutlined />
+                                          ) : (
+                                            <FolderOutlined />
+                                          )}
+                                          <TooltipDiv title={name} style={{ margin: '0 16px 0 4px' }}>
+                                            {name}
+                                          </TooltipDiv>
+                                        </div>
+                                        {open ? (
+                                          <DownOutlined />
+                                        ) : (
+                                          <RightOutlined />
+                                        )}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                  <div style={open ? {} : { display: 'none' }}>
+                                    {
+                                      children.map((child: any) => {
+                                        const parent = initParams;
+                                        let item: any = {};
+                                        if (parent[child]) {
+                                          item = {
+                                            ...parent[child]
+                                          };
+                                        } else {
+                                          return null;
+                                        }
+                                        const { alias, name, widget, } = item;
+                                        const { type } = widget || {};
+                                        return <div className="flex-box param-item" key={`${id}@$@${child}`}>
+                                          <div className="icon-box flex-box">
+                                            {_.toUpper(type.slice(0, 1))}
+                                            {/* <BlockOutlined className="item-icon" /> */}
+                                          </div>
+                                          <div className="title-box">
+                                            <TooltipDiv className="first">{alias}</TooltipDiv>
+                                            <TooltipDiv className="second">{name}</TooltipDiv>
+                                          </div>
+                                          <div className="value-box">
+                                            <FormatWidgetToDom
+                                              id={`${node.id}@$@${child}`}
+                                              node={node}
+                                              config={[child, item]}
+                                              form={form}
+                                              disabled={false}
+                                              selectedOption={selectedOption}
+                                              setSelectedOption={setSelectedOption}
+                                              widgetChange={widgetChange}
+                                              setEditorVisible={setEditorVisible}
+                                              setEditorValue={setEditorValue}
+                                              setPlatFormVisible={setPlatFormVisible}
+                                              setPlatFormValue={setPlatFormValue}
+                                              setSelectPathVisible={setSelectPathVisible}
+                                              setSelectedPath={setSelectedPath}
+                                            />
+                                          </div>
+                                        </div>
+                                      })
+                                    }
                                   </div>
-                                })
-                              }
-                            </div>
-                          </div>
-                        );
-                      })
+                                </div>
+                              );
+                            })
+                          }
+                        </Fragment>
                         : null
                     }
                   </div>

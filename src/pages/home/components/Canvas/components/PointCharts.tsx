@@ -125,9 +125,9 @@ const PointCharts: React.FC<Props> = (props: any) => {
                         name: name,
                         // color: color,
                         type: "scatter",
-                        data: value.map((item: any) => {
+                        data: _.cloneDeep(value).map((item: any) => {
                             if (direction === 'rows') {
-                                return item.reverse();
+                                return _.cloneDeep(item).reverse();
                             }
                             return item;
                         }),

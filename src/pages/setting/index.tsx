@@ -91,25 +91,22 @@ const Setting: React.FC<any> = (props) => {
       .then((values) => {
         const { quality_icon, quality_name, } = values;
         let nodeList: any = [].concat(paramData?.flowData?.nodes);
-        (checkedKeys || []).forEach((key: any) => {
-          const id = key.split('@$@');
-          if (!!id[1]) {
-            nodeList = nodeList.map((node: any) => {
-              const { config } = node;
-              const { initParams = {} } = config;
-              return Object.assign({}, node, {
-                config: Object.assign({}, config, {
-                  initParams: Object.entries(initParams).reduce((pre: any, cen: any) => {
-                    return Object.assign({}, pre, {
-                      [cen[0]]: Object.assign({}, cen[1], {
-                        onHidden: !checkedKeys.includes(`${node.id}@$@${cen[0]}`)
-                      })
-                    });
-                  }, {}),
-                })
-              });
-            })
-          }
+        (paramData?.flowData?.nodes || []).forEach((key: any) => {
+          nodeList = nodeList.map((node: any) => {
+            const { config } = node;
+            const { initParams = {} } = config;
+            return Object.assign({}, node, {
+              config: Object.assign({}, config, {
+                initParams: Object.entries(initParams).reduce((pre: any, cen: any) => {
+                  return Object.assign({}, pre, {
+                    [cen[0]]: Object.assign({}, cen[1], {
+                      onHidden: !checkedKeys.includes(`${node.id}@$@${cen[0]}`)
+                    })
+                  });
+                }, {}),
+              })
+            });
+          })
         });
         const result = Object.assign({}, paramData, {
           quality_name,

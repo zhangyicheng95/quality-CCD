@@ -1,6 +1,9 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { Button, Form, message, Popover, Select, Spin } from 'antd';
-import { PictureOutlined } from "@ant-design/icons";
+import Icon, {
+  AimOutlined, BorderOutlined, DownloadOutlined, DragOutlined, MinusCircleOutlined,
+  PictureOutlined, PlusCircleOutlined, StockOutlined
+} from "@ant-design/icons";
 // @ts-ignore
 import { saveAs } from "file-saver";
 import html2canvas from 'html2canvas';
@@ -8,20 +11,10 @@ import * as _ from "lodash";
 import styles from "./index.less";
 import markIcon from '@/assets/imgs/marker.png';
 import deleteIcon from '@/assets/imgs/delete.png';
-import cursorIcon from '@/assets/imgs/cursor.svg';
-import grabHandIcon from '@/assets/imgs/grabHand.svg';
-import plusIcon from '@/assets/imgs/magnifier-plus.svg';
-import minusIcon from '@/assets/imgs/magnifier-minus.svg';
-import circleIcon from '@/assets/imgs/circle.svg';
-import polyLineIcon from '@/assets/imgs/poly-line.svg';
-import rectIcon from '@/assets/imgs/rect.svg';
-import aimIcon from '@/assets/imgs/aim.svg';
-import loadIcon from '@/assets/imgs/down-load.svg';
 import { BASE_IP } from "@/services/api";
 import { FormatWidgetToDom } from "@/pages/control";
 import { downFileFun, guid, } from "@/utils/utils";
 import Measurement from "@/components/Measurement";
-import { includes } from "lodash";
 
 interface Props {
   data?: any;
@@ -84,7 +77,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           (data.x + data.width) > width ||
           (data.y + data.height) > height
         ) {
-          return message.warning('标注位置 不能超出图片范围！');
+          message.warning('标注位置 不能超出图片范围！');
+          return;
         }
         setGetDataFun((prev: any) => ({ ...prev, zoom: gMap.zoom }));
         const relatedTextId = `label-text-id-${+new Date()}`;
@@ -367,7 +361,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       let obj = {};
       if (_.isArray(platFormValue)) {
         (platFormValue || [])?.forEach((plat: any) => {
-          const { type, id, shape, props, style, ...rest } = plat;
+          const { type, id, shape, props, style } = plat;
           obj = Object.assign({}, obj, {
             [id]: { roi: shape, ...props?.initParams },
           });
@@ -399,7 +393,13 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       relatedTextId, // id
       { text, position: { x: ltx, y: lty }, offset: { x: 0, y: 0 } }, // shape, 左上角
       { name: '文本对象' }, // props
-      { fillStyle: '#F4A460', strokeStyle: '#D2691E', background: true, globalAlpha: 1, fontColor: '#0f0' } // style
+      {
+        fillStyle: 'transparent',
+        strokeStyle: '#D2691E',
+        background: true,
+        globalAlpha: 1,
+        fontColor: '#f00'
+      } // style
     );
     gFirstTextLayer.addText(gFirstText);
   };
@@ -645,7 +645,10 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     <div className="canvas-body flex-box-start">
       <div className="btn-box">
         <div className="top background-ubv">
-          <img src={polyLineIcon} alt="poly-line" onClick={() => { setMode('LINE') }} className={selectedBtn === 'LINE' ? "selected" : ''} />
+          <StockOutlined
+            onClick={() => { setMode('LINE') }}
+            className={`img-icon flex-box-center ${selectedBtn === 'LINE' ? "selected" : ''}`}
+          />
           {/* <Popover placement="right" content={lineMenu} style={{ padding: 0 }}>
             {
               selectedBtn === 'LINE' ?
@@ -654,8 +657,15 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                 <img src={polyLineIcon} alt="poly-line" className={selectedBtn === 'POLYLINE' ? "selected" : ''} />
             }
           </Popover> */}
-          <img src={circleIcon} alt="circle" onClick={() => { setMode('CIRCLE') }} className={selectedBtn === 'CIRCLE' ? "selected" : ''} />
-          <img src={rectIcon} alt="RECT" onClick={() => { setMode('RECT') }} className={selectedBtn === 'RECT' ? "selected" : ''} />
+          <div className={`img-icon flex-box-center ${selectedBtn === 'CIRCLE' ? "selected" : ''}`}
+            onClick={() => { setMode('CIRCLE') }}
+          >
+            <div className="img-icon-circle" />
+          </div>
+          <BorderOutlined
+            className={`img-icon flex-box-center ${selectedBtn === 'RECT' ? "selected" : ''}`}
+            onClick={() => setMode('RECT')}
+          />
           {/* <Popover placement="right" content={rectMenu} >
             {
               selectedBtn === 'CIRCLE' ?
@@ -667,14 +677,10 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                   <img src={polygonIcon} alt="POLYGON" className={selectedBtn === 'POLYGON' ? "selected" : ''} />
             }
           </Popover> */}
-          {/* <Popover placement="right" content={"点"} > */}
-          <img
-            src={aimIcon}
-            alt="cursor-default"
-            className={selectedBtn === 'POINT' ? "selected" : ''}
+          <AimOutlined
+            className={`img-icon flex-box-center ${selectedBtn === 'POINT' ? "selected" : ''}`}
             onClick={() => setMode('POINT')}
           />
-          {/* </Popover> */}
           {/* <Popover placement="right" content={"画笔"} >
             <img
               src={maskIcon}
@@ -694,32 +700,34 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
               onClick={() => setMode('CLEARMASK')}
             />
           </Popover> */}
-          <img
-            src={cursorIcon}
-            alt="cursor"
-            className={selectedBtn === '' ? "selected" : ''}
+          <Icon
+            component={() => <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="983" width="200" height="200">
+              <path d="M607.274667 612.992l88.661333 190.122667a21.333333 21.333333 0 0 1-10.325333 28.373333l-77.312 36.053333a21.333333 21.333333 0 0 1-28.373334-10.325333l-90.666666-194.474667-111.488 111.488A21.333333 21.333333 0 0 1 341.333333 759.168V218.88a21.333333 21.333333 0 0 1 35.669334-15.786667l397.056 360.96a21.333333 21.333333 0 0 1-12.714667 37.077334l-154.069333 11.861333z" fill="#000000" p-id="984">
+              </path>
+            </svg>
+            }
+            className={`img-icon flex-box-center ${selectedBtn === '' ? "selected" : ''}`}
             onClick={() => setMode('')}
           />
-          <Popover placement="right" content={"移动"} >
-            <img
-              src={grabHandIcon}
-              alt="grab-hand"
-              className={selectedBtn === 'PAN' ? "selected" : ''}
-              onClick={() => setMode('PAN')}
-            />
-          </Popover>
-          <img
-            src={cursorIcon}
-            alt="cursor"
-            className={selectedBtn === 'drawRect' ? "selected" : ''}
-            onClick={() => setMode('drawRect')}
+          <DragOutlined
+            className={`img-icon flex-box-center ${selectedBtn === 'PAN' ? "selected" : ''}`}
+            onClick={() => setMode('PAN')}
           />
         </div>
         <div className="bottom background-ubv" style={{ marginBottom: 0 }}>
-          <img src={plusIcon} alt="plus" onClick={() => zoomIn()} />
-          <img src={minusIcon} alt="minus" onClick={() => zoomOut()} />
+          <PlusCircleOutlined
+            className={`img-icon flex-box-center`}
+            onClick={() => zoomIn()}
+          />
+          <MinusCircleOutlined
+            className={`img-icon flex-box-center`}
+            onClick={() => zoomOut()}
+          />
           <Popover placement="right" content={"导出数据"} >
-            <img src={loadIcon} alt="down-load" onClick={() => exportData()} />
+            <DownloadOutlined
+              className={`img-icon flex-box-center`}
+              onClick={() => exportData()}
+            />
           </Popover>
         </div>
       </div>
