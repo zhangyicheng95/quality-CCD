@@ -67,6 +67,7 @@ import ImgCharts from './components/ImgCharts';
 import { windowTypeList, } from '@/common/constants/globalConstants';
 import LogPreviewModal from './components/LogPreviewModal';
 import { guid } from '@/utils/utils';
+import DescriptionCharts from './components/DescriptionCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -98,8 +99,7 @@ const Home: React.FC<any> = (props: any) => {
   const [addItemsVisible, setAddItemsVisible] = useState(false);
   const [myChartVisible, setMyChartVisible] = useState<any>(null);
   const [logDataVisible, setLogDataVisible] = useState('');
-  const [commonInfoVisible, setCommonInfoVisible] = useState<any>(false);
-  const [commonInfoData, setCommonInfoData] = useState<any>([]);
+  const [basicInfoData, setBasicInfoData] = useState<any>([]);
 
   const ifCanEdit = useMemo(() => {
     return window.location.hash.indexOf('edit') > -1;
@@ -111,7 +111,7 @@ const Home: React.FC<any> = (props: any) => {
   }, []);
   useEffect(() => {
     if (_.isArray(paramData?.commonInfo?.data)) {
-      setCommonInfoData(paramData?.commonInfo?.data);
+      setBasicInfoData(paramData?.commonInfo?.data);
     } else if (_.isObject(paramData?.commonInfo)) {
       const result = Object.entries(paramData?.commonInfo)?.map((res: any, index: number) => {
         return {
@@ -120,7 +120,7 @@ const Home: React.FC<any> = (props: any) => {
           value: res[1]
         }
       });
-      setCommonInfoData(result);
+      setBasicInfoData(result);
     }
   }, [paramData?.commonInfo]);
   // 基础组件
@@ -415,14 +415,6 @@ const Home: React.FC<any> = (props: any) => {
                         });
                       }}
                     />
-                    <div
-                      className='common-btn'
-                      onClick={() => {
-                        setCommonInfoVisible(true);
-                      }}
-                    >
-                      编辑
-                    </div>
                     <Popconfirm
                       title="确认删除 基本信息 窗口吗?"
                       onConfirm={() => {
@@ -457,39 +449,18 @@ const Home: React.FC<any> = (props: any) => {
             : null
         }
         <div className="info-box-content">
-          {
-            _.isArray(paramData?.commonInfo?.data) ?
-              <Descriptions
-                bordered={paramData?.commonInfo?.setting?.bordered || false}
-                column={paramData?.commonInfo?.setting?.column || 2}
-                layout={paramData?.commonInfo?.setting?.layout || 'horizontal'}
-                size={paramData?.commonInfo?.setting?.size || 'default'}
-              >
-                {
-                  paramData?.commonInfo?.data.map((item: any, index: number) => {
-                    const { id, name, value } = item;
-                    return <Descriptions.Item label={name} key={id}>
-                      {value}
-                    </Descriptions.Item>
-                  })
-                }
-              </Descriptions>
-              :
-              <Fragment>
-                <div className="info-item">
-                  <div>产线信息：</div>
-                  {paramData?.commonInfo?.productionInfo}
-                </div>
-                <div className="info-item">
-                  <div>工位信息：</div>
-                  {paramData?.commonInfo?.stationInfo}
-                </div>
-                <div className="info-item">
-                  <div>功能信息：</div>
-                  {paramData?.commonInfo?.useInfo}
-                </div>
-              </Fragment>
-          }
+          <div className="info-item">
+            <div>产线信息：</div>
+            {paramData?.commonInfo?.productionInfo}
+          </div>
+          <div className="info-item">
+            <div>工位信息：</div>
+            {paramData?.commonInfo?.stationInfo}
+          </div>
+          <div className="info-item">
+            <div>功能信息：</div>
+            {paramData?.commonInfo?.useInfo}
+          </div>
         </div>
       </div>
     </div>,
@@ -1062,7 +1033,9 @@ const Home: React.FC<any> = (props: any) => {
           id: key, size, value = [], type, yName, xName, defaultImg, fontSize,
           reverse, direction, symbol, fetchType, fetchParams, align,
           backgroundColor = 'default', barColor = 'default', progressType = 'line',
-          progressSize = 8, progressSteps = 5, windowControl, ifLocalStorage
+          progressSize = 8, progressSteps = 5, windowControl,
+          des_bordered, des_column, des_layout, des_size, ifLocalStorage,
+          basicInfoData = [{ id: guid(), name: '', value: '' }]
         } = item;
         const id = key?.split('$$')[0];
         const gridValue = gridContentList[id] || {};
@@ -1108,6 +1081,7 @@ const Home: React.FC<any> = (props: any) => {
                           className='common-btn'
                           onClick={() => {
                             !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
+                            setBasicInfoData(basicInfoData);
                             setEditWindowData(item);
                             setFieldsValue(item);
                             setWindowType(type);
@@ -1225,45 +1199,55 @@ const Home: React.FC<any> = (props: any) => {
                                       }}
                                     />
                                     :
-                                    type === 'button' ?
-                                      <Button
-                                        type={'primary'}
+                                    type === 'description' ?
+                                      <DescriptionCharts
                                         id={key}
-                                        onClick={() => {
-                                          btnFetch(fetchType, xName, JSON.parse(fetchParams));
+                                        data={{
+                                          dataValue: dataValue || [],
+                                          basicInfoData,
+                                          des_bordered, des_column, des_layout, des_size,
                                         }}
-                                      >
-                                        {yName}
-                                      </Button>
+                                      />
                                       :
-                                      type === 'buttonInp' ?
-                                        <ButtonCharts
+                                      type === 'button' ?
+                                        <Button
+                                          type={'primary'}
                                           id={key}
-                                          data={{
-                                            yName, xName, fetchType
+                                          onClick={() => {
+                                            btnFetch(fetchType, xName, JSON.parse(fetchParams));
                                           }}
-                                        />
+                                        >
+                                          {yName}
+                                        </Button>
                                         :
-                                        (
-                                          _.isString(dataValue) && dataValue.indexOf('http') > -1 ? (
-                                            <ImgCharts
-                                              id={key}
-                                              data={{
-                                                dataValue, windowControl,
-                                                setContentList
-                                              }}
-                                            />
+                                        type === 'buttonInp' ?
+                                          <ButtonCharts
+                                            id={key}
+                                            data={{
+                                              yName, xName, fetchType
+                                            }}
+                                          />
+                                          :
+                                          (
+                                            _.isString(dataValue) && dataValue.indexOf('http') > -1 ? (
+                                              <ImgCharts
+                                                id={key}
+                                                data={{
+                                                  dataValue, windowControl,
+                                                  setContentList
+                                                }}
+                                              />
+                                            )
+                                              :
+                                              <ImgCharts
+                                                id={key}
+                                                data={{
+                                                  dataValue: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                  windowControl,
+                                                  setContentList
+                                                }}
+                                              />
                                           )
-                                            :
-                                            <ImgCharts
-                                              id={key}
-                                              data={{
-                                                dataValue: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                windowControl,
-                                                setContentList
-                                              }}
-                                            />
-                                        )
                 }
               </div>
             </div>
@@ -1425,7 +1409,8 @@ const Home: React.FC<any> = (props: any) => {
         const {
           value, type, yName, xName, fontSize, defaultImg, reverse, direction, symbol,
           fetchType, fetchParams, align, backgroundColor, barColor,
-          progressType, progressSize, progressSteps, windowControl, ifLocalStorage
+          progressType, progressSize, progressSteps, windowControl,
+          des_bordered, des_column, des_layout, des_size, ifLocalStorage,
         } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
@@ -1451,7 +1436,9 @@ const Home: React.FC<any> = (props: any) => {
             tab: activeTab,
             yName, xName, defaultImg, fontSize, reverse, direction, symbol,
             fetchType, fetchParams, align, backgroundColor, barColor,
-            progressType, progressSize, progressSteps, windowControl, ifLocalStorage
+            progressType, progressSize, progressSteps, windowControl,
+            des_bordered, des_column, des_layout, des_size, ifLocalStorage,
+            basicInfoData,
           });
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1464,7 +1451,9 @@ const Home: React.FC<any> = (props: any) => {
                 tab: activeTab,
                 yName, xName, defaultImg, fontSize, reverse, direction, symbol,
                 fetchType, fetchParams, align, backgroundColor, barColor,
-                progressType, progressSize, progressSteps, windowControl, ifLocalStorage
+                progressType, progressSize, progressSteps, windowControl,
+                des_bordered, des_column, des_layout, des_size, ifLocalStorage,
+                basicInfoData,
               };
             };
             return item;
@@ -1637,7 +1626,7 @@ const Home: React.FC<any> = (props: any) => {
           getContainer={false}
           destroyOnClose={true}
         >
-          <Form form={form} scrollToFirstError initialValues={editWindowData}>
+          <Form form={form} scrollToFirstError>
             <Form.Item
               name={'value'}
               label="绑定节点"
@@ -2012,6 +2001,125 @@ const Home: React.FC<any> = (props: any) => {
                 </Fragment>
                 : null
             }
+            {
+              ['description'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    label="静态数据"
+                  >
+                    {
+                      _.isArray(basicInfoData) ?
+                        basicInfoData.map((item: any, index: number) => {
+                          if (!item || _.isEmpty(item)) return null;
+
+                          const { id, name, value } = item;
+                          return <Row
+                            key={`commonInfo-${id || index}`}
+                            gutter={8}
+                            style={{ marginBottom: 8, height: '27px', }}
+                          >
+                            <Col flex={1}>
+                              <Input
+                                placeholder='key'
+                                value={name}
+                                onChange={e => {
+                                  const val = e?.target?.value;
+                                  setBasicInfoData((prev: any) => {
+                                    return prev.map((info: any) => {
+                                      if (info.id === id) {
+                                        return { ...info, name: val }
+                                      }
+                                      return info;
+                                    })
+                                  });
+                                }}
+                              />
+                            </Col>
+                            <Col flex={2}>
+                              <Input
+                                placeholder='value'
+                                value={value}
+                                onChange={e => {
+                                  const val = e?.target?.value;
+                                  setBasicInfoData((prev: any) => {
+                                    return prev.map((info: any) => {
+                                      if (info.id === id) {
+                                        return { ...info, value: val }
+                                      }
+                                      return info;
+                                    })
+                                  });
+                                }}
+                              />
+                            </Col>
+                            <Col style={{ height: '100%' }}>
+                              <Button
+                                style={{ height: '100%' }}
+                                icon={<MinusOutlined />}
+                                onClick={() => {
+                                  setBasicInfoData((prev: any) => {
+                                    return prev.filter((i: any) => i.id !== id)?.length ?
+                                      prev.filter((i: any) => i.id !== id) :
+                                      [{ id: guid(), name: '', value: '' }]
+                                  })
+                                }}
+                              />
+                            </Col>
+                          </Row>
+                        })
+                        :
+                        null
+                    }
+                    <Button
+                      icon={<PlusOutlined />}
+                      onClick={() => {
+                        setBasicInfoData((prev: any) => prev.concat({ id: guid(), name: '', value: '' }))
+                      }}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name="des_bordered"
+                    label="是否展示边框"
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                  <Form.Item
+                    name="des_column"
+                    label="列数"
+                  >
+                    <InputNumber />
+                  </Form.Item>
+                  <Form.Item
+                    name="des_layout"
+                    label="布局方向"
+                  >
+                    <Select
+                      options={[
+                        { label: '横向', value: 'horizontal' },
+                        { label: '纵向', value: 'vertical' }
+                      ]}
+                    />
+                  </Form.Item>
+                  {
+                    !!form.getFieldValue('des_bordered') ?
+                      <Form.Item
+                        name="des_size"
+                        label="布局大小"
+                      >
+                        <Select
+                          options={[
+                            { label: '自适应', value: 'default' },
+                            { label: '中', value: 'middle' },
+                            { label: '小', value: 'small' }
+                          ]}
+                        />
+                      </Form.Item>
+                      : null
+                  }
+                </Fragment>
+                : null
+            }
             <Form.Item
               name="ifLocalStorage"
               label="是否开启缓存"
@@ -2101,151 +2209,6 @@ const Home: React.FC<any> = (props: any) => {
             type={logDataVisible}
             onCancel={() => setLogDataVisible('')}
           />
-          : null
-      }
-      {
-        !!commonInfoVisible ?
-          <Modal
-            title={`基本信息`}
-            wrapClassName="history-window-modal"
-            centered
-            width="50vw"
-            open={!!commonInfoVisible}
-            // maskClosable={false}
-            onOk={() => {
-              validateFields().then(values => {
-                const { bordered, column, layout, size } = values;
-                const result = Object.assign({}, paramData, {
-                  commonInfo: {
-                    data: commonInfoData,
-                    setting: { bordered, column, layout, size },
-                  },
-                });
-                setInitialState({ ...initialState, params: result });
-                setParamData(result);
-                setCommonInfoVisible(false);
-              });
-            }}
-            onCancel={() => setCommonInfoVisible(false)}
-            getContainer={false}
-            destroyOnClose={true}
-          >
-            {
-              _.isArray(commonInfoData) ?
-                commonInfoData.map((item: any, index: number) => {
-                  if (!item || _.isEmpty(item)) return null;
-
-                  const { id, name, value } = item;
-                  return <Row
-                    key={`commonInfo-${id || index}`}
-                    gutter={8}
-                    style={{ marginBottom: 8, height: '27px', }}
-                  >
-                    <Col flex={1}>
-                      <Input
-                        placeholder='key'
-                        value={name}
-                        onChange={e => {
-                          const val = e?.target?.value;
-                          setCommonInfoData((prev: any) => {
-                            return prev.map((info: any) => {
-                              if (info.id === id) {
-                                return { ...info, name: val }
-                              }
-                              return info;
-                            })
-                          });
-                        }}
-                      />
-                    </Col>
-                    <Col flex={2}>
-                      <Input
-                        placeholder='value'
-                        value={value}
-                        onChange={e => {
-                          const val = e?.target?.value;
-                          setCommonInfoData((prev: any) => {
-                            return prev.map((info: any) => {
-                              if (info.id === id) {
-                                return { ...info, value: val }
-                              }
-                              return info;
-                            })
-                          });
-                        }}
-                      />
-                    </Col>
-                    <Col style={{ height: '100%' }}>
-                      <Button
-                        style={{ height: '100%' }}
-                        icon={<MinusOutlined />}
-                        onClick={() => {
-                          setCommonInfoData((prev: any) => {
-                            return prev.filter((i: any) => i.id !== id)?.length ?
-                              prev.filter((i: any) => i.id !== id) :
-                              [{ id: guid(), name: '', value: '' }]
-                          })
-                        }}
-                      />
-                    </Col>
-                  </Row>
-                })
-                :
-                null
-            }
-            <Button
-              icon={<PlusOutlined />}
-              onClick={() => {
-                setCommonInfoData((prev: any) => prev.concat({ id: guid(), name: '', value: '' }))
-              }}
-            />
-            <Form form={form} scrollToFirstError initialValues={paramData?.commonInfo?.setting}>
-              <Form.Item
-                name="bordered"
-                label="是否展示边框"
-                valuePropName="checked"
-                style={{ marginBottom: 8 }}
-              >
-                <Switch />
-              </Form.Item>
-              <Form.Item
-                name="column"
-                label="列数"
-                style={{ marginBottom: 8 }}
-              >
-                <InputNumber />
-              </Form.Item>
-              <Form.Item
-                name="layout"
-                label="布局方向"
-                style={{ marginBottom: 8 }}
-              >
-                <Select
-                  options={[
-                    { label: '横向', value: 'horizontal' },
-                    { label: '纵向', value: 'vertical' }
-                  ]}
-                />
-              </Form.Item>
-              {
-                !!form.getFieldValue('bordered') ?
-                  <Form.Item
-                    name="size"
-                    label="布局大小"
-                    style={{ marginBottom: 8 }}
-                  >
-                    <Select
-                      options={[
-                        { label: '自适应', value: 'default' },
-                        { label: '中', value: 'middle' },
-                        { label: '小', value: 'small' }
-                      ]}
-                    />
-                  </Form.Item>
-                  : null
-              }
-            </Form>
-          </Modal>
           : null
       }
     </div>

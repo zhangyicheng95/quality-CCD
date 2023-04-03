@@ -62,6 +62,10 @@ export const windowTypeList: any = [
     value: 'progress',
     label: '进度条组件',
   },
+  {
+    value: 'description',
+    label: '描述组件',
+  }
 ];
 export const logColors = {
   warning: 'rgba(245,160,49,1)',
