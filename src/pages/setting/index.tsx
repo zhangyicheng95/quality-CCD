@@ -110,6 +110,14 @@ const Setting: React.FC<any> = (props) => {
         });
         const result = Object.assign({}, paramData, {
           quality_name,
+          configList: (paramData.configList || []).map((config: any) => {
+            if (config.value === paramData?.selectedConfig) {
+              return Object.assign({}, config, {
+                data: nodeList
+              });
+            }
+            return config;
+          }),
           flowData: Object.assign({}, paramData?.flowData, {
             nodes: nodeList,
           })

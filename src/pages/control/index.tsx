@@ -229,7 +229,7 @@ const Control: React.FC<any> = (props: any) => {
   };
   // 配置文件改变
   const selectUpdate = (val: any, option: any) => {
-    const { data, listType = 'line' } = option;
+    const { data, } = option;
     const result = data.map((item: any, index: number) => {
       if (!item.sortId || item.sortId !== 0) {
         return { ...item, sortId: index };
