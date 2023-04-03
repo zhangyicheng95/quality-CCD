@@ -18,7 +18,7 @@ const Setting: React.FC<any> = (props) => {
   const { validateFields, setFieldsValue, getFieldValue } = form;
   const [paramData, setParamData] = useState<any>({});
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
-  const [treeData, setTreeData] = useState([]);
+  const [treeData, setTreeData] = useState<any>([]);
   const [selectPathVisible, setSelectPathVisible] = useState(false);
   const [selectedPath, setSelectedPath] = useState<any>('');
   const [edit, setEdit] = useState({
@@ -65,7 +65,7 @@ const Setting: React.FC<any> = (props) => {
         return null;
       }).filter(Boolean);
       setParamData(paramsData);
-      setTreeData(result);
+      setTreeData([{ title: '参数节点', key: 'parent_001', children: result }]);
       setCheckedKeys(checkedList);
       setFieldsValue({ quality_name: quality_name || name });
     }
@@ -256,7 +256,7 @@ const Setting: React.FC<any> = (props) => {
             </Button>
           </Form.Item>
           {
-            !isVision ?
+            (!isVision && !_.isEmpty(treeData) && !!treeData?.length) ?
               <Form.Item
                 name="params"
                 label="参数项管理"
@@ -264,10 +264,12 @@ const Setting: React.FC<any> = (props) => {
               >
                 <Tree
                   checkable
-                  autoExpandParent={true}
+                  defaultExpandedKeys={['parent_001']}
                   showLine={true}
                   // @ts-ignore
-                  onCheck={onCheck}
+                  onCheck={(checkedKeysValue: any) => {
+                    onCheck(_.pull(checkedKeysValue, 'parent_001'));
+                  }}
                   checkedKeys={checkedKeys}
                   treeData={treeData}
                 />

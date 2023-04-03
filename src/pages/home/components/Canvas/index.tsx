@@ -852,7 +852,10 @@ const Home: React.FC<any> = (props: any) => {
         </div>
       </div>
     </div>,
-  ]), [isVision, started, taskDataConnect, loading, paramData]);
+  ]), [
+    isVision, started, taskDataConnect, loading, paramData,
+    logStr, footerData, errorData
+  ]);
   // 保存布局状态
   const saveGridFunc = (data: any) => {
     let home: any = [],

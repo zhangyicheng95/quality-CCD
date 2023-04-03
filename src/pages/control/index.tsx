@@ -403,7 +403,7 @@ const Control: React.FC<any> = (props: any) => {
                       </DropSortableItem>
                     }
                     {
-                      !hidden && (Object.entries(initParams) || [])
+                      !hidden ? (Object.entries(initParams) || [])
                         ?.sort((a: any, b: any) => {
                           return a[1]?.orderId - b[1]?.orderId
                         }).map((item: any) => {
@@ -439,9 +439,10 @@ const Control: React.FC<any> = (props: any) => {
                             </div>
                           </div>
                         })
+                        : null
                     }
                     {
-                      group?.map((grou: any) => {
+                      !hidden ? group?.map((grou: any) => {
                         const { name, id, open, children } = grou;
                         return (
                           <div key={`${name}_${id}`}>
@@ -532,6 +533,7 @@ const Control: React.FC<any> = (props: any) => {
                           </div>
                         );
                       })
+                        : null
                     }
                   </div>
                 }
