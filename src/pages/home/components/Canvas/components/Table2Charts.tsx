@@ -4,6 +4,7 @@ import styles from '../index.module.less';
 import TooltipDiv from '@/components/TooltipDiv';
 import { message } from 'antd';
 import { useModel } from 'umi';
+import { isObject } from 'lodash';
 
 interface Props {
     data: any,
@@ -50,6 +51,18 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                             >
                                 {
                                     (!!reverse ? _.cloneDeep(value).reverse() : value).map((val: any, sIndex: number) => {
+                                        if (_.isObject(val)) {
+                                            // @ts-ignore
+                                            const { value, color } = val;
+                                            return <TooltipDiv
+                                                className="charts-body-td"
+                                                key={`echart-${id}-tr-td-${sIndex}`}
+                                                title={value.length > 15 ? value : ''}
+                                                style={!!color ? { color } : {}}
+                                            >
+                                                {value}
+                                            </TooltipDiv>
+                                        }
                                         return <TooltipDiv
                                             className="charts-body-td"
                                             key={`echart-${id}-tr-td-${sIndex}`}
