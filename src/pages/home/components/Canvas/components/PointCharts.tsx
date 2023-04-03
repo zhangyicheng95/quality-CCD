@@ -98,7 +98,7 @@ const PointCharts: React.FC<Props> = (props: any) => {
             }),
             seriesLayoutBy: "row",
             series: (dataValue || []).map((item: any) => {
-                const { name, value, type, color } = item;
+                const { name, value, type } = item;
                 if (type === 'markLine') {
                     return {
                         symbolSize: 1,

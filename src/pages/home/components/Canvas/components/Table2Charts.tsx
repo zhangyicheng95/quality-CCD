@@ -4,7 +4,6 @@ import styles from '../index.module.less';
 import TooltipDiv from '@/components/TooltipDiv';
 import { message } from 'antd';
 import { useModel } from 'umi';
-import { isObject } from 'lodash';
 
 interface Props {
     data: any,
