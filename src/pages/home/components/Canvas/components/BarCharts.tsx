@@ -17,10 +17,10 @@ const colorOption = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3b
 const BarCharts: React.FC<Props> = (props: any) => {
     let myChart: any = null;
     const { data = {}, id, setMyChartVisible, } = props;
-    const { dataValue = [], yName, xName, direction, align, barColor } = data;
+    let { dataValue = [], yName, xName, direction, align, barColor } = data;
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
-
+    barColor = [].concat(barColor)
     useEffect(() => {
         if (!_.isArray(dataValue)) {
             message.error('数据格式不正确，请检查');
@@ -58,6 +58,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 maxValue = value;
             }
         });
+        console.log(barColor)
         const dom: any = document.getElementById(`echart-${id}`);
         myChart = echarts.init(dom);
         const option = Object.assign({}, options, {
@@ -96,7 +97,15 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 label: {
                     show: seriesData?.length < 10
                 },
-                data: seriesData,
+                data: barColor.includes('default') ?
+                    seriesData
+                    :
+                    seriesData.map((item: any, index: number) => {
+                        return {
+                            value: item,
+                            itemStyle: { color: barColor[index % barColor?.length] },
+                        }
+                    }),
                 markLine: {
                     data: markLineData?.map((mark: any, index: number) => {
                         const { value, name, color } = mark;
@@ -119,8 +128,8 @@ const BarCharts: React.FC<Props> = (props: any) => {
                     silent: false, // 鼠标悬停事件, true悬停不会出现实线
                     symbol: 'none', // 去掉箭头
                 },
-            }, barColor === 'default' ? { colorBy: 'data', } : {
-                itemStyle: { color: barColor }
+            }, barColor.includes('default') ? { colorBy: 'data', } : {
+
             })
         });
 

@@ -1808,6 +1808,7 @@ const Home: React.FC<any> = (props: any) => {
                 >
                   <Select
                     style={{ width: '100%' }}
+                    mode={['bar'].includes(windowType) ? 'multiple' : undefined}
                     options={[['default', '默认'], ['#73c0de', '蓝色'],
                     ['#5470c6', '深蓝'], ['#91cc75', '绿色'],
                     ['#3ba272', '深绿'], ['#fac858', '黄色'],
@@ -1824,6 +1825,13 @@ const Home: React.FC<any> = (props: any) => {
                         }
                       })
                     }
+                    onChange={(value) => {
+                      if (value.includes('default')) {
+                        setFieldsValue({
+                          barColor: 'default'
+                        });
+                      }
+                    }}
                   />
                 </Form.Item>
                 : null
