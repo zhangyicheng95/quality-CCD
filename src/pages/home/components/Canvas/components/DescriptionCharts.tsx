@@ -40,9 +40,17 @@ const DescriptionCharts: React.FC<Props> = (props: any) => {
                     {
                         basicInfoData.concat(dataValue).map((item: any, index: number) => {
                             const { id = guid(), name, value, color } = item;
-                            return <Descriptions.Item label={name} key={id} style={!!color ? { color } : {}}>
-                                {value}
-                            </Descriptions.Item>
+                            if (!_.isObject(value?.[0])) {
+                                return <Descriptions.Item label={name} key={id} style={!!color ? { color } : {}}>
+                                    {value}
+                                </Descriptions.Item>
+                            } else {
+                                // @ts-ignore
+                                const { value, color } = item?.value[0];
+                                return <Descriptions.Item label={name} key={id} style={!!color ? { color } : {}}>
+                                    {value}
+                                </Descriptions.Item>
+                            }
                         })
                     }
                 </Descriptions>
