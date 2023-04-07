@@ -58,7 +58,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 maxValue = value;
             }
         });
-        console.log(barColor)
+
         const dom: any = document.getElementById(`echart-${id}`);
         myChart = echarts.init(dom);
         const option = Object.assign({}, options, {

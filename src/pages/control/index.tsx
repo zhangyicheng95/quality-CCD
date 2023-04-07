@@ -330,7 +330,7 @@ const Control: React.FC<any> = (props: any) => {
                             null
                             :
                             <MinusCircleOutlined onClick={(e) => {
-                              // 组织鼠标击穿
+                              // 防止鼠标击穿
                               e.preventDefault();
                               e.stopPropagation();
                               confirm({

@@ -42,6 +42,7 @@ import {
   PlusCircleOutlined,
   PlusOutlined,
   SafetyOutlined,
+  SwapOutlined,
   UpOutlined,
 } from '@ant-design/icons';
 import { connect, useHistory, useModel } from 'umi';
@@ -100,6 +101,10 @@ const Home: React.FC<any> = (props: any) => {
   const [myChartVisible, setMyChartVisible] = useState<any>(null);
   const [logDataVisible, setLogDataVisible] = useState('');
   const [basicInfoData, setBasicInfoData] = useState<any>([]);
+  const [pageIconPosition, setPageIconPosition] = useState<any>({
+    position: { bottom: 16, right: 16 },
+    direction: 'column'
+  });
 
   const ifCanEdit = useMemo(() => {
     return window.location.hash.indexOf('edit') > -1;
@@ -313,7 +318,13 @@ const Home: React.FC<any> = (props: any) => {
                 onClick={() => {
                   updateParams({
                     id: paramData.id,
-                    data: paramData,
+                    data: {
+                      ...paramData,
+                      contentData: {
+                        ...paramData?.contentData,
+                        pageIconPosition
+                      }
+                    },
                   }).then((res: any) => {
                     if (res && res.code === 'SUCCESS') {
                       history.push({ pathname: `/home` });
@@ -826,7 +837,7 @@ const Home: React.FC<any> = (props: any) => {
     </div>,
   ]), [
     isVision, started, taskDataConnect, loading, paramData,
-    logStr, footerData, errorData
+    logStr, footerData, errorData, pageIconPosition
   ]);
   // 保存布局状态
   const saveGridFunc = (data: any) => {
@@ -911,7 +922,7 @@ const Home: React.FC<any> = (props: any) => {
       { "i": "slider-4", "x": 7, "y": 0, "w": 89, "h": 3, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
       { "i": "footer-1", "x": 7, "y": 0, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
       { "i": "footer-2", "x": 0, "y": 26, "w": 7, "h": 17, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }
-    ], content = {}, footerSelectList, contentHeader = {} } = contentData;
+    ], content = {}, footerSelectList, contentHeader = {}, pageIconPosition } = contentData;
     const { nodes } = flowData;
     const list = nodes?.map((node: any) => {
       const { name, alias, id, ports = {} } = node;
@@ -936,6 +947,7 @@ const Home: React.FC<any> = (props: any) => {
     setNodeList(list);
     setFooterSelectList(footerSelectList || []);
     setGridHomeList(home);
+    setPageIconPosition(pageIconPosition);
     let newParams = paramsData;
     if (!_.isObject(contentHeader) || _.isEmpty(contentHeader)) {
       const header = {};
@@ -1035,6 +1047,7 @@ const Home: React.FC<any> = (props: any) => {
           backgroundColor = 'default', barColor = 'default', progressType = 'line',
           progressSize = 8, progressSteps = 5, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
+          CCDName,
           basicInfoData = [{ id: guid(), name: '', value: '' }]
         } = item;
         const id = key?.split('$$')[0];
@@ -1053,7 +1066,7 @@ const Home: React.FC<any> = (props: any) => {
               (ifCanEdit || paramData?.contentData?.contentHeader?.[key]) ?
                 <div className="common-card-title-box flex-box drag-btn">
                   <TooltipDiv className="flex-box common-card-title">
-                    {`${alias || name}`}
+                    {`${CCDName || alias || name}`}
                     <span className='title-span'>{`- ${SecLabel?.label?.alias || value[1] || ''}`}</span>
                   </TooltipDiv>
                   {
@@ -1411,6 +1424,7 @@ const Home: React.FC<any> = (props: any) => {
           fetchType, fetchParams, align, backgroundColor, barColor,
           progressType, progressSize, progressSteps, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
+          CCDName,
         } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
@@ -1438,7 +1452,7 @@ const Home: React.FC<any> = (props: any) => {
             fetchType, fetchParams, align, backgroundColor, barColor,
             progressType, progressSize, progressSteps, windowControl,
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-            basicInfoData,
+            basicInfoData, CCDName
           });
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1453,7 +1467,7 @@ const Home: React.FC<any> = (props: any) => {
                 fetchType, fetchParams, align, backgroundColor, barColor,
                 progressType, progressSize, progressSteps, windowControl,
                 des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-                basicInfoData,
+                basicInfoData, CCDName
               };
             };
             return item;
@@ -1491,14 +1505,15 @@ const Home: React.FC<any> = (props: any) => {
       value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false,
       direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined,
       align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line',
-      progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: false
+      progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: false,
+      CCDName: undefined
     });
     setWindowType('img');
     setAddWindowVisible(false);
     setFooterSelectVisible(false);
   };
 
-  const homeDom = useMemo(() => {
+  const homeDom: any = useMemo(() => {
     return document.getElementById('dashboardContent');
   }, [document.getElementById('dashboardContent')]);
   const homePageIcon = useMemo(() => {
@@ -1509,6 +1524,50 @@ const Home: React.FC<any> = (props: any) => {
     }
     return arr;
   }, [homeDom]);
+  useEffect(() => {
+    if (!ifCanEdit) return;
+    // 1.获取元素
+    var oBox: any = document.getElementById("home-affixs");
+    var pBox: any = document.getElementById("home-affix-box");
+    let top = 0,
+      left = 0,
+      bottom = 16,
+      right = 16;
+    // 2.鼠标按下事件
+    oBox.onmousedown = function (ev: any) {
+      var ev = ev || window.event;
+      // 获取鼠标相对于盒子的坐标
+      // 3.鼠标移动
+      document.onmousemove = function (ev: any) {
+        var ev = ev || window.event;
+        var x3 = ev.pageX;
+        var y3 = ev.pageY;
+        if (pageIconPosition?.direction === 'column') {
+          top = y3;
+          left = x3 + 12;
+        } else {
+          top = y3 - 72;
+          left = x3 + (homePageIcon.length * 40 + 16) / 2 - 4;
+        }
+        bottom = homeDom?.clientHeight - top;
+        right = homeDom?.clientWidth - left;
+        pBox.style.bottom = bottom + "px";
+        pBox.style.right = right + "px"
+      }
+    }
+    // 4.鼠标松开事件
+    oBox.onmouseup = function (ev: any) {
+      var ev = ev || window.event;
+      // 获取鼠标相对于盒子的坐标
+      var x2 = ev.offsetX;
+      var y2 = ev.offsetY;
+      if (x2 <= 0 || y2 <= 0) return;
+      setPageIconPosition((prev: any) => ({ ...prev, position: { bottom, right } }));
+      document.onmousemove = function () {
+        // 释放鼠标
+      }
+    }
+  }, [ifCanEdit, homeDom, pageIconPosition.direction])
 
   return (
     <div className={`${styles.home}`}>
@@ -1558,18 +1617,42 @@ const Home: React.FC<any> = (props: any) => {
           }, [started, footerData, footerSelectList])
         }
       </div>
-      <div className="home-affix-box">
+      <div
+        className={`home-affix-box flex-box`}
+        id={`home-affix-box`}
+        style={{
+          flexDirection: pageIconPosition?.direction,
+          bottom: pageIconPosition?.position.bottom,
+          right: pageIconPosition?.position.right
+        }}
+      >
         {
-          homePageIcon.map((item: any, index: number) => {
-            return <div className="flex-box-center home-page-affix"
-              onClick={(e) => {
-                homeDom?.scrollTo({ top: (homeDom?.clientHeight || 1) * index });
-              }}
-            >
-              {index + 1}
-            </div>
-          })
+          ifCanEdit ?
+            <SwapOutlined className='home-page-affix-direction' onClick={(e) => {
+              setPageIconPosition((prev: any) => ({ ...prev, direction: prev.direction === 'column' ? 'row' : 'column' }))
+            }} />
+            : null
         }
+        <div
+          className={`flex-box`}
+          id={`home-affixs`}
+          style={{
+            flexDirection: pageIconPosition?.direction,
+          }}
+        >
+          {
+            homePageIcon.map((item: any, index: number) => {
+              return <div className="flex-box-center home-page-affix" key={`page-icon-${index}`}
+                onClick={(e) => {
+                  if (ifCanEdit) return;
+                  homeDom?.scrollTo({ top: (homeDom?.clientHeight || 1) * index });
+                }}
+              >
+                {index + 1}
+              </div>
+            })
+          }
+        </div>
       </div>
       {
         footerSelectVisible ?
@@ -1627,6 +1710,13 @@ const Home: React.FC<any> = (props: any) => {
           destroyOnClose={true}
         >
           <Form form={form} scrollToFirstError>
+            <Form.Item
+              name={`CCDName`}
+              label={"监控窗口名称"}
+              rules={[{ required: false, message: '监控窗口名称' }]}
+            >
+              <Input size='large' />
+            </Form.Item>
             <Form.Item
               name={'value'}
               label="绑定节点"

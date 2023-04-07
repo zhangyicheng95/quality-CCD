@@ -300,6 +300,10 @@
       }
     }
 
+    .vertical {
+      flex-direction: column;
+    }
+
     .home-affix-box {
       position: fixed;
       bottom: 16px;
@@ -309,7 +313,7 @@
       .home-page-affix {
         height: 40px;
         width: 40px;
-        margin-bottom: 4px;
+        margin: 4px;
         border-radius: 50%;
         background-color: rgba(144, 144, 144, 1);
         color: #fff;
@@ -317,6 +321,19 @@
         cursor: pointer;
 
         &:hover {
+          opacity: 1;
+        }
+      }
+
+      .home-page-affix-direction {
+        font-size: 16px;
+        cursor: pointer;
+        margin: 4px;
+        opacity: 0;
+      }
+
+      &:hover {
+        .home-page-affix-direction {
           opacity: 1;
         }
       }
