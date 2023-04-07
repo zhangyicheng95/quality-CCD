@@ -947,7 +947,7 @@ const Home: React.FC<any> = (props: any) => {
     setNodeList(list);
     setFooterSelectList(footerSelectList || []);
     setGridHomeList(home);
-    setPageIconPosition(pageIconPosition);
+    setPageIconPosition(pageIconPosition || {});
     let newParams = paramsData;
     if (!_.isObject(contentHeader) || _.isEmpty(contentHeader)) {
       const header = {};
@@ -1622,8 +1622,8 @@ const Home: React.FC<any> = (props: any) => {
         id={`home-affix-box`}
         style={{
           flexDirection: pageIconPosition?.direction,
-          bottom: pageIconPosition?.position.bottom,
-          right: pageIconPosition?.position.right
+          bottom: pageIconPosition?.position?.bottom,
+          right: pageIconPosition?.position?.right
         }}
       >
         {
