@@ -1442,7 +1442,7 @@ const Home: React.FC<any> = (props: any) => {
         }
         let result = [];
         if (_.isEmpty(editWindowData)) {
-          result = addContentList.concat({
+          result = addContentList.concat(Object.assign({}, {
             id,
             value,
             size: { i: id, x: 8, y: 0, w: 10, h: 4, minW: 1, maxW: 100, minH: 2, maxH: 100 },
@@ -1452,12 +1452,12 @@ const Home: React.FC<any> = (props: any) => {
             fetchType, fetchParams, align, backgroundColor, barColor,
             progressType, progressSize, progressSteps, windowControl,
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-            basicInfoData, CCDName
-          });
+            CCDName
+          }, ['description'].includes(windowType) ? { basicInfoData } : {}));
         } else {
           result = (addContentList || [])?.map((item: any) => {
             if (item.id === `${editWindowData?.value?.join('$$')}$$${editWindowData.type}`) {
-              return {
+              return Object.assign({}, {
                 id,
                 value,
                 size: Object.assign({}, editWindowData.size, { i: id }),
@@ -1467,8 +1467,8 @@ const Home: React.FC<any> = (props: any) => {
                 fetchType, fetchParams, align, backgroundColor, barColor,
                 progressType, progressSize, progressSteps, windowControl,
                 des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-                basicInfoData, CCDName
-              };
+                CCDName
+              }, ['description'].includes(windowType) ? { basicInfoData } : {});
             };
             return item;
           })
@@ -1505,7 +1505,7 @@ const Home: React.FC<any> = (props: any) => {
       value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false,
       direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined,
       align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line',
-      progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: false,
+      progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: undefined,
       CCDName: undefined
     });
     setWindowType('img');

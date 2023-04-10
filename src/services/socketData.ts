@@ -25,15 +25,18 @@ const listen = (action: any) => {
           const { uid = '', data = {}, ...rest } = result;
           if (uid) {
             const newData = (Object.entries(data || {}) || []).reduce((pre: any, cen: any) => {
+              const key = cen[0]?.split('@')[0],
+                value = _.isBoolean(cen[1])
+                  ? cen[1]
+                    ? 'RUNNING'
+                    : 'STOPPED'
+                  : cen[1];
               return {
                 uid,
                 ...pre,
                 ...rest,
-                [_.toLower(cen[0]?.split('@')[0])]: _.isBoolean(cen[1])
-                  ? cen[1]
-                    ? 'RUNNING'
-                    : 'STOPPED'
-                  : cen[1],
+                [_.toLower(key)]: value,
+                [key]: value,
               };
             }, {});
             action({ type: `home/${type}Message`, payload: newData });
