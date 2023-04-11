@@ -419,7 +419,7 @@ const Control: React.FC<any> = (props: any) => {
                                     {/* <BlockOutlined className="item-icon" /> */}
                                   </div>
                                   <div className="title-box">
-                                    <TooltipDiv className="first">{alias}</TooltipDiv>
+                                    <TooltipDiv className="first" title={alias || name}>{alias || name}</TooltipDiv>
                                     <TooltipDiv className="second">{name}</TooltipDiv>
                                   </div>
                                   <div className="value-box">
@@ -507,7 +507,7 @@ const Control: React.FC<any> = (props: any) => {
                                             {/* <BlockOutlined className="item-icon" /> */}
                                           </div>
                                           <div className="title-box">
-                                            <TooltipDiv className="first">{alias}</TooltipDiv>
+                                            <TooltipDiv className="first" title={alias || name}>{alias || name}</TooltipDiv>
                                             <TooltipDiv className="second">{name}</TooltipDiv>
                                           </div>
                                           <div className="value-box">
@@ -867,7 +867,7 @@ export const FormatWidgetToDom = (props: any) => {
             name={`${name}$$${guid()}`}
             label={label}
             tooltip={description}
-            initialValue={(value || value == 0) ? value : defaultValue}
+            initialValue={(value || value == 0) ? value : defaultValue || undefined}
             rules={[{ required: require, message: `${alias}` }]}
           >
             <InputNumber
