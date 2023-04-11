@@ -109,7 +109,6 @@ const Size: React.FC<any> = (props: any) => {
         {
           !_.isEmpty(list) && !_.isEmpty(layout) ?
             <GridLayout
-              edit={edit}
               list={list}
               layout={layout}
               onChange={(data: any) => {

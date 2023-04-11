@@ -38,7 +38,7 @@ const DPJ: React.FC<any> = (props: any) => {
 
   return (
     <div className={`${styles.dpj} flex-box`}>
-      <GridLayout list={list} layout={layout} setLayout={setLayout} />
+      <GridLayout list={list} layout={layout} />
     </div>
   );
 };

@@ -867,7 +867,7 @@ export const FormatWidgetToDom = (props: any) => {
             name={`${name}$$${guid()}`}
             label={label}
             tooltip={description}
-            initialValue={(value || value == 0) ? value : defaultValue || undefined}
+            initialValue={(value || value == 0) ? value : ((defaultValue || defaultValue == 0) ? defaultValue : undefined)}
             rules={[{ required: require, message: `${alias}` }]}
           >
             <InputNumber
