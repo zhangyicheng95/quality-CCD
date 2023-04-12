@@ -53,7 +53,7 @@ export default {
 
     *logMessage({ payload }: any, { put, select }: any) {
       const logData: any[] = yield select((state: any) => state.home.logData);
-      const _logData: any[] = [...logData, payload];
+      const _logData: any[] = logData.concat(payload);
       yield put({
         type: 'set',
         payload: {
@@ -69,12 +69,12 @@ export default {
 
     *dataMessage({ payload }: any, { put, select }: any) {
       yield put({ type: 'setGridContentList', payload });
-      const imgData = Object.entries(payload).filter((res: any) => {
-        return _.isString(res[1]) ? res[1].indexOf('http') > -1 : false;
-      });
-      if (imgData[0] && imgData[0][1]) {
-        yield put({ type: 'setGridContentList', payload: { uid: payload.uid, imgData } });
-      }
+      // const imgData = Object.entries(payload).filter((res: any) => {
+      //   return _.isString(res[1]) ? res[1].indexOf('http') > -1 : false;
+      // });
+      // if (imgData[0] && imgData[0][1]) {
+      //   yield put({ type: 'setGridContentList', payload: { uid: payload.uid, imgData } });
+      // }
     },
 
     *stateConnect(action: any, { put }: any) {
@@ -129,7 +129,7 @@ export default {
         return JSON.stringify(a) !== JSON.stringify(b);
       }
       const diff = () => {
-        if (state.logData.join('<br/>') !== snapshot.logStr) {
+        if (_.cloneDeep(state.logData).join('<br/>') !== snapshot.logStr) {
           return true;
         }
         if (!_.isEqual(state.gridContentList, snapshot.gridContentList)) {

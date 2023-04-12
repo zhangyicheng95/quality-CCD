@@ -47,53 +47,57 @@ const PlatFormModal: React.FC<Props> = (props) => {
               const { initParams = {} } = props;
               const initValue = Object.entries(initParams)?.reduce((pre: any, cen: any) => {
                 return Object.assign({}, pre, (cen[0] === 'roi') ?
-                  (!!cen[1]?.realValue?.x?.value || cen[1]?.realValue?.x?.value == 0) ?
+                  (!!cen[1]?.realValue?.x ?
                     {
-                      [cen[0]]: {
+                      [cen[0]]: Object.assign({}, {
                         cx: {
                           alias: "cx",
-                          value: cen[1]?.realValue?.x?.value
+                          value: Number(cen[1]?.realValue?.x?.value?.toFixed(2))
                         },
                         cy: {
                           alias: "cy",
-                          value: cen[1]?.realValue?.y?.value
+                          value: Number(cen[1]?.realValue?.y?.value?.toFixed(2))
                         },
+                      }, type === 'RECT' ? {
+                        width: { alias: 'width', value: Number(cen[1]?.realValue?.width?.value?.toFixed(2)) },
+                        height: { alias: 'height', value: Number(cen[1]?.realValue?.height?.value?.toFixed(2)) }
+                      } : {
                         ..._.omit(_.omit(cen[1]?.realValue, "x"), "y"),
-                      }
+                      })
                     }
-                    : {}
+                    : {})
                   :
                   { [cen[0]]: cen[1]?.value });
               }, {});
               if (type === 'RECT') {
                 return {
-                  id,
+                  // id,
                   type: "RECT",
                   roi: {
                     cx: { alias: "cx", value: shape.x + shape.width / 2 },
                     cy: { alias: "cy", value: shape.y + shape.height / 2 },
-                    width: { alias: "width", value: shape.width },
-                    height: { alias: "height", value: shape.height }
+                    width: { alias: "width", value: Number(shape.width?.toFixed(2)) },
+                    height: { alias: "height", value: Number(shape.height?.toFixed(2)) }
                   },
                   ...initValue
                 }
               } else if (type === 'LINE') {
                 return {
-                  id,
+                  // id,
                   type: "LINE",
                   roi: shape,
                   ...initValue
                 }
               } else if (type === 'CIRCLE') {
                 return {
-                  id,
+                  // id,
                   type: "CIRCLE",
                   roi: shape,
                   ...initValue
                 }
               } else if (type === 'POINT') {
                 return {
-                  id,
+                  // id,
                   type: "POINT",
                   roi: shape,
                   ...initValue
