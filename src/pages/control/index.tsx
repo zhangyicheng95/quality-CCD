@@ -583,6 +583,7 @@ const Control: React.FC<any> = (props: any) => {
               setPlatFormVisible(false);
             }}
             onCancel={() => {
+              setPlatFormValue({});
               setPlatFormVisible(false);
             }}
           />
