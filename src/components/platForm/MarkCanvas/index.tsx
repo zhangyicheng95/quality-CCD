@@ -140,20 +140,20 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           const circleFeature = new AILabel.Feature.Circle(
             `${+new Date()}`, // id
             data, // data1代表屏幕坐标 shape
-            { name: '圆形矢量图层', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: '缺陷' }, // props 
+            { name: '圆形矢量图层', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: 'label' }, // props 
             drawingStyle // style
           );
           gFirstFeatureLayer.addFeature(circleFeature);
-          addFeatureText({ x: data.cx - data.r, y: data.cy - data.r }, relatedTextId, '缺陷');
+          addFeatureText({ x: data.cx - data.r, y: data.cy - data.r }, relatedTextId, 'label');
         } else if (type === 'RECT') {
           const rectFeature = new AILabel.Feature.Rect(
             `${+new Date()}`, // id
             data, // shape
-            { name: '矩形矢量图形', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: '缺陷' }, // props
+            { name: '矩形矢量图形', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: 'label' }, // props
             drawingStyle // style
           );
           gFirstFeatureLayer.addFeature(rectFeature);
-          addFeatureText(data, relatedTextId, '缺陷');
+          addFeatureText(data, relatedTextId, 'label');
         } else if (type === 'POLYGON') {
           let xList: any = [],
             yList: any = [];
@@ -164,7 +164,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           const polygonFeature = new AILabel.Feature.Polygon(
             `${+new Date()}`, // id
             { points: data, location: { x: _.min(xList), y: _.min(yList) } }, // shape
-            { name: '多边形矢量图形', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: '缺陷' }, // props
+            { name: '多边形矢量图形', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: 'label' }, // props
             drawingStyle // style
           );
           gFirstFeatureLayer.addFeature(polygonFeature);
@@ -266,14 +266,21 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       width: { alias: "width", value: shape.width },
                       height: { alias: "height", value: shape.height }
                     },
-                    value: Object.entries(cen[1]?.roi?.value).reduce((p: any, c: any) => {
-                      return Object.assign({}, p, {
-                        [c[0]]: { ...c[1], value: shape[c[0]] }
-                      });
-                    }, {})
+                    value: !!cen[1]?.roi?.value ?
+                      Object.entries(cen[1]?.roi?.value).reduce((p: any, c: any) => {
+                        return Object.assign({}, p, {
+                          [c[0]]: { ...c[1], value: shape[c[0]] }
+                        });
+                      }, {})
+                      :
+                      Object.entries(shape).reduce((p: any, c: any) => {
+                        return Object.assign({}, p, {
+                          [c[0]]: { alias: c[0], value: c[1] }
+                        });
+                      }, {})
                   }
                 } : {})
-              })
+              });
             }, {});
           });
         }
@@ -363,12 +370,27 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         (platFormValue || [])?.forEach((plat: any) => {
           const { type, id, shape, props, style } = plat;
           obj = Object.assign({}, obj, {
-            [id]: { roi: shape, ...props?.initParams },
+            [id]: {
+              roi: {
+                realValue: {
+                  x: { alias: "cx", value: shape.x + shape.width / 2 },
+                  y: { alias: "cy", value: shape.y + shape.height / 2 },
+                  width: { alias: "width", value: shape.width },
+                  height: { alias: "height", value: shape.height }
+                },
+                value: {
+                  x: { alias: "cx", value: shape.x },
+                  y: { alias: "cy", value: shape.y },
+                  width: { alias: "width", value: shape.width },
+                  height: { alias: "height", value: shape.height }
+                },
+              }, ...(props?.initParams)
+            },
           });
           addFeature(type, id, shape, props, style);
         });
         setFeatureList(obj);
-      }
+      };
       setGetDataFun((prev: any) => {
         const feat = getFeatures;
         const pen = getRle;
@@ -394,11 +416,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       { text, position: { x: ltx, y: lty }, offset: { x: 0, y: 0 } }, // shape, 左上角
       { name: '文本对象' }, // props
       {
-        fillStyle: 'transparent',
+        fillStyle: 'rgba(1,1,1,.9)',
         strokeStyle: '#D2691E',
         background: true,
         globalAlpha: 1,
-        fontColor: '#f00'
+        fontWeight: 3,
+        fontColor: '#0f0'
       } // style
     );
     gFirstTextLayer.addText(gFirstText);
@@ -448,6 +471,15 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       // gFirstMaskLayer.addAction(drawMaskAction);
     }
   };
+  // featureList更新
+  useEffect(() => {
+    setGetDataFun((prev: any) => {
+      return {
+        ...prev,
+        value: Object.assign({}, prev?.value, featureList)
+      };
+    });
+  }, [featureList]);
   function zoomIn() {
     gMap.zoomIn();
     setGetDataFun((prev: any) => ({
@@ -548,7 +580,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         return {
           id,
           type: "RECT",
-          roi: shape,
+          roi: {
+            cx: { alias: "cx", value: shape.x + shape.width / 2 },
+            cy: { alias: "cy", value: shape.y + shape.height / 2 },
+            width: { alias: "width", value: shape.width },
+            height: { alias: "height", value: shape.height }
+          },
           ...initValue
         }
       } else if (type === 'LINE') {
@@ -760,7 +797,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       }) : []}
                       placeholder="参数类型"
                       onChange={(val, option: any) => {
-                        const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
                         setSelectedOptionType({ roi: feature?.shape, ..._.cloneDeep(options)[val] });
                         const { id, shape, props, style, type } = feature;
                         gFirstFeatureLayer.removeFeatureById(id);
@@ -867,11 +903,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                               value = {
                                 x: {
                                   alias: "cx",
-                                  value: item[1]?.x
+                                  value: item[1]?.x + item[1]?.width / 2
                                 },
                                 y: {
                                   alias: "cy",
-                                  value: item[1]?.y
+                                  value: item[1]?.y + item[1]?.height / 2
                                 },
                                 width: {
                                   alias: "width",

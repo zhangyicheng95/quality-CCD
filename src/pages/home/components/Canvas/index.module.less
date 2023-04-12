@@ -32,6 +32,30 @@
         font-size: 30px;
       }
 
+      .btn-self-icon {
+        height: 30px;
+        width: 30px;
+        min-width: 30px;
+        max-width: 30px;
+        border-radius: 50%;
+        border: 2px solid;
+        margin-right: 8px;
+
+        .btn-self-icon-rect {
+          height: 11px;
+          width: 11px;
+          background-color: inherit;
+        }
+
+        .active {
+          background-color: #f64c4f;
+        }
+
+        .disabled {
+          background-color: #606266;
+        }
+      }
+
       .ant-badge-status-processing {
         background-color: @success-color;
 
@@ -457,6 +481,37 @@
   width: 100%;
   height: 100%;
   position: relative;
+
+  :global {
+    .img-box {
+      width: 100%;
+      height: auto;
+      position: relative;
+
+      .event1 {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 10;
+      }
+
+      .mask {
+        width: 50%;
+        height: 50%;
+        background-color: rgba(0, 255, 0, 0.3);
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: none;
+      }
+
+      .event1:hover~.mask {
+        display: block;
+      }
+    }
+  }
 }
 
 .imgsCharts {

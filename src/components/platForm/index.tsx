@@ -47,7 +47,7 @@ const PlatFormModal: React.FC<Props> = (props) => {
               const { initParams = {} } = props;
               const initValue = Object.entries(initParams)?.reduce((pre: any, cen: any) => {
                 return Object.assign({}, pre, (cen[0] === 'roi') ?
-                  (_.isNumber(cen[1]?.realValue?.x?.value) || _.isString(cen[1]?.realValue?.x?.value)) ?
+                  (!!cen[1]?.realValue?.x?.value || cen[1]?.realValue?.x?.value == 0) ?
                     {
                       [cen[0]]: {
                         cx: {
@@ -65,11 +65,16 @@ const PlatFormModal: React.FC<Props> = (props) => {
                   :
                   { [cen[0]]: cen[1]?.value });
               }, {});
-              if (type === 'RECT' && !_.isEmpty(initValue?.['roi'])) {
+              if (type === 'RECT') {
                 return {
                   id,
                   type: "RECT",
-                  roi: shape,
+                  roi: {
+                    cx: { alias: "cx", value: shape.x + shape.width / 2 },
+                    cy: { alias: "cy", value: shape.y + shape.height / 2 },
+                    width: { alias: "width", value: shape.width },
+                    height: { alias: "height", value: shape.height }
+                  },
                   ...initValue
                 }
               } else if (type === 'LINE') {

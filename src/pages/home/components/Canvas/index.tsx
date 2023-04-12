@@ -136,267 +136,282 @@ const Home: React.FC<any> = (props: any) => {
           <div className="flex-box common-card-title">
             当前状态：
             {
-              isVision ?
-                <Tooltip title={'服务已连接'} placement={'bottom'}>
-                  <Badge status="processing" className="status-icon" />
-                </Tooltip>
+              ifCanEdit ? null
                 :
-                (started ? (
-                  taskDataConnect ? (
-                    <Tooltip title={'服务已连接'} placement={'bottom'}>
-                      <Badge status="processing" className="status-icon" />
+                isVision ?
+                  <Tooltip title={'服务已连接'} placement={'bottom'}>
+                    <Badge status="processing" className="status-icon" />
+                  </Tooltip>
+                  :
+                  (started ? (
+                    taskDataConnect ? (
+                      <Tooltip title={'服务已连接'} placement={'bottom'}>
+                        <Badge status="processing" className="status-icon" />
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title={'socket未连接'} placement={'bottom'}>
+                        <Badge status="error" className="status-icon" />
+                      </Tooltip>
+                    )
+                  ) : loading ? (
+                    <Tooltip title={'启动中'} placement={'bottom'}>
+                      <LoadingOutlined style={{ fontSize: 15 }} />
                     </Tooltip>
                   ) : (
-                    <Tooltip title={'socket未连接'} placement={'bottom'}>
-                      <Badge status="error" className="status-icon" />
+                    <Tooltip title={'未启动'} placement={'bottom'}>
+                      <Badge status="default" className="status-icon" />
                     </Tooltip>
-                  )
-                ) : loading ? (
-                  <Tooltip title={'启动中'} placement={'bottom'}>
-                    <LoadingOutlined style={{ fontSize: 15 }} />
-                  </Tooltip>
-                ) : (
-                  <Tooltip title={'未启动'} placement={'bottom'}>
-                    <Badge status="default" className="status-icon" />
-                  </Tooltip>
-                ))
+                  ))
             }
           </div>
+          {/* {
+            ifCanEdit ?
+              <div className="flex-box drag-item-btn-box">
+                <div className='common-btn' onClick={() => {
+
+                }}>布局</div>
+              </div>
+              : null
+          } */}
         </div>
-        {
-          ifCanEdit ?
-            <Fragment>
-              <Popover
-                placement="right"
-                title={'添加窗口'}
-                trigger="click"
-                content={
-                  <Menu
-                    items={[
-                      {
-                        label: '添加监控窗口', key: 'add', onClick: () => {
-                          setAddWindowVisible(true);
-                        }
-                      },
-                      {
-                        label: '显示首页窗口',
-                        key: 'home-content',
-                        children: [
-                          {
-                            label: '显示基本信息',
-                            key: 'slider-2',
-                            disabled: (
-                              gridHomeList?.filter((i: any) => i.i === 'slider-2')[0]?.w !== 0 &&
-                              gridHomeList?.filter((i: any) => i.i === 'slider-2')[0]?.h !== 0
-                            ),
-                            onClick: () =>
-                              setGridHomeList((prev: any) => {
-                                return prev?.map((item: any) => {
-                                  if (item.i === 'slider-2') {
-                                    return {
-                                      ...item,
-                                      w: 9,
-                                      h: 4,
-                                      minW: 1,
-                                      minH: 2,
-                                    };
-                                  }
-                                  return item;
+        <div className={`btn-box-bottom ${(gridHomeList?.filter((i: any) => i.i === 'slider-1')[0]?.w > gridHomeList?.filter((i: any) => i.i === 'slider-1')[0]?.h) ? 'flex-box' : ''}`}>
+          {
+            ifCanEdit ?
+              <Fragment>
+                <Popover
+                  placement="right"
+                  title={'添加窗口'}
+                  trigger="click"
+                  content={
+                    <Menu
+                      items={[
+                        {
+                          label: '添加监控窗口', key: 'add', onClick: () => {
+                            setAddWindowVisible(true);
+                          }
+                        },
+                        {
+                          label: '显示首页窗口',
+                          key: 'home-content',
+                          children: [
+                            {
+                              label: '显示基本信息',
+                              key: 'slider-2',
+                              disabled: (
+                                gridHomeList?.filter((i: any) => i.i === 'slider-2')[0]?.w !== 0 &&
+                                gridHomeList?.filter((i: any) => i.i === 'slider-2')[0]?.h !== 0
+                              ),
+                              onClick: () =>
+                                setGridHomeList((prev: any) => {
+                                  return prev?.map((item: any) => {
+                                    if (item.i === 'slider-2') {
+                                      return {
+                                        ...item,
+                                        w: 9,
+                                        h: 4,
+                                        minW: 1,
+                                        minH: 2,
+                                      };
+                                    }
+                                    return item;
+                                  })
                                 })
-                              })
-                          },
-                          {
-                            label: '显示实时信息',
-                            key: 'slider-3',
-                            disabled: (
-                              gridHomeList?.filter((i: any) => i.i === 'slider-3')[0]?.w !== 0 &&
-                              gridHomeList?.filter((i: any) => i.i === 'slider-3')[0]?.h !== 0
-                            ),
-                            onClick: () =>
-                              setGridHomeList((prev: any) => {
-                                return prev?.map((item: any) => {
-                                  if (item.i === 'slider-3') {
-                                    return {
-                                      ...item,
-                                      w: 9,
-                                      h: 4,
-                                      minW: 1,
-                                      minH: 2,
-                                    };
-                                  }
-                                  return item;
+                            },
+                            {
+                              label: '显示实时信息',
+                              key: 'slider-3',
+                              disabled: (
+                                gridHomeList?.filter((i: any) => i.i === 'slider-3')[0]?.w !== 0 &&
+                                gridHomeList?.filter((i: any) => i.i === 'slider-3')[0]?.h !== 0
+                              ),
+                              onClick: () =>
+                                setGridHomeList((prev: any) => {
+                                  return prev?.map((item: any) => {
+                                    if (item.i === 'slider-3') {
+                                      return {
+                                        ...item,
+                                        w: 9,
+                                        h: 4,
+                                        minW: 1,
+                                        minH: 2,
+                                      };
+                                    }
+                                    return item;
+                                  })
                                 })
-                              })
-                          },
-                          {
-                            label: '显示方案列表',
-                            key: 'slider-4',
-                            disabled: (
-                              gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w !== 0 &&
-                              gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.h !== 0
-                            ),
-                            onClick: () =>
-                              setGridHomeList((prev: any) => {
-                                return prev?.map((item: any) => {
-                                  if (item.i === 'slider-4') {
-                                    return {
-                                      ...item,
-                                      w: 9,
-                                      h: 4,
-                                      minW: 1,
-                                      minH: 1,
-                                    };
-                                  }
-                                  return item;
+                            },
+                            {
+                              label: '显示方案列表',
+                              key: 'slider-4',
+                              disabled: (
+                                gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w !== 0 &&
+                                gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.h !== 0
+                              ),
+                              onClick: () =>
+                                setGridHomeList((prev: any) => {
+                                  return prev?.map((item: any) => {
+                                    if (item.i === 'slider-4') {
+                                      return {
+                                        ...item,
+                                        w: 9,
+                                        h: 4,
+                                        minW: 1,
+                                        minH: 1,
+                                      };
+                                    }
+                                    return item;
+                                  })
                                 })
-                              })
-                          },
-                          {
-                            label: '显示日志信息',
-                            key: 'footer-1',
-                            disabled: (
-                              gridHomeList?.filter((i: any) => i.i === 'footer-1')[0]?.w !== 0 &&
-                              gridHomeList?.filter((i: any) => i.i === 'footer-1')[0]?.h !== 0
-                            ),
-                            onClick: () =>
-                              setGridHomeList((prev: any) => {
-                                return prev?.map((item: any) => {
-                                  if (item.i === 'footer-1') {
-                                    return {
-                                      ...item,
-                                      w: 9,
-                                      h: 4,
-                                      minW: 1,
-                                      minH: 2,
-                                    };
-                                  }
-                                  return item;
+                            },
+                            {
+                              label: '显示日志信息',
+                              key: 'footer-1',
+                              disabled: (
+                                gridHomeList?.filter((i: any) => i.i === 'footer-1')[0]?.w !== 0 &&
+                                gridHomeList?.filter((i: any) => i.i === 'footer-1')[0]?.h !== 0
+                              ),
+                              onClick: () =>
+                                setGridHomeList((prev: any) => {
+                                  return prev?.map((item: any) => {
+                                    if (item.i === 'footer-1') {
+                                      return {
+                                        ...item,
+                                        w: 9,
+                                        h: 4,
+                                        minW: 1,
+                                        minH: 2,
+                                      };
+                                    }
+                                    return item;
+                                  })
                                 })
-                              })
-                          },
-                          {
-                            label: '显示错误信息',
-                            key: 'footer-2',
-                            disabled: (
-                              gridHomeList?.filter((i: any) => i.i === 'footer-2')[0]?.w !== 0 &&
-                              gridHomeList?.filter((i: any) => i.i === 'footer-2')[0]?.h !== 0
-                            ),
-                            onClick: () =>
-                              setGridHomeList((prev: any) => {
-                                return prev?.map((item: any) => {
-                                  if (item.i === 'footer-2') {
-                                    return {
-                                      ...item,
-                                      w: 9,
-                                      h: 4,
-                                      minW: 1,
-                                      minH: 2,
-                                    };
-                                  }
-                                  return item;
+                            },
+                            {
+                              label: '显示错误信息',
+                              key: 'footer-2',
+                              disabled: (
+                                gridHomeList?.filter((i: any) => i.i === 'footer-2')[0]?.w !== 0 &&
+                                gridHomeList?.filter((i: any) => i.i === 'footer-2')[0]?.h !== 0
+                              ),
+                              onClick: () =>
+                                setGridHomeList((prev: any) => {
+                                  return prev?.map((item: any) => {
+                                    if (item.i === 'footer-2') {
+                                      return {
+                                        ...item,
+                                        w: 9,
+                                        h: 4,
+                                        minW: 1,
+                                        minH: 2,
+                                      };
+                                    }
+                                    return item;
+                                  })
                                 })
-                              })
-                          },
-                        ],
-                      },
-                    ]}
-                  ></Menu>
-                }
-              >
+                            },
+                          ],
+                        },
+                      ]}
+                    ></Menu>
+                  }
+                >
+                  <Button
+                    className="flex-box btn"
+                    icon={<PlusCircleOutlined className="btn-icon" />}
+                    type="text"
+                  >
+                    添加窗口
+                  </Button>
+                </Popover>
                 <Button
                   className="flex-box btn"
-                  icon={<PlusCircleOutlined className="btn-icon" />}
-                  type="text"
-                >
-                  添加窗口
-                </Button>
-              </Popover>
-              <Button
-                className="flex-box btn"
-                icon={<SafetyOutlined className="btn-icon" />}
-                type="link"
-                onClick={() => {
-                  updateParams({
-                    id: paramData.id,
-                    data: {
-                      ...paramData,
-                      contentData: {
-                        ...paramData?.contentData,
-                        pageIconPosition
+                  icon={<SafetyOutlined className="btn-icon" />}
+                  type="link"
+                  onClick={() => {
+                    updateParams({
+                      id: paramData.id,
+                      data: {
+                        ...paramData,
+                        contentData: {
+                          ...paramData?.contentData,
+                          pageIconPosition
+                        }
+                      },
+                    }).then((res: any) => {
+                      if (res && res.code === 'SUCCESS') {
+                        history.push({ pathname: `/home` });
+                        window.location.reload();
+                      } else {
+                        message.error(res?.msg || res?.message || '接口异常');
                       }
-                    },
-                  }).then((res: any) => {
-                    if (res && res.code === 'SUCCESS') {
-                      history.push({ pathname: `/home` });
-                      window.location.reload();
-                    } else {
-                      message.error(res?.msg || res?.message || '接口异常');
-                    }
-                  });
-                }}
-              >
-                保存并返回
-              </Button>
-            </Fragment>
-            :
-            isVision ?
-              <Button
-                className="flex-box btn"
-                icon={
-                  <div style={{ height: 30, width: 30, marginRight: 8 }}>
-                    <div className="k-loader" />
-                  </div>
-                }
-                type="link"
-                disabled
-              >
-                {'检测中'}
-              </Button>
+                    });
+                  }}
+                >
+                  保存并返回
+                </Button>
+              </Fragment>
               :
-              <Fragment>
+              isVision ?
                 <Button
                   className="flex-box btn"
                   icon={
-                    started ? (
-                      <div style={{ height: 30, width: 30, marginRight: 8 }}>
-                        <div className="k-loader" />
-                      </div>
-                    ) : (
-                      <PlayCircleOutlined className="btn-icon" />
-                    )
+                    <div style={{ height: 30, width: 30, marginRight: 8 }}>
+                      <div className="k-loader" />
+                    </div>
                   }
                   type="link"
-                  onClick={() => start()}
-                  disabled={started}
-                  loading={!started && loading}
+                  disabled
                 >
-                  {started ? '检测中' : '启动检测'}
+                  {'检测中'}
                 </Button>
-                <Button
-                  className="flex-box btn"
-                  danger
-                  icon={<PauseCircleOutlined className="btn-icon" />}
-                  type="text"
-                  onClick={() => end()}
-                  disabled={!started}
-                  loading={started && loading}
-                >
-                  停止检测
-                </Button>
-                {process.env.NODE_ENV === 'development' ? (
+                :
+                <Fragment>
                   <Button
                     className="flex-box btn"
-                    icon={<AndroidOutlined className="btn-icon" />}
+                    icon={
+                      started ? (
+                        <div style={{ height: 30, width: 30, marginRight: 8 }}>
+                          <div className="k-loader" />
+                        </div>
+                      ) : (
+                        <PlayCircleOutlined className="btn-icon" />
+                      )
+                    }
                     type="link"
-                    onClick={() => touchFlowService()}
+                    onClick={() => start()}
+                    disabled={started}
+                    loading={!started && loading}
+                  >
+                    {started ? '检测中' : '启动'}
+                  </Button>
+                  <Button
+                    className="flex-box btn"
+                    danger
+                    icon={<div className="btn-icon btn-self-icon flex-box-center" >
+                      <div className={`btn-self-icon-rect ${started ? 'active' : 'disabled'}`} />
+                    </div>}
+                    type="text"
+                    onClick={() => end()}
                     disabled={!started}
                     loading={started && loading}
                   >
-                    自助触发
+                    停止
                   </Button>
-                ) : null}
-              </Fragment>
-        }
+                  {process.env.NODE_ENV === 'development' ? (
+                    <Button
+                      className="flex-box btn"
+                      icon={<AndroidOutlined className="btn-icon" />}
+                      type="link"
+                      onClick={() => touchFlowService()}
+                      disabled={!started}
+                      loading={started && loading}
+                    >
+                      自助触发
+                    </Button>
+                  ) : null}
+                </Fragment>
+          }
+        </div>
       </div>
     </div>,
     <div key={'slider-2'}>
@@ -917,11 +932,11 @@ const Home: React.FC<any> = (props: any) => {
     const { flowData, contentData = {} } = paramsData;
     const { home = [
       { "i": "slider-1", "x": 0, "y": 0, "w": 7, "h": 8, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
-      { "i": "slider-2", "x": 0, "y": 8, "w": 7, "h": 18, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
+      { "i": "slider-2", "x": 0, "y": 8, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
       { "i": "slider-3", "x": 0, "y": 0, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
-      { "i": "slider-4", "x": 7, "y": 0, "w": 89, "h": 3, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
-      { "i": "footer-1", "x": 7, "y": 0, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
-      { "i": "footer-2", "x": 0, "y": 26, "w": 7, "h": 17, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }
+      { "i": "slider-4", "x": 7, "y": 0, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
+      { "i": "footer-1", "x": 7, "y": 8, "w": 89, "h": 20, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
+      { "i": "footer-2", "x": 7, "y": 0, "w": 89, "h": 8, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }
     ], content = {}, footerSelectList, contentHeader = {}, pageIconPosition } = contentData;
     const { nodes } = flowData;
     const list = nodes?.map((node: any) => {
