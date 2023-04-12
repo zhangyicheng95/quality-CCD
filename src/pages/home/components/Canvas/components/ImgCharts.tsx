@@ -14,7 +14,7 @@ interface Props {
 const ImgCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
     let { dataValue, windowControl, setContentList } = data;
-    // dataValue = 'https://img1.baidu.com/it/u=4278632386,1202646523&fm=253&fmt=auto&app=138&f=JPEG?w=751&h=500';
+    dataValue = 'https://img1.baidu.com/it/u=4278632386,1202646523&fm=253&fmt=auto&app=138&f=JPEG?w=751&h=500';
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const [fontSize, setFontSize] = useState({ width: '100%', height: 'auto' });
@@ -91,8 +91,8 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             bigDom.style['width'] = dom?.current?.clientWidth + "px";
             bigDom.style['height'] = dom?.current?.clientHeight + "px";
             // 与css中width：200%，height：200%相对应，建议以后放大倍数为2n
-            imgDom.style['left'] = -2 * left + "px";
-            imgDom.style['top'] = -2 * top + "px";
+            imgDom.style['left'] = -4 * left + "px";
+            imgDom.style['top'] = -4 * top + "px";
         }
         // 4.鼠标松开事件
         eventDom.onmouseleave = function (ev: any) {
@@ -110,27 +110,30 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         >
             {
                 dataValue ?
-                    <Image
-                        src={dataValue}
-                        alt="logo"
-                        style={fontSize}
-                    />
-                    // <div className="img-box">
-                    //     <img
-                    //         src={dataValue}
-                    //         id={`img-${id}`}
-                    //         alt="logo"
-                    //         style={fontSize}
-                    //     />
-                    //     <div
-                    //         className="img-charts-event1"
-                    //         id="img-charts-event1"
-                    //     />
-                    //     {/* <div className="img-charts-big">
-                    //         <img src={dataValue} />
-                    //     </div> */}
-                    //     <div className="mask" />
-                    // </div>
+                    // @ts-ignore
+                    window.QUALITY_CCD_CONFIG.type === 'gf' ?
+                        <div className="img-box">
+                            <img
+                                src={dataValue}
+                                id={`img-${id}`}
+                                alt="logo"
+                                style={fontSize}
+                            />
+                            <div
+                                className="img-charts-event1"
+                                id="img-charts-event1"
+                            />
+                            {/* <div className="img-charts-big">
+                            <img src={dataValue} />
+                        </div> */}
+                            <div className="mask" />
+                        </div>
+                        :
+                        <Image
+                            src={dataValue}
+                            alt="logo"
+                            style={fontSize}
+                        />
                     :
                     <Skeleton.Image
                         active={true}
