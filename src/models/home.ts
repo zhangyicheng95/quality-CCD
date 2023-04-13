@@ -52,7 +52,8 @@ export default {
     },
 
     *logMessage({ payload }: any, { put, select }: any) {
-      const logData: any[] = yield select((state: any) => state.home.logData);
+      let logData: any[] = yield select((state: any) => state.home.logData);
+      logData = Array.from(new Set(logData));
       const _logData: any[] = logData.concat(payload);
       yield put({
         type: 'set',
