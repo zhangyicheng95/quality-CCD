@@ -14,7 +14,7 @@ interface Props {
 const ImgCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
     let { dataValue, windowControl, setContentList } = data;
-    dataValue = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
+    // dataValue = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const [fontSize, setFontSize] = useState({ width: '100%', height: 'auto' });
