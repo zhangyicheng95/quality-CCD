@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as _ from 'lodash';
 import styles from '../index.module.less';
 import TooltipDiv from '@/components/TooltipDiv';
@@ -22,16 +22,63 @@ const Table2Charts: React.FC<Props> = (props: any) => {
             message.error('数据格式不正确，请检查');
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
+        } else {
+
         }
     }, [dataValue]);
+
+    const onMoveIconMouseDown = (ev: any, index: number) => {
+        document.onmousemove = (e: any) => {
+            const { target, offsetX } = e;
+            const box = target.parentNode.children[0];
+            const { clientWidth } = box;
+            console.log(clientWidth, offsetX)
+            console.log(box)
+            const width = Math.abs(clientWidth - offsetX)
+            box.style.maxWidth = width + 'px';
+            box.style.width = width + 'px';
+        }
+        document.onmouseup = (e: any) => {
+            document.onmousemove = (e: any) => {
+                // 释放鼠标
+            }
+        }
+    };
+    const onMoveIconMouseUp = (ev: any, index: number) => {
+        const box = document.getElementById(`charts-header-item-move-${index}`);
+        var ev = ev || window.event;
+        // 获取鼠标相对于盒子的坐标
+        var x2 = ev.offsetX;
+        var y2 = ev.offsetY;
+        if (x2 <= 0 || y2 <= 0) return;
+        document.onmousemove = (e: any) => {
+            // 释放鼠标
+        }
+    };
+
     return (
         <div id={`echart-${id}`} className={styles.table2Charts} style={{ fontSize }}>
             <div className="charts-header-box flex-box">
                 {
                     _.isArray(dataValue) && (dataValue || []).map((item: any, index: number) => {
                         const { name } = item;
-                        return <div className="charts-header-item flex-box-center" key={`echart-${id}-tr-th-${index}`}>
-                            {name}
+                        return <div
+                            className="charts-header-item flex-box"
+                            key={`echart-${id}-tr-th-${index}`}
+
+                        >
+                            <div className="charts-header-item-title flex-box-center">
+                                {name}
+                            </div>
+                            {
+                                (index + 1) === dataValue?.length ? null :
+                                    <div
+                                        id={`charts-header-item-move-${index}`}
+                                        className="charts-header-item-border"
+                                        onMouseDown={(e: any) => onMoveIconMouseDown(e, index)}
+                                        onMouseUp={(e: any) => onMoveIconMouseUp(e, index)}
+                                    />
+                            }
                         </div>
                     })
                 }

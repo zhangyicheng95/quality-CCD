@@ -174,7 +174,7 @@ const Home: React.FC<any> = (props: any) => {
               : null
           } */}
         </div>
-        <div className={`btn-box-bottom ${(gridHomeList?.filter((i: any) => i.i === 'slider-1')[0]?.w > gridHomeList?.filter((i: any) => i.i === 'slider-1')[0]?.h) ? 'flex-box' : ''}`}>
+        <div className={`btn-box-bottom flex-box`} style={{ flexWrap: 'wrap' }}>
           {
             ifCanEdit ?
               <Fragment>
@@ -320,7 +320,7 @@ const Home: React.FC<any> = (props: any) => {
                     icon={<PlusCircleOutlined className="btn-icon" />}
                     type="text"
                   >
-                    添加窗口
+                    添加
                   </Button>
                 </Popover>
                 <Button
@@ -347,7 +347,7 @@ const Home: React.FC<any> = (props: any) => {
                     });
                   }}
                 >
-                  保存并返回
+                  保存
                 </Button>
               </Fragment>
               :
@@ -406,7 +406,7 @@ const Home: React.FC<any> = (props: any) => {
                       disabled={!started}
                       loading={started && loading}
                     >
-                      自助触发
+                      自助
                     </Button>
                   ) : null}
                 </Fragment>
@@ -1062,7 +1062,7 @@ const Home: React.FC<any> = (props: any) => {
           backgroundColor = 'default', barColor = 'default', progressType = 'line',
           progressSize = 8, progressSteps = 5, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-          CCDName,
+          CCDName, imgs_width, imgs_height,
           basicInfoData = [{ id: guid(), name: '', value: '' }]
         } = item;
         const id = key?.split('$$')[0];
@@ -1147,10 +1147,10 @@ const Home: React.FC<any> = (props: any) => {
                 :
                 null
             }
-            <div className="card-body-box">
-              <div className="flex-box-center"
-                style={paramData?.contentData?.contentHeader?.[key] ? { height: 'calc(100% - 14px)' } : { height: '100%' }}
-              >
+            <div className="card-body-box"
+              style={paramData?.contentData?.contentHeader?.[key] ? { height: 'calc(100% - 28px)' } : { height: '100%' }}
+            >
+              <div className="flex-box-center" style={{ height: '100%' }}>
                 {
                   type === 'line' ?
                     <LineCharts
@@ -1216,7 +1216,10 @@ const Home: React.FC<any> = (props: any) => {
                                 type === 'imgs' ?
                                   <ImgsCharts
                                     id={key}
-                                    data={dataValue || []}
+                                    data={{
+                                      dataValue: dataValue || [],
+                                      imgs_width, imgs_height
+                                    }}
                                   />
                                   :
                                   type === 'progress' ?
@@ -1232,7 +1235,7 @@ const Home: React.FC<any> = (props: any) => {
                                         id={key}
                                         data={{
                                           dataValue: dataValue || [],
-                                          basicInfoData,
+                                          basicInfoData, fontSize,
                                           des_bordered, des_column, des_layout, des_size,
                                         }}
                                       />
@@ -1439,7 +1442,7 @@ const Home: React.FC<any> = (props: any) => {
           fetchType, fetchParams, align, backgroundColor, barColor,
           progressType, progressSize, progressSteps, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-          CCDName,
+          CCDName, imgs_width, imgs_height
         } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
@@ -1467,7 +1470,7 @@ const Home: React.FC<any> = (props: any) => {
             fetchType, fetchParams, align, backgroundColor, barColor,
             progressType, progressSize, progressSteps, windowControl,
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-            CCDName
+            CCDName, imgs_width, imgs_height
           }, ['description'].includes(windowType) ? { basicInfoData } : {}));
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1482,7 +1485,7 @@ const Home: React.FC<any> = (props: any) => {
                 fetchType, fetchParams, align, backgroundColor, barColor,
                 progressType, progressSize, progressSteps, windowControl,
                 des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-                CCDName
+                CCDName, imgs_width, imgs_height
               }, ['description'].includes(windowType) ? { basicInfoData } : {});
             };
             return item;
@@ -1554,6 +1557,7 @@ const Home: React.FC<any> = (props: any) => {
       // 获取鼠标相对于盒子的坐标
       // 3.鼠标移动
       document.onmousemove = function (ev: any) {
+        console.log(ev)
         var ev = ev || window.event;
         var x3 = ev.pageX;
         var y3 = ev.pageY;
@@ -2071,6 +2075,28 @@ const Home: React.FC<any> = (props: any) => {
                 : null
             }
             {
+              ['imgs'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    name={`imgs_width`}
+                    label={'小图的宽'}
+                    rules={[{ required: true, message: '小图的宽' }]}
+                    initialValue={150}
+                  >
+                    <InputNumber />
+                  </Form.Item>
+                  <Form.Item
+                    name={`imgs_height`}
+                    label={'小图的高'}
+                    rules={[{ required: true, message: '小图的高' }]}
+                    initialValue={150}
+                  >
+                    <InputNumber />
+                  </Form.Item>
+                </Fragment>
+                : null
+            }
+            {
               ['button', 'buttonInp'].includes(windowType) ?
                 <Fragment>
                   <Form.Item
@@ -2191,11 +2217,12 @@ const Home: React.FC<any> = (props: any) => {
                     />
                   </Form.Item>
                   <Form.Item
-                    name="des_bordered"
-                    label="是否展示边框"
-                    valuePropName="checked"
+                    name={`fontSize`}
+                    label={'字体大小'}
+                    rules={[{ required: true, message: '字体大小' }]}
+                    initialValue={24}
                   >
-                    <Switch />
+                    <InputNumber />
                   </Form.Item>
                   <Form.Item
                     name="des_column"
@@ -2213,6 +2240,13 @@ const Home: React.FC<any> = (props: any) => {
                         { label: '纵向', value: 'vertical' }
                       ]}
                     />
+                  </Form.Item>
+                  <Form.Item
+                    name="des_bordered"
+                    label="是否展示边框"
+                    valuePropName="checked"
+                  >
+                    <Switch />
                   </Form.Item>
                   {
                     !!form.getFieldValue('des_bordered') ?

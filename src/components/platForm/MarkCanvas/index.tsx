@@ -845,17 +845,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                     value: item[1].realValue?.y?.value
                                   }
                                 }
-                              } else {
-                                // 其他
-                                value = item[1].realValue;
-                              }
-                            } else {
-                              if (!!item[1]?.start) {
+                              } else if (!!item[1]?.realValue?.x2) {
                                 value = {
-                                  "起点x": { alias: "起点x", value: item[1]?.start?.x },
-                                  "起点y": { alias: "起点y", value: item[1]?.start?.y },
-                                  "终点x": { alias: "终点x", value: item[1]?.end?.x },
-                                  "终点y": { alias: "终点y", value: item[1]?.end?.y }
+                                  "x1": { alias: "起点x", value: item[1]?.realValue?.x1?.value },
+                                  "y1": { alias: "起点y", value: item[1]?.realValue?.y1?.value },
+                                  "x2": { alias: "终点x", value: item[1]?.realValue?.x2?.value },
+                                  "y2": { alias: "终点y", value: item[1]?.realValue?.y2?.value }
                                 };
                               } else {
                                 value = Object.entries(_.omit(item[1], "value")).reduce((pre: any, cen: any) => {
@@ -872,10 +867,10 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                               name={`${item[0]}$$${guid()}`}
                               label={"位置信息"}
                               initialValue={value || {
-                                num_0: undefined,
-                                num_1: undefined,
-                                num_2: undefined,
-                                num_3: undefined,
+                                num_0: { alias: 'num_0', value: undefined },
+                                num_1: { alias: 'num_1', value: undefined },
+                                num_2: { alias: 'num_2', value: undefined },
+                                num_3: { alias: 'num_3', value: undefined },
                               }}
                               rules={[{ required: true, message: "位置信息" }]}
                             >
@@ -918,17 +913,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                   value: item[1]?.height
                                 }
                               }
-                            } else {
-                              // 其他
-                              value = item[1].realValue;
-                            }
-                          } else {
-                            if (!!item[1]?.start) {
+                            } else if (!!item[1]?.start) {
                               value = {
-                                "起点x": { alias: "起点x", value: item[1]?.start?.x },
-                                "起点y": { alias: "起点y", value: item[1]?.start?.y },
-                                "终点x": { alias: "终点x", value: item[1]?.end?.x },
-                                "终点y": { alias: "终点y", value: item[1]?.end?.y }
+                                "x1": { alias: "起点x", value: item[1]?.start?.x },
+                                "y1": { alias: "起点y", value: item[1]?.start?.y },
+                                "x2": { alias: "终点x", value: item[1]?.end?.x },
+                                "y2": { alias: "终点y", value: item[1]?.end?.y }
                               };
                             } else {
                               value = Object.entries(_.omit(item[1], "value")).reduce((pre: any, cen: any) => {
@@ -945,10 +935,10 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                             name={`${item[0]}$$${guid()}`}
                             label={"位置信息"}
                             initialValue={value || {
-                              num_0: undefined,
-                              num_1: undefined,
-                              num_2: undefined,
-                              num_3: undefined,
+                              num_0: { alias: 'num_0', value: undefined },
+                              num_1: { alias: 'num_1', value: undefined },
+                              num_2: { alias: 'num_2', value: undefined },
+                              num_3: { alias: 'num_3', value: undefined },
                             }}
                             rules={[{ required: true, message: "位置信息" }]}
                           >
@@ -992,20 +982,17 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                             if (cen[0] === 'roi') {
                               let { value: val, } = value[cen[0]];
                               // realValue：没旋转的 中心点x,y
-                              let realValue = {
-                                x: { ...val?.x, },
-                                y: { ...val?.y, },
-                                width: { ...val?.width },
-                                height: { ...val?.height }
-                              };
-                              val = {
-                                ...val,
-                                x: { ...val?.x, value: val?.x?.value - val?.width?.value / 2 },
-                                y: { ...val?.y, value: val?.y?.value - val?.height?.value / 2 }
-                              }
+                              let realValue = val;
+
+                              // 矩形
                               if (val?.x && val?.height) {
+                                val = {
+                                  ...val,
+                                  x: { ...val?.x, value: val?.x?.value - val?.width?.value / 2 },
+                                  y: { ...val?.y, value: val?.y?.value - val?.height?.value / 2 }
+                                }
                                 if ([90, 270].includes(range)) {
-                                  // 矩形，有旋转
+                                  // 有旋转
                                   val = {
                                     x: { ...val?.x, value: val?.x?.value + val?.width?.value / 2 - val?.height?.value / 2 },
                                     y: { ...val?.y, value: val?.y?.value - val?.width?.value / 2 + val?.height?.value / 2 },
@@ -1013,27 +1000,28 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                     height: { ...val?.height, value: val?.width?.value }
                                   };
                                 };
+                                /****************通过roi更新图层******************/
+                                const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
+                                const shape = Object.entries(val).reduce((pre: any, cen: any) => {
+                                  return Object.assign({}, pre, {
+                                    [cen[0]]: cen[1]?.value
+                                  });
+                                }, {});
+                                if (
+                                  Math.min(shape?.x, shape?.y) < 0 ||
+                                  (shape?.x + shape?.width) > img?.width ||
+                                  (shape?.y + shape?.height) > img?.height
+                                ) {
+                                  message.warning('标注位置 不能超出图片范围！');
+                                } else {
+                                  feature.updateShape(shape);
+                                  const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
+                                  targetText?.updatePosition({ x: shape.x, y: shape.y });
+                                  gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
+                                }
+                                /****************通过roi更新图层******************/
                               };
-                              /****************通过roi更新图层******************/
-                              const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
-                              const shape = Object.entries(val).reduce((pre: any, cen: any) => {
-                                return Object.assign({}, pre, {
-                                  [cen[0]]: cen[1]?.value
-                                });
-                              }, {});
-                              if (
-                                Math.min(shape?.x, shape?.y) < 0 ||
-                                (shape?.x + shape?.width) > img?.width ||
-                                (shape?.y + shape?.height) > img?.height
-                              ) {
-                                message.warning('标注位置 不能超出图片范围！');
-                              } else {
-                                feature.updateShape(shape);
-                                const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
-                                targetText?.updatePosition({ x: shape.x, y: shape.y });
-                                gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
-                              }
-                              /****************通过roi更新图层******************/
+
                               return Object.assign({}, pre, {
                                 [cen[0]]: {
                                   // ...cen[1],

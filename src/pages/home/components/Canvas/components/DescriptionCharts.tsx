@@ -12,7 +12,9 @@ interface Props {
 
 const DescriptionCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { dataValue, basicInfoData, des_bordered, des_column, des_layout, des_size, } = data;
+    const {
+        dataValue, basicInfoData, des_bordered, des_column, des_layout, des_size, fontSize,
+    } = data;
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
 
@@ -41,13 +43,13 @@ const DescriptionCharts: React.FC<Props> = (props: any) => {
                         basicInfoData.concat(dataValue).map((item: any, index: number) => {
                             const { id = guid(), name, value, color } = item;
                             if (!_.isObject(value?.[0])) {
-                                return <Descriptions.Item label={name} key={id} style={!!color ? { color } : {}}>
+                                return <Descriptions.Item label={name} key={id} style={Object.assign({ fontSize }, !!color ? { color } : {})}>
                                     {value}
                                 </Descriptions.Item>
                             } else {
                                 // @ts-ignore
                                 const { value, color } = item?.value[0];
-                                return <Descriptions.Item label={name} key={id} style={!!color ? { color } : {}}>
+                                return <Descriptions.Item label={name} key={id} style={Object.assign({ fontSize }, !!color ? { color } : {})}>
                                     {value}
                                 </Descriptions.Item>
                             }

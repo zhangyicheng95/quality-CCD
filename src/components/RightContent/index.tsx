@@ -63,6 +63,7 @@ const GlobalHeaderRight: React.FC = () => {
           />
           :
           <ExpandOutlined
+            id="full-screen-icon"
             onClick={() => {
               setFull(true);
               requestFullScreen();

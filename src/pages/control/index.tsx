@@ -1070,10 +1070,10 @@ export const FormatWidgetToDom = (props: any) => {
           label={label}
           tooltip={description}
           initialValue={value || defaultValue || {
-            num_0: undefined,
-            num_1: undefined,
-            num_2: undefined,
-            num_3: undefined,
+            num_0: { alias: 'num_0', value: undefined },
+            num_1: { alias: 'num_1', value: undefined },
+            num_2: { alias: 'num_2', value: undefined },
+            num_3: { alias: 'num_3', value: undefined },
           }}
           rules={[{ required: require, message: `${alias}` }]}
         >
