@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import * as _ from 'lodash';
 import styles from '../index.module.less';
 import TooltipDiv from '@/components/TooltipDiv';
 import { message } from 'antd';
 import { useModel } from 'umi';
+import { guid } from '@/utils/utils';
+import { updateParams } from '@/services/api';
 
 interface Props {
     data: any,
@@ -13,9 +15,10 @@ interface Props {
 
 const Table2Charts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { dataValue = [], fontSize, reverse } = data;
+    let { dataValue = [], fontSize, reverse, tableSize = [] } = data;
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
+    const [tableSizeSelf, setTableSizeSelf] = useState([]);
 
     useEffect(() => {
         if (!_.isArray(dataValue)) {
@@ -23,36 +26,65 @@ const Table2Charts: React.FC<Props> = (props: any) => {
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         } else {
-
+            setTableSizeSelf(tableSize || []);
         }
-    }, [dataValue]);
+    }, [dataValue, tableSize]);
 
     const onMoveIconMouseDown = (ev: any, index: number) => {
+        const { target, } = ev;
+        const parent = target.parentNode;
+        const { clientWidth } = parent;
+        let width = 0;
+
         document.onmousemove = (e: any) => {
-            const { target, offsetX } = e;
-            const box = target.parentNode.children[0];
-            const { clientWidth } = box;
-            console.log(clientWidth, offsetX)
-            console.log(box)
-            const width = Math.abs(clientWidth - offsetX)
-            box.style.maxWidth = width + 'px';
-            box.style.width = width + 'px';
+            width = Math.abs(clientWidth - (ev.pageX - e.pageX));
+            parent.style.width = width + 'px';
+            parent.style.minWidth = width + 'px';
         }
         document.onmouseup = (e: any) => {
+            const chartsBox: any = document.getElementById(`echart-${id}`);
+            const { clientWidth } = chartsBox;
+            if (!_.isArray(tableSize)) {
+                tableSize = [];
+            }
+            if (!!tableSize.length) {
+                tableSize[index] = (width / clientWidth * 100) + '%';
+            } else {
+                dataValue.forEach((item: any, ind: number) => {
+                    if (ind === index) {
+                        tableSize[index] = (width / clientWidth * 100) + '%';
+                    } else {
+                        tableSize[ind] = 0;
+                    }
+                });
+            }
+            setTableSizeSelf(() => tableSize.concat(guid()));
+            updateParams({
+                id: params.id,
+                data: {
+                    ...params,
+                    contentData: {
+                        ...params?.contentData,
+                        content: params?.contentData?.content.map((item: any) => {
+                            if (item.id === id) {
+                                return Object.assign({}, item, {
+                                    tableSize: tableSize
+                                });
+                            }
+                            return item;
+                        })
+                    }
+                },
+            }).then((res: any) => {
+                if (res && res.code === 'SUCCESS') {
+
+                } else {
+                    message.error(res?.msg || res?.message || '接口异常');
+                }
+            });
             document.onmousemove = (e: any) => {
                 // 释放鼠标
             }
-        }
-    };
-    const onMoveIconMouseUp = (ev: any, index: number) => {
-        const box = document.getElementById(`charts-header-item-move-${index}`);
-        var ev = ev || window.event;
-        // 获取鼠标相对于盒子的坐标
-        var x2 = ev.offsetX;
-        var y2 = ev.offsetY;
-        if (x2 <= 0 || y2 <= 0) return;
-        document.onmousemove = (e: any) => {
-            // 释放鼠标
         }
     };
 
@@ -65,7 +97,15 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                         return <div
                             className="charts-header-item flex-box"
                             key={`echart-${id}-tr-th-${index}`}
-
+                            style={Object.assign(
+                                !!tableSizeSelf?.[index] ?
+                                    {
+                                        width: tableSizeSelf?.[index],
+                                        minWidth: tableSizeSelf?.[index],
+                                        maxWidth: tableSizeSelf?.[index],
+                                    }
+                                    : {}
+                            )}
                         >
                             <div className="charts-header-item-title flex-box-center">
                                 {name}
@@ -76,7 +116,6 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                         id={`charts-header-item-move-${index}`}
                                         className="charts-header-item-border"
                                         onMouseDown={(e: any) => onMoveIconMouseDown(e, index)}
-                                        onMouseUp={(e: any) => onMoveIconMouseUp(e, index)}
                                     />
                             }
                         </div>
@@ -91,7 +130,14 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                             return <div
                                 className="charts-body-tr"
                                 key={`echart-${id}-tr-${index}`}
-                                style={Object.assign({ width: `${100 / dataValue?.length}%` },
+                                style={Object.assign(
+                                    !!tableSizeSelf?.[index] ?
+                                        {
+                                            width: tableSizeSelf?.[index],
+                                            minWidth: tableSizeSelf?.[index],
+                                            maxWidth: tableSizeSelf?.[index],
+                                        }
+                                        : {},
                                     !!color ? { color } : {}
                                 )}
                             >

@@ -18,13 +18,16 @@ export default function useEyeDropper(
     const open = useCallback(
         async function (signal?: AbortSignal) {
             if (!canUse) return;
-
-            const eyeDropper: EyeDropper = new (window as any).EyeDropper();
-            if (!eyeDropper) return '';
-            const res = await eyeDropper.open({ signal });
-            res.sRGBHex && setColor(res.sRGBHex);
-
-            return res.sRGBHex;
+            let res: any = null;
+            try {
+                const eyeDropper: EyeDropper = new (window as any).EyeDropper();
+                if (!eyeDropper) return '';
+                res = await eyeDropper.open({ signal });
+                res.sRGBHex && setColor(res.sRGBHex);
+            } catch (err) {
+                console.error(err);
+            }
+            return !!res ? res.sRGBHex : '';
         },
         [canUse],
     );

@@ -1062,7 +1062,7 @@ const Home: React.FC<any> = (props: any) => {
           backgroundColor = 'default', barColor = 'default', progressType = 'line',
           progressSize = 8, progressSteps = 5, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-          CCDName, imgs_width, imgs_height,
+          CCDName, imgs_width, imgs_height, tableSize,
           basicInfoData = [{ id: guid(), name: '', value: '' }]
         } = item;
         const id = key?.split('$$')[0];
@@ -1194,7 +1194,7 @@ const Home: React.FC<any> = (props: any) => {
                               id={key}
                               data={{
                                 dataValue: dataValue || [],
-                                yName, xName, fontSize, reverse
+                                yName, xName, fontSize, reverse, tableSize
                               }}
                             />
                             :
@@ -1203,7 +1203,7 @@ const Home: React.FC<any> = (props: any) => {
                                 id={key}
                                 data={{
                                   dataValue: dataValue || [],
-                                  fontSize, reverse
+                                  fontSize, reverse, tableSize
                                 }}
                               />
                               :
@@ -1497,7 +1497,7 @@ const Home: React.FC<any> = (props: any) => {
             contentData: Object.assign({}, paramsData.contentData, { content: result }),
           });
           setParamData(params);
-        }
+        };
         form.resetFields();
         setEditWindowData({});
         // dispatch({

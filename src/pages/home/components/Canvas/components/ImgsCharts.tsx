@@ -27,8 +27,10 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
+        if (_.isEmpty(dataValue)) return;
         let result: any = [];
         const loadFun = (item: any, index: number) => {
+            if (!item) return;
             const { name, value } = item;
             const img = document.createElement('img');
             img.src = value;

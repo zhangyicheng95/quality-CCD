@@ -39,15 +39,14 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   const { data, setGetDataFun, getDataFun } = props;
   const { platFormValue, localPath, zoom, widget } = data;
   const { options } = widget;
-  // const [{ color }, open] = useEyeDropper();
+  const [{ color }, open] = useEyeDropper();
   const markRef = useRef<any>();
   const [loading, setLoading] = useState(false);
   const [selectedBtn, setSelectedBtn] = useState('RECT');
   const [featureList, setFeatureList] = useState({});
   const [selectedFeature, setSelectedFeature] = useState('');
   const [selectedOptionType, setSelectedOptionType] = useState({});
-  // open();
-  // console.log('color', color)
+
   useEffect(() => {
     // const dom: any = document.getElementById(CONTAINER_ID);
     // const width = dom?.clientWidth,
