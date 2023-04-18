@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { Button, Form, message, Popover, Select, Spin } from 'antd';
 import Icon, {
-  AimOutlined, BorderOutlined, DownloadOutlined, DragOutlined, MinusCircleOutlined,
+  AimOutlined, BorderOutlined, DownloadOutlined, DragOutlined, HighlightOutlined, MinusCircleOutlined,
   PictureOutlined, PlusCircleOutlined, StockOutlined
 } from "@ant-design/icons";
 // @ts-ignore
@@ -736,6 +736,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     <div className="canvas-body flex-box-start">
       <div className="btn-box">
         <div className="top background-ubv">
+          <Popover placement="right" content={"拾色器"} >
+            <HighlightOutlined
+              onClick={() => { open() }}
+              className={`img-icon flex-box-center ${selectedBtn === 'LINE' ? "selected" : ''}`}
+            />
+          </Popover>
           <StockOutlined
             onClick={() => { setMode('LINE') }}
             className={`img-icon flex-box-center ${selectedBtn === 'LINE' ? "selected" : ''}`}

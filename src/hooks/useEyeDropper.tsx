@@ -1,3 +1,4 @@
+import { hexToRGB } from "@/utils/utils";
 import { useCallback, useMemo, useState } from "react";
 
 type EyeDropper = {
@@ -24,6 +25,7 @@ export default function useEyeDropper(
                 if (!eyeDropper) return '';
                 res = await eyeDropper.open({ signal });
                 res.sRGBHex && setColor(res.sRGBHex);
+                alert(`点击位置的灰度值为：${hexToRGB(res.sRGBHex)}`);
             } catch (err) {
                 console.error(err);
             }
