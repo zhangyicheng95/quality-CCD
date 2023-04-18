@@ -15,6 +15,7 @@ import { BASE_IP } from "@/services/api";
 import { FormatWidgetToDom } from "@/pages/control";
 import { downFileFun, guid, } from "@/utils/utils";
 import Measurement from "@/components/Measurement";
+import useEyeDropper from "@/hooks/useEyeDropper";
 
 interface Props {
   data?: any;
@@ -38,13 +39,15 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   const { data, setGetDataFun, getDataFun } = props;
   const { platFormValue, localPath, zoom, widget } = data;
   const { options } = widget;
+  // const [{ color }, open] = useEyeDropper();
   const markRef = useRef<any>();
   const [loading, setLoading] = useState(false);
   const [selectedBtn, setSelectedBtn] = useState('RECT');
   const [featureList, setFeatureList] = useState({});
   const [selectedFeature, setSelectedFeature] = useState('');
   const [selectedOptionType, setSelectedOptionType] = useState({});
-
+  // open();
+  // console.log('color', color)
   useEffect(() => {
     // const dom: any = document.getElementById(CONTAINER_ID);
     // const width = dom?.clientWidth,
@@ -75,7 +78,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         if (
           Math.min(data.x, data.y) < 0 ||
           (data.x + data.width) > width ||
-          (data.y + data.height) > height
+          (data.y + data.height) > height ||
+          Math.min(data?.start?.x, data?.end?.y) < 0 ||
+          data?.start?.x > width ||
+          data?.start?.y > height ||
+          data?.end?.x > width ||
+          data?.end?.y > height
         ) {
           message.warning('标注位置 不能超出图片范围！');
           return;
@@ -125,6 +133,14 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             drawingStyle // style
           );
           gFirstFeatureLayer.addFeature(lineFeature);
+          const { start, end } = data;
+          let position = { x: 0, y: 0 };
+          if (start.y <= end.y) {
+            position = { x: start.x, y: start.y - 2 };
+          } else {
+            position = { x: end.x, y: end.y - 2 };
+          }
+          addFeatureText(position, relatedTextId, 'label');
         } else if (type === 'POLYLINE') {
           const scale = gMap.getScale();
           const width = drawingStyle.lineWidth / scale;
@@ -198,7 +214,33 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       });
       // 双击选中
       gMap.events.on('featureSelected', (feature: any) => {
-        const { id, type, shape, } = feature;
+        const { id, type, shape, props } = feature;
+
+        if (type === 'LINE') {
+          // 线段，把label显示为两点坐标
+          let { start, end } = shape;
+          start = {
+            x: start.x.toFixed(2),
+            y: start.y.toFixed(2)
+          };
+          end = {
+            x: end.x.toFixed(2),
+            y: end.y.toFixed(2)
+          };
+          // 线段长度
+          const length = AILabel.Util.MathUtil.distance(start, end);
+          const text = `(${start.x}, ${start.y}), (${end.x}, ${end.y}),  ${(length.toFixed(2))}`;
+          const targetText = gFirstTextLayer.getTextById(props?.textId);
+          if (targetText) {
+            targetText?.updateText(text);
+          } else {
+            const { id, shape, props, style, type } = feature;
+            gFirstFeatureLayer.removeFeatureById(id);
+            gFirstTextLayer.removeTextById(props?.textId);
+            addFeature(type, id, shape, { ...props, label: text }, style);
+          }
+        };
+
         setSelectedFeature(id);
         gMap.setActiveFeature(feature);
         const markerId = feature.props.deleteMarkerId;
@@ -239,8 +281,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       });
       // 取消featureSelected
       gMap.events.on('featureUnselected', (feature: any) => {
+        const { props } = feature;
         gMap.setActiveFeature(null);
-        gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
+        const targetText = gFirstTextLayer.getTextById(props?.textId);
+        targetText?.updateText(!!props?.initParams?.option_type ? props?.initParams?.option_type?.value : 'label');
+        gMap.markerLayer.removeMarkerById(props.deleteMarkerId);
         onCancel();
       });
       // 圆形/矩形 框选更新
@@ -433,6 +478,14 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         id, shape, props, style
       );
       gFirstFeatureLayer.addFeature(gFirstFeatureLine);
+      const { start, end } = shape;
+      let position = { x: 0, y: 0 };
+      if (start.y <= end.y) {
+        position = { x: start.x, y: start.y - 2 };
+      } else {
+        position = { x: end.x, y: end.y - 2 };
+      }
+      addFeatureText(position, props.textId, props.label);
     } else if (type === "POLYLINE") {
       const polylineFeature = new AILabel.Feature.Polyline(
         id, shape, props, style
@@ -564,7 +617,9 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       return Object.assign({}, item, {
         props: Object.assign({}, item?.props, {
           initParams: getDataFun?.value?.[item.id]
-        })
+        }, !!getDataFun?.value?.[item.id]?.option_type ? {
+          label: getDataFun?.value?.[item.id]?.option_type?.value
+        } : {})
       })
     });
     const data2 = getRle() || [];
@@ -798,10 +853,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       placeholder="参数类型"
                       onChange={(val, option: any) => {
                         setSelectedOptionType({ roi: feature?.shape, ..._.cloneDeep(options)[val] });
-                        const { id, shape, props, style, type } = feature;
-                        gFirstFeatureLayer.removeFeatureById(id);
-                        gFirstTextLayer.removeTextById(props?.textId);
-                        addFeature(type, id, shape, { ...props, label: val }, style);
                       }}
                     />
                   </Form.Item>
@@ -846,6 +897,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                   }
                                 }
                               } else if (!!item[1]?.realValue?.x2) {
+                                // 线
                                 value = {
                                   "x1": { alias: "起点x", value: item[1]?.realValue?.x1?.value },
                                   "y1": { alias: "起点y", value: item[1]?.realValue?.y1?.value },
@@ -914,6 +966,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                 }
                               }
                             } else if (!!item[1]?.start) {
+                              // 线
                               value = {
                                 "x1": { alias: "起点x", value: item[1]?.start?.x },
                                 "y1": { alias: "起点y", value: item[1]?.start?.y },
@@ -974,6 +1027,17 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           [key[0]]: item
                         })
                       }, {});
+                      // 更新text
+                      const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
+                      if (targetText) {
+                        targetText?.updateText(value?.['option_type']?.value);
+                      } else {
+                        const { id, shape, props, style, type } = feature;
+                        gFirstFeatureLayer.removeFeatureById(id);
+                        gFirstTextLayer.removeTextById(props?.textId);
+                        addFeature(type, id, shape, { ...props, label: value?.['option_type']?.value }, style);
+                      }
+                      // 
                       const range = value?.['旋转角度']?.value;
                       const result = {
                         ...featureList,

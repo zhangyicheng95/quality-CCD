@@ -33,8 +33,10 @@ const PlatFormModal: React.FC<Props> = (props) => {
         const data1 = ((feat && feat().map((item: any) => _.omit(item, 'layer'))) || []).map((item: any) => {
           return Object.assign({}, item, {
             props: Object.assign({}, item?.props, {
-              initParams: value?.[item.id]
-            })
+              initParams: value?.[item.id],
+            }, !!value?.[item.id]?.option_type ? {
+              label: value?.[item.id]?.option_type?.value
+            } : {})
           })
         });
         const data2 = (pen && pen()) || [];
@@ -106,6 +108,7 @@ const PlatFormModal: React.FC<Props> = (props) => {
             }).filter(Boolean)
           }
         );
+        console.log(params)
         onOk(params);
       }}
       onCancel={() => {
