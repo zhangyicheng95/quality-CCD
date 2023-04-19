@@ -18,17 +18,15 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     let { dataValue = [], fontSize, reverse, tableSize = [] } = data;
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
-    const [tableSizeSelf, setTableSizeSelf] = useState([]);
+    const [tableSizeSelf, setTableSizeSelf] = useState(tableSize);
 
     useEffect(() => {
         if (!_.isArray(dataValue)) {
             message.error('数据格式不正确，请检查');
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
-        } else {
-            setTableSizeSelf(tableSize || []);
         }
-    }, [dataValue, tableSize]);
+    }, [dataValue,]);
 
     const onMoveIconMouseDown = (ev: any, index: number) => {
         const { target, } = ev;
@@ -115,7 +113,11 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                     <div
                                         id={`charts-header-item-move-${index}`}
                                         className="charts-header-item-border"
-                                        onMouseDown={(e: any) => onMoveIconMouseDown(e, index)}
+                                        onMouseDown={(e: any) => {
+                                            if (window.location.hash.indexOf('edit') > -1) {
+                                                onMoveIconMouseDown(e, index);
+                                            }
+                                        }}
                                     />
                             }
                         </div>

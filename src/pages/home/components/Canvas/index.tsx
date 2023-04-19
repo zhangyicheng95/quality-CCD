@@ -1543,49 +1543,49 @@ const Home: React.FC<any> = (props: any) => {
     return arr;
   }, [homeDom]);
   useEffect(() => {
-    if (!ifCanEdit) return;
-    // 1.获取元素
-    var oBox: any = document.getElementById("home-affixs");
-    var pBox: any = document.getElementById("home-affix-box");
-    let top = 0,
-      left = 0,
-      bottom = 16,
-      right = 16;
-    // 2.鼠标按下事件
-    oBox.onmousedown = function (ev: any) {
-      var ev = ev || window.event;
-      // 获取鼠标相对于盒子的坐标
-      // 3.鼠标移动
-      document.onmousemove = function (ev: any) {
-        console.log(ev)
+    if (ifCanEdit) {
+      // 1.获取元素
+      var oBox: any = document.getElementById("home-affixs");
+      var pBox: any = document.getElementById("home-affix-box");
+      let top = 0,
+        left = 0,
+        bottom = 16,
+        right = 16;
+      // 2.鼠标按下事件
+      oBox.onmousedown = function (ev: any) {
         var ev = ev || window.event;
-        var x3 = ev.pageX;
-        var y3 = ev.pageY;
-        if (pageIconPosition?.direction === 'column') {
-          top = y3;
-          left = x3 + 12;
-        } else {
-          top = y3 - 72;
-          left = x3 + (homePageIcon.length * 40 + 16) / 2 - 4;
+        // 获取鼠标相对于盒子的坐标
+        // 3.鼠标移动
+        document.onmousemove = function (ev: any) {
+          var ev = ev || window.event;
+          var x3 = ev.pageX;
+          var y3 = ev.pageY;
+          if (pageIconPosition?.direction === 'column') {
+            top = y3;
+            left = x3 + 12;
+          } else {
+            top = y3 - 72;
+            left = x3 + (homePageIcon.length * 40 + 16) / 2 - 4;
+          }
+          bottom = homeDom?.clientHeight - top;
+          right = homeDom?.clientWidth - left;
+          pBox.style.bottom = bottom + "px";
+          pBox.style.right = right + "px"
         }
-        bottom = homeDom?.clientHeight - top;
-        right = homeDom?.clientWidth - left;
-        pBox.style.bottom = bottom + "px";
-        pBox.style.right = right + "px"
       }
-    }
-    // 4.鼠标松开事件
-    oBox.onmouseup = function (ev: any) {
-      var ev = ev || window.event;
-      // 获取鼠标相对于盒子的坐标
-      var x2 = ev.offsetX;
-      var y2 = ev.offsetY;
-      if (x2 <= 0 || y2 <= 0) return;
-      setPageIconPosition((prev: any) => ({ ...prev, position: { bottom, right } }));
-      document.onmousemove = function () {
-        // 释放鼠标
+      // 4.鼠标松开事件
+      oBox.onmouseup = function (ev: any) {
+        var ev = ev || window.event;
+        // 获取鼠标相对于盒子的坐标
+        var x2 = ev.offsetX;
+        var y2 = ev.offsetY;
+        if (x2 <= 0 || y2 <= 0) return;
+        setPageIconPosition((prev: any) => ({ ...prev, position: { bottom, right } }));
+        document.onmousemove = function () {
+          // 释放鼠标
+        }
       }
-    }
+    };
   }, [ifCanEdit, homeDom, pageIconPosition.direction])
 
   return (

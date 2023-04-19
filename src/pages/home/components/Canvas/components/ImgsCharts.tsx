@@ -43,7 +43,6 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
                     result = result.concat({ ...item, imgHeight: 'auto', imgWidth: '100%' })
                 }
                 if (index + 1 === dataValue.length) {
-                    console.log(result)
                     setImgList(result);
                     return;
                 }
