@@ -42,21 +42,20 @@ const Table2Charts: React.FC<Props> = (props: any) => {
         document.onmouseup = (e: any) => {
             const chartsBox: any = document.getElementById(`echart-${id}`);
             const { clientWidth } = chartsBox;
-            if (!_.isArray(tableSize)) {
-                tableSize = [];
-            }
-            if (!!tableSize.length) {
-                tableSize[index] = (width / clientWidth * 100) + '%';
+            const tableSizes = !_.isArray(tableSize) ? _.cloneDeep(tableSize) : [];
+
+            if (!!tableSizes.length) {
+                tableSizes[index] = (width / clientWidth * 100) + '%';
             } else {
                 dataValue.forEach((item: any, ind: number) => {
                     if (ind === index) {
-                        tableSize[index] = (width / clientWidth * 100) + '%';
+                        tableSizes[index] = (width / clientWidth * 100) + '%';
                     } else {
-                        tableSize[ind] = 0;
+                        tableSizes[ind] = 0;
                     }
                 });
             }
-            setTableSizeSelf(() => tableSize.concat(guid()));
+            setTableSizeSelf(() => tableSizes.concat(guid()));
             updateParams({
                 id: params.id,
                 data: {
@@ -66,7 +65,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                         content: params?.contentData?.content.map((item: any) => {
                             if (item.id === id) {
                                 return Object.assign({}, item, {
-                                    tableSize: tableSize
+                                    tableSize: tableSizes
                                 });
                             }
                             return item;
