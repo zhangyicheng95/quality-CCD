@@ -39,9 +39,9 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         };
     }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight]);
     useEffect(() => {
-        const eventDom: any = document.getElementById('img-charts-event1');
+        const eventDom: any = dom.current.querySelector('.ant-image-mask');
         const mask: any = dom?.current?.querySelector('.mask');
-        if (!eventDom || !mask) return;
+        if (!eventDom) return;
         eventDom.onmousemove = function (event: any) {
             // offsetX：鼠标坐标到元素的左侧的距离
             // offsetWidth 除了外边距(margin)以外，所有的宽度(高度)之和
@@ -49,19 +49,19 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             let { clientWidth: bodyWidth, clientHeight: bodyHeight } = document.body;
             let { clientWidth: boxWidth, clientHeight: boxHeight } = eventDom;
 
-            let left = offsetX - mask?.offsetWidth / 2;
+            let left = offsetX - boxWidth / 8;
             // offsetY：鼠标坐标到元素的顶部的距离
             // offsetHeight:元素的像素高度 包含元素的垂直内边距和边框,水平滚动条的高度,且是一个整数
-            let top = offsetY - mask?.offsetHeight / 2;
+            let top = offsetY - boxHeight / 8;
             // 约束范围,保证光标在div范围内，都是以父盒子div为参考对象的
             // 超出图片左侧
             if (!left || (left <= 0)) left = 0;
             // 超出图片右侧
-            if ((left + mask?.offsetWidth) >= boxWidth) left = (boxWidth - mask?.offsetWidth);
+            if ((left + boxWidth / 4) >= boxWidth) left = (boxWidth - boxWidth / 4);
             // 超出图片上侧
             if (!top || (top <= 0)) top = 0;
             // 超出图片下侧
-            if ((top + mask?.offsetHeight) >= boxHeight) top = (boxHeight - mask?.offsetHeight);
+            if ((top + boxHeight / 4) >= boxHeight) top = (boxHeight - boxHeight / 4);
             // 修改元素的left|top属性值
             // 遮罩层
             mask.style['left'] = left + "px";
@@ -146,36 +146,26 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         >
             {
                 dataValue ?
-                    // @ts-ignore
-                    window.QUALITY_CCD_CONFIG.type === 'gf' ?
-                        <div className="img-box">
-                            <img
-                                src={dataValue}
-                                id={`img-${id}`}
-                                alt="logo"
-                                style={fontSize}
-                            />
-                            <div
-                                className="img-charts-event1"
-                                id="img-charts-event1"
-                            />
-                            {/* <div className="img-charts-big">
-                            <img src={dataValue} />
-                        </div> */}
-                            <div className="mask" />
-                        </div>
-                        :
+                    <div className="img-box">
                         <Image
                             src={dataValue}
                             alt="logo"
                             style={fontSize}
                         />
+                        {/* <div
+                            className="img-charts-event1"
+                            id="img-charts-event1"
+                        /> */}
+                        {/* <div className="img-charts-big">
+                            <img src={dataValue} />
+                        </div> */}
+                        <div className="mask" />
+                    </div>
                     :
                     <Skeleton.Image
                         active={true}
                     />
             }
-            <div className="mask"></div>
             {
                 !!windowControl ?
                     <div className="preview-box flex-box-center">

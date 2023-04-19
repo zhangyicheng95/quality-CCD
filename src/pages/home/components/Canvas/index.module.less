@@ -511,10 +511,17 @@
         position: absolute;
         left: 0;
         top: 0;
+        z-index: 0;
         display: none;
       }
 
+      .ant-image-mask {
+        cursor: zoom-in;
+        z-index: 1;
+      }
+
       &:hover {
+
         .mask {
           display: block;
         }
