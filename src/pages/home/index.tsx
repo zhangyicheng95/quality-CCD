@@ -1,6 +1,7 @@
 import { Route, Router, Switch, useHistory, } from "react-router";
 import Canvas from './components/Canvas';
 import { useReloadAfterStationary } from "@/utils/useReloadAfterStationary";
+import { useEffect } from "react";
 
 const Mark = (props: any) => {
   const history = useHistory();

@@ -112,7 +112,7 @@ export const layout: RunTimeLayoutConfig = (props) => {
   const { initialState, setInitialState } = props;
   return {
     // headerRender: () => null,
-    headerHeight: 80,
+    headerHeight: 40,
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: {
