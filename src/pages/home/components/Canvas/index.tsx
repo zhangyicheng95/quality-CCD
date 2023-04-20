@@ -987,12 +987,7 @@ const Home: React.FC<any> = (props: any) => {
       dispatch({
         type: 'home/set',
         payload: {
-          gridContentList: content.reduce((pre: any, cen: any) => {
-            const { id, ...rest } = cen;
-            return Object.assign({}, pre, {
-              [id?.split('$$')[0]]: rest
-            });
-          }, {}),
+          gridContentList: content.map((item: any) => ({ ...item, key: item.id?.split('$$')?.[0] })),
         },
       });
       dispatch({ type: 'home/snapshot' });
@@ -1007,7 +1002,8 @@ const Home: React.FC<any> = (props: any) => {
           id,
           size: Object.assign({}, size, {
             i: id,
-          })
+          }),
+          key: id.split('$$')?.[0],
         }
       });
       dispatch({
@@ -1035,7 +1031,7 @@ const Home: React.FC<any> = (props: any) => {
       dispatch({
         type: 'home/set',
         payload: {
-          gridContentList: {},
+          gridContentList: [],
         },
       });
       dispatch({ type: 'home/snapshot' });
@@ -1051,10 +1047,14 @@ const Home: React.FC<any> = (props: any) => {
     if (!_.isEmpty(addContentList) && !_.isEmpty(paramData)) {
       const newGridContentList = !!localStorage.getItem(`localGridContentList-${paramData.id}`) ?
         JSON.parse(localStorage.getItem(`localGridContentList-${paramData.id}`) || "{}")
-        : {};
+        : [];
+      if (!_.isArray(newGridContentList)) {
+        localStorage.removeItem(`localGridContentList-${paramData.id}`);
+        window.location.reload();
+      }
       let listData: any = [],
         layoutData: any = [],
-        resultData: any = {};
+        resultData: any = [];
       addContentList?.forEach((item: any, index: number) => {
         const {
           id: key, size, value = [], type, yName, xName, defaultImg, fontSize,
@@ -1066,10 +1066,10 @@ const Home: React.FC<any> = (props: any) => {
           basicInfoData = [{ id: guid(), name: '', value: '' }]
         } = item;
         const id = key?.split('$$')[0];
-        const gridValue = gridContentList[id] || {};
-        const newGridValue = newGridContentList[id] || {};
+        const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
+        const newGridValue = newGridContentList?.filter((i: any) => i?.id === key)?.[0];
         // socket有数据就渲染新的，没有就渲染localStorage缓存的
-        const dataValue = gridValue[value[1]] || newGridValue[value[1]] || undefined;
+        const dataValue = gridValue?.[value[1]] || newGridValue?.[value[1]] || undefined;
         const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
         const { alias, name, ports = {} } = parent[0] || {};
         const { items = [] } = ports;
@@ -1286,10 +1286,12 @@ const Home: React.FC<any> = (props: any) => {
         );
         layoutData = layoutData.concat(size);
         if (ifLocalStorage || !_.isBoolean(ifLocalStorage)) {
-          resultData[id] = !!dataValue ? {
-            ...item,
-            [value[1]]: dataValue
-          } : item;
+          resultData = resultData.concat(
+            !!dataValue ? {
+              ...item,
+              [value[1]]: dataValue
+            } : item
+          );
         }
       });
       localStorage.setItem(`localGridContentList-${paramData.id}`, JSON.stringify(resultData));

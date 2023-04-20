@@ -23,7 +23,7 @@ export default {
     errorData: [],
     snapshot: {
       logStr: '',
-      gridContentList: {},
+      gridContentList: [],
       historyData: [],
       footerData: {},
       errorData: [],
@@ -165,17 +165,15 @@ export default {
     },
     setGridContentList: (state: any, { payload }: any) => {
       const prev = state.gridContentList;
-      const gridContentList = Object.entries(prev).reduce((pre: any, cen: any) => {
-        return Object.assign(
-          {},
-          pre,
-          cen[0] === payload.uid
-            ? {
-              [cen[0]]: Object.assign({}, cen[1], payload),
-            }
-            : { [cen[0]]: cen[1] },
-        );
-      }, {});
+      const gridContentList = prev.map((item: any) => {
+        if (item.key === payload.uid && !_.isUndefined(payload?.[item?.value?.[1]])) {
+          return {
+            ...item,
+            ...payload,
+          };
+        };
+        return item;
+      });
       return { ...state, gridContentList };
     },
     setHistoryData: (state: any, { payload }: any) => {

@@ -49,19 +49,19 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             let { clientWidth: bodyWidth, clientHeight: bodyHeight } = document.body;
             let { clientWidth: boxWidth, clientHeight: boxHeight } = eventDom;
 
-            let left = offsetX - boxWidth / 8;
+            let left = offsetX - mask?.offsetWidth / 2;
             // offsetY：鼠标坐标到元素的顶部的距离
             // offsetHeight:元素的像素高度 包含元素的垂直内边距和边框,水平滚动条的高度,且是一个整数
-            let top = offsetY - boxHeight / 8;
+            let top = offsetY - mask?.offsetHeight / 2;
             // 约束范围,保证光标在div范围内，都是以父盒子div为参考对象的
             // 超出图片左侧
             if (!left || (left <= 0)) left = 0;
             // 超出图片右侧
-            if ((left + boxWidth / 4) >= boxWidth) left = (boxWidth - boxWidth / 4);
+            if ((left + mask?.offsetWidth / 2) >= boxWidth) left = (boxWidth - mask?.offsetWidth / 2);
             // 超出图片上侧
             if (!top || (top <= 0)) top = 0;
             // 超出图片下侧
-            if ((top + boxHeight / 4) >= boxHeight) top = (boxHeight - boxHeight / 4);
+            if ((top + mask?.offsetHeight / 2) >= boxHeight) top = (boxHeight - mask?.offsetHeight / 2);
             // 修改元素的left|top属性值
             // 遮罩层
             mask.style['left'] = left + "px";
@@ -70,7 +70,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             let imgDom: any = document.getElementById(`img-charts-bigImg-${id}`);
             if (!imgDom) {
                 bigDom = document.createElement('div');
-                bigDom.className = `img-charts-big-${id}`;
+                bigDom.className = `img-charts-big img-charts-big-${id}`;
                 document.body.appendChild(bigDom);
                 imgDom = document.createElement('img');
                 imgDom.id = `img-charts-bigImg-${id}`;
@@ -136,7 +136,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             const bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
             bigDom.style.display = 'none';
         }
-    }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight]);
+    }, [dataValue, id, dom?.current?.clientWidth, dom?.current?.clientHeight]);
 
     return (
         <div

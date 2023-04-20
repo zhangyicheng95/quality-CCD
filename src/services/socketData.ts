@@ -31,10 +31,15 @@ const listen = (action: any) => {
                     ? 'RUNNING'
                     : 'STOPPED'
                   : cen[1];
+              if (key == 'uid') {
+                return {
+                  uid,
+                  ...pre,
+                };
+              };
               return {
                 uid,
                 ...pre,
-                ...rest,
                 [_.toLower(key)]: value,
                 [key]: value,
               };
