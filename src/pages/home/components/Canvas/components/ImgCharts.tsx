@@ -66,17 +66,18 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             // 遮罩层
             mask.style['left'] = left + "px";
             mask.style['top'] = top + "px";
-            let bigDom: any = document.getElementsByClassName('img-charts-big')[0];
-            let imgDom: any = document.getElementById('img-charts-bigImg');
+            let bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
+            let imgDom: any = document.getElementById(`img-charts-bigImg-${id}`);
             if (!imgDom) {
                 bigDom = document.createElement('div');
-                bigDom.className = 'img-charts-big';
+                bigDom.className = `img-charts-big-${id}`;
                 document.body.appendChild(bigDom);
                 imgDom = document.createElement('img');
-                imgDom.id = 'img-charts-bigImg';
+                imgDom.id = `img-charts-bigImg-${id}`;
                 imgDom.src = dataValue;
                 bigDom.appendChild(imgDom);
             } else {
+                imgDom.src = dataValue;
                 bigDom.style.display = 'block';
             }
 
@@ -132,7 +133,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         }
         // 4.鼠标松开事件
         eventDom.onmouseleave = function (ev: any) {
-            const bigDom: any = document.getElementsByClassName('img-charts-big')[0];
+            const bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
             bigDom.style.display = 'none';
         }
     }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight]);
