@@ -112,9 +112,6 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                 bigWidth = boxWidth * scale;
                 bigHeight = maxSize;
             }
-            console.log('盒子大小', boxWidth, boxHeight);
-            console.log('放大镜大小', bigWidth, bigHeight);
-            console.log('鼠标位置', left, top);
             bigDom.style['width'] = bigWidth + "px";
             bigDom.style['height'] = bigHeight + "px";
             const scaleSize = (fontSize > 1 ? (boxWidth / bigWidth) : (boxHeight / bigHeight));
