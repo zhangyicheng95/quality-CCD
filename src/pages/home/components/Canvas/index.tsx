@@ -1543,7 +1543,7 @@ const Home: React.FC<any> = (props: any) => {
       arr = arr.concat(i + 1)
     }
     return arr;
-  }, [homeDom]);
+  }, [homeDom?.clientHeight, homeDom?.clientWidth]);
   useEffect(() => {
     if (ifCanEdit) {
       // 1.获取元素
