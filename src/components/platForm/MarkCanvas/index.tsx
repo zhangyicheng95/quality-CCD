@@ -1223,6 +1223,26 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         addFeature(type, id, shape, { ...props, label: value?.['option_type']?.value }, style);
                       };
                       const range = value?.['旋转角度']?.value;
+                      if (value?.['roi']?.value?.cx && value?.['roi']?.value?.r) {
+                        const val = value?.['roi']?.value;
+                        // 圆
+                        const shape1 = {
+                          cx: val?.cx?.value,
+                          cy: val?.cy?.value,
+                          r: val?.r?.value,
+                        };
+                        feature.updateShape(shape1);
+                        if (val.r2) {
+                          // 圆环
+                          const feature2 = gFirstFeatureLayer.getFeatureById(selectedFeature + 100) || gFirstFeatureLayer.getFeatureById(selectedFeature - 100);
+                          const shape2 = {
+                            cx: val?.cx?.value,
+                            cy: val?.cy?.value,
+                            r: val?.r2?.value,
+                          };
+                          feature2?.updateShape(shape2);
+                        }
+                      };
                       const result = {
                         ...featureList,
                         [selectedFeature]: (!_.isEmpty(selectedOptionType) || !_.isEmpty(featureList[selectedFeature])) ?
@@ -1268,25 +1288,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                     gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
                                   }
                                   /****************通过roi更新图层******************/
-                                } else if (val?.cx && val?.r) {
-                                  // 圆
-                                  const shape1 = {
-                                    cx: val?.cx?.value,
-                                    cy: val?.cy?.value,
-                                    r: val?.r?.value,
-                                  };
-                                  feature.updateShape(shape1);
-                                  if (val.r2) {
-                                    // 圆环
-                                    const feature2 = gFirstFeatureLayer.getFeatureById(selectedFeature + 100) || gFirstFeatureLayer.getFeatureById(selectedFeature - 100);
-                                    const shape2 = {
-                                      cx: val?.cx?.value,
-                                      cy: val?.cy?.value,
-                                      r: val?.r2?.value,
-                                    };
-                                    feature2?.updateShape(shape2);
-                                  }
-                                };
+                                }
 
                                 return Object.assign({}, pre, {
                                   [cen[0]]: {
@@ -1305,8 +1307,10 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                             }, { option_type: { value: value?.['option_type']?.value }, "旋转角度": { value: range } })
                           :
                           {
-                            value: value?.['roi']?.value,
-                            realValue: value?.['roi']?.value
+                            roi: {
+                              value: value?.['roi']?.value,
+                              realValue: value?.['roi']?.value
+                            }
                           }
                       };
                       setGetDataFun((prev: any) => ({
