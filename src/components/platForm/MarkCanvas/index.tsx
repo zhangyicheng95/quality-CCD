@@ -970,7 +970,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                     name={`option_type`}
                     label="参数类型"
                     initialValue={featureList?.[selectedFeature] ? featureList?.[selectedFeature]?.['option_type']?.value : undefined}
-                    rules={[{ required: true, message: "参数类型" }]}
+                    rules={[{ required: false, message: "参数类型" }]}
                   >
                     <Select
                       style={{ width: '100%' }}
@@ -1221,88 +1221,93 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         gFirstFeatureLayer.removeFeatureById(id);
                         gFirstTextLayer.removeTextById(props?.textId);
                         addFeature(type, id, shape, { ...props, label: value?.['option_type']?.value }, style);
-                      }
-                      // 
+                      };
                       const range = value?.['旋转角度']?.value;
                       const result = {
                         ...featureList,
-                        [selectedFeature]: Object.entries(!_.isEmpty(selectedOptionType) ? selectedOptionType : featureList[selectedFeature])
-                          ?.reduce((pre: any, cen: any) => {
-                            if (cen[0] === 'roi') {
-                              let { value: val, } = value[cen[0]];
-                              // realValue：没旋转的 中心点x,y
-                              let realValue = val;
-                              // 矩形
-                              if (val?.x && val?.height) {
-                                val = {
-                                  ...val,
-                                  x: { ...val?.x, value: val?.x?.value - val?.width?.value / 2 },
-                                  y: { ...val?.y, value: val?.y?.value - val?.height?.value / 2 }
-                                }
-                                if ([90, 270].includes(range)) {
-                                  // 有旋转
+                        [selectedFeature]: (!_.isEmpty(selectedOptionType) || !_.isEmpty(featureList[selectedFeature])) ?
+                          Object.entries(!_.isEmpty(selectedOptionType) ? selectedOptionType : featureList[selectedFeature])
+                            ?.reduce((pre: any, cen: any) => {
+                              if (cen[0] === 'roi') {
+                                let { value: val, } = value[cen[0]];
+                                // realValue：没旋转的 中心点x,y
+                                let realValue = val;
+                                // 矩形
+                                if (val?.x && val?.height) {
                                   val = {
-                                    x: { ...val?.x, value: val?.x?.value + val?.width?.value / 2 - val?.height?.value / 2 },
-                                    y: { ...val?.y, value: val?.y?.value - val?.width?.value / 2 + val?.height?.value / 2 },
-                                    width: { ...val?.width, value: val?.height?.value },
-                                    height: { ...val?.height, value: val?.width?.value }
+                                    ...val,
+                                    x: { ...val?.x, value: val?.x?.value - val?.width?.value / 2 },
+                                    y: { ...val?.y, value: val?.y?.value - val?.height?.value / 2 }
+                                  }
+                                  if ([90, 270].includes(range)) {
+                                    // 有旋转
+                                    val = {
+                                      x: { ...val?.x, value: val?.x?.value + val?.width?.value / 2 - val?.height?.value / 2 },
+                                      y: { ...val?.y, value: val?.y?.value - val?.width?.value / 2 + val?.height?.value / 2 },
+                                      width: { ...val?.width, value: val?.height?.value },
+                                      height: { ...val?.height, value: val?.width?.value }
+                                    };
                                   };
-                                };
-                                /****************通过roi更新图层******************/
-                                const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
-                                const shape = Object.entries(val).reduce((pre: any, cen: any) => {
-                                  return Object.assign({}, pre, {
-                                    [cen[0]]: cen[1]?.value
-                                  });
-                                }, {});
-                                if (
-                                  Math.min(shape?.x, shape?.y) < 0 ||
-                                  (shape?.x + shape?.width) > img?.width ||
-                                  (shape?.y + shape?.height) > img?.height
-                                ) {
-                                  message.warning('标注位置 不能超出图片范围！');
-                                } else {
-                                  feature.updateShape(shape);
-                                  const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
-                                  targetText?.updatePosition({ x: shape.x, y: shape.y });
-                                  gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
-                                }
-                                /****************通过roi更新图层******************/
-                              } else if (val?.cx && val?.r) {
-                                // 圆
-                                const shape1 = {
-                                  cx: val?.cx?.value,
-                                  cy: val?.cy?.value,
-                                  r: val?.r?.value,
-                                };
-                                feature.updateShape(shape1);
-                                if (val.r2) {
-                                  // 圆环
-                                  const feature2 = gFirstFeatureLayer.getFeatureById(selectedFeature + 100) || gFirstFeatureLayer.getFeatureById(selectedFeature - 100);
-                                  const shape2 = {
+                                  /****************通过roi更新图层******************/
+                                  const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
+                                  const shape = Object.entries(val).reduce((pre: any, cen: any) => {
+                                    return Object.assign({}, pre, {
+                                      [cen[0]]: cen[1]?.value
+                                    });
+                                  }, {});
+                                  if (
+                                    Math.min(shape?.x, shape?.y) < 0 ||
+                                    (shape?.x + shape?.width) > img?.width ||
+                                    (shape?.y + shape?.height) > img?.height
+                                  ) {
+                                    message.warning('标注位置 不能超出图片范围！');
+                                  } else {
+                                    feature.updateShape(shape);
+                                    const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
+                                    targetText?.updatePosition({ x: shape.x, y: shape.y });
+                                    gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
+                                  }
+                                  /****************通过roi更新图层******************/
+                                } else if (val?.cx && val?.r) {
+                                  // 圆
+                                  const shape1 = {
                                     cx: val?.cx?.value,
                                     cy: val?.cy?.value,
-                                    r: val?.r2?.value,
+                                    r: val?.r?.value,
                                   };
-                                  feature2?.updateShape(shape2);
-                                }
-                              };
+                                  feature.updateShape(shape1);
+                                  if (val.r2) {
+                                    // 圆环
+                                    const feature2 = gFirstFeatureLayer.getFeatureById(selectedFeature + 100) || gFirstFeatureLayer.getFeatureById(selectedFeature - 100);
+                                    const shape2 = {
+                                      cx: val?.cx?.value,
+                                      cy: val?.cy?.value,
+                                      r: val?.r2?.value,
+                                    };
+                                    feature2?.updateShape(shape2);
+                                  }
+                                };
 
+                                return Object.assign({}, pre, {
+                                  [cen[0]]: {
+                                    // ...cen[1],
+                                    value: val,
+                                    realValue: realValue
+                                  }
+                                });
+                              };
                               return Object.assign({}, pre, {
                                 [cen[0]]: {
-                                  // ...cen[1],
-                                  value: val,
-                                  realValue: realValue
+                                  ...cen[1],
+                                  value: value[cen[0]]?.value
                                 }
-                              });
-                            };
-                            return Object.assign({}, pre, {
-                              [cen[0]]: {
-                                ...cen[1],
-                                value: value[cen[0]]?.value
-                              }
-                            })
-                          }, { option_type: { value: value?.['option_type']?.value }, "旋转角度": { value: range } })
+                              })
+                            }, { option_type: { value: value?.['option_type']?.value }, "旋转角度": { value: range } })
+                          :
+                          {
+                            value: value?.['roi']?.value,
+                            realValue: value?.['roi']?.value
+                          }
                       };
                       setGetDataFun((prev: any) => ({
                         ...prev, zoom: gMap.zoom, value: Object.assign({}, prev?.value, result)
