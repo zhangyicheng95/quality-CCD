@@ -193,7 +193,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           const circleFeature = new AILabel.Feature.Circle(
             id, // id
             data, // data1代表屏幕坐标 shape
-            { name: '圆形矢量图层', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: 'label', type: btn }, // props 
+            Object.assign({}, {
+              name: '圆形矢量图层',
+              textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId,
+              label: 'label',
+            }, btn === 'DOUBLE_CIRCLE' ? { type: btn, child: id + 100 } : {}), // props 
             drawingStyle // style
           );
           gFirstFeatureLayer.addFeature(circleFeature);
@@ -204,7 +208,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             const circleFeature = new AILabel.Feature.Circle(
               id + 100, // id
               { ...data, r: data.r - (data.r > 40 ? 20 : (data.r / 2)) }, // data1代表屏幕坐标 shape
-              { name: '圆形矢量图层', deleteMarkerId: relatedDeleteMarkerId, }, // props 
+              { name: '圆形矢量图层', deleteMarkerId: relatedDeleteMarkerId, parent: id }, // props 
               drawingStyle // style
             );
             gFirstFeatureLayer.addFeature(circleFeature);
