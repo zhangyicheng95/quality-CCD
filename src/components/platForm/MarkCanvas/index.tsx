@@ -44,7 +44,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   const [loading, setLoading] = useState(false);
   const [selectedBtn, setSelectedBtn] = useState('RECT');
   const [featureList, setFeatureList] = useState({});
-  const [selectedFeature, setSelectedFeature] = useState('');
+  const [selectedFeature, setSelectedFeature] = useState(0);
   const [selectedOptionType, setSelectedOptionType] = useState({});
 
   useEffect(() => {
@@ -52,7 +52,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     // const width = dom?.clientWidth,
     // height = dom?.clientHeight;
     img = new Image();
-    img.src = localPath?.indexOf('http') === 0 ? localPath : `${BASE_IP}file${(localPath?.indexOf('\\') === 0 || localPath?.indexOf('/') === 0) ? '' : '\\'}${localPath}`;
+    if (process.env.NODE_ENV === 'development') {
+      img.src = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
+    } else {
+      img.src = localPath?.indexOf('http') === 0 ? localPath : `${BASE_IP}file${(localPath?.indexOf('\\') === 0 || localPath?.indexOf('/') === 0) ? '' : '\\'}${localPath}`;
+    }
     img.title = 'img.png';
     img.onload = (res: any) => {
       const { width = 1, height = 1 } = img;
@@ -74,19 +78,52 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       // 不同的标记功能
       gMap.events.on('drawDone', (type: any, data: any) => {
         console.log('--type, data--', type, data, gMap.zoom);
-        if (
-          Math.min(data.x, data.y) < 0 ||
-          (data.x + data.width) > width ||
-          (data.y + data.height) > height ||
-          Math.min(data?.start?.x, data?.end?.y) < 0 ||
-          data?.start?.x > width ||
-          data?.start?.y > height ||
-          data?.end?.x > width ||
-          data?.end?.y > height
-        ) {
-          message.warning('标注位置 不能超出图片范围！');
-          return;
-        }
+        let btn = '';
+        setSelectedBtn((prev: string) => {
+          btn = prev;
+          return prev;
+        });
+        // 判断有没有画出图形之外
+        if (type === 'RECT') {
+          if (
+            Math.min(data.x, data.y) < 0 ||
+            (data.x + data.width) > width ||
+            (data.y + data.height) > height
+          ) {
+            message.warning('标注位置 不能超出图片范围！');
+            return;
+          }
+        } else if (type === 'CIRCLE') {
+          if (
+            Math.min(data.cx - data.r, data.cy - data.r) < 0 ||
+            (data.cx + data.r) > width ||
+            (data.cy + data.r) > height
+          ) {
+            message.warning('标注位置 不能超出图片范围！');
+            return;
+          }
+        } else if (type === 'LINE') {
+          if (
+            Math.min(data?.start?.x, data?.start?.y) < 0 ||
+            Math.min(data?.end?.x, data?.end?.y) < 0 ||
+            data?.start?.x > width ||
+            data?.start?.y > height ||
+            data?.end?.x > width ||
+            data?.end?.y > height
+          ) {
+            message.warning('标注位置 不能超出图片范围！');
+            return;
+          }
+        } else if (type === 'POINT') {
+          if (
+            Math.min(data.x, data.y) < 0 ||
+            data.x > width ||
+            data.y > height
+          ) {
+            message.warning('标注位置 不能超出图片范围！');
+            return;
+          }
+        };
         setGetDataFun((prev: any) => ({ ...prev, zoom: gMap.zoom }));
         const relatedTextId = `label-text-id-${+new Date()}`;
         const relatedDeleteMarkerId = `label-marker-id-${+new Date()}`;
@@ -117,11 +154,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           const pointFeature = new AILabel.Feature.Point(
             `${+new Date()}`, // id
             { ...data, sr: 3 }, // shape
-            { name: '点状矢量图层', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: '瑕疵' }, // props
+            { name: '点状矢量图层', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: 'label' }, // props
             drawingStyle // style
           );
           gFirstFeatureLayer.addFeature(pointFeature);
-          addFeatureText(data, relatedTextId, '瑕疵');
+          addFeatureText({ x: data.x + 3, y: data.y - 3 }, relatedTextId, 'label');
         } else if (type === 'LINE') {
           const scale = gMap.getScale();
           const width = drawingStyle.lineWidth / scale;
@@ -151,15 +188,27 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           );
           gFirstFeatureLayer.addFeature(polylineFeature);
         } else if (type === 'CIRCLE') {
+          const id = +new Date();
           // data 代表r半径shape；data1代表sr半径shape
           const circleFeature = new AILabel.Feature.Circle(
-            `${+new Date()}`, // id
+            id, // id
             data, // data1代表屏幕坐标 shape
-            { name: '圆形矢量图层', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: 'label' }, // props 
+            { name: '圆形矢量图层', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: 'label', type: btn }, // props 
             drawingStyle // style
           );
           gFirstFeatureLayer.addFeature(circleFeature);
           addFeatureText({ x: data.cx - data.r, y: data.cy - data.r }, relatedTextId, 'label');
+
+          // 是圆环，手动添加内环
+          if (btn === 'DOUBLE_CIRCLE') {
+            const circleFeature = new AILabel.Feature.Circle(
+              id + 100, // id
+              { ...data, r: data.r - (data.r > 40 ? 20 : (data.r / 2)) }, // data1代表屏幕坐标 shape
+              { name: '圆形矢量图层', deleteMarkerId: relatedDeleteMarkerId, }, // props 
+              drawingStyle // style
+            );
+            gFirstFeatureLayer.addFeature(circleFeature);
+          }
         } else if (type === 'RECT') {
           const rectFeature = new AILabel.Feature.Rect(
             `${+new Date()}`, // id
@@ -214,7 +263,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       // 双击选中
       gMap.events.on('featureSelected', (feature: any) => {
         const { id, type, shape, props } = feature;
-
         if (type === 'LINE') {
           // 线段，把label显示为两点坐标
           let { start, end } = shape;
@@ -274,22 +322,75 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           gFirstTextLayer.removeTextById(textId);
           // 删除对应feature
           gFirstFeatureLayer.removeFeatureById(feature.id);
+
+          if (props.type === 'DOUBLE_CIRCLE') {
+            gFirstFeatureLayer.removeFeatureById(feature.id + 100);
+            gFirstFeatureLayer.removeFeatureById(feature.id - 100);
+          }
         });
 
         gMap.markerLayer.addMarker(gFirstMarker);
       });
       // 取消featureSelected
       gMap.events.on('featureUnselected', (feature: any) => {
-        const { props } = feature;
+        const { type, props, shape } = feature;
         gMap.setActiveFeature(null);
+        const textPosition = type === 'RECT' ? feature.getPoints()[0] :
+          type === 'CIRCLE' ? { x: shape.cx - shape.r, y: shape.cy - shape.r } :
+            type === 'POLYGON' ? shape.location :
+              type === 'LINE' ? shape.start :
+                type === 'POLYLINE' ? shape.points[0] :
+                  type === 'POINT' ? shape : {};
         const targetText = gFirstTextLayer.getTextById(props?.textId);
-        targetText?.updateText(!!props?.initParams?.option_type ? props?.initParams?.option_type?.value : 'label');
+        targetText?.updatePosition(textPosition);
         gMap.markerLayer.removeMarkerById(props.deleteMarkerId);
         onCancel();
       });
       // 圆形/矩形 框选更新
       gMap.events.on('featureUpdated', (feature: any, shape: any) => {
-        const { id, type } = feature;
+        const { id, props, type } = feature;
+        const data = shape;
+        // 判断有没有画出图形之外
+        if (type === 'RECT') {
+          if (
+            Math.min(data.x, data.y) < 0 ||
+            (data.x + data.width) > width ||
+            (data.y + data.height) > height
+          ) {
+            message.warning('标注位置 不能超出图片范围！');
+            return;
+          }
+        } else if (type === 'CIRCLE') {
+          if (
+            Math.min(data.cx - data.r, data.cy - data.r) < 0 ||
+            (data.cx + data.r) > width ||
+            (data.cy + data.r) > height
+          ) {
+            message.warning('标注位置 不能超出图片范围！');
+            return;
+          }
+        } else if (type === 'LINE') {
+          if (
+            Math.min(data?.start?.x, data?.start?.y) < 0 ||
+            Math.min(data?.end?.x, data?.end?.y) < 0 ||
+            data?.start?.x > width ||
+            data?.start?.y > height ||
+            data?.end?.x > width ||
+            data?.end?.y > height
+          ) {
+            message.warning('标注位置 不能超出图片范围！');
+            return;
+          }
+        } else if (type === 'POINT') {
+          if (
+            Math.min(data.x, data.y) < 0 ||
+            data.x > width ||
+            data.y > height
+          ) {
+            message.warning('标注位置 不能超出图片范围！');
+            return;
+          }
+        };
         feature.updateShape(shape);
         if (type === 'RECT') {
           setFeatureList((prev: any) => {
@@ -327,6 +428,35 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
               });
             }, {});
           });
+        } else {
+          setFeatureList((prev: any) => {
+            return {
+              ...prev,
+              [id]: {
+                ...prev?.[id],
+                roi: {
+                  realValue: Object.entries(shape).reduce((p: any, c: any) => {
+                    return Object.assign({}, p, {
+                      [c[0]]: { alias: c[0], value: c[1] }
+                    });
+                  }, {}),
+                  value: Object.entries(shape).reduce((p: any, c: any) => {
+                    return Object.assign({}, p, {
+                      [c[0]]: { alias: c[0], value: c[1] }
+                    });
+                  }, {})
+                },
+              },
+            }
+          });
+        }
+        if (props.type === 'DOUBLE_CIRCLE') {
+          const feature2 = gFirstFeatureLayer.getFeatureById(id + 100) || gFirstFeatureLayer.getFeatureById(id - 100);
+          const shape2 = {
+            ...shape,
+            r: feature2?.shape?.r,
+          };
+          feature2?.updateShape(shape2);
         }
         const markerId = feature.props.deleteMarkerId;
         const textId = feature.props.textId;
@@ -338,14 +468,14 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
               type === 'LINE' ? shape.start :
                 type === 'POLYLINE' ? shape.points[0] :
                   type === 'POINT' ? shape : {};
+        targetMarker.updatePosition(deleteMarkPosition);
+        // 更新text位置
         const textPosition = type === 'RECT' ? feature.getPoints()[0] :
           type === 'CIRCLE' ? { x: shape.cx - shape.r, y: shape.cy - shape.r } :
             type === 'POLYGON' ? shape.location :
               type === 'LINE' ? shape.start :
                 type === 'POLYLINE' ? shape.points[0] :
                   type === 'POINT' ? shape : {};
-        targetMarker.updatePosition(deleteMarkPosition);
-        // 更新text位置
         const targetText = gFirstTextLayer.getTextById(textId);
         targetText?.updatePosition(textPosition);
       });
@@ -416,18 +546,26 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           obj = Object.assign({}, obj, {
             [id]: {
               roi: {
-                realValue: {
+                realValue: type === 'RECT' ? {
                   x: { alias: "cx", value: shape.x + shape.width / 2 },
                   y: { alias: "cy", value: shape.y + shape.height / 2 },
                   width: { alias: "width", value: shape.width },
                   height: { alias: "height", value: shape.height }
-                },
-                value: {
+                } : type === 'CIRCLE' ? {
+                  cx: { alias: "cx", value: shape.cx },
+                  cy: { alias: "cy", value: shape.cy },
+                  r: { alias: "r", value: shape.r },
+                } : {},
+                value: type === 'RECT' ? {
                   x: { alias: "cx", value: shape.x },
                   y: { alias: "cy", value: shape.y },
                   width: { alias: "width", value: shape.width },
                   height: { alias: "height", value: shape.height }
-                },
+                } : type === 'CIRCLE' ? {
+                  cx: { alias: "cx", value: shape.cx },
+                  cy: { alias: "cy", value: shape.cy },
+                  r: { alias: "r", value: shape.r },
+                } : {},
               }, ...(props?.initParams)
             },
           });
@@ -551,7 +689,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   }
   function setMode(mode: any) {
     setSelectedBtn(mode);
-    gMap.setMode(mode);
+    if (mode === 'DOUBLE_CIRCLE') {
+      gMap.setMode('CIRCLE');
+    } else {
+      gMap.setMode(mode);
+    }
     // 后续对应模式处理
     switch (gMap.mode) {
       case 'PAN': {
@@ -563,6 +705,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       }
       case 'POINT': {
         drawingStyle = { fillStyle: '#9370DB' };
+        gMap.setDrawingStyle(drawingStyle);
+        break;
+      }
+      case 'DOUBLE_CIRCLE': {
+        drawingStyle = { fillStyle: '#9370DB', strokeStyle: '#F00', lineWidth: 2 };
         gMap.setDrawingStyle(drawingStyle);
         break;
       }
@@ -722,7 +869,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   }
   // 关闭
   const onCancel = () => {
-    setSelectedFeature('');
+    setSelectedFeature(0);
     setSelectedOptionType({});
     resetFields();
   };
@@ -739,21 +886,20 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           <Popover placement="right" content={"拾色器"} >
             <HighlightOutlined
               onClick={() => { open() }}
-              className={`img-icon flex-box-center ${selectedBtn === 'LINE' ? "selected" : ''}`}
+              className={`img-icon flex-box-center`}
             />
           </Popover>
           <StockOutlined
             onClick={() => { setMode('LINE') }}
             className={`img-icon flex-box-center ${selectedBtn === 'LINE' ? "selected" : ''}`}
           />
-          {/* <Popover placement="right" content={lineMenu} style={{ padding: 0 }}>
-            {
-              selectedBtn === 'LINE' ?
-                <img src={lineIcon} alt="line" className="selected" />
-                :
-                <img src={polyLineIcon} alt="poly-line" className={selectedBtn === 'POLYLINE' ? "selected" : ''} />
-            }
-          </Popover> */}
+          <div className={`img-icon flex-box-center ${selectedBtn === 'DOUBLE_CIRCLE' ? "selected" : ''}`}
+            onClick={() => { setMode('DOUBLE_CIRCLE') }}
+          >
+            <div className="img-icon-circle flex-box-center" >
+              <div className="img-icon-circle-inhert" />
+            </div>
+          </div>
           <div className={`img-icon flex-box-center ${selectedBtn === 'CIRCLE' ? "selected" : ''}`}
             onClick={() => { setMode('CIRCLE') }}
           >
@@ -763,40 +909,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             className={`img-icon flex-box-center ${selectedBtn === 'RECT' ? "selected" : ''}`}
             onClick={() => setMode('RECT')}
           />
-          {/* <Popover placement="right" content={rectMenu} >
-            {
-              selectedBtn === 'CIRCLE' ?
-                <img src={circleIcon} alt="circle" className="selected" />
-                :
-                selectedBtn === 'RECT' ?
-                  <img src={rectIcon} alt="RECT" className="selected" />
-                  :
-                  <img src={polygonIcon} alt="POLYGON" className={selectedBtn === 'POLYGON' ? "selected" : ''} />
-            }
-          </Popover> */}
           <AimOutlined
             className={`img-icon flex-box-center ${selectedBtn === 'POINT' ? "selected" : ''}`}
             onClick={() => setMode('POINT')}
           />
-          {/* <Popover placement="right" content={"画笔"} >
-            <img
-              src={maskIcon}
-              alt="mask"
-              className={selectedBtn === 'DRAWMASK' ? "selected" : ''}
-              onClick={() => setMode('DRAWMASK')}
-            />
-          </Popover> */}
         </div>
         <div className="center background-ubv">
-          {/* <img src={clearIcon} alt="cursor-default" onClick={() => setMode('POINT')} /> */}
-          {/* <Popover placement="right" content={"橡皮擦"} >
-            <img
-              src={clearMaskIcon}
-              alt="mask"
-              className={selectedBtn === 'CLEARMASK' ? "selected" : ''}
-              onClick={() => setMode('CLEARMASK')}
-            />
-          </Popover> */}
           <Icon
             component={() => <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="983" width="200" height="200">
               <path d="M607.274667 612.992l88.661333 190.122667a21.333333 21.333333 0 0 1-10.325333 28.373333l-77.312 36.053333a21.333333 21.333333 0 0 1-28.373334-10.325333l-90.666666-194.474667-111.488 111.488A21.333333 21.333333 0 0 1 341.333333 759.168V218.88a21.333333 21.333333 0 0 1 35.669334-15.786667l397.056 360.96a21.333333 21.333333 0 0 1-12.714667 37.077334l-154.069333 11.861333z" fill="#000000" p-id="984">
@@ -882,68 +1000,109 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                   }
                   {
                     _.isEmpty(selectedOptionType) ?
-                      (!!featureList[selectedFeature] ?
-                        Object.entries(featureList[selectedFeature])?.map((item: any) => {
-                          if (item[0] === '找线方向') return null;
-                          if (item[0] === 'roi') {
-                            let value = {};
-                            if (_.isObject(item[1]?.realValue) && !_.isEmpty(item[1].realValue)) {
-                              if (!!item[1]?.realValue?.x && !!item[1]?.realValue?.width) {
-                                // 矩形
-                                value = {
-                                  ...item[1].realValue,
-                                  x: {
-                                    alias: "cx",
-                                    value: item[1].realValue?.x?.value
-                                  },
-                                  y: {
-                                    alias: "cy",
-                                    value: item[1].realValue?.y?.value
-                                  }
-                                }
-                              } else if (!!item[1]?.realValue?.x2) {
-                                // 线
-                                value = {
-                                  "x1": { alias: "起点x", value: item[1]?.realValue?.x1?.value },
-                                  "y1": { alias: "起点y", value: item[1]?.realValue?.y1?.value },
-                                  "x2": { alias: "终点x", value: item[1]?.realValue?.x2?.value },
-                                  "y2": { alias: "终点y", value: item[1]?.realValue?.y2?.value }
-                                };
-                              } else {
-                                value = Object.entries(_.omit(item[1], "value")).reduce((pre: any, cen: any) => {
-                                  return Object.assign({}, pre, {
-                                    [cen[0]]: {
-                                      alias: cen[0],
-                                      value: cen[1]
+                      (
+                        !!featureList[selectedFeature] ?
+                          Object.entries(featureList[selectedFeature])?.map((item: any) => {
+                            if (item[0] === '找线方向') return null;
+                            if (item[0] === 'roi') {
+                              let value = {};
+                              if (_.isObject(item[1]?.realValue) && !_.isEmpty(item[1].realValue)) {
+                                if (!!item[1]?.realValue?.x && !!item[1]?.realValue?.width) {
+                                  // 矩形
+                                  value = {
+                                    ...item[1].realValue,
+                                    x: {
+                                      alias: "cx",
+                                      value: item[1].realValue?.x?.value
+                                    },
+                                    y: {
+                                      alias: "cy",
+                                      value: item[1].realValue?.y?.value
                                     }
-                                  });
-                                }, {});
+                                  }
+                                } else if (!!item[1]?.realValue?.x2) {
+                                  // 线
+                                  value = {
+                                    "x1": { alias: "起点x", value: item[1]?.realValue?.x1?.value },
+                                    "y1": { alias: "起点y", value: item[1]?.realValue?.y1?.value },
+                                    "x2": { alias: "终点x", value: item[1]?.realValue?.x2?.value },
+                                    "y2": { alias: "终点y", value: item[1]?.realValue?.y2?.value }
+                                  };
+                                } else if (!!item[1]?.realValue?.cx && !!item[1]?.realValue?.r) {
+                                  // 圆
+                                  value = {
+                                    ...item[1].realValue
+                                  };
+                                  // 圆环
+                                  if (feature?.props?.type === "DOUBLE_CIRCLE") {
+                                    const feature2 = gFirstFeatureLayer.getFeatureById(feature?.id + 100) || gFirstFeatureLayer.getFeatureById(feature?.id - 100);
+                                    value = {
+                                      ...value,
+                                      "r2": {
+                                        alias: "r2",
+                                        value: feature2?.shape?.r
+                                      }
+                                    }
+                                  }
+                                } else {
+                                  value = Object.entries(_.omit(item[1], "value")).reduce((pre: any, cen: any) => {
+                                    return Object.assign({}, pre, {
+                                      [cen[0]]: {
+                                        alias: cen[0],
+                                        value: cen[1]
+                                      }
+                                    });
+                                  }, {});
+                                }
                               }
+                              return <Form.Item
+                                name={`${item[0]}$$${guid()}`}
+                                label={"位置信息"}
+                                initialValue={value || {
+                                  num_0: { alias: 'num_0', value: undefined },
+                                  num_1: { alias: 'num_1', value: undefined },
+                                  num_2: { alias: 'num_2', value: undefined },
+                                  num_3: { alias: 'num_3', value: undefined },
+                                }}
+                                rules={[{ required: true, message: "位置信息" }]}
+                              >
+                                <Measurement />
+                              </Form.Item>
                             }
-                            return <Form.Item
-                              name={`${item[0]}$$${guid()}`}
-                              label={"位置信息"}
-                              initialValue={value || {
-                                num_0: { alias: 'num_0', value: undefined },
-                                num_1: { alias: 'num_1', value: undefined },
-                                num_2: { alias: 'num_2', value: undefined },
-                                num_3: { alias: 'num_3', value: undefined },
-                              }}
-                              rules={[{ required: true, message: "位置信息" }]}
-                            >
-                              <Measurement />
-                            </Form.Item>
-                          }
-                          return <FormatWidgetToDom
-                            key={item[0]}
-                            id={item[0]}
-                            label={item?.[1]?.alias || item[0]}
-                            config={item}
-                            form={form}
-                            disabled={false}
-                          />
-                        })
-                        : null)
+                            return <FormatWidgetToDom
+                              key={item[0]}
+                              id={item[0]}
+                              label={item?.[1]?.alias || item[0]}
+                              config={item}
+                              form={form}
+                              disabled={false}
+                            />
+                          })
+                          :
+                          <Form.Item
+                            name={`roi$$${guid()}`}
+                            label={"位置信息"}
+                            initialValue={Object.assign({},
+                              Object.entries(feature?.shape || {}).reduce((pre: any, cen: any) => {
+                                return Object.assign({}, pre, {
+                                  [cen[0]]: {
+                                    alias: cen[0],
+                                    value: cen[1]
+                                  }
+                                });
+                              }, {}),
+                              feature?.props?.type === "DOUBLE_CIRCLE" ? {
+                                "r2": {
+                                  alias: "r2",
+                                  value: gFirstFeatureLayer?.getFeatureById?.(feature?.id + 100)?.shape?.r || gFirstFeatureLayer?.getFeatureById?.(feature?.id - 100)?.shape?.r
+                                }
+                              } : {}
+                            )}
+                            rules={[{ required: true, message: "位置信息" }]}
+                          >
+                            <Measurement />
+                          </Form.Item>
+                      )
                       :
                       Object.entries(selectedOptionType)?.map((item: any) => {
                         if (item[0] === '找线方向') return null;
@@ -978,6 +1137,23 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                 "x2": { alias: "终点x", value: item[1]?.end?.x },
                                 "y2": { alias: "终点y", value: item[1]?.end?.y }
                               };
+                            } else if (!!item[1]?.cx && !!item[1]?.r) {
+                              // 圆
+                              value = {
+                                "cx": { alias: "cx", value: item[1].cx },
+                                "cy": { alias: "cy", value: item[1].cy },
+                                "r": { alias: "r", value: item[1].r },
+                              };
+                              if (feature?.props?.type === "DOUBLE_CIRCLE") {
+                                const feature2 = gFirstFeatureLayer.getFeatureById(feature?.id + 100) || gFirstFeatureLayer.getFeatureById(feature?.id - 100);
+                                value = {
+                                  ...value,
+                                  "r2": {
+                                    alias: "r2",
+                                    value: feature2?.shape?.r
+                                  }
+                                }
+                              }
                             } else {
                               value = Object.entries(_.omit(item[1], "value")).reduce((pre: any, cen: any) => {
                                 return Object.assign({}, pre, {
@@ -1052,7 +1228,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                               let { value: val, } = value[cen[0]];
                               // realValue：没旋转的 中心点x,y
                               let realValue = val;
-
                               // 矩形
                               if (val?.x && val?.height) {
                                 val = {
@@ -1089,6 +1264,24 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                   gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
                                 }
                                 /****************通过roi更新图层******************/
+                              } else if (val?.cx && val?.r) {
+                                // 圆
+                                const shape1 = {
+                                  cx: val?.cx?.value,
+                                  cy: val?.cy?.value,
+                                  r: val?.r?.value,
+                                };
+                                feature.updateShape(shape1);
+                                if (val.r2) {
+                                  // 圆环
+                                  const feature2 = gFirstFeatureLayer.getFeatureById(selectedFeature + 100) || gFirstFeatureLayer.getFeatureById(selectedFeature - 100);
+                                  const shape2 = {
+                                    cx: val?.cx?.value,
+                                    cy: val?.cy?.value,
+                                    r: val?.r2?.value,
+                                  };
+                                  feature2?.updateShape(shape2);
+                                }
                               };
 
                               return Object.assign({}, pre, {
