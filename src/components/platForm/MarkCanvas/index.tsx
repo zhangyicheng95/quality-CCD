@@ -1212,16 +1212,18 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           [key[0]]: item
                         })
                       }, {});
-                      // 更新text
-                      const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
-                      if (targetText) {
-                        targetText?.updateText(value?.['option_type']?.value);
-                      } else {
-                        const { id, shape, props, style, type } = feature;
-                        gFirstFeatureLayer.removeFeatureById(id);
-                        gFirstTextLayer.removeTextById(props?.textId);
-                        addFeature(type, id, shape, { ...props, label: value?.['option_type']?.value }, style);
-                      };
+                      if (value?.['option_type']?.value) {
+                        // 更新text
+                        const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
+                        if (targetText) {
+                          targetText?.updateText(value?.['option_type']?.value);
+                        } else {
+                          const { id, shape, props, style, type } = feature;
+                          gFirstFeatureLayer.removeFeatureById(id);
+                          gFirstTextLayer.removeTextById(props?.textId);
+                          addFeature(type, id, shape, { ...props, label: value?.['option_type']?.value }, style);
+                        };
+                      }
                       const range = value?.['旋转角度']?.value;
                       if (value?.['roi']?.value?.cx && value?.['roi']?.value?.r) {
                         const val = value?.['roi']?.value;

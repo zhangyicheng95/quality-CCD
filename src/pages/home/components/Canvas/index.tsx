@@ -69,6 +69,7 @@ import { windowTypeList, } from '@/common/constants/globalConstants';
 import LogPreviewModal from './components/LogPreviewModal';
 import { guid } from '@/utils/utils';
 import DescriptionCharts from './components/DescriptionCharts';
+import moment from 'moment';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -100,6 +101,12 @@ const Home: React.FC<any> = (props: any) => {
   const [addItemsVisible, setAddItemsVisible] = useState(false);
   const [myChartVisible, setMyChartVisible] = useState<any>(null);
   const [logDataVisible, setLogDataVisible] = useState('');
+  const [homeSettingVisible, setHomeSettingVisible] = useState('');
+  const [homeSettingData, setHomeSettingData] = useState({
+    log: { fontSize: 14 },
+    error: { fontSize: 20 },
+    "slider-4": { fontSize: 20 },
+  });
   const [basicInfoData, setBasicInfoData] = useState<any>([]);
   const [pageIconPosition, setPageIconPosition] = useState<any>({
     position: { bottom: 16, right: 16 },
@@ -334,7 +341,8 @@ const Home: React.FC<any> = (props: any) => {
                         ...paramData,
                         contentData: {
                           ...paramData?.contentData,
-                          pageIconPosition
+                          pageIconPosition,
+                          homeSetting: homeSettingData
                         }
                       },
                     }).then((res: any) => {
@@ -591,6 +599,15 @@ const Home: React.FC<any> = (props: any) => {
                         })
                       }}
                     />
+                    <div
+                      className='common-btn'
+                      onClick={() => {
+                        setFieldsValue({ fontSize: homeSettingData?.['slider-4']?.fontSize || 20 });
+                        setHomeSettingVisible('slider-4');
+                      }}
+                    >
+                      编辑
+                    </div>
                     <Popconfirm
                       title="确认删除 方案列表 窗口吗?"
                       onConfirm={() => {
@@ -624,8 +641,10 @@ const Home: React.FC<any> = (props: any) => {
             </div>
             : null
         }
-        <div className={`info-box-content tabs-box`} style={(ifCanEdit || paramData?.contentData?.contentHeader?.['slider-4']) ? {} : {
-          display: 'flex', alignItems: 'center', padding: '0 8px'
+        <div className={`info-box-content tabs-box`} style={{
+          ...homeSettingData?.['slider-4'],
+          ...(ifCanEdit || paramData?.contentData?.contentHeader?.['slider-4']) ?
+            {} : { display: 'flex', alignItems: 'center', padding: '0 8px' }
         }}>
           <div
             className={`flex-box-center tabs-box-item-box ${gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 20 ? 'tabs-box-item-box-rows' : ''}`}
@@ -709,6 +728,15 @@ const Home: React.FC<any> = (props: any) => {
                         })
                       }}
                     />
+                    <div
+                      className='common-btn'
+                      onClick={() => {
+                        setFieldsValue({ fontSize: homeSettingData?.['log']?.fontSize || 14 });
+                        setHomeSettingVisible('log');
+                      }}
+                    >
+                      编辑
+                    </div>
                     <Popconfirm
                       title="确认删除 日志信息 窗口吗?"
                       onConfirm={() => {
@@ -746,9 +774,10 @@ const Home: React.FC<any> = (props: any) => {
         <div className="card-body-box">
           <div
             className="content-item-span"
+            style={homeSettingData['log']}
             dangerouslySetInnerHTML={{
               // 此处需要处理
-              __html: _.isString(logStr) ? logStr : logStr.join('<br/>'),
+              __html: _.isString(logStr) ? logStr : logStr.join('<br />'),
             }}
           />
           <div className="preview-box flex-box-center">
@@ -786,6 +815,15 @@ const Home: React.FC<any> = (props: any) => {
                         })
                       }}
                     />
+                    <div
+                      className='common-btn'
+                      onClick={() => {
+                        setFieldsValue({ fontSize: homeSettingData?.['error']?.fontSize || 20 });
+                        setHomeSettingVisible('error');
+                      }}
+                    >
+                      编辑
+                    </div>
                     <Popconfirm
                       title="确认删除 错误信息 窗口吗?"
                       onConfirm={() => {
@@ -819,29 +857,29 @@ const Home: React.FC<any> = (props: any) => {
             </div>
             : null
         }
-        <div className="content-item-span card-body-box">
-          {/* <BasicScrollBar data={errorData}> */}
-          {errorData?.map((log: any, index: number) => {
-            const { color, node_name, nid, message, time } = log;
-            return (
-              <div className="log-item flex-box-start" key={index}>
-                <div className="log-item-content">
-                  <div className="content-item">
-                    <span>{time}&nbsp;</span>
-                    &nbsp;
-                    <div
-                      className="content-item-span"
-                      style={{ color }}
-                      dangerouslySetInnerHTML={{
-                        __html: `节点${node_name || ''}（${nid || ''}）${message}`,
-                      }}
-                    />
+        <div className=" card-body-box">
+          <div className="content-item-span">
+            {errorData?.map((log: any, index: number) => {
+              const { color, node_name, nid, message, time } = log;
+              return (
+                <div className="log-item flex-box-start" key={index}>
+                  <div className="log-item-content">
+                    <div className="content-item" style={homeSettingData['error']}>
+                      <span>{time || moment().format('YYYY-MM-DD HH:mm:ss')}&nbsp;</span>
+                      &nbsp;
+                      <div
+                        className="content-item-span"
+                        style={{ color, fontSize: 'inherit' }}
+                        dangerouslySetInnerHTML={{
+                          __html: `节点${node_name || ''}（${nid || ''}）${message}`,
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-          {/* </BasicScrollBar> */}
+              );
+            })}
+          </div>
           <div className="preview-box flex-box-center">
             <CompressOutlined className='preview-icon' onClick={() => {
               setLogDataVisible('error');
@@ -852,7 +890,7 @@ const Home: React.FC<any> = (props: any) => {
     </div>,
   ]), [
     isVision, started, taskDataConnect, loading, paramData,
-    logStr, footerData, errorData, pageIconPosition
+    logStr, footerData, errorData, pageIconPosition, homeSettingData
   ]);
   // 保存布局状态
   const saveGridFunc = (data: any) => {
@@ -930,14 +968,21 @@ const Home: React.FC<any> = (props: any) => {
   useEffect(() => {
     if (!ipString || _.isEmpty(paramsData)) return;
     const { flowData, contentData = {} } = paramsData;
-    const { home = [
-      { "i": "slider-1", "x": 0, "y": 0, "w": 7, "h": 8, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
-      { "i": "slider-2", "x": 0, "y": 8, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
-      { "i": "slider-3", "x": 0, "y": 0, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
-      { "i": "slider-4", "x": 7, "y": 0, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
-      { "i": "footer-1", "x": 7, "y": 8, "w": 89, "h": 20, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
-      { "i": "footer-2", "x": 7, "y": 0, "w": 89, "h": 8, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }
-    ], content = {}, footerSelectList, contentHeader = {}, pageIconPosition } = contentData;
+    const {
+      home = [
+        { "i": "slider-1", "x": 0, "y": 0, "w": 7, "h": 8, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
+        { "i": "slider-2", "x": 0, "y": 8, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
+        { "i": "slider-3", "x": 0, "y": 0, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
+        { "i": "slider-4", "x": 7, "y": 0, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
+        { "i": "footer-1", "x": 7, "y": 8, "w": 89, "h": 20, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
+        { "i": "footer-2", "x": 7, "y": 0, "w": 89, "h": 8, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }
+      ],
+      content = {}, footerSelectList, contentHeader = {}, pageIconPosition,
+      homeSetting = {
+        log: { fontSize: 14 },
+        error: { fontSize: 20 },
+      }
+    } = contentData;
     const { nodes } = flowData;
     const list = nodes?.map((node: any) => {
       const { name, alias, id, ports = {} } = node;
@@ -962,6 +1007,7 @@ const Home: React.FC<any> = (props: any) => {
     setNodeList(list);
     setFooterSelectList(footerSelectList || []);
     setGridHomeList(home);
+    setHomeSettingData(homeSetting);
     setPageIconPosition(pageIconPosition || {});
     let newParams = paramsData;
     if (!_.isObject(contentHeader) || _.isEmpty(contentHeader)) {
@@ -2337,6 +2383,41 @@ const Home: React.FC<any> = (props: any) => {
                   labelInValue
                   options={projectStatus}
                   placeholder="方案ID"
+                />
+              </Form.Item>
+
+            </Form>
+          </Modal>
+          : null
+      }
+      {
+        // home 设置字号
+        !!homeSettingVisible ?
+          <Modal
+            title={`基础组件编辑窗口`}
+            wrapClassName="history-window-modal"
+            centered
+            open={!!homeSettingVisible}
+            // maskClosable={false}
+            destroyOnClose
+            onOk={() => {
+              validateFields().then(values => {
+                setHomeSettingData((prev: any) => ({ ...prev, [homeSettingVisible]: { ...prev?.[homeSettingVisible], ...values } }));
+                setHomeSettingVisible('');
+                form.resetFields();
+              });
+            }}
+            onCancel={() => setHomeSettingVisible('')}
+            getContainer={false}
+          >
+            <Form form={form} scrollToFirstError initialValues={homeSettingData[homeSettingVisible]}>
+              <Form.Item
+                name={'fontSize'}
+                label="字号"
+                rules={[{ required: true, message: '字号' }]}
+              >
+                <InputNumber
+                  min={12}
                 />
               </Form.Item>
 
