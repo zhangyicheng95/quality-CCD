@@ -207,7 +207,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           if (btn === 'DOUBLE_CIRCLE') {
             const circleFeature = new AILabel.Feature.Circle(
               id + 100, // id
-              { ...data, r: data.r - (data.r > 40 ? 20 : (data.r / 2)) }, // data1代表屏幕坐标 shape
+              { ...data, r: data.r / 2 }, // data1代表屏幕坐标 shape
               { name: '圆形矢量图层', deleteMarkerId: relatedDeleteMarkerId, parent: id }, // props 
               drawingStyle // style
             );
