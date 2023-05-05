@@ -14,7 +14,9 @@ interface Props {
 const ImgCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
     let { dataValue, windowControl, setContentList } = data;
-    // dataValue = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
+    if (process.env.NODE_ENV === 'development') {
+        dataValue = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
+    }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const [fontSize, setFontSize] = useState(1);
@@ -35,7 +37,9 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         };
     }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight]);
     useEffect(() => {
+        const size = 4;
         const eventDom: any = dom.current.querySelector('.ant-image-mask');
+        const ImageDom: any = dom.current.querySelector('.ant-image-img');
         const mask: any = dom?.current?.querySelector('.mask');
         if (!eventDom) return;
         eventDom.onmousemove = function (event: any) {
@@ -43,8 +47,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             // offsetWidth 除了外边距(margin)以外，所有的宽度(高度)之和
             const { pageX = 0, pageY = 0, offsetX = 0, offsetY = 0 } = event;
             // let { clientWidth: bodyWidth, clientHeight: bodyHeight } = document.body;
-            let { clientWidth: boxWidth, clientHeight: boxHeight } = eventDom;
-            boxHeight = boxWidth / fontSize;
+            let { clientWidth: boxWidth, clientHeight: boxHeight } = ImageDom;
 
             let left = offsetX - mask?.offsetWidth / 2;
             // offsetY：鼠标坐标到元素的顶部的距离
@@ -65,10 +68,10 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             mask.style['top'] = top + "px";
             if (fontSize > 1) {
                 // 图片比较宽
-                mask.style['height'] = 12.5 / fontSize + "%";
+                mask.style['height'] = 50 / size / fontSize + "%";
             } else {
                 // 图片比较高
-                mask.style['width'] = 12.5 * fontSize + "%";
+                mask.style['width'] = 50 / size * fontSize + "%";
             }
             let bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
             let imgDom: any = document.getElementById(`img-charts-bigImg-${id}`);
@@ -79,56 +82,23 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                 imgDom = document.createElement('img');
                 imgDom.id = `img-charts-bigImg-${id}`;
                 imgDom.src = dataValue;
-                imgDom.style.width =
-                    bigDom.appendChild(imgDom);
+                bigDom.appendChild(imgDom);
             } else {
                 imgDom.src = dataValue;
                 bigDom.style.display = 'block';
             }
 
             // 放大镜大小
-            let bigWidth = boxWidth,
-                bigHeight = boxHeight,
-                scale = 1,
-                maxSize = 400;
-            if (boxWidth > maxSize) {
-                if (boxHeight > maxSize) {
-                    if (((maxSize) / boxWidth) <= ((maxSize) / boxHeight)) {
-                        scale = (maxSize) / boxWidth;
-                        bigWidth = maxSize;
-                        bigHeight = boxHeight * scale;
-                    } else {
-                        scale = (maxSize) / boxHeight;
-                        bigWidth = boxWidth * scale;
-                        bigHeight = maxSize;
-                    }
-                } else {
-                    scale = (maxSize) / boxWidth;
-                    bigWidth = maxSize;
-                    bigHeight = boxHeight * scale;
-                }
-            } else if (boxHeight > maxSize) {
-                scale = (maxSize) / boxHeight;
-                bigWidth = boxWidth * scale;
-                bigHeight = maxSize;
-            }
+            let bigWidth = mask.clientWidth * size,
+                bigHeight = mask.clientHeight * size;
+
             bigDom.style['width'] = bigWidth + "px";
             bigDom.style['height'] = bigHeight + "px";
-            const scaleSize = (fontSize > 1 ? (boxWidth / bigWidth) : (boxHeight / bigHeight));
             // 放大镜中的图片位置，与css中width：200%，height：200%相对应，建议以后放大倍数为2n
-            imgDom.style['left'] = -4 * left + "px";
-            imgDom.style['top'] = -4 * top + "px";
-            if (fontSize > 1) {
-                // 图片比较宽
-                imgDom.style['width'] = boxWidth * 4 + 'px';
-                imgDom.style['max-width'] = boxWidth * 4 + 'px';
-                imgDom.style['height'] = 'auto';
-            } else {
-                // 图片比较高
-                imgDom.style['height'] = boxHeight * 4 + 'px';
-                imgDom.style['max-height'] = boxHeight * 4 + 'px';
-                imgDom.style['width'] = 'auto';
-            }
+            imgDom.style['width'] = boxWidth * size + "px";
+            imgDom.style['height'] = boxHeight * size + "px";
+            imgDom.style['left'] = -1 * size * left + "px";
+            imgDom.style['top'] = -1 * size * top + "px";
             // 放大镜的位置
             const offset = 20;
             if ((offsetX > boxWidth / 2) && (offsetY < boxHeight / 2)) {

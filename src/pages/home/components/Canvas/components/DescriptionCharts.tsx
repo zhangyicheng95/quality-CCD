@@ -38,6 +38,7 @@ const DescriptionCharts: React.FC<Props> = (props: any) => {
                     column={des_column || 2}
                     layout={des_layout || 'horizontal'}
                     size={des_size || 'default'}
+                    style={{ height: '100%', overflowY: 'auto' }}
                 >
                     {
                         basicInfoData.concat(dataValue).map((item: any, index: number) => {
