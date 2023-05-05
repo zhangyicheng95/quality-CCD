@@ -104,9 +104,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                     : {}
                             )}
                         >
-                            <div className="charts-header-item-title flex-box-center">
+                            <TooltipDiv title={name} className="charts-header-item-title">
                                 {name}
-                            </div>
+                            </TooltipDiv>
                             {
                                 (index + 1) === dataValue?.length ? null :
                                     <div

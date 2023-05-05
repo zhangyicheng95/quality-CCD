@@ -27,12 +27,12 @@ const TableCharts: React.FC<Props> = (props: any) => {
     return (
         <div id={`echart-${id}`} className={styles.tableCharts} style={{ fontSize }}>
             <div className="charts-header-box flex-box">
-                <div className="charts-header-item flex-box-center">
+                <TooltipDiv title={yName} className="charts-header-item">
                     {yName}
-                </div>
-                <div className="charts-header-item flex-box-center">
+                </TooltipDiv>
+                <TooltipDiv title={xName} className="charts-header-item">
                     {xName}
-                </div>
+                </TooltipDiv>
             </div>
             <div className="charts-body-box">
                 {
