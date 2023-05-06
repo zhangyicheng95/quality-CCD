@@ -119,8 +119,13 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                 bigDom.style['top'] = pageY - offset - bigHeight + "px";
             }
         }
-        // 4.鼠标松开事件
+        // 4.鼠标离开事件
         eventDom.onmouseleave = function (ev: any) {
+            const bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
+            bigDom.style.display = 'none';
+        }
+        const domBox = dom.current.querySelector('.img-box');
+        domBox.onmouseleave = function (ev: any) {
             const bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
             bigDom.style.display = 'none';
         }
