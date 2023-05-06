@@ -66,13 +66,13 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             // 遮罩层
             mask.style['left'] = left + "px";
             mask.style['top'] = top + "px";
-            if (fontSize > 1) {
-                // 图片比较宽
-                mask.style['height'] = 50 / size / fontSize + "%";
-            } else {
-                // 图片比较高
-                mask.style['width'] = 50 / size * fontSize + "%";
-            }
+            // if (fontSize > 1) {
+            //     // 图片比较宽
+            //     mask.style['height'] = 50 / size / fontSize + "%";
+            // } else {
+            //     // 图片比较高
+            //     mask.style['width'] = 50 / size * fontSize + "%";
+            // }
             let bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
             let imgDom: any = document.getElementById(`img-charts-bigImg-${id}`);
             if (!imgDom) {
