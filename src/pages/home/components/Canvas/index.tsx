@@ -106,6 +106,7 @@ const Home: React.FC<any> = (props: any) => {
     log: { fontSize: 14 },
     error: { fontSize: 20 },
     "slider-4": { fontSize: 20 },
+    "slider-1": { des_column: 1 }
   });
   const [basicInfoData, setBasicInfoData] = useState<any>([]);
   const [pageIconPosition, setPageIconPosition] = useState<any>({
@@ -143,7 +144,18 @@ const Home: React.FC<any> = (props: any) => {
           <div className="flex-box common-card-title">
             当前状态：
             {
-              ifCanEdit ? null
+              ifCanEdit ?
+                <div className="flex-box drag-item-btn-box">
+                  <div
+                    className='common-btn'
+                    onClick={() => {
+                      setFieldsValue({ des_column: homeSettingData?.['slider-1']?.des_column || 2 });
+                      setHomeSettingVisible('slider-1');
+                    }}
+                  >
+                    编辑
+                  </div>
+                </div>
                 :
                 isVision ?
                   <Tooltip title={'服务已连接'} placement={'bottom'}>
@@ -181,7 +193,7 @@ const Home: React.FC<any> = (props: any) => {
               : null
           } */}
         </div>
-        <div className={`btn-box-bottom flex-box`} style={{ flexWrap: 'wrap' }}>
+        <div className={`btn-box-bottom flex-box`}>
           {
             ifCanEdit ?
               <Fragment>
@@ -324,6 +336,7 @@ const Home: React.FC<any> = (props: any) => {
                 >
                   <Button
                     className="flex-box btn"
+                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 2)}%` }}
                     icon={<PlusCircleOutlined className="btn-icon" />}
                     type="text"
                   >
@@ -332,6 +345,7 @@ const Home: React.FC<any> = (props: any) => {
                 </Popover>
                 <Button
                   className="flex-box btn"
+                  style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 2)}%` }}
                   icon={<SafetyOutlined className="btn-icon" />}
                   type="link"
                   onClick={() => {
@@ -376,6 +390,7 @@ const Home: React.FC<any> = (props: any) => {
                 <Fragment>
                   <Button
                     className="flex-box btn"
+                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 2)}%` }}
                     icon={
                       started ? (
                         <div style={{ height: 30, width: 30, marginRight: 8 }}>
@@ -390,10 +405,11 @@ const Home: React.FC<any> = (props: any) => {
                     disabled={started}
                     loading={!started && loading}
                   >
-                    {started ? '检测中' : '启动'}
+                    {started ? '检测' : '启动'}
                   </Button>
                   <Button
                     className="flex-box btn"
+                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 2)}%` }}
                     danger
                     icon={<div className="btn-icon btn-self-icon flex-box-center" >
                       <div className={`btn-self-icon-rect ${started ? 'active' : 'disabled'}`} />
@@ -408,6 +424,7 @@ const Home: React.FC<any> = (props: any) => {
                   {process.env.NODE_ENV === 'development' ? (
                     <Button
                       className="flex-box btn"
+                      style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 2)}%` }}
                       icon={<AndroidOutlined className="btn-icon" />}
                       type="link"
                       onClick={() => touchFlowService()}
@@ -2411,16 +2428,25 @@ const Home: React.FC<any> = (props: any) => {
             getContainer={false}
           >
             <Form form={form} scrollToFirstError initialValues={homeSettingData[homeSettingVisible]}>
-              <Form.Item
-                name={'fontSize'}
-                label="字号"
-                rules={[{ required: true, message: '字号' }]}
-              >
-                <InputNumber
-                  min={12}
-                />
-              </Form.Item>
-
+              {
+                homeSettingVisible === 'slider-1' ?
+                  <Form.Item
+                    name="des_column"
+                    label="列数"
+                  >
+                    <InputNumber />
+                  </Form.Item>
+                  :
+                  <Form.Item
+                    name={'fontSize'}
+                    label="字号"
+                    rules={[{ required: true, message: '字号' }]}
+                  >
+                    <InputNumber
+                      min={12}
+                    />
+                  </Form.Item>
+              }
             </Form>
           </Modal>
           : null
