@@ -44,7 +44,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
             const { clientWidth } = chartsBox;
             const tableSizes = !_.isArray(tableSize) ? _.cloneDeep(tableSize) : [];
 
-            if (!!tableSizes.length) {
+            if (!!tableSizes?.length) {
                 tableSizes[index] = (width / clientWidth * 100) + '%';
             } else {
                 dataValue.forEach((item: any, ind: number) => {
@@ -150,7 +150,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                             return <TooltipDiv
                                                 className="charts-body-td"
                                                 key={`echart-${id}-tr-td-${sIndex}`}
-                                                title={value.length > 15 ? value : ''}
+                                                title={value?.length > 15 ? value : ''}
                                                 style={!!color ? { color } : {}}
                                             >
                                                 {value}
@@ -159,7 +159,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                         return <TooltipDiv
                                             className="charts-body-td"
                                             key={`echart-${id}-tr-td-${sIndex}`}
-                                            title={val.length > 15 ? val : ''}
+                                            title={val?.length > 15 ? val : ''}
                                         >
                                             {val}
                                         </TooltipDiv>
