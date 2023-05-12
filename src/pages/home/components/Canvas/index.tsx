@@ -907,7 +907,8 @@ const Home: React.FC<any> = (props: any) => {
     </div>,
   ]), [
     isVision, started, taskDataConnect, loading, paramData,
-    logStr, footerData, errorData, pageIconPosition, homeSettingData
+    logStr, footerData, errorData, pageIconPosition, homeSettingData,
+    localStorage.getItem('ipList')
   ]);
   // 保存布局状态
   const saveGridFunc = (data: any) => {
@@ -2363,13 +2364,13 @@ const Home: React.FC<any> = (props: any) => {
           : null
       }
       {
-        addItemsVisible ?
+        !!addItemsVisible ?
           <Modal
             title={`添加方案窗口`}
             wrapClassName="history-window-modal"
             centered
             width="50vw"
-            open={addItemsVisible}
+            open={!!addItemsVisible}
             // maskClosable={false}
             onOk={() => {
               validateFields().then(values => {
