@@ -16,6 +16,12 @@ interface Props {
 const Table2Charts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
     let { dataValue = [], fontSize, reverse, tableSize = [] } = data;
+    if (process.env.NODE_ENV === 'development') {
+        dataValue = [
+            { "name": "序号", "value": [{ "value": "value1", "color": "red" }, { "value": "value2", "color": "red" }, { "value": "value1", "color": "red" }], "color": "red" },
+            { "name": "创建时间", "value": [{ "value": "value1", "color": "red" }, { "value": "value2", "color": "red" }, { "value": "value1", "color": "red" }] }
+        ];
+    }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const [tableSizeSelf, setTableSizeSelf] = useState(tableSize);

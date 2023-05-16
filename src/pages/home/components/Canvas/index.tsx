@@ -2115,7 +2115,7 @@ const Home: React.FC<any> = (props: any) => {
                     rules={[{ required: true, message: '字体大小' }]}
                     initialValue={24}
                   >
-                    <InputNumber />
+                    <InputNumber min={12} />
                   </Form.Item>
                   <Form.Item
                     name={`reverse`}
@@ -2288,7 +2288,7 @@ const Home: React.FC<any> = (props: any) => {
                     rules={[{ required: true, message: '字体大小' }]}
                     initialValue={24}
                   >
-                    <InputNumber />
+                    <InputNumber min={12} />
                   </Form.Item>
                   <Form.Item
                     name="des_column"
