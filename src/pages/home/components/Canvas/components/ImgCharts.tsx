@@ -12,8 +12,8 @@ interface Props {
 }
 
 const ImgCharts: React.FC<Props> = (props: any) => {
-    const { data = {}, id, } = props;
-    let { dataValue, windowControl, setContentList } = data;
+    const { data = {}, id } = props;
+    let { dataValue, windowControl, setContentList, magnifier = false } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
     }
@@ -37,6 +37,9 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         };
     }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight]);
     useEffect(() => {
+        if (!magnifier) {
+            return;
+        }
         const size = 4;
         const eventDom: any = dom.current.querySelector('.ant-image-mask');
         const ImageDom: any = dom.current.querySelector('.ant-image-img');
@@ -129,7 +132,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             const bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
             bigDom.style.display = 'none';
         }
-    }, [dataValue, id, fontSize, dom?.current?.clientWidth, dom?.current?.clientHeight]);
+    }, [magnifier, dataValue, id, fontSize, dom?.current?.clientWidth, dom?.current?.clientHeight]);
 
     return (
         <div
@@ -140,7 +143,20 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         >
             {
                 dataValue ?
-                    <div className="img-box">
+                    (magnifier ?
+                        <div className="img-box">
+                            <Image
+                                src={dataValue}
+                                alt="logo"
+                                style={
+                                    fontSize > 1 ?
+                                        { width: '100%', height: 'auto' } :
+                                        { width: 'auto', height: '100%' }
+                                }
+                            />
+                            <div className="mask" />
+                        </div>
+                        :
                         <Image
                             src={dataValue}
                             alt="logo"
@@ -149,16 +165,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                     { width: '100%', height: 'auto' } :
                                     { width: 'auto', height: '100%' }
                             }
-                        />
-                        {/* <div
-                            className="img-charts-event1"
-                            id="img-charts-event1"
-                        /> */}
-                        {/* <div className="img-charts-big">
-                            <img src={dataValue} />
-                        </div> */}
-                        <div className="mask" />
-                    </div>
+                        />)
                     :
                     <Skeleton.Image
                         active={true}

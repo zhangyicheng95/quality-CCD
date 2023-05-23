@@ -70,6 +70,7 @@ import LogPreviewModal from './components/LogPreviewModal';
 import { guid } from '@/utils/utils';
 import DescriptionCharts from './components/DescriptionCharts';
 import moment from 'moment';
+import ThreeCharts from './components/ThreeCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -1126,7 +1127,7 @@ const Home: React.FC<any> = (props: any) => {
           backgroundColor = 'default', barColor = 'default', progressType = 'line',
           progressSize = 8, progressSteps = 5, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-          CCDName, imgs_width, imgs_height, tableSize,
+          CCDName, imgs_width, imgs_height, tableSize, magnifier,
           basicInfoData = [{ id: guid(), name: '', value: '' }]
         } = item;
         const id = key?.split('$$')[0];
@@ -1271,78 +1272,87 @@ const Home: React.FC<any> = (props: any) => {
                                 }}
                               />
                               :
-                              type === 'alert' ?
-                                <AlertCharts
+                              type === 'three' ?
+                                <ThreeCharts
                                   id={key}
-                                  data={dataValue || []}
+                                  data={{
+                                    dataValue: dataValue || "",
+                                    fontSize
+                                  }}
                                 />
                                 :
-                                type === 'imgs' ?
-                                  <ImgsCharts
+                                type === 'alert' ?
+                                  <AlertCharts
                                     id={key}
-                                    data={{
-                                      dataValue: dataValue || [],
-                                      imgs_width, imgs_height
-                                    }}
+                                    data={dataValue || []}
                                   />
                                   :
-                                  type === 'progress' ?
-                                    <ProgressCharts
+                                  type === 'imgs' ?
+                                    <ImgsCharts
                                       id={key}
                                       data={{
-                                        dataValue: dataValue || 0, barColor, progressType, progressSize, progressSteps
+                                        dataValue: dataValue || [],
+                                        imgs_width, imgs_height
                                       }}
                                     />
                                     :
-                                    type === 'description' ?
-                                      <DescriptionCharts
+                                    type === 'progress' ?
+                                      <ProgressCharts
                                         id={key}
                                         data={{
-                                          dataValue: dataValue || [],
-                                          basicInfoData, fontSize,
-                                          des_bordered, des_column, des_layout, des_size,
+                                          dataValue: dataValue || 0, barColor, progressType, progressSize, progressSteps
                                         }}
                                       />
                                       :
-                                      type === 'button' ?
-                                        <Button
-                                          type={'primary'}
+                                      type === 'description' ?
+                                        <DescriptionCharts
                                           id={key}
-                                          onClick={() => {
-                                            btnFetch(fetchType, xName, JSON.parse(fetchParams));
+                                          data={{
+                                            dataValue: dataValue || [],
+                                            basicInfoData, fontSize,
+                                            des_bordered, des_column, des_layout, des_size,
                                           }}
-                                        >
-                                          {yName}
-                                        </Button>
+                                        />
                                         :
-                                        type === 'buttonInp' ?
-                                          <ButtonCharts
+                                        type === 'button' ?
+                                          <Button
+                                            type={'primary'}
                                             id={key}
-                                            data={{
-                                              yName, xName, fetchType
+                                            onClick={() => {
+                                              btnFetch(fetchType, xName, JSON.parse(fetchParams));
                                             }}
-                                          />
+                                          >
+                                            {yName}
+                                          </Button>
                                           :
-                                          (
-                                            _.isString(dataValue) && dataValue.indexOf('http') > -1 ? (
-                                              <ImgCharts
-                                                id={key}
-                                                data={{
-                                                  dataValue, windowControl,
-                                                  setContentList
-                                                }}
-                                              />
+                                          type === 'buttonInp' ?
+                                            <ButtonCharts
+                                              id={key}
+                                              data={{
+                                                yName, xName, fetchType
+                                              }}
+                                            />
+                                            :
+                                            (
+                                              _.isString(dataValue) && dataValue.indexOf('http') > -1 ? (
+                                                <ImgCharts
+                                                  id={key}
+                                                  data={{
+                                                    dataValue, windowControl,
+                                                    setContentList, magnifier
+                                                  }}
+                                                />
+                                              )
+                                                :
+                                                <ImgCharts
+                                                  id={key}
+                                                  data={{
+                                                    dataValue: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                    windowControl, magnifier,
+                                                    setContentList
+                                                  }}
+                                                />
                                             )
-                                              :
-                                              <ImgCharts
-                                                id={key}
-                                                data={{
-                                                  dataValue: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                  windowControl,
-                                                  setContentList
-                                                }}
-                                              />
-                                          )
                 }
               </div>
             </div>
@@ -1508,7 +1518,7 @@ const Home: React.FC<any> = (props: any) => {
           fetchType, fetchParams, align, backgroundColor, barColor,
           progressType, progressSize, progressSteps, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-          CCDName, imgs_width, imgs_height
+          CCDName, imgs_width, imgs_height, magnifier
         } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
@@ -1536,7 +1546,7 @@ const Home: React.FC<any> = (props: any) => {
             fetchType, fetchParams, align, backgroundColor, barColor,
             progressType, progressSize, progressSteps, windowControl,
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-            CCDName, imgs_width, imgs_height
+            CCDName, imgs_width, imgs_height, magnifier
           }, ['description'].includes(windowType) ? { basicInfoData } : {}));
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1551,7 +1561,7 @@ const Home: React.FC<any> = (props: any) => {
                 fetchType, fetchParams, align, backgroundColor, barColor,
                 progressType, progressSize, progressSteps, windowControl,
                 des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-                CCDName, imgs_width, imgs_height
+                CCDName, imgs_width, imgs_height, magnifier
               }, ['description'].includes(windowType) ? { basicInfoData } : {});
             };
             return item;
@@ -1590,7 +1600,7 @@ const Home: React.FC<any> = (props: any) => {
       direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined,
       align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line',
       progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: undefined,
-      CCDName: undefined
+      CCDName: undefined, magnifier: false
     });
     setWindowType('img');
     setAddWindowVisible(false);
@@ -1900,6 +1910,13 @@ const Home: React.FC<any> = (props: any) => {
                           />
                       }
                     </div>
+                  </Form.Item>
+                  <Form.Item
+                    name="magnifier"
+                    label="开启放大镜"
+                    valuePropName="checked"
+                  >
+                    <Switch />
                   </Form.Item>
                 </Fragment>
                 : null
@@ -2333,12 +2350,27 @@ const Home: React.FC<any> = (props: any) => {
                 </Fragment>
                 : null
             }
+            {
+              ['three'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    name={'fontSize'}
+                    label="字号"
+                    rules={[{ required: true, message: '字号' }]}
+                  >
+                    <InputNumber
+                      min={12}
+                    />
+                  </Form.Item>
+                </Fragment>
+                : null
+            }
             <Form.Item
               name="ifLocalStorage"
-              label="是否开启缓存"
+              label="开启缓存"
               initialValue={true}
               valuePropName="checked"
-              style={{ marginBottom: 8 }}
+              style={{ marginBottom: 0 }}
             >
               <Switch />
             </Form.Item>

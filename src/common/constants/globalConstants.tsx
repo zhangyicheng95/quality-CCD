@@ -47,6 +47,10 @@ export const windowTypeList: any = [
     label: '通用表格窗口',
   },
   {
+    value: 'three',
+    label: '3D组件',
+  },
+  {
     value: 'alert',
     label: '状态窗口',
   },

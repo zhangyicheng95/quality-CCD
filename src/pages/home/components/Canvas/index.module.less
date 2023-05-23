@@ -641,6 +641,72 @@
   }
 }
 
+.threeCharts {
+  width: 100%;
+  height: 100%;
+  position: relative;
+
+  :global {
+    #instructions {
+      width: 90%;
+      color: white;
+      position: absolute;
+      left: 100px;
+      top: 10px;
+      font-family: monospace;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .measurementLabel {
+      font-family: monospace;
+      background-color: black;
+      color: white;
+      font-size: 12px;
+    }
+
+    #demoBox {
+      height: 100%;
+      width: 100%;
+    }
+
+    .three-mask {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 9;
+      color: #fff;
+      justify-content: center;
+    }
+
+    .label {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      color: #000;
+      font-size: inherit;
+      transform: scale(4);
+
+      .item {
+        border-bottom: 1px solid #ccc;
+        padding: 0 4px;
+
+        .key {
+          border-right: 1px solid #ccc;
+          padding: 2px 4px 2px 0;
+        }
+
+        .value {
+          flex: 1;
+          text-align: right;
+          padding: 2px 0 2px 4px;
+        }
+      }
+    }
+  }
+}
+
 .descriptionCharts {
   width: 100%;
   height: 100%;
