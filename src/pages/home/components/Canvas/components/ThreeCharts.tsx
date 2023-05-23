@@ -186,7 +186,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         box.appendChild(labelRenderer.domElement);
         // @ts-ignore 左上角，内存占用显示 
         stats = new Stats();
-        stats.dom.style.top = "28px";
+        stats.dom.style.position = "absolute";
+        // stats.dom.style.top = "28px";
         box.appendChild(stats.dom);
         // 场景
         scene.current = new THREE.Scene();
