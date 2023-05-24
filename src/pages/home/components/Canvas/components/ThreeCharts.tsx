@@ -433,10 +433,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             const depth = mesh.material.depthTest;
             if (depth) {
                 mesh.material.depthTest = false;
-                setSelectedBtn('');
+                setSelectedBtn('bzBtn04');
             } else {
                 mesh.material.depthTest = true;
-                setSelectedBtn('bzBtn04');
+                setSelectedBtn('');
             }
         });
         // 取消标注
