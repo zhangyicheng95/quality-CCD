@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
-import { Button, Input, message } from 'antd';
+import { Button, Input, message, Tooltip } from 'antd';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -14,7 +14,7 @@ import {
     CSS2DRenderer,
     CSS2DObject,
 } from "three/examples/jsm/renderers/CSS2DRenderer.js";
-import { EyeOutlined } from '@ant-design/icons';
+import { BorderlessTableOutlined, BorderOuterOutlined, EyeOutlined, FontSizeOutlined, PlusOutlined } from '@ant-design/icons';
 
 interface Props {
     data: any,
@@ -32,6 +32,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const dom = useRef<any>();
+    const [selectedBtn, setSelectedBtn] = useState('');
 
     useEffect(() => {
         if (!_.isString(dataValue)) {
@@ -162,10 +163,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         const box: any = dom?.current;
         // 渲染场景盒子
         const canvas: any = document.querySelector("#demoBox");
-        // 输入框-比例尺
-        const ipt01: any = document.querySelector("#ipt01");
         // 按钮-标注
-        const bzBtn: any = document.querySelector("#bzBtn");
+        const bzBtn01: any = document.querySelector("#bzBtn01");
         // 按钮-框选
         const bzBtn02: any = document.querySelector("#bzBtn02");
         // 按钮-坐标轴
@@ -182,7 +181,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         labelRenderer.domElement.style.position = "absolute";
         labelRenderer.domElement.style.top = "0px";
         labelRenderer.domElement.style.pointerEvents = "none";
-        labelRenderer.domElement.style.fontSize = fontSize || "12px";
+        labelRenderer.domElement.style['font-size'] = 'inherit';
         box.appendChild(labelRenderer.domElement);
         // @ts-ignore 左上角，内存占用显示 
         stats = new Stats();
@@ -384,7 +383,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             ctrlDown = false;
             controls.current.enabled = true;
             renderer.current.domElement.style.cursor = "pointer";
-            bzBtn.innerText = "标注";
+            setSelectedBtn('');
             if (drawingLine) {
                 //delete the last line because it wasn't committed
                 scene.current.remove(line);
@@ -393,12 +392,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             }
         }
         // 标注
-        bzBtn.addEventListener("click", function (event: any) {
+        bzBtn01.addEventListener("click", function (event: any) {
             if (!ctrlDown) {
                 ctrlDown = true;
                 controls.current.enabled = false;
                 renderer.current.domElement.style.cursor = "crosshair";
-                bzBtn.innerText = "关闭";
+                setSelectedBtn('bzBtn01');
             } else {
                 cancelMeasurement();
             }
@@ -408,13 +407,13 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             const mesh: any = scene.current.getObjectByName("tx");
             if (mesh.children?.length) {
                 mesh.children = [];
-                bzBtn02.innerText = "显示边框";
+                setSelectedBtn('');
             } else {
                 // 选中边框架
                 const border = new THREE.BoxHelper(mesh, 0x00ffff); //object 模型
                 border.name = "border";
                 mesh.attach(border);
-                bzBtn02.innerText = "隐藏边框";
+                setSelectedBtn('bzBtn02');
             }
         });
         // 坐标轴
@@ -422,10 +421,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             const axis: any = scene.current.getObjectByName("axis");
             if (axis.visible) {
                 axis.visible = false;
-                bzBtn03.innerText = "显示坐标轴";
+                setSelectedBtn('');
             } else {
                 axis.visible = true;
-                bzBtn03.innerText = "隐藏坐标轴";
+                setSelectedBtn('bzBtn03');
             }
         });
         // 透视
@@ -434,10 +433,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             const depth = mesh.material.depthTest;
             if (depth) {
                 mesh.material.depthTest = false;
-                bzBtn04.innerText = "开启透视";
+                setSelectedBtn('');
             } else {
                 mesh.material.depthTest = true;
-                bzBtn04.innerText = "关闭透视";
+                setSelectedBtn('bzBtn04');
             }
         });
         // 取消标注
@@ -445,10 +444,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             if (event.key === "Escape") {
                 cancelMeasurement();
             }
-        });
-        ipt01.addEventListener("change", function (e: any) {
-            const val = e.target.value;
-            localStorage.setItem("scale", val);
         });
         renderer.current.domElement.addEventListener("pointerdown", onClick, false);
         renderer.current.domElement.addEventListener("mousemove", onDocumentMouseMove, false);
@@ -521,16 +516,60 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             style={{ fontSize }}
         >
             <div id="instructions" className="flex-box">
-                <Input
-                    id="ipt01"
-                    placeholder="比例尺"
-                    defaultValue={localStorage.getItem("scale") || 1}
-                />
-                <Button id="bzBtn">标注</Button>  {/**  <PlusOutlined /> */}
-                <Button id="bzBtn02">显示边框</Button>  {/**  <BorderOuterOutlined />  */}
-                <Button id="bzBtn03">显示坐标轴</Button>  {/**  <BorderlessTableOutlined />  */}
-                <Button id="bzBtn04">开启透视</Button>  {/**  <EyeOutlined />  */}
-                <Button onClick={() => clearScene()}>clear</Button>
+                {
+                    selectedBtn === 'scale' ?
+                        <Input
+                            style={{ maxWidth: 200 }}
+                            placeholder="比例尺"
+                            onBlur={(e) => {
+                                const val = e.target.value;
+                                localStorage.setItem("scale", val);
+                            }}
+                            defaultValue={localStorage.getItem("scale") || 1}
+                        />
+                        : null
+                }
+                <Tooltip title="比例尺">
+                    <Button
+                        icon={<FontSizeOutlined />}
+                        type={selectedBtn === 'scale' ? 'primary' : 'default'}
+                        className='btn'
+                        onClick={() => setSelectedBtn((prev) => prev === 'scale' ? '' : 'scale')}
+                    />
+                </Tooltip>
+                <Tooltip title="标注">
+                    <Button
+                        icon={<PlusOutlined />}
+                        type={selectedBtn === 'bzBtn01' ? 'primary' : 'default'}
+                        id="bzBtn01"
+                        className='btn'
+                    />
+                </Tooltip>
+                <Tooltip title="显示边框">
+                    <Button
+                        icon={<BorderOuterOutlined />}
+                        type={selectedBtn === 'bzBtn02' ? 'primary' : 'default'}
+                        id="bzBtn02"
+                        className='btn'
+                    />
+                </Tooltip>
+                <Tooltip title="显示坐标轴">
+                    <Button
+                        icon={<BorderlessTableOutlined />}
+                        type={selectedBtn === 'bzBtn03' ? 'primary' : 'default'}
+                        id="bzBtn03"
+                        className='btn'
+                    />
+                </Tooltip>
+                <Tooltip title="开启透视">
+                    <Button
+                        icon={<EyeOutlined />}
+                        type={selectedBtn === 'bzBtn04' ? 'primary' : 'default'}
+                        id="bzBtn04"
+                        className='btn'
+                    />
+                </Tooltip>
+                {/* <Button onClick={() => clearScene()}>clear</Button> */}
             </div>
             <div className="three-mask flex-box">加载中...</div>
             <canvas id="demoBox"></canvas>

@@ -648,14 +648,20 @@
 
   :global {
     #instructions {
-      width: 90%;
+      width: 100%;
       color: white;
       position: absolute;
-      left: 100px;
       top: 10px;
       font-family: monospace;
       gap: 8px;
       justify-content: center;
+
+      .ant-btn {
+        height: auto;
+        font-size: inherit;
+      }
+
+      // .btn {}
     }
 
     .measurementLabel {
