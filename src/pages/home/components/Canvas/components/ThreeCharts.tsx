@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
-import { Button, Input, message, Tooltip } from 'antd';
+import { Button, Input, message, Popover, Tooltip } from 'antd';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -25,14 +25,15 @@ interface Props {
 const ThreeCharts: React.FC<Props> = (props: any) => {
     // models/ply/ascii/tx.ply / models/obj/walt/tx.obj / models/stl/ascii/tx.stl
     let { data = {}, id, } = props;
-    let { dataValue, fontSize } = data;
-    if (process.env.NODE_ENV === 'development') {
-        dataValue = "models/tx.stl";
-    }
+    let { dataValue: url, fontSize } = data;
+    // if (process.env.NODE_ENV === 'development') {
+    //     dataValue = "models/tx.stl";
+    // }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const dom = useRef<any>();
-    const [selectedBtn, setSelectedBtn] = useState('');
+    const [selectedBtn, setSelectedBtn] = useState(['']);
+    const [dataValue, setUrl] = useState("models/tx.stl");
 
     useEffect(() => {
         if (!_.isString(dataValue)) {
@@ -47,7 +48,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     let scene = useRef<any>(),
         camera = useRef<any>(),
         controls = useRef<any>(),
-        stats: any = null,
+        stats = useRef<any>(),
         animateId: number = 0;
     // 定义常变量
     let ctrlDown = false;
@@ -64,99 +65,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     if (!localStorage.getItem("scale")) {
         localStorage.setItem("scale", "10");
     }
-    var animate = function () {
-        animateId = requestAnimationFrame(animate);
-        controls && controls.current.update();
-        render();
-        !!stats && stats.update();
-    };
-    function onDocumentMouseMove(event: any) {
-        event.preventDefault();
-        mouse.x = (event.offsetX / renderer.current.domElement.offsetWidth) * 2 - 1;
-        mouse.y = -(event.offsetY / renderer.current.domElement.offsetHeight) * 2 + 1;
-        if (drawingLine) {
-            raycaster.setFromCamera(mouse, camera.current);
-            intersects = raycaster.intersectObjects(pickableObjects, false);
-            if (intersects.length > 0) {
-                const positions = line.geometry.attributes.position.array;
-                const v0 = new THREE.Vector3(
-                    positions[0],
-                    positions[1],
-                    positions[2]
-                );
-                const v1 = new THREE.Vector3(
-                    intersects[0].point.x,
-                    intersects[0].point.y,
-                    intersects[0].point.z
-                );
-                positions[3] = intersects[0].point.x;
-                positions[4] = intersects[0].point.y;
-                positions[5] = intersects[0].point.z;
-                line.geometry.attributes.position.needsUpdate = true;
-                const distance = v0.distanceTo(v1);
-                measurementLabels[lineId].element.innerText =
-                    (distance * (Number(localStorage.getItem("scale")) || 1)).toFixed(2) + "m";
-                measurementLabels[lineId].position.lerpVectors(v0, v1, 0.5);
-            }
-        }
-    }
-    function onClick(event: any) {
-        if (ctrlDown) {
-            raycaster.setFromCamera(mouse, camera.current);
-            intersects = raycaster.intersectObjects(pickableObjects, false);
-            if (intersects.length > 0) {
-                if (!drawingLine) {
-                    //start the line
-                    const points = [];
-                    points.push(intersects[0].point);
-                    points.push(intersects[0].point.clone());
-                    const geometry = new THREE.BufferGeometry().setFromPoints(points);
-                    line = new THREE.LineSegments(
-                        geometry,
-                        new THREE.LineBasicMaterial({
-                            color: 0xff0000, // 射线颜色
-                            transparent: true,
-                            opacity: 0.75,
-                            // depthTest: false,
-                            // depthWrite: false,
-                        })
-                    );
-                    line.frustumCulled = false;
-                    scene.current.add(line);
-                    const measurementDiv = document.createElement("div");
-                    measurementDiv.className = "measurementLabel";
-                    measurementDiv.innerText = "start";
-                    const measurementLabel: any = new CSS2DObject(measurementDiv);
-                    measurementLabel.position.copy(intersects[0].point);
-                    measurementLabels[lineId] = measurementLabel;
-                    scene.current.add(measurementLabels[lineId]);
-                    drawingLine = true;
-                } else {
-                    //finish the line
-                    const positions = line.geometry.attributes.position.array;
-                    positions[3] = intersects[0].point.x;
-                    positions[4] = intersects[0].point.y;
-                    positions[5] = intersects[0].point.z;
-                    line.geometry.attributes.position.needsUpdate = true;
-                    lineId++;
-                    drawingLine = false;
-                }
-            } else {
-                console.log(intersects);
-            }
-        } else {
-            event.preventDefault();
-            mouse.x = (event.offsetX / renderer.current?.domElement.offsetWidth) * 2 - 1;
-            mouse.y = -(event.offsetY / renderer.current?.domElement.offsetHeight) * 2 + 1;
-            raycaster.setFromCamera(mouse, camera.current);
-            intersects = raycaster.intersectObjects(pickableObjects, false);
-        }
-    }
-    function render() {
-        labelRenderer.render(scene.current, camera.current);
-        renderer.current.render(scene.current, camera.current);
-    }
-    function main(url: string) {
+
+    useEffect(() => {
         // 蒙层
         const maskBox: any = document.querySelector(".three-mask");
         // 外层盒子
@@ -184,10 +94,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         labelRenderer.domElement.style['font-size'] = 'inherit';
         box.appendChild(labelRenderer.domElement);
         // @ts-ignore 左上角，内存占用显示 
-        stats = new Stats();
-        stats.dom.style.position = "absolute";
+        stats.current = new Stats();
+        stats.current.dom.style.position = "absolute";
         // stats.dom.style.top = "28px";
-        box.appendChild(stats.dom);
+        box.appendChild(stats.current.dom);
         // 场景
         scene.current = new THREE.Scene();
         // 坐标轴（右手定则，大拇指是x）
@@ -237,6 +147,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             } else if (mesh.children?.[0] && !!mesh.children[0]?.material) {
                 mesh.children[0].material.side = THREE.DoubleSide;
             }
+            // 边框
+            const border = new THREE.BoxHelper(mesh, 0x00ffff); //object 模型
+            border.name = "border";
+            border.visible = false;
+            mesh.attach(border);
             // 居中显示
             let box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
             let mdlen = box.max.x - box.min.x; // 模型长度
@@ -306,12 +221,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 const measurementDiv = document.createElement("div");
                 measurementDiv.className = "label";
                 measurementDiv.innerHTML = `
-          <div class="item">长度尺寸: ${name}</div>
-          <div class="item" style="text-align:center;">${standardValue} ± ${offsetValue}</div>
-          <div class="flex-box item"><div class="key">名义值</div><div class="value">${standardValue}</div></div>
-          <div class="flex-box item"><div class="key">实测值</div><div class="value">${trueValue}</div></div>
-          <div class="flex-box item"><div class="key">偏差值</div><div class="value">${offsetValue}</div></div>
-          `;
+         <div class="item">长度尺寸: ${name}</div>
+         <div class="item" style="text-align:center;">${standardValue} ± ${offsetValue}</div>
+         <div class="flex-box item"><div class="key">名义值</div><div class="value">${standardValue}</div></div>
+         <div class="flex-box item"><div class="key">实测值</div><div class="value">${trueValue}</div></div>
+         <div class="flex-box item"><div class="key">偏差值</div><div class="value">${offsetValue}</div></div>
+         `;
                 const measurementLabel: any = new CSS2DObject(measurementDiv);
                 measurementLabel.position.copy({
                     x: (position[0].x + position[1].x) / 2,
@@ -326,21 +241,26 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         }
         function processFun(xhr: any) {
             const { loaded = 0, total = 1 } = xhr;
-            // @ts-ignore
-            maskBox.innerText = `${(loaded / total).toFixed(2) * 100}%`;
+            const processBox = maskBox.querySelector('.process');
+            const processText = maskBox.querySelector('.process-text');
+
+            const process = `${((loaded / total) * 100 + '').slice(0, 5)}%`;
+            const percentComplete = (xhr.loaded / xhr.total) * 100
+            processBox.value = loaded / total;
+            processText.innerText = process;
         }
         // 加载url
-        if (url.indexOf(".glb") > -1) {
+        if (dataValue.indexOf(".glb") > -1) {
             new GLTFLoader().load(
-                url,
+                dataValue,
                 function (gltf) {
                     addPickable(gltf.scene);
                 },
                 (xhr) => processFun(xhr)
             );
-        } else if (url.indexOf(".ply") > -1) {
+        } else if (dataValue.indexOf(".ply") > -1) {
             new PLYLoader().load(
-                url,
+                dataValue,
                 function (geometry) {
                     geometry.computeVertexNormals();
                     const material: any = new THREE.MeshStandardMaterial({
@@ -355,9 +275,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     console.log(error);
                 }
             );
-        } else if (url.indexOf(".stl") > -1) {
+        } else if (dataValue.indexOf(".stl") > -1) {
             new STLLoader().load(
-                url,
+                dataValue,
                 function (geometry) {
                     geometry.computeVertexNormals();
                     const material: any = new THREE.MeshPhysicalMaterial({
@@ -369,9 +289,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 },
                 (xhr) => processFun(xhr)
             );
-        } else if (url.indexOf(".obj") > -1) {
+        } else if (dataValue.indexOf(".obj") > -1) {
             new OBJLoader().load(
-                url,
+                dataValue,
                 function (object) {
                     addPickable(object);
                 },
@@ -383,7 +303,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             ctrlDown = false;
             controls.current.enabled = true;
             renderer.current.domElement.style.cursor = "pointer";
-            setSelectedBtn('');
+            setSelectedBtn((prev: any) => prev.filter((i: any) => i !== 'bzBtn01'));
             if (drawingLine) {
                 //delete the last line because it wasn't committed
                 scene.current.remove(line);
@@ -392,70 +312,236 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             }
         }
         // 标注
-        bzBtn01.addEventListener("click", function (event: any) {
+        function bzBtnFun01() {
             if (!ctrlDown) {
                 ctrlDown = true;
                 controls.current.enabled = false;
                 renderer.current.domElement.style.cursor = "crosshair";
-                setSelectedBtn('bzBtn01');
+                setSelectedBtn((prev: any) => (prev || []).concat('bzBtn01'));
             } else {
                 cancelMeasurement();
             }
-        });
+        };
+        bzBtn01.addEventListener("click", bzBtnFun01);
         // 边框
-        bzBtn02.addEventListener("click", function (event: any) {
+        function bzBtnFun02() {
             const mesh: any = scene.current.getObjectByName("tx");
-            if (mesh.children?.length) {
-                mesh.children = [];
-                setSelectedBtn('');
-            } else {
-                // 选中边框架
-                const border = new THREE.BoxHelper(mesh, 0x00ffff); //object 模型
-                border.name = "border";
-                mesh.attach(border);
-                setSelectedBtn('bzBtn02');
-            }
-        });
+            setSelectedBtn((prev: any) => {
+                if ((prev || []).includes('bzBtn02')) {
+                    (mesh.children || []).filter((i: any) => i.type === "BoxHelper")[0].visible = false;
+                    return prev.filter((i: any) => i !== 'bzBtn02');
+                } else {
+                    (mesh.children || []).filter((i: any) => i.type === "BoxHelper")[0].visible = true;
+                    return (prev || []).concat('bzBtn02');
+                }
+            });
+        };
+        bzBtn02.addEventListener("click", bzBtnFun02);
         // 坐标轴
-        bzBtn03.addEventListener("click", function (event: any) {
+        function bzBtnFun03() {
             const axis: any = scene.current.getObjectByName("axis");
-            if (axis.visible) {
-                axis.visible = false;
-                setSelectedBtn('');
-            } else {
-                axis.visible = true;
-                setSelectedBtn('bzBtn03');
-            }
-        });
+            setSelectedBtn((prev: any) => {
+                if ((prev || []).includes('bzBtn03')) {
+                    axis.visible = false;
+                    return prev.filter((i: any) => i !== 'bzBtn03');
+                } else {
+                    axis.visible = true;
+                    return (prev || []).concat('bzBtn03');
+                }
+            });
+        };
+        bzBtn03.addEventListener("click", bzBtnFun03);
         // 透视
-        bzBtn04.addEventListener("click", function (event: any) {
+        function bzBtnFun04() {
             const mesh: any = scene.current.getObjectByName("tx");
-            const depth = mesh.material.depthTest;
-            if (depth) {
-                mesh.material.depthTest = false;
-                setSelectedBtn('bzBtn04');
-            } else {
-                mesh.material.depthTest = true;
-                setSelectedBtn('');
+            if (!!mesh.material) {
+                const depth = mesh.material?.depthTest;
+                if (depth) {
+                    mesh.material.depthTest = false;
+                    setSelectedBtn((prev: any) => (prev || []).concat('bzBtn04'));
+                } else {
+                    mesh.material.depthTest = true;
+                    setSelectedBtn((prev: any) => prev.filter((i: any) => i !== 'bzBtn04'));
+                }
+            } else if (mesh.children.filter((i: any) => i.type === "Points")[0]) {
+                const depth = mesh.children.filter((i: any) => i.type === "Points")[0]?.material?.depthTest;
+                if (!!mesh.children.filter((i: any) => i.type === "Points")[0]?.material) {
+                    if (depth) {
+                        mesh.children.filter((i: any) => i.type === "Points")[0].material.depthTest = false;
+                        setSelectedBtn((prev: any) => (prev || []).concat('bzBtn04'));
+                    } else {
+                        mesh.children.filter((i: any) => i.type === "Points")[0].material.depthTest = true;
+                        setSelectedBtn((prev: any) => prev.filter((i: any) => i !== 'bzBtn04'));
+                    }
+                }
             }
-        });
+        };
+        bzBtn04.addEventListener("click", bzBtnFun04);
         // 取消标注
         window.addEventListener("keyup", function (event) {
             if (event.key === "Escape") {
                 cancelMeasurement();
             }
         });
-        renderer.current.domElement.addEventListener("pointerdown", onClick, false);
+        function onMouseDown(event: any) {
+            if (ctrlDown) {
+                raycaster.setFromCamera(mouse, camera.current);
+                intersects = raycaster.intersectObjects(pickableObjects, false);
+                if (intersects.length > 0) {
+                    if (!drawingLine) {
+                        //start the line
+                        const points = [];
+                        points.push(intersects[0].point);
+                        points.push(intersects[0].point.clone());
+                        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                        line = new THREE.LineSegments(
+                            geometry,
+                            new THREE.LineBasicMaterial({
+                                color: 0xff0000, // 射线颜色
+                                transparent: true,
+                                opacity: 0.75,
+                                // depthTest: false,
+                                // depthWrite: false,
+                            })
+                        );
+                        line.frustumCulled = false;
+                        scene.current.add(line);
+                        const measurementDiv = document.createElement("div");
+                        measurementDiv.className = "measurementLabel";
+                        measurementDiv.innerText = "start";
+                        const measurementLabel: any = new CSS2DObject(measurementDiv);
+                        measurementLabel.position.copy(intersects[0].point);
+                        measurementLabels[lineId] = measurementLabel;
+                        scene.current.add(measurementLabels[lineId]);
+                        drawingLine = true;
+                    } else {
+                        //finish the line
+                        const positions = line.geometry.attributes.position.array;
+                        positions[3] = intersects[0].point.x;
+                        positions[4] = intersects[0].point.y;
+                        positions[5] = intersects[0].point.z;
+                        line.geometry.attributes.position.needsUpdate = true;
+                        lineId++;
+                        drawingLine = false;
+                    }
+                } else {
+                    console.log(intersects);
+                }
+            } else {
+                event.preventDefault();
+                mouse.x = (event.offsetX / renderer.current?.domElement.offsetWidth) * 2 - 1;
+                mouse.y = -(event.offsetY / renderer.current?.domElement.offsetHeight) * 2 + 1;
+                raycaster.setFromCamera(mouse, camera.current);
+                intersects = raycaster.intersectObjects(pickableObjects, false);
+
+                // 显示边框
+                const mesh: any = scene.current.getObjectByName("tx");
+                const axis: any = scene.current.getObjectByName("axis");
+                (mesh.children || []).filter((i: any) => i.type === "BoxHelper")[0].visible = true;
+                // 显示坐标轴
+                axis.visible = true;
+            }
+        }
+        function onDocumentMouseMove(event: any) {
+            event.preventDefault();
+            mouse.x = (event.offsetX / renderer.current.domElement.offsetWidth) * 2 - 1;
+            mouse.y = -(event.offsetY / renderer.current.domElement.offsetHeight) * 2 + 1;
+            if (drawingLine) {
+                raycaster.setFromCamera(mouse, camera.current);
+                intersects = raycaster.intersectObjects(pickableObjects, false);
+                if (intersects.length > 0) {
+                    const positions = line.geometry.attributes.position.array;
+                    const v0 = new THREE.Vector3(
+                        positions[0],
+                        positions[1],
+                        positions[2]
+                    );
+                    const v1 = new THREE.Vector3(
+                        intersects[0].point.x,
+                        intersects[0].point.y,
+                        intersects[0].point.z
+                    );
+                    positions[3] = intersects[0].point.x;
+                    positions[4] = intersects[0].point.y;
+                    positions[5] = intersects[0].point.z;
+                    line.geometry.attributes.position.needsUpdate = true;
+                    const distance = v0.distanceTo(v1);
+                    measurementLabels[lineId].element.innerText =
+                        (distance * (Number(localStorage.getItem("scale")) || 1)).toFixed(2) + "m";
+                    measurementLabels[lineId].position.lerpVectors(v0, v1, 0.5);
+                }
+            }
+        }
+        function onMouseUp() {
+            if (!renderer.current) return;
+            const mesh: any = scene.current.getObjectByName("tx");
+            const axis: any = scene.current.getObjectByName("axis");
+            setSelectedBtn((prev: any) => {
+                if (!(prev || []).includes('bzBtn02')) {
+                    // 隐藏边框
+                    (mesh.children || []).filter((i: any) => i.type === "BoxHelper")[0].visible = false;
+                }
+                if (!(prev || []).includes('bzBtn03')) {
+                    // 隐藏坐标轴
+                    axis.visible = false;
+                }
+                return prev;
+            });
+        }
+        renderer.current.domElement.addEventListener("pointerdown", onMouseDown, false);
+        renderer.current.domElement.addEventListener("pointerup", onMouseUp, false);
         renderer.current.domElement.addEventListener("mousemove", onDocumentMouseMove, false);
-
+        var animate = function () {
+            animateId = requestAnimationFrame(animate);
+            controls && controls.current.update();
+            render();
+            !!stats.current && stats.current.update();
+        };
+        function render() {
+            labelRenderer.render(scene.current, camera.current);
+            renderer.current.render(scene.current, camera.current);
+        }
         animate();
-    }
-
-    useEffect(() => {
-        main(dataValue);
 
         return () => {
-            renderer.current?.dispose();
+            bzBtn01.removeEventListener('click', bzBtnFun01);
+            bzBtn02.removeEventListener('click', bzBtnFun02);
+            bzBtn03.removeEventListener('click', bzBtnFun03);
+            bzBtn04.removeEventListener('click', bzBtnFun04);
+            cancelAnimationFrame(animateId);
+            dom?.current?.removeChild(stats.current.dom);
+            stats.current = null;
+            scene.current.traverse((child: any) => {
+                console.log(child)
+                if (child.material) {
+                    child.material.dispose();
+                }
+                if (child.geometry) {
+                    child.geometry.dispose();
+                }
+                child = null;
+            });
+
+            // 场景中的参数释放清理或者置空等
+            dom.current.innerHTML = `
+              <div class="three-mask flex-box">
+                <progress class='process' value="0" />
+                <span class='process-text'>0%</span>
+              </div>
+              <canvas id="demoBox" />
+            `;
+            renderer.current.domElement.innerHTML = '';
+            // renderer.current.forceContextLoss();
+            renderer.current.dispose();
+            // dom.current.removeChild(renderer.current.domElement);
+            // dom.current.removeChild(labelRenderer.domElement);
+            scene.current.clear();
+            scene.current = undefined;
+            camera.current = undefined;
+            controls.current = undefined;
+            renderer.current.domElement = undefined;
+            renderer.current = undefined;
+            console.log('clearScene');
         };
     }, [dataValue]);
 
@@ -475,50 +561,19 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     ]);
 
     const clearScene = () => {
-        if (renderer.current) {
-            cancelAnimationFrame(animateId);
-            scene.current.traverse((child: any) => {
-                if (child.material) {
-                    child.material.dispose();
-                }
-                if (child.geometry) {
-                    child.geometry.dispose();
-                }
-                child = null;
-            });
-
-            renderer.current?.domElement.removeEventListener("pointerdown", onClick, false);
-            renderer.current?.domElement.removeEventListener("mousemove", onDocumentMouseMove, false);
-            // 场景中的参数释放清理或者置空等
-            renderer.current.domElement.innerHTML = '';
-            renderer.current.forceContextLoss();
-            renderer.current.dispose();
-            scene.current.clear();
-            scene.current = undefined;
-            camera.current = undefined;
-            controls.current = undefined;
-            renderer.current.domElement = undefined;
-            renderer.current = undefined;
-
-            console.log('clearScene');
-        } else {
-            console.log(dataValue)
-            main(dataValue);
-        }
+        setUrl((prev: any) => prev === "models/tx.stl" ? "models/tx.ply" : "models/tx.stl");
     }
 
     return (
         <div
             id={`echart-${id}`}
             className={`${styles.threeCharts} flex-box`}
-            // @ts-ignore
-            ref={dom}
             style={{ fontSize }}
         >
             <div id="instructions" className="flex-box">
-                {
-                    selectedBtn === 'scale' ?
-                        <Input
+                <Tooltip title="比例尺">
+                    <Popover
+                        content={<Input
                             style={{ maxWidth: 200 }}
                             placeholder="比例尺"
                             onBlur={(e) => {
@@ -526,21 +581,20 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 localStorage.setItem("scale", val);
                             }}
                             defaultValue={localStorage.getItem("scale") || 1}
+                        />}
+                        title="设置比例尺"
+                        trigger="click"
+                    >
+                        <Button
+                            icon={<FontSizeOutlined />}
+                            className='btn'
                         />
-                        : null
-                }
-                <Tooltip title="比例尺">
-                    <Button
-                        icon={<FontSizeOutlined />}
-                        type={selectedBtn === 'scale' ? 'primary' : 'default'}
-                        className='btn'
-                        onClick={() => setSelectedBtn((prev) => prev === 'scale' ? '' : 'scale')}
-                    />
+                    </Popover>
                 </Tooltip>
                 <Tooltip title="标注">
                     <Button
                         icon={<PlusOutlined />}
-                        type={selectedBtn === 'bzBtn01' ? 'primary' : 'default'}
+                        type={selectedBtn.includes('bzBtn01') ? 'primary' : 'default'}
                         id="bzBtn01"
                         className='btn'
                     />
@@ -548,7 +602,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 <Tooltip title="显示边框">
                     <Button
                         icon={<BorderOuterOutlined />}
-                        type={selectedBtn === 'bzBtn02' ? 'primary' : 'default'}
+                        type={selectedBtn.includes('bzBtn02') ? 'primary' : 'default'}
                         id="bzBtn02"
                         className='btn'
                     />
@@ -556,7 +610,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 <Tooltip title="显示坐标轴">
                     <Button
                         icon={<BorderlessTableOutlined />}
-                        type={selectedBtn === 'bzBtn03' ? 'primary' : 'default'}
+                        type={selectedBtn.includes('bzBtn03') ? 'primary' : 'default'}
                         id="bzBtn03"
                         className='btn'
                     />
@@ -564,15 +618,24 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 <Tooltip title="开启透视">
                     <Button
                         icon={<EyeOutlined />}
-                        type={selectedBtn === 'bzBtn04' ? 'primary' : 'default'}
+                        type={selectedBtn.includes('bzBtn04') ? 'primary' : 'default'}
                         id="bzBtn04"
                         className='btn'
                     />
                 </Tooltip>
-                {/* <Button onClick={() => clearScene()}>clear</Button> */}
+                <Button onClick={() => clearScene()}>clear</Button>
             </div>
-            <div className="three-mask flex-box">加载中...</div>
-            <canvas id="demoBox"></canvas>
+            <div
+                className='render-dom'
+                // @ts-ignore
+                ref={dom}
+            >
+                <div className="three-mask flex-box">
+                    <progress className='process' value="0" />
+                    <span className='process-text'>0%</span>
+                </div>
+                <canvas id="demoBox"></canvas>
+            </div>
         </div>
     );
 
