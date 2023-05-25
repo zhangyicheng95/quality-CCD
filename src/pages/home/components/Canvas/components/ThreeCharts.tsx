@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
@@ -66,6 +66,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     }
 
     useEffect(() => {
+        if (!dataValue) return;
         // 蒙层
         const maskBox: any = document.querySelector(".three-mask");
         // 外层盒子
@@ -321,7 +322,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 cancelMeasurement();
             }
         };
-        bzBtn01.addEventListener("click", bzBtnFun01);
+        bzBtn01?.addEventListener("click", bzBtnFun01);
         // 边框
         function bzBtnFun02() {
             const mesh: any = scene.current.getObjectByName("tx");
@@ -335,7 +336,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 }
             });
         };
-        bzBtn02.addEventListener("click", bzBtnFun02);
+        bzBtn02?.addEventListener("click", bzBtnFun02);
         // 坐标轴
         function bzBtnFun03() {
             const axis: any = scene.current.getObjectByName("axis");
@@ -349,7 +350,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 }
             });
         };
-        bzBtn03.addEventListener("click", bzBtnFun03);
+        bzBtn03?.addEventListener("click", bzBtnFun03);
         // 透视
         function bzBtnFun04() {
             const mesh: any = scene.current.getObjectByName("tx");
@@ -375,7 +376,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 }
             }
         };
-        bzBtn04.addEventListener("click", bzBtnFun04);
+        bzBtn04?.addEventListener("click", bzBtnFun04);
         // 取消标注
         window.addEventListener("keyup", function (event) {
             if (event.key === "Escape") {
@@ -544,20 +545,20 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         };
     }, [dataValue]);
 
-    useEffect(() => {
-        if (camera) {
-            dom?.current?.reload?.();
-            camera.current.aspect = dom?.current?.clientWidth / dom?.current?.clientHeight;
-            camera.current.updateProjectionMatrix();
-            renderer.current.setSize(dom?.current?.clientWidth, dom?.current?.clientHeight);
-            labelRenderer.setSize(dom?.current?.clientWidth, dom?.current?.clientHeight);
-            labelRenderer.domElement.style.fontSize = fontSize || "12px";
-            // animate();
-        }
-    }, [
-        camera, renderer, labelRenderer, fontSize,
-        dom?.current?.parentNode?.clientWidth, dom?.current?.parentNode?.clientHeight
-    ]);
+    // useEffect(() => {
+    //     if (!!renderer.current) {
+    //         dom?.current?.reload?.();
+    //         camera.current.aspect = dom?.current?.clientWidth / dom?.current?.clientHeight;
+    //         camera.current.updateProjectionMatrix();
+    //         renderer.current.setSize(dom?.current?.clientWidth, dom?.current?.clientHeight);
+    //         labelRenderer.setSize(dom?.current?.clientWidth, dom?.current?.clientHeight);
+    //         labelRenderer.domElement.style.fontSize = fontSize || "12px";
+    //         // animate();
+    //     }
+    // }, [
+    //     camera, renderer.current, labelRenderer, fontSize,
+    //     dom?.current?.parentNode?.clientWidth, dom?.current?.parentNode?.clientHeight
+    // ]);
 
     return (
         <div
@@ -565,71 +566,78 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             className={`${styles.threeCharts} flex-box`}
             style={{ fontSize }}
         >
-            <div id="instructions" className="flex-box">
-                <Tooltip title="比例尺">
-                    <Popover
-                        content={<Input
-                            style={{ maxWidth: 200 }}
-                            placeholder="比例尺"
-                            onBlur={(e) => {
-                                const val = e.target.value;
-                                localStorage.setItem("scale", val);
-                            }}
-                            defaultValue={localStorage.getItem("scale") || 1}
-                        />}
-                        title="设置比例尺"
-                        trigger="click"
-                    >
-                        <Button
-                            icon={<FontSizeOutlined />}
-                            className='btn'
-                        />
-                    </Popover>
-                </Tooltip>
-                <Tooltip title="标注">
-                    <Button
-                        icon={<PlusOutlined />}
-                        type={selectedBtn.includes('bzBtn01') ? 'primary' : 'default'}
-                        id="bzBtn01"
-                        className='btn'
-                    />
-                </Tooltip>
-                <Tooltip title="显示边框">
-                    <Button
-                        icon={<BorderOuterOutlined />}
-                        type={selectedBtn.includes('bzBtn02') ? 'primary' : 'default'}
-                        id="bzBtn02"
-                        className='btn'
-                    />
-                </Tooltip>
-                <Tooltip title="显示坐标轴">
-                    <Button
-                        icon={<BorderlessTableOutlined />}
-                        type={selectedBtn.includes('bzBtn03') ? 'primary' : 'default'}
-                        id="bzBtn03"
-                        className='btn'
-                    />
-                </Tooltip>
-                <Tooltip title="开启透视">
-                    <Button
-                        icon={<EyeOutlined />}
-                        type={selectedBtn.includes('bzBtn04') ? 'primary' : 'default'}
-                        id="bzBtn04"
-                        className='btn'
-                    />
-                </Tooltip>
-            </div>
-            <div
-                className='render-dom'
-                // @ts-ignore
-                ref={dom}
-            >
-                <div className="three-mask flex-box">
-                    <progress className='process' value="0" />
-                    <span className='process-text'>0%</span>
-                </div>
-                <canvas id="demoBox"></canvas>
-            </div>
+            {
+                !!dataValue ?
+                    <Fragment>
+                        <div id="instructions" className="flex-box">
+                            <Tooltip title="比例尺">
+                                <Popover
+                                    content={<Input
+                                        style={{ maxWidth: 200 }}
+                                        placeholder="比例尺"
+                                        onBlur={(e) => {
+                                            const val = e.target.value;
+                                            localStorage.setItem("scale", val);
+                                        }}
+                                        defaultValue={localStorage.getItem("scale") || 1}
+                                    />}
+                                    title="设置比例尺"
+                                    trigger="click"
+                                >
+                                    <Button
+                                        icon={<FontSizeOutlined />}
+                                        className='btn'
+                                    />
+                                </Popover>
+                            </Tooltip>
+                            <Tooltip title="标注">
+                                <Button
+                                    icon={<PlusOutlined />}
+                                    type={selectedBtn.includes('bzBtn01') ? 'primary' : 'default'}
+                                    id="bzBtn01"
+                                    className='btn'
+                                />
+                            </Tooltip>
+                            <Tooltip title="显示边框">
+                                <Button
+                                    icon={<BorderOuterOutlined />}
+                                    type={selectedBtn.includes('bzBtn02') ? 'primary' : 'default'}
+                                    id="bzBtn02"
+                                    className='btn'
+                                />
+                            </Tooltip>
+                            <Tooltip title="显示坐标轴">
+                                <Button
+                                    icon={<BorderlessTableOutlined />}
+                                    type={selectedBtn.includes('bzBtn03') ? 'primary' : 'default'}
+                                    id="bzBtn03"
+                                    className='btn'
+                                />
+                            </Tooltip>
+                            <Tooltip title="开启透视">
+                                <Button
+                                    icon={<EyeOutlined />}
+                                    type={selectedBtn.includes('bzBtn04') ? 'primary' : 'default'}
+                                    id="bzBtn04"
+                                    className='btn'
+                                />
+                            </Tooltip>
+                        </div>
+
+                        <div
+                            className='render-dom'
+                            // @ts-ignore
+                            ref={dom}
+                        >
+                            <div className="three-mask flex-box">
+                                <progress className='process' value="0" />
+                                <span className='process-text'>0%</span>
+                            </div>
+                            <canvas id="demoBox"></canvas>
+                        </div>
+                    </Fragment>
+                    : null
+            }
         </div>
     );
 
