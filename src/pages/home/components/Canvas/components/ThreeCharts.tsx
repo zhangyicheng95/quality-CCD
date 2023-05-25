@@ -25,7 +25,7 @@ interface Props {
 const ThreeCharts: React.FC<Props> = (props: any) => {
     // models/ply/ascii/tx.ply / models/obj/walt/tx.obj / models/stl/ascii/tx.stl
     let { data = {}, id, } = props;
-    let { dataValue: url, fontSize } = data;
+    let { dataValue, fontSize } = data;
     // if (process.env.NODE_ENV === 'development') {
     //     dataValue = "models/tx.stl";
     // }
@@ -33,7 +33,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const { params } = initialState;
     const dom = useRef<any>();
     const [selectedBtn, setSelectedBtn] = useState(['']);
-    const [dataValue, setUrl] = useState("models/tx.stl");
 
     useEffect(() => {
         if (!_.isString(dataValue)) {
@@ -510,7 +509,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             bzBtn04.removeEventListener('click', bzBtnFun04);
             cancelAnimationFrame(animateId);
             dom?.current?.removeChild(stats.current.dom);
-            stats.current = null;
             scene.current.traverse((child: any) => {
                 console.log(child)
                 if (child.material) {
@@ -535,8 +533,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             renderer.current.dispose();
             // dom.current.removeChild(renderer.current.domElement);
             // dom.current.removeChild(labelRenderer.domElement);
-            scene.current.clear();
+            scene.current?.clear();
             scene.current = undefined;
+            stats.current = undefined;
             camera.current = undefined;
             controls.current = undefined;
             renderer.current.domElement = undefined;
@@ -559,10 +558,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         camera, renderer, labelRenderer, fontSize,
         dom?.current?.parentNode?.clientWidth, dom?.current?.parentNode?.clientHeight
     ]);
-
-    const clearScene = () => {
-        setUrl((prev: any) => prev === "models/tx.stl" ? "models/tx.ply" : "models/tx.stl");
-    }
 
     return (
         <div
@@ -623,7 +618,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         className='btn'
                     />
                 </Tooltip>
-                <Button onClick={() => clearScene()}>clear</Button>
             </div>
             <div
                 className='render-dom'
