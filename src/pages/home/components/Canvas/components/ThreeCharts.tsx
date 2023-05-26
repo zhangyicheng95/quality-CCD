@@ -541,6 +541,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             controls.current = undefined;
             renderer.current.domElement = undefined;
             renderer.current = undefined;
+            setSelectedBtn([]);
             console.log('clearScene');
         };
     }, [dataValue]);
