@@ -26,9 +26,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     // models/ply/ascii/tx.ply / models/obj/walt/tx.obj / models/stl/ascii/tx.stl
     let { data = {}, id, } = props;
     let { dataValue, fontSize } = data;
-    // if (process.env.NODE_ENV === 'development') {
-    //     dataValue = "models/tx.stl";
-    // }
+    if (process.env.NODE_ENV === 'development') {
+        dataValue = "models/test.ply";
+    }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const dom = useRef<any>();
@@ -201,41 +201,41 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     ],
                 },
             ];
-            data.forEach((item, index) => {
-                const { name, standardValue, trueValue, offsetValue, position } = item;
-                // @ts-ignore 渲染线
-                const geometry = new THREE.BufferGeometry().setFromPoints(position);
-                line = new THREE.LineSegments(
-                    geometry,
-                    new THREE.LineBasicMaterial({
-                        color: 0xff0000, // 射线颜色
-                        transparent: true,
-                        opacity: 0.75,
-                        // depthTest: false,
-                        // depthWrite: false,
-                    })
-                );
-                line.frustumCulled = false;
-                scene.current.add(line);
-                // 渲染信息卡片
-                const measurementDiv = document.createElement("div");
-                measurementDiv.className = "label";
-                measurementDiv.innerHTML = `
-         <div class="item">长度尺寸: ${name}</div>
-         <div class="item" style="text-align:center;">${standardValue} ± ${offsetValue}</div>
-         <div class="flex-box item"><div class="key">名义值</div><div class="value">${standardValue}</div></div>
-         <div class="flex-box item"><div class="key">实测值</div><div class="value">${trueValue}</div></div>
-         <div class="flex-box item"><div class="key">偏差值</div><div class="value">${offsetValue}</div></div>
-         `;
-                const measurementLabel: any = new CSS2DObject(measurementDiv);
-                measurementLabel.position.copy({
-                    x: (position[0].x + position[1].x) / 2,
-                    y: (position[0].y + position[1].y) / 2,
-                    z: (position[0].z + position[1].z) / 2,
-                });
-                measurementLabels["label" + index] = measurementLabel;
-                scene.current.add(measurementLabels["label" + index]);
-            });
+            //     data.forEach((item, index) => {
+            //         const { name, standardValue, trueValue, offsetValue, position } = item;
+            //         // @ts-ignore 渲染线
+            //         const geometry = new THREE.BufferGeometry().setFromPoints(position);
+            //         line = new THREE.LineSegments(
+            //             geometry,
+            //             new THREE.LineBasicMaterial({
+            //                 color: 0xff0000, // 射线颜色
+            //                 transparent: true,
+            //                 opacity: 0.75,
+            //                 // depthTest: false,
+            //                 // depthWrite: false,
+            //             })
+            //         );
+            //         line.frustumCulled = false;
+            //         scene.current.add(line);
+            //         // 渲染信息卡片
+            //         const measurementDiv = document.createElement("div");
+            //         measurementDiv.className = "label";
+            //         measurementDiv.innerHTML = `
+            //  <div class="item">长度尺寸: ${name}</div>
+            //  <div class="item" style="text-align:center;">${standardValue} ± ${offsetValue}</div>
+            //  <div class="flex-box item"><div class="key">名义值</div><div class="value">${standardValue}</div></div>
+            //  <div class="flex-box item"><div class="key">实测值</div><div class="value">${trueValue}</div></div>
+            //  <div class="flex-box item"><div class="key">偏差值</div><div class="value">${offsetValue}</div></div>
+            //  `;
+            //         const measurementLabel: any = new CSS2DObject(measurementDiv);
+            //         measurementLabel.position.copy({
+            //             x: (position[0].x + position[1].x) / 2,
+            //             y: (position[0].y + position[1].y) / 2,
+            //             z: (position[0].z + position[1].z) / 2,
+            //         });
+            //         measurementLabels["label" + index] = measurementLabel;
+            //         scene.current.add(measurementLabels["label" + index]);
+            //     });
             camera.current.position.set(0, -1.5 * mdlen, 0);
             scene.current.add(mesh);
         }
