@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState, } from "react";
-import { Form, Input, message, Button, Tree, Select } from "antd";
+import { Form, Input, message, Button, Tree, Select, Switch } from "antd";
 import * as _ from "lodash";
 import styles from "./index.module.less";
 import { updateParams } from "@/services/api";
@@ -89,7 +89,7 @@ const Setting: React.FC<any> = (props) => {
   const onFinish = () => {
     validateFields()
       .then((values) => {
-        const { quality_icon, quality_name, } = values;
+        const { quality_icon, quality_name, selfStart, errorSelfStart } = values;
         let nodeList: any = [].concat(paramData?.flowData?.nodes);
         (paramData?.flowData?.nodes || []).forEach((key: any) => {
           nodeList = nodeList.map((node: any) => {
@@ -110,6 +110,7 @@ const Setting: React.FC<any> = (props) => {
         });
         const result = Object.assign({}, paramData, {
           quality_name,
+          selfStart, errorSelfStart,
           configList: (paramData.configList || []).map((config: any) => {
             if (config.value === paramData?.selectedConfig) {
               return Object.assign({}, config, {
@@ -131,7 +132,7 @@ const Setting: React.FC<any> = (props) => {
           } else {
             message.error(res?.msg || res?.message || '接口异常');
           }
-        })
+        });
         if (!!quality_icon) {
           localStorage.setItem("quality_icon", quality_icon || '');
         } else {
@@ -259,6 +260,24 @@ const Setting: React.FC<any> = (props) => {
             >
               前往配置
             </Button>
+          </Form.Item>
+          <Form.Item
+            name="selfStart"
+            label="开机自启动"
+            tooltip="开启软件后，自动检测链接状态，并启动"
+            initialValue={paramData?.selfStart || false}
+            rules={[{ required: false, message: "开机自启动" }]}
+          >
+            <Switch />
+          </Form.Item>
+          <Form.Item
+            name="errorSelfStart"
+            label="异常自动重启"
+            tooltip="运行发生报错时，自动重启服务。"
+            initialValue={paramData?.errorSelfStart || false}
+            rules={[{ required: false, message: "异常自动重启" }]}
+          >
+            <Switch />
           </Form.Item>
           {
             (!isVision && !_.isEmpty(treeData) && !!treeData?.length) ?

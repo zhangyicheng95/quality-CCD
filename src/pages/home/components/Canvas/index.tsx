@@ -986,7 +986,7 @@ const Home: React.FC<any> = (props: any) => {
   // 拉取方案详情 TODO
   useEffect(() => {
     if (!ipString || _.isEmpty(paramsData)) return;
-    const { flowData, contentData = {} } = paramsData;
+    const { flowData, contentData = {}, selfStart = false, errorSelfStart = false } = paramsData;
     const {
       home = [
         { "i": "slider-1", "x": 0, "y": 0, "w": 7, "h": 8, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
@@ -1090,6 +1090,11 @@ const Home: React.FC<any> = (props: any) => {
       }));
       setParamData(resultParams);
     };
+
+    if (selfStart) {
+      console.log('任务自启动');
+      start();
+    }
 
     return () => {
       setAddContentList([]);

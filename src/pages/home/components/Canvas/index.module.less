@@ -672,52 +672,102 @@
       height: 100%;
       position: relative;
 
+      .measurementLabel {
+        font-family: monospace;
+        background-color: black;
+        color: white;
+        font-size: 12px;
+      }
+
+      #demoBox {
+        height: 100%;
+        width: 100%;
+      }
+
+      .three-mask {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 9;
+        color: #fff;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .label {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        color: #000;
+        font-size: inherit;
+        transform: scale(4);
+
+        .item {
+          border-bottom: 1px solid #ccc;
+          padding: 0 4px;
+
+          .key {
+            border-right: 1px solid #ccc;
+            padding: 2px 4px 2px 0;
+          }
+
+          .value {
+            flex: 1;
+            text-align: right;
+            padding: 2px 0 2px 4px;
+          }
+        }
+      }
     }
 
-    .measurementLabel {
-      font-family: monospace;
-      background-color: black;
-      color: white;
-      font-size: 12px;
-    }
-
-    #demoBox {
-      height: 100%;
-      width: 100%;
-    }
-
-    .three-mask {
+    .camera-box {
       position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      z-index: 9;
+      left: 16px;
+      bottom: 16px;
       color: #fff;
-      justify-content: center;
-      gap: 8px;
-    }
+      font-size: 14px;
 
-    .label {
-      background-color: #fff;
-      border: 1px solid #ccc;
-      color: #000;
-      font-size: inherit;
-      transform: scale(4);
+      .cameraIcon {
+        height: 20px !important;
+        width: 20px !important;
+        cursor: pointer;
+        pointer-events: auto;
+      }
 
-      .item {
-        border-bottom: 1px solid #ccc;
-        padding: 0 4px;
+      .camera-box-pointer {
+        display: none;
+        padding: 12px;
+        background-color: rgba(0, 0, 0, .6);
 
-        .key {
-          border-right: 1px solid #ccc;
-          padding: 2px 4px 2px 0;
+        .camera-box-pointer-top,
+        .camera-box-pointer-center,
+        .camera-box-pointer-bottom {
+          gap: 16px;
+          margin-bottom: 16px;
         }
 
-        .value {
-          flex: 1;
-          text-align: right;
-          padding: 2px 0 2px 4px;
+        .camera-box-pointer-top,
+        .camera-box-pointer-bottom {
+          padding-left: 36px;
+        }
+
+        .camera-box-pointer-bottom {
+          margin-bottom: 0;
+        }
+      }
+
+      .camera-box-cursor {
+        width: 68px;
+        background-color: rgba(0, 0, 0, .6);
+        gap: 4px;
+        padding: 4px 8px;
+        cursor: pointer;
+      }
+
+      &:hover {
+        .camera-box-pointer {
+          display: block;
         }
       }
     }

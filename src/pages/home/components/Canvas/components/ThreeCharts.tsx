@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
-import { Button, Input, message, Popover, Tooltip } from 'antd';
+import { Button, Input, message, Popover, Select, Tooltip } from 'antd';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -10,11 +10,24 @@ import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader.js";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import Stats from "three/examples/jsm/libs/stats.module.js";
+import TWEEN from '@tweenjs/tween.js';
+import h337 from '@rengr/heatmap.js'
 import {
     CSS2DRenderer,
     CSS2DObject,
 } from "three/examples/jsm/renderers/CSS2DRenderer.js";
-import { BorderlessTableOutlined, BorderOuterOutlined, EyeOutlined, FontSizeOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+    AimOutlined,
+    BorderlessTableOutlined, BorderOuterOutlined, EyeOutlined, FontSizeOutlined, PlusOutlined
+} from '@ant-design/icons';
+import rectIcon from '@/assets/imgs/rect.svg';
+import rectAllIcon from '@/assets/imgs/rect-all.svg';
+import rectLeftIcon from '@/assets/imgs/rect-left.svg';
+import rectRightIcon from '@/assets/imgs/rect-right.svg';
+import rectTopIcon from '@/assets/imgs/rect-top.svg';
+import rectBottomIcon from '@/assets/imgs/rect-bottom.svg';
+import rectFrontIcon from '@/assets/imgs/rect-front.svg';
+import rectBackIcon from '@/assets/imgs/rect-back.svg';
 
 interface Props {
     data: any,
@@ -27,7 +40,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     let { data = {}, id, } = props;
     let { dataValue, fontSize } = data;
     if (process.env.NODE_ENV === 'development') {
-        dataValue = "models/test.ply";
+        dataValue = "models/01.stl";
     }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
@@ -62,7 +75,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const pickableObjects = new Array();
 
     if (!localStorage.getItem("scale")) {
-        localStorage.setItem("scale", "10");
+        localStorage.setItem("scale", JSON.stringify({ value: "1", unit: "m" }));
     }
 
     useEffect(() => {
@@ -101,7 +114,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         // 场景
         scene.current = new THREE.Scene();
         // 坐标轴（右手定则，大拇指是x）
-        const axesHelper = new THREE.AxesHelper(500);
+        const axesHelper = new THREE.AxesHelper(1000);
         axesHelper.name = "axis";
         axesHelper.visible = false;
         scene.current.add(axesHelper);
@@ -137,7 +150,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         const startTime = +new Date();
         const timeHost = () => {
             const endTime = +new Date();
-            console.log("渲染耗时:", `${(endTime - startTime) / 1000}s`);
+            console.log("模型加载渲染耗时:", `${(endTime - startTime) / 1000}s`);
         };
         function addPickable(mesh: any) {
             timeHost();
@@ -276,6 +289,29 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 }
             );
         } else if (dataValue.indexOf(".stl") > -1) {
+            // 热力图着色器程序
+            const vertexShader = `
+                varying vec2 vUv;
+
+                void main() {
+                vUv = uv;
+                
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `;
+
+            const fragmentShader = `
+                uniform float iGlobalTime;
+                uniform sampler2D textureData;
+
+                varying vec2 vUv;
+
+                void main() {
+                vec4 color = texture2D(textureData, vUv);
+                vec3 heatColor = vec3(1.0, 1.0 - color.r, 1.0 - color.r * color.r);
+                gl_FragColor = vec4(heatColor, 1.0);
+                }
+            `;
             new STLLoader().load(
                 dataValue,
                 function (geometry) {
@@ -466,8 +502,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     positions[5] = intersects[0].point.z;
                     line.geometry.attributes.position.needsUpdate = true;
                     const distance = v0.distanceTo(v1);
+                    let scale = { value: 1, unit: "m" };
+                    try {
+                        scale = JSON.parse(localStorage.getItem("scale") || JSON.stringify({ value: 1, unit: "m" }));
+                    } catch (err) {
+                        console.log('localStorge中的scale格式不对', err);
+                    }
                     measurementLabels[lineId].element.innerText =
-                        (distance * (Number(localStorage.getItem("scale")) || 1)).toFixed(2) + "m";
+                        (distance * Number(scale?.value || "1")).toFixed(2) + (scale?.unit || "m");
                     measurementLabels[lineId].position.lerpVectors(v0, v1, 0.5);
                 }
             }
@@ -495,6 +537,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             animateId = requestAnimationFrame(animate);
             controls && controls.current.update();
             render();
+            TWEEN.update();
             !!stats.current && stats.current.update();
         };
         function render() {
@@ -522,13 +565,15 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             });
 
             // 场景中的参数释放清理或者置空等
-            dom.current.innerHTML = `
-              <div class="three-mask flex-box">
-                <progress class='process' value="0" />
-                <span class='process-text'>0%</span>
-              </div>
-              <canvas id="demoBox" />
-            `;
+            if (!!dom.current && dom.current.innerHTML) {
+                dom.current.innerHTML = `
+                    <div class="three-mask flex-box">
+                        <progress class='process' value="0" />
+                        <span class='process-text'>0%</span>
+                    </div>
+                    <canvas id="demoBox" />
+                `;
+            }
             renderer.current.domElement.innerHTML = '';
             // renderer.current.forceContextLoss();
             renderer.current.dispose();
@@ -545,21 +590,29 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             console.log('clearScene');
         };
     }, [dataValue]);
-
-    // useEffect(() => {
-    //     if (!!renderer.current) {
-    //         dom?.current?.reload?.();
-    //         camera.current.aspect = dom?.current?.clientWidth / dom?.current?.clientHeight;
-    //         camera.current.updateProjectionMatrix();
-    //         renderer.current.setSize(dom?.current?.clientWidth, dom?.current?.clientHeight);
-    //         labelRenderer.setSize(dom?.current?.clientWidth, dom?.current?.clientHeight);
-    //         labelRenderer.domElement.style.fontSize = fontSize || "12px";
-    //         // animate();
-    //     }
-    // }, [
-    //     camera, renderer.current, labelRenderer, fontSize,
-    //     dom?.current?.parentNode?.clientWidth, dom?.current?.parentNode?.clientHeight
-    // ]);
+    // 获取模型实际尺寸
+    const getSize = () => {
+        const mesh: any = scene.current.getObjectByName("tx");
+        const box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
+        const length = box.max.x - box.min.x; // 模型长度
+        const width = box.max.z - box.min.z; // 模型宽度
+        const height = box.max.y - box.min.y; // 模型高度
+        const max = Math.max(length, width, height);
+        return { length, width, height, max };
+    };
+    // 动态旋转视角
+    const animateCamera = (targetPos: any) => {
+        var currentPos = camera.current.position;
+        console.log(currentPos, targetPos)
+        var tween = new TWEEN.Tween(currentPos)
+            .to(targetPos, 1000)
+            .easing(TWEEN.Easing.Quadratic.Out)
+            .onUpdate(function () {
+                camera.current.position.copy(currentPos);
+                camera.current.lookAt(0, 0, 0);
+            });
+        tween.start();
+    };
 
     return (
         <div
@@ -567,78 +620,148 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             className={`${styles.threeCharts} flex-box`}
             style={{ fontSize }}
         >
-            {
-                !!dataValue ?
-                    <Fragment>
-                        <div id="instructions" className="flex-box">
-                            <Tooltip title="比例尺">
-                                <Popover
-                                    content={<Input
-                                        style={{ maxWidth: 200 }}
-                                        placeholder="比例尺"
-                                        onBlur={(e) => {
-                                            const val = e.target.value;
-                                            localStorage.setItem("scale", val);
-                                        }}
-                                        defaultValue={localStorage.getItem("scale") || 1}
-                                    />}
-                                    title="设置比例尺"
-                                    trigger="click"
-                                >
-                                    <Button
-                                        icon={<FontSizeOutlined />}
-                                        className='btn'
-                                    />
-                                </Popover>
-                            </Tooltip>
-                            <Tooltip title="标注">
-                                <Button
-                                    icon={<PlusOutlined />}
-                                    type={selectedBtn.includes('bzBtn01') ? 'primary' : 'default'}
-                                    id="bzBtn01"
-                                    className='btn'
+            <div id="instructions" className="flex-box">
+                <Tooltip title="比例尺">
+                    <Popover
+                        content={
+                            <div className='flex-box'>
+                                <Input
+                                    style={{ maxWidth: 100 }}
+                                    placeholder="比例尺"
+                                    onBlur={(e) => {
+                                        const res = JSON.parse(localStorage.getItem("scale") || "{}");
+                                        const val = e.target.value;
+                                        localStorage.setItem("scale", JSON.stringify({ ...res, value: val }));
+                                    }}
+                                    defaultValue={JSON.parse(localStorage.getItem("scale") || "{}")?.value || 1}
                                 />
-                            </Tooltip>
-                            <Tooltip title="显示边框">
-                                <Button
-                                    icon={<BorderOuterOutlined />}
-                                    type={selectedBtn.includes('bzBtn02') ? 'primary' : 'default'}
-                                    id="bzBtn02"
-                                    className='btn'
+                                <Select
+                                    style={{ width: 125, minWidth: 125 }}
+                                    onChange={(val) => {
+                                        const res = JSON.parse(localStorage.getItem("scale") || "{}");
+                                        localStorage.setItem("scale", JSON.stringify({ ...res, unit: val }));
+                                    }}
+                                    defaultValue={JSON.parse(localStorage.getItem("scale") || "{}")?.unit || 'm'}
+                                    options={[
+                                        {
+                                            value: 'mm',
+                                            label: '毫米（mm）',
+                                        },
+                                        {
+                                            value: 'cm',
+                                            label: '厘米（cm）',
+                                        },
+                                        {
+                                            value: 'm',
+                                            label: '米（m）',
+                                        }
+                                    ]}
                                 />
-                            </Tooltip>
-                            <Tooltip title="显示坐标轴">
-                                <Button
-                                    icon={<BorderlessTableOutlined />}
-                                    type={selectedBtn.includes('bzBtn03') ? 'primary' : 'default'}
-                                    id="bzBtn03"
-                                    className='btn'
-                                />
-                            </Tooltip>
-                            <Tooltip title="开启透视">
-                                <Button
-                                    icon={<EyeOutlined />}
-                                    type={selectedBtn.includes('bzBtn04') ? 'primary' : 'default'}
-                                    id="bzBtn04"
-                                    className='btn'
-                                />
-                            </Tooltip>
-                        </div>
-
-                        <div
-                            className='render-dom'
-                            // @ts-ignore
-                            ref={dom}
-                        >
-                            <div className="three-mask flex-box">
-                                <progress className='process' value="0" />
-                                <span className='process-text'>0%</span>
                             </div>
-                            <canvas id="demoBox"></canvas>
-                        </div>
-                    </Fragment>
-                    : null
-            }
+                        }
+                        title="设置比例尺"
+                        trigger="click"
+                    >
+                        <Button
+                            icon={<FontSizeOutlined />}
+                            className='btn'
+                        />
+                    </Popover>
+                </Tooltip>
+                <Tooltip title="标注">
+                    <Button
+                        icon={<AimOutlined />}
+                        type={selectedBtn.includes('bzBtn01') ? 'primary' : 'default'}
+                        id="bzBtn01"
+                        className='btn'
+                    />
+                </Tooltip>
+                <Tooltip title="显示边框">
+                    <Button
+                        icon={<BorderOuterOutlined />}
+                        type={selectedBtn.includes('bzBtn02') ? 'primary' : 'default'}
+                        id="bzBtn02"
+                        className='btn'
+                    />
+                </Tooltip>
+                <Tooltip title="显示坐标轴">
+                    <Button
+                        icon={<BorderlessTableOutlined />}
+                        type={selectedBtn.includes('bzBtn03') ? 'primary' : 'default'}
+                        id="bzBtn03"
+                        className='btn'
+                    />
+                </Tooltip>
+                <Tooltip title="开启透视">
+                    <Button
+                        icon={<EyeOutlined />}
+                        type={selectedBtn.includes('bzBtn04') ? 'primary' : 'default'}
+                        id="bzBtn04"
+                        className='btn'
+                    />
+                </Tooltip>
+            </div>
+
+            <div
+                className='render-dom'
+                // @ts-ignore
+                ref={dom}
+            >
+                <div className="three-mask flex-box">
+                    <progress className='process' value="0" />
+                    <span className='process-text'>0%</span>
+                </div>
+                <canvas id="demoBox"></canvas>
+            </div>
+            <div className='camera-box'>
+                <div className="camera-box-pointer">
+                    <div className="camera-box-pointer-top flex-box-justify-between">
+                        <img src={rectTopIcon} alt="rect" className='cameraIcon' onClick={() => {
+                            const { max } = getSize();
+                            var targetPos = new THREE.Vector3(0, max * 1.5, 0);
+                            animateCamera(targetPos);
+                        }} />
+                        <img src={rectAllIcon} alt="rect" className='cameraIcon' onClick={() => {
+                            const { length, width, height } = getSize();
+                            var targetPos = new THREE.Vector3(width, height, length);
+                            animateCamera(targetPos);
+                        }} />
+                    </div>
+                    <div className="camera-box-pointer-center flex-box-justify-between">
+                        <img src={rectLeftIcon} alt="rect" className='cameraIcon' onClick={() => {
+                            const { max } = getSize();
+                            var targetPos = new THREE.Vector3(max * -1.5, 0, 0);
+                            animateCamera(targetPos);
+                        }} />
+                        <img src={rectFrontIcon} alt="rect" className='cameraIcon' onClick={() => {
+                            const { max } = getSize();
+                            var targetPos = new THREE.Vector3(0, 0, max * 1.5);
+                            animateCamera(targetPos);
+                        }} />
+                        <img src={rectRightIcon} alt="rect" className='cameraIcon' onClick={() => {
+                            const { max } = getSize();
+                            var targetPos = new THREE.Vector3(max * 1.5, 0, 0);
+                            animateCamera(targetPos);
+                        }} />
+                        <img src={rectBackIcon} alt="rect" className='cameraIcon' onClick={() => {
+                            const { max } = getSize();
+                            var targetPos = new THREE.Vector3(0, 0, max * -1.5);
+                            animateCamera(targetPos);
+                        }} />
+                    </div>
+                    <div className="camera-box-pointer-bottom flex-box-justify-between">
+                        <img src={rectBottomIcon} alt="rect" className='cameraIcon' onClick={() => {
+                            const { max } = getSize();
+                            var targetPos = new THREE.Vector3(0, max * -1.5, 0);
+                            animateCamera(targetPos);
+                        }} />
+                    </div>
+                </div>
+                <div className="camera-box-cursor flex-box">
+                    <img src={rectIcon} alt="rect" className='cameraIcon' />
+                    视图
+                </div>
+            </div>
         </div>
     );
 
