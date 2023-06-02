@@ -36,7 +36,7 @@ const AlertCharts: React.FC<Props> = (props: any) => {
                 _.isArray(dataValue) && (dataValue || []).map((item: any, index: number) => {
                     const { name, value } = item;
                     return <div
-                        id={`echart-${id}`}
+                        key={`echart-${id}-${index}`}
                         className={`flex-box-center alert-item ${!!value ? 'OK' : 'NG'}`}
                         style={{ fontSize }}
                     >
