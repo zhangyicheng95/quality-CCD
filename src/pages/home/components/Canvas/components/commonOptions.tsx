@@ -1,5 +1,10 @@
 const options = {
-    color: ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'],
+    color: [
+        '#5470c6', '#91cc75', '#fac858', '#ee6666',
+        '#73c0de', '#3ba272', '#fc8452', '#9a60b4',
+        '#ea7ccc', '#FFA07A', '#FA8072', '#FAFAD2',
+        '#BDB76B', '#ADFF2F', '#AFEEEE', '#FF00FF',
+    ],
     tooltip: {
         trigger: 'axis',
         axisPointer: {
