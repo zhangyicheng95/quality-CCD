@@ -38,9 +38,13 @@ interface Props {
 const ThreeCharts: React.FC<Props> = (props: any) => {
     // models/ply/ascii/tx.ply / models/obj/walt/tx.obj / models/stl/ascii/tx.stl
     let { data = {}, id, } = props;
-    let { dataValue, fontSize } = data;
+    let { dataValue = {}, fontSize } = data;
+    let { name, value = [] } = dataValue;
     if (process.env.NODE_ENV === 'development') {
-        dataValue = "models/01.stl";
+        name = "models/tx.stl";
+        value = [
+            { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -400, y: 0, z: 500 }, { x: 400, y: 0, z: 500 },], }
+        ];
     }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
@@ -48,12 +52,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const [selectedBtn, setSelectedBtn] = useState(['']);
 
     useEffect(() => {
-        if (!_.isString(dataValue)) {
+        if (!_.isString(name)) {
             message.error('数据格式不正确，请检查');
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
-    }, [dataValue]);
+    }, [name]);
 
     let renderer = useRef<any>();
     const labelRenderer = new CSS2DRenderer();
@@ -79,7 +83,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     }
 
     useEffect(() => {
-        if (!dataValue) return;
+        if (!name) return;
         // 蒙层
         const maskBox: any = document.querySelector(".three-mask");
         // 外层盒子
@@ -196,7 +200,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 {
                     name: "14",
                     standardValue: "536",
-                    trueValue: "562.365",
+                    measureValue: "562.365",
                     offsetValue: "0.765",
                     position: [
                         { x: -mdwid / 4, y: -mdhei / 2, z: mdlen / 4 },
@@ -206,7 +210,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 {
                     name: "7",
                     standardValue: "536",
-                    trueValue: "562.365",
+                    measureValue: "562.365",
                     offsetValue: "0.765",
                     position: [
                         { x: -mdwid / 2, y: 0, z: mdlen / 2 },
@@ -215,7 +219,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 },
             ];
             //     data.forEach((item, index) => {
-            //         const { name, standardValue, trueValue, offsetValue, position } = item;
+            //         const { name, standardValue, measureValue, offsetValue, position } = item;
             //         // @ts-ignore 渲染线
             //         const geometry = new THREE.BufferGeometry().setFromPoints(position);
             //         line = new THREE.LineSegments(
@@ -237,7 +241,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             //  <div class="item">长度尺寸: ${name}</div>
             //  <div class="item" style="text-align:center;">${standardValue} ± ${offsetValue}</div>
             //  <div class="flex-box item"><div class="key">名义值</div><div class="value">${standardValue}</div></div>
-            //  <div class="flex-box item"><div class="key">实测值</div><div class="value">${trueValue}</div></div>
+            //  <div class="flex-box item"><div class="key">实测值</div><div class="value">${measureValue}</div></div>
             //  <div class="flex-box item"><div class="key">偏差值</div><div class="value">${offsetValue}</div></div>
             //  `;
             //         const measurementLabel: any = new CSS2DObject(measurementDiv);
@@ -263,17 +267,17 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             processText.innerText = process;
         }
         // 加载url
-        if (dataValue.indexOf(".glb") > -1) {
+        if (name.indexOf(".glb") > -1) {
             new GLTFLoader().load(
-                dataValue,
+                name,
                 function (gltf) {
                     addPickable(gltf.scene);
                 },
                 (xhr) => processFun(xhr)
             );
-        } else if (dataValue.indexOf(".ply") > -1) {
+        } else if (name.indexOf(".ply") > -1) {
             new PLYLoader().load(
-                dataValue,
+                name,
                 function (geometry) {
                     geometry.computeVertexNormals();
                     const material: any = new THREE.MeshStandardMaterial({
@@ -288,7 +292,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     console.log(error);
                 }
             );
-        } else if (dataValue.indexOf(".stl") > -1) {
+        } else if (name.indexOf(".stl") > -1) {
             // 热力图着色器程序
             const vertexShader = `
                 varying vec2 vUv;
@@ -313,7 +317,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 }
             `;
             new STLLoader().load(
-                dataValue,
+                name,
                 function (geometry) {
                     geometry.computeVertexNormals();
                     const material: any = new THREE.MeshPhysicalMaterial({
@@ -325,9 +329,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 },
                 (xhr) => processFun(xhr)
             );
-        } else if (dataValue.indexOf(".obj") > -1) {
+        } else if (name.indexOf(".obj") > -1) {
             new OBJLoader().load(
-                dataValue,
+                name,
                 function (object) {
                     addPickable(object);
                 },
@@ -589,7 +593,44 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             setSelectedBtn([]);
             console.log('clearScene');
         };
-    }, [dataValue]);
+    }, [name]);
+    useEffect(() => {
+        (value || []).forEach((item: any, index: number) => {
+            const { name, standardValue, measureValue, offsetValue, position } = item;
+            // @ts-ignore 渲染线
+            const geometry = new THREE.BufferGeometry().setFromPoints(position);
+            line = new THREE.LineSegments(
+                geometry,
+                new THREE.LineBasicMaterial({
+                    color: 0xff0000, // 射线颜色
+                    transparent: true,
+                    opacity: 0.75,
+                    // depthTest: false,
+                    // depthWrite: false,
+                })
+            );
+            line.frustumCulled = false;
+            scene.current.add(line);
+            // 渲染信息卡片
+            const measurementDiv = document.createElement("div");
+            measurementDiv.className = "label";
+            measurementDiv.innerHTML = `
+             <div class="item">长度尺寸: ${name}</div>
+             <div class="item" style="text-align:center;">${standardValue} ± ${offsetValue}</div>
+             <div class="flex-box item"><div class="key">名义值</div><div class="value">${standardValue}</div></div>
+             <div class="flex-box item"><div class="key">实测值</div><div class="value">${measureValue}</div></div>
+             <div class="flex-box item"><div class="key">偏差值</div><div class="value">${offsetValue}</div></div>
+             `;
+            const measurementLabel: any = new CSS2DObject(measurementDiv);
+            measurementLabel.position.copy({
+                x: (position[0].x + position[1].x) / 2,
+                y: (position[0].y + position[1].y) / 2,
+                z: (position[0].z + position[1].z) / 2,
+            });
+            measurementLabels["label" + index] = measurementLabel;
+            scene.current.add(measurementLabels["label" + index]);
+        });
+    }, [value]);
     // 获取模型实际尺寸
     const getSize = () => {
         const mesh: any = scene.current.getObjectByName("tx");
@@ -598,6 +639,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         const width = box.max.z - box.min.z; // 模型宽度
         const height = box.max.y - box.min.y; // 模型高度
         const max = Math.max(length, width, height);
+        console.log(length, width, height)
         return { length, width, height, max };
     };
     // 动态旋转视角

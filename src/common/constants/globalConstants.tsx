@@ -69,6 +69,10 @@ export const windowTypeList: any = [
   {
     value: 'description',
     label: '描述组件',
+  },
+  {
+    value: 'operation',
+    label: '功能操作组件',
   }
 ];
 export const logColors = {

@@ -71,6 +71,7 @@ import { guid } from '@/utils/utils';
 import DescriptionCharts from './components/DescriptionCharts';
 import moment from 'moment';
 import ThreeCharts from './components/ThreeCharts';
+import OperationCharts from './components/OperationCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -81,7 +82,7 @@ const Home: React.FC<any> = (props: any) => {
   } = props;
   const { logStr, gridContentList, footerData, errorData } = snapshot;
   const [form] = Form.useForm();
-  const { validateFields, setFieldsValue } = form;
+  const { validateFields, setFieldsValue, getFieldValue } = form;
   // @ts-ignore
   const { type } = window.QUALITY_CCD_CONFIG;
   const ipString: any = localStorage.getItem('ipString') || '';
@@ -94,6 +95,7 @@ const Home: React.FC<any> = (props: any) => {
   const [contentLayout, setContentLayout] = useState([]);
   const [paramData, setParamData] = useState<any>({});
   const [nodeList, setNodeList] = useState<any>([]);
+  const [selectedNodeConfig, setSelectedNodeConfig] = useState<any>([]);
   const [windowType, setWindowType] = useState('img');
   const [selectPathVisible, setSelectPathVisible] = useState(false);
   const [selectedPath, setSelectedPath] = useState<any>({ fileType: 'file', value: '' });
@@ -1132,7 +1134,7 @@ const Home: React.FC<any> = (props: any) => {
           backgroundColor = 'default', barColor = 'default', progressType = 'line',
           progressSize = 8, progressSteps = 5, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-          CCDName, imgs_width, imgs_height, tableSize, magnifier,
+          CCDName, imgs_width, imgs_height, tableSize, magnifier, operationList,
           basicInfoData = [{ id: guid(), name: '', value: '' }]
         } = item;
         const id = key?.split('$$')[0];
@@ -1338,26 +1340,35 @@ const Home: React.FC<any> = (props: any) => {
                                               }}
                                             />
                                             :
-                                            (
-                                              _.isString(dataValue) && dataValue.indexOf('http') > -1 ? (
-                                                <ImgCharts
-                                                  id={key}
-                                                  data={{
-                                                    dataValue, windowControl,
-                                                    setContentList, magnifier
-                                                  }}
-                                                />
+                                            type === 'operation' ?
+                                              <OperationCharts
+                                                id={key}
+                                                data={{
+                                                  operationList,
+                                                  dataValue
+                                                }}
+                                              />
+                                              :
+                                              (
+                                                _.isString(dataValue) && dataValue.indexOf('http') > -1 ? (
+                                                  <ImgCharts
+                                                    id={key}
+                                                    data={{
+                                                      dataValue, windowControl,
+                                                      setContentList, magnifier
+                                                    }}
+                                                  />
+                                                )
+                                                  :
+                                                  <ImgCharts
+                                                    id={key}
+                                                    data={{
+                                                      dataValue: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                      windowControl, magnifier,
+                                                      setContentList
+                                                    }}
+                                                  />
                                               )
-                                                :
-                                                <ImgCharts
-                                                  id={key}
-                                                  data={{
-                                                    dataValue: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                    windowControl, magnifier,
-                                                    setContentList
-                                                  }}
-                                                />
-                                            )
                 }
               </div>
             </div>
@@ -1523,7 +1534,7 @@ const Home: React.FC<any> = (props: any) => {
           fetchType, fetchParams, align, backgroundColor, barColor,
           progressType, progressSize, progressSteps, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-          CCDName, imgs_width, imgs_height, magnifier
+          CCDName, imgs_width, imgs_height, magnifier, operationList
         } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
@@ -1551,7 +1562,7 @@ const Home: React.FC<any> = (props: any) => {
             fetchType, fetchParams, align, backgroundColor, barColor,
             progressType, progressSize, progressSteps, windowControl,
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-            CCDName, imgs_width, imgs_height, magnifier
+            CCDName, imgs_width, imgs_height, magnifier, operationList
           }, ['description'].includes(windowType) ? { basicInfoData } : {}));
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1566,7 +1577,7 @@ const Home: React.FC<any> = (props: any) => {
                 fetchType, fetchParams, align, backgroundColor, barColor,
                 progressType, progressSize, progressSteps, windowControl,
                 des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-                CCDName, imgs_width, imgs_height, magnifier
+                CCDName, imgs_width, imgs_height, magnifier, operationList
               }, ['description'].includes(windowType) ? { basicInfoData } : {});
             };
             return item;
@@ -1605,7 +1616,7 @@ const Home: React.FC<any> = (props: any) => {
       direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined,
       align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line',
       progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: undefined,
-      CCDName: undefined, magnifier: false
+      CCDName: undefined, magnifier: false, operationList: [],
     });
     setWindowType('img');
     setAddWindowVisible(false);
@@ -1825,17 +1836,46 @@ const Home: React.FC<any> = (props: any) => {
               <Cascader
                 style={{ width: '100%' }}
                 options={nodeList}
+                onChange={(val) => {
+                  const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === val[0])?.[0];
+                  if (!!res) {
+                    setFieldsValue({ operationList: [] });
+                    const { config = {} } = res;
+                    if (!!config?.initParams && _.isObject(config?.initParams)) {
+                      setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
+                        return {
+                          label: item[1]?.alias,
+                          value: item[0],
+                        }
+                      }));
+                    }
+                  }
+                }}
               />
             </Form.Item>
             <Form.Item
               name={'type'}
               label="窗口类型"
+              initialValue={'img'}
               rules={[{ required: true, message: '窗口类型' }]}
             >
               <Select
                 style={{ width: '100%' }}
                 options={windowTypeList}
                 onChange={val => {
+                  const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === getFieldValue('value')[0])?.[0];
+                  if (!!res) {
+                    setFieldsValue({ operationList: [] });
+                    const { config = {} } = res;
+                    if (!!config?.initParams && _.isObject(config?.initParams)) {
+                      setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
+                        return {
+                          label: item[1]?.alias,
+                          value: item[0],
+                        }
+                      }));
+                    }
+                  }
                   setWindowType(val);
                 }}
               />
@@ -2132,14 +2172,6 @@ const Home: React.FC<any> = (props: any) => {
               ['table2', 'table'].includes(windowType) ?
                 <Fragment>
                   <Form.Item
-                    name={`fontSize`}
-                    label={'字体大小'}
-                    rules={[{ required: true, message: '字体大小' }]}
-                    initialValue={24}
-                  >
-                    <InputNumber min={12} />
-                  </Form.Item>
-                  <Form.Item
                     name={`reverse`}
                     label={'数据倒叙'}
                     rules={[{ required: true, message: '数据倒叙' }]}
@@ -2305,14 +2337,6 @@ const Home: React.FC<any> = (props: any) => {
                     />
                   </Form.Item>
                   <Form.Item
-                    name={`fontSize`}
-                    label={'字体大小'}
-                    rules={[{ required: true, message: '字体大小' }]}
-                    initialValue={24}
-                  >
-                    <InputNumber min={12} />
-                  </Form.Item>
-                  <Form.Item
                     name="des_column"
                     label="列数"
                   >
@@ -2358,18 +2382,38 @@ const Home: React.FC<any> = (props: any) => {
             {
               ['three'].includes(windowType) ?
                 <Fragment>
+
+                </Fragment>
+                : null
+            }
+            {
+              ['operation'].includes(windowType) ?
+                <Fragment>
                   <Form.Item
-                    name={'fontSize'}
-                    label="字号"
-                    rules={[{ required: true, message: '字号' }]}
+                    name={`operationList`}
+                    label={"操作项"}
+                    rules={[{ required: true, message: '操作项' }]}
                   >
-                    <InputNumber
-                      min={12}
+                    <Select
+                      style={{ width: '100%' }}
+                      mode="multiple"
+                      options={selectedNodeConfig}
                     />
                   </Form.Item>
                 </Fragment>
                 : null
             }
+            <Form.Item
+              name={'fontSize'}
+              label="字号"
+              // initialValue={24}
+              rules={[{ required: true, message: '字号' }]}
+            >
+              <InputNumber
+                min={12}
+                placeholder="12"
+              />
+            </Form.Item>
             <Form.Item
               name="ifLocalStorage"
               label="开启缓存"

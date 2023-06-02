@@ -49,7 +49,7 @@ const FileManager: React.FC<Props> = (props) => {
       onCancel={() => {
         onCancel();
       }}
-      getContainer={false}
+    // getContainer={false}
     >
       <div className={styles.fileManagerBox}>
         <div className="file-managet-title">

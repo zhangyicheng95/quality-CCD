@@ -67,7 +67,11 @@ const Setting: React.FC<any> = (props) => {
       setParamData(paramsData);
       setTreeData([{ title: '参数节点', key: 'parent_001', children: result }]);
       setCheckedKeys(checkedList);
-      setFieldsValue({ quality_name: quality_name || name });
+      setFieldsValue({
+        quality_name: quality_name || name,
+        selfStart: paramsData.selfStart || false,
+        errorSelfStart: paramsData.errorSelfStart || false
+      });
     }
   }, [paramsData]);
   // 设置服务端IP
@@ -265,7 +269,7 @@ const Setting: React.FC<any> = (props) => {
             name="selfStart"
             label="开机自启动"
             tooltip="开启软件后，自动检测链接状态，并启动"
-            initialValue={paramData?.selfStart || false}
+            valuePropName="checked"
             rules={[{ required: false, message: "开机自启动" }]}
           >
             <Switch />
@@ -274,7 +278,7 @@ const Setting: React.FC<any> = (props) => {
             name="errorSelfStart"
             label="异常自动重启"
             tooltip="运行发生报错时，自动重启服务。"
-            initialValue={paramData?.errorSelfStart || false}
+            valuePropName="checked"
             rules={[{ required: false, message: "异常自动重启" }]}
           >
             <Switch />
