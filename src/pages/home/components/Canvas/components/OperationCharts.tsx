@@ -7,6 +7,8 @@ import { FormatWidgetToDom } from '@/pages/control';
 import MonacoEditor from '@/components/MonacoEditor';
 import PlatFormModal from '@/components/platForm';
 import FileManager from '@/components/FileManager';
+import TooltipDiv from '@/components/TooltipDiv';
+import { updateParams } from '@/services/api';
 
 interface Props {
     data: any,
@@ -16,9 +18,10 @@ interface Props {
 }
 
 const OperationCharts: React.FC<Props> = (props: any) => {
-    const { data = {}, id, } = props;
-    const { operationList, dataValue = [], } = data;
+    const { data = {}, id, started } = props;
+    const { operationList, } = data;
     const [form] = Form.useForm();
+    const { validateFields, resetFields } = form;
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
 
@@ -62,10 +65,53 @@ const OperationCharts: React.FC<Props> = (props: any) => {
         setConfigValueList((prev: any) => ({ ...prev, [key]: value }));
     }
     const onOk = () => {
-        console.log(configValueList);
+        validateFields()
+            .then((values) => {
+                console.log(configValueList)
+                const { flowData, } = params;
+                let { nodes } = flowData;
+                nodes = nodes.map((node: any) => {
+                    const { config = {} } = node;
+                    if (node.id === id.split('$$')[0]) {
+                        const { initParams = {} } = config;
+                        let obj = Object.assign({}, initParams);
+                        Object.entries(configValueList).forEach((item: any, index: number) => {
+                            obj[item[0]] = {
+                                ...obj[item[0]],
+                                value: item[1],
+                            }
+                        });
+                        return Object.assign({}, node, {
+                            config: Object.assign({}, config, {
+                                initParams: obj
+                            })
+                        });
+                    }
+                    return node
+                });
+                const requestParams = {
+                    id: params.id,
+                    data: Object.assign({}, params, {
+                        flowData: Object.assign({}, flowData, {
+                            nodes
+                        })
+                    })
+                };
+                console.log(requestParams);
+                updateParams(requestParams).then((res: any) => {
+                    if (res && res.code === 'SUCCESS') {
+                        message.success('修改成功');
+                    } else {
+                        message.error(res?.msg || res?.message || '接口异常');
+                    }
+                });
+            }).catch((err) => {
+                console.log(err);
+            });
     };
     const onCancel = () => {
-
+        resetFields();
+        setConfigValueList({});
     };
 
     return (
@@ -74,31 +120,50 @@ const OperationCharts: React.FC<Props> = (props: any) => {
             className={`${styles.operationCharts} flex-box`}
         >
             <div className="operation-body">
-                {
-                    useMemo(() => {
-                        return configList.map((item: any, index: number) => {
-                            return <FormatWidgetToDom
-                                key={item?.name}
-                                id={item?.name}
-                                label={item?.alias || item?.name}
-                                config={[item?.name, item]}
-                                widgetChange={widgetChange}
-                                form={form}
-                                disabled={false}
-                                setEditorVisible={setEditorVisible}
-                                setEditorValue={setEditorValue}
-                                setPlatFormVisible={setPlatFormVisible}
-                                setPlatFormValue={setPlatFormValue}
-                                setSelectPathVisible={setSelectPathVisible}
-                                setSelectedPath={setSelectedPath}
-                            />
-                        })
-                    }, [configList])
-                }
+                <Form
+                    form={form}
+                    scrollToFirstError
+                >
+                    {
+                        useMemo(() => {
+                            return configList.map((item: any, index: number) => {
+                                const { name, alias, widget = {} } = item;
+                                const { type } = widget;
+                                return <div className="flex-box param-item" key={`${id}@$@${item[0]}`}>
+                                    <div className="icon-box flex-box">
+                                        {_.toUpper(type.slice(0, 1))}
+                                        {/* <BlockOutlined className="item-icon" /> */}
+                                    </div>
+                                    <div className="title-box">
+                                        <TooltipDiv className="first" title={alias || name}>{alias || name}</TooltipDiv>
+                                        <TooltipDiv className="second">{name}</TooltipDiv>
+                                    </div>
+                                    <div className="value-box">
+                                        <FormatWidgetToDom
+                                            key={item?.name}
+                                            id={item?.name}
+                                            // label={item?.alias || item?.name}
+                                            config={[item?.name, item]}
+                                            widgetChange={widgetChange}
+                                            form={form}
+                                            disabled={!!started}
+                                            setEditorVisible={setEditorVisible}
+                                            setEditorValue={setEditorValue}
+                                            setPlatFormVisible={setPlatFormVisible}
+                                            setPlatFormValue={setPlatFormValue}
+                                            setSelectPathVisible={setSelectPathVisible}
+                                            setSelectedPath={setSelectedPath}
+                                        />
+                                    </div>
+                                </div>
+                            })
+                        }, [configList])
+                    }
+                </Form>
             </div>
             <div className="operation-footer flex-box-center">
-                <Button type="primary" onClick={() => onOk()} >确认</Button>
-                <Button onClick={() => onCancel()}>重置</Button>
+                <Button type="primary" disabled={!!started} onClick={() => onOk()} >确认</Button>
+                <Button disabled={!!started} onClick={() => onCancel()}>重置</Button>
             </div>
 
             {
@@ -161,4 +226,6 @@ const OperationCharts: React.FC<Props> = (props: any) => {
 
 };
 
-export default OperationCharts;
+export default connect(({ home, themeStore }) => ({
+    started: home.started || false,
+}))(OperationCharts);

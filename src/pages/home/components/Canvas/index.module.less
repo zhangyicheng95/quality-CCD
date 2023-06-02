@@ -794,9 +794,90 @@
       flex: 1;
       padding: 12px;
 
-      .ant-form-item {
-        float: left;
-        margin: 0 24px 16px 0;
+      .param-item {
+        flex: 1;
+        padding-bottom: 16px;
+
+        &-underline {
+          text-decoration: underline;
+        }
+
+        .icon-box {
+          height: 35px;
+          width: 35px;
+          min-width: 35px;
+          border-radius: 50%;
+          justify-content: center;
+          background-color: @border-color-base;
+          margin-right: 12px;
+
+          .item-icon {
+            font-size: 20px;
+          }
+        }
+
+        .title-box {
+          max-width: 150px;
+
+          .first {
+            font-size: 20px;
+            margin-bottom: -6px;
+          }
+
+          .second {
+            font-size: 12px;
+            color: @text-color-secondary;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+          }
+        }
+
+        .value-box {
+          flex: 1;
+          width: calc(100% - 259px);
+          font-weight: 250;
+          word-break: break-all;
+          margin-left: 16px;
+
+          p {
+            margin-bottom: 0;
+            color: @text-color;
+            font-weight: 700;
+          }
+
+          .ant-form-item {
+            margin-bottom: 0;
+
+            .ant-form-item-control {
+              height: 40px;
+              line-height: 40px;
+
+              .ant-form-item-control-input {
+                height: 100%;
+
+                .ant-form-item-control-input-content {
+                  height: 100%;
+                }
+              }
+
+              .ant-btn {
+                height: 38px;
+              }
+            }
+
+            .dir {
+              gap: 12px;
+            }
+          }
+
+          .codeEditor {
+            .ant-form-item-control {
+              height: auto;
+            }
+          }
+        }
+
       }
     }
 

@@ -41,6 +41,7 @@ import {
   PlayCircleOutlined,
   PlusCircleOutlined,
   PlusOutlined,
+  ReloadOutlined,
   SafetyOutlined,
   SwapOutlined,
   UpOutlined,
@@ -393,7 +394,7 @@ const Home: React.FC<any> = (props: any) => {
                 <Fragment>
                   <Button
                     className="flex-box btn"
-                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 2)}%` }}
+                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 3)}%` }}
                     icon={
                       started ? (
                         <div style={{ height: 30, width: 30, marginRight: 8 }}>
@@ -412,7 +413,7 @@ const Home: React.FC<any> = (props: any) => {
                   </Button>
                   <Button
                     className="flex-box btn"
-                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 2)}%` }}
+                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 3)}%` }}
                     danger
                     icon={<div className="btn-icon btn-self-icon flex-box-center" >
                       <div className={`btn-self-icon-rect ${started ? 'active' : 'disabled'}`} />
@@ -423,6 +424,18 @@ const Home: React.FC<any> = (props: any) => {
                     loading={started && loading}
                   >
                     停止
+                  </Button>
+                  <Button
+                    className="flex-box btn"
+                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 3)}%` }}
+                    danger
+                    icon={<ReloadOutlined className="btn-icon" />}
+                    type="text"
+                    onClick={() => reStart()}
+                    disabled={!started}
+                    loading={started && loading}
+                  >
+                    重启
                   </Button>
                   {process.env.NODE_ENV === 'development' ? (
                     <Button
@@ -1428,6 +1441,18 @@ const Home: React.FC<any> = (props: any) => {
         message.error(res?.msg || res?.message || '接口异常');
       }
       setLoading(false);
+    });
+  };
+  // 重启任务
+  const reStart = () => {
+    if (!ipString) return;
+    setLoading(true);
+    stopFlowService(ipString || '').then((res: any) => {
+      if (res && res.code === 'SUCCESS') {
+        start();
+      } else {
+        message.error(res?.msg || res?.message || '接口异常');
+      }
     });
   };
   // 关闭
