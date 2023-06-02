@@ -15,7 +15,10 @@ interface Props {
 
 const PieCharts: React.FC<Props> = (props: any) => {
     let myChart: any = null;
-    const { data = {}, id, legend, dispatch, setMyChartVisible } = props;
+    let { data = [], id, legend, dispatch, setMyChartVisible } = props;
+    if (process.env.NODE_ENV === 'development') {
+        data = [{ "name": "OK", value: "1024", }, { "name": "NG类型1", value: "888", "color": "blue" }, { "name": "NG类型2", value: "1024", "color": "blue" },];
+    }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
 

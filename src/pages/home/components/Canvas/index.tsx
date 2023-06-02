@@ -1159,7 +1159,6 @@ const Home: React.FC<any> = (props: any) => {
         const { alias, name, ports = {} } = parent[0] || {};
         const { items = [] } = ports;
         const SecLabel = items?.filter((i: any) => i.group === 'bottom' && (i?.label?.name === value[1]))[0];
-
         listData = listData.concat(
           <div key={key} className={` drag-item-content-box ${backgroundColor === 'default' ? "background-ubv" : ""}`}>
             {
@@ -1304,7 +1303,10 @@ const Home: React.FC<any> = (props: any) => {
                                 type === 'alert' ?
                                   <AlertCharts
                                     id={key}
-                                    data={dataValue || []}
+                                    data={{
+                                      dataValue: dataValue || [],
+                                      fontSize
+                                    }}
                                   />
                                   :
                                   type === 'imgs' ?
@@ -1358,7 +1360,8 @@ const Home: React.FC<any> = (props: any) => {
                                                 id={key}
                                                 data={{
                                                   operationList,
-                                                  dataValue
+                                                  dataValue,
+                                                  fontSize
                                                 }}
                                               />
                                               :
@@ -1613,6 +1616,7 @@ const Home: React.FC<any> = (props: any) => {
           const params = Object.assign({}, paramsData, {
             contentData: Object.assign({}, paramsData.contentData, { content: result }),
           });
+          console.log(params)
           setParamData(params);
         };
         form.resetFields();

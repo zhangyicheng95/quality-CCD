@@ -13,7 +13,13 @@ interface Props {
 
 const TableCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { dataValue = [], yName, xName, fontSize, reverse } = data;
+    let { dataValue = [], yName, xName, fontSize, reverse } = data;
+    if (process.env.NODE_ENV === 'development') {
+        dataValue = [
+            { "name": "序号", "value": [{ "value": "value1", "color": "red" }, { "value": "value2", "color": "red" }, { "value": "value1", "color": "red" }], "color": "red" },
+            { "name": "创建时间", "value": [{ "value": "value1", "color": "red" }, { "value": "value2", "color": "red" }, { "value": "value1", "color": "red" }] }
+        ];
+    }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
 

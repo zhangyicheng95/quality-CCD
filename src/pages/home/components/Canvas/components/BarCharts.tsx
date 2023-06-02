@@ -18,6 +18,9 @@ const BarCharts: React.FC<Props> = (props: any) => {
     let myChart: any = null;
     const { data = {}, id, setMyChartVisible, } = props;
     let { dataValue = [], yName, xName, direction, align, barColor } = data;
+    if (process.env.NODE_ENV === 'development') {
+        dataValue = [{ "name": "data1", "value": 8.04, "color": "blue" }, { "name": "data2", "value": 6.95, "color": "blue" }, { "name": "上限", "value": 2.2, "type": "markLine", "color": "red" }, { "name": "标准值", "value": 1.6, "type": "markLine", "color": "green" }, { "name": "下限", "value": 1.53, "type": "markLine", "color": "red" }, { "name": "开始", "value": 2.2, "type": "start" }, { "name": "截止", "value": 2.2, "type": "end" }];
+    }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     barColor = [].concat(barColor)

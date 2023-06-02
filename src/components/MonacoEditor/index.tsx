@@ -100,7 +100,7 @@ const MonacoEditor: React.FC<Props> = (props) => {
       onCancel={() => {
         onCancel();
       }}
-      getContainer={false}
+    // getContainer={false}
     >
       <Monaco
         width="100%"

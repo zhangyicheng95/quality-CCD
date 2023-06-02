@@ -16,7 +16,34 @@ interface Props {
 const LineCharts: React.FC<Props> = (props: any) => {
     let myChart: any = null;
     const { data = {}, id, legend, dispatch, setMyChartVisible } = props;
-    const { dataValue = [], yName, xName } = data;
+    let { dataValue = [], yName, xName } = data;
+    if (process.env.NODE_ENV === 'development') {
+        dataValue = [
+            {
+                "name": "上限",
+                "value": 2.2,
+                "type": "markLine"
+            },
+            {
+                "name": "标准值",
+                "value": 1.6,
+                "type": "markLine"
+            },
+            {
+                "name": "下限",
+                "value": 1.53,
+                "type": "markLine"
+            },
+            {
+                "name": "data1",
+                "value": [[1, 1.54], [2, 0], [3, 1.57], [4, 1.67], [5, 1.89], [6, 1.6], [7, 1.51], [8, 1.55], [9, 1.79], [10, 1.65], [11, 1.6], [12, 1.76], [13, 1.62], [14, 1.76]]
+            },
+            {
+                "name": "data2",
+                "value": [[1, 1.62], [2, 1.53], [3, 1.8], [4, 1.76], [5, 1.83], [6, 1.63], [7, 1.78], [8, 1.85], [9, 1.5], [10, 1.59], [11, 1.7], [12, 1.74], [13, 1.79], [14, 1.69]]
+            }
+        ];
+    }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
 
@@ -62,7 +89,25 @@ const LineCharts: React.FC<Props> = (props: any) => {
             ),
             grid: Object.assign({}, options.grid, {
                 right: `${xName.length * (xName.length < 4 ? 24 : 16)}px`,
+                bottom: 40
             }),
+            dataZoom: [Object.assign({
+                type: "slider",
+                show: true,
+                realtime: true,
+                start: 0,
+                end: 100,
+                showDetai: false,
+                moveHandleStyle: {
+                    opacity: 0,
+                }
+            }, {
+                orient: 'horizontal',
+                bottom: 20,
+                left: 80,
+                right: 60,
+                height: 20,
+            })],
             yAxis: Object.assign({}, options.yAxis, {
                 type: 'value',
                 name: yName,

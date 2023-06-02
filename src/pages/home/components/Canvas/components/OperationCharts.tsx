@@ -19,7 +19,7 @@ interface Props {
 
 const OperationCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, started } = props;
-    const { operationList, } = data;
+    const { operationList, dataValue, fontSize } = data;
     const [form] = Form.useForm();
     const { validateFields, resetFields } = form;
     const { initialState } = useModel<any>('@@initialState');
@@ -118,6 +118,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
         <div
             id={`echart-${id}`}
             className={`${styles.operationCharts} flex-box`}
+            style={{ fontSize }}
         >
             <div className="operation-body">
                 <Form

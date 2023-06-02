@@ -37,8 +37,8 @@ interface Props {
 
 const ThreeCharts: React.FC<Props> = (props: any) => {
     // models/ply/ascii/tx.ply / models/obj/walt/tx.obj / models/stl/ascii/tx.stl
-    let { data = {}, id, } = props;
-    let { dataValue = {}, fontSize } = data;
+    const { data = {}, id, } = props;
+    const { dataValue = {}, fontSize } = data;
     let { name, value = [] } = dataValue;
     if (process.env.NODE_ENV === 'development') {
         name = "models/tx.stl";
@@ -195,64 +195,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 }
             });
             maskBox.style.display = "none";
-            // 渲染卡片
-            const data = [
-                {
-                    name: "14",
-                    standardValue: "536",
-                    measureValue: "562.365",
-                    offsetValue: "0.765",
-                    position: [
-                        { x: -mdwid / 4, y: -mdhei / 2, z: mdlen / 4 },
-                        { x: mdwid / 4, y: -mdhei / 2, z: 0 },
-                    ],
-                },
-                {
-                    name: "7",
-                    standardValue: "536",
-                    measureValue: "562.365",
-                    offsetValue: "0.765",
-                    position: [
-                        { x: -mdwid / 2, y: 0, z: mdlen / 2 },
-                        { x: mdwid / 2, y: 0, z: mdlen / 2 },
-                    ],
-                },
-            ];
-            //     data.forEach((item, index) => {
-            //         const { name, standardValue, measureValue, offsetValue, position } = item;
-            //         // @ts-ignore 渲染线
-            //         const geometry = new THREE.BufferGeometry().setFromPoints(position);
-            //         line = new THREE.LineSegments(
-            //             geometry,
-            //             new THREE.LineBasicMaterial({
-            //                 color: 0xff0000, // 射线颜色
-            //                 transparent: true,
-            //                 opacity: 0.75,
-            //                 // depthTest: false,
-            //                 // depthWrite: false,
-            //             })
-            //         );
-            //         line.frustumCulled = false;
-            //         scene.current.add(line);
-            //         // 渲染信息卡片
-            //         const measurementDiv = document.createElement("div");
-            //         measurementDiv.className = "label";
-            //         measurementDiv.innerHTML = `
-            //  <div class="item">长度尺寸: ${name}</div>
-            //  <div class="item" style="text-align:center;">${standardValue} ± ${offsetValue}</div>
-            //  <div class="flex-box item"><div class="key">名义值</div><div class="value">${standardValue}</div></div>
-            //  <div class="flex-box item"><div class="key">实测值</div><div class="value">${measureValue}</div></div>
-            //  <div class="flex-box item"><div class="key">偏差值</div><div class="value">${offsetValue}</div></div>
-            //  `;
-            //         const measurementLabel: any = new CSS2DObject(measurementDiv);
-            //         measurementLabel.position.copy({
-            //             x: (position[0].x + position[1].x) / 2,
-            //             y: (position[0].y + position[1].y) / 2,
-            //             z: (position[0].z + position[1].z) / 2,
-            //         });
-            //         measurementLabels["label" + index] = measurementLabel;
-            //         scene.current.add(measurementLabels["label" + index]);
-            //     });
+
             camera.current.position.set(0, -1.5 * mdlen, 0);
             scene.current.add(mesh);
         }
@@ -639,7 +582,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         const width = box.max.z - box.min.z; // 模型宽度
         const height = box.max.y - box.min.y; // 模型高度
         const max = Math.max(length, width, height);
-        console.log(length, width, height)
         return { length, width, height, max };
     };
     // 动态旋转视角

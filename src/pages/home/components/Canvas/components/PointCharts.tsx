@@ -16,7 +16,57 @@ interface Props {
 const PointCharts: React.FC<Props> = (props: any) => {
     let myChart: any = null;
     const { data = {}, id, setMyChartVisible, } = props;
-    const { dataValue = [], yName, xName, direction, symbol = "rect" } = data;
+    let { dataValue = [], yName, xName, direction, symbol = "rect" } = data;
+    if (process.env.NODE_ENV === 'development') {
+        dataValue = [
+            {
+                "name": "data1", "value": [
+                    [10.0, 8.04],
+                    [8.07, 6.95],
+                    [13.0, 7.58],
+                    [9.05, 8.81],
+                    [11.0, 8.33],
+                    [14.0, 7.66],
+                    [13.4, 6.81],
+                    [10.0, 6.33],
+                    [14.0, 8.96],
+                    [12.5, 6.82],
+                    [9.15, 7.2],
+                    [11.5, 7.2],
+                    [3.03, 4.23],
+                    [12.2, 7.83],
+                    [2.02, 4.47],
+                    [1.05, 3.33],
+                    [4.05, 4.96],
+                    [6.03, 7.24],
+                    [12.0, 6.26],
+                    [12.0, 8.84]
+                ], "color": "blue"
+            },
+            {
+                "name": "data2", "value": [
+                    [21.0, 8.33],
+                    [24.0, 7.66],
+                    [23.4, 6.81],
+                    [20.0, 6.33],
+                    [24.0, 8.96],
+                    [22.5, 6.82],
+                    [19.15, 7.2],
+                    [21.5, 7.2],
+                    [13.03, 4.23],
+                    [22.2, 7.83],
+                    [12.02, 4.47],
+                    [11.05, 3.33],
+                    [14.05, 4.96],
+                    [16.03, 7.24],
+                    [22.0, 6.26],
+                    [22.0, 8.84],
+                    [17.08, 5.82],
+                    [15.02, 5.68]
+                ], "color": "red"
+            },
+            { "name": "下限", "value": 1.53, "type": "markLine", "color": "green" },];
+    }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
 

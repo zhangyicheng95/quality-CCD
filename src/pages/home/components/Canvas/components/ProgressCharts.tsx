@@ -12,7 +12,10 @@ interface Props {
 
 const ProgressCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { dataValue = 0, barColor, progressType, progressSize, progressSteps } = data;
+    let { dataValue = 0, barColor, progressType, progressSize, progressSteps } = data;
+    if (process.env.NODE_ENV === 'development') {
+        dataValue = 0.5;
+    }
     const dom = useRef<any>();
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;

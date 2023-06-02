@@ -3,6 +3,7 @@ import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
 import { message } from 'antd';
+import { FrownOutlined, SmileOutlined } from '@ant-design/icons';
 
 interface Props {
     data: any,
@@ -11,30 +12,41 @@ interface Props {
 }
 
 const AlertCharts: React.FC<Props> = (props: any) => {
-    const { data = [], id, } = props;
+    const { data = {}, id } = props;
+    let { dataValue = [], fontSize } = data;
+    if (process.env.NODE_ENV === 'development') {
+        dataValue = [{ "name": "状态1", value: false, "color": "blue" }];
+    }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
 
     useEffect(() => {
-        if (!_.isArray(data)) {
+        if (!_.isArray(dataValue)) {
             message.error('数据格式不正确，请检查');
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
-    }, [data]);
+    }, [dataValue]);
     return (
         <div
             id={`echart-${id}`}
             className={`${styles.alertCharts} flex-box`}
         >
             {
-                _.isArray(data) && (data || []).map((item: any, index: number) => {
+                _.isArray(dataValue) && (dataValue || []).map((item: any, index: number) => {
                     const { name, value } = item;
                     return <div
                         id={`echart-${id}`}
                         className={`flex-box-center alert-item ${!!value ? 'OK' : 'NG'}`}
+                        style={{ fontSize }}
                     >
                         <span style={{ position: 'absolute', left: 4, top: 4, fontSize: 12 }}>{name}</span>
+                        {
+                            !!value ?
+                                <SmileOutlined />
+                                :
+                                <FrownOutlined />
+                        }
                         {!!value ? 'OK' : 'NG'}
                     </div>
                 })
