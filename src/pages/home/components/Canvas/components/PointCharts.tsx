@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import * as echarts from "echarts";
 import options from "./commonOptions";
 import * as _ from 'lodash';
@@ -16,7 +16,7 @@ interface Props {
 const PointCharts: React.FC<Props> = (props: any) => {
     let myChart: any = null;
     const { data = {}, id, setMyChartVisible, } = props;
-    let { dataValue = [], yName, xName, direction, symbol = "rect" } = data;
+    let { dataValue = [], yName, xName, direction, symbol = "rect", dataZoom } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = [
             {
@@ -76,9 +76,15 @@ const PointCharts: React.FC<Props> = (props: any) => {
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
+        let maxLength = 0;
+        dataValue.forEach((item: any) => {
+            if (item?.value?.length > maxLength) {
+                maxLength = item.value.length;
+            }
+        });
+
         const dom: any = document.getElementById(`echart-${id}`);
         myChart = echarts.init(dom);
-
         const option = Object.assign({}, options, {
             // color: ["rgb(115,171,216)", "rgb(245,142,94)"],
             legend: Object.assign({}, options.legend, {
@@ -109,7 +115,7 @@ const PointCharts: React.FC<Props> = (props: any) => {
                 type: "slider",
                 show: true,
                 realtime: true,
-                start: 0,
+                start: !!dataZoom ? ((maxLength - dataZoom) / maxLength * 100) : 0,
                 end: 100,
                 showDetai: false,
                 moveHandleStyle: {
@@ -189,6 +195,9 @@ const PointCharts: React.FC<Props> = (props: any) => {
         myChart.resize({
             width: dom.clientWidth,
             height: dom.clientHeight,
+        });
+        myChart.on('dataZoom', function (event: any) {
+            // const { start, end } = event;
         });
         window.addEventListener("resize", () => {
             myChart.resize({

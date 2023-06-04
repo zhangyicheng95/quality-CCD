@@ -8781,12 +8781,11 @@ const getParams = (req: Request, res: Response) => {
           { "i": "slider-4", "x": 9, "y": 0, "w": 87, "h": 2, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
           { "i": "footer-1", "x": 2, "y": 14, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
           { "i": "footer-2", "x": 0, "y": 32, "w": 9, "h": 12, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }
-        ]
-        ,
+        ],
         "content": [
           { "value": ["45e063e4-8d3e-4e10-a1cd-48be2f78e97a", "store_path"], "type": "three", "fontSize": 12, "yName": "资源名", "xName": "实时数据", "size": { "i": "45e063e4-8d3e-4e10-a1cd-48be2f78e97a$$store_path$$table", "x": 9, "y": 2, "w": 42, "h": 16, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "id": "45e063e4-8d3e-4e10-a1cd-48be2f78e97a$$store_path$$table" },
           { "value": ["b4f890bc-3254-4e03-a4bb-7e16b8d5534d"], "size": { "i": "b4f890bc-3254-4e03-a4bb-7e16b8d5534d$$table2", "x": 9, "y": 18, "w": 42, "h": 26, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "table2", "tab": "1", "yName": "qwe", "xName": "asd", "id": "b4f890bc-3254-4e03-a4bb-7e16b8d5534d$$table2" },
-          { "value": ["56284350-1bc5-465f-b7d4-2c7fbe94097d", "store_path"], "size": { "i": "56284350-1bc5-465f-b7d4-2c7fbe94097d$$store_path$$point", "x": 51, "y": 2, "w": 45, "h": 16, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "point", "tab": "1", "yName": "123", "xName": "sdf", "id": "56284350-1bc5-465f-b7d4-2c7fbe94097d$$store_path$$point" },
+          { "value": ["56284350-1bc5-465f-b7d4-2c7fbe94097d", "store_path"], "size": { "i": "56284350-1bc5-465f-b7d4-2c7fbe94097d$$store_path$$point", "x": 51, "y": 2, "w": 45, "h": 16, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "point", "tab": "1", "yName": "123", "xName": "sdf", "dataZoom": 4, "id": "56284350-1bc5-465f-b7d4-2c7fbe94097d$$store_path$$point" },
           { "value": ["3e41e3d3-2ef4-44fc-9771-d352e634dfdf", "heart"], "size": { "i": "3e41e3d3-2ef4-44fc-9771-d352e634dfdf$$heart$$line", "x": 51, "y": 18, "w": 45, "h": 26, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "line", "tab": "1", "yName": "sdfdfv", "xName": "r5y4gr", "id": "3e41e3d3-2ef4-44fc-9771-d352e634dfdf$$heart$$line" },
           {
             "id": "56284350-1bc5-465f-b7d4-2c7fbe94097d$$status$$operation",
@@ -8805,7 +8804,7 @@ const getParams = (req: Request, res: Response) => {
               "minH": 2,
               "maxH": 100
             },
-            "type": "operation",
+            "type": "img",
             "tab": "1",
             "backgroundColor": "default",
             "ifLocalStorage": true,
@@ -8813,9 +8812,9 @@ const getParams = (req: Request, res: Response) => {
               "store_dir"
             ]
           }
-        ]
-        ,
-        "footerSelectList": ["45e063e4-8d3e-4e10-a1cd-48be2f78e97a"]
+        ],
+        "footerSelectList": ["45e063e4-8d3e-4e10-a1cd-48be2f78e97a"],
+        "theme": "dark"
       },
       "environment": {
         "serviceIp": "localhost",

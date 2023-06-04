@@ -201,13 +201,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         }
         function processFun(xhr: any) {
             const { loaded = 0, total = 1 } = xhr;
-            const processBox = maskBox.querySelector('.process');
-            const processText = maskBox.querySelector('.process-text');
+            if (!!loaded && !!total) {
+                const processBox = maskBox.querySelector('.process');
+                const processText = maskBox.querySelector('.process-text');
 
-            const process = `${((loaded / total) * 100 + '').slice(0, 5)}%`;
-            const percentComplete = (xhr.loaded / xhr.total) * 100
-            processBox.value = loaded / total;
-            processText.innerText = process;
+                const process = `${((loaded / total) * 100 + '').slice(0, 5)}%`;
+                processBox.value = loaded / total;
+                processText.innerText = process;
+            }
         }
         // 加载url
         if (name.indexOf(".glb") > -1) {

@@ -1148,6 +1148,7 @@ const Home: React.FC<any> = (props: any) => {
           progressSize = 8, progressSteps = 5, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
           CCDName, imgs_width, imgs_height, tableSize, magnifier, operationList,
+          dataZoom,
           basicInfoData = [{ id: guid(), name: '', value: '' }]
         } = item;
         const id = key?.split('$$')[0];
@@ -1252,7 +1253,7 @@ const Home: React.FC<any> = (props: any) => {
                         setMyChartVisible={setMyChartVisible}
                         data={{
                           dataValue: dataValue || [],
-                          yName, xName, direction, symbol
+                          yName, xName, direction, symbol, dataZoom
                         }}
                       />
                       :
@@ -1365,26 +1366,14 @@ const Home: React.FC<any> = (props: any) => {
                                                 }}
                                               />
                                               :
-                                              (
-                                                _.isString(dataValue) && dataValue.indexOf('http') > -1 ? (
-                                                  <ImgCharts
-                                                    id={key}
-                                                    data={{
-                                                      dataValue, windowControl,
-                                                      setContentList, magnifier
-                                                    }}
-                                                  />
-                                                )
-                                                  :
-                                                  <ImgCharts
-                                                    id={key}
-                                                    data={{
-                                                      dataValue: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                      windowControl, magnifier,
-                                                      setContentList
-                                                    }}
-                                                  />
-                                              )
+                                              <ImgCharts
+                                                id={key}
+                                                data={{
+                                                  defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                  dataValue, windowControl,
+                                                  setContentList, magnifier
+                                                }}
+                                              />
                 }
               </div>
             </div>
@@ -1562,7 +1551,7 @@ const Home: React.FC<any> = (props: any) => {
           fetchType, fetchParams, align, backgroundColor, barColor,
           progressType, progressSize, progressSteps, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-          CCDName, imgs_width, imgs_height, magnifier, operationList
+          CCDName, imgs_width, imgs_height, magnifier, operationList, dataZoom
         } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
@@ -1590,7 +1579,7 @@ const Home: React.FC<any> = (props: any) => {
             fetchType, fetchParams, align, backgroundColor, barColor,
             progressType, progressSize, progressSteps, windowControl,
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-            CCDName, imgs_width, imgs_height, magnifier, operationList
+            CCDName, imgs_width, imgs_height, magnifier, operationList, dataZoom
           }, ['description'].includes(windowType) ? { basicInfoData } : {}));
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1605,7 +1594,7 @@ const Home: React.FC<any> = (props: any) => {
                 fetchType, fetchParams, align, backgroundColor, barColor,
                 progressType, progressSize, progressSteps, windowControl,
                 des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-                CCDName, imgs_width, imgs_height, magnifier, operationList
+                CCDName, imgs_width, imgs_height, magnifier, operationList, dataZoom
               }, ['description'].includes(windowType) ? { basicInfoData } : {});
             };
             return item;
@@ -1641,11 +1630,11 @@ const Home: React.FC<any> = (props: any) => {
     setEditWindowData({});
     setSelectedPath({ fileType: 'file', value: '' });
     setFieldsValue({
-      value: [], type: 'img', yName: undefined, xName: undefined, fontSize: 24, reverse: false,
+      value: [], type: 'img', yName: undefined, xName: undefined, fontSize: undefined, reverse: false,
       direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined,
       align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line',
       progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: undefined,
-      CCDName: undefined, magnifier: false, operationList: [],
+      CCDName: undefined, magnifier: false, operationList: [], dataZoom: 0,
     });
     setWindowType('img');
     setAddWindowVisible(false);
@@ -2155,46 +2144,56 @@ const Home: React.FC<any> = (props: any) => {
             }
             {
               ['point'].includes(windowType) ?
-                <Form.Item
-                  name={`symbol`}
-                  label={'散点形状'}
-                  rules={[{ required: true, message: '散点形状' }]}
-                  initialValue={'rect'}
-                >
-                  <Select
-                    style={{ width: '100%' }}
-                    options={[
-                      {
-                        value: 'circle',
-                        label: '圆点',
-                      },
-                      {
-                        value: 'rect',
-                        label: '正方形',
-                      },
-                      {
-                        value: 'roundRect',
-                        label: '圆角正方形',
-                      },
-                      {
-                        value: 'triangle',
-                        label: '三角形',
-                      },
-                      {
-                        value: 'diamond',
-                        label: '菱形',
-                      },
-                      {
-                        value: 'pin',
-                        label: '小气球',
-                      },
-                      {
-                        value: 'arrow',
-                        label: '箭头',
-                      }
-                    ]}
-                  />
-                </Form.Item>
+                <Fragment>
+                  <Form.Item
+                    name={`symbol`}
+                    label={'散点形状'}
+                    rules={[{ required: true, message: '散点形状' }]}
+                    initialValue={'rect'}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      options={[
+                        {
+                          value: 'circle',
+                          label: '圆点',
+                        },
+                        {
+                          value: 'rect',
+                          label: '正方形',
+                        },
+                        {
+                          value: 'roundRect',
+                          label: '圆角正方形',
+                        },
+                        {
+                          value: 'triangle',
+                          label: '三角形',
+                        },
+                        {
+                          value: 'diamond',
+                          label: '菱形',
+                        },
+                        {
+                          value: 'pin',
+                          label: '小气球',
+                        },
+                        {
+                          value: 'arrow',
+                          label: '箭头',
+                        }
+                      ]}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name={`dataZoom`}
+                    label={'展示最新的'}
+                    rules={[{ required: false, message: '展示最新的' }]}
+                    initialValue={0}
+                  >
+                    <InputNumber min={0} />
+                  </Form.Item>
+                </Fragment>
                 : null
             }
             {
