@@ -13,7 +13,7 @@ interface Props {
 
 const ImgsCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    let { dataValue, imgs_width: width = 150, imgs_height: height = 150, } = data;
+    let { dataValue = [], imgs_width: width = 150, imgs_height: height = 150, } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = [
             { value: 'https://img0.baidu.com/it/u=4285923189,2766387018&fm=253&fmt=auto&app=138&f=JPEG?w=281&h=499', name: 'data1' },
@@ -30,7 +30,7 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
 
     useEffect(() => {
         if (!_.isArray(dataValue)) {
-            message.error('数据格式不正确，请检查');
+            message.error('图片列表数据格式不正确，请检查');
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
