@@ -16,7 +16,7 @@ interface Props {
 const LineCharts: React.FC<Props> = (props: any) => {
     let myChart: any = null;
     const { data = {}, id, legend, dispatch, setMyChartVisible } = props;
-    let { dataValue = [], yName, xName } = data;
+    let { dataValue = [], yName, xName, dataZoom } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = [
             {
@@ -53,15 +53,21 @@ const LineCharts: React.FC<Props> = (props: any) => {
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
+
+
         const dom: any = document.getElementById(`echart-${id}`);
         myChart = echarts.init(dom);
         let minValue: any = null,
             maxValue: any = null;
+        let maxLength = 0;
         (dataValue || []).forEach((item: any, index: number) => {
             const { value, type } = item;
             if (type === 'markLine') {
                 return;
             } else {
+                if (item?.value?.length > maxLength) {
+                    maxLength = item.value.length;
+                }
                 if (_.isNull(minValue) || _.isNull(maxValue)) {
                     minValue = value[0][0];
                     maxValue = value[value.length - 1][0];
@@ -95,7 +101,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
                 type: "slider",
                 show: true,
                 realtime: true,
-                start: 0,
+                start: !!dataZoom ? ((maxLength - dataZoom) / maxLength * 100) : 0,
                 end: 100,
                 showDetai: false,
                 moveHandleStyle: {

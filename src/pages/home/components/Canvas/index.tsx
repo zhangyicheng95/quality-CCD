@@ -1243,7 +1243,7 @@ const Home: React.FC<any> = (props: any) => {
                       setMyChartVisible={setMyChartVisible}
                       data={{
                         dataValue: dataValue || [],
-                        yName, xName,
+                        yName, xName, dataZoom,
                       }}
                     />
                     :
@@ -1263,7 +1263,8 @@ const Home: React.FC<any> = (props: any) => {
                           setMyChartVisible={setMyChartVisible}
                           data={{
                             dataValue: dataValue || [],
-                            yName, xName, direction, align, barColor
+                            yName, xName, direction, align, barColor,
+                            dataZoom
                           }}
                         />
                         :
@@ -2001,6 +2002,19 @@ const Home: React.FC<any> = (props: any) => {
                   >
                     <Input size='large' />
                   </Form.Item>
+                  {
+                    ['table'].includes(windowType) ?
+                      null
+                      :
+                      <Form.Item
+                        name={`dataZoom`}
+                        label={'展示最新的'}
+                        rules={[{ required: false, message: '展示最新的' }]}
+                        initialValue={0}
+                      >
+                        <InputNumber min={0} />
+                      </Form.Item>
+                  }
                 </Fragment>
                 : null
             }
@@ -2184,14 +2198,6 @@ const Home: React.FC<any> = (props: any) => {
                         }
                       ]}
                     />
-                  </Form.Item>
-                  <Form.Item
-                    name={`dataZoom`}
-                    label={'展示最新的'}
-                    rules={[{ required: false, message: '展示最新的' }]}
-                    initialValue={0}
-                  >
-                    <InputNumber min={0} />
                   </Form.Item>
                 </Fragment>
                 : null
