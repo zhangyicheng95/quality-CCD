@@ -13,7 +13,7 @@ interface Props {
 
 const ImgCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id } = props;
-    let { defaultImg, dataValue, windowControl, setContentList, magnifier = false } = data;
+    let { defaultImg, dataValue = '', windowControl, setContentList, magnifier = false } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
     }

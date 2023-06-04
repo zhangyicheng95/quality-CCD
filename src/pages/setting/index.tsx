@@ -51,7 +51,7 @@ const Setting: React.FC<any> = (props) => {
             children: Object.entries(initParams).map((param: any) => {
               const { alias, name, onHidden } = param[1];
               const key = `${id}@$@${param[0]}`;
-              if (_.isBoolean(onHidden) && !onHidden) {
+              if (!onHidden) {
                 checkedList = checkedList.concat(key)
               }
               return {
