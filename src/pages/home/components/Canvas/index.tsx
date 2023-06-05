@@ -1122,6 +1122,13 @@ const Home: React.FC<any> = (props: any) => {
       dispatch({ type: 'home/snapshot' });
     };
   }, [paramsData]);
+  // 检测错误信息，如果有数据，代表有异常，自动重启
+  useEffect(() => {
+    const { errorSelfStart = false } = paramsData;
+    if (!!errorSelfStart && !!errorData && !!errorData.length) {
+      reStart();
+    }
+  }, [errorData]);
   // 轮训获取运行状态
   useEffect(() => {
     if (!ipString || ifCanEdit || isVision) return;

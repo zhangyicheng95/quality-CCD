@@ -503,6 +503,12 @@
   position: relative;
 
   :global {
+    .ant-image {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     .img-box {
       width: 100%;
       height: 100%;
@@ -541,6 +547,8 @@
       }
 
       .ant-image {
+        display: inline-block;
+
         .ant-image-mask-info {
           display: none;
         }
@@ -653,7 +661,9 @@
         flex: 1;
 
         .ant-image {
-          text-align: center;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
 
         .img-item-right-top {

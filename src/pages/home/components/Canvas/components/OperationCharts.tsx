@@ -54,7 +54,6 @@ const OperationCharts: React.FC<Props> = (props: any) => {
                     resValue[item] = initParams[item]?.value;
                 }
             });
-            console.log(resConfig);
             setConfigList(resConfig);
             setConfigValueList(resValue)
         }
@@ -130,7 +129,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
                             return configList.map((item: any, index: number) => {
                                 const { name, alias, widget = {} } = item;
                                 const { type } = widget;
-                                return <div className="flex-box param-item" key={`${id}@$@${item[0]}`}>
+                                return <div className="flex-box param-item" key={`${id}@$@${name}`}>
                                     <div className="icon-box flex-box">
                                         {_.toUpper(type.slice(0, 1))}
                                         {/* <BlockOutlined className="item-icon" /> */}

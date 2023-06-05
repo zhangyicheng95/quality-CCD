@@ -20,6 +20,7 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
             { value: 'https://img.zcool.cn/community/01a24d55efd0006ac7251df84f100f.jpg@3000w_1l_2o_100sh.jpg', name: 'data2' },
             { value: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg9.doubanio.com%2Fview%2Fnote%2Fl%2Fpublic%2Fp61025315.jpg&refer=http%3A%2F%2Fimg9.doubanio.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1684313532&t=c46ef54f701c6b74cf0864410fcde75f', name: 'data3' },
             { value: 'https://picnew9.photophoto.cn/20150712/huagongchangjianzhutupian-11762860_1.jpg', name: 'data4' },
+            { value: 'https://img-qn.51miz.com/Element/00/16/74/69/000e44be_E167469_6d5c450g.png', name: 'data5' }
         ]
     }
     const { initialState } = useModel<any>('@@initialState');
@@ -87,7 +88,7 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
                             {name}
                         </div> */}
                         <div className="img-item-right">
-                            <div className="img-item-right-top flex-box-center">
+                            <div className="img-item-right-top">
                                 <Image
                                     src={value}
                                     alt={name || 'logo'}

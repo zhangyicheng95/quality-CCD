@@ -91,7 +91,7 @@ const Control: React.FC<any> = (props: any) => {
               initParams: Object.assign({}, item?.config?.initParams, {
                 [key[1]]: Object.assign({},
                   item?.config?.initParams?.[key[1]],
-                  (_.isObject(value) && item?.config?.initParams[key[1]]?.widget?.type !== "Measurement") ? value : { value },
+                  ((_.isObject(value) && !_.isArray(value)) && item?.config?.initParams[key[1]]?.widget?.type !== "Measurement") ? value : { value },
                   item?.config?.initParams?.[key[1]]?.widget?.type === 'codeEditor'
                     ? {
                       value: value?.language === 'json' ?
