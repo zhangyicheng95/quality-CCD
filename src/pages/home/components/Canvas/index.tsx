@@ -1126,6 +1126,12 @@ const Home: React.FC<any> = (props: any) => {
   useEffect(() => {
     const { errorSelfStart = false } = paramsData;
     if (!!errorSelfStart && !!errorData && !!errorData.length) {
+      dispatch({
+        type: 'home/set',
+        payload: {
+          errorData: []
+        },
+      });
       reStart();
     }
   }, [errorData]);
