@@ -8804,8 +8804,10 @@ const getParams = (req: Request, res: Response) => {
               "minH": 2,
               "maxH": 100
             },
-            "type": "img",
+            "type": "statistic",
             "tab": "1",
+            "yName": "Active Users",
+            "fontSize": 14,
             "backgroundColor": "default",
             "ifLocalStorage": true,
             "operationList": [

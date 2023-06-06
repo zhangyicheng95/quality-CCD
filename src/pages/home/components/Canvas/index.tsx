@@ -73,6 +73,7 @@ import DescriptionCharts from './components/DescriptionCharts';
 import moment from 'moment';
 import ThreeCharts from './components/ThreeCharts';
 import OperationCharts from './components/OperationCharts';
+import StatisticCharts from './components/StatisticCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -1126,6 +1127,7 @@ const Home: React.FC<any> = (props: any) => {
   useEffect(() => {
     const { errorSelfStart = false } = paramsData;
     if (!!errorSelfStart && !!errorData && !!errorData.length) {
+      console.log('异常重启');
       dispatch({
         type: 'home/set',
         payload: {
@@ -1380,14 +1382,24 @@ const Home: React.FC<any> = (props: any) => {
                                                 }}
                                               />
                                               :
-                                              <ImgCharts
-                                                id={key}
-                                                data={{
-                                                  defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                  dataValue, windowControl,
-                                                  setContentList, magnifier
-                                                }}
-                                              />
+                                              type === 'statistic' ?
+                                                <StatisticCharts
+                                                  id={key}
+                                                  data={{
+                                                    dataValue,
+                                                    fontSize,
+                                                    yName
+                                                  }}
+                                                />
+                                                :
+                                                <ImgCharts
+                                                  id={key}
+                                                  data={{
+                                                    defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                    dataValue, windowControl,
+                                                    setContentList, magnifier
+                                                  }}
+                                                />
                 }
               </div>
             </div>
@@ -2446,6 +2458,19 @@ const Home: React.FC<any> = (props: any) => {
                       mode="multiple"
                       options={selectedNodeConfig}
                     />
+                  </Form.Item>
+                </Fragment>
+                : null
+            }
+            {
+              ['statistic'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    name={`yName`}
+                    label={"标题名称"}
+                    rules={[{ required: true, message: '标题名称' }]}
+                  >
+                    <Input size='large' />
                   </Form.Item>
                 </Fragment>
                 : null
