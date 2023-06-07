@@ -1,14 +1,6 @@
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { connect, useModel } from 'umi';
-import { Button, Form, message } from 'antd';
-import { FormatWidgetToDom } from '@/pages/control';
-import MonacoEditor from '@/components/MonacoEditor';
-import PlatFormModal from '@/components/platForm';
-import FileManager from '@/components/FileManager';
-import TooltipDiv from '@/components/TooltipDiv';
-import { updateParams } from '@/services/api';
 
 interface Props {
     data: any,
@@ -19,30 +11,31 @@ interface Props {
 
 const StatisticCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    let { dataValue, fontSize, yName } = data;
+    let { dataValue, fontSize, yName, fontColor, direction } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = 10
     }
-    const { initialState } = useModel<any>('@@initialState');
-    const { params } = initialState;
-
-    useEffect(() => {
-        if (!_.isArray(dataValue)) {
-            message.error('数据格式不正确，请检查');
-            localStorage.removeItem(`localGridContentList-${params.id}`);
-            return;
-        }
-
-    }, [dataValue]);
-
+    console.log(fontColor)
     return (
         <div
             id={`echart-${id}`}
             className={`${styles.statisticCharts} flex-box`}
-            style={{ fontSize }}
+            style={{
+                fontSize,
+                alignItems: direction
+            }}
         >
             <div className="statistic-title">{yName}</div>
-            <div className="statistic-value" style={{ fontSize: Number(fontSize) + 10 }}>{dataValue}</div>
+            <div className="statistic-value" style={Object.assign({
+                fontSize: Number(fontSize) + 10,
+            }, (!!fontColor && !!fontColor?.rgb) ? {
+                color: `rgba(${fontColor.rgb.r},${fontColor.rgb.g},${fontColor.rgb.b},${fontColor.rgb.a})`
+            } : {})}>{
+                    _.isString(dataValue) ?
+                        dataValue
+                        :
+                        JSON.stringify(dataValue)
+                }</div>
         </div>
     );
 

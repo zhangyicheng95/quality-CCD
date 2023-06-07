@@ -47,6 +47,11 @@ import {
   UpOutlined,
 } from '@ant-design/icons';
 import { connect, useHistory, useModel } from 'umi';
+import {
+  AlphaPicker, BlockPicker, ChromePicker, CirclePicker,
+  CompactPicker, GithubPicker, HuePicker, MaterialPicker,
+  PhotoshopPicker, SketchPicker, SliderPicker, SwatchesPicker, TwitterPicker,
+} from 'react-color';
 import socketErrorListen from '@/services/socketError';
 import socketLogListen from '@/services/socketLog';
 import socketDataListen from '@/services/socketData';
@@ -89,6 +94,7 @@ const Home: React.FC<any> = (props: any) => {
   const { type } = window.QUALITY_CCD_CONFIG;
   const ipString: any = localStorage.getItem('ipString') || '';
   const [loading, setLoading] = useState(false);
+  const [fontColor, setFontColor] = useState('#fff');
   const [addWindowVisible, setAddWindowVisible] = useState(false);
   const [editWindowData, setEditWindowData] = useState<any>({});
   const [gridHomeList, setGridHomeList] = useState<any>([]);
@@ -1128,12 +1134,13 @@ const Home: React.FC<any> = (props: any) => {
     const { errorSelfStart = false } = paramsData;
     if (!!errorSelfStart && !!errorData && !!errorData.length) {
       console.log('异常重启');
-      dispatch({
-        type: 'home/set',
-        payload: {
-          errorData: []
-        },
-      });
+      message.warning('异常报错，自动重启');
+      // dispatch({
+      //   type: 'home/set',
+      //   payload: {
+      //     errorData: []
+      //   },
+      // });
       reStart();
     }
   }, [errorData]);
@@ -1163,7 +1170,7 @@ const Home: React.FC<any> = (props: any) => {
           progressSize = 8, progressSteps = 5, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
           CCDName, imgs_width, imgs_height, tableSize, magnifier, operationList,
-          dataZoom,
+          dataZoom, fontColor,
           basicInfoData = [{ id: guid(), name: '', value: '' }]
         } = item;
         const id = key?.split('$$')[0];
@@ -1212,6 +1219,9 @@ const Home: React.FC<any> = (props: any) => {
                             setBasicInfoData(basicInfoData);
                             setEditWindowData(item);
                             setFieldsValue(item);
+                            if (!!fontColor && !!fontColor?.rgb) {
+                              setFontColor(fontColor.rgb);
+                            }
                             setWindowType(type);
                             setAddWindowVisible(true);
                           }}
@@ -1386,9 +1396,8 @@ const Home: React.FC<any> = (props: any) => {
                                                 <StatisticCharts
                                                   id={key}
                                                   data={{
-                                                    dataValue,
-                                                    fontSize,
-                                                    yName
+                                                    dataValue, fontSize,
+                                                    yName, fontColor, direction
                                                   }}
                                                 />
                                                 :
@@ -1430,12 +1439,12 @@ const Home: React.FC<any> = (props: any) => {
     startFlowService(ipString || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
         message.success('任务启动成功');
-        // dispatch({
-        //   type: 'home/set',
-        //   payload: {
-        //     started: true,
-        //   },
-        // });
+        dispatch({
+          type: 'home/set',
+          payload: {
+            started: true,
+          },
+        });
       } else {
         message.error(res?.msg || res?.message || '接口异常');
       }
@@ -1449,12 +1458,12 @@ const Home: React.FC<any> = (props: any) => {
     stopFlowService(ipString || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
         message.success('任务停止成功');
-        // dispatch({
-        //   type: 'home/set',
-        //   payload: {
-        //     started: false,
-        //   },
-        // });
+        dispatch({
+          type: 'home/set',
+          payload: {
+            started: false,
+          },
+        });
       } else {
         message.error(res?.msg || res?.message || '接口异常');
       }
@@ -1467,7 +1476,9 @@ const Home: React.FC<any> = (props: any) => {
     setLoading(true);
     stopFlowService(ipString || '').then((res: any) => {
       if (res && res.code === 'SUCCESS') {
-        start();
+        setTimeout(() => {
+          start();
+        }, 2000);
       } else {
         message.error(res?.msg || res?.message || '接口异常');
       }
@@ -1577,7 +1588,8 @@ const Home: React.FC<any> = (props: any) => {
           fetchType, fetchParams, align, backgroundColor, barColor,
           progressType, progressSize, progressSteps, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-          CCDName, imgs_width, imgs_height, magnifier, operationList, dataZoom
+          CCDName, imgs_width, imgs_height, magnifier, operationList, dataZoom,
+          fontColor,
         } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
@@ -1605,7 +1617,8 @@ const Home: React.FC<any> = (props: any) => {
             fetchType, fetchParams, align, backgroundColor, barColor,
             progressType, progressSize, progressSteps, windowControl,
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-            CCDName, imgs_width, imgs_height, magnifier, operationList, dataZoom
+            CCDName, imgs_width, imgs_height, magnifier, operationList, dataZoom,
+            fontColor,
           }, ['description'].includes(windowType) ? { basicInfoData } : {}));
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1620,7 +1633,8 @@ const Home: React.FC<any> = (props: any) => {
                 fetchType, fetchParams, align, backgroundColor, barColor,
                 progressType, progressSize, progressSteps, windowControl,
                 des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-                CCDName, imgs_width, imgs_height, magnifier, operationList, dataZoom
+                CCDName, imgs_width, imgs_height, magnifier, operationList, dataZoom,
+                fontColor,
               }, ['description'].includes(windowType) ? { basicInfoData } : {});
             };
             return item;
@@ -1660,7 +1674,7 @@ const Home: React.FC<any> = (props: any) => {
       direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined,
       align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line',
       progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: undefined,
-      CCDName: undefined, magnifier: false, operationList: [], dataZoom: 0,
+      CCDName: undefined, magnifier: false, operationList: [], dataZoom: 0, fontColor: undefined
     });
     setWindowType('img');
     setAddWindowVisible(false);
@@ -2471,6 +2485,43 @@ const Home: React.FC<any> = (props: any) => {
                     rules={[{ required: true, message: '标题名称' }]}
                   >
                     <Input size='large' />
+                  </Form.Item>
+                  <Form.Item
+                    name={`direction`}
+                    label={'对齐方向'}
+                    initialValue={'center'}
+                    rules={[{ required: true, message: '对齐方向' }]}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      options={[
+                        {
+                          value: 'flex-start',
+                          label: '左对齐',
+                        },
+                        {
+                          value: 'center',
+                          label: '居中',
+                        },
+                        {
+                          value: 'flex-end',
+                          label: '右对齐',
+                        }
+                      ]}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name={`fontColor`}
+                    label={'内容颜色'}
+                    rules={[{ required: false, message: '内容颜色' }]}
+                  >
+                    <ChromePicker
+                      color={fontColor}
+                      onChange={(value: any) => {
+                        const { hex, rgb } = value;
+                        setFontColor(rgb);
+                      }}
+                    />
                   </Form.Item>
                 </Fragment>
                 : null

@@ -236,7 +236,7 @@ const Setting: React.FC<any> = (props) => {
             name="ipString"
             label="方案ID绑定"
             initialValue={localStorage.getItem("ipString") || undefined}
-            rules={[{ required: true, message: "方案ID绑定" }]}
+            rules={[{ required: false, message: "方案ID绑定" }]}
           >
             {
               isVision ?
