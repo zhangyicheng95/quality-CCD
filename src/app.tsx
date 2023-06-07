@@ -149,7 +149,7 @@ export const layout: RunTimeLayoutConfig = (props) => {
         <ErrorBoundary>
           {
             !_props.location?.pathname?.includes('/login') ?
-              <HomeLayout initialState={initialState}>{children}</HomeLayout>
+              <HomeLayout initialState={initialState} setInitialState={setInitialState}>{children}</HomeLayout>
               :
               children
           }
@@ -163,7 +163,6 @@ export const layout: RunTimeLayoutConfig = (props) => {
             //   enableDarkTheme
             //   settings={initialState?.settings}
             //   onSettingChange={(settings) => {
-            //     console.log(settings);
             //     setInitialState((preInitialState: any) => ({
             //       ...preInitialState,
             //       settings,

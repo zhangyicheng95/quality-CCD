@@ -695,7 +695,7 @@ const Home: React.FC<any> = (props: any) => {
             +
           </div>
           {
-            JSON.parse(localStorage.getItem('ipList') || "[]")?.map((item: any, index: number) => {
+            (paramData?.contentData?.ipList || [])?.map((item: any, index: number) => {
               const { label, key } = item;
               return <div
                 className={`flex-box tabs-box-item-box ${localStorage.getItem('ipString') === key ? 'active' : ''} ${gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 3 ? 'tabs-box-item-box-rows' : ''}`}
@@ -715,26 +715,48 @@ const Home: React.FC<any> = (props: any) => {
                       label
                   }
                 </div>
-                <CloseOutlined onClick={() => {
-                  let newActiveKey: string = localStorage.getItem('ipString') || '';
-                  let lastIndex = -1;
-                  JSON.parse(localStorage.getItem('ipList') || "[]")?.forEach((item: any, i: any) => {
-                    if (item.key === key) {
-                      lastIndex = i - 1;
-                    }
-                  });
-                  const newPanes = JSON.parse(localStorage.getItem('ipList') || "[]")?.filter((item: any) => item.key !== key);
-                  if (newPanes.length && newActiveKey === key) {
-                    if (lastIndex >= 0) {
-                      newActiveKey = newPanes[lastIndex]?.key;
-                    } else {
-                      newActiveKey = newPanes[0].key;
-                    }
-                  }
-                  localStorage.setItem('ipString', newActiveKey);
-                  localStorage.setItem('ipList', JSON.stringify(newPanes));
-                  window.location.reload();
-                }} className="tabs-box-item-close" />
+                {
+                  (localStorage.getItem('ipString') === key) ?
+                    null
+                    :
+                    <CloseOutlined onClick={() => {
+                      let newActiveKey: string = localStorage.getItem('ipString') || '';
+                      let lastIndex = -1;
+                      (paramData?.contentData?.ipList || [])?.forEach((item: any, i: any) => {
+                        if (item.key === key) {
+                          lastIndex = i - 1;
+                        }
+                      });
+                      const newPanes = (paramData?.contentData?.ipList || [])?.filter((item: any) => item.key !== key);
+                      if (newPanes.length && newActiveKey === key) {
+                        if (lastIndex >= 0) {
+                          newActiveKey = newPanes[lastIndex]?.key;
+                        } else {
+                          newActiveKey = newPanes[0].key;
+                        }
+                      }
+                      localStorage.setItem('ipString', newActiveKey);
+                      updateParams({
+                        id: paramData.id,
+                        data: {
+                          ...paramData,
+                          contentData: {
+                            ...paramData?.contentData,
+                            ipList: newPanes
+                          }
+                        },
+                      }).then((res: any) => {
+                        if (res && res.code === 'SUCCESS') {
+                          setInitialState((preInitialState: any) => ({
+                            ...preInitialState,
+                            params: res.data
+                          }));
+                        } else {
+                          message.error(res?.msg || res?.message || '接口异常');
+                        }
+                      });
+                    }} className="tabs-box-item-close" />
+                }
               </div>
             })
           }
@@ -931,7 +953,6 @@ const Home: React.FC<any> = (props: any) => {
   ]), [
     isVision, started, taskDataConnect, loading, paramData,
     logStr, footerData, errorData, pageIconPosition, homeSettingData,
-    localStorage.getItem('ipList')
   ]);
   // 保存布局状态
   const saveGridFunc = (data: any) => {
@@ -1508,7 +1529,6 @@ const Home: React.FC<any> = (props: any) => {
    * 处理错误信息
    */
   const errorThrottleAndMerge = useThrottleAndMerge((errors) => {
-    // console.log('errors', errors, errors?.filter((item: any) => isJSON(item.data)))
     // try {
     //   const errorList: any = [];
     //   errors?.filter((item: any) => isJSON(item.data))?.forEach((msg: any) => {
@@ -1534,7 +1554,6 @@ const Home: React.FC<any> = (props: any) => {
     //   })
     //
     // } catch (err) {
-    //   // console.log(err);
     // }
   }, 300);
   // 监听任务启动，开启socket
@@ -1595,7 +1614,6 @@ const Home: React.FC<any> = (props: any) => {
           try {
             JSON.parse(fetchParams);
           } catch (e) {
-            console.log(e, fetchParams)
             message.error('传递参数 格式不正确');
             return;
           }
@@ -1645,7 +1663,6 @@ const Home: React.FC<any> = (props: any) => {
           const params = Object.assign({}, paramsData, {
             contentData: Object.assign({}, paramsData.contentData, { content: result }),
           });
-          console.log(params)
           setParamData(params);
         };
         form.resetFields();
@@ -2581,11 +2598,27 @@ const Home: React.FC<any> = (props: any) => {
                 const { value } = values;
                 const { label, key } = value;
                 const newActiveKey = key + '';
-                const newPanes = [...JSON.parse(localStorage.getItem('ipList') || "[]")];
+                const newPanes = [...(paramData?.contentData?.ipList || [])];
                 newPanes.push({ label: label, children: null, key: newActiveKey });
-                // localStorage.setItem('ipString', newActiveKey);
-                localStorage.setItem('ipList', JSON.stringify(newPanes));
-                // window.location.reload();
+                updateParams({
+                  id: paramData.id,
+                  data: {
+                    ...paramData,
+                    contentData: {
+                      ...paramData?.contentData,
+                      ipList: newPanes
+                    }
+                  },
+                }).then((res: any) => {
+                  if (res && res.code === 'SUCCESS') {
+                    setInitialState((preInitialState: any) => ({
+                      ...preInitialState,
+                      params: res.data
+                    }));
+                  } else {
+                    message.error(res?.msg || res?.message || '接口异常');
+                  }
+                });
                 setAddItemsVisible(false)
               });
             }}

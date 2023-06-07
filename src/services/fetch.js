@@ -96,7 +96,6 @@ axiosInstance.interceptors.response.use(
             // const jumpAddress = `${loginUrl}?restapi=${restapi}&service=${service}`; // 4. 跳转⻚页⾯面
             // location.href = jumpAddress
             // 对接gateway
-            console.log(error.response.headers.location);
             window.location.href = error.response.headers.location;
           }
           break;

@@ -238,7 +238,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 },
                 (xhr) => processFun(xhr),
                 (error) => {
-                    console.log(error);
+                    console.log('点云数据有问题:', error);
                 }
             );
         } else if (name.indexOf(".stl") > -1) {
@@ -462,8 +462,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         lineId++;
                         drawingLine = false;
                     }
-                } else {
-                    console.log(intersects);
                 }
             } else {
                 event.preventDefault();
@@ -509,6 +507,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         scale = JSON.parse(localStorage.getItem("scale") || JSON.stringify({ value: 1, unit: "m" }));
                     } catch (err) {
                         console.log('localStorge中的scale格式不对', err);
+                        localStorage.removeItem("scale");
                     }
                     measurementLabels[lineId].element.innerText =
                         (distance * Number(scale?.value || "1")).toFixed(2) + (scale?.unit || "m");
@@ -588,7 +587,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             renderer.current.domElement = undefined;
             renderer.current = undefined;
             setSelectedBtn([]);
-            console.log('clearScene');
         };
     }, [name]);
     useEffect(() => {

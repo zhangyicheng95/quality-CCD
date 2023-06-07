@@ -1,18 +1,18 @@
-import React, { useEffect, useMemo, useState, } from "react";
-import { Form, Input, message, Button, Tree, Select, Switch } from "antd";
+import React, { Fragment, useEffect, useMemo, useState, } from "react";
+import { Form, Input, message, Button, Tree, Select, Switch, Row, Col } from "antd";
 import * as _ from "lodash";
 import styles from "./index.module.less";
-import { updateParams } from "@/services/api";
+import { getAllProject, updateParams } from "@/services/api";
 import PrimaryTitle from "@/components/PrimaryTitle";
 import FileManager from "@/components/FileManager";
 import TooltipDiv from "@/components/TooltipDiv";
 import { connect, useHistory, useModel } from "umi";
-import { FormOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, FormOutlined, } from "@ant-design/icons";
 
 const Setting: React.FC<any> = (props) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
   const { params: paramsData } = initialState;
-  const { projectStatus } = props;
+  const { projectStatus, projectListStore } = props;
   const [form] = Form.useForm();
   const history = useHistory();
   const { validateFields, setFieldsValue, getFieldValue } = form;
@@ -21,20 +21,14 @@ const Setting: React.FC<any> = (props) => {
   const [treeData, setTreeData] = useState<any>([]);
   const [selectPathVisible, setSelectPathVisible] = useState(false);
   const [selectedPath, setSelectedPath] = useState<any>('');
-  const [edit, setEdit] = useState({
-    ip: false,
-    historyIp: false,
-    id: false,
-  });
+  const [ipUrlList, setIpUrlList] = useState<any>([]);
+  const [projectList, setProjectList] = useState<any>([]);
 
   const isVision = useMemo(() => {
     // @ts-ignore
     return window.QUALITY_CCD_CONFIG.type === 'vision';
   }, []);
-  // 已添加的tabs
-  const ipList = useMemo(() => {
-    return JSON.parse(localStorage.getItem('ipList') || "[]");
-  }, [localStorage.getItem('ipList')]);
+
   // 获取数据信息
   useEffect(() => {
     if (!_.isEmpty(paramsData) && !_.isEmpty(paramsData?.flowData)) {
@@ -84,12 +78,40 @@ const Setting: React.FC<any> = (props) => {
       localStorage.setItem("ipUrl-realtime", 'localhost:8866');
       setFieldsValue({ "ipUrl-realtime": 'localhost:8866' });
     }
+    if (!localStorage.getItem("ipUrlList")) {
+      setIpUrlList([{ name: '本地服务', value: 'localhost:8866' }]);
+    } else {
+      try {
+        const list = JSON.parse(localStorage.getItem("ipUrlList") || "[]");
+        if (!!list.length) {
+          setIpUrlList(list);
+        } else {
+          setIpUrlList([{ name: '本地服务', value: 'localhost:8866' }]);
+        }
+      } catch (e) {
+        console.log('ipUrlList有问题', e);
+        localStorage.removeItem("ipUrlList");
+      }
+    }
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem("ipUrlList", JSON.stringify(ipUrlList.map((item: any) => _.omit(item, 'edit'))));
+  }, [ipUrlList]);
+  // 服务端地址列表
+  const updateIpUrl = (index: number, name: string, value: any) => {
+    setIpUrlList((prev: any) => prev.map((item: any, iIndex: number) => {
+      if (index === iIndex) {
+        return { ...item, [name]: value };
+      }
+      return item;
+    }));
+  };
+  // 参数树状结构
   const onCheck = (checkedKeysValue: React.Key[]) => {
     setCheckedKeys(checkedKeysValue.filter((i: any) => i?.indexOf("@$@") > -1));
   };
-
+  // 保存
   const onFinish = () => {
     validateFields()
       .then((values) => {
@@ -142,18 +164,8 @@ const Setting: React.FC<any> = (props) => {
         } else {
           localStorage.removeItem("quality_icon");
         }
-        localStorage.setItem("ipUrl-realtime", values['ipUrl-realtime']);
-        localStorage.setItem("ipUrl-history", values['ipUrl-history']);
-        // try {
-        //   const result = ipList.map((item: any) => {
-        //     if (item.key === localStorage.getItem('ipString')) {
-        //       return Object.assign({}, item, { key: values['ipString'] });
-        //     }
-        //     return item;
-        //   });
-        //   localStorage.setItem("ipList", JSON.stringify(result));
-        // } catch (err) { }
-        localStorage.setItem("ipString", values['ipString']);
+        localStorage.setItem("ipUrl-history", values['ipUrl-history'] || '');
+        localStorage.setItem("ipString", values['ipString'] || '');
         window.location.reload();
       })
       .catch((err) => {
@@ -206,32 +218,54 @@ const Setting: React.FC<any> = (props) => {
           >
             <Input placeholder="系统名称" />
           </Form.Item>
-          <div className="flex-box has-edit-btn">
-            <Form.Item
-              name="ipUrl-realtime"
-              label="服务端地址"
-              initialValue={localStorage.getItem("ipUrl-realtime") || undefined}
-              rules={[{ required: true, message: "服务端地址" }]}
-            >
-              <Input placeholder="localhost:8866" disabled={!edit.ip} />
-            </Form.Item>
-            <Button type="primary" onClick={() => setEdit(prev => Object.assign({ ip: !prev.ip }))}>
-              {edit.ip ? '确认' : '修改'}
-            </Button>
-          </div>
-          <div className="flex-box has-edit-btn">
-            <Form.Item
-              name="ipUrl-history"
-              label="历史记录地址"
-              initialValue={localStorage.getItem("ipUrl-history") || undefined}
-              rules={[{ required: true, message: "历史记录服务端地址" }]}
-            >
-              <Input placeholder="localhost:8867" disabled={!edit.historyIp} />
-            </Form.Item>
-            <Button type="primary" onClick={() => setEdit(prev => Object.assign({ historyIp: !prev.historyIp }))}>
-              {edit.historyIp ? '确认' : '修改'}
-            </Button>
-          </div>
+          <Form.Item
+            name="ipUrl"
+            label="服务端地址"
+            rules={[{ required: false, message: "服务端地址" }]}
+          >
+            {
+              isVision ?
+                <Input placeholder="localhost:8866" onBlur={(e) => localStorage.setItem("ipUrl-realtime", e.target.value)} />
+                :
+                <Fragment>
+                  {
+                    (ipUrlList || []).map((ip: any, index: number) => {
+                      const { name, value, edit } = ip;
+                      return <div className="flex-box ipList-item" key={`ipUrl-${index}`}>
+                        <Input defaultValue={name} disabled={!edit} onBlur={(e) => updateIpUrl(index, 'name', e.target.value)} />
+                        <Input defaultValue={value} disabled={!edit} onBlur={(e) => updateIpUrl(index, 'value', e.target.value)} />
+                        <Button
+                          icon={<EditOutlined />}
+                          className="del-btn"
+                          onClick={() => updateIpUrl(index, 'edit', !edit)}
+                        />
+                        <Button
+                          icon={<DeleteOutlined />}
+                          disabled={ipUrlList?.length === 1}
+                          className="del-btn"
+                          onClick={() => {
+                            setIpUrlList((prev: any) => prev.filter((i: any, iIndex: number) => iIndex !== index));
+                          }}
+                        />
+                      </div>
+                    })
+                  }
+                  <Button type="primary" onClick={() => {
+                    setIpUrlList((prev: any) => prev.concat({ name: '', value: '', edit: true }));
+                  }}>
+                    添加服务地址
+                  </Button>
+                </Fragment>
+            }
+          </Form.Item>
+          <Form.Item
+            name="ipUrl-history"
+            label="历史记录地址"
+            initialValue={localStorage.getItem("ipUrl-history") || undefined}
+            rules={[{ required: false, message: "历史记录服务端地址" }]}
+          >
+            <Input placeholder="localhost:8867" onBlur={(e) => localStorage.setItem("ipUrl-history", e.target.value)} />
+          </Form.Item>
           <Form.Item
             name="ipString"
             label="方案ID绑定"
@@ -245,44 +279,59 @@ const Setting: React.FC<any> = (props) => {
                 <Select
                   style={{ width: '100%' }}
                   size="large"
-                  options={projectStatus.map((item: any) => _.omit(item, 'disabled'))}
+                  allowClear
+                  showSearch
+                  optionFilterProp="label"
+                  options={projectListStore}
                   placeholder="方案ID"
+                  onChange={(e, option: any) => {
+                    const { value, realIp } = option;
+                    localStorage.setItem("ipUrl-realtime", realIp);
+                    localStorage.setItem("ipString", value);
+                    window.location.reload();
+                  }}
                 />
             }
           </Form.Item>
-          <Form.Item
-            name="canvas"
-            label="配置布局"
-          >
-            <Button
-              icon={<FormOutlined />}
-              type="primary"
-              onClick={() => {
-                history.push({ pathname: `/home/edit` });
-                window.location.reload();
-              }}
-            >
-              前往配置
-            </Button>
-          </Form.Item>
-          <Form.Item
-            name="selfStart"
-            label="开机自启动"
-            tooltip="开启软件后，自动检测链接状态，并启动"
-            valuePropName="checked"
-            rules={[{ required: false, message: "开机自启动" }]}
-          >
-            <Switch />
-          </Form.Item>
-          <Form.Item
-            name="errorSelfStart"
-            label="异常自动重启"
-            tooltip="运行发生报错时，自动重启服务。"
-            valuePropName="checked"
-            rules={[{ required: false, message: "异常自动重启" }]}
-          >
-            <Switch />
-          </Form.Item>
+          <Row>
+            <Col span={8} className="flex-box ant-form-item">
+              <div className="ant-col ant-form-item-label">
+                <label title="配置布局">配置布局</label>
+              </div>
+              <Button
+                icon={<FormOutlined />}
+                type="primary"
+                onClick={() => {
+                  history.push({ pathname: `/home/edit` });
+                  window.location.reload();
+                }}
+              >
+                前往配置
+              </Button>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                name="selfStart"
+                label="开机自启动"
+                tooltip="开启软件后，自动检测链接状态，并启动"
+                valuePropName="checked"
+                rules={[{ required: false, message: "开机自启动" }]}
+              >
+                <Switch />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                name="errorSelfStart"
+                label="异常自动重启"
+                tooltip="运行发生报错时，自动重启服务。"
+                valuePropName="checked"
+                rules={[{ required: false, message: "异常自动重启" }]}
+              >
+                <Switch />
+              </Form.Item>
+            </Col>
+          </Row>
           {
             (!isVision && !_.isEmpty(treeData) && !!treeData?.length) ?
               <Form.Item
@@ -334,4 +383,5 @@ const Setting: React.FC<any> = (props) => {
 
 export default connect(({ home, themeStore }) => ({
   projectStatus: themeStore.projectStatus,
+  projectListStore: themeStore.projectList
 }))(Setting);

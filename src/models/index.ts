@@ -4,6 +4,7 @@ export default {
   state: {
     theme: 'dark',
     projectStatus: [],
+    projectList: [],
     legend: {},
   },
 
@@ -18,6 +19,13 @@ export default {
       yield put({
         type: 'set',
         payload: { projectStatus: payload },
+      });
+    },
+    *projectListAction({ payload }: any, { put, select }: any) {
+      const projectList: [] = yield select((state: any) => state.themeStore.projectList);
+      yield put({
+        type: 'set',
+        payload: { projectList: projectList.concat(payload) },
       });
     },
     *shortTimeAction({ payload }: any, { put, select }: any) {

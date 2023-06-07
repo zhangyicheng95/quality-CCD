@@ -15,7 +15,6 @@ const StatisticCharts: React.FC<Props> = (props: any) => {
     if (process.env.NODE_ENV === 'development') {
         dataValue = 10
     }
-    console.log(fontColor)
     return (
         <div
             id={`echart-${id}`}

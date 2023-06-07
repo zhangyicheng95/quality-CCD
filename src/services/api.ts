@@ -6,8 +6,8 @@ export const BASE_HISTORY_IP = localStorage.getItem("ipUrl-history") ?
   `http://${localStorage.getItem("ipUrl-history")}/` : `http://localhost:8867/`;
 
 // 获取项目列表
-export async function getAllProject(params?: any) {
-  return fetchGet(`${BASE_IP}projects`);
+export async function getAllProject(ip?: any) {
+  return fetchGet(`${ip ? ('http://' + ip + '/') : BASE_IP}projects`);
 }
 
 // 获取列表任务状态

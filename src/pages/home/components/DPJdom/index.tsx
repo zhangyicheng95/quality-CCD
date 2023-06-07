@@ -30,7 +30,6 @@ const DPJ: React.FC<any> = (props: any) => {
           i: index + '', ...layoutTransform[index],
         })
       });
-      console.log(layoutData)
       setList(listData);
       setLayout(localStorage.getItem("EUlayoutArr") ? JSON.parse(localStorage.getItem("EUlayoutArr") || "[]") : layoutData);
     }
