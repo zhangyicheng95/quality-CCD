@@ -160,7 +160,7 @@ const Home: React.FC<any> = (props: any) => {
                   <div
                     className='common-btn'
                     onClick={() => {
-                      setFieldsValue({ des_column: homeSettingData?.['slider-1']?.des_column || 2 });
+                      setFieldsValue({ des_column: homeSettingData?.['slider-1']?.des_column || 1 });
                       setHomeSettingVisible('slider-1');
                     }}
                   >
@@ -347,7 +347,7 @@ const Home: React.FC<any> = (props: any) => {
                 >
                   <Button
                     className="flex-box btn"
-                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 2)}%` }}
+                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
                     icon={<PlusCircleOutlined className="btn-icon" />}
                     type="text"
                   >
@@ -356,7 +356,7 @@ const Home: React.FC<any> = (props: any) => {
                 </Popover>
                 <Button
                   className="flex-box btn"
-                  style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 2)}%` }}
+                  style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
                   icon={<SafetyOutlined className="btn-icon" />}
                   type="link"
                   onClick={() => {
@@ -401,7 +401,7 @@ const Home: React.FC<any> = (props: any) => {
                 <Fragment>
                   <Button
                     className="flex-box btn"
-                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 3)}%` }}
+                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
                     icon={
                       started ? (
                         <div style={{ height: 30, width: 30, marginRight: 8 }}>
@@ -420,7 +420,7 @@ const Home: React.FC<any> = (props: any) => {
                   </Button>
                   <Button
                     className="flex-box btn"
-                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 3)}%` }}
+                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
                     danger
                     icon={<div className="btn-icon btn-self-icon flex-box-center" >
                       <div className={`btn-self-icon-rect ${started ? 'active' : 'disabled'}`} />
@@ -434,7 +434,7 @@ const Home: React.FC<any> = (props: any) => {
                   </Button>
                   <Button
                     className="flex-box btn"
-                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 3)}%` }}
+                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
                     danger
                     icon={<ReloadOutlined className="btn-icon" />}
                     type="text"
@@ -447,7 +447,7 @@ const Home: React.FC<any> = (props: any) => {
                   {process.env.NODE_ENV === 'development' ? (
                     <Button
                       className="flex-box btn"
-                      style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 2)}%` }}
+                      style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
                       icon={<AndroidOutlined className="btn-icon" />}
                       type="link"
                       onClick={() => touchFlowService()}

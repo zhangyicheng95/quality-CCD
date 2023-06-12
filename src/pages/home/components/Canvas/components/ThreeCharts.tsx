@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
@@ -45,7 +45,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     if (process.env.NODE_ENV === 'development') {
         name = "models/tx.stl"; // models/pressure.json  models/tx.stl
         value = [
-            { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -400, y: 0, z: 500 }, { x: 400, y: 0, z: 500 },], }
+            { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -400, y: 0, z: 500 }, { x: 400, y: 0, z: 500 },], },
+            { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -400, y: 400, z: 500 }, { x: 400, y: 400, z: 500 },], }
         ];
     }
     const { initialState } = useModel<any>('@@initialState');
@@ -53,6 +54,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const dom = useRef<any>();
     const [selectedBtn, setSelectedBtn] = useState(['']);
 
+    const theme = useMemo(() => {
+        return params?.contentData?.theme || 'realDark';
+    }, [params?.contentData?.theme]);
     useEffect(() => {
         if (!_.isString(name)) {
             message.error('数据格式不正确，请检查');
@@ -73,14 +77,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
 
     // 定义常变量
     let ctrlDown = false;
-    let lineId = 0;
+    let lineId = "measure_0";
     let line: any;
     let drawingLine = false;
     const raycaster = new THREE.Raycaster();
     let intersects;
     const mouse = new THREE.Vector2();
-    const measurementLabels = {};
-    let measurements: any = [];
+    let measurementLabels: any = {},
+        measurements: any = [];
     // loader后能被标注的点云
     const pickableObjects = new Array();
 
@@ -104,6 +108,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         const bzBtn03: any = document.querySelector("#bzBtn03");
         // 按钮-透视
         const bzBtn04: any = document.querySelector("#bzBtn04");
+        // 按钮-清理数据
+        const bzBtn05: any = document.querySelector("#bzBtn05");
         // 初始化dom
         renderer.current = new THREE.WebGLRenderer({ canvas });
         renderer.current.shadowMap.enabled = true;
@@ -123,7 +129,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         box.appendChild(stats.current.dom);
         // 场景
         scene.current = new THREE.Scene();
-        scene.current.background = new THREE.Color(0x000);
+        scene.current.background = theme === 'realDark' ? new THREE.Color(0x2b313b) : new THREE.Color(0xeeeeee);
         // 坐标轴（右手定则，大拇指是x）
         const axesHelper = new THREE.AxesHelper(1000);
         axesHelper.name = "axis";
@@ -394,29 +400,67 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         // 透视
         function bzBtnFun04() {
             const mesh: any = scene.current.getObjectByName("tx");
+            /**
+             * 1：开启透视，隐藏卡片
+             * 0：关闭透视，显示卡片
+             */
+            function toggleLabelOpacity(type: number) {
+                Object.entries(measurementLabels).forEach((label: any) => {
+                    console.log(label[1])
+                    if (!!label[1]?.element?.firstElementChild) {
+                        label[1].element.firstElementChild.style.display = type === 1 ? "none" : "block";
+                    }
+                    if (!!label[1]?.element?.lastElementChild) {
+                        label[1].element.lastElementChild.style.display = type === 1 ? "block" : "none";
+                    }
+                });
+            };
             if (!!mesh.material) {
+                // 有材质
                 const depth = mesh.material?.depthTest;
                 if (depth) {
+                    // 开启透视
                     mesh.material.depthTest = false;
                     setSelectedBtn((prev: any) => (prev || []).concat('bzBtn04'));
+                    toggleLabelOpacity(1);
                 } else {
+                    // 关闭透视
                     mesh.material.depthTest = true;
                     setSelectedBtn((prev: any) => prev.filter((i: any) => i !== 'bzBtn04'));
+                    toggleLabelOpacity(0);
                 }
             } else if (mesh.children.filter((i: any) => i.type === "Points")[0]) {
+                // 没有材质，点组成
                 const depth = mesh.children.filter((i: any) => i.type === "Points")[0]?.material?.depthTest;
                 if (!!mesh.children.filter((i: any) => i.type === "Points")[0]?.material) {
                     if (depth) {
+                        // 开启透视
                         mesh.children.filter((i: any) => i.type === "Points")[0].material.depthTest = false;
                         setSelectedBtn((prev: any) => (prev || []).concat('bzBtn04'));
+                        toggleLabelOpacity(1);
                     } else {
+                        // 关闭透视
                         mesh.children.filter((i: any) => i.type === "Points")[0].material.depthTest = true;
                         setSelectedBtn((prev: any) => prev.filter((i: any) => i !== 'bzBtn04'));
+                        toggleLabelOpacity(0);
                     }
                 }
             }
         };
         bzBtn04?.addEventListener("click", bzBtnFun04);
+        // 清理数据
+        function bzBtnFun05() {
+            console.log(measurementLabels);
+            console.log(measurements);
+            (measurements || []).forEach((line: any) => {
+                scene.current.remove(line);
+                scene.current.remove(measurementLabels[line.name]);
+            });
+            lineId = "measure_0";
+            measurements = [];
+            measurementLabels = {};
+        };
+        bzBtn05?.addEventListener("click", bzBtnFun05);
         // 取消标注
         function onKeyUp(event: any) {
             if (event.key === "Escape") {
@@ -445,13 +489,18 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 // depthWrite: false,
                             })
                         );
-                        line.name = `measure_${guid()}`;
+                        line.name = `measure_${measurements.length}`;
                         line.frustumCulled = false;
                         scene.current.add(line);
                         measurements = measurements.concat(line);
                         const measurementDiv = document.createElement("div");
-                        measurementDiv.className = "measurementLabel";
-                        measurementDiv.innerText = "start";
+                        measurementDiv.className = "label";
+                        measurementDiv.innerHTML = `
+                        <div>
+                            开始
+                        </div>
+                        <div style="display: none;">开始</div>
+                        `;
                         const measurementLabel: any = new CSS2DObject(measurementDiv);
                         measurementLabel.position.copy(intersects[0].point);
                         measurementLabels[lineId] = measurementLabel;
@@ -464,7 +513,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         positions[4] = intersects[0].point.y;
                         positions[5] = intersects[0].point.z;
                         line.geometry.attributes.position.needsUpdate = true;
-                        lineId++;
+                        lineId = `measure_${measurements.length}`;
                         drawingLine = false;
                     }
                 }
@@ -514,8 +563,13 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         console.log('localStorge中的scale格式不对', err);
                         localStorage.removeItem("scale");
                     }
-                    measurementLabels[lineId].element.innerText =
-                        (distance * Number(scale?.value || "1")).toFixed(2) + (scale?.unit || "m");
+                    const value = (distance * Number(scale?.value || "1")).toFixed(2) + (scale?.unit || "m");
+                    measurementLabels[lineId].element.innerHTML = `
+                    <div>
+                        ${value}
+                    </div>
+                    <div style="display: none;">${value}</div>
+                    `;
                     measurementLabels[lineId].position.lerpVectors(v0, v1, 0.5);
                 }
             }
@@ -551,12 +605,65 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             renderer.current.render(scene.current, camera.current);
         }
         animate();
-
+        // 加载卡片数据
+        function effectMeasureLine() {
+            if (!!scene.current && !!value?.length) {
+                (value || []).forEach((item: any, index: number) => {
+                    const { name, standardValue, measureValue, offsetValue, position } = item;
+                    // @ts-ignore 渲染线
+                    const geometry = new THREE.BufferGeometry().setFromPoints(position);
+                    line = new THREE.LineSegments(
+                        geometry,
+                        new THREE.LineBasicMaterial({
+                            color: 0xff0000, // 射线颜色
+                            transparent: true,
+                            opacity: 0.75,
+                            // depthTest: false,
+                            // depthWrite: false,
+                        })
+                    );
+                    line.name = `measure_${index}`;
+                    line.frustumCulled = false;
+                    scene.current.add(line);
+                    measurements = measurements.concat(line);
+                    // 渲染信息卡片
+                    const measurementDiv = document.createElement("div");
+                    measurementDiv.className = "label";
+                    measurementDiv.innerHTML = `
+                        <div>
+                            <div class="item">长度尺寸: ${name}</div>
+                            <div class="item" style="text-align:center;">${standardValue} ± ${offsetValue}</div>
+                            <div class="flex-box item"><div class="key">名义值</div><div class="value">${standardValue}</div></div>
+                            <div class="flex-box item"><div class="key">实测值</div><div class="value">${measureValue}</div></div>
+                            <div class="flex-box item"><div class="key">偏差值</div><div class="value">${offsetValue}</div></div>
+                        </div>
+                        <div style="display: none;">${measureValue}</div>
+                    `;
+                    const measurementLabel: any = new CSS2DObject(measurementDiv);
+                    measurementLabel.position.copy({
+                        x: (position[0].x + position[1].x) / 2,
+                        y: (position[0].y + position[1].y) / 2,
+                        z: (position[0].z + position[1].z) / 2,
+                    });
+                    measurementLabels[`measure_${index}`] = measurementLabel;
+                    scene.current.add(measurementLabels[`measure_${index}`]);
+                    lineId = `measure_${index + 1}`;
+                    // const closeDom = measurementDiv.querySelector('.close');
+                    // closeDom?.addEventListener('dbclick', () => {
+                    //     console.log(123)
+                    //     scene.current.remove(measurementLabel);
+                    //     scene.current.remove(line);
+                    // });
+                });
+            }
+        };
+        effectMeasureLine();
         return () => {
             bzBtn01.removeEventListener('click', bzBtnFun01);
             bzBtn02.removeEventListener('click', bzBtnFun02);
             bzBtn03.removeEventListener('click', bzBtnFun03);
             bzBtn04.removeEventListener('click', bzBtnFun04);
+            bzBtn05.removeEventListener("click", bzBtnFun05);
             renderer.current.domElement.removeEventListener("pointerdown", onMouseDown, false);
             renderer.current.domElement.removeEventListener("pointerup", onMouseUp, false);
             renderer.current.domElement.removeEventListener("mousemove", onDocumentMouseMove, false);
@@ -577,8 +684,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             if (!!dom.current && dom.current.innerHTML) {
                 dom.current.innerHTML = `
                     <div class="three-mask flex-box">
-                        <progress class='process' value="0" />
-                        <span class='process-text'>0%</span>
+                        <progress class="process" value="0" />
+                        <span class="process-text">0%</span>
                     </div>
                     <canvas id="demoBox" />
                 `;
@@ -597,55 +704,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             renderer.current = undefined;
             setSelectedBtn([]);
         };
-    }, [name]);
-    // 加载卡片数据
-    useEffect(() => {
-        if (!!scene.current && !!value?.length) {
-            (value || []).forEach((item: any, index: number) => {
-                const { name, standardValue, measureValue, offsetValue, position } = item;
-                // @ts-ignore 渲染线
-                const geometry = new THREE.BufferGeometry().setFromPoints(position);
-                line = new THREE.LineSegments(
-                    geometry,
-                    new THREE.LineBasicMaterial({
-                        color: 0xff0000, // 射线颜色
-                        transparent: true,
-                        opacity: 0.75,
-                        // depthTest: false,
-                        // depthWrite: false,
-                    })
-                );
-                line.name = `measure_${guid()}`;
-                line.frustumCulled = false;
-                scene.current.add(line);
-                measurements = measurements.concat(line);
-                // 渲染信息卡片
-                const measurementDiv = document.createElement("div");
-                measurementDiv.className = "label";
-                measurementDiv.innerHTML = `
-                <div class="close">x</div>
-                <div class="item">长度尺寸: ${name}</div>
-                <div class="item" style="text-align:center;">${standardValue} ± ${offsetValue}</div>
-                <div class="flex-box item"><div class="key">名义值</div><div class="value">${standardValue}</div></div>
-                <div class="flex-box item"><div class="key">实测值</div><div class="value">${measureValue}</div></div>
-                <div class="flex-box item"><div class="key">偏差值</div><div class="value">${offsetValue}</div></div>
-                `;
-                const measurementLabel: any = new CSS2DObject(measurementDiv);
-                measurementLabel.position.copy({
-                    x: (position[0].x + position[1].x) / 2,
-                    y: (position[0].y + position[1].y) / 2,
-                    z: (position[0].z + position[1].z) / 2,
-                });
-                measurementLabels["label" + index] = measurementLabel;
-                scene.current.add(measurementLabels["label" + index]);
-                const closeDom = measurementDiv.querySelector('.close');
-                closeDom?.addEventListener('click', () => {
-                    scene.current.remove(measurementLabel);
-                    scene.current.remove(line);
-                });
-            });
-        }
-    }, [scene.current, value]);
+    }, [name, theme]);
     // 监听鼠标事件
     const onDeleteLine = (event: any) => {
         const raycaster = new THREE.Raycaster();
@@ -658,8 +717,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         console.log(mouse, measurements)
         // 检测交点处是否存在测距线和点
         const intersects = raycaster.intersectObjects(measurements);
+
+        const line = measurements[measurements.length - 1];
         scene.current.remove(measurements[measurements.length - 1]);
-        scene.current.remove(measurementLabels["label0"]);
+        scene.current.remove(measurementLabels[line.name]);
         if (intersects.length > 0) {
             // 获取选中的测距对象
             const selectedMeasurement = intersects[0].object;
@@ -782,7 +843,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         className='btn'
                     />
                 </Tooltip>
-                <Tooltip title="开启透视">
+                <Tooltip title="清理测距数据">
                     <Button
                         icon={<ClearOutlined />}
                         type={'default'}
@@ -798,8 +859,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 ref={dom}
             >
                 <div className="three-mask flex-box">
-                    <progress className='process' value="0" />
-                    <span className='process-text'>0%</span>
+                    <progress className="process" value="0" />
+                    <span className="process-text">0%</span>
                 </div>
                 <canvas id="demoBox"></canvas>
             </div>
