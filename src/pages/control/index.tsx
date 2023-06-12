@@ -366,8 +366,8 @@ const Control: React.FC<any> = (props: any) => {
                     const { widget } = cen[1] || {};
                     if (widget?.type === 'TagRadio') {
                       const ids = (widget?.options || []).reduce((optionP: any, optionC: any) => {
-                        const { children } = optionC;
-                        const childIds = children.map((item: any) => item.id);
+                        const { children = [] } = optionC;
+                        const childIds = (children || []).map((item: any) => item.id);
                         return optionP.concat(childIds);
                       }, []);
                       return pre.concat(ids)
@@ -675,7 +675,7 @@ export const FormatWidgetToDom = (props: any) => {
 
   useEffect(() => {
     if (type1 === 'TagRadio') {
-      const children = options.filter((i: any) => i.name === value)[0]?.children;
+      const children = (options || []).filter((i: any) => i.name === value)[0]?.children;
       setSelectedOption(children);
     };
   }, [type1]);

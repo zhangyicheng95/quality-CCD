@@ -22,7 +22,6 @@ const Setting: React.FC<any> = (props) => {
   const [selectPathVisible, setSelectPathVisible] = useState(false);
   const [selectedPath, setSelectedPath] = useState<any>('');
   const [ipUrlList, setIpUrlList] = useState<any>([]);
-  const [projectList, setProjectList] = useState<any>([]);
 
   const isVision = useMemo(() => {
     // @ts-ignore

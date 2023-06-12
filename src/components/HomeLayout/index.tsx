@@ -22,26 +22,19 @@ const HomeLayout: React.FC<any> = (props) => {
   useEffect(() => {
     if (isVision) return;
 
-    if (!localStorage.getItem("ipUrlList")) {
-      dispatch({
-        type: 'themeStore/projectListAction',
-        payload: [{ name: '本地服务', value: 'localhost:8866' }]
-      });
-    } else {
-      try {
-        const list = JSON.parse(localStorage.getItem("ipUrlList") || "[]");
-        if (!!list.length) {
-          loopGetProjects(0, list[0], list);
-        } else {
-          dispatch({
-            type: 'themeStore/projectListAction',
-            payload: [{ name: '本地服务', value: 'localhost:8866' }]
-          });
-        }
-      } catch (e) {
-        console.log('ipUrlList有问题', e);
-        localStorage.removeItem("ipUrlList");
+    try {
+      const list = JSON.parse(localStorage.getItem("ipUrlList") || JSON.stringify([{ name: '本地服务', value: 'localhost:8866' }]));
+      if (!!list.length) {
+        loopGetProjects(0, list[0], list);
+      } else {
+        dispatch({
+          type: 'themeStore/projectListAction',
+          payload: [{ name: '本地服务', value: 'localhost:8866' }]
+        });
       }
+    } catch (e) {
+      console.log('ipUrlList有问题', e);
+      localStorage.removeItem("ipUrlList");
     }
 
     return () => {

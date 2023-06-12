@@ -1029,7 +1029,7 @@ const Home: React.FC<any> = (props: any) => {
   // 拉取方案详情 TODO
   useEffect(() => {
     if (!ipString || _.isEmpty(paramsData)) return;
-    const { flowData, contentData = {}, selfStart = false, errorSelfStart = false } = paramsData;
+    const { flowData = {}, contentData = {}, selfStart = false, errorSelfStart = false } = paramsData;
     const {
       home = [
         { "i": "slider-1", "x": 0, "y": 0, "w": 7, "h": 8, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
@@ -1045,7 +1045,7 @@ const Home: React.FC<any> = (props: any) => {
         error: { fontSize: 20 },
       }
     } = contentData;
-    const { nodes } = flowData;
+    const { nodes = [] } = flowData;
     const list = nodes?.map((node: any) => {
       const { name, alias, id, ports = {} } = node;
       const { items = [] } = ports;
@@ -2636,6 +2636,9 @@ const Home: React.FC<any> = (props: any) => {
                   style={{ width: '100%' }}
                   size="large"
                   labelInValue
+                  allowClear
+                  showSearch
+                  optionFilterProp="label"
                   options={projectStatus}
                   placeholder="方案ID"
                 />

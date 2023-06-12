@@ -55,6 +55,9 @@ export async function getInitialState(): Promise<{
 
   let params: any = {};
   let title: any = '';
+  if (!localStorage.getItem("ipUrlList")) {
+    localStorage.setItem("ipUrlList", JSON.stringify([{ name: '本地服务', value: 'localhost:8866' }]));
+  }
   if (!localStorage.getItem("ipUrl-history")) {
     localStorage.setItem("ipUrl-history", 'localhost:8867');
   }
