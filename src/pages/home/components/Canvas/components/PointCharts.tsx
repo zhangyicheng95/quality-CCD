@@ -20,7 +20,8 @@ const PointCharts: React.FC<Props> = (props: any) => {
     if (process.env.NODE_ENV === 'development') {
         dataValue = [
             {
-                "name": "data1", "value": [
+                "name": "data1",
+                "value": [
                     [10.0, 8.04],
                     [8.07, 6.95],
                     [13.0, 7.58],
@@ -41,10 +42,12 @@ const PointCharts: React.FC<Props> = (props: any) => {
                     [6.03, 7.24],
                     [12.0, 6.26],
                     [12.0, 8.84]
-                ], "color": "blue"
+                ],
+                "color": "blue"
             },
             {
-                "name": "data2", "value": [
+                "name": "data2",
+                "value": [
                     [21.0, 8.33],
                     [24.0, 7.66],
                     [23.4, 6.81],
@@ -63,7 +66,8 @@ const PointCharts: React.FC<Props> = (props: any) => {
                     [22.0, 8.84],
                     [17.08, 5.82],
                     [15.02, 5.68]
-                ], "color": "red"
+                ],
+                "color": "red"
             },
             { "name": "下限", "value": 1.53, "type": "markLine", "color": "green" },];
     }
@@ -78,8 +82,13 @@ const PointCharts: React.FC<Props> = (props: any) => {
         }
         let maxLength = 0;
         dataValue.forEach((item: any) => {
-            if (item?.value?.length > maxLength) {
-                maxLength = item.value.length;
+            const { value = [] } = item;
+            if (_.isArray(value)) {
+                (value || []).forEach((val: any) => {
+                    if (val[0] > maxLength) {
+                        maxLength = val[0];
+                    }
+                });
             }
         });
 
@@ -129,7 +138,7 @@ const PointCharts: React.FC<Props> = (props: any) => {
                 width: 20,
             } : {
                 orient: 'horizontal',
-                bottom: 10,
+                bottom: 15,
                 left: 80,
                 right: 60,
                 height: 20,

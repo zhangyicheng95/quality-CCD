@@ -52,20 +52,40 @@ export async function getInitialState(): Promise<{
     address: '',
     phone: '',
   };
+  /***************************** iframe嵌套进去，获取所有参数值 ****************************************/
+  function GetQueryObj(url: any) {
+    let arr = url?.split('?') || [];
+    let params = arr?.[1]?.split('&') || [];
+    let obj = {};
+    for (let i = 0; i < params.length; i++) {
+      let param = params[i].split('=');
+      obj[param[0]] = param[1];
+    }
+    return obj;
+  };
+  const query: any = GetQueryObj(window.location.hash);
+  /***************************** ****************************************/
 
   let params: any = {};
   let title: any = '';
+  const ipUrl = !!Object.keys(query).length ? (query?.ipUrl || 'localhost:8866') : 'localhost:8866';
+  const ipString = localStorage.getItem("ipString") || query?.id || '';
+
+  if (!localStorage.getItem("ipString")) {
+    localStorage.setItem("ipString", ipString);
+  }
   if (!localStorage.getItem("ipUrlList")) {
-    localStorage.setItem("ipUrlList", JSON.stringify([{ name: '本地服务', value: 'localhost:8866' }]));
+    localStorage.setItem("ipUrlList", JSON.stringify([{ name: '本地服务', value: ipUrl }]));
   }
   if (!localStorage.getItem("ipUrl-history")) {
     localStorage.setItem("ipUrl-history", 'localhost:8867');
   }
   if (!localStorage.getItem("ipUrl-realtime")) {
-    localStorage.setItem("ipUrl-realtime", 'localhost:8866');
+    localStorage.setItem("ipUrl-realtime", ipUrl);
+    window.location.reload();
   } else {
-    if (localStorage.getItem("ipString")) {
-      const res = await getParams(localStorage.getItem("ipString") || '');
+    if (ipString) {
+      const res = await getParams(ipString || '');
       if (res && res.code === 'SUCCESS') {
         params = res?.data || {};
         title = res?.data?.quality_name || res?.data?.name;

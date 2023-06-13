@@ -1310,7 +1310,6 @@ const Home: React.FC<any> = (props: any) => {
                           data={{
                             dataValue: dataValue || [],
                             yName, xName, direction, align, barColor,
-                            dataZoom
                           }}
                         />
                         :

@@ -65,19 +65,23 @@ const LineCharts: React.FC<Props> = (props: any) => {
             if (type === 'markLine') {
                 return;
             } else {
-                if (item?.value?.length > maxLength) {
-                    maxLength = item.value.length;
-                }
-                if (_.isNull(minValue) || _.isNull(maxValue)) {
-                    minValue = value[0][0];
-                    maxValue = value[value.length - 1][0];
-                    return;
-                }
-                if (value[0][0] < minValue) {
-                    minValue = value[0][0];
-                }
-                if (value[0][0] > maxValue) {
-                    maxValue = value[0][0];
+                if (_.isArray(value)) {
+                    (value || []).forEach((val: any) => {
+                        if (val[0] > maxLength) {
+                            maxLength = val[0];
+                        }
+                    });
+                    if (_.isNull(minValue) || _.isNull(maxValue)) {
+                        minValue = value[0][0];
+                        maxValue = value[value.length - 1][0];
+                        return;
+                    }
+                    if (value[0][0] < minValue) {
+                        minValue = value[0][0];
+                    }
+                    if (value[0][0] > maxValue) {
+                        maxValue = value[0][0];
+                    }
                 }
             }
         });
@@ -95,7 +99,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
             ),
             grid: Object.assign({}, options.grid, {
                 right: `${xName.length * (xName.length < 4 ? 24 : 16)}px`,
-                bottom: 40
+                bottom: 30
             }),
             dataZoom: [Object.assign({
                 type: "slider",
@@ -109,7 +113,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
                 }
             }, {
                 orient: 'horizontal',
-                bottom: 20,
+                bottom: 15,
                 left: 80,
                 right: 60,
                 height: 20,
