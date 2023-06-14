@@ -29,7 +29,7 @@ import rectTopIcon from '@/assets/imgs/rect-top.svg';
 import rectBottomIcon from '@/assets/imgs/rect-bottom.svg';
 import rectFrontIcon from '@/assets/imgs/rect-front.svg';
 import rectBackIcon from '@/assets/imgs/rect-back.svg';
-import { guid } from '@/utils/utils';
+import { equalsObj, guid } from '@/utils/utils';
 
 interface Props {
     data: any,
@@ -45,8 +45,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     if (process.env.NODE_ENV === 'development') {
         name = "models/tx.stl"; // http://43.138.71.42:7080/build/3d_data/pressure.json  models/tx.stl
         value = [
-            { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -400, y: 0, z: 500 }, { x: 400, y: 0, z: 500 },], },
-            { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -400, y: 400, z: 500 }, { x: 400, y: 400, z: 500 },], }
+            { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: 0, z: 500 }, { x: 0, y: 0, z: 500 },], },
+            { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -20, y: -200, z: 100 }, { x: -20, y: -200, z: 100 },], },
+            { name: "9", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -400, y: -200, z: 300 }, { x: 400, y: -200, z: 300 },], }
         ];
     }
     const { initialState } = useModel<any>('@@initialState');
@@ -211,6 +212,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
 
             camera.current.position.set(0, -1.5 * mdlen, 0);
             scene.current.add(mesh);
+            effectMeasureLine();
         }
         function processFun(xhr: any) {
             const { loaded = 0, total = 1 } = xhr;
@@ -406,7 +408,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
              */
             function toggleLabelOpacity(type: number) {
                 Object.entries(measurementLabels).forEach((label: any) => {
-                    console.log(label[1])
                     if (!!label[1]?.element?.firstElementChild) {
                         label[1].element.firstElementChild.style.display = type === 1 ? "none" : "block";
                     }
@@ -607,9 +608,47 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         animate();
         // 加载卡片数据
         function effectMeasureLine() {
-            if (!!scene.current && !!value?.length) {
+            const mesh: any = scene.current.getObjectByName("tx");
+
+            if (!!scene.current && !!value?.length && !!mesh) {
                 (value || []).forEach((item: any, index: number) => {
-                    const { name, standardValue, measureValue, offsetValue, position } = item;
+                    let { name, standardValue, measureValue, offsetValue, position } = item;
+                    if (!!position[0] && !!position[1] && equalsObj(position[0], position[1])) {
+                        // 线段的两个点相同，代表只绘制卡片
+                        const box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
+                        const length = box.max.x - box.min.x; // 模型长度
+                        const width = box.max.z - box.min.z; // 模型宽度
+                        const height = box.max.y - box.min.y; // 模型高度
+                        const localPosition = [].concat(position[0]);
+                        const scale = 3;
+                        position = [
+                            {
+                                x: position[0].x + (position[0].x >= 0 ? length / 2.5 : -length / 2.5),
+                                y: position[0].y + (position[0].y >= 0 ? height / scale : -height / scale),
+                                z: position[0].z + (position[0].z >= 0 ? width / scale : -width / scale),
+                            },
+                            {
+                                x: position[0].x + (position[0].x >= 0 ? length / 2.5 : -length / 2.5),
+                                y: position[0].y + (position[0].y >= 0 ? height / scale : -height / scale),
+                                z: position[0].z + (position[0].z >= 0 ? width / scale : -width / scale),
+                            }
+                        ];
+                        const geometry = new THREE.BufferGeometry().setFromPoints([localPosition[0], position[0]]);
+                        line = new THREE.LineSegments(
+                            geometry,
+                            new THREE.LineBasicMaterial({
+                                color: 0xff0000, // 射线颜色
+                                transparent: true,
+                                opacity: 0.75,
+                                // depthTest: false,
+                                // depthWrite: false,
+                            })
+                        );
+                        line.name = `measure_${index}`;
+                        line.frustumCulled = false;
+                        scene.current.add(line);
+                        measurements = measurements.concat(line);
+                    }
                     // @ts-ignore 渲染线
                     const geometry = new THREE.BufferGeometry().setFromPoints(position);
                     line = new THREE.LineSegments(
@@ -657,7 +696,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 });
             }
         };
-        effectMeasureLine();
+
         return () => {
             bzBtn01.removeEventListener('click', bzBtnFun01);
             bzBtn02.removeEventListener('click', bzBtnFun02);
