@@ -1,5 +1,6 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
+import { message } from 'antd';
 
 // import mockRules from '../../mock';
 import { formatResponse } from '@/utils/utils'; // 引入mock规则库
@@ -131,6 +132,9 @@ function axiosRequest(config) {
       if (error.response) {
         const { status } = error.response;
         if (status === 400 || status === 404 || status === 500) {
+          if (status === 500) {
+            message.error('后台服务异常，请尝试重启机器');
+          }
           return {
             status: 'failed',
             message:
