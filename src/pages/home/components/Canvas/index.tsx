@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import styles from './index.module.less';
 import {
   Button,
@@ -93,6 +93,7 @@ const Home: React.FC<any> = (props: any) => {
   // @ts-ignore
   const { type } = window.QUALITY_CCD_CONFIG;
   const ipString: any = localStorage.getItem('ipString') || '';
+  const updateTimer = useRef<any>();
   const [loading, setLoading] = useState(false);
   const [fontColor, setFontColor] = useState('#fff');
   const [addWindowVisible, setAddWindowVisible] = useState(false);
@@ -1135,8 +1136,13 @@ const Home: React.FC<any> = (props: any) => {
     };
 
     if (selfStart) {
-      console.log('任务自启动');
-      start();
+      // 开机自启动-延时15秒启动
+      if (updateTimer.current) {
+        clearTimeout(updateTimer.current);
+      }
+      updateTimer.current = setTimeout(() => {
+        start();
+      }, 15000);
     }
 
     return () => {
@@ -1148,6 +1154,9 @@ const Home: React.FC<any> = (props: any) => {
         },
       });
       dispatch({ type: 'home/snapshot' });
+      if (updateTimer.current) {
+        clearTimeout(updateTimer.current);
+      }
     };
   }, [paramsData]);
   // 检测错误信息，如果有数据，代表有异常，自动重启
@@ -1579,24 +1588,6 @@ const Home: React.FC<any> = (props: any) => {
       // onclose();
     };
   }, [started, dispatch]);
-  // 信息变化，走接口更新
-  // useEffect(() => {
-  //   if (!_.isEmpty(paramData) && !!paramData.id && ifCanEdit) {
-  //     updateTimer && clearTimeout(updateTimer);
-  //     updateTimer = setTimeout(() => {
-  //       updateParams({
-  //         id: paramData.id,
-  //         data: paramData,
-  //       }).then((res: any) => {
-  //         if (res && res.code === 'SUCCESS') {
-
-  //         } else {
-  //           message.error(res?.msg || res?.message || '接口异常');
-  //         }
-  //       });
-  //     }, 500);
-  //   }
-  // }, [paramData]);
   // 添加监控窗口
   const addWindow = () => {
     validateFields()

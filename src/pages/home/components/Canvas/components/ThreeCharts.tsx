@@ -43,7 +43,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const { dataValue = {}, fontSize } = data;
     let { name, value = [] } = dataValue;
     if (process.env.NODE_ENV === 'development') {
-        name = "models/tx.stl"; // models/pressure.json  models/tx.stl
+        name = "models/tx.stl"; // http://43.138.71.42:7080/build/3d_data/pressure.json  models/tx.stl
         value = [
             { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -400, y: 0, z: 500 }, { x: 400, y: 0, z: 500 },], },
             { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -400, y: 400, z: 500 }, { x: 400, y: 400, z: 500 },], }
