@@ -8787,33 +8787,7 @@ const getParams = (req: Request, res: Response) => {
           { "value": ["b4f890bc-3254-4e03-a4bb-7e16b8d5534d"], "size": { "i": "b4f890bc-3254-4e03-a4bb-7e16b8d5534d$$table2", "x": 9, "y": 18, "w": 42, "h": 26, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "table2", "tab": "1", "yName": "qwe", "xName": "asd", "id": "b4f890bc-3254-4e03-a4bb-7e16b8d5534d$$table2" },
           { "value": ["56284350-1bc5-465f-b7d4-2c7fbe94097d", "store_path"], "size": { "i": "56284350-1bc5-465f-b7d4-2c7fbe94097d$$store_path$$point", "x": 51, "y": 2, "w": 45, "h": 16, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "point", "tab": "1", "yName": "123", "xName": "sdf", "dataZoom": 4, "id": "56284350-1bc5-465f-b7d4-2c7fbe94097d$$store_path$$point" },
           { "value": ["3e41e3d3-2ef4-44fc-9771-d352e634dfdf", "heart"], "size": { "i": "3e41e3d3-2ef4-44fc-9771-d352e634dfdf$$heart$$line", "x": 51, "y": 18, "w": 45, "h": 26, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "line", "tab": "1", "yName": "sdfdfv", "xName": "r5y4gr", "id": "3e41e3d3-2ef4-44fc-9771-d352e634dfdf$$heart$$line" },
-          {
-            "id": "56284350-1bc5-465f-b7d4-2c7fbe94097d$$status$$operation",
-            "value": [
-              "56284350-1bc5-465f-b7d4-2c7fbe94097d",
-              "status"
-            ],
-            "size": {
-              "i": "56284350-1bc5-465f-b7d4-2c7fbe94097d$$status$$operation",
-              "x": 8,
-              "y": 0,
-              "w": 29,
-              "h": 27,
-              "minW": 1,
-              "maxW": 100,
-              "minH": 2,
-              "maxH": 100
-            },
-            "type": "statistic",
-            "tab": "1",
-            "yName": "Active Users",
-            "fontSize": 14,
-            "backgroundColor": "default",
-            "ifLocalStorage": true,
-            "operationList": [
-              "store_dir"
-            ]
-          }
+
         ],
         "footerSelectList": ["45e063e4-8d3e-4e10-a1cd-48be2f78e97a"],
         "theme": "dark"

@@ -1248,7 +1248,7 @@ const Home: React.FC<any> = (props: any) => {
                             !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
                             setBasicInfoData(basicInfoData);
                             setEditWindowData(item);
-                            setFieldsValue(item);
+                            setFieldsValue(Object.assign({}, item, !fontSize ? { fontSize: 12 } : {}));
                             if (!!fontColor && !!fontColor?.rgb) {
                               setFontColor(fontColor.rgb);
                             }

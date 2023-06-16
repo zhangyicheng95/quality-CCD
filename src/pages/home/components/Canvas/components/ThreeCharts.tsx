@@ -6,10 +6,12 @@ import { Button, Input, message, Popover, Select, Tooltip } from 'antd';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Lut } from "three/examples/jsm/math/Lut.js";
+import { DDSLoader } from "three/examples/jsm/loaders/DDSLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader.js";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
+import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader.js";
 import Stats from "three/examples/jsm/libs/stats.module.js";
 import TWEEN from '@tweenjs/tween.js';
 import h337 from '@rengr/heatmap.js'
@@ -29,6 +31,7 @@ import rectTopIcon from '@/assets/imgs/rect-top.svg';
 import rectBottomIcon from '@/assets/imgs/rect-bottom.svg';
 import rectFrontIcon from '@/assets/imgs/rect-front.svg';
 import rectBackIcon from '@/assets/imgs/rect-back.svg';
+import spriteIcon from '@/assets/imgs/sprite.png';
 import { equalsObj, guid } from '@/utils/utils';
 
 interface Props {
@@ -43,11 +46,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const { dataValue = {}, fontSize } = data;
     let { name, value = [] } = dataValue;
     if (process.env.NODE_ENV === 'development') {
-        name = "models/tx.stl"; // http://43.138.71.42:7080/build/3d_data/pressure.json  models/tx.stl
+        name = "models/output.ply"; // models/pressure.json  models/tx.stl
         value = [
             { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: 0, z: 500 }, { x: 0, y: 0, z: 500 },], },
             { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -20, y: -200, z: 100 }, { x: -20, y: -200, z: 100 },], },
-            { name: "9", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -400, y: -200, z: 300 }, { x: 400, y: -200, z: 300 },], }
+            // { name: "9", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -400, y: -200, z: 300 }, { x: 400, y: -200, z: 300 },], }
         ];
     }
     const { initialState } = useModel<any>('@@initialState');
@@ -69,11 +72,13 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     let renderer = useRef<any>();
     const labelRenderer = new CSS2DRenderer();
     let scene = useRef<any>(),
+        uiScene = useRef<any>(),
+        orthoCamera = useRef<any>(),
         camera = useRef<any>(),
         controls = useRef<any>(),
         stats = useRef<any>(),
         animateId: number = 0,
-        lut: any = null,
+        lut: any = new Lut(),
         sprite: any = null;
 
     // 定义常变量
@@ -112,9 +117,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         // 按钮-清理数据
         const bzBtn05: any = document.querySelector("#bzBtn05");
         // 初始化dom
-        renderer.current = new THREE.WebGLRenderer({ canvas });
+        renderer.current = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        // 防止后渲染的scene覆盖前面的scene
+        renderer.current.autoClear = false    //默认为true
         renderer.current.shadowMap.enabled = true;
-        renderer.current.outputEncoding = THREE.sRGBEncoding;
         renderer.current.setSize(box.offsetWidth, box.offsetHeight);
         box.appendChild(renderer.current.domElement);
         labelRenderer.setSize(box.offsetWidth, box.offsetHeight);
@@ -130,7 +136,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         box.appendChild(stats.current.dom);
         // 场景
         scene.current = new THREE.Scene();
-        scene.current.background = theme === 'realDark' ? new THREE.Color(0x2b313b) : new THREE.Color(0xeeeeee);
+        uiScene.current = new THREE.Scene();
+        const background = theme === 'realDark' ? new THREE.Color(0x2b313b) : new THREE.Color(0xeeeeee);
+        scene.current.background = background;
         // 坐标轴（右手定则，大拇指是x）
         const axesHelper = new THREE.AxesHelper(1000);
         axesHelper.name = "axis";
@@ -150,17 +158,27 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             scene.current.add(light2);
             //点光源
             light3 = new THREE.PointLight(0xffffff);
-            light3.position.set(0, 0, 0);
+            // light3.position.set(0, 0, 0);
             scene.current.add(light3);
         }
         // 相机
         camera.current = new THREE.PerspectiveCamera(
-            75,
-            canvas.offsetWidth / canvas.offsetHeight,
-            0.1,
-            1000000
+            75, // fov — 摄像机视锥体垂直视野角度
+            canvas.offsetWidth / canvas.offsetHeight,  // aspect — 摄像机视锥体长宽比
+            0.1,  // near — 摄像机视锥体近端面
+            1000000  // far — 摄像机视锥体远端面
         );
         camera.current.position.set(1000, -1400, 0);
+        scene.current.add(camera.current);
+        orthoCamera.current = new THREE.OrthographicCamera(
+            - 1,  // left — 摄像机视锥体左侧面。
+            1,  // right — 摄像机视锥体右侧面。
+            1,  // top — 摄像机视锥体上侧面。
+            - 1,  // bottom — 摄像机视锥体下侧面。
+            0.1,  // near — 摄像机视锥体近端面
+            1000000  // far — 摄像机视锥体远端面
+        );
+        orthoCamera.current.position.set(0.5, 0, 1);
         // 控制器 (旋转/缩放)
         controls.current = new OrbitControls(camera.current, renderer.current.domElement);
         controls.current.enableDamping = true;
@@ -216,31 +234,85 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         }
         function processFun(xhr: any) {
             const { loaded = 0, total = 1 } = xhr;
+            const processBox = maskBox.querySelector('.process');
+            const processText = maskBox.querySelector('.process-text');
             if (!!loaded && !!total) {
-                const processBox = maskBox.querySelector('.process');
-                const processText = maskBox.querySelector('.process-text');
-
                 const process = `${((loaded / total) * 100 + '').slice(0, 5)}%`;
                 processBox.value = loaded / total;
                 processText.innerText = process;
+            } else {
+                processBox.value = 0.99;
+                processText.innerText = '99%';
             }
         }
+        function processError(error: any) {
+            message.error('点云数据有问题，请检查');
+            console.log('点云数据有问题:', error);
+        }
         // 加载url
+        const manager = new THREE.LoadingManager();
+        manager.addHandler(/\.dds$/i, new DDSLoader());
         if (name.indexOf(".glb") > -1) {
             new GLTFLoader().load(
                 name,
                 function (gltf) {
                     addPickable(gltf.scene);
                 },
-                (xhr) => processFun(xhr)
+                (xhr) => processFun(xhr),
+                (error) => {
+                    processError(error);
+                }
             );
         } else if (name.indexOf(".ply") > -1) {
             new PLYLoader().load(
                 name,
+                function (geometry: any) {
+                    // 用于计算模型的顶点法向量，以使模型的光照效果更为真实。
+                    geometry.computeVertexNormals();
+                    // 判断模型是否自带颜色
+                    var colors = geometry?.attributes?.color?.array || [];
+                    let material: any = null;
+                    if (colors?.length) {
+                        // colors 有值代表ply文件本身包含了颜色，则使用本身的颜色渲染
+                        sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+                            map: new THREE.CanvasTexture(lut.createCanvas())
+                        }));
+                        sprite.material.map.colorSpace = THREE.SRGBColorSpace;
+                        sprite.scale.x = 0.125;
+                        sprite.position.set(1.4, 0, 0);
+                        console.log(sprite)
+                        uiScene.current.add(sprite);
+
+                        material = new THREE.PointsMaterial({   // MeshStandardMaterial,MeshBasicMaterial
+                            vertexColors: true
+                        })
+                    } else {
+                        /** 没有颜色则手动添加
+                         *  金色：#ffd700
+                         *  银色：#c0c0c0
+                         *  铜色：#b87333
+                         *  钢色：#808080
+                         *  铝色：#c3c3c3
+                         * */
+                        material = new THREE.PointsMaterial({   // MeshStandardMaterial,MeshBasicMaterial
+                            color: '#c0c0c0'
+                        });
+                    }
+                    const mesh = new THREE.Points(geometry, material);
+                    addPickable(mesh);
+                },
+                (xhr) => processFun(xhr),
+                (error) => {
+                    processError(error);
+                }
+            );
+        } else if (name.indexOf(".stl") > -1) {
+            new STLLoader().load(
+                name,
                 function (geometry) {
                     geometry.computeVertexNormals();
-                    const material: any = new THREE.MeshStandardMaterial({
-                        color: 0x009cff,
+                    const material: any = new THREE.MeshPhysicalMaterial({
+                        color: '#c0c0c0'
                     });
 
                     const mesh = new THREE.Mesh(geometry, material);
@@ -248,45 +320,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 },
                 (xhr) => processFun(xhr),
                 (error) => {
-                    console.log('点云数据有问题:', error);
+                    processError(error);
                 }
-            );
-        } else if (name.indexOf(".stl") > -1) {
-            // 热力图着色器程序
-            const vertexShader = `
-                varying vec2 vUv;
-
-                void main() {
-                vUv = uv;
-                
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                }
-            `;
-
-            const fragmentShader = `
-                uniform float iGlobalTime;
-                uniform sampler2D textureData;
-
-                varying vec2 vUv;
-
-                void main() {
-                vec4 color = texture2D(textureData, vUv);
-                vec3 heatColor = vec3(1.0, 1.0 - color.r, 1.0 - color.r * color.r);
-                gl_FragColor = vec4(heatColor, 1.0);
-                }
-            `;
-            new STLLoader().load(
-                name,
-                function (geometry) {
-                    geometry.computeVertexNormals();
-                    const material: any = new THREE.MeshPhysicalMaterial({
-                        color: 0xff9c7c,
-                    });
-
-                    const mesh = new THREE.Mesh(geometry, material);
-                    addPickable(mesh);
-                },
-                (xhr) => processFun(xhr)
             );
         } else if (name.indexOf(".obj") > -1) {
             new OBJLoader().load(
@@ -294,57 +329,78 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 function (object) {
                     addPickable(object);
                 },
-                (xhr) => processFun(xhr)
+                (xhr) => processFun(xhr),
+                (error) => {
+                    processError(error);
+                }
             );
         } else if (name.indexOf(".json") > -1) {
-            lut = new Lut();
-            sprite = new THREE.Sprite(
-                new THREE.SpriteMaterial({
-                    map: new THREE.CanvasTexture(lut.createCanvas()),
-                })
-            );
+            sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+                map: new THREE.CanvasTexture(lut.createCanvas())
+            }));
             sprite.material.map.colorSpace = THREE.SRGBColorSpace;
             sprite.scale.x = 0.125;
+            uiScene.current.add(sprite);
 
-            const loader = new THREE.BufferGeometryLoader();
-            loader.load(name, function (geometry) {
-                geometry.center();
-                geometry.computeVertexNormals();
+            const loader = new THREE.BufferGeometryLoader(manager);
+            loader.load(name,
+                function (geometry) {
+                    geometry.computeVertexNormals();
+                    // default color attribute
+                    const colors = [];
+                    for (let i = 0, n = geometry.attributes.position.count; i < n; ++i) {
+                        colors.push(1, 1, 1);
+                    }
+                    geometry.setAttribute(
+                        "color",
+                        new THREE.Float32BufferAttribute(colors, 3)
+                    );
+                    const mesh = new THREE.Points(geometry, new THREE.PointsMaterial({
+                        // side: THREE.DoubleSide,
+                        // color: 0xf5f5f5,
+                        vertexColors: true,
+                    }));
+                    lut.setColorMap('rainbow');
+                    lut.setMax(2000);
+                    lut.setMin(0);
 
-                // default color attribute
-                const colors = [];
-                for (let i = 0, n = geometry.attributes.position.count; i < n; ++i) {
-                    colors.push(1, 1, 1);
+                    const pressures = geometry.attributes.pressure;
+                    const colorsUpdate = geometry.attributes.color;
+                    const color = new THREE.Color();
+                    for (let i = 0; i < pressures.array.length; i++) {
+                        const colorValue = pressures.array[i];
+                        color.copy(lut.getColor(colorValue)).convertSRGBToLinear();
+                        colorsUpdate.setXYZ(i, color.r, color.g, color.b);
+                    }
+                    colorsUpdate.needsUpdate = true;
+                    const map = sprite.material.map;
+                    lut.updateCanvas(map.image);
+                    map.needsUpdate = true;
+                    addPickable(mesh);
+                },
+                (xhr) => processFun(xhr),
+                (error) => {
+                    processError(error);
                 }
-                geometry.setAttribute(
-                    "color",
-                    new THREE.Float32BufferAttribute(colors, 3)
-                );
-                const mesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({
-                    side: THREE.DoubleSide,
-                    color: 0xf5f5f5,
-                    vertexColors: true,
-                }));
-                lut.setColorMap('rainbow');
-                lut.setMax(2000);
-                lut.setMin(0);
-
-                const pressures = geometry.attributes.pressure;
-                const colorsUpdate = geometry.attributes.color;
-                const color = new THREE.Color();
-                for (let i = 0; i < pressures.array.length; i++) {
-                    const colorValue = pressures.array[i];
-                    color.copy(lut.getColor(colorValue)).convertSRGBToLinear();
-                    colorsUpdate.setXYZ(i, color.r, color.g, color.b);
-                }
-                colorsUpdate.needsUpdate = true;
-                const map = sprite.material.map;
-                lut.updateCanvas(map.image);
-                map.needsUpdate = true;
-                addPickable(mesh);
-            },
-                (xhr) => processFun(xhr)
             );
+        } else if (name.indexOf('.mtl') > -1) {
+            // new MTLLoader(manager).load(
+            //     myobj.mtl,
+            //     function (materials) {
+            //         materials.preload();
+            //         new OBJLoader(manager)
+            //             .setMaterials(materials)
+            //             .load(myobj.obj,
+            //                 function (object) {
+            //                     scene.add(object);
+            //                 },
+            //                 (xhr) => processFun(xhr),
+            //                 (error) => {
+            //                     processError(error);
+            //                 }
+            //             );
+            //     }
+            // );
         }
         // 取消标注的公共方法
         function cancelMeasurement() {
@@ -604,6 +660,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         function render() {
             labelRenderer.render(scene.current, camera.current);
             renderer.current.render(scene.current, camera.current);
+            renderer.current.clearDepth();  // 清除深度缓冲区
+            renderer.current.render(uiScene.current, orthoCamera.current);
         }
         animate();
         // 加载卡片数据
@@ -903,6 +961,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 </div>
                 <canvas id="demoBox"></canvas>
             </div>
+            {/* <img src={spriteIcon} alt="sprite" className='sprite-icon' /> */}
             <div className='camera-box'>
                 <div className="camera-box-pointer">
                     <div className="camera-box-pointer-top flex-box-justify-between">
