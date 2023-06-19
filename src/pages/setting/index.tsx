@@ -136,6 +136,18 @@ const Setting: React.FC<any> = (props) => {
         const result = Object.assign({}, paramData, {
           quality_name,
           selfStart, errorSelfStart,
+          contentData: {
+            ...(paramData?.contentData || {}),
+            ipList: (paramData?.contentData?.ipList || [])?.map((item: any) => {
+              if (item.key === paramData.id) {
+                return {
+                  ...item,
+                  label: quality_name
+                };
+              };
+              return item;
+            })
+          },
           configList: (paramData.configList || []).map((config: any) => {
             if (config.value === paramData?.selectedConfig) {
               return Object.assign({}, config, {
