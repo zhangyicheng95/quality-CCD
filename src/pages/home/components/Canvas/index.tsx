@@ -148,6 +148,7 @@ const Home: React.FC<any> = (props: any) => {
       setBasicInfoData(result);
     }
   }, [paramData?.commonInfo]);
+
   // 基础组件
   const gridList = useMemo(() => ([
     <div key={'slider-1'}>
@@ -697,8 +698,7 @@ const Home: React.FC<any> = (props: any) => {
           </div>
           {
             (paramData?.contentData?.ipList || [])?.map((item: any, index: number) => {
-              const { label, key } = item;
-              const itemLabel = projectStatus?.filter((i: any) => i.value === item.key)[0];
+              const { label, key, running } = item;
               return <div
                 className={`flex-box tabs-box-item-box ${localStorage.getItem('ipString') === key ? 'active' : ''} ${gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 3 ? 'tabs-box-item-box-rows' : ''}`}
                 key={`tabs-${key}`}
@@ -708,13 +708,13 @@ const Home: React.FC<any> = (props: any) => {
                   window.location.reload();
                 }} className="tabs-box-item-title">
                   {
-                    itemLabel?.running ?
+                    !!running ?
                       <div className="flex-box" style={{ gap: 8 }}>
                         <Badge color={'green'} />
-                        {itemLabel?.label || label}
+                        {label}
                       </div>
                       :
-                      (itemLabel?.label || label)
+                      label
                   }
                 </div>
                 {
@@ -953,7 +953,7 @@ const Home: React.FC<any> = (props: any) => {
       </div>
     </div>,
   ]), [
-    isVision, started, taskDataConnect, loading, paramData, projectStatus,
+    isVision, started, taskDataConnect, loading, paramData,
     logStr, footerData, errorData, pageIconPosition, homeSettingData,
   ]);
   // 保存布局状态
@@ -1041,7 +1041,7 @@ const Home: React.FC<any> = (props: any) => {
         { "i": "footer-1", "x": 7, "y": 8, "w": 89, "h": 20, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
         { "i": "footer-2", "x": 7, "y": 0, "w": 89, "h": 8, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }
       ],
-      content = {}, footerSelectList, contentHeader = {}, pageIconPosition,
+      content = {}, footerSelectList, contentHeader = {}, pageIconPosition, ipList = [],
       homeSetting = {
         log: { fontSize: 14 },
         error: { fontSize: 20 },
@@ -1129,6 +1129,7 @@ const Home: React.FC<any> = (props: any) => {
           content: result,
         })
       });
+
       setInitialState((preInitialState: any) => ({
         ...preInitialState,
         params: resultParams,

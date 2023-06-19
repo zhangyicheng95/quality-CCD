@@ -90,7 +90,23 @@ export async function getInitialState(): Promise<{
         params = res?.data || {};
         title = res?.data?.quality_name || res?.data?.name;
         const { contentData = {} } = params;
-        const { theme } = contentData;
+        const { theme, ipList = [] } = contentData;
+        params = ['contentData']['ipList'] = {
+          ...params,
+          contentData: {
+            ...contentData,
+            ipList: (ipList || [])?.map((item: any) => {
+              if (item.key === res.data.id) {
+                return {
+                  ...item,
+                  label: res?.data?.quality_name || res?.data?.name
+                };
+              };
+              return item;
+            })
+          }
+        };
+
         defaultSettings.navTheme = theme || 'realDark';
       }
     }

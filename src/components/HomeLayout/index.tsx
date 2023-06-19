@@ -10,7 +10,6 @@ const HomeLayout: React.FC<any> = (props) => {
   const { params = {} } = initialState;
   const { quality_name, name, id } = params;
   const timerRef = useRef<any>();
-  const [items, setItems] = useState<any>([]);
   const [list, setList] = useState<any>([]);
   const [projectList, setProjectList] = useState([]);
 
@@ -66,11 +65,7 @@ const HomeLayout: React.FC<any> = (props) => {
       }
       loopGetProjects(index + 1, list[index + 1], list);
     });
-  }
-  // 已添加的标签的IDS
-  const ids = useMemo(() => {
-    return items.map((item: any) => item.key);
-  }, [items]);
+  };
   // 启动循环列表状态
   useEffect(() => {
     if (isVision) return;
@@ -92,7 +87,7 @@ const HomeLayout: React.FC<any> = (props) => {
           return {
             ...item,
             running: _.isObject(res?.data) && !_.isEmpty(res?.data[value]),
-            disabled: ids.includes(value),
+            disabled: (params?.contentData?.ipList.map((i: any) => i.key) || []).includes(value),
           };
         })
         setList(result);
@@ -114,36 +109,31 @@ const HomeLayout: React.FC<any> = (props) => {
           if (item.key === id) {
             return Object.assign({}, item, {
               name: quality_name || name,
-              label: list.filter((i: any) => i.value === id)[0]?.running ?
-                <div className="flex-box" style={{ gap: 8 }}>
-                  <Badge color={'green'} />
-                  {quality_name || name}
-                </div>
-                :
-                (quality_name || name),
+              label: (quality_name || name),
             });
           }
           const alias = !!item.name ? item.name : item.label;
           return {
             ...item,
             name: alias,
-            label: list.filter((i: any) => i.value === item.key)[0]?.running ?
-              <div className="flex-box" style={{ gap: 8 }}>
-                <Badge color={'green'} />
-                {alias}
-              </div>
-              :
-              alias,
+            label: alias,
           };
         });
-        setItems(data);
+        setInitialState((preInitialState: any) => ({
+          ...preInitialState,
+          params: {
+            ...params, contentData: {
+              ...params?.contentData,
+              ipList: data
+            }
+          }
+        }));
       } catch (err) { }
     } else {
       if (!!quality_name || !!name) {
         const list = [
           { label: quality_name || name, name: quality_name || name, children: null, key: id },
         ];
-        setItems(list);
         setInitialState((preInitialState: any) => ({
           ...preInitialState,
           params: {
@@ -165,7 +155,7 @@ const HomeLayout: React.FC<any> = (props) => {
         }));
       }
     }
-  }, [params?.contentData?.ipList, list]);
+  }, []);
 
   return (
     <div className={styles.reportWrap}>
