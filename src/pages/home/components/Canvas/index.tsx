@@ -18,7 +18,6 @@ import {
   Switch,
   Col,
   Row,
-  Descriptions,
 } from 'antd';
 import * as _ from 'lodash';
 import {
@@ -37,20 +36,16 @@ import {
   DeleteOutlined,
   LoadingOutlined,
   MinusOutlined,
-  PauseCircleOutlined,
   PlayCircleOutlined,
   PlusCircleOutlined,
   PlusOutlined,
   ReloadOutlined,
   SafetyOutlined,
   SwapOutlined,
-  UpOutlined,
 } from '@ant-design/icons';
 import { connect, useHistory, useModel } from 'umi';
 import {
-  AlphaPicker, BlockPicker, ChromePicker, CirclePicker,
-  CompactPicker, GithubPicker, HuePicker, MaterialPicker,
-  PhotoshopPicker, SketchPicker, SliderPicker, SwatchesPicker, TwitterPicker,
+  ChromePicker,
 } from 'react-color';
 import socketErrorListen from '@/services/socketError';
 import socketLogListen from '@/services/socketLog';
@@ -1031,7 +1026,7 @@ const Home: React.FC<any> = (props: any) => {
   // 拉取方案详情 TODO
   useEffect(() => {
     if (!ipString || _.isEmpty(paramsData)) return;
-    const { flowData = {}, contentData = {}, selfStart = false, errorSelfStart = false } = paramsData;
+    const { flowData = {}, contentData = {}, selfStart = false, } = paramsData;
     const {
       home = [
         { "i": "slider-1", "x": 0, "y": 0, "w": 7, "h": 8, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
@@ -1041,7 +1036,7 @@ const Home: React.FC<any> = (props: any) => {
         { "i": "footer-1", "x": 7, "y": 8, "w": 89, "h": 20, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
         { "i": "footer-2", "x": 7, "y": 0, "w": 89, "h": 8, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }
       ],
-      content = {}, footerSelectList, contentHeader = {}, pageIconPosition, ipList = [],
+      content = {}, footerSelectList, contentHeader = {}, pageIconPosition,
       homeSetting = {
         log: { fontSize: 14 },
         error: { fontSize: 20 },
@@ -1164,7 +1159,7 @@ const Home: React.FC<any> = (props: any) => {
   // 检测错误信息，如果有数据，代表有异常，自动重启
   useEffect(() => {
     const { errorSelfStart = false } = paramsData;
-    if (!!errorSelfStart && !!errorData && !!errorData.length) {
+    if (!!started && !!errorSelfStart && !!errorData && !!errorData.length) {
       console.log('异常重启');
       message.warning('异常报错，自动重启');
       // dispatch({
@@ -1173,9 +1168,15 @@ const Home: React.FC<any> = (props: any) => {
       //     errorData: []
       //   },
       // });
-      reStart();
+      // 异常自重启-延时10秒启动
+      if (updateTimer.current) {
+        clearTimeout(updateTimer.current);
+      };
+      updateTimer.current = setTimeout(() => {
+        reStart();
+      }, 10000);
     }
-  }, [errorData]);
+  }, [started, errorData]);
   // 轮训获取运行状态
   useEffect(() => {
     if (!ipString || ifCanEdit || isVision) return;
@@ -1205,7 +1206,7 @@ const Home: React.FC<any> = (props: any) => {
           dataZoom, fontColor,
           basicInfoData = [{ id: guid(), name: '', value: '' }]
         } = item;
-        const id = key?.split('$$')[0];
+        // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
         const newGridValue = newGridContentList?.filter((i: any) => i?.id === key)?.[0];
         // socket有数据就渲染新的，没有就渲染localStorage缓存的
@@ -2527,7 +2528,7 @@ const Home: React.FC<any> = (props: any) => {
                     <ChromePicker
                       color={fontColor}
                       onChange={(value: any) => {
-                        const { hex, rgb } = value;
+                        const { rgb } = value;
                         setFontColor(rgb);
                       }}
                     />

@@ -445,7 +445,10 @@ const Control: React.FC<any> = (props: any) => {
                           }
                           {
                             group?.map((grou: any) => {
-                              const { name, id, open, children } = grou;
+                              if (!!!grou || _.isEmpty(grou)) {
+                                return null;
+                              }
+                              const { name, id, open, children = [] } = grou;
                               return (
                                 <div key={`${name}_${id}`} style={{ marginLeft: 24 }}>
                                   <Row style={{ marginBottom: 8 }}>
@@ -489,8 +492,8 @@ const Control: React.FC<any> = (props: any) => {
                                   </Row>
                                   <div style={open ? {} : { display: 'none' }}>
                                     {
-                                      children.map((child: any) => {
-                                        const parent = initParams;
+                                      (children || [])?.map((child: any) => {
+                                        const parent = initParams || {};
                                         let item: any = {};
                                         if (parent[child]) {
                                           item = {
