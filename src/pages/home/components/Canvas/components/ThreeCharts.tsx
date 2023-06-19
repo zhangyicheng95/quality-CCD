@@ -119,7 +119,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         // 初始化dom
         renderer.current = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
         // 防止后渲染的scene覆盖前面的scene
-        renderer.current.autoClear = false    //默认为true
+        renderer.current.autoClear = false;    // 缓冲区数据清理，默认为true
         renderer.current.shadowMap.enabled = true;
         renderer.current.setSize(box.offsetWidth, box.offsetHeight);
         box.appendChild(renderer.current.domElement);

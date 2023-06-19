@@ -698,6 +698,7 @@ const Home: React.FC<any> = (props: any) => {
           {
             (paramData?.contentData?.ipList || [])?.map((item: any, index: number) => {
               const { label, key } = item;
+              const itemLabel = projectStatus?.filter((i: any) => i.value === item.key)[0];
               return <div
                 className={`flex-box tabs-box-item-box ${localStorage.getItem('ipString') === key ? 'active' : ''} ${gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 3 ? 'tabs-box-item-box-rows' : ''}`}
                 key={`tabs-${key}`}
@@ -707,13 +708,13 @@ const Home: React.FC<any> = (props: any) => {
                   window.location.reload();
                 }} className="tabs-box-item-title">
                   {
-                    projectStatus?.filter((i: any) => i.value === item.key)[0]?.running ?
+                    itemLabel?.running ?
                       <div className="flex-box" style={{ gap: 8 }}>
                         <Badge color={'green'} />
-                        {label}
+                        {itemLabel?.label || label}
                       </div>
                       :
-                      label
+                      (itemLabel?.label || label)
                   }
                 </div>
                 {
@@ -952,7 +953,7 @@ const Home: React.FC<any> = (props: any) => {
       </div>
     </div>,
   ]), [
-    isVision, started, taskDataConnect, loading, paramData,
+    isVision, started, taskDataConnect, loading, paramData, projectStatus,
     logStr, footerData, errorData, pageIconPosition, homeSettingData,
   ]);
   // 保存布局状态

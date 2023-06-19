@@ -49,11 +49,11 @@ const HomeLayout: React.FC<any> = (props) => {
     getAllProject(data.value).then((res: any) => {
       if (res && res.code === 'SUCCESS') {
         const result = (res?.data || []).map((item: any) => {
-          const { name, id } = item;
+          const { quality_name, name, id } = item;
           return {
             value: id,
             realIp: data.value,
-            label: name,
+            label: quality_name || name,
           };
         });
         setProjectList((prev) => prev.concat(result));
