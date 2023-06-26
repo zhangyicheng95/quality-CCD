@@ -37,7 +37,7 @@ const HomeLayout: React.FC<any> = (props) => {
     }
 
     return () => {
-      !!timerRef.current && clearInterval(timerRef.current);
+      !!timerRef.current && clearTimeout(timerRef.current);
     }
   }, []);
   // 循环获取项目列表
@@ -78,6 +78,10 @@ const HomeLayout: React.FC<any> = (props) => {
   const loopGetStatus = (list: any) => {
     getListStatusService().then((res: any) => {
       if (!!res && res.code === 'SUCCESS') {
+        !!timerRef.current && clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => {
+          loopGetStatus(list);
+        }, 2500);
         const result = list.map((item: any) => {
           const { value } = item;
           return {
@@ -95,10 +99,6 @@ const HomeLayout: React.FC<any> = (props) => {
         message.error(res?.message || '接口异常');
         setList(list);
       }
-      !!timerRef.current && clearInterval(timerRef.current);
-      timerRef.current = setInterval(() => {
-        loopGetStatus(list);
-      }, 2500)
     });
   };
   // 进来默认加载标签页
