@@ -70,12 +70,8 @@ const HomeLayout: React.FC<any> = (props) => {
   useEffect(() => {
     if (isVision) return;
     if (_.isEmpty(projectList)) return;
-    loopGetStatus(projectList);
-    !!timerRef.current && clearInterval(timerRef.current);
     if (projectList.length) {
-      timerRef.current = setInterval(() => {
-        loopGetStatus(projectList);
-      }, 2500)
+      loopGetStatus(projectList);
     }
   }, [projectList]);
   // 循环获取任务列表状态
@@ -99,6 +95,10 @@ const HomeLayout: React.FC<any> = (props) => {
         message.error(res?.message || '接口异常');
         setList(list);
       }
+      !!timerRef.current && clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => {
+        loopGetStatus(list);
+      }, 2500)
     });
   };
   // 进来默认加载标签页

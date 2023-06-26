@@ -1513,7 +1513,9 @@ const Home: React.FC<any> = (props: any) => {
         if (index + 1 === list?.length) {
           setLoading(false);
         } else {
-          startProjects(list[index + 1], list, index + 1, projectStatus);
+          setTimeout(() => {
+            startProjects(list[index + 1], list, index + 1, projectStatus);
+          }, 1000);
         }
       });
     }
