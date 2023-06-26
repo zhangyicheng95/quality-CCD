@@ -17,9 +17,9 @@ const colorOption = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3b
 const BarCharts: React.FC<Props> = (props: any) => {
     let myChart: any = null;
     const { data = {}, id, setMyChartVisible, } = props;
-    let { dataValue = [], yName, xName, direction, align, barColor } = data;
+    let { dataValue = [], yName, xName, direction, align, barColor = [] } = data;
     if (process.env.NODE_ENV === 'development') {
-        dataValue = [{ "name": "data1", "value": 8.04, "color": "blue" }, { "name": "data2", "value": 6.95, "color": "blue" }, { "name": "上限", "value": 2.2, "type": "markLine", "color": "red" }, { "name": "标准值", "value": 1.6, "type": "markLine", "color": "green" }, { "name": "下限", "value": 1.53, "type": "markLine", "color": "red" }, { "name": "开始", "value": 2.2, "type": "start" }, { "name": "截止", "value": 2.2, "type": "end" }];
+        dataValue = [{ "name": "data1", "value": 8.04, "color": "black" }, { "name": "data2", "value": 6.95, "color": "blue" }, { "name": "上限", "value": 2.2, "type": "markLine", "color": "red" }, { "name": "标准值", "value": 1.6, "type": "markLine", "color": "green" }, { "name": "下限", "value": 1.53, "type": "markLine", "color": "red" }, { "name": "开始", "value": 2.2, "type": "start" }, { "name": "截止", "value": 2.2, "type": "end" }];
     }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
@@ -46,7 +46,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
             } else if (type === 'end') {
                 threshold_end = value;
             } else {
-                seriesData = seriesData.concat(value);
+                seriesData = seriesData.concat(item);
                 yData = yData.concat(name);
             }
             if (_.isNull(minValue) || _.isNull(maxValue)) {
@@ -101,11 +101,18 @@ const BarCharts: React.FC<Props> = (props: any) => {
                     show: seriesData?.length < 10
                 },
                 data: barColor.includes('default') ?
-                    seriesData
+                    seriesData.map((item: any, index: number) => {
+                        const { value, color } = item;
+                        return {
+                            value: value,
+                            itemStyle: { color: color },
+                        }
+                    })
                     :
                     seriesData.map((item: any, index: number) => {
+                        const { value } = item;
                         return {
-                            value: item,
+                            value: value,
                             itemStyle: { color: barColor[index % barColor?.length] },
                         }
                     }),

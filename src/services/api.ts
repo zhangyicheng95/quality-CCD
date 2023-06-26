@@ -41,13 +41,13 @@ export async function getFlowStatusService(id: string) {
 }
 
 // 业务启动
-export async function startFlowService(id: string) {
-  return fetchPost(`${BASE_IP}task/${id}`);
+export async function startFlowService(id: string, url?: string) {
+  return fetchPost(`${url ? `http://${url}/` : BASE_IP}task/${id}`);
 }
 
 // 业务停止
-export async function stopFlowService(id: string) {
-  return fetchDelete(`${BASE_IP}task/${id}`);
+export async function stopFlowService(id: string, url?: string) {
+  return fetchDelete(`${url ? `http://${url}/` : BASE_IP}task/${id}`);
 }
 
 // 自助触发推送

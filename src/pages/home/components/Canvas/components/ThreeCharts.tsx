@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
@@ -11,17 +11,15 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader.js";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
-import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader.js";
 import Stats from "three/examples/jsm/libs/stats.module.js";
 import TWEEN from '@tweenjs/tween.js';
-import h337 from '@rengr/heatmap.js'
 import {
     CSS2DRenderer,
     CSS2DObject,
 } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 import {
     AimOutlined,
-    BorderlessTableOutlined, BorderOuterOutlined, ClearOutlined, EyeOutlined, FontSizeOutlined, PlusOutlined
+    BorderlessTableOutlined, BorderOuterOutlined, ClearOutlined, EyeOutlined, FontSizeOutlined
 } from '@ant-design/icons';
 import rectIcon from '@/assets/imgs/rect.svg';
 import rectAllIcon from '@/assets/imgs/rect-all.svg';
@@ -31,14 +29,15 @@ import rectTopIcon from '@/assets/imgs/rect-top.svg';
 import rectBottomIcon from '@/assets/imgs/rect-bottom.svg';
 import rectFrontIcon from '@/assets/imgs/rect-front.svg';
 import rectBackIcon from '@/assets/imgs/rect-back.svg';
-import spriteIcon from '@/assets/imgs/sprite.png';
-import { equalsObj, guid } from '@/utils/utils';
+import { equalsObj } from '@/utils/utils';
 
 interface Props {
     data: any,
     id: any,
     onClick?: any,
 }
+
+const cameraScale = 1.1;
 
 const ThreeCharts: React.FC<Props> = (props: any) => {
     // models/ply/ascii/tx.ply / models/obj/walt/tx.obj / models/stl/ascii/tx.stl
@@ -48,7 +47,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     if (process.env.NODE_ENV === 'development') {
         name = "models/output.ply"; // models/pressure.json  models/tx.stl
         value = [
-            { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: 0, z: 500 }, { x: 0, y: 0, z: 500 },], },
+            { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: -200, z: 300 }, { x: 0, y: -200, z: 300 },], },
             { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -20, y: -200, z: 100 }, { x: -20, y: -200, z: 100 },], },
             // { name: "9", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -400, y: -200, z: 300 }, { x: 400, y: -200, z: 300 },], }
         ];
@@ -138,7 +137,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         scene.current = new THREE.Scene();
         uiScene.current = new THREE.Scene();
         const background = theme === 'realDark' ? new THREE.Color(0x2b313b) : new THREE.Color(0xeeeeee);
-        scene.current.background = background;
+        // scene.current.background = background;
         // 坐标轴（右手定则，大拇指是x）
         const axesHelper = new THREE.AxesHelper(1000);
         axesHelper.name = "axis";
@@ -228,7 +227,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             });
             maskBox.style.display = "none";
 
-            camera.current.position.set(0, -1.5 * mdlen, 0);
+            camera.current.position.set(0, -cameraScale * mdlen, 0);
             scene.current.add(mesh);
             effectMeasureLine();
         }
@@ -236,6 +235,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             const { loaded = 0, total = 1 } = xhr;
             const processBox = maskBox.querySelector('.process');
             const processText = maskBox.querySelector('.process-text');
+            processBox.style.display = 'block';
+            processText.style.display = 'block';
             if (!!loaded && !!total) {
                 const process = `${((loaded / total) * 100 + '').slice(0, 5)}%`;
                 processBox.value = loaded / total;
@@ -246,7 +247,15 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             }
         }
         function processError(error: any) {
-            message.error('点云数据有问题，请检查');
+            const processBox = maskBox.querySelector('.process');
+            const processText = maskBox.querySelector('.process-text');
+            processBox.style.display = 'none';
+            processText.style.display = 'block';
+            processText.style.textAlign = 'center';
+            processText.innerText = `点云数据有问题或路径不正确，请检查
+            
+            ${name}`;
+            message.error('点云数据有问题或路径不正确，请检查', 5);
             console.log('点云数据有问题:', error);
         }
         // 加载url
@@ -259,9 +268,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     addPickable(gltf.scene);
                 },
                 (xhr) => processFun(xhr),
-                (error) => {
-                    processError(error);
-                }
+                (error) => processError(error)
             );
         } else if (name.indexOf(".ply") > -1) {
             new PLYLoader().load(
@@ -302,9 +309,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     addPickable(mesh);
                 },
                 (xhr) => processFun(xhr),
-                (error) => {
-                    processError(error);
-                }
+                (error) => processError(error)
             );
         } else if (name.indexOf(".stl") > -1) {
             new STLLoader().load(
@@ -312,16 +317,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 function (geometry) {
                     geometry.computeVertexNormals();
                     const material: any = new THREE.MeshPhysicalMaterial({
-                        color: '#c0c0c0'
+                        color: 0xff9c7c
                     });
 
                     const mesh = new THREE.Mesh(geometry, material);
                     addPickable(mesh);
                 },
                 (xhr) => processFun(xhr),
-                (error) => {
-                    processError(error);
-                }
+                (error) => processError(error)
             );
         } else if (name.indexOf(".obj") > -1) {
             new OBJLoader().load(
@@ -330,9 +333,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     addPickable(object);
                 },
                 (xhr) => processFun(xhr),
-                (error) => {
-                    processError(error);
-                }
+                (error) => processError(error)
             );
         } else if (name.indexOf(".json") > -1) {
             sprite = new THREE.Sprite(new THREE.SpriteMaterial({
@@ -379,9 +380,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     addPickable(mesh);
                 },
                 (xhr) => processFun(xhr),
-                (error) => {
-                    processError(error);
-                }
+                (error) => processError(error)
             );
         } else if (name.indexOf('.mtl') > -1) {
             // new MTLLoader(manager).load(
@@ -781,7 +780,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             if (!!dom.current && dom.current.innerHTML) {
                 dom.current.innerHTML = `
                     <div class="three-mask flex-box">
-                        <progress class="process" value="0" />
+                        <progress class="process" value="0" ></progress>
                         <span class="process-text">0%</span>
                     </div>
                     <canvas id="demoBox" />
@@ -956,7 +955,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 ref={dom}
             >
                 <div className="three-mask flex-box">
-                    <progress className="process" value="0" />
+                    <progress className="process" value="0" ></progress>
                     <span className="process-text">0%</span>
                 </div>
                 <canvas id="demoBox"></canvas>
@@ -966,8 +965,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 <div className="camera-box-pointer">
                     <div className="camera-box-pointer-top flex-box-justify-between">
                         <img src={rectTopIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { max } = getSize();
-                            var targetPos = new THREE.Vector3(0, max * 1.5, 0);
+                            const { length } = getSize();
+                            var targetPos = new THREE.Vector3(0, length * cameraScale, 0);
                             animateCamera(targetPos);
                         }} />
                         <img src={rectAllIcon} alt="rect" className='cameraIcon' onClick={() => {
@@ -978,30 +977,30 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     </div>
                     <div className="camera-box-pointer-center flex-box-justify-between">
                         <img src={rectLeftIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { max } = getSize();
-                            var targetPos = new THREE.Vector3(max * -1.5, 0, 0);
+                            const { width } = getSize();
+                            var targetPos = new THREE.Vector3(width * -cameraScale, 0, 0);
                             animateCamera(targetPos);
                         }} />
                         <img src={rectFrontIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { max } = getSize();
-                            var targetPos = new THREE.Vector3(0, 0, max * 1.5);
+                            const { height } = getSize();
+                            var targetPos = new THREE.Vector3(0, 0, height * cameraScale);
                             animateCamera(targetPos);
                         }} />
                         <img src={rectRightIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { max } = getSize();
-                            var targetPos = new THREE.Vector3(max * 1.5, 0, 0);
+                            const { width } = getSize();
+                            var targetPos = new THREE.Vector3(width * cameraScale, 0, 0);
                             animateCamera(targetPos);
                         }} />
                         <img src={rectBackIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { max } = getSize();
-                            var targetPos = new THREE.Vector3(0, 0, max * -1.5);
+                            const { height } = getSize();
+                            var targetPos = new THREE.Vector3(0, 0, height * -cameraScale);
                             animateCamera(targetPos);
                         }} />
                     </div>
                     <div className="camera-box-pointer-bottom flex-box-justify-between">
                         <img src={rectBottomIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { max } = getSize();
-                            var targetPos = new THREE.Vector3(0, max * -1.5, 0);
+                            const { length } = getSize();
+                            var targetPos = new THREE.Vector3(0, length * -cameraScale, 0);
                             animateCamera(targetPos);
                         }} />
                     </div>

@@ -683,6 +683,34 @@ const Home: React.FC<any> = (props: any) => {
           ...(ifCanEdit || paramData?.contentData?.contentHeader?.['slider-4']) ?
             {} : { display: 'flex', alignItems: 'center', padding: '0 8px' }
         }}>
+          {
+            !!paramData?.contentData?.ipList?.length ?
+              <Fragment>
+                <Button
+                  type="text"
+                  disabled={loading}
+                  loading={loading}
+                  className={`flex-box-center tabs-box-item-box ${gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 20 ? 'tabs-box-item-box-rows' : ''}`}
+                  onClick={() => {
+                    startProjects(paramData?.contentData?.ipList?.[0], paramData?.contentData?.ipList, 0, projectStatus);
+                  }}
+                >
+                  一键启动
+                </Button>
+                <Button
+                  type="text"
+                  disabled={loading}
+                  loading={loading}
+                  className={`flex-box-center tabs-box-item-box ${gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 20 ? 'tabs-box-item-box-rows' : ''}`}
+                  onClick={() => {
+                    endProjects(paramData?.contentData?.ipList?.[0], paramData?.contentData?.ipList, 0, projectStatus);
+                  }}
+                >
+                  一键停止
+                </Button>
+              </Fragment>
+              : null
+          }
           <div
             className={`flex-box-center tabs-box-item-box ${gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 20 ? 'tabs-box-item-box-rows' : ''}`}
             onClick={() => {
@@ -693,7 +721,8 @@ const Home: React.FC<any> = (props: any) => {
           </div>
           {
             (paramData?.contentData?.ipList || [])?.map((item: any, index: number) => {
-              const { label, key, running } = item;
+              const { label, key } = item;
+              const statusItem = projectStatus?.filter((i: any) => i.value === key)?.[0]?.running || false;
               return <div
                 className={`flex-box tabs-box-item-box ${localStorage.getItem('ipString') === key ? 'active' : ''} ${gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 3 ? 'tabs-box-item-box-rows' : ''}`}
                 key={`tabs-${key}`}
@@ -703,7 +732,7 @@ const Home: React.FC<any> = (props: any) => {
                   window.location.reload();
                 }} className="tabs-box-item-title">
                   {
-                    !!running ?
+                    !!statusItem ?
                       <div className="flex-box" style={{ gap: 8 }}>
                         <Badge color={'green'} />
                         {label}
@@ -948,7 +977,7 @@ const Home: React.FC<any> = (props: any) => {
       </div>
     </div>,
   ]), [
-    isVision, started, taskDataConnect, loading, paramData,
+    isVision, started, taskDataConnect, loading, paramData, projectStatus,
     logStr, footerData, errorData, pageIconPosition, homeSettingData,
   ]);
   // 保存布局状态
@@ -1464,6 +1493,56 @@ const Home: React.FC<any> = (props: any) => {
       setContentList([]);
     }
   }, [gridContentList, addContentList]);
+  // 批量启动任务
+  const startProjects = (item: any, list: any, index: number, projectStatus: any) => {
+    const data = projectStatus?.filter((i: any) => i.value === item.key)?.[0] || {};
+    const { value, realIp, label, running } = data;
+    if (!running) {
+      setLoading(true);
+      startFlowService(value || '', realIp).then((res: any) => {
+        if (res && res.code === 'SUCCESS') {
+          dispatch({
+            type: 'home/set',
+            payload: {
+              started: true,
+            },
+          });
+        } else {
+          message.error(`${label} ${res?.msg || res?.message || '启动失败'}`);
+        }
+        if (index + 1 === list?.length) {
+          setLoading(false);
+        } else {
+          startProjects(list[index + 1], list, index + 1, projectStatus);
+        }
+      });
+    }
+  };
+  // 批量停止任务
+  const endProjects = (item: any, list: any, index: number, projectStatus: any) => {
+    const data = projectStatus?.filter((i: any) => i.value === item.key)?.[0] || {};
+    const { value, realIp, label, running } = data;
+    if (running) {
+      setLoading(true);
+      stopFlowService(value || '', realIp).then((res: any) => {
+        if (res && res.code === 'SUCCESS') {
+          dispatch({
+            type: 'home/set',
+            payload: {
+              started: false,
+            },
+          });
+        } else {
+          message.error(`${label} ${res?.msg || res?.message || '停止失败'}`);
+        }
+        if (index + 1 === list?.length) {
+          setLoading(false);
+        } else {
+          endProjects(list[index + 1], list, index + 1, projectStatus);
+        }
+      });
+    }
+  };
   // 启动任务
   const start = () => {
     if (!ipString) return;

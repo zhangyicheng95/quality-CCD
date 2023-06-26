@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { connect, useModel } from 'umi';
 import { message } from 'antd';
 import { CompressOutlined } from '@ant-design/icons';
+import moment from 'moment';
 
 interface Props {
     data: any,
@@ -18,6 +19,14 @@ const LineCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, legend, dispatch, setMyChartVisible } = props;
     let { dataValue = [], yName, xName, dataZoom } = data;
     if (process.env.NODE_ENV === 'development') {
+        let base = +new Date(1988, 9, 3);
+        let oneDay = 24 * 3600 * 1000;
+        let data: any = [[moment(base).format("YYYY-MM-DD HH:mm:ss"), Math.random() * 300]];
+        for (let i = 1; i < 120000; i++) {
+            let now = new Date((base += oneDay));
+            data.push([moment(now).format("YYYY-MM-DD HH:mm:ss"), Math.round((Math.random() - 0.5) * 20 + data[i - 1][1])]);
+        }
+
         dataValue = [
             {
                 "name": "上限",
@@ -36,12 +45,13 @@ const LineCharts: React.FC<Props> = (props: any) => {
             },
             {
                 "name": "data1",
-                "value": [[1, 1.54], [2, 0], [3, 1.57], [4, 1.67], [5, 1.89], [6, 1.6], [7, 1.51], [8, 1.55], [9, 1.79], [10, 1.65], [11, 1.6], [12, 1.76], [13, 1.62], [14, 1.76]]
+                "color": "black",
+                "value": data
             },
-            {
-                "name": "data2",
-                "value": [[1, 1.62], [2, 1.53], [3, 1.8], [4, 1.76], [5, 1.83], [6, 1.63], [7, 1.78], [8, 1.85], [9, 1.5], [10, 1.59], [11, 1.7], [12, 1.74], [13, 1.79], [14, 1.69]]
-            }
+            // {
+            //     "name": "data2",
+            //     "value": data
+            // }
         ];
     }
     const { initialState } = useModel<any>('@@initialState');
@@ -53,7 +63,6 @@ const LineCharts: React.FC<Props> = (props: any) => {
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
-
 
         const dom: any = document.getElementById(`echart-${id}`);
         myChart = echarts.init(dom);
@@ -87,6 +96,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
         });
 
         const option = Object.assign({}, options, {
+            // tooltip: false,
             legend: Object.assign(
                 {}, options.legend,
                 {
@@ -101,23 +111,28 @@ const LineCharts: React.FC<Props> = (props: any) => {
                 right: `${xName.length * (xName.length < 4 ? 24 : 16)}px`,
                 bottom: 30
             }),
-            dataZoom: [Object.assign({
-                type: "slider",
-                show: true,
-                realtime: true,
-                start: !!dataZoom ? ((maxLength - dataZoom) / maxLength * 100) : 0,
-                end: 100,
-                showDetai: false,
-                moveHandleStyle: {
-                    opacity: 0,
-                }
-            }, {
-                orient: 'horizontal',
-                bottom: 15,
-                left: 80,
-                right: 60,
-                height: 20,
-            })],
+            dataZoom: [
+                {
+                    type: "inside",
+                },
+                Object.assign({
+                    type: "slider",
+                    show: true,
+                    realtime: true,
+                    start: !!dataZoom ? ((maxLength - dataZoom) / maxLength * 100) : 0,
+                    end: 100,
+                    showDetai: false,
+                    moveHandleStyle: {
+                        opacity: 0,
+                    }
+                }, {
+                    orient: 'horizontal',
+                    bottom: 15,
+                    left: 80,
+                    right: 60,
+                    height: 20,
+                })
+            ],
             yAxis: Object.assign({}, options.yAxis, {
                 type: 'value',
                 name: yName,
@@ -125,7 +140,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
                 scale: true,
             }),
             xAxis: Object.assign({}, options.xAxis, {
-                type: 'value',
+                type: 'category',
                 name: xName,
                 boundaryGap: [0, 0],
                 min: minValue,
@@ -133,7 +148,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
                 scale: true,
             }),
             series: (dataValue || []).map((item: any) => {
-                const { name, value, type } = item;
+                const { name, value, type, color } = item;
                 if (type === 'markLine') {
                     return {
                         name: name,
@@ -178,6 +193,8 @@ const LineCharts: React.FC<Props> = (props: any) => {
                         label: {
                             show: false
                         },
+                        color,
+                        sampling: 'lttb',
                         animation: false,
                         emphasis: {
                             focus: 'series'

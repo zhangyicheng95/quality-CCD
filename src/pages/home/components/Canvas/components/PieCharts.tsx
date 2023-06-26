@@ -17,7 +17,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
     let myChart: any = null;
     let { data = [], id, legend, dispatch, setMyChartVisible } = props;
     if (process.env.NODE_ENV === 'development') {
-        data = [{ "name": "OK", value: "1024", }, { "name": "NG类型1", value: "888", "color": "blue" }, { "name": "NG类型2", value: "1024", "color": "blue" },];
+        data = [{ "name": "OK", value: "1024", "color": "black" }, { "name": "NG类型1", value: "888", }, { "name": "NG类型2", value: "1024", "color": "blue" },];
     }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
@@ -91,10 +91,11 @@ const PieCharts: React.FC<Props> = (props: any) => {
                         };
                     },
                     data: (data || []).map((item: any) => {
-                        const { name, value } = item;
+                        const { name, value, color } = item;
                         return {
-                            name: name,
-                            value: value
+                            name,
+                            value,
+                            itemStyle: { color }
                         }
                     }),
                     emphasis: {
