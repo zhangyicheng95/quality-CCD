@@ -49,7 +49,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         value = [
             { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: -200, z: 300 }, { x: 0, y: -200, z: 300 },], },
             { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -20, y: -200, z: 100 }, { x: -20, y: -200, z: 100 },], },
-            // { name: "9", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -400, y: -200, z: 300 }, { x: 400, y: -200, z: 300 },], }
+            { name: "9", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 200, y: -200, z: 200 }, { x: 200, y: -200, z: -200 },], }
         ];
     }
     const { initialState } = useModel<any>('@@initialState');
@@ -669,28 +669,88 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
 
             if (!!scene.current && !!value?.length && !!mesh) {
                 (value || []).forEach((item: any, index: number) => {
-                    let { name, standardValue, measureValue, offsetValue, position } = item;
+                    let { name, standardValue, measureValue, offsetValue, position = [] } = item;
                     if (!!position[0] && !!position[1] && equalsObj(position[0], position[1])) {
                         // 线段的两个点相同，代表只绘制卡片
                         const box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
                         const length = box.max.x - box.min.x; // 模型长度
                         const width = box.max.z - box.min.z; // 模型宽度
                         const height = box.max.y - box.min.y; // 模型高度
-                        const localPosition = [].concat(position[0]);
+                        const localPosition = [].concat(position);
                         const scale = 3;
                         position = [
                             {
-                                x: position[0].x + (position[0].x >= 0 ? length / 2.5 : -length / 2.5),
-                                y: position[0].y + (position[0].y >= 0 ? height / scale : -height / scale),
-                                z: position[0].z + (position[0].z >= 0 ? width / scale : -width / scale),
+                                ...position[0],
+                                x: position[0].x + (position[0].x >= 0 ? 1 : -1) * length / 2,
+                                // y: position[0].y + (position[0].y >= 0 ? height / scale : -height / scale),
+                                // z: position[0].z + (position[0].z >= 0 ? width / scale : -width / scale),
                             },
                             {
-                                x: position[0].x + (position[0].x >= 0 ? length / 2.5 : -length / 2.5),
-                                y: position[0].y + (position[0].y >= 0 ? height / scale : -height / scale),
-                                z: position[0].z + (position[0].z >= 0 ? width / scale : -width / scale),
+                                ...position[0],
+                                x: position[0].x + (position[0].x >= 0 ? 1 : -1) * length / 2,
+                                // y: position[0].y + (position[0].y >= 0 ? height / scale : -height / scale),
+                                // z: position[0].z + (position[0].z >= 0 ? width / scale : -width / scale),
                             }
                         ];
                         const geometry = new THREE.BufferGeometry().setFromPoints([localPosition[0], position[0]]);
+                        line = new THREE.LineSegments(
+                            geometry,
+                            new THREE.LineDashedMaterial({
+                                color: 0xff0000, // 射线颜色
+                                linewidth: 1,
+                                scale: 1,
+                                dashSize: 10,
+                                gapSize: 10
+                                // depthTest: false,
+                                // depthWrite: false,
+                            })
+                        );
+                        line.computeLineDistances();  // 虚线
+                        line.name = `measure_${index}`;
+                        line.frustumCulled = false;
+                        scene.current.add(line);
+                        measurements = measurements.concat(line);
+                    } else {
+                        // 线段的两个点不同，卡片外移
+                        const box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
+                        const length = box.max.x - box.min.x; // 模型长度
+                        const width = box.max.z - box.min.z; // 模型宽度
+                        const height = box.max.y - box.min.y; // 模型高度
+                        const localPosition = [].concat(position);
+                        const scale = 3;
+                        position = [
+                            {
+                                ...position[0],
+                                x: position[0].x + (position[0].x >= 0 ? 1 : -1) * length / 2,
+                            },
+                            {
+                                ...position[1],
+                                x: position[1].x + (position[0].x >= 0 ? 1 : -1) * length / 2,
+                            }
+                        ];
+                        for (let i = 0; i < 2; i++) {
+                            // @ts-ignore
+                            const geometry = new THREE.BufferGeometry().setFromPoints([localPosition[i], position[i]]);
+                            const line = new THREE.Line(
+                                geometry,
+                                new THREE.LineDashedMaterial({
+                                    color: 0xff0000, // 射线颜色
+                                    linewidth: 1,
+                                    scale: 1,
+                                    dashSize: 10,
+                                    gapSize: 10
+                                    // depthTest: false,
+                                    // depthWrite: false,
+                                })
+                            );
+                            line.computeLineDistances();  // 虚线
+                            line.name = `measure_${index}_${i}`;
+                            line.frustumCulled = false;
+                            scene.current.add(line);
+                            measurements = measurements.concat(line);
+                        }
+                        // 渲染线
+                        const geometry = new THREE.BufferGeometry().setFromPoints(position);
                         line = new THREE.LineSegments(
                             geometry,
                             new THREE.LineBasicMaterial({
@@ -706,30 +766,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         scene.current.add(line);
                         measurements = measurements.concat(line);
                     }
-                    // @ts-ignore 渲染线
-                    const geometry = new THREE.BufferGeometry().setFromPoints(position);
-                    line = new THREE.LineSegments(
-                        geometry,
-                        new THREE.LineBasicMaterial({
-                            color: 0xff0000, // 射线颜色
-                            transparent: true,
-                            opacity: 0.75,
-                            // depthTest: false,
-                            // depthWrite: false,
-                        })
-                    );
-                    line.name = `measure_${index}`;
-                    line.frustumCulled = false;
-                    scene.current.add(line);
-                    measurements = measurements.concat(line);
                     // 渲染信息卡片
                     const measurementDiv = document.createElement("div");
                     measurementDiv.className = "label";
                     measurementDiv.innerHTML = `
                         <div>
-                            <div class="item">长度尺寸: ${name}</div>
+                            <div class="item">${name}</div>
                             <div class="item" style="text-align:center;">${standardValue} ± ${offsetValue}</div>
-                            <div class="flex-box item"><div class="key">名义值</div><div class="value">${standardValue}</div></div>
+                            <div class="flex-box item"><div class="key">标准值</div><div class="value">${standardValue}</div></div>
                             <div class="flex-box item"><div class="key">实测值</div><div class="value">${measureValue}</div></div>
                             <div class="flex-box item"><div class="key">偏差值</div><div class="value">${offsetValue}</div></div>
                         </div>

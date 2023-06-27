@@ -722,17 +722,20 @@ const Home: React.FC<any> = (props: any) => {
           {
             (paramData?.contentData?.ipList || [])?.map((item: any, index: number) => {
               const { label, key } = item;
-              const statusItem = projectStatus?.filter((i: any) => i.value === key)?.[0]?.running || false;
+              const statusItem = projectStatus?.filter((i: any) => i.value === key)?.[0] || {};
               return <div
                 className={`flex-box tabs-box-item-box ${localStorage.getItem('ipString') === key ? 'active' : ''} ${gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 3 ? 'tabs-box-item-box-rows' : ''}`}
                 key={`tabs-${key}`}
               >
                 <div onClick={() => {
-                  localStorage.setItem('ipString', key);
-                  window.location.reload();
+                  if (localStorage.getItem('ipString') !== key) {
+                    !!key && localStorage.setItem('ipString', key);
+                    !!statusItem?.realIp && localStorage.setItem('ipUrl-realtime', statusItem?.realIp);
+                    window.location.reload();
+                  }
                 }} className="tabs-box-item-title">
                   {
-                    !!statusItem ?
+                    !!statusItem?.running ?
                       <div className="flex-box" style={{ gap: 8 }}>
                         <Badge color={'green'} />
                         {label}
