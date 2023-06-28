@@ -151,21 +151,7 @@ const Home: React.FC<any> = (props: any) => {
         <div className={`common-card-title-box flex-box drag-btn`}>
           <div className="flex-box common-card-title">
             当前状态：
-          </div>
-          {
-            ifCanEdit ?
-              <div className="flex-box drag-item-btn-box">
-                <div
-                  className='common-btn'
-                  onClick={() => {
-                    setFieldsValue({ des_column: homeSettingData?.['slider-1']?.des_column || 1 });
-                    setHomeSettingVisible('slider-1');
-                  }}
-                >
-                  编辑
-                </div>
-              </div>
-              :
+            {
               isVision ?
                 <Tooltip title={'服务已连接'} placement={'bottom'}>
                   <Badge status="processing" className="status-icon" />
@@ -190,16 +176,23 @@ const Home: React.FC<any> = (props: any) => {
                     <Badge status="default" className="status-icon" />
                   </Tooltip>
                 ))
-          }
-          {/* {
+            }
+          </div>
+          {
             ifCanEdit ?
               <div className="flex-box drag-item-btn-box">
-                <div className='common-btn' onClick={() => {
-
-                }}>布局</div>
+                <div
+                  className='common-btn'
+                  onClick={() => {
+                    setFieldsValue({ des_column: homeSettingData?.['slider-1']?.des_column || 1 });
+                    setHomeSettingVisible('slider-1');
+                  }}
+                >
+                  编辑
+                </div>
               </div>
               : null
-          } */}
+          }
         </div>
         <div className={`btn-box-bottom flex-box`}>
           {
