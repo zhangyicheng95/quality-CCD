@@ -148,49 +148,49 @@ const Home: React.FC<any> = (props: any) => {
   const gridList = useMemo(() => ([
     <div key={'slider-1'}>
       <div className="btn-box background-ubv">
-        <div className={`common-card-title-box flex-box drag-btn}`}>
+        <div className={`common-card-title-box flex-box drag-btn`}>
           <div className="flex-box common-card-title">
             当前状态：
-            {
-              ifCanEdit ?
-                <div className="flex-box drag-item-btn-box">
-                  <div
-                    className='common-btn'
-                    onClick={() => {
-                      setFieldsValue({ des_column: homeSettingData?.['slider-1']?.des_column || 1 });
-                      setHomeSettingVisible('slider-1');
-                    }}
-                  >
-                    编辑
-                  </div>
+          </div>
+          {
+            ifCanEdit ?
+              <div className="flex-box drag-item-btn-box">
+                <div
+                  className='common-btn'
+                  onClick={() => {
+                    setFieldsValue({ des_column: homeSettingData?.['slider-1']?.des_column || 1 });
+                    setHomeSettingVisible('slider-1');
+                  }}
+                >
+                  编辑
                 </div>
+              </div>
+              :
+              isVision ?
+                <Tooltip title={'服务已连接'} placement={'bottom'}>
+                  <Badge status="processing" className="status-icon" />
+                </Tooltip>
                 :
-                isVision ?
-                  <Tooltip title={'服务已连接'} placement={'bottom'}>
-                    <Badge status="processing" className="status-icon" />
-                  </Tooltip>
-                  :
-                  (started ? (
-                    taskDataConnect ? (
-                      <Tooltip title={'服务已连接'} placement={'bottom'}>
-                        <Badge status="processing" className="status-icon" />
-                      </Tooltip>
-                    ) : (
-                      <Tooltip title={'socket未连接'} placement={'bottom'}>
-                        <Badge status="error" className="status-icon" />
-                      </Tooltip>
-                    )
-                  ) : loading ? (
-                    <Tooltip title={'启动中'} placement={'bottom'}>
-                      <LoadingOutlined style={{ fontSize: 15 }} />
+                (started ? (
+                  taskDataConnect ? (
+                    <Tooltip title={'服务已连接'} placement={'bottom'}>
+                      <Badge status="processing" className="status-icon" />
                     </Tooltip>
                   ) : (
-                    <Tooltip title={'未启动'} placement={'bottom'}>
-                      <Badge status="default" className="status-icon" />
+                    <Tooltip title={'socket未连接'} placement={'bottom'}>
+                      <Badge status="error" className="status-icon" />
                     </Tooltip>
-                  ))
-            }
-          </div>
+                  )
+                ) : loading ? (
+                  <Tooltip title={'启动中'} placement={'bottom'}>
+                    <LoadingOutlined style={{ fontSize: 15 }} />
+                  </Tooltip>
+                ) : (
+                  <Tooltip title={'未启动'} placement={'bottom'}>
+                    <Badge status="default" className="status-icon" />
+                  </Tooltip>
+                ))
+          }
           {/* {
             ifCanEdit ?
               <div className="flex-box drag-item-btn-box">
