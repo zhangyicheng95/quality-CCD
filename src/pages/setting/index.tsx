@@ -194,33 +194,38 @@ const Setting: React.FC<any> = (props) => {
           layout="horizontal"
           scrollToFirstError
         >
-          <Form.Item
-            name="quality_icon"
-            label="系统图标"
-            initialValue={localStorage.getItem("quality_icon") || ''}
-            rules={[{ required: false, message: "系统图标" }]}
-          >
-            <div className="flex-box">
-              {
-                getFieldValue("quality_icon") ?
-                  <TooltipDiv title={getFieldValue("quality_icon")} style={{ marginRight: 16, }}>
-                    {getFieldValue("quality_icon")}
-                  </TooltipDiv>
-                  : null
-              }
-              {
-                getFieldValue("quality_icon") ?
-                  <Button style={{ height: 40 }} onClick={() => {
-                    setFieldsValue({ "quality_icon": undefined });
-                  }}>移除</Button>
-                  :
-                  <Button style={{ height: 40 }} onClick={() => {
-                    setSelectedPath(localStorage.getItem("quality_icon") || '');
-                    setSelectPathVisible(true);
-                  }}>选择系统图标</Button>
-              }
-            </div>
-          </Form.Item>
+          {
+            // @ts-ignore
+            !!window.QUALITY_CCD_CONFIG?.canChangeLogo ?
+              <Form.Item
+                name="quality_icon"
+                label="系统图标"
+                initialValue={localStorage.getItem("quality_icon") || ''}
+                rules={[{ required: false, message: "系统图标" }]}
+              >
+                <div className="flex-box">
+                  {
+                    getFieldValue("quality_icon") ?
+                      <TooltipDiv title={getFieldValue("quality_icon")} style={{ marginRight: 16, }}>
+                        {getFieldValue("quality_icon")}
+                      </TooltipDiv>
+                      : null
+                  }
+                  {
+                    getFieldValue("quality_icon") ?
+                      <Button style={{ height: 40 }} onClick={() => {
+                        setFieldsValue({ "quality_icon": undefined });
+                      }}>移除</Button>
+                      :
+                      <Button style={{ height: 40 }} onClick={() => {
+                        setSelectedPath(localStorage.getItem("quality_icon") || '');
+                        setSelectPathVisible(true);
+                      }}>选择系统图标</Button>
+                  }
+                </div>
+              </Form.Item>
+              : null
+          }
           <Form.Item
             name="quality_name"
             label="系统名称"
