@@ -8,7 +8,7 @@ import MonacoEditor from '@/components/MonacoEditor';
 import PlatFormModal from '@/components/platForm';
 import FileManager from '@/components/FileManager';
 import TooltipDiv from '@/components/TooltipDiv';
-import { updateParams } from '@/services/api';
+import { btnFetch, updateParams } from '@/services/api';
 
 interface Props {
     data: any,
@@ -17,12 +17,12 @@ interface Props {
     onClick?: any,
 }
 
-const OperationCharts: React.FC<Props> = (props: any) => {
+const Operation2Charts: React.FC<Props> = (props: any) => {
     const { data = {}, id, started } = props;
-    const { operationList, dataValue, fontSize } = data;
+    const { operationList, dataValue, xName, fontSize } = data;
     const [form] = Form.useForm();
     const { validateFields, resetFields } = form;
-    const { initialState, setInitialState } = useModel<any>('@@initialState');
+    const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
 
     const [configList, setConfigList] = useState<any>([]);
@@ -61,37 +61,12 @@ const OperationCharts: React.FC<Props> = (props: any) => {
     }, [operationList, params]);
 
     const widgetChange = (key: any, value: any) => {
-        setConfigList((prev: any) => {
-            return (prev || [])?.map((item: any, index: number) => {
-                if (item.name === key) {
-                    return Object.assign({},
-                        item,
-                        { value },
-                        ((_.isObject(value) && !_.isArray(value)) && item?.widget?.type !== "Measurement") ? value : { value },
-                        item?.widget?.type === 'codeEditor'
-                            ? {
-                                value: value?.language === 'json' ?
-                                    (
-                                        _.isString(value?.value) ?
-                                            JSON.parse(value?.value) :
-                                            value?.value
-                                    )
-                                    :
-                                    value?.value,
-                            }
-                            : {}
-
-                    );
-                }
-                return item;
-            })
-        });
         setConfigValueList((prev: any) => ({ ...prev, [key]: value }));
-    };
-
+    }
     const onOk = () => {
         validateFields()
             .then((values) => {
+                console.log(configValueList)
                 const { flowData, } = params;
                 let { nodes } = flowData;
                 nodes = nodes.map((node: any) => {
@@ -99,8 +74,11 @@ const OperationCharts: React.FC<Props> = (props: any) => {
                     if (node.id === id.split('$$')[0]) {
                         const { initParams = {} } = config;
                         let obj = Object.assign({}, initParams);
-                        configList.forEach((item: any, index: number) => {
-                            obj[item?.id || item?.name] = item;
+                        Object.entries(configValueList).forEach((item: any, index: number) => {
+                            obj[item[0]] = {
+                                ...obj[item[0]],
+                                value: item[1],
+                            }
                         });
                         return Object.assign({}, node, {
                             config: Object.assign({}, config, {
@@ -119,17 +97,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
                     })
                 };
                 console.log(requestParams);
-                updateParams(requestParams).then((res: any) => {
-                    if (res && res.code === 'SUCCESS') {
-                        message.success('修改成功');
-                        setInitialState((preInitialState: any) => ({
-                            ...preInitialState,
-                            params: res.data
-                        }));
-                    } else {
-                        message.error(res?.msg || res?.message || '接口异常');
-                    }
-                });
+                btnFetch('post', xName, requestParams);
             }).catch((err) => {
                 console.log(err);
             });
@@ -172,7 +140,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
                                             config={[item?.name, item]}
                                             widgetChange={widgetChange}
                                             form={form}
-                                            disabled={!!started}
+                                            disabled={!started}
                                             setEditorVisible={setEditorVisible}
                                             setEditorValue={setEditorValue}
                                             setPlatFormVisible={setPlatFormVisible}
@@ -188,8 +156,8 @@ const OperationCharts: React.FC<Props> = (props: any) => {
                 </Form>
             </div>
             <div className="operation-footer flex-box-center">
-                <Button type="primary" disabled={!!started} onClick={() => onOk()} >确认</Button>
-                <Button disabled={!!started} onClick={() => onCancel()}>重置</Button>
+                <Button type="primary" disabled={!started} onClick={() => onOk()} >确认</Button>
+                <Button disabled={!started} onClick={() => onCancel()}>重置</Button>
             </div>
 
             {
@@ -254,4 +222,4 @@ const OperationCharts: React.FC<Props> = (props: any) => {
 
 export default connect(({ home, themeStore }) => ({
     started: home.started || false,
-}))(OperationCharts);
+}))(Operation2Charts);

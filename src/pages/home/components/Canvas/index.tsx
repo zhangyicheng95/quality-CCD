@@ -74,6 +74,7 @@ import moment from 'moment';
 import ThreeCharts from './components/ThreeCharts';
 import OperationCharts from './components/OperationCharts';
 import StatisticCharts from './components/StatisticCharts';
+import Operation2Charts from './components/Operation2Charts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -1281,6 +1282,33 @@ const Home: React.FC<any> = (props: any) => {
                               setFontColor(fontColor.rgb);
                             }
                             setWindowType(type);
+                            if (type === 'operation') {
+                              const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
+                              if (!!res) {
+                                const { config = {} } = res;
+                                if (!!config?.initParams && _.isObject(config?.initParams)) {
+                                  setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
+                                    return {
+                                      label: item[1]?.alias,
+                                      value: item[0],
+                                    }
+                                  }));
+                                }
+                              }
+                            } else if (type === 'operation2') {
+                              const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
+                              if (!!res) {
+                                const { config = {} } = res;
+                                if (!!config?.execParams && _.isObject(config?.execParams)) {
+                                  setSelectedNodeConfig(() => Object.entries(config.execParams)?.map((item: any) => {
+                                    return {
+                                      label: item[1]?.alias,
+                                      value: item[0],
+                                    }
+                                  }));
+                                }
+                              }
+                            }
                             setAddWindowVisible(true);
                           }}
                         >
@@ -1449,23 +1477,34 @@ const Home: React.FC<any> = (props: any) => {
                                                 }}
                                               />
                                               :
-                                              type === 'statistic' ?
-                                                <StatisticCharts
+                                              type === 'operation2' ?
+                                                <Operation2Charts
                                                   id={key}
                                                   data={{
-                                                    dataValue, fontSize,
-                                                    yName, fontColor, direction
+                                                    operationList,
+                                                    dataValue,
+                                                    fontSize,
+                                                    xName
                                                   }}
                                                 />
                                                 :
-                                                <ImgCharts
-                                                  id={key}
-                                                  data={{
-                                                    defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                    dataValue, windowControl,
-                                                    setContentList, magnifier
-                                                  }}
-                                                />
+                                                type === 'statistic' ?
+                                                  <StatisticCharts
+                                                    id={key}
+                                                    data={{
+                                                      dataValue, fontSize,
+                                                      yName, fontColor, direction
+                                                    }}
+                                                  />
+                                                  :
+                                                  <ImgCharts
+                                                    id={key}
+                                                    data={{
+                                                      defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                      dataValue, windowControl,
+                                                      setContentList, magnifier
+                                                    }}
+                                                  />
                 }
               </div>
             </div>
@@ -1986,13 +2025,20 @@ const Home: React.FC<any> = (props: any) => {
                   if (!!res) {
                     setFieldsValue({ operationList: [] });
                     const { config = {} } = res;
-                    if (!!config?.initParams && _.isObject(config?.initParams)) {
-                      setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
+                    const params = ['operation'].includes(windowType) ?
+                      config?.initParams :
+                      ['operation2'].includes(windowType) ?
+                        config?.execParams :
+                        null;
+                    if (!!params && _.isObject(params)) {
+                      setSelectedNodeConfig(() => Object.entries(params)?.map((item: any) => {
                         return {
                           label: item[1]?.alias,
                           value: item[0],
                         }
                       }));
+                    } else {
+                      setSelectedNodeConfig([]);
                     }
                   }
                 }}
@@ -2012,13 +2058,20 @@ const Home: React.FC<any> = (props: any) => {
                   if (!!res) {
                     setFieldsValue({ operationList: [] });
                     const { config = {} } = res;
-                    if (!!config?.initParams && _.isObject(config?.initParams)) {
-                      setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
+                    const params = (val === 'operation') ?
+                      config?.initParams :
+                      (val === 'operation2') ?
+                        config?.execParams :
+                        null;
+                    if (!!params && _.isObject(params)) {
+                      setSelectedNodeConfig(() => Object.entries(params)?.map((item: any) => {
                         return {
                           label: item[1]?.alias,
                           value: item[0],
                         }
                       }));
+                    } else {
+                      setSelectedNodeConfig([]);
                     }
                   }
                   setWindowType(val);
@@ -2547,7 +2600,7 @@ const Home: React.FC<any> = (props: any) => {
                 : null
             }
             {
-              ['operation'].includes(windowType) ?
+              ['operation', 'operation2'].includes(windowType) ?
                 <Fragment>
                   <Form.Item
                     name={`operationList`}
@@ -2560,6 +2613,17 @@ const Home: React.FC<any> = (props: any) => {
                       options={selectedNodeConfig}
                     />
                   </Form.Item>
+                  {
+                    ['operation2'].includes(windowType) ?
+                      <Form.Item
+                        name={`xName`}
+                        label={"接口地址"}
+                        rules={[{ required: true, message: '接口地址' }]}
+                      >
+                        <Input size='large' />
+                      </Form.Item>
+                      : null
+                  }
                 </Fragment>
                 : null
             }

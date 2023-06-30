@@ -75,6 +75,10 @@ export const windowTypeList: any = [
     label: '功能操作组件',
   },
   {
+    value: 'operation2',
+    label: '功能操作组件2',
+  },
+  {
     value: 'statistic',
     label: '统计数据'
   }

@@ -71,6 +71,12 @@ export async function outLogin() {
 }
 
 export async function btnFetch(type: string, url: string, params: any) {
+  if (url.indexOf('/') === 0) {
+    url = url.slice(1);
+  }
+  if (url.indexOf(':') < 0) {
+    url = BASE_IP + url;
+  }
   if (url.indexOf('http') < 0) {
     url = 'http://' + url;
   }

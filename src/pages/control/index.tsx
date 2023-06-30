@@ -728,9 +728,12 @@ export const FormatWidgetToDom = (props: any) => {
           initialValue={(_.isArray(value) ? value[0] : value) || undefined}
           rules={[{ required: require, message: `${alias}` }]}
         >
-          <Radio.Group onChange={(e) => {
-            widgetChange?.(name, e.target.value);
-          }}>
+          <Radio.Group
+            disabled={disabled}
+            onChange={(e) => {
+              widgetChange?.(name, e.target.value);
+            }}
+          >
             {options.map((option: any, index: any) => {
               const { label, value } = option;
               return (
@@ -903,6 +906,7 @@ export const FormatWidgetToDom = (props: any) => {
             step={step}
             max={max}
             min={min}
+            disabled={disabled}
             precision={precision}
             onChange={(e: any) => {
               !!updateTimer?.current && clearTimeout(updateTimer?.current);
@@ -1059,7 +1063,7 @@ export const FormatWidgetToDom = (props: any) => {
                 setPlatFormValue({ ...config[1], id: name, nodeName: node?.alias || node?.name });
                 setPlatFormVisible(true);
               }}
-              disabled={!localPath}
+              disabled={!localPath || disabled}
             >
               开始标注
             </Button>
