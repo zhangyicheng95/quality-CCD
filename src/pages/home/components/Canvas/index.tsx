@@ -1407,7 +1407,7 @@ const Home: React.FC<any> = (props: any) => {
                                 <ThreeCharts
                                   id={key}
                                   data={{
-                                    dataValue: dataValue || "",
+                                    dataValue: dataValue || { name: "" },
                                     fontSize
                                   }}
                                 />
@@ -2753,10 +2753,14 @@ const Home: React.FC<any> = (props: any) => {
                     message.error(res?.msg || res?.message || '接口异常');
                   }
                 });
-                setAddItemsVisible(false)
+                setAddItemsVisible(false);
+                form.resetFields();
               });
             }}
-            onCancel={() => setAddItemsVisible(false)}
+            onCancel={() => {
+              setAddItemsVisible(false);
+              form.resetFields();
+            }}
             getContainer={false}
             destroyOnClose={true}
           >
@@ -2773,7 +2777,12 @@ const Home: React.FC<any> = (props: any) => {
                   allowClear
                   showSearch
                   optionFilterProp="label"
-                  options={projectStatus}
+                  options={(projectStatus || [])?.map((item: any) => {
+                    return {
+                      ...item,
+                      disabled: (paramData?.contentData?.ipList.map((i: any) => i.key) || []).includes(item.value),
+                    }
+                  })}
                   placeholder="方案ID"
                 />
               </Form.Item>

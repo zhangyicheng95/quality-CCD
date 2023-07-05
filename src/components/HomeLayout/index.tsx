@@ -52,7 +52,7 @@ const HomeLayout: React.FC<any> = (props) => {
           return {
             value: id,
             realIp: data.value,
-            label: quality_name || name,
+            label: name,
           };
         });
         setProjectList((prev) => prev.concat(result));
@@ -87,7 +87,6 @@ const HomeLayout: React.FC<any> = (props) => {
           return {
             ...item,
             running: _.isObject(res?.data) && !_.isEmpty(res?.data[value]),
-            disabled: (params?.contentData?.ipList.map((i: any) => i.key) || []).includes(value),
           };
         })
         setList(result);

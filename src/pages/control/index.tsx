@@ -55,7 +55,7 @@ const Control: React.FC<any> = (props: any) => {
           if (config.value === 'default') {
             return {
               ...config,
-              data: (config?.data?.length > nodes?.length) ? config?.data : nodes
+              data: (config?.data?.length >= nodes?.length) ? config?.data : nodes
             };
           };
           return config;
@@ -65,7 +65,7 @@ const Control: React.FC<any> = (props: any) => {
           setListType(listType);
           setFieldsValue({ 'config-value': _.isObject(selectedConfig) ? selectedConfig : { value: selectedConfig } });
           if (!!data?.length && _.isArray(data)) {
-            setNodeList((value === 'default' ? ((data?.length > nodes?.length) ? data : nodes) : data)
+            setNodeList((value === 'default' ? ((data?.length >= nodes?.length) ? data : nodes) : data)
               .map((item: any, index: number) => {
                 if (!item.sortId || item.sortId !== 0) {
                   return { ...item, sortId: index };

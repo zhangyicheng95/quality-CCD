@@ -45,13 +45,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const { dataValue = {}, fontSize } = data;
     let { name, value = [] } = dataValue;
     if (process.env.NODE_ENV === 'development') {
-        name = "models/output.ply"; // models/pressure.json  models/tx.stl
+        name = "models/0.ply"; // models/pressure.json  models/tx.stl
         value = [
             { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: -200, z: 300 }, { x: 0, y: -200, z: 300 },], },
             { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -20, y: -200, z: 100 }, { x: -20, y: -200, z: 100 },], },
             { name: "9", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 200, y: -200, z: 200 }, { x: 200, y: -200, z: -200 },], }
         ];
     }
+
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const dom = useRef<any>();
@@ -67,7 +68,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             return;
         }
     }, [name]);
-
+    ["models/1.ply", "models/2.ply"].forEach((i: string, index: number) => {
+        setTimeout(() => {
+            loadModel(i);
+        }, 3000 + index * 3000);
+    })
     let renderer = useRef<any>();
     const labelRenderer = new CSS2DRenderer();
     let scene = useRef<any>(),
@@ -95,12 +100,49 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
 
     if (!localStorage.getItem("scale")) {
         localStorage.setItem("scale", JSON.stringify({ value: "1", unit: "m" }));
-    }
+    };
+    const clearCanvas = () => {
+
+        cancelAnimationFrame(animateId);
+        dom?.current?.removeChild(stats.current.dom);
+        scene?.current?.traverse((child: any) => {
+            if (child?.material) {
+                child?.material?.dispose?.();
+            }
+            if (child?.geometry) {
+                child?.geometry?.dispose?.();
+            }
+            child = null;
+        });
+
+        // 场景中的参数释放清理或者置空等
+        if (!!dom.current && dom.current.innerHTML) {
+            dom.current.innerHTML = `
+                <div class="three-mask flex-box">
+                    <progress class="process" value="0" ></progress>
+                    <span class="process-text">0%</span>
+                </div>
+                <canvas id="demoBox" />
+            `;
+        }
+        renderer.current.domElement.innerHTML = '';
+        // renderer.current.forceContextLoss();
+        renderer.current.dispose();
+        // dom.current.removeChild(renderer.current.domElement);
+        // dom.current.removeChild(labelRenderer.domElement);
+        scene.current?.clear();
+        scene.current = undefined;
+        stats.current = undefined;
+        camera.current = undefined;
+        controls.current = undefined;
+        renderer.current.domElement = undefined;
+        renderer.current = undefined;
+        setSelectedBtn([]);
+    };
     // 初始化场景数据，渲染点云
     useEffect(() => {
+        console.log(name)
         if (!name) return;
-        // 蒙层
-        const maskBox: any = document.querySelector(".three-mask");
         // 外层盒子
         const box: any = dom?.current;
         // 渲染场景盒子
@@ -181,226 +223,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         // 控制器 (旋转/缩放)
         controls.current = new OrbitControls(camera.current, renderer.current.domElement);
         controls.current.enableDamping = true;
-        // 开始渲染
-        const startTime = +new Date();
-        const timeHost = () => {
-            const endTime = +new Date();
-            console.log("模型加载渲染耗时:", `${(endTime - startTime) / 1000}s`);
-        };
-        function addPickable(mesh: any) {
-            timeHost();
-            mesh.name = "tx";
-            if (mesh?.material) {
-                mesh.material.side = THREE.DoubleSide;
-            } else if (mesh.children?.[0] && !!mesh.children[0]?.material) {
-                mesh.children[0].material.side = THREE.DoubleSide;
-            }
-            // 边框
-            const border = new THREE.BoxHelper(mesh, 0x00ffff); //object 模型
-            border.name = "border";
-            border.visible = false;
-            mesh.attach(border);
-            // 居中显示
-            let box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
-            let mdlen = box.max.x - box.min.x; // 模型长度
-            let mdwid = box.max.z - box.min.z; // 模型宽度
-            let mdhei = box.max.y - box.min.y; // 模型高度
-            let x1 = box.min.x + mdlen / 2; // 模型中心点坐标X
-            let y1 = box.min.y + mdhei / 2; // 模型中心点坐标Y
-            let z1 = box.min.z + mdwid / 2; // 模型中心点坐标Z
-            mesh.position.set(-x1, -y1, -z1); // 将模型进行偏移
-            // 把点云放到可控数组里，用于画线标注
-            mesh.frustumCulled = false;
-            mesh.traverse(function (child: any) {
-                if (child.isMesh) {
-                    child.frustumCulled = false;
-                    let m = child;
-                    switch (m.name) {
-                        case "Plane":
-                            m.receiveShadow = true;
-                            break;
-                        default:
-                            m.castShadow = true;
-                    }
-                    pickableObjects.push(m);
-                }
-            });
-            maskBox.style.display = "none";
-
-            camera.current.position.set(0, -cameraScale * mdlen, 0);
-            scene.current.add(mesh);
-            effectMeasureLine();
-        }
-        function processFun(xhr: any) {
-            const { loaded = 0, total = 1 } = xhr;
-            const processBox = maskBox.querySelector('.process');
-            const processText = maskBox.querySelector('.process-text');
-            processBox.style.display = 'block';
-            processText.style.display = 'block';
-            if (!!loaded && !!total) {
-                const process = `${((loaded / total) * 100 + '').slice(0, 5)}%`;
-                processBox.value = loaded / total;
-                processText.innerText = process;
-            } else {
-                processBox.value = 0.99;
-                processText.innerText = '99%';
-            }
-        }
-        function processError(error: any) {
-            const processBox = maskBox.querySelector('.process');
-            const processText = maskBox.querySelector('.process-text');
-            processBox.style.display = 'none';
-            processText.style.display = 'block';
-            processText.style.textAlign = 'center';
-            processText.innerText = `点云数据有问题或路径不正确，请检查
-            
-            ${name}`;
-            message.error('点云数据有问题或路径不正确，请检查', 5);
-            console.log('点云数据有问题:', error);
-        }
-        // 加载url
-        const manager = new THREE.LoadingManager();
-        manager.addHandler(/\.dds$/i, new DDSLoader());
-        if (name.indexOf(".glb") > -1) {
-            new GLTFLoader().load(
-                name,
-                function (gltf) {
-                    addPickable(gltf.scene);
-                },
-                (xhr) => processFun(xhr),
-                (error) => processError(error)
-            );
-        } else if (name.indexOf(".ply") > -1) {
-            new PLYLoader().load(
-                name,
-                function (geometry: any) {
-                    // 用于计算模型的顶点法向量，以使模型的光照效果更为真实。
-                    geometry.computeVertexNormals();
-                    // 判断模型是否自带颜色
-                    var colors = geometry?.attributes?.color?.array || [];
-                    let material: any = null;
-                    if (colors?.length) {
-                        // colors 有值代表ply文件本身包含了颜色，则使用本身的颜色渲染
-                        sprite = new THREE.Sprite(new THREE.SpriteMaterial({
-                            map: new THREE.CanvasTexture(lut.createCanvas())
-                        }));
-                        sprite.material.map.colorSpace = THREE.SRGBColorSpace;
-                        sprite.scale.x = 0.125;
-                        sprite.position.set(1.4, 0, 0);
-                        console.log(sprite)
-                        uiScene.current.add(sprite);
-
-                        material = new THREE.PointsMaterial({   // MeshStandardMaterial,MeshBasicMaterial
-                            vertexColors: true
-                        })
-                    } else {
-                        /** 没有颜色则手动添加
-                         *  金色：#ffd700
-                         *  银色：#c0c0c0
-                         *  铜色：#b87333
-                         *  钢色：#808080
-                         *  铝色：#c3c3c3
-                         * */
-                        material = new THREE.PointsMaterial({   // MeshStandardMaterial,MeshBasicMaterial
-                            color: '#c0c0c0'
-                        });
-                    }
-                    const mesh = new THREE.Points(geometry, material);
-                    addPickable(mesh);
-                },
-                (xhr) => processFun(xhr),
-                (error) => processError(error)
-            );
-        } else if (name.indexOf(".stl") > -1) {
-            new STLLoader().load(
-                name,
-                function (geometry) {
-                    geometry.computeVertexNormals();
-                    const material: any = new THREE.MeshPhysicalMaterial({
-                        color: 0xff9c7c
-                    });
-
-                    const mesh = new THREE.Mesh(geometry, material);
-                    addPickable(mesh);
-                },
-                (xhr) => processFun(xhr),
-                (error) => processError(error)
-            );
-        } else if (name.indexOf(".obj") > -1) {
-            new OBJLoader().load(
-                name,
-                function (object) {
-                    addPickable(object);
-                },
-                (xhr) => processFun(xhr),
-                (error) => processError(error)
-            );
-        } else if (name.indexOf(".json") > -1) {
-            sprite = new THREE.Sprite(new THREE.SpriteMaterial({
-                map: new THREE.CanvasTexture(lut.createCanvas())
-            }));
-            sprite.material.map.colorSpace = THREE.SRGBColorSpace;
-            sprite.scale.x = 0.125;
-            uiScene.current.add(sprite);
-
-            const loader = new THREE.BufferGeometryLoader(manager);
-            loader.load(name,
-                function (geometry) {
-                    geometry.computeVertexNormals();
-                    // default color attribute
-                    const colors = [];
-                    for (let i = 0, n = geometry.attributes.position.count; i < n; ++i) {
-                        colors.push(1, 1, 1);
-                    }
-                    geometry.setAttribute(
-                        "color",
-                        new THREE.Float32BufferAttribute(colors, 3)
-                    );
-                    const mesh = new THREE.Points(geometry, new THREE.PointsMaterial({
-                        // side: THREE.DoubleSide,
-                        // color: 0xf5f5f5,
-                        vertexColors: true,
-                    }));
-                    lut.setColorMap('rainbow');
-                    lut.setMax(2000);
-                    lut.setMin(0);
-
-                    const pressures = geometry.attributes.pressure;
-                    const colorsUpdate = geometry.attributes.color;
-                    const color = new THREE.Color();
-                    for (let i = 0; i < pressures.array.length; i++) {
-                        const colorValue = pressures.array[i];
-                        color.copy(lut.getColor(colorValue)).convertSRGBToLinear();
-                        colorsUpdate.setXYZ(i, color.r, color.g, color.b);
-                    }
-                    colorsUpdate.needsUpdate = true;
-                    const map = sprite.material.map;
-                    lut.updateCanvas(map.image);
-                    map.needsUpdate = true;
-                    addPickable(mesh);
-                },
-                (xhr) => processFun(xhr),
-                (error) => processError(error)
-            );
-        } else if (name.indexOf('.mtl') > -1) {
-            // new MTLLoader(manager).load(
-            //     myobj.mtl,
-            //     function (materials) {
-            //         materials.preload();
-            //         new OBJLoader(manager)
-            //             .setMaterials(materials)
-            //             .load(myobj.obj,
-            //                 function (object) {
-            //                     scene.add(object);
-            //                 },
-            //                 (xhr) => processFun(xhr),
-            //                 (error) => {
-            //                     processError(error);
-            //                 }
-            //             );
-            //     }
-            // );
-        }
+        // 开始渲染,加载url
+        loadModel(name);
         // 取消标注的公共方法
         function cancelMeasurement() {
             ctrlDown = false;
@@ -663,6 +487,103 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             renderer.current.render(uiScene.current, orthoCamera.current);
         }
         animate();
+
+        return () => {
+            bzBtn01.removeEventListener('click', bzBtnFun01);
+            bzBtn02.removeEventListener('click', bzBtnFun02);
+            bzBtn03.removeEventListener('click', bzBtnFun03);
+            bzBtn04.removeEventListener('click', bzBtnFun04);
+            bzBtn05.removeEventListener("click", bzBtnFun05);
+            renderer.current.domElement.removeEventListener("pointerdown", onMouseDown, false);
+            renderer.current.domElement.removeEventListener("pointerup", onMouseUp, false);
+            renderer.current.domElement.removeEventListener("mousemove", onDocumentMouseMove, false);
+            window.removeEventListener("keyup", onKeyUp);
+
+            clearCanvas();
+        };
+    }, [theme]);
+    // 初始化场景之后，渲染点云
+    const loadModel = (name: string) => {
+        // 蒙层
+        const maskBox: any = document?.querySelector(".three-mask");
+        const startTime = +new Date();
+        const timeHost = () => {
+            const endTime = +new Date();
+            console.log("模型加载渲染耗时:", `${(endTime - startTime) / 1000}s`);
+        };
+        function addPickable(mesh: any) {
+            timeHost();
+            mesh.name = "tx";
+            if (mesh?.material) {
+                mesh.material.side = THREE.DoubleSide;
+            } else if (mesh.children?.[0] && !!mesh.children[0]?.material) {
+                mesh.children[0].material.side = THREE.DoubleSide;
+            }
+            // 边框
+            const border = new THREE.BoxHelper(mesh, 0x00ffff); //object 模型
+            border.name = "border";
+            border.visible = false;
+            mesh.attach(border);
+            // 居中显示
+            let box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
+            let mdlen = box.max.x - box.min.x; // 模型长度
+            let mdwid = box.max.z - box.min.z; // 模型宽度
+            let mdhei = box.max.y - box.min.y; // 模型高度
+            let x1 = box.min.x + mdlen / 2; // 模型中心点坐标X
+            let y1 = box.min.y + mdhei / 2; // 模型中心点坐标Y
+            let z1 = box.min.z + mdwid / 2; // 模型中心点坐标Z
+            mesh.position.set(-x1, -y1, -z1); // 将模型进行偏移
+            // 把点云放到可控数组里，用于画线标注
+            mesh.frustumCulled = false;
+            mesh.traverse(function (child: any) {
+                if (child.isMesh) {
+                    child.frustumCulled = false;
+                    let m = child;
+                    switch (m.name) {
+                        case "Plane":
+                            m.receiveShadow = true;
+                            break;
+                        default:
+                            m.castShadow = true;
+                    }
+                    pickableObjects.push(m);
+                }
+            });
+            maskBox.style.display = "none";
+            const max = Math.max(mdlen, mdwid, mdhei);
+            camera.current.position.set(0, -2 * max, 0);
+            scene.current.add(mesh);
+            effectMeasureLine();
+        };
+        function processFun(xhr: any) {
+            const { loaded = 0, total = 1 } = xhr;
+            if (!maskBox) return;
+            const processBox = maskBox?.querySelector('.process');
+            const processText = maskBox?.querySelector('.process-text');
+            processBox.style.display = 'block';
+            processText.style.display = 'block';
+            if (!!loaded && !!total) {
+                const process = `${((loaded / total) * 100 + '').slice(0, 5)}%`;
+                processBox.value = loaded / total;
+                processText.innerText = process;
+            } else {
+                processBox.value = 0.99;
+                processText.innerText = '99%';
+            }
+        };
+        function processError(error: any) {
+            if (!maskBox) return;
+            const processBox = maskBox?.querySelector('.process');
+            const processText = maskBox?.querySelector('.process-text');
+            processBox.style.display = 'none';
+            processText.style.display = 'block';
+            processText.style.textAlign = 'center';
+            processText.innerText = `点云数据有问题或路径不正确，请检查
+        
+        ${name}`;
+            message.error('点云数据有问题或路径不正确，请检查', 5);
+            console.log('点云数据有问题:', error);
+        };
         // 加载卡片数据
         function effectMeasureLine() {
             const mesh: any = scene.current.getObjectByName("tx");
@@ -798,53 +719,148 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             }
         };
 
-        return () => {
-            bzBtn01.removeEventListener('click', bzBtnFun01);
-            bzBtn02.removeEventListener('click', bzBtnFun02);
-            bzBtn03.removeEventListener('click', bzBtnFun03);
-            bzBtn04.removeEventListener('click', bzBtnFun04);
-            bzBtn05.removeEventListener("click", bzBtnFun05);
-            renderer.current.domElement.removeEventListener("pointerdown", onMouseDown, false);
-            renderer.current.domElement.removeEventListener("pointerup", onMouseUp, false);
-            renderer.current.domElement.removeEventListener("mousemove", onDocumentMouseMove, false);
-            window.removeEventListener("keyup", onKeyUp);
-            cancelAnimationFrame(animateId);
-            dom?.current?.removeChild(stats.current.dom);
-            scene.current.traverse((child: any) => {
-                if (child.material) {
-                    child.material.dispose();
-                }
-                if (child.geometry) {
-                    child.geometry.dispose();
-                }
-                child = null;
-            });
+        const manager = new THREE.LoadingManager();
+        manager.addHandler(/\.dds$/i, new DDSLoader());
+        if (name.indexOf(".glb") > -1) {
+            new GLTFLoader().load(
+                name,
+                function (gltf) {
+                    addPickable(gltf.scene);
+                },
+                (xhr) => processFun(xhr),
+                (error) => processError(error)
+            );
+        } else if (name.indexOf(".ply") > -1) {
+            new PLYLoader().load(
+                name,
+                function (geometry: any) {
+                    // 用于计算模型的顶点法向量，以使模型的光照效果更为真实。
+                    geometry.computeVertexNormals();
+                    // 判断模型是否自带颜色
+                    var colors = geometry?.attributes?.color?.array || [];
+                    let material: any = null;
+                    if (colors?.length) {
+                        // colors 有值代表ply文件本身包含了颜色，则使用本身的颜色渲染
+                        sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+                            map: new THREE.CanvasTexture(lut.createCanvas())
+                        }));
+                        sprite.material.map.colorSpace = THREE.SRGBColorSpace;
+                        sprite.scale.x = 0.125;
+                        sprite.position.set(1.4, 0, 0);
+                        uiScene.current.add(sprite);
 
-            // 场景中的参数释放清理或者置空等
-            if (!!dom.current && dom.current.innerHTML) {
-                dom.current.innerHTML = `
-                    <div class="three-mask flex-box">
-                        <progress class="process" value="0" ></progress>
-                        <span class="process-text">0%</span>
-                    </div>
-                    <canvas id="demoBox" />
-                `;
-            }
-            renderer.current.domElement.innerHTML = '';
-            // renderer.current.forceContextLoss();
-            renderer.current.dispose();
-            // dom.current.removeChild(renderer.current.domElement);
-            // dom.current.removeChild(labelRenderer.domElement);
-            scene.current?.clear();
-            scene.current = undefined;
-            stats.current = undefined;
-            camera.current = undefined;
-            controls.current = undefined;
-            renderer.current.domElement = undefined;
-            renderer.current = undefined;
-            setSelectedBtn([]);
-        };
-    }, [name, theme]);
+                        material = new THREE.PointsMaterial({   // MeshStandardMaterial,MeshBasicMaterial
+                            vertexColors: true
+                        })
+                    } else {
+                        /** 没有颜色则手动添加
+                         *  金色：#ffd700
+                         *  银色：#c0c0c0
+                         *  铜色：#b87333
+                         *  钢色：#808080
+                         *  铝色：#c3c3c3
+                         * */
+                        material = new THREE.PointsMaterial({   // MeshStandardMaterial,MeshBasicMaterial
+                            color: '#808080'
+                        });
+                    }
+                    const mesh = new THREE.Points(geometry, material);
+                    addPickable(mesh);
+                },
+                (xhr) => processFun(xhr),
+                (error) => processError(error)
+            );
+        } else if (name.indexOf(".stl") > -1) {
+            new STLLoader().load(
+                name,
+                function (geometry) {
+                    geometry.computeVertexNormals();
+                    const material: any = new THREE.MeshPhysicalMaterial({
+                        color: 0xff9c7c
+                    });
+
+                    const mesh = new THREE.Mesh(geometry, material);
+                    addPickable(mesh);
+                },
+                (xhr) => processFun(xhr),
+                (error) => processError(error)
+            );
+        } else if (name.indexOf(".obj") > -1) {
+            new OBJLoader().load(
+                name,
+                function (object) {
+                    addPickable(object);
+                },
+                (xhr) => processFun(xhr),
+                (error) => processError(error)
+            );
+        } else if (name.indexOf(".json") > -1) {
+            sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+                map: new THREE.CanvasTexture(lut.createCanvas())
+            }));
+            sprite.material.map.colorSpace = THREE.SRGBColorSpace;
+            sprite.scale.x = 0.125;
+            uiScene.current.add(sprite);
+
+            const loader = new THREE.BufferGeometryLoader(manager);
+            loader.load(name,
+                function (geometry) {
+                    geometry.computeVertexNormals();
+                    // default color attribute
+                    const colors = [];
+                    for (let i = 0, n = geometry.attributes.position.count; i < n; ++i) {
+                        colors.push(1, 1, 1);
+                    }
+                    geometry.setAttribute(
+                        "color",
+                        new THREE.Float32BufferAttribute(colors, 3)
+                    );
+                    const mesh = new THREE.Points(geometry, new THREE.PointsMaterial({
+                        // side: THREE.DoubleSide,
+                        // color: 0xf5f5f5,
+                        vertexColors: true,
+                    }));
+                    lut.setColorMap('rainbow');
+                    lut.setMax(2000);
+                    lut.setMin(0);
+
+                    const pressures = geometry.attributes.pressure;
+                    const colorsUpdate = geometry.attributes.color;
+                    const color = new THREE.Color();
+                    for (let i = 0; i < pressures.array.length; i++) {
+                        const colorValue = pressures.array[i];
+                        color.copy(lut.getColor(colorValue)).convertSRGBToLinear();
+                        colorsUpdate.setXYZ(i, color.r, color.g, color.b);
+                    }
+                    colorsUpdate.needsUpdate = true;
+                    const map = sprite.material.map;
+                    lut.updateCanvas(map.image);
+                    map.needsUpdate = true;
+                    addPickable(mesh);
+                },
+                (xhr) => processFun(xhr),
+                (error) => processError(error)
+            );
+        } else if (name.indexOf('.mtl') > -1) {
+            // new MTLLoader(manager).load(
+            //     myobj.mtl,
+            //     function (materials) {
+            //         materials.preload();
+            //         new OBJLoader(manager)
+            //             .setMaterials(materials)
+            //             .load(myobj.obj,
+            //                 function (object) {
+            //                     scene.add(object);
+            //                 },
+            //                 (xhr) => processFun(xhr),
+            //                 (error) => {
+            //                     processError(error);
+            //                 }
+            //             );
+            //     }
+            // );
+        }
+    };
     // 监听鼠标事件
     const onDeleteLine = (event: any) => {
         const raycaster = new THREE.Raycaster();
