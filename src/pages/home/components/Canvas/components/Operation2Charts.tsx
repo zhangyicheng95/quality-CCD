@@ -84,6 +84,12 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     const widgetChange = (key: string, value: any) => {
         setConfigList((prev: any) => (prev || [])?.map((item: any) => {
             if (item.name === key) {
+                if (!!value?.widget?.type) {
+                    return {
+                        ...item,
+                        ...value,
+                    }
+                }
                 return {
                     ...item,
                     value,
