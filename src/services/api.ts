@@ -17,7 +17,12 @@ export const getListStatusService = () => {
 
 // 获取历史记录 //缺陷
 export async function getAllHistory(params: any) {
-  return fetchPost(`${BASE_HISTORY_IP}track/list/v1`, { body: params });
+  return fetchGet(`${BASE_HISTORY_IP}projects/list`, {
+    params: {
+      "func": "SELECT",
+      "data": [params]
+    }
+  });
 }
 // 获取历史记录 //尺寸
 export async function getAllHistorySize(params: any) {

@@ -43,14 +43,20 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     // models/ply/ascii/tx.ply / models/obj/walt/tx.obj / models/stl/ascii/tx.stl
     const { data = {}, id, } = props;
     const { dataValue = {}, fontSize } = data;
-    let { name, value = [] } = dataValue;
+    let { name, value = [], addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
+        addType = 'add';
         name = "models/0.ply"; // models/pressure.json  models/tx.stl
         value = [
             { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: -200, z: 300 }, { x: 0, y: -200, z: 300 },], },
             { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -20, y: -200, z: 100 }, { x: -20, y: -200, z: 100 },], },
             { name: "9", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 200, y: -200, z: 200 }, { x: 200, y: -200, z: -200 },], }
         ];
+        [1, 2, 3, 4, 5, 6, 7, 8].forEach((i: any, index: number) => {
+            setTimeout(() => {
+                loadModel(`models/${i}.ply`, addType);
+            }, 3000 + index * 300);
+        })
     }
 
     const { initialState } = useModel<any>('@@initialState');
@@ -68,11 +74,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             return;
         }
     }, [name]);
-    ["models/1.ply", "models/2.ply"].forEach((i: string, index: number) => {
-        setTimeout(() => {
-            loadModel(i);
-        }, 3000 + index * 3000);
-    })
+
     let renderer = useRef<any>();
     const labelRenderer = new CSS2DRenderer();
     let scene = useRef<any>(),
@@ -141,8 +143,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     };
     // 初始化场景数据，渲染点云
     useEffect(() => {
-        console.log(name)
         if (!name) return;
+        // addType为add时，代表增量渲染，不清除其他数据
+        if (!!scene.current && addType === 'add') {
+            loadModel(name, addType);
+            return;
+        }
         // 外层盒子
         const box: any = dom?.current;
         // 渲染场景盒子
@@ -252,13 +258,17 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         bzBtn01?.addEventListener("click", bzBtnFun01);
         // 边框
         function bzBtnFun02() {
-            const mesh: any = scene.current.getObjectByName("tx");
+            const models = getAllModelsFromScene(scene.current);
             setSelectedBtn((prev: any) => {
                 if ((prev || []).includes('bzBtn02')) {
-                    (mesh.children || []).filter((i: any) => i.type === "BoxHelper")[0].visible = false;
+                    models.forEach((mesh: any) => {
+                        (mesh.children || []).filter((i: any) => i.type === "BoxHelper")[0].visible = false;
+                    });
                     return prev.filter((i: any) => i !== 'bzBtn02');
                 } else {
-                    (mesh.children || []).filter((i: any) => i.type === "BoxHelper")[0].visible = true;
+                    models.forEach((mesh: any) => {
+                        (mesh.children || []).filter((i: any) => i.type === "BoxHelper")[0].visible = true;
+                    });
                     return (prev || []).concat('bzBtn02');
                 }
             });
@@ -280,7 +290,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         bzBtn03?.addEventListener("click", bzBtnFun03);
         // 透视
         function bzBtnFun04() {
-            const mesh: any = scene.current.getObjectByName("tx");
+            const models = getAllModelsFromScene(scene.current);
             /**
              * 1：开启透视，隐藏卡片
              * 0：关闭透视，显示卡片
@@ -295,37 +305,39 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     }
                 });
             };
-            if (!!mesh.material) {
-                // 有材质
-                const depth = mesh.material?.depthTest;
-                if (depth) {
-                    // 开启透视
-                    mesh.material.depthTest = false;
-                    setSelectedBtn((prev: any) => (prev || []).concat('bzBtn04'));
-                    toggleLabelOpacity(1);
-                } else {
-                    // 关闭透视
-                    mesh.material.depthTest = true;
-                    setSelectedBtn((prev: any) => prev.filter((i: any) => i !== 'bzBtn04'));
-                    toggleLabelOpacity(0);
-                }
-            } else if (mesh.children.filter((i: any) => i.type === "Points")[0]) {
-                // 没有材质，点组成
-                const depth = mesh.children.filter((i: any) => i.type === "Points")[0]?.material?.depthTest;
-                if (!!mesh.children.filter((i: any) => i.type === "Points")[0]?.material) {
+            models.forEach((mesh: any) => {
+                if (!!mesh.material) {
+                    // 有材质
+                    const depth = mesh.material?.depthTest;
                     if (depth) {
                         // 开启透视
-                        mesh.children.filter((i: any) => i.type === "Points")[0].material.depthTest = false;
+                        mesh.material.depthTest = false;
                         setSelectedBtn((prev: any) => (prev || []).concat('bzBtn04'));
                         toggleLabelOpacity(1);
                     } else {
                         // 关闭透视
-                        mesh.children.filter((i: any) => i.type === "Points")[0].material.depthTest = true;
+                        mesh.material.depthTest = true;
                         setSelectedBtn((prev: any) => prev.filter((i: any) => i !== 'bzBtn04'));
                         toggleLabelOpacity(0);
                     }
+                } else if (mesh.children.filter((i: any) => i.type === "Points")[0]) {
+                    // 没有材质，点组成
+                    const depth = mesh.children.filter((i: any) => i.type === "Points")[0]?.material?.depthTest;
+                    if (!!mesh.children.filter((i: any) => i.type === "Points")[0]?.material) {
+                        if (depth) {
+                            // 开启透视
+                            mesh.children.filter((i: any) => i.type === "Points")[0].material.depthTest = false;
+                            setSelectedBtn((prev: any) => (prev || []).concat('bzBtn04'));
+                            toggleLabelOpacity(1);
+                        } else {
+                            // 关闭透视
+                            mesh.children.filter((i: any) => i.type === "Points")[0].material.depthTest = true;
+                            setSelectedBtn((prev: any) => prev.filter((i: any) => i !== 'bzBtn04'));
+                            toggleLabelOpacity(0);
+                        }
+                    }
                 }
-            }
+            });
         };
         bzBtn04?.addEventListener("click", bzBtnFun04);
         // 清理数据
@@ -405,9 +417,13 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 intersects = raycaster.intersectObjects(pickableObjects, false);
 
                 // 显示边框
-                const mesh: any = scene.current.getObjectByName("tx");
+                const models = getAllModelsFromScene(scene.current);
                 const axis: any = scene.current.getObjectByName("axis");
-                (mesh.children || []).filter((i: any) => i.type === "BoxHelper")[0].visible = true;
+                models.forEach((mesh: any) => {
+                    (mesh.children || []).filter((i: any) => i.type === "BoxHelper").forEach((child: any) => {
+                        child.visible = true;
+                    });
+                });
                 // 显示坐标轴
                 axis.visible = true;
             }
@@ -456,12 +472,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         }
         function onMouseUp() {
             if (!renderer.current) return;
-            const mesh: any = scene.current.getObjectByName("tx");
+            const models = getAllModelsFromScene(scene.current);
             const axis: any = scene.current.getObjectByName("axis");
             setSelectedBtn((prev: any) => {
                 if (!(prev || []).includes('bzBtn02')) {
                     // 隐藏边框
-                    (mesh.children || []).filter((i: any) => i.type === "BoxHelper")[0].visible = false;
+                    models.forEach((mesh: any) => {
+                        (mesh.children || []).filter((i: any) => i.type === "BoxHelper")[0].visible = false;
+                    });
                 }
                 if (!(prev || []).includes('bzBtn03')) {
                     // 隐藏坐标轴
@@ -501,9 +519,22 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
 
             clearCanvas();
         };
-    }, [theme]);
+    }, [theme, name, addType]);
+    // 获取场景中的全部模型对象
+    function getAllModelsFromScene(scene: any) {
+        const models: any = [];
+
+        scene.traverse((object: any) => {
+            if (object.isMesh || object.isPoints) {
+                models.push(object);
+            }
+        });
+
+        return models;
+    }
     // 初始化场景之后，渲染点云
-    const loadModel = (name: string) => {
+    const loadModel = (name: string, addType?: string) => {
+        console.log('加载的url:', name);
         // 蒙层
         const maskBox: any = document?.querySelector(".three-mask");
         const startTime = +new Date();
@@ -513,7 +544,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         };
         function addPickable(mesh: any) {
             timeHost();
-            mesh.name = "tx";
+            const models = getAllModelsFromScene(scene.current);
+            mesh.name = `tx-${models.length}`;
             if (mesh?.material) {
                 mesh.material.side = THREE.DoubleSide;
             } else if (mesh.children?.[0] && !!mesh.children[0]?.material) {
@@ -524,6 +556,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             border.name = "border";
             border.visible = false;
             mesh.attach(border);
+
             // 居中显示
             let box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
             let mdlen = box.max.x - box.min.x; // 模型长度
@@ -532,30 +565,52 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             let x1 = box.min.x + mdlen / 2; // 模型中心点坐标X
             let y1 = box.min.y + mdhei / 2; // 模型中心点坐标Y
             let z1 = box.min.z + mdwid / 2; // 模型中心点坐标Z
-            mesh.position.set(-x1, -y1, -z1); // 将模型进行偏移
+            const max = Math.max(mdlen, mdwid, mdhei);
+            const scale = 2;
+            if (addType === 'add') {
+                let targetPos = camera.current.position;
+                if (max === mdlen) {
+                    targetPos = new THREE.Vector3(1.5 * box.max.x, 0, scale * max);
+                } else if (max === mdwid) {
+                    targetPos = new THREE.Vector3(0, scale * max, 1.5 * box.max.z);
+                } else if (max === mdhei) {
+                    targetPos = new THREE.Vector3(scale * max, 1.5 * box.max.y, 0);
+                }
+                var currentPos = camera.current.position;
+                var tween = new TWEEN.Tween(currentPos)
+                    .to(targetPos, 1000)  // 目标位置，动画时间
+                    .easing(TWEEN.Easing.Quadratic.Out)
+                    .onUpdate(function () {
+                        camera.current.position.copy(currentPos);
+                        camera.current.lookAt(box.max.x, box.max.y, box.max.z);
+                    });
+                tween.start();
+            } else {
+                mesh.position.set(-x1, -y1, -z1); // 将模型进行偏移
+                camera.current.position.set(scale * max, scale * max, scale * max);
+                effectMeasureLine();
+            }
             // 把点云放到可控数组里，用于画线标注
             mesh.frustumCulled = false;
             mesh.traverse(function (child: any) {
-                if (child.isMesh) {
-                    child.frustumCulled = false;
-                    let m = child;
-                    switch (m.name) {
-                        case "Plane":
-                            m.receiveShadow = true;
-                            break;
-                        default:
-                            m.castShadow = true;
-                    }
-                    pickableObjects.push(m);
+                // if (child.isMesh) {
+                child.frustumCulled = false;
+                let m = child;
+                switch (m.name) {
+                    case "Plane":
+                        m.receiveShadow = true;
+                        break;
+                    default:
+                        m.castShadow = true;
                 }
+                pickableObjects.push(m);
+                // }
             });
             maskBox.style.display = "none";
-            const max = Math.max(mdlen, mdwid, mdhei);
-            camera.current.position.set(0, -2 * max, 0);
             scene.current.add(mesh);
-            effectMeasureLine();
         };
         function processFun(xhr: any) {
+            if (addType === 'add') return;
             const { loaded = 0, total = 1 } = xhr;
             if (!maskBox) return;
             const processBox = maskBox?.querySelector('.process');
@@ -586,8 +641,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         };
         // 加载卡片数据
         function effectMeasureLine() {
-            const mesh: any = scene.current.getObjectByName("tx");
-
+            const mesh: any = scene.current.getObjectByName("tx-0");
+            const models = getAllModelsFromScene(scene.current);
             if (!!scene.current && !!value?.length && !!mesh) {
                 (value || []).forEach((item: any, index: number) => {
                     let { name, standardValue, measureValue, offsetValue, position = [] } = item;
@@ -740,16 +795,17 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     var colors = geometry?.attributes?.color?.array || [];
                     let material: any = null;
                     if (colors?.length) {
-                        // colors 有值代表ply文件本身包含了颜色，则使用本身的颜色渲染
-                        sprite = new THREE.Sprite(new THREE.SpriteMaterial({
-                            map: new THREE.CanvasTexture(lut.createCanvas())
-                        }));
-                        sprite.material.map.colorSpace = THREE.SRGBColorSpace;
-                        sprite.scale.x = 0.125;
-                        sprite.position.set(1.4, 0, 0);
-                        uiScene.current.add(sprite);
-
-                        material = new THREE.PointsMaterial({   // MeshStandardMaterial,MeshBasicMaterial
+                        if (!sprite) {
+                            // colors 有值代表ply文件本身包含了颜色，则使用本身的颜色渲染
+                            sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+                                map: new THREE.CanvasTexture(lut.createCanvas())
+                            }));
+                            sprite.material.map.colorSpace = THREE.SRGBColorSpace;
+                            sprite.scale.x = 0.125;
+                            sprite.position.set(1.4, 0, 0);
+                            uiScene.current.add(sprite);
+                        }
+                        material = new THREE.PointsMaterial({   // MeshStandardMaterial,MeshBasicMaterial,PointsMaterial
                             vertexColors: true
                         })
                     } else {
@@ -760,11 +816,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                          *  钢色：#808080
                          *  铝色：#c3c3c3
                          * */
-                        material = new THREE.PointsMaterial({   // MeshStandardMaterial,MeshBasicMaterial
+                        material = new THREE.PointsMaterial({   // MeshStandardMaterial,MeshBasicMaterial,PointsMaterial
                             color: '#808080'
                         });
                     }
-                    const mesh = new THREE.Points(geometry, material);
+                    const mesh = new THREE.Points(geometry, material); // Points,Mesh
                     addPickable(mesh);
                 },
                 (xhr) => processFun(xhr),
@@ -861,42 +917,33 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             // );
         }
     };
-    // 监听鼠标事件
-    const onDeleteLine = (event: any) => {
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-
-        // 将鼠标点击位置转换为Three.js中的向量
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-        raycaster.setFromCamera(mouse, camera.current);
-        console.log(mouse, measurements)
-        // 检测交点处是否存在测距线和点
-        const intersects = raycaster.intersectObjects(measurements);
-
-        const line = measurements[measurements.length - 1];
-        scene.current.remove(measurements[measurements.length - 1]);
-        scene.current.remove(measurementLabels[line.name]);
-        if (intersects.length > 0) {
-            // 获取选中的测距对象
-            const selectedMeasurement = intersects[0].object;
-            const selectedMeasurementId = selectedMeasurement.id; // 获取选中的测距对象的id
-        }
-    };
-    useEffect(() => {
-        renderer.current?.domElement.addEventListener("dblclick", onDeleteLine, false);
-
-        return () => {
-            renderer.current?.domElement.removeEventListener('dblclick', onDeleteLine);
-        }
-    }, [scene.current, renderer.current]);
     // 获取模型实际尺寸
     const getSize = () => {
-        const mesh: any = scene.current.getObjectByName("tx");
-        const box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
-        const length = box.max.x - box.min.x; // 模型长度
-        const width = box.max.z - box.min.z; // 模型宽度
-        const height = box.max.y - box.min.y; // 模型高度
+        let maxX: any = [],
+            maxY: any = [],
+            maxZ: any = [],
+            minX: any = [],
+            minY: any = [],
+            minZ: any = [];
+        const models = getAllModelsFromScene(scene.current);
+        (models || []).forEach((mesh: any) => {
+            const box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
+            maxX.push(box.max.x);
+            maxY.push(box.max.y);
+            maxZ.push(box.max.z);
+            minX.push(box.min.x);
+            minY.push(box.min.y);
+            minZ.push(box.min.z);
+        });
+        const boxXmax = Math.max(...maxX);
+        const boxXmin = Math.min(...minX);
+        const boxYmax = Math.max(...maxY);
+        const boxYmin = Math.min(...minY);
+        const boxZmax = Math.max(...maxZ);
+        const boxZmin = Math.min(...minZ);
+        const length = (boxXmax - boxXmin); // 模型长度
+        const width = (boxZmax - boxZmin); // 模型宽度
+        const height = (boxYmax - boxYmin); // 模型高度
         const max = Math.max(length, width, height);
         return { length, width, height, max };
     };
@@ -1025,8 +1072,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 <div className="camera-box-pointer">
                     <div className="camera-box-pointer-top flex-box-justify-between">
                         <img src={rectTopIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { length } = getSize();
-                            var targetPos = new THREE.Vector3(0, length * cameraScale, 0);
+                            const { max } = getSize();
+                            var targetPos = new THREE.Vector3(0, max * cameraScale, 0);
                             animateCamera(targetPos);
                         }} />
                         <img src={rectAllIcon} alt="rect" className='cameraIcon' onClick={() => {
@@ -1037,30 +1084,30 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     </div>
                     <div className="camera-box-pointer-center flex-box-justify-between">
                         <img src={rectLeftIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { width } = getSize();
-                            var targetPos = new THREE.Vector3(width * -cameraScale, 0, 0);
+                            const { max } = getSize();
+                            var targetPos = new THREE.Vector3(max * -cameraScale, 0, 0);
                             animateCamera(targetPos);
                         }} />
                         <img src={rectFrontIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { height } = getSize();
-                            var targetPos = new THREE.Vector3(0, 0, height * cameraScale);
+                            const { max } = getSize();
+                            var targetPos = new THREE.Vector3(0, 0, max * cameraScale);
                             animateCamera(targetPos);
                         }} />
                         <img src={rectRightIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { width } = getSize();
-                            var targetPos = new THREE.Vector3(width * cameraScale, 0, 0);
+                            const { max } = getSize();
+                            var targetPos = new THREE.Vector3(max * cameraScale, 0, 0);
                             animateCamera(targetPos);
                         }} />
                         <img src={rectBackIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { height } = getSize();
-                            var targetPos = new THREE.Vector3(0, 0, height * -cameraScale);
+                            const { max } = getSize();
+                            var targetPos = new THREE.Vector3(0, 0, max * -cameraScale);
                             animateCamera(targetPos);
                         }} />
                     </div>
                     <div className="camera-box-pointer-bottom flex-box-justify-between">
                         <img src={rectBottomIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { length } = getSize();
-                            var targetPos = new THREE.Vector3(0, length * -cameraScale, 0);
+                            const { max } = getSize();
+                            var targetPos = new THREE.Vector3(0, max * -cameraScale, 0);
                             animateCamera(targetPos);
                         }} />
                     </div>

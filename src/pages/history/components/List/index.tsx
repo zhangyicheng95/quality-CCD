@@ -29,8 +29,6 @@ const HistoryList: React.FC<any> = (props: any) => {
   const [params, setParams] = useState<any>({
     pageSize: 20,
     pageNum: 1,
-    startTime: '',
-    endTime: '',
     type: 'size',
   });
 
@@ -45,15 +43,15 @@ const HistoryList: React.FC<any> = (props: any) => {
   };
 
   const getList = (param: any) => {
-    if (param.type === 'size') {
-      getAllHistorySize(param).then((res: any) => {
-        updateFun(res);
-      });
-    } else {
-      getAllHistory(param).then((res: any) => {
-        updateFun(res);
-      });
-    }
+    // if (param.type === 'size') {
+    //   getAllHistorySize(param).then((res: any) => {
+    //     updateFun(res);
+    //   });
+    // } else {
+    getAllHistory(param).then((res: any) => {
+      updateFun(res);
+    });
+    // }
   };
   useEffect(() => {
     getList(params);
@@ -69,22 +67,24 @@ const HistoryList: React.FC<any> = (props: any) => {
       render: (text: any, record: any, index: number) => index + 1,
     },
     {
-      key: 'materialCode',
-      dataIndex: 'materialCode',
-      title: '物料号',
+      key: 'colName',
+      dataIndex: 'colName',
+      title: '名称',
       width: 150,
       align: 'center',
       render: (text: any, record: any) => (
         <TooltipDiv
           title={text}
           placement="top"
-        // onClick={() => {
-        //   history.push({ pathname: `/history/detail`, state: record });
-        // }}
         >
           {text}
         </TooltipDiv>
       ),
+    },
+    {
+      key: 'materialCode',
+      dataIndex: 'materialCode',
+      title: '物料号',
     },
     {
       key: 'deviceCode',
@@ -102,8 +102,8 @@ const HistoryList: React.FC<any> = (props: any) => {
       ),
     },
     {
-      key: 'captureTime',
-      dataIndex: 'captureTime',
+      key: 'loLimit',
+      dataIndex: 'loLimit',
       title: '检测时间',
       align: 'center',
       // render: (text: any, record: any, index: number) => {
@@ -167,8 +167,8 @@ const HistoryList: React.FC<any> = (props: any) => {
             onFinish={(values) => {
               const { timeRange, ...rest } = values;
               const result = Object.assign({}, params, rest, !!timeRange ? {
-                captureBeginTime: timeRange[0].format('YYYY-MM-DD HH:mm:ss'),
-                captureEndTime: timeRange[1].format('YYYY-MM-DD HH:mm:ss'),
+                loLimit: timeRange[0].format('YYYY-MM-DD HH:mm:ss'),
+                upLimit: timeRange[1].format('YYYY-MM-DD HH:mm:ss'),
               } : {});
               getList(result);
               setParams(result);
@@ -184,7 +184,7 @@ const HistoryList: React.FC<any> = (props: any) => {
                   { label: '缺陷', value: 'defect' }
                 ]} style={{ width: 200 }} />
               </Form.Item>
-              <Form.Item label="物料号" name="materialCode">
+              <Form.Item label="名称" name="colName">
                 <Input />
               </Form.Item>
               <Button type="primary" htmlType="submit">
