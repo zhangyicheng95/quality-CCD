@@ -148,54 +148,79 @@ const Home: React.FC<any> = (props: any) => {
   // 基础组件
   const gridList = useMemo(() => ([
     <div key={'slider-1'}>
-      <div className="btn-box background-ubv">
-        <div className={`common-card-title-box flex-box drag-btn`}>
-          <div className="flex-box common-card-title">
-            当前状态：
-            {
-              isVision ?
-                <Tooltip title={'服务已连接'} placement={'bottom'}>
-                  <Badge status="processing" className="status-icon" />
-                </Tooltip>
-                :
-                (started ? (
-                  taskDataConnect ? (
+      <div className="btn-box drag-item-content-box background-ubv">
+        {
+          (ifCanEdit || paramData?.contentData?.contentHeader?.['slider-1']) ?
+            <div className={`common-card-title-box flex-box drag-btn`}>
+              <div className="flex-box common-card-title">
+                当前状态：
+                {
+                  isVision ?
                     <Tooltip title={'服务已连接'} placement={'bottom'}>
                       <Badge status="processing" className="status-icon" />
                     </Tooltip>
-                  ) : (
-                    <Tooltip title={'socket未连接'} placement={'bottom'}>
-                      <Badge status="error" className="status-icon" />
-                    </Tooltip>
-                  )
-                ) : loading ? (
-                  <Tooltip title={'启动中'} placement={'bottom'}>
-                    <LoadingOutlined style={{ fontSize: 15 }} />
-                  </Tooltip>
-                ) : (
-                  <Tooltip title={'未启动'} placement={'bottom'}>
-                    <Badge status="default" className="status-icon" />
-                  </Tooltip>
-                ))
-            }
-          </div>
-          {
-            ifCanEdit ?
-              <div className="flex-box drag-item-btn-box">
-                <div
-                  className='common-btn'
-                  onClick={() => {
-                    setFieldsValue({ des_column: homeSettingData?.['slider-1']?.des_column || 1 });
-                    setHomeSettingVisible('slider-1');
-                  }}
-                >
-                  编辑
-                </div>
+                    :
+                    (started ? (
+                      taskDataConnect ? (
+                        <Tooltip title={'服务已连接'} placement={'bottom'}>
+                          <Badge status="processing" className="status-icon" />
+                        </Tooltip>
+                      ) : (
+                        <Tooltip title={'socket未连接'} placement={'bottom'}>
+                          <Badge status="error" className="status-icon" />
+                        </Tooltip>
+                      )
+                    ) : loading ? (
+                      <Tooltip title={'启动中'} placement={'bottom'}>
+                        <LoadingOutlined style={{ fontSize: 15 }} />
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title={'未启动'} placement={'bottom'}>
+                        <Badge status="default" className="status-icon" />
+                      </Tooltip>
+                    ))
+                }
               </div>
-              : null
-          }
-        </div>
-        <div className={`btn-box-bottom flex-box`}>
+              {
+                ifCanEdit ?
+                  <div className="flex-box drag-item-btn-box">
+                    <Switch
+                      size="small"
+                      checkedChildren="显示头"
+                      unCheckedChildren="隐藏头"
+                      defaultChecked={paramData?.contentData?.contentHeader?.['slider-1']}
+                      onChange={(e) => {
+                        setParamData((prev: any) => {
+                          return Object.assign({}, prev, {
+                            contentData: Object.assign({}, prev?.contentData, {
+                              contentHeader: e ?
+                                Object.assign({}, prev?.contentData?.contentHeader, { ['slider-1']: e })
+                                :
+                                _.omit(prev?.contentData?.contentHeader, 'slider-1')
+                            })
+                          })
+                        });
+                      }}
+                    />
+                    <div
+                      className='common-btn'
+                      onClick={() => {
+                        setFieldsValue({ des_column: homeSettingData?.['slider-1']?.des_column || 1 });
+                        setHomeSettingVisible('slider-1');
+                      }}
+                    >
+                      编辑
+                    </div>
+                  </div>
+                  : null
+              }
+            </div>
+            : null
+        }
+        <div className={`btn-box-bottom flex-box`} style={{
+          ...(ifCanEdit || paramData?.contentData?.contentHeader?.['slider-1']) ?
+            { height: 'calc(100% - 28px)' } : { height: '100%' }
+        }}>
           {
             ifCanEdit ?
               <Fragment>
@@ -1883,6 +1908,32 @@ const Home: React.FC<any> = (props: any) => {
         }
       </div>
       <div className="flex-box home-footer">
+        {
+          isVision ?
+            <Tooltip title={'服务已连接'} placement={'bottom'}>
+              <Badge status="processing" className="status-icon" />
+            </Tooltip>
+            :
+            (started ? (
+              taskDataConnect ? (
+                <Tooltip title={'服务已连接'} placement={'bottom'}>
+                  <Badge status="processing" className="status-icon" />
+                </Tooltip>
+              ) : (
+                <Tooltip title={'socket未连接'} placement={'bottom'}>
+                  <Badge status="error" className="status-icon" />
+                </Tooltip>
+              )
+            ) : loading ? (
+              <Tooltip title={'启动中'} placement={'bottom'}>
+                <LoadingOutlined style={{ fontSize: 15 }} />
+              </Tooltip>
+            ) : (
+              <Tooltip title={'未启动'} placement={'bottom'}>
+                <Badge status="default" className="status-icon" />
+              </Tooltip>
+            ))
+        }
         {
           useMemo(() => {
             return started ?

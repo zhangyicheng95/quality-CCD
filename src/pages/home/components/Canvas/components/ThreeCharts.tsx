@@ -52,10 +52,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -20, y: -200, z: 100 }, { x: -20, y: -200, z: 100 },], },
             { name: "9", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 200, y: -200, z: 200 }, { x: 200, y: -200, z: -200 },], }
         ];
-        [1, 2, 3, 4, 5, 6, 7, 8].forEach((i: any, index: number) => {
+        let arr = [];
+        for (let i = 1; i < 9; i++) {
+            arr.push(i);
+        }
+        arr.forEach((i: any, index: number) => {
             setTimeout(() => {
                 loadModel(`models/${i}.ply`, addType);
-            }, 3000 + index * 300);
+            }, 1000 + index * 300);
         })
     }
 
