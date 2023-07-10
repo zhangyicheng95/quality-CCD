@@ -15,15 +15,22 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
     const { yName, xName, fetchType } = data;
     const [value, setValue] = useState('');
 
-    useEffect(() => {
+    const onChange = (e: any) => {
+        const val = e?.target?.value;
+        try {
+            JSON.parse(val);
+            setValue(val);
+        } catch (e) {
+            setValue(JSON.stringify({ msg: val }));
+        }
 
-    }, [data]);
+    };
     return (
         <div
             id={`echart-${id}`}
             className={`${styles.buttonCharts} flex-box`}
         >
-            <Input placeholder='传递参数' value={value} onChange={(e) => setValue(e?.target?.value)} />
+            <Input placeholder='传递参数' onChange={(e) => onChange(e)} />
             <Button type="primary" onClick={() => {
                 try {
                     JSON.parse(value)

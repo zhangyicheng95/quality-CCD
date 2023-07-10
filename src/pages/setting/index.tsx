@@ -169,15 +169,15 @@ const Setting: React.FC<any> = (props) => {
           } else {
             message.error(res?.msg || res?.message || '接口异常');
           }
+          if (!!quality_icon) {
+            localStorage.setItem("quality_icon", quality_icon || '');
+          } else {
+            localStorage.removeItem("quality_icon");
+          }
+          localStorage.setItem("ipUrl-history", values['ipUrl-history'] || '');
+          localStorage.setItem("ipString", values['ipString'] || '');
+          window.location.reload();
         });
-        if (!!quality_icon) {
-          localStorage.setItem("quality_icon", quality_icon || '');
-        } else {
-          localStorage.removeItem("quality_icon");
-        }
-        localStorage.setItem("ipUrl-history", values['ipUrl-history'] || '');
-        localStorage.setItem("ipString", values['ipString'] || '');
-        window.location.reload();
       })
       .catch((err) => {
         const { errorFields } = err;
