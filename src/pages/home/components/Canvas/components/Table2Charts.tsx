@@ -15,7 +15,9 @@ interface Props {
 
 const Table2Charts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    let { dataValue = [], fontSize, reverse, tableSize = [] } = data;
+    let {
+        dataValue = [], fontSize, reverse, tableSize = [], interlacing
+    } = data;
     if (process.env.NODE_ENV === 'development') {
         reverse = true;
         dataValue = [
@@ -494,7 +496,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                         (dataValue || []).map((item: any, index: number) => {
                             const { value = [], color } = item;
                             return <div
-                                className="charts-body-tr"
+                                className={`charts-body-tr ${(_.isBoolean(interlacing) ? interlacing : true) ? 'charts-body-tr-interlacing' : ''}`}
                                 key={`echart-${id}-tr-${index}`}
                                 style={Object.assign(
                                     !!tableSizeSelf?.[index] ?

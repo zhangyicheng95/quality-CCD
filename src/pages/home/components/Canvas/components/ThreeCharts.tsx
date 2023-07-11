@@ -46,19 +46,21 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     let { name, value = [], addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
         addType = 'add';
-        name = "models/0.ply"; // models/pressure.json  models/tx.stl
+        name = "models/lines_0.ply"; // models/pressure.json  models/tx.stl
         value = [
             { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: -200, z: 300 }, { x: 0, y: -200, z: 300 },], },
             { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -20, y: -200, z: 100 }, { x: -20, y: -200, z: 100 },], },
             { name: "9", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 200, y: -200, z: 200 }, { x: 200, y: -200, z: -200 },], }
         ];
         let arr = [];
-        for (let i = 1; i < 9; i++) {
+        for (let i = 1; i < 48; i++) {
             arr.push(i);
         }
         arr.forEach((i: any, index: number) => {
             setTimeout(() => {
-                loadModel(`models/${i}.ply`, addType);
+                if (!!scene.current) {
+                    loadModel(`models/lines_${i}.ply`, addType);
+                }
             }, 1000 + index * 300);
         })
     }
@@ -569,16 +571,27 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             let x1 = box.min.x + mdlen / 2; // 模型中心点坐标X
             let y1 = box.min.y + mdhei / 2; // 模型中心点坐标Y
             let z1 = box.min.z + mdwid / 2; // 模型中心点坐标Z
-            const max = Math.max(mdlen, mdwid, mdhei);
-            const scale = 2;
+            const max = Math.max(...Object.values(box.max));
+            const scale = 3;
             if (addType === 'add') {
+                models?.forEach((model: any) => {
+                    model.material = new THREE.PointsMaterial({   // MeshStandardMaterial,MeshBasicMaterial,PointsMaterial
+                        color: '#808080',
+                    });
+                });
+                // if (mesh?.material) {
+                //     mesh.material.color = '#ffd700';
+                // } else if (mesh.children?.[0] && !!mesh.children[0]?.material) {
+                //     mesh.children[0].material.color = '#ffd700';
+                // }
+
                 let targetPos = camera.current.position;
-                if (max === mdlen) {
-                    targetPos = new THREE.Vector3(1.5 * box.max.x, 0, scale * max);
-                } else if (max === mdwid) {
-                    targetPos = new THREE.Vector3(0, scale * max, 1.5 * box.max.z);
-                } else if (max === mdhei) {
-                    targetPos = new THREE.Vector3(scale * max, 1.5 * box.max.y, 0);
+                if (max === box.max.x) {
+                    targetPos = new THREE.Vector3(scale * max, 0, 0);
+                } else if (max === box.max.z) {
+                    targetPos = new THREE.Vector3(0, 0, scale * max);
+                } else if (max === box.max.y) {
+                    targetPos = new THREE.Vector3(0, scale * max, 0);
                 }
                 var currentPos = camera.current.position;
                 var tween = new TWEEN.Tween(currentPos)
@@ -819,9 +832,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                          *  铜色：#b87333
                          *  钢色：#808080
                          *  铝色：#c3c3c3
+                         *  蓝色：#55fdfd
                          * */
                         material = new THREE.PointsMaterial({   // MeshStandardMaterial,MeshBasicMaterial,PointsMaterial
-                            color: '#808080'
+                            color: addType === 'add' ? "#55fdfd" : '#808080'
                         });
                     }
                     const mesh = new THREE.Points(geometry, material); // Points,Mesh

@@ -13,7 +13,10 @@ interface Props {
 
 const ImgCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id } = props;
-    let { defaultImg, dataValue = '', windowControl, setContentList, magnifier = false } = data;
+    let {
+        defaultImg, dataValue = '', windowControl, setContentList, magnifier = false,
+        comparison,
+    } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
     }
@@ -210,9 +213,13 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                     </div>
                     : null
             }
-            <div className="contrast-box flex-box" onClick={() => setImgVisible(true)}>
-                <BlockOutlined />对比
-            </div>
+            {
+                (_.isBoolean(comparison) ? comparison : true) ?
+                    <div className="contrast-box flex-box" onClick={() => setImgVisible(true)}>
+                        <BlockOutlined />对比
+                    </div>
+                    : null
+            }
 
             <Modal
                 title={<div className='flex-box image-contrast-modal-title'>

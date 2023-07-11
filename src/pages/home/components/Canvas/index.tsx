@@ -1253,8 +1253,8 @@ const Home: React.FC<any> = (props: any) => {
           backgroundColor = 'default', barColor = 'default', progressType = 'line',
           progressSize = 8, progressSteps = 5, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-          CCDName, imgs_width, imgs_height, tableSize, magnifier, operationList,
-          dataZoom, fontColor,
+          CCDName, imgs_width, imgs_height, tableSize, magnifier, comparison, operationList,
+          dataZoom, fontColor, interlacing,
           basicInfoData = [{ id: guid(), name: '', value: '' }]
         } = item;
         // const id = key?.split('$$')[0];
@@ -1415,7 +1415,7 @@ const Home: React.FC<any> = (props: any) => {
                               id={key}
                               data={{
                                 dataValue: dataValue || [],
-                                yName, xName, fontSize, reverse, tableSize
+                                yName, xName, fontSize, reverse, tableSize, interlacing
                               }}
                             />
                             :
@@ -1424,7 +1424,7 @@ const Home: React.FC<any> = (props: any) => {
                                 id={key}
                                 data={{
                                   dataValue: dataValue || [],
-                                  fontSize, reverse, tableSize
+                                  fontSize, reverse, tableSize, interlacing
                                 }}
                               />
                               :
@@ -1527,7 +1527,7 @@ const Home: React.FC<any> = (props: any) => {
                                                     data={{
                                                       defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
                                                       dataValue, windowControl,
-                                                      setContentList, magnifier
+                                                      setContentList, magnifier, comparison
                                                     }}
                                                   />
                 }
@@ -1741,8 +1741,8 @@ const Home: React.FC<any> = (props: any) => {
           fetchType, fetchParams, align, backgroundColor, barColor,
           progressType, progressSize, progressSteps, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-          CCDName, imgs_width, imgs_height, magnifier, operationList, dataZoom,
-          fontColor,
+          CCDName, imgs_width, imgs_height, magnifier, comparison = false, operationList, dataZoom,
+          fontColor, interlacing = false
         } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
@@ -1769,8 +1769,8 @@ const Home: React.FC<any> = (props: any) => {
             fetchType, fetchParams, align, backgroundColor, barColor,
             progressType, progressSize, progressSteps, windowControl,
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-            CCDName, imgs_width, imgs_height, magnifier, operationList, dataZoom,
-            fontColor,
+            CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
+            fontColor, interlacing
           }, ['description'].includes(windowType) ? { basicInfoData } : {}));
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1785,8 +1785,8 @@ const Home: React.FC<any> = (props: any) => {
                 fetchType, fetchParams, align, backgroundColor, barColor,
                 progressType, progressSize, progressSteps, windowControl,
                 des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-                CCDName, imgs_width, imgs_height, magnifier, operationList, dataZoom,
-                fontColor,
+                CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
+                fontColor, interlacing
               }, ['description'].includes(windowType) ? { basicInfoData } : {});
             };
             return item;
@@ -1825,7 +1825,8 @@ const Home: React.FC<any> = (props: any) => {
       direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined,
       align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line',
       progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: undefined,
-      CCDName: undefined, magnifier: false, operationList: [], dataZoom: 0, fontColor: undefined
+      CCDName: undefined, magnifier: false, comparison: false, operationList: [], dataZoom: 0,
+      fontColor: undefined, interlacing: false
     });
     setWindowType('img');
     setAddWindowVisible(false);
@@ -2105,7 +2106,7 @@ const Home: React.FC<any> = (props: any) => {
                 style={{ width: '100%' }}
                 options={windowTypeList}
                 onChange={val => {
-                  const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === getFieldValue('value')[0])?.[0];
+                  const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === getFieldValue('value')?.[0])?.[0];
                   if (!!res) {
                     setFieldsValue({ operationList: [] });
                     const { config = {} } = res;
@@ -2208,6 +2209,13 @@ const Home: React.FC<any> = (props: any) => {
                   <Form.Item
                     name="magnifier"
                     label="开启放大镜"
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                  <Form.Item
+                    name="comparison"
+                    label="开启对比图"
                     valuePropName="checked"
                   >
                     <Switch />
@@ -2454,6 +2462,13 @@ const Home: React.FC<any> = (props: any) => {
                         }
                       ]}
                     />
+                  </Form.Item>
+                  <Form.Item
+                    name="interlacing"
+                    label="隔行换色"
+                    valuePropName="checked"
+                  >
+                    <Switch />
                   </Form.Item>
                 </Fragment>
                 : null
@@ -2731,7 +2746,7 @@ const Home: React.FC<any> = (props: any) => {
             <Form.Item
               name={'fontSize'}
               label="字号"
-              // initialValue={24}
+              initialValue={24}
               rules={[{ required: true, message: '字号' }]}
             >
               <InputNumber

@@ -13,7 +13,9 @@ interface Props {
 
 const TableCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    let { dataValue = [], yName, xName, fontSize, reverse } = data;
+    let {
+        dataValue = [], yName, xName, fontSize, reverse, interlacing
+    } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = [
             { "name": "序号", "value": [{ "value": "value1", "color": "red" }, { "value": "value2", "color": "red" }, { "value": "value1", "color": "red" }], "color": "red" },
@@ -30,6 +32,7 @@ const TableCharts: React.FC<Props> = (props: any) => {
             return;
         }
     }, [dataValue]);
+
     return (
         <div id={`echart-${id}`} className={styles.tableCharts} style={{ fontSize }}>
             <div className="charts-header-box flex-box">
@@ -49,7 +52,7 @@ const TableCharts: React.FC<Props> = (props: any) => {
                                 // @ts-ignore
                                 const { value, color } = item?.value[0];
                                 const text = _.isArray(value) ? value.join(',') : value;
-                                return <div className="charts-body-tr flex-box" key={`echart-${id}-tr-${index}`}>
+                                return <div className={`charts-body-tr flex-box ${(_.isBoolean(interlacing) ? interlacing : true) ? 'charts-body-tr-interlacing' : ''}`} key={`echart-${id}-tr-${index}`}>
                                     <div className="charts-body-td flex-box-center">{name}</div>
                                     <TooltipDiv
                                         className="charts-body-td flex-box-center"
@@ -61,7 +64,7 @@ const TableCharts: React.FC<Props> = (props: any) => {
                                 </div>
                             }
                             const text = _.isArray(value) ? value.join(',') : value;
-                            return <div className="charts-body-tr flex-box" key={`echart-${id}-tr-${index}`}>
+                            return <div className={`charts-body-tr flex-box ${(_.isBoolean(interlacing) ? interlacing : true) ? 'charts-body-tr-interlacing' : ''}`} key={`echart-${id}-tr-${index}`}>
                                 <div className="charts-body-td flex-box-center">{name}</div>
                                 <TooltipDiv
                                     className="charts-body-td flex-box-center"
