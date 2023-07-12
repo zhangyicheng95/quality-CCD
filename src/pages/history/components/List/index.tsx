@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styles from './index.module.less';
-import { message, Form, Button, DatePicker, Segmented, Select, Input } from 'antd';
+import { message, Form, Button, DatePicker, Select, Input } from 'antd';
 import _ from 'lodash';
 import { guid } from '@/utils/utils';
-import moment from 'moment';
 import PrimaryTitle from '@/components/PrimaryTitle';
-import { getAllHistory, getAllHistorySize } from '@/services/api';
+import { getAllHistory } from '@/services/api';
 import BasicTable from '@/components/BasicTable';
-import { useHistory } from 'react-router';
 import TooltipDiv from '@/components/TooltipDiv';
 
 const LABEL_RESULT = {
@@ -23,7 +21,6 @@ const CLASS_RESULT = {
 
 const RangePicker: any = DatePicker.RangePicker;
 const HistoryList: React.FC<any> = (props: any) => {
-  const history = useHistory();
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
   const [params, setParams] = useState<any>({
@@ -34,7 +31,7 @@ const HistoryList: React.FC<any> = (props: any) => {
 
   const updateFun = (res: any) => {
     if (res?.code === 'SUCCESS' || res?.code === 200) {
-      const { list, pageNum, pageSize, total, } = res.result;
+      const { list, pageNum, pageSize, total, } = res.data;
       setData(list);
       setParams((prev: any) => Object.assign({}, prev, { pageNum, pageSize, total }));
     } else {
@@ -67,8 +64,8 @@ const HistoryList: React.FC<any> = (props: any) => {
       render: (text: any, record: any, index: number) => index + 1,
     },
     {
-      key: 'colName',
-      dataIndex: 'colName',
+      key: 'name',
+      dataIndex: 'name',
       title: '名称',
       width: 150,
       align: 'center',
@@ -102,8 +99,8 @@ const HistoryList: React.FC<any> = (props: any) => {
       ),
     },
     {
-      key: 'loLimit',
-      dataIndex: 'loLimit',
+      key: 'captureTime',
+      dataIndex: 'captureTime',
       title: '检测时间',
       align: 'center',
       // render: (text: any, record: any, index: number) => {

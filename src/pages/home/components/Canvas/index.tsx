@@ -1578,6 +1578,14 @@ const Home: React.FC<any> = (props: any) => {
           }, 1000);
         }
       });
+    } else {
+      if (index + 1 === list?.length) {
+        setLoading(false);
+      } else {
+        setTimeout(() => {
+          startProjects(list[index + 1], list, index + 1, projectStatus);
+        }, 1000);
+      }
     }
   };
   // 批量停止任务
