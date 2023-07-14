@@ -15,15 +15,18 @@ interface Props {
 
 const PieCharts: React.FC<Props> = (props: any) => {
     let myChart: any = null;
-    let { data = [], id, legend, dispatch, setMyChartVisible } = props;
+    let { data = {}, id, legend, dispatch, setMyChartVisible } = props;
+    let {
+        dataValue = [], fontSize,
+    } = data;
     if (process.env.NODE_ENV === 'development') {
-        data = [{ "name": "OK", value: "1024", "color": "black" }, { "name": "NG类型1", value: "888", }, { "name": "NG类型2", value: "1024", "color": "blue" },];
+        dataValue = [{ "name": "OK", value: "1024", "color": "black" }, { "name": "NG类型1", value: "888", }, { "name": "NG类型2", value: "1024", "color": "blue" },];
     }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
 
     useEffect(() => {
-        if (!_.isArray(data)) {
+        if (!_.isArray(dataValue)) {
             message.error('数据格式不正确，请检查');
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
@@ -61,15 +64,15 @@ const PieCharts: React.FC<Props> = (props: any) => {
                     // }
                     label: {
                         alignTo: 'edge',
-                        fontSize: data?.length > 4 ? 9 : 11,
+                        fontSize: fontSize ? fontSize : dataValue?.length > 4 ? 9 : 11,
                         formatter: '{name|{b}}\n{time|{d} %}',
                         // textBorderWidth: 3,
                         minMargin: 5,
                         edgeDistance: 10,
-                        lineHeight: 16,
+                        lineHeight: fontSize ? fontSize : 16,
                         rich: {
                             time: {
-                                fontSize: 10,
+                                fontSize: fontSize ? (fontSize - 2) : 10,
                                 color: '#999'
                             }
                         }
@@ -90,7 +93,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
                             labelLinePoints: points
                         };
                     },
-                    data: (data || []).map((item: any) => {
+                    data: (dataValue || []).map((item: any) => {
                         const { name, value, color } = item;
                         return {
                             name,
@@ -136,7 +139,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
             }, false);
             myChart && myChart.dispose();
         }
-    }, [data, legend]);
+    }, [dataValue, fontSize, legend]);
 
     return (
         <Fragment>

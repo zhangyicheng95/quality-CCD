@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
-import { Button, Input, message, Popover, Select, Tooltip } from 'antd';
+import { Button, Input, InputNumber, message, Popover, Select, Switch, Tooltip } from 'antd';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Lut } from "three/examples/jsm/math/Lut.js";
@@ -45,30 +45,33 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const { dataValue = {}, fontSize } = data;
     let { name, value = [], addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
-        addType = 'add';
-        name = "models/lines_0.ply"; // models/pressure.json  models/tx.stl
+        // addType = 'add';
+        name = "models/output.ply"; // models/pressure.json  models/tx.stl
         value = [
             { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: -200, z: 300 }, { x: 0, y: -200, z: 300 },], },
             { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -20, y: -200, z: 100 }, { x: -20, y: -200, z: 100 },], },
             { name: "9", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 200, y: -200, z: 200 }, { x: 200, y: -200, z: -200 },], }
         ];
         let arr = [];
-        for (let i = 1; i < 48; i++) {
-            arr.push(i);
-        }
-        arr.forEach((i: any, index: number) => {
-            setTimeout(() => {
-                if (!!scene.current) {
-                    loadModel(`models/lines_${i}.ply`, addType);
-                }
-            }, 1000 + index * 300);
-        })
+        // for (let i = 1; i < 48; i++) {
+        //     arr.push(i);
+        // }
+        // arr.forEach((i: any, index: number) => {
+        //     setTimeout(() => {
+        //         if (!!scene.current) {
+        //             loadModel(`models/lines_${i}.ply`, addType);
+        //         }
+        //     }, 1000 + index * 300);
+        // })
     }
 
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const dom = useRef<any>();
+    const cameraRef = useRef<any>();
     const [selectedBtn, setSelectedBtn] = useState(['']);
+    const [cameraSwitchTime, setCameraSwitchTime] = useState(2);
+    const [cameraSwitch, setCameraSwitch] = useState(false);
 
     const theme = useMemo(() => {
         return params?.contentData?.theme || 'realDark';
@@ -110,9 +113,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         localStorage.setItem("scale", JSON.stringify({ value: "1", unit: "m" }));
     };
     const clearCanvas = () => {
-
+        console.log("清理缓存");
         cancelAnimationFrame(animateId);
-        dom?.current?.removeChild(stats.current.dom);
+        stats?.current?.dom && dom?.current?.removeChild(stats?.current?.dom);
         scene?.current?.traverse((child: any) => {
             if (child?.material) {
                 child?.material?.dispose?.();
@@ -122,7 +125,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             }
             child = null;
         });
-
+        (Object.values(measurementLabels) || [])?.forEach((label: any) => {
+            scene?.current?.remove?.(label);
+        });
         // 场景中的参数释放清理或者置空等
         if (!!dom.current && dom.current.innerHTML) {
             dom.current.innerHTML = `
@@ -133,9 +138,13 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 <canvas id="demoBox" />
             `;
         }
-        renderer.current.domElement.innerHTML = '';
+        if (!!renderer?.current?.domElement) {
+            renderer.current.domElement.innerHTML = '';
+            renderer.current.domElement = undefined;
+        }
         // renderer.current.forceContextLoss();
-        renderer.current.dispose();
+        renderer?.current?.dispose?.();
+        renderer.current = undefined;
         // dom.current.removeChild(renderer.current.domElement);
         // dom.current.removeChild(labelRenderer.domElement);
         scene.current?.clear();
@@ -143,8 +152,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         stats.current = undefined;
         camera.current = undefined;
         controls.current = undefined;
-        renderer.current.domElement = undefined;
-        renderer.current = undefined;
         setSelectedBtn([]);
     };
     // 初始化场景数据，渲染点云
@@ -152,8 +159,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         if (!name) return;
         // addType为add时，代表增量渲染，不清除其他数据
         if (!!scene.current && addType === 'add') {
-            loadModel(name, addType);
+            loadModel(name, value, addType);
             return;
+        } else {
+
         }
         // 外层盒子
         const box: any = dom?.current;
@@ -236,7 +245,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         controls.current = new OrbitControls(camera.current, renderer.current.domElement);
         controls.current.enableDamping = true;
         // 开始渲染,加载url
-        loadModel(name);
+        loadModel(name, value);
         // 取消标注的公共方法
         function cancelMeasurement() {
             ctrlDown = false;
@@ -282,7 +291,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         bzBtn02?.addEventListener("click", bzBtnFun02);
         // 坐标轴
         function bzBtnFun03() {
-            const axis: any = scene.current.getObjectByName("axis");
+            const axis: any = scene?.current?.getObjectByName?.("axis");
             setSelectedBtn((prev: any) => {
                 if ((prev || []).includes('bzBtn03')) {
                     axis.visible = false;
@@ -367,6 +376,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         };
         window.addEventListener("keyup", onKeyUp);
         function onMouseDown(event: any) {
+            setCameraSwitch(false);
             if (ctrlDown) {
                 raycaster.setFromCamera(mouse, camera.current);
                 intersects = raycaster.intersectObjects(pickableObjects, false);
@@ -424,7 +434,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
 
                 // 显示边框
                 const models = getAllModelsFromScene(scene.current);
-                const axis: any = scene.current.getObjectByName("axis");
+                const axis: any = scene?.current?.getObjectByName?.("axis");
                 models.forEach((mesh: any) => {
                     (mesh.children || []).filter((i: any) => i.type === "BoxHelper").forEach((child: any) => {
                         child.visible = true;
@@ -479,7 +489,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         function onMouseUp() {
             if (!renderer.current) return;
             const models = getAllModelsFromScene(scene.current);
-            const axis: any = scene.current.getObjectByName("axis");
+            const axis: any = scene?.current?.getObjectByName?.("axis");
             setSelectedBtn((prev: any) => {
                 if (!(prev || []).includes('bzBtn02')) {
                     // 隐藏边框
@@ -513,17 +523,22 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         animate();
 
         return () => {
-            bzBtn01.removeEventListener('click', bzBtnFun01);
-            bzBtn02.removeEventListener('click', bzBtnFun02);
-            bzBtn03.removeEventListener('click', bzBtnFun03);
-            bzBtn04.removeEventListener('click', bzBtnFun04);
-            bzBtn05.removeEventListener("click", bzBtnFun05);
-            renderer.current.domElement.removeEventListener("pointerdown", onMouseDown, false);
-            renderer.current.domElement.removeEventListener("pointerup", onMouseUp, false);
-            renderer.current.domElement.removeEventListener("mousemove", onDocumentMouseMove, false);
-            window.removeEventListener("keyup", onKeyUp);
-
-            clearCanvas();
+            bzBtn01?.removeEventListener?.('click', bzBtnFun01);
+            bzBtn02?.removeEventListener?.('click', bzBtnFun02);
+            bzBtn03?.removeEventListener?.('click', bzBtnFun03);
+            bzBtn04?.removeEventListener?.('click', bzBtnFun04);
+            bzBtn05?.removeEventListener?.("click", bzBtnFun05);
+            renderer?.current?.domElement?.removeEventListener?.("pointerdown", onMouseDown, false);
+            renderer?.current?.domElement?.removeEventListener?.("pointerup", onMouseUp, false);
+            renderer?.current?.domElement?.removeEventListener?.("mousemove", onDocumentMouseMove, false);
+            window?.removeEventListener?.("keyup", onKeyUp);
+            setCameraSwitch && setCameraSwitch?.(false);
+            if (cameraRef?.current) {
+                clearInterval(cameraRef?.current);
+            };
+            if (addType !== 'add') {
+                clearCanvas();
+            }
         };
     }, [theme, name, addType]);
     // 获取场景中的全部模型对象
@@ -539,7 +554,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         return models;
     }
     // 初始化场景之后，渲染点云
-    const loadModel = (name: string, addType?: string) => {
+    const loadModel = (name: string, value: any, addType?: string) => {
         console.log('加载的url:', name);
         // 蒙层
         const maskBox: any = document?.querySelector(".three-mask");
@@ -604,8 +619,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 tween.start();
             } else {
                 mesh.position.set(-x1, -y1, -z1); // 将模型进行偏移
-                camera.current.position.set(scale * max, scale * max, scale * max);
-                effectMeasureLine();
+                if (max === box.max.x) {
+                    camera.current.position.set(0, mdhei / 2, 1.6 * max);
+                } else if (max === box.max.y) {
+                    camera.current.position.set(0, 0, 1.2 * max);
+                } else {
+                    camera.current.position.set(0, -1.2 * max, 0);
+                }
+                effectMeasureLine(mesh, value);
             }
             // 把点云放到可控数组里，用于画线标注
             mesh.frustumCulled = false;
@@ -625,6 +646,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             });
             maskBox.style.display = "none";
             scene.current.add(mesh);
+            setCameraSwitch(true);
         };
         function processFun(xhr: any) {
             if (addType === 'add') return;
@@ -657,9 +679,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             console.log('点云数据有问题:', error);
         };
         // 加载卡片数据
-        function effectMeasureLine() {
-            const mesh: any = scene.current.getObjectByName("tx-0");
-            const models = getAllModelsFromScene(scene.current);
+        function effectMeasureLine(mesh: any, value: any) {
+            // const models = getAllModelsFromScene(scene.current);
             if (!!scene.current && !!value?.length && !!mesh) {
                 (value || []).forEach((item: any, index: number) => {
                     let { name, standardValue, measureValue, offsetValue, position = [] } = item;
@@ -763,15 +784,15 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     const measurementDiv = document.createElement("div");
                     measurementDiv.className = "label";
                     measurementDiv.innerHTML = `
-                        <div>
-                            <div class="item">${name}</div>
-                            <div class="item" style="text-align:center;">${standardValue} ± ${offsetValue}</div>
-                            <div class="flex-box item"><div class="key">标准值</div><div class="value">${standardValue}</div></div>
-                            <div class="flex-box item"><div class="key">实测值</div><div class="value">${measureValue}</div></div>
-                            <div class="flex-box item"><div class="key">偏差值</div><div class="value">${offsetValue}</div></div>
-                        </div>
-                        <div style="display: none;">${measureValue}</div>
-                    `;
+                    <div>
+                        <div class="item">${name}</div>
+                        <div class="item" style="text-align:center;">${standardValue} ± ${offsetValue}</div>
+                        <div class="flex-box item"><div class="key">标准值</div><div class="value">${standardValue}</div></div>
+                        <div class="flex-box item"><div class="key">实测值</div><div class="value">${measureValue}</div></div>
+                        <div class="flex-box item"><div class="key">偏差值</div><div class="value">${offsetValue}</div></div>
+                    </div>
+                    <div style="display: none;">${measureValue}</div>
+                `;
                     const measurementLabel: any = new CSS2DObject(measurementDiv);
                     measurementLabel.position.copy({
                         x: (position[0].x + position[1].x) / 2,
@@ -965,18 +986,81 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         const max = Math.max(length, width, height);
         return { length, width, height, max };
     };
+    // 不同视角点击函数
+    const animationClick = (targetPos: any) => {
+        // 先停止自动旋转
+        setCameraSwitch(false);
+        // 然后旋转视角
+        animateCamera(targetPos);
+    };
     // 动态旋转视角
     const animateCamera = (targetPos: any) => {
-        var currentPos = camera.current.position;
-        var tween = new TWEEN.Tween(currentPos)
-            .to(targetPos, 1000)
-            .easing(TWEEN.Easing.Quadratic.Out)
-            .onUpdate(function () {
-                camera.current.position.copy(currentPos);
-                camera.current.lookAt(0, 0, 0);
-            });
-        tween.start();
+        if (!!camera?.current && camera?.current?.position) {
+            var currentPos = camera.current.position;
+            var tween = new TWEEN.Tween(currentPos)
+                .to(targetPos, 1000)
+                .easing(TWEEN.Easing.Quadratic.Out)
+                .onUpdate(function () {
+                    camera?.current?.position?.copy?.(currentPos);
+                    camera?.current?.lookAt?.(0, 0, 0);
+                });
+            tween.start();
+        }
     };
+    // 自动旋转函数
+    const cameraRotate = (list: any, index: number) => {
+        if (cameraRef?.current) {
+            clearInterval(cameraRef?.current);
+        };
+
+        if (index + 1 > list.length) {
+            return;
+        }
+        animateCamera(list[index]);
+
+        cameraRef.current = setTimeout(() => {
+            cameraRotate(list, ((index + 1 === list.length) ? 0 : index + 1))
+        }, cameraSwitchTime * 1000);
+    };
+    useEffect(() => {
+        const mesh: any = scene?.current?.getObjectByName?.("tx-0");
+        if (!scene.current || !mesh) {
+            return;
+        }
+
+        const { length, width, height, max } = getSize();
+        var cameraList = [
+            new THREE.Vector3(max * -cameraScale, 0, 0),
+            new THREE.Vector3(0, 0, max * cameraScale),
+
+            new THREE.Vector3(0, max * cameraScale, 0),
+            new THREE.Vector3(0, 0, max * cameraScale),
+            new THREE.Vector3(0, max * -cameraScale, 0),
+
+            new THREE.Vector3(max * cameraScale, 0, 0),
+            new THREE.Vector3(0, 0, max * -cameraScale),
+
+            new THREE.Vector3(width, height, length),
+        ];
+        if (cameraSwitch) {
+            if (cameraRef?.current) {
+                clearInterval(cameraRef?.current);
+            }
+            cameraRotate(cameraList, 0)
+        } else {
+            if (cameraRef?.current) {
+                clearInterval(cameraRef?.current);
+            }
+            cameraRotate(cameraList, cameraList.length);
+        }
+
+        return () => {
+            if (cameraRef?.current) {
+                clearInterval(cameraRef?.current);
+            }
+            cameraRotate(cameraList, cameraList.length);
+        }
+    }, [scene.current, cameraSwitch, cameraSwitchTime]);
 
     return (
         <div
@@ -1088,45 +1172,62 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             {/* <img src={spriteIcon} alt="sprite" className='sprite-icon' /> */}
             <div className='camera-box'>
                 <div className="camera-box-pointer">
+                    <div className="camera-box-pointer-head flex-box-justify-between">
+                        <InputNumber
+                            size='small'
+                            addonAfter="秒"
+                            value={cameraSwitchTime}
+                            max={100}
+                            min={1}
+                            onChange={(val: any) => {
+                                setCameraSwitchTime(val);
+                            }}
+                        />
+                        <Switch
+                            className='cameraIcon-switch'
+                            checked={cameraSwitch}
+                            onChange={(e) => setCameraSwitch(e)}
+                        />
+                    </div>
                     <div className="camera-box-pointer-top flex-box-justify-between">
                         <img src={rectTopIcon} alt="rect" className='cameraIcon' onClick={() => {
                             const { max } = getSize();
                             var targetPos = new THREE.Vector3(0, max * cameraScale, 0);
-                            animateCamera(targetPos);
+                            animationClick(targetPos);
                         }} />
                         <img src={rectAllIcon} alt="rect" className='cameraIcon' onClick={() => {
                             const { length, width, height } = getSize();
                             var targetPos = new THREE.Vector3(width, height, length);
-                            animateCamera(targetPos);
+                            animationClick(targetPos);
                         }} />
                     </div>
                     <div className="camera-box-pointer-center flex-box-justify-between">
                         <img src={rectLeftIcon} alt="rect" className='cameraIcon' onClick={() => {
                             const { max } = getSize();
                             var targetPos = new THREE.Vector3(max * -cameraScale, 0, 0);
-                            animateCamera(targetPos);
+                            animationClick(targetPos);
                         }} />
                         <img src={rectFrontIcon} alt="rect" className='cameraIcon' onClick={() => {
                             const { max } = getSize();
                             var targetPos = new THREE.Vector3(0, 0, max * cameraScale);
-                            animateCamera(targetPos);
+                            animationClick(targetPos);
                         }} />
                         <img src={rectRightIcon} alt="rect" className='cameraIcon' onClick={() => {
                             const { max } = getSize();
                             var targetPos = new THREE.Vector3(max * cameraScale, 0, 0);
-                            animateCamera(targetPos);
+                            animationClick(targetPos);
                         }} />
                         <img src={rectBackIcon} alt="rect" className='cameraIcon' onClick={() => {
                             const { max } = getSize();
                             var targetPos = new THREE.Vector3(0, 0, max * -cameraScale);
-                            animateCamera(targetPos);
+                            animationClick(targetPos);
                         }} />
                     </div>
                     <div className="camera-box-pointer-bottom flex-box-justify-between">
                         <img src={rectBottomIcon} alt="rect" className='cameraIcon' onClick={() => {
                             const { max } = getSize();
                             var targetPos = new THREE.Vector3(0, max * -cameraScale, 0);
-                            animateCamera(targetPos);
+                            animationClick(targetPos);
                         }} />
                     </div>
                 </div>

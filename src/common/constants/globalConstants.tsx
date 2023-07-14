@@ -48,7 +48,7 @@ export const windowTypeList: any = [
   },
   {
     value: 'three',
-    label: '3D组件',
+    label: '3D窗口',
   },
   {
     value: 'alert',
@@ -68,19 +68,19 @@ export const windowTypeList: any = [
   },
   {
     value: 'description',
-    label: '描述组件',
+    label: '描述窗口',
   },
   {
     value: 'operation',
-    label: '功能操作组件',
+    label: '功能操作窗口',
   },
   {
     value: 'operation2',
-    label: '功能操作组件2',
+    label: '动态操作窗口',
   },
   {
     value: 'statistic',
-    label: '统计数据'
+    label: '统计数据窗口'
   }
 ];
 export const logColors = {

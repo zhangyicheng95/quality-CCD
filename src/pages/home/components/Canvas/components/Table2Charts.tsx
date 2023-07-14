@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as _ from 'lodash';
 import styles from '../index.module.less';
 import TooltipDiv from '@/components/TooltipDiv';
@@ -383,8 +383,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
             },
         ];
     }
-    const { initialState } = useModel<any>('@@initialState');
+    const { initialState, setInitialState } = useModel<any>('@@initialState');
     const { params } = initialState;
+    const domRef = useRef<any>(null);
     const [tableSizeSelf, setTableSizeSelf] = useState(tableSize);
 
     useEffect(() => {
@@ -401,15 +402,15 @@ const Table2Charts: React.FC<Props> = (props: any) => {
         const { clientWidth } = parent;
         let width = 0;
 
-        document.onmousemove = (e: any) => {
+        domRef.current.onmousemove = (e: any) => {
             width = Math.abs(clientWidth - (ev.pageX - e.pageX));
             parent.style.width = width + 'px';
             parent.style.minWidth = width + 'px';
         }
-        document.onmouseup = (e: any) => {
+        domRef.current.onmouseup = (e: any) => {
             const chartsBox: any = document.getElementById(`echart-${id}`);
             const { clientWidth } = chartsBox;
-            const tableSizes = !_.isArray(tableSize) ? _.cloneDeep(tableSize) : [];
+            const tableSizes = _.isArray(tableSize) ? _.cloneDeep(tableSize) : [];
 
             if (!!tableSizes?.length) {
                 tableSizes[index] = (width / clientWidth * 100) + '%';
@@ -418,42 +419,56 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                     if (ind === index) {
                         tableSizes[index] = (width / clientWidth * 100) + '%';
                     } else {
-                        tableSizes[ind] = 0;
+                        tableSizes[ind] = !!tableSizes[ind] ? tableSizes[ind] : 0;
                     }
                 });
             }
-            setTableSizeSelf(() => tableSizes.concat(guid()));
+            setTableSizeSelf(tableSizes);
+
+            const updateParam = {
+                ...params,
+                contentData: {
+                    ...params?.contentData,
+                    content: params?.contentData?.content.map((item: any) => {
+                        if (item.id === id) {
+                            return Object.assign({}, item, {
+                                tableSize: tableSizes
+                            });
+                        }
+                        return item;
+                    })
+                }
+            };
+            setInitialState((preInitialState: any) => ({
+                ...preInitialState,
+                params: updateParam
+            }));
             updateParams({
                 id: params.id,
-                data: {
-                    ...params,
-                    contentData: {
-                        ...params?.contentData,
-                        content: params?.contentData?.content.map((item: any) => {
-                            if (item.id === id) {
-                                return Object.assign({}, item, {
-                                    tableSize: tableSizes
-                                });
-                            }
-                            return item;
-                        })
-                    }
-                },
+                data: updateParam,
             }).then((res: any) => {
                 if (res && res.code === 'SUCCESS') {
-
+                    // setInitialState((preInitialState: any) => ({
+                    //     ...preInitialState,
+                    //     params: res?.data
+                    // }));
                 } else {
                     message.error(res?.msg || res?.message || '接口异常');
                 }
             });
-            document.onmousemove = (e: any) => {
+            domRef.current.onmousemove = (e: any) => {
                 // 释放鼠标
             }
         }
     };
 
     return (
-        <div id={`echart-${id}`} className={styles.table2Charts} style={{ fontSize }}>
+        <div
+            id={`echart-${id}`}
+            className={styles.table2Charts}
+            ref={domRef}
+            style={{ fontSize }}
+        >
             <div className="charts-header-box flex-box">
                 {
                     _.isArray(dataValue) && (dataValue || []).map((item: any, index: number) => {
@@ -496,7 +511,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                         (dataValue || []).map((item: any, index: number) => {
                             const { value = [], color } = item;
                             return <div
-                                className={`charts-body-tr ${(_.isBoolean(interlacing) ? interlacing : true) ? 'charts-body-tr-interlacing' : ''}`}
+                                className={`charts-body-tr`}
                                 key={`echart-${id}-tr-${index}`}
                                 style={Object.assign(
                                     !!tableSizeSelf?.[index] ?
@@ -515,7 +530,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                             // @ts-ignore
                                             const { value, color } = val;
                                             return <TooltipDiv
-                                                className="charts-body-td"
+                                                className={`charts-body-td ${(_.isBoolean(interlacing) ? interlacing : true) ? 'charts-body-td-interlacing' : ''}`}
                                                 key={`echart-${id}-tr-td-${sIndex}`}
                                                 title={value?.length > 15 ? value : ''}
                                                 style={!!color ? { color } : {}}
