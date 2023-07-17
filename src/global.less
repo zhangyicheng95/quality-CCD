@@ -141,12 +141,22 @@ ol {
 }
 
 @media (prefers-color-scheme: light) {
-  //
+  .ant-slider {
+    .ant-slider-rail {
+      background-color: @body-background;
+    }
+  }
 }
 
 @media (prefers-color-scheme: dark) {
   .ant-switch-handle::before {
     background-color: #fff;
+  }
+
+  .ant-slider {
+    .ant-slider-rail {
+      background-color: @body-background;
+    }
   }
 }
 

@@ -477,6 +477,12 @@ const Home: React.FC<any> = (props: any) => {
                                 "fontSize": 12,
                                 "yName": "资源名",
                                 "xName": "实时数据",
+                                "store_path": {
+                                  "name": "models/output.ply",
+                                  "value": [
+                                    { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: -200, z: 300 }, { x: 0, y: -200, z: 300 },], },
+                                  ]
+                                },
                                 "result": Math.random() > 0.5 ?
                                   {
                                     "name": "http://localhost:5000/files/C:/ProgramData/UBVision/task/output.ply",
@@ -1512,7 +1518,7 @@ const Home: React.FC<any> = (props: any) => {
                                   id={key}
                                   data={{
                                     dataValue: dataValue || { name: "" },
-                                    fontSize
+                                    fontSize, guid: guid(),
                                   }}
                                 />
                                 :

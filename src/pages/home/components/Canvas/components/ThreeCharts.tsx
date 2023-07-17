@@ -42,7 +42,7 @@ const cameraScale = 1.1;
 const ThreeCharts: React.FC<Props> = (props: any) => {
     // models/ply/ascii/tx.ply / models/obj/walt/tx.obj / models/stl/ascii/tx.stl
     const { data = {}, id, } = props;
-    const { dataValue = {}, fontSize } = data;
+    const { dataValue = {}, fontSize, guid } = data;
     let { name, value = [], addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
         // addType = 'add';
@@ -83,7 +83,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             return;
         }
     }, [name]);
-    console.log('three86行: 接收到的', name);
+
     let renderer = useRef<any>();
     const labelRenderer = new CSS2DRenderer();
     let scene = useRef<any>(),
@@ -371,8 +371,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         bzBtn04?.addEventListener("click", bzBtnFun04);
         // 清理数据
         function bzBtnFun05() {
-            console.log(measurementLabels);
-            console.log(measurements);
             (measurements || []).forEach((line: any) => {
                 scene.current.remove(line);
                 scene.current.remove(measurementLabels[line.name]);
@@ -554,7 +552,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 clearCanvas();
             }
         };
-    }, [theme, name, addType]);
+    }, [theme, guid]);
     // 获取场景中的全部模型对象
     function getAllModelsFromScene(scene: any) {
         const models: any = [];
@@ -569,7 +567,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     }
     // 初始化场景之后，渲染点云
     const loadModel = (name: string, value: any, addType?: string) => {
-        console.log('加载的url:', name);
         // 蒙层
         const maskBox: any = document?.querySelector(".three-mask");
         const startTime = +new Date();
