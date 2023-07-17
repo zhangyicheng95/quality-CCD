@@ -466,8 +466,84 @@ const Home: React.FC<any> = (props: any) => {
                       style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
                       icon={<AndroidOutlined className="btn-icon" />}
                       type="link"
-                      onClick={() => touchFlowService()}
-                      disabled={!started}
+                      onClick={() => {
+                        dispatch({
+                          type: 'home/set',
+                          payload: {
+                            gridContentList: [
+                              {
+                                "value": ["fca93e5a-e010-4e8e-8475-bfa8fcbaecbd", "result"],
+                                "type": "three",
+                                "fontSize": 12,
+                                "yName": "资源名",
+                                "xName": "实时数据",
+                                "result": Math.random() > 0.5 ?
+                                  {
+                                    "name": "http://localhost:5000/files/C:/ProgramData/UBVision/task/output.ply",
+                                    "value": [
+                                      { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: -200, z: 300 }, { x: 0, y: -200, z: 300 },], },
+                                    ]
+                                  }
+                                  :
+                                  {
+                                    "name": "http://localhost:5000/files/C:/ProgramData/UBVision/task/01.stl",
+                                    "value": [
+                                      { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: -200, z: 300 }, { x: 0, y: -200, z: 300 },], },
+                                      { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -20, y: -200, z: 100 }, { x: -20, y: -200, z: 100 },], },
+                                      { name: "9", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 200, y: -200, z: 200 }, { x: 200, y: -200, z: -200 },], }
+                                    ]
+                                  },
+                                "size": {
+                                  h: 25,
+                                  i: "fca93e5a-e010-4e8e-8475-bfa8fcbaecbd$$result$$three",
+                                  maxH: 100,
+                                  maxW: 100,
+                                  minH: 2,
+                                  minW: 1,
+                                  w: 82,
+                                  x: 14,
+                                  y: 17,
+                                },
+                                "id": "fca93e5a-e010-4e8e-8475-bfa8fcbaecbd$$result$$three",
+                                "key": "fca93e5a-e010-4e8e-8475-bfa8fcbaecbd"
+                              },
+                              {
+                                "value": ["b4f890bc-3254-4e03-a4bb-7e16b8d5534d"],
+                                "size": { "i": "b4f890bc-3254-4e03-a4bb-7e16b8d5534d$$table2", "x": 9, "y": 18, "w": 42, "h": 26, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
+                                "type": "table2",
+                                "tab": "1",
+                                "yName": "qwe",
+                                "xName": "asd",
+                                "id": "b4f890bc-3254-4e03-a4bb-7e16b8d5534d$$table2",
+                                "key": "b4f890bc-3254-4e03-a4bb-7e16b8d5534d"
+                              },
+                              {
+                                "value": ["56284350-1bc5-465f-b7d4-2c7fbe94097d", "store_path"],
+                                "size": { "i": "56284350-1bc5-465f-b7d4-2c7fbe94097d$$store_path$$pie", "x": 51, "y": 2, "w": 45, "h": 16, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
+                                "type": "pie",
+                                "tab": "1",
+                                "yName": "123",
+                                "xName": "sdf",
+                                "dataZoom": 4,
+                                "id": "56284350-1bc5-465f-b7d4-2c7fbe94097d$$store_path$$pie",
+                                "key": "56284350-1bc5-465f-b7d4-2c7fbe94097d"
+                              },
+                              {
+                                "value": ["3e41e3d3-2ef4-44fc-9771-d352e634dfdf", "heart"],
+                                "size": { "i": "3e41e3d3-2ef4-44fc-9771-d352e634dfdf$$heart$$line", "x": 51, "y": 18, "w": 45, "h": 26, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
+                                "type": "line",
+                                "tab": "1",
+                                "yName": "sdfdfv",
+                                "xName": "r5y4gr",
+                                "id": "3e41e3d3-2ef4-44fc-9771-d352e634dfdf$$heart$$line",
+                                "key": "3e41e3d3-2ef4-44fc-9771-d352e634dfdf"
+                              }
+                            ],
+                          },
+                        });
+                        // touchFlowService()
+                      }}
+                      disabled={!started && process.env.NODE_ENV !== 'development'}
                       loading={started && loading}
                     >
                       自助
@@ -1620,19 +1696,36 @@ const Home: React.FC<any> = (props: any) => {
   const start = () => {
     if (!ipString) return;
     setLoading(true);
-    startFlowService(ipString || '').then((res: any) => {
+    const params = Object.assign({}, _.omit(paramsData, 'edges'), {
+      flowData: Object.assign({}, paramsData?.flowData, {
+        edges: (paramsData?.flowData?.edges || []).filter((edge: any) => {
+          return (paramsData?.flowData?.nodes || []).filter((node: any) => node.id === edge?.source?.cell || node.id === edge?.target?.cell).length;
+        }),
+      })
+    });
+    updateParams({
+      id: params.id,
+      data: params
+    }).then((res: any) => {
       if (res && res.code === 'SUCCESS') {
-        message.success('任务启动成功');
-        dispatch({
-          type: 'home/set',
-          payload: {
-            started: true,
-          },
+        startFlowService(ipString || '', '', params).then((res: any) => {
+          if (res && res.code === 'SUCCESS') {
+            message.success('任务启动成功');
+            dispatch({
+              type: 'home/set',
+              payload: {
+                started: true,
+              },
+            });
+          } else {
+            message.error(res?.msg || res?.message || '接口异常');
+          }
+          setLoading(false);
         });
       } else {
         message.error(res?.msg || res?.message || '接口异常');
+        setLoading(false);
       }
-      setLoading(false);
     });
   };
   // 停止任务

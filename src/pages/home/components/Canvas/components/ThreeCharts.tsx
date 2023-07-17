@@ -46,13 +46,13 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     let { name, value = [], addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
         // addType = 'add';
-        name = "models/output.ply"; // models/pressure.json  models/tx.stl
-        value = [
-            { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: -200, z: 300 }, { x: 0, y: -200, z: 300 },], },
-            { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -20, y: -200, z: 100 }, { x: -20, y: -200, z: 100 },], },
-            { name: "9", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 200, y: -200, z: 200 }, { x: 200, y: -200, z: -200 },], }
-        ];
-        let arr = [];
+        // name = "models/output.ply"; // models/pressure.json  models/tx.stl
+        // value = [
+        //     { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: -200, z: 300 }, { x: 0, y: -200, z: 300 },], },
+        //     { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -20, y: -200, z: 100 }, { x: -20, y: -200, z: 100 },], },
+        //     { name: "9", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 200, y: -200, z: 200 }, { x: 200, y: -200, z: -200 },], }
+        // ];
+        // let arr = [];
         // for (let i = 1; i < 48; i++) {
         //     arr.push(i);
         // }
@@ -83,7 +83,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             return;
         }
     }, [name]);
-
+    console.log('three86行: 接收到的', name);
     let renderer = useRef<any>();
     const labelRenderer = new CSS2DRenderer();
     let scene = useRef<any>(),
@@ -137,7 +137,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 </div>
                 <canvas id="demoBox" />
             `;
-        }
+        };
         if (!!renderer?.current?.domElement) {
             renderer.current.domElement.innerHTML = '';
             renderer.current.domElement = undefined;
@@ -156,7 +156,21 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     };
     // 初始化场景数据，渲染点云
     useEffect(() => {
-        if (!name) return;
+        if (!name) {
+            if (!!dom.current && dom.current.innerHTML) {
+                const maskBox: any = document?.querySelector(".three-mask");
+                const processBox = maskBox?.querySelector('.process');
+                const processText = maskBox?.querySelector('.process-text');
+                if (!!processBox && !!processText) {
+                    processBox.style.display = 'none';
+                    processText.style.display = 'block';
+                    processText.style.textAlign = 'center';
+                    processText.innerText = `点云数据路径为空`;
+                }
+            }
+            return;
+        };
+        console.log('three160行: 点云路径', name);
         // addType为add时，代表增量渲染，不清除其他数据
         if (!!scene.current && addType === 'add') {
             loadModel(name, value, addType);

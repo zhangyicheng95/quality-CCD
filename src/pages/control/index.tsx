@@ -42,7 +42,7 @@ const Control: React.FC<any> = (props: any) => {
   useEffect(() => {
     if (!_.isEmpty(paramsData) && !_.isEmpty(paramsData?.flowData)) {
       const { flowData, configList, selectedConfig } = paramsData;
-      const { nodes } = flowData;
+      const { nodes, edges } = flowData;
       setParamData(paramsData);
       setNodeList(nodes.map((item: any, index: number) => {
         if (!item.sortId || item.sortId !== 0) {
@@ -55,10 +55,11 @@ const Control: React.FC<any> = (props: any) => {
           if (config.value === 'default') {
             return {
               ...config,
-              data: (config?.data?.length >= nodes?.length) ? config?.data : nodes
+              data: (config?.data?.length >= nodes?.length) ? config?.data : nodes,
+              edges,
             };
           };
-          return config;
+          return !!config?.edges ? config : { ...config, edges };
         }));
         if (!!selectedConfig) {
           const { data, value, listType = 'line' } = configList?.filter((i: any) => i.value === selectedConfig)[0] || {};
@@ -76,7 +77,7 @@ const Control: React.FC<any> = (props: any) => {
           }
         }
       } else {
-        setConfigList([{ label: '默认配置', value: 'default', data: nodes, listType: 'line' }]);
+        setConfigList([{ label: '默认配置', value: 'default', data: nodes, edges: edges, listType: 'line' }]);
       }
     }
   }, [paramsData]);
@@ -161,7 +162,7 @@ const Control: React.FC<any> = (props: any) => {
       })
     });
   };
-  console.log(nodeList)
+
   // 拖拽排序
   const sortCommonFun = (dragIndex: any, hoverIndex: any) => {
     const source = nodeList.filter((i: any) => i.sortId === dragIndex)[0];
@@ -188,18 +189,23 @@ const Control: React.FC<any> = (props: any) => {
           })
         };
         return item;
-      })
-    })
+      });
+    });
   };
   // 另存为配置
   const onAddNewConfig = () => {
     validateFields()
       .then((values) => {
+        const { flowData, configList } = paramsData;
+        const { nodes, edges } = flowData;
         const id = guid();
         const result = configList.concat({
           label: values['config-name'],
           value: id,
           data: nodeList,
+          edges: (edges || []).filter((edge: any) => {
+            return (nodes || []).filter((node: any) => node.id === edge?.source?.cell || node.id === edge?.target?.cell).length;
+          }),
           listType: 'line'
         });
         setConfigList(result);
@@ -210,7 +216,8 @@ const Control: React.FC<any> = (props: any) => {
           id: paramData.id,
           data: Object.assign({}, paramData, {
             flowData: Object.assign({}, paramData.flowData, {
-              nodes: nodeList
+              nodes: result.data,
+              edges: result.edges,
             }),
             configList: result,
             selectedConfig: id,
@@ -266,7 +273,7 @@ const Control: React.FC<any> = (props: any) => {
   };
   // 配置文件改变
   const selectUpdate = (val: any, option: any) => {
-    const { data, } = option;
+    const { data, edges } = option;
     const result = data.map((item: any, index: number) => {
       if (!item.sortId || item.sortId !== 0) {
         return { ...item, sortId: index };
@@ -278,7 +285,8 @@ const Control: React.FC<any> = (props: any) => {
       id: paramData.id,
       data: Object.assign({}, paramData, {
         flowData: Object.assign({}, paramData.flowData, {
-          nodes: result
+          nodes: result,
+          edges
         }),
         configList: configList.map((item: any) => {
           if (item.value === val?.value) {
@@ -289,9 +297,9 @@ const Control: React.FC<any> = (props: any) => {
         selectedConfig: val?.value,
       })
     };
+    setInitialState({ ...initialState, params: params.data });
     updateParams(params).then((res: any) => {
       if (res && res.code === 'SUCCESS') {
-        setInitialState({ ...initialState, params: params.data });
         message.success('修改成功');
       } else {
         message.error(res?.msg || res?.message || '接口异常');
