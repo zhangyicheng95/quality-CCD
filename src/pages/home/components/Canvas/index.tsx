@@ -130,6 +130,7 @@ const Home: React.FC<any> = (props: any) => {
     // @ts-ignore
     return window.QUALITY_CCD_CONFIG.type === 'vision';
   }, []);
+  // 迁移描述信息组件
   useEffect(() => {
     if (_.isArray(paramData?.commonInfo?.data)) {
       setBasicInfoData(paramData?.commonInfo?.data);
@@ -144,7 +145,6 @@ const Home: React.FC<any> = (props: any) => {
       setBasicInfoData(result);
     }
   }, [paramData?.commonInfo]);
-
   // 基础组件
   const gridList = useMemo(() => ([
     <div key={'slider-1'}>
@@ -157,13 +157,13 @@ const Home: React.FC<any> = (props: any) => {
                 {
                   isVision ?
                     <Tooltip title={'服务已连接'} placement={'bottom'}>
-                      <Badge status="processing" className="status-icon" />
+                      <Badge status="success" className="status-icon" />
                     </Tooltip>
                     :
                     (started ? (
                       taskDataConnect ? (
                         <Tooltip title={'服务已连接'} placement={'bottom'}>
-                          <Badge status="processing" className="status-icon" />
+                          <Badge status="success" className="status-icon" />
                         </Tooltip>
                       ) : (
                         <Tooltip title={'socket未连接'} placement={'bottom'}>
@@ -404,9 +404,10 @@ const Home: React.FC<any> = (props: any) => {
                 <Button
                   className="flex-box btn"
                   icon={
-                    <div style={{ height: 30, width: 30, marginRight: 8 }}>
-                      <div className="k-loader" />
-                    </div>
+                    <Badge status="success" />
+                    // <div style={{ height: 30, width: 30, marginRight: 8 }}>
+                    //   <div className="k-loader" />
+                    // </div>
                   }
                   type="link"
                   disabled
@@ -415,25 +416,30 @@ const Home: React.FC<any> = (props: any) => {
                 </Button>
                 :
                 <Fragment>
-                  <Button
-                    className="flex-box btn"
-                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
-                    icon={
-                      started ? (
-                        <div style={{ height: 30, width: 30, marginRight: 8 }}>
-                          <div className="k-loader" />
-                        </div>
-                      ) : (
-                        <PlayCircleOutlined className="btn-icon" />
-                      )
-                    }
-                    type="link"
-                    onClick={() => start()}
-                    disabled={started}
-                    loading={!started && loading}
-                  >
-                    {started ? '检测' : '启动'}
-                  </Button>
+                  {
+                    started ?
+                      null
+                      :
+                      <Button
+                        className="flex-box btn"
+                        style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
+                        icon={
+                          started ? (
+                            <div style={{ height: 30, width: 30, marginRight: 8 }}>
+                              <div className="k-loader" />
+                            </div>
+                          ) : (
+                            <PlayCircleOutlined className="btn-icon" />
+                          )
+                        }
+                        type="link"
+                        onClick={() => start()}
+                        disabled={started}
+                        loading={!started && loading}
+                      >
+                        {started ? '检测' : '启动'}
+                      </Button>
+                  }
                   <Button
                     className="flex-box btn"
                     style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
@@ -2020,57 +2026,34 @@ const Home: React.FC<any> = (props: any) => {
       </div>
       <div className="flex-box home-footer">
         {
-          isVision ?
-            <Tooltip title={'服务已连接'} placement={'bottom'}>
-              <Badge status="processing" className="status-icon" />
-            </Tooltip>
+          started ?
+            <div className="home-footer-item-box success">
+              检测中
+            </div>
             :
-            (started ? (
-              taskDataConnect ? (
-                <Tooltip title={'服务已连接'} placement={'bottom'}>
-                  <Badge status="processing" className="status-icon" />
-                </Tooltip>
-              ) : (
-                <Tooltip title={'socket未连接'} placement={'bottom'}>
-                  <Badge status="error" className="status-icon" />
-                </Tooltip>
-              )
-            ) : loading ? (
-              <Tooltip title={'启动中'} placement={'bottom'}>
-                <LoadingOutlined style={{ fontSize: 15 }} />
-              </Tooltip>
-            ) : (
-              <Tooltip title={'未启动'} placement={'bottom'}>
-                <Badge status="default" className="status-icon" />
-              </Tooltip>
-            ))
+            <div className="home-footer-item-box success" onClick={() => {
+              ifCanEdit && setFooterSelectVisible(true);
+            }}>
+              未启动
+            </div>
         }
         {
           useMemo(() => {
-            return started ?
-              (
-                !!footerData && (Object.entries(footerData) || [])?.map((item: any, index: number) => {
-                  const { Status } = item[1];
-                  if (!footerSelectList.includes(item[0])) {
-                    return null;
-                  }
-                  return <div
-                    key={item[0]}
-                    className={`home-footer-item-box ${Status === 'running' ? 'success' : 'error'}`}
-                    onClick={() => {
-                      ifCanEdit && setFooterSelectVisible(true);
-                    }}
-                  >
-                    {`${nodeList?.filter((i: any) => i.value === item[0])[0]?.label}: ${Status === 'running' ? '正常' : '异常'}`}
-                  </div>
-                })
-              )
-              :
-              <div className="home-footer-item-box success" onClick={() => {
-                ifCanEdit && setFooterSelectVisible(true);
-              }}>
-                未启动
+            return !!footerData && (Object.entries(footerData) || [])?.map((item: any, index: number) => {
+              const { Status } = item[1];
+              if (!footerSelectList.includes(item[0])) {
+                return null;
+              }
+              return <div
+                key={item[0]}
+                className={`home-footer-item-box ${Status === 'running' ? 'success' : 'error'}`}
+                onClick={() => {
+                  ifCanEdit && setFooterSelectVisible(true);
+                }}
+              >
+                {`${nodeList?.filter((i: any) => i.value === item[0])[0]?.label}: ${Status === 'running' ? '正常' : '异常'}`}
               </div>
+            })
           }, [started, footerData, footerSelectList])
         }
       </div>

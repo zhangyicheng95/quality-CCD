@@ -43,11 +43,13 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             const { width = 1, height = 1 } = img;
             setFontSize(width / height);
         };
-        setUrlList((pre: any) => {
-            let list = Array.from(new Set(pre.concat(dataValue)));
-            return list.slice(list.length - 19);
-        });
-    }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight]);
+        if (!!comparison) {
+            setUrlList((pre: any) => {
+                let list = Array.from(new Set(pre.concat(dataValue)));
+                return list.slice(list.length - 19);
+            });
+        }
+    }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight, comparison]);
     useEffect(() => {
         if (!magnifier) {
             return;
@@ -154,11 +156,11 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             ref={dom}
         >
             {
-                dataValue ?
+                (!!dataValue || !!defaultImg) ?
                     (magnifier ?
                         <div className="img-box">
                             <Image
-                                src={dataValue}
+                                src={dataValue || defaultImg}
                                 alt="logo"
                                 style={
                                     fontSize > 1 ?
@@ -170,7 +172,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                         </div>
                         :
                         <Image
-                            src={dataValue}
+                            src={dataValue || defaultImg}
                             alt="logo"
                             style={
                                 fontSize > 1 ?
@@ -179,16 +181,9 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                             }
                         />)
                     :
-                    defaultImg ?
-                        <Image
-                            src={defaultImg}
-                            alt="logo"
-                            style={{ width: '100%', height: 'auto' }}
-                        />
-                        :
-                        <Skeleton.Image
-                            active={true}
-                        />
+                    <Skeleton.Image
+                        active={true}
+                    />
             }
             {
                 !!windowControl ?
@@ -220,67 +215,70 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                     </div>
                     : null
             }
-
-            <Modal
-                title={<div className='flex-box image-contrast-modal-title'>
-                    模板对比
-                    <Button
-                        icon={<SwapOutlined />}
-                        className="image-contrast-modal-title-btn"
-                        onClick={() => setVisibleDirection((pre: string) => pre === 'row' ? "column" : "row")}
-                    />
-                </div>}
-                wrapClassName="image-contrast-modal"
-                centered
-                width="90vw"
-                open={!!imgVisible}
-                footer={null}
-                onCancel={() => setImgVisible(false)}
-                destroyOnClose={true}
-            >
-                <div className="flex-box image-contrast-modal-body" style={{
-                    flexDirection: visibleDirection
-                }}>
-                    <div className={`image-contrast-modal-body-top ${visibleDirection}`}>
-                        <Image
-                            src={defaultImg}
-                            alt="logo"
-                            className='image-contrast-modal-body-img'
-                        />
-                    </div>
-                    <div className={`flex-box image-contrast-modal-body-bottom ${visibleDirection}`}>
-                        <Image
-                            src={urlList[selectedNum] || ''}
-                            alt="logo"
-                            className='image-contrast-modal-body-img'
-                        />
-                        <Button
-                            type="text"
-                            disabled={selectedNum === 0}
-                            icon={<LeftCircleOutlined className='btn-icon' />}
-                            className='prev-btn'
-                            onClick={() => setSelectedNum((pre: number) => {
-                                if (pre - 1 >= 0) {
-                                    return pre - 1;
-                                }
-                                return pre;
-                            })}
-                        />
-                        <Button
-                            type="text"
-                            disabled={selectedNum + 1 === urlList.length}
-                            icon={<RightCircleOutlined className='btn-icon' />}
-                            className='next-btn'
-                            onClick={() => setSelectedNum((pre: number) => {
-                                if (pre + 1 < urlList.length) {
-                                    return pre + 1;
-                                }
-                                return pre;
-                            })}
-                        />
-                    </div>
-                </div>
-            </Modal>
+            {
+                !!imgVisible ?
+                    <Modal
+                        title={<div className='flex-box image-contrast-modal-title'>
+                            模板对比
+                            <Button
+                                icon={<SwapOutlined />}
+                                className="image-contrast-modal-title-btn"
+                                onClick={() => setVisibleDirection((pre: string) => pre === 'row' ? "column" : "row")}
+                            />
+                        </div>}
+                        wrapClassName="image-contrast-modal"
+                        centered
+                        width="90vw"
+                        open={!!imgVisible}
+                        footer={null}
+                        onCancel={() => setImgVisible(false)}
+                        destroyOnClose={true}
+                    >
+                        <div className="flex-box image-contrast-modal-body" style={{
+                            flexDirection: visibleDirection
+                        }}>
+                            <div className={`image-contrast-modal-body-top ${visibleDirection}`}>
+                                <Image
+                                    src={defaultImg}
+                                    alt="logo"
+                                    className='image-contrast-modal-body-img'
+                                />
+                            </div>
+                            <div className={`flex-box image-contrast-modal-body-bottom ${visibleDirection}`}>
+                                <Image
+                                    src={urlList[selectedNum] || ''}
+                                    alt="logo"
+                                    className='image-contrast-modal-body-img'
+                                />
+                                <Button
+                                    type="text"
+                                    disabled={selectedNum === 0}
+                                    icon={<LeftCircleOutlined className='btn-icon' />}
+                                    className='prev-btn'
+                                    onClick={() => setSelectedNum((pre: number) => {
+                                        if (pre - 1 >= 0) {
+                                            return pre - 1;
+                                        }
+                                        return pre;
+                                    })}
+                                />
+                                <Button
+                                    type="text"
+                                    disabled={selectedNum + 1 === urlList.length}
+                                    icon={<RightCircleOutlined className='btn-icon' />}
+                                    className='next-btn'
+                                    onClick={() => setSelectedNum((pre: number) => {
+                                        if (pre + 1 < urlList.length) {
+                                            return pre + 1;
+                                        }
+                                        return pre;
+                                    })}
+                                />
+                            </div>
+                        </div>
+                    </Modal>
+                    : null
+            }
         </div>
     );
 
