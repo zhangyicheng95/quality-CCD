@@ -416,30 +416,24 @@ const Home: React.FC<any> = (props: any) => {
                 </Button>
                 :
                 <Fragment>
-                  {
-                    started ?
-                      null
-                      :
-                      <Button
-                        className="flex-box btn"
-                        style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
-                        icon={
-                          started ? (
-                            <div style={{ height: 30, width: 30, marginRight: 8 }}>
-                              <div className="k-loader" />
-                            </div>
-                          ) : (
-                            <PlayCircleOutlined className="btn-icon" />
-                          )
-                        }
-                        type="link"
-                        onClick={() => start()}
-                        disabled={started}
-                        loading={!started && loading}
-                      >
-                        {started ? '检测' : '启动'}
-                      </Button>
-                  }
+                  <Button
+                    className="flex-box btn"
+                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
+                    icon={
+                      started ? (
+                        <div className="btn-icon btn-self-icon flex-box-center success" >
+                        </div>
+                      ) : (
+                        <PlayCircleOutlined className="btn-icon" />
+                      )
+                    }
+                    type="link"
+                    onClick={() => start()}
+                    disabled={started}
+                    loading={!started && loading}
+                  >
+                    {started ? '检测' : '启动'}
+                  </Button>
                   <Button
                     className="flex-box btn"
                     style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
@@ -1342,7 +1336,7 @@ const Home: React.FC<any> = (props: any) => {
           progressSize = 8, progressSteps = 5, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
           CCDName, imgs_width, imgs_height, tableSize, magnifier, comparison, operationList,
-          dataZoom, fontColor, interlacing,
+          dataZoom, fontColor, interlacing, modelRotate, modelScale,
           basicInfoData = [{ id: guid(), name: '', value: '' }]
         } = item;
         // const id = key?.split('$$')[0];
@@ -1524,6 +1518,7 @@ const Home: React.FC<any> = (props: any) => {
                                   id={key}
                                   data={{
                                     dataValue: dataValue || { name: "" },
+                                    modelRotate, modelScale,
                                     fontSize, guid: guid(),
                                   }}
                                 />
@@ -1858,7 +1853,7 @@ const Home: React.FC<any> = (props: any) => {
           progressType, progressSize, progressSteps, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
           CCDName, imgs_width, imgs_height, magnifier, comparison = false, operationList, dataZoom,
-          fontColor, interlacing = false
+          fontColor, interlacing = false, modelRotate = false, modelScale = false
         } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
@@ -1886,7 +1881,7 @@ const Home: React.FC<any> = (props: any) => {
             progressType, progressSize, progressSteps, windowControl,
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
             CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
-            fontColor, interlacing
+            fontColor, interlacing, modelRotate, modelScale
           }, ['description'].includes(windowType) ? { basicInfoData } : {}));
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1902,7 +1897,7 @@ const Home: React.FC<any> = (props: any) => {
                 progressType, progressSize, progressSteps, windowControl,
                 des_bordered, des_column, des_layout, des_size, ifLocalStorage,
                 CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
-                fontColor, interlacing
+                fontColor, interlacing, modelRotate, modelScale
               }, ['description'].includes(windowType) ? { basicInfoData } : {});
             };
             return item;
@@ -1942,7 +1937,7 @@ const Home: React.FC<any> = (props: any) => {
       align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line',
       progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: undefined,
       CCDName: undefined, magnifier: false, comparison: false, operationList: [], dataZoom: 0,
-      fontColor: undefined, interlacing: false
+      fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false
     });
     setWindowType('img');
     setAddWindowVisible(false);
@@ -2755,7 +2750,22 @@ const Home: React.FC<any> = (props: any) => {
               {
                 ['three'].includes(windowType) ?
                   <Fragment>
-
+                    <Form.Item
+                      name="modelRotate"
+                      label="开启模型旋转"
+                      initialValue={false}
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name="modelScale"
+                      label="开启模型缩放"
+                      initialValue={false}
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
                   </Fragment>
                   : null
               }

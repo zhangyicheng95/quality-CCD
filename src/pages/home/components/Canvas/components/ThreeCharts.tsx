@@ -42,11 +42,11 @@ const cameraScale = 1.1;
 const ThreeCharts: React.FC<Props> = (props: any) => {
     // models/ply/ascii/tx.ply / models/obj/walt/tx.obj / models/stl/ascii/tx.stl
     const { data = {}, id, } = props;
-    const { dataValue = {}, fontSize, guid } = data;
+    const { dataValue = {}, fontSize, guid, modelRotate = false, modelScale = false, } = data;
     let { name, value = [], addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
         // addType = 'add';
-        // name = "models/output.ply"; // models/pressure.json  models/tx.stl
+        name = "models/output.ply"; // models/pressure.json  models/tx.stl
         // value = [
         //     { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: -200, z: 300 }, { x: 0, y: -200, z: 300 },], },
         //     { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -20, y: -200, z: 100 }, { x: -20, y: -200, z: 100 },], },
@@ -258,6 +258,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         // 控制器 (旋转/缩放)
         controls.current = new OrbitControls(camera.current, renderer.current.domElement);
         controls.current.enableDamping = true;
+        controls.current.enableZoom = modelScale;
         // 开始渲染,加载url
         loadModel(name, value);
         // 取消标注的公共方法
@@ -515,6 +516,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 }
                 return prev;
             });
+            console.log('当前的相机角度：', camera.current.position);
         }
         renderer.current.domElement.addEventListener("pointerdown", onMouseDown, false);
         renderer.current.domElement.addEventListener("pointerup", onMouseUp, false);
@@ -633,9 +635,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 if (max === box.max.x) {
                     camera.current.position.set(0, mdhei / 2, 1.6 * max);
                 } else if (max === box.max.y) {
-                    camera.current.position.set(0, 0, 1.2 * max);
+                    camera.current.position.set(0, 0, 1.6 * max);
                 } else {
-                    camera.current.position.set(0, -1.2 * max, 0);
+                    camera.current.position.set(0, -1.6 * max, 0);
                 }
                 effectMeasureLine(mesh, value);
             }
@@ -657,7 +659,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             });
             maskBox.style.display = "none";
             scene.current.add(mesh);
-            setCameraSwitch(true);
+            // 开启相机巡航
+            setCameraSwitch(modelRotate);
         };
         function processFun(xhr: any) {
             if (addType === 'add') return;
@@ -1183,23 +1186,27 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             {/* <img src={spriteIcon} alt="sprite" className='sprite-icon' /> */}
             <div className='camera-box'>
                 <div className="camera-box-pointer">
-                    <div className="camera-box-pointer-head flex-box-justify-between">
-                        <InputNumber
-                            size='small'
-                            addonAfter="秒"
-                            value={cameraSwitchTime}
-                            max={100}
-                            min={1}
-                            onChange={(val: any) => {
-                                setCameraSwitchTime(val);
-                            }}
-                        />
-                        <Switch
-                            className='cameraIcon-switch'
-                            checked={cameraSwitch}
-                            onChange={(e) => setCameraSwitch(e)}
-                        />
-                    </div>
+                    {
+                        modelRotate ?
+                            <div className="camera-box-pointer-head flex-box-justify-between">
+                                <InputNumber
+                                    size='small'
+                                    addonAfter="秒"
+                                    value={cameraSwitchTime}
+                                    max={100}
+                                    min={1}
+                                    onChange={(val: any) => {
+                                        setCameraSwitchTime(val);
+                                    }}
+                                />
+                                <Switch
+                                    className='cameraIcon-switch'
+                                    checked={cameraSwitch}
+                                    onChange={(e) => setCameraSwitch(e)}
+                                />
+                            </div>
+                            : null
+                    }
                     <div className="camera-box-pointer-top flex-box-justify-between">
                         <img src={rectTopIcon} alt="rect" className='cameraIcon' onClick={() => {
                             const { max } = getSize();
