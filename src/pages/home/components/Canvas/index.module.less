@@ -765,8 +765,6 @@
       position: absolute;
       top: 10px;
       font-family: monospace;
-      gap: 8px;
-      justify-content: center;
       z-index: 8;
 
       .ant-btn {
@@ -775,6 +773,15 @@
       }
 
       // .btn {}
+      div {
+        gap: 8px;
+        justify-content: center;
+      }
+
+      div:first-child,
+      div:last-child {
+        width: 100px;
+      }
     }
 
     .render-dom {

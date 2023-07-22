@@ -19,7 +19,7 @@ import {
 } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 import {
     AimOutlined,
-    BorderlessTableOutlined, BorderOuterOutlined, ClearOutlined, EyeOutlined, FontSizeOutlined
+    BorderlessTableOutlined, BorderOuterOutlined, ClearOutlined, EyeOutlined, FontSizeOutlined, MinusOutlined, PlusOutlined
 } from '@ant-design/icons';
 import rectIcon from '@/assets/imgs/rect.svg';
 import rectAllIcon from '@/assets/imgs/rect-all.svg';
@@ -46,12 +46,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     let { name, value = [], addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
         // addType = 'add';
-        name = "models/output.ply"; // models/pressure.json  models/tx.stl
-        // value = [
-        //     { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: -200, z: 300 }, { x: 0, y: -200, z: 300 },], },
-        //     { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -20, y: -200, z: 100 }, { x: -20, y: -200, z: 100 },], },
-        //     { name: "9", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 200, y: -200, z: 200 }, { x: 200, y: -200, z: -200 },], }
-        // ];
+        name = "models/tx.ply"; // models/pressure.json  models/tx.stl
+        value = [
+            { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: -200, z: 300 }, { x: 0, y: -200, z: 300 },], },
+            { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -20, y: -200, z: 100 }, { x: -20, y: -200, z: 100 },], },
+            { name: "9", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 200, y: -200, z: 200 }, { x: 200, y: -200, z: -200 },], }
+        ];
         // let arr = [];
         // for (let i = 1; i < 48; i++) {
         //     arr.push(i);
@@ -192,6 +192,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         const bzBtn04: any = document.querySelector("#bzBtn04");
         // 按钮-清理数据
         const bzBtn05: any = document.querySelector("#bzBtn05");
+        // 按钮-缩小模型
+        const bzBtn06: any = document.querySelector("#bzBtn06");
+        // 按钮-放大模型
+        const bzBtn07: any = document.querySelector("#bzBtn07");
         // 初始化dom
         renderer.current = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
         // 防止后渲染的scene覆盖前面的scene
@@ -381,6 +385,31 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             measurementLabels = {};
         };
         bzBtn05?.addEventListener("click", bzBtnFun05);
+        // 缩放
+        function bzBtnFun06(type: number) {
+            const currentPosition = camera.current.position;
+            const currentZoom = camera.current.zoom || 1;
+            const targetZoom = currentZoom + type
+            camera.current.zoom = targetZoom;
+            localStorage.setItem('cameraScale', targetZoom);
+            const targetPosition = new THREE.Vector3(
+                currentPosition?.x / currentZoom * targetZoom,
+                currentPosition?.y / currentZoom * targetZoom,
+                currentPosition?.z / currentZoom * targetZoom
+            );
+            console.log('修改后的相机角度：', targetPosition);
+
+            var tween = new TWEEN.Tween(currentPosition)
+                .to(targetPosition, 1000)
+                .easing(TWEEN.Easing.Quadratic.Out)
+                .onUpdate(function () {
+                    camera?.current?.position?.copy?.(currentPosition);
+                    camera?.current?.lookAt?.(0, 0, 0);
+                });
+            tween.start();
+        };
+        bzBtn06?.addEventListener("click", () => bzBtnFun06(0.1));
+        bzBtn07?.addEventListener("click", () => bzBtnFun06(-0.1));
         // 取消标注
         function onKeyUp(event: any) {
             if (event.key === "Escape") {
@@ -516,12 +545,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 }
                 return prev;
             });
-            console.log('当前的相机角度：', camera.current.position);
         }
         renderer.current.domElement.addEventListener("pointerdown", onMouseDown, false);
         renderer.current.domElement.addEventListener("pointerup", onMouseUp, false);
         renderer.current.domElement.addEventListener("mousemove", onDocumentMouseMove, false);
-        var animate = function () {
+        function animate() {
             animateId = requestAnimationFrame(animate);
             controls && controls.current.update();
             render();
@@ -600,7 +628,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             let y1 = box.min.y + mdhei / 2; // 模型中心点坐标Y
             let z1 = box.min.z + mdwid / 2; // 模型中心点坐标Z
             const max = Math.max(...Object.values(box.max));
-            const scale = 3;
+            let scale = 1.6;
+            if (!!localStorage.getItem('cameraScale')) {
+                scale = Number(localStorage.getItem('cameraScale'));
+            }
             if (addType === 'add') {
                 models?.forEach((model: any) => {
                     model.material = new THREE.PointsMaterial({   // MeshStandardMaterial,MeshBasicMaterial,PointsMaterial
@@ -633,12 +664,13 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             } else {
                 mesh.position.set(-x1, -y1, -z1); // 将模型进行偏移
                 if (max === box.max.x) {
-                    camera.current.position.set(0, mdhei / 2, 1.6 * max);
+                    camera.current.position.set(0, mdhei / 2, scale * max);
                 } else if (max === box.max.y) {
-                    camera.current.position.set(0, 0, 1.6 * max);
+                    camera.current.position.set(0, 0, scale * max);
                 } else {
-                    camera.current.position.set(0, -1.6 * max, 0);
+                    camera.current.position.set(0, -scale * max, 0);
                 }
+                camera.current.zoom = scale;
                 effectMeasureLine(mesh, value);
             }
             // 把点云放到可控数组里，用于画线标注
@@ -658,6 +690,15 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 // }
             });
             maskBox.style.display = "none";
+            // 创建一个旋转轴向量
+            const axis = new THREE.Vector3(1, 0, 0); // 这里以x轴为例，你可以根据需要修改旋转轴向量
+            // 创建一个旋转角度
+            const angle = Math.PI * 2; // 360度旋转
+            // 创建一个旋转矩阵
+            const rotationMatrix = new THREE.Matrix4().makeRotationAxis(axis, angle);
+            // 应用旋转矩阵到物体
+            mesh.applyMatrix4(rotationMatrix);
+
             scene.current.add(mesh);
             // 开启相机巡航
             setCameraSwitch(modelRotate);
@@ -1082,94 +1123,115 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             className={`${styles.threeCharts} flex-box`}
             style={{ fontSize }}
         >
-            <div id="instructions" className="flex-box">
-                <Tooltip title="比例尺">
-                    <Popover
-                        content={
-                            <div className='flex-box'>
-                                <Input
-                                    style={{ maxWidth: 100 }}
-                                    placeholder="比例尺"
-                                    onBlur={(e) => {
-                                        const res = JSON.parse(localStorage.getItem("scale") || "{}");
-                                        const val = e.target.value;
-                                        localStorage.setItem("scale", JSON.stringify({ ...res, value: val }));
-                                    }}
-                                    defaultValue={JSON.parse(localStorage.getItem("scale") || "{}")?.value || 1}
-                                />
-                                <Select
-                                    style={{ width: 125, minWidth: 125 }}
-                                    onChange={(val) => {
-                                        const res = JSON.parse(localStorage.getItem("scale") || "{}");
-                                        localStorage.setItem("scale", JSON.stringify({ ...res, unit: val }));
-                                    }}
-                                    defaultValue={JSON.parse(localStorage.getItem("scale") || "{}")?.unit || 'm'}
-                                    options={[
-                                        {
-                                            value: 'mm',
-                                            label: '毫米（mm）',
-                                        },
-                                        {
-                                            value: 'cm',
-                                            label: '厘米（cm）',
-                                        },
-                                        {
-                                            value: 'm',
-                                            label: '米（m）',
-                                        }
-                                    ]}
-                                />
-                            </div>
-                        }
-                        title="设置比例尺"
-                        trigger="click"
-                    >
+            <div id="instructions" className="flex-box-justify-between">
+                <div className="flex-box">
+
+                </div>
+                <div className="flex-box" style={{ flex: 1 }}>
+                    <Tooltip title="比例尺">
+                        <Popover
+                            content={
+                                <div className='flex-box'>
+                                    <Input
+                                        style={{ maxWidth: 100 }}
+                                        placeholder="比例尺"
+                                        onBlur={(e) => {
+                                            const res = JSON.parse(localStorage.getItem("scale") || "{}");
+                                            const val = e.target.value;
+                                            localStorage.setItem("scale", JSON.stringify({ ...res, value: val }));
+                                        }}
+                                        defaultValue={JSON.parse(localStorage.getItem("scale") || "{}")?.value || 1}
+                                    />
+                                    <Select
+                                        style={{ width: 125, minWidth: 125 }}
+                                        onChange={(val) => {
+                                            const res = JSON.parse(localStorage.getItem("scale") || "{}");
+                                            localStorage.setItem("scale", JSON.stringify({ ...res, unit: val }));
+                                        }}
+                                        defaultValue={JSON.parse(localStorage.getItem("scale") || "{}")?.unit || 'm'}
+                                        options={[
+                                            {
+                                                value: 'mm',
+                                                label: '毫米（mm）',
+                                            },
+                                            {
+                                                value: 'cm',
+                                                label: '厘米（cm）',
+                                            },
+                                            {
+                                                value: 'm',
+                                                label: '米（m）',
+                                            }
+                                        ]}
+                                    />
+                                </div>
+                            }
+                            title="设置比例尺"
+                            trigger="click"
+                        >
+                            <Button
+                                icon={<FontSizeOutlined />}
+                                className='btn'
+                            />
+                        </Popover>
+                    </Tooltip>
+                    <Tooltip title="标注">
                         <Button
-                            icon={<FontSizeOutlined />}
+                            icon={<AimOutlined />}
+                            type={selectedBtn.includes('bzBtn01') ? 'primary' : 'default'}
+                            id="bzBtn01"
                             className='btn'
                         />
-                    </Popover>
-                </Tooltip>
-                <Tooltip title="标注">
-                    <Button
-                        icon={<AimOutlined />}
-                        type={selectedBtn.includes('bzBtn01') ? 'primary' : 'default'}
-                        id="bzBtn01"
-                        className='btn'
-                    />
-                </Tooltip>
-                <Tooltip title="显示边框">
-                    <Button
-                        icon={<BorderOuterOutlined />}
-                        type={selectedBtn.includes('bzBtn02') ? 'primary' : 'default'}
-                        id="bzBtn02"
-                        className='btn'
-                    />
-                </Tooltip>
-                <Tooltip title="显示坐标轴">
-                    <Button
-                        icon={<BorderlessTableOutlined />}
-                        type={selectedBtn.includes('bzBtn03') ? 'primary' : 'default'}
-                        id="bzBtn03"
-                        className='btn'
-                    />
-                </Tooltip>
-                <Tooltip title="开启透视">
-                    <Button
-                        icon={<EyeOutlined />}
-                        type={selectedBtn.includes('bzBtn04') ? 'primary' : 'default'}
-                        id="bzBtn04"
-                        className='btn'
-                    />
-                </Tooltip>
-                <Tooltip title="清理测距数据">
-                    <Button
-                        icon={<ClearOutlined />}
-                        type={'default'}
-                        id="bzBtn05"
-                        className='btn'
-                    />
-                </Tooltip>
+                    </Tooltip>
+                    <Tooltip title="显示边框">
+                        <Button
+                            icon={<BorderOuterOutlined />}
+                            type={selectedBtn.includes('bzBtn02') ? 'primary' : 'default'}
+                            id="bzBtn02"
+                            className='btn'
+                        />
+                    </Tooltip>
+                    <Tooltip title="显示坐标轴">
+                        <Button
+                            icon={<BorderlessTableOutlined />}
+                            type={selectedBtn.includes('bzBtn03') ? 'primary' : 'default'}
+                            id="bzBtn03"
+                            className='btn'
+                        />
+                    </Tooltip>
+                    <Tooltip title="开启透视">
+                        <Button
+                            icon={<EyeOutlined />}
+                            type={selectedBtn.includes('bzBtn04') ? 'primary' : 'default'}
+                            id="bzBtn04"
+                            className='btn'
+                        />
+                    </Tooltip>
+                    <Tooltip title="清理测距数据">
+                        <Button
+                            icon={<ClearOutlined />}
+                            type={'default'}
+                            id="bzBtn05"
+                            className='btn'
+                        />
+                    </Tooltip>
+                </div>
+                <div className="flex-box">
+                    <Tooltip title="缩小">
+                        <Button
+                            icon={<MinusOutlined />}
+                            id="bzBtn06"
+                            className='btn'
+                        />
+                    </Tooltip>
+                    <Tooltip title="放大">
+                        <Button
+                            icon={<PlusOutlined />}
+                            id="bzBtn07"
+                            className='btn'
+                        />
+                    </Tooltip>
+                </div>
             </div>
 
             <div
