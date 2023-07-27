@@ -16,6 +16,10 @@ function OutputPathName(env: string) {
   return 'quality'
 
 };
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const path = require('path');
+const APP_DIR = path.resolve(__dirname, '../src');
+const MONACO_DIR = path.resolve(__dirname, '../node_modules/monaco-editor');
 
 export default defineConfig({
   hash: true,
@@ -82,6 +86,35 @@ export default defineConfig({
       projectName: 'swagger',
     },
   ],
+  //API 修改 webpack 配置
+  chainWebpack: function (config, { webpack }) {
+    config.merge({
+      plugins: [
+        new MonacoWebpackPlugin(['apex', 'azcli', 'bat', 'clojure', 'coffee', 'cpp', 'csharp', 'csp', 'css', 'dockerfile', 'fsharp', 'go', 'handlebars', 'html', 'ini', 'java', 'javascript', 'json', 'less', 'lua', 'markdown', 'msdax', 'mysql', 'objective', 'perl', 'pgsql', 'php', 'postiats', 'powerquery', 'powershell', 'pug', 'python', 'r', 'razor', 'redis', 'redshift', 'ruby', 'rust', 'sb', 'scheme', 'scss', 'shell', 'solidity', 'sql', 'st', 'swift', 'typescript', 'vb', 'xml', 'yaml'])
+      ],
+      module: {
+        rules: [
+          {
+            test: /\.css$/,
+            include: APP_DIR,
+            use: [{
+              loader: 'style-loader',
+            }, {
+              loader: 'css-loader',
+              options: {
+                modules: true,
+                namedExport: true,
+              },
+            }],
+          }, {
+            test: /\.css$/,
+            include: MONACO_DIR,
+            use: ['style-loader', 'css-loader'],
+          }
+        ]
+      },
+    })
+  },
   nodeModulesTransform: {
     type: 'none',
   },

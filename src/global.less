@@ -607,6 +607,53 @@ ol {
   margin: 0 5px;
 }
 
+.monaco-editor-modal {
+  .ant-modal {
+    height: calc(100vh - 64px);
+
+    .ant-modal-content {
+      height: 100%;
+    }
+
+    .ant-modal-header {
+      height: 65px;
+    }
+
+    .ant-modal-body {
+      height: calc(100% - 120px);
+    }
+
+    .monaco-editor {
+      height: 100% !important;
+      width: 100% !important;
+
+      .overflow-guard {
+        height: 100% !important;
+        width: 100% !important;
+
+        .margin,
+        .monaco-scrollable-element {
+          height: 100% !important;
+          width: 100% !important;
+
+          .view-overlays {
+            height: 100% !important;
+            width: 100% !important;
+          }
+
+          .view-lines {
+            height: 100% !important;
+            width: 100% !important;
+          }
+        }
+      }
+    }
+
+    .ant-modal-footer {
+      height: 55px;
+    }
+  }
+}
 
 
 @keyframes k-loadingK {

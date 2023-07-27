@@ -851,15 +851,27 @@
       }
     }
 
-    .sprite-icon {
+    .sprite-box {
       position: absolute;
-      right: 24px;
-      width: 8% !important;
-      min-width: 80px !important;
-      height: auto !important;
-      max-height: 80% !important;
       top: 50%;
+      right: 24px;
       transform: translateY(-50%);
+      gap: 4px;
+
+      .number-box {
+        height: 300px;
+        max-height: 80%;
+        flex-direction: column;
+        font-size: 12px;
+      }
+
+      .sprite-icon {
+        width: 80px;
+        height: 300px;
+        max-height: 80%;
+        pointer-events: all;
+        background: linear-gradient(to bottom, red, yellow, rgb(0, 255, 0), rgb(0, 225, 255), blue);
+      }
     }
 
     .camera-box {

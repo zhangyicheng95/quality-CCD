@@ -90,7 +90,10 @@ const Control: React.FC<any> = (props: any) => {
       return prev.map((item: any, index: any) => {
         if (item.id === key[0]) {
           const initParams = Object.entries(item?.config?.initParams)?.reduce((pre: any, cen: any) => {
-            return Object.assign({}, pre, (cen[1]?.name && cen[1]?.type) ? { [cen[0]]: cen[1] } : {});
+            return Object.assign({}, pre, cen[1]?.type ? {
+              [cen[0]]: Object.assign({}, cen[1], cen[1]?.name ? {} : { name: cen[0] })
+            } : {}
+            );
           }, {});
           return Object.assign({}, item, {
             config: Object.assign({}, item?.config, {

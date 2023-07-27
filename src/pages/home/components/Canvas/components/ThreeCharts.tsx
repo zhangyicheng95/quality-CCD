@@ -793,11 +793,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         localPosition = [
                             {
                                 ...point,
-                                x: 0
+                                x: -1 * length / 3
                             },
                             {
                                 ...point,
-                                x: 0
+                                x: -1 * length / 3
                             }
                         ];
                     } else if (index >= 3 && index < 6) {
@@ -810,11 +810,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         localPosition = [
                             {
                                 ...point,
-                                x: 0,
+                                x: length / 3,
                             },
                             {
                                 ...point,
-                                x: 0,
+                                x: length / 3,
                             }
                         ];
                     } else if (index >= 6 && index < 9) {
@@ -1029,7 +1029,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         //     sprite.position.set(1.4, 0, 0);
                         //     uiScene.current.add(sprite);
                         // }
-                        material = new THREE.MeshStandardMaterial({   // MeshStandardMaterial,MeshBasicMaterial,PointsMaterial
+                        material = new THREE.MeshBasicMaterial({   // MeshStandardMaterial,MeshBasicMaterial,PointsMaterial
                             vertexColors: true
                         })
                     } else {
@@ -1160,7 +1160,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             minY.push(box.min.y);
             minZ.push(box.min.z);
         });
-        console.log(maxY, minY)
         const boxXmax = Math.max(...maxX);
         const boxXmin = Math.min(...minX);
         const boxYmax = Math.max(...maxY);
@@ -1381,7 +1380,34 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 </div>
                 <canvas id="demoBox"></canvas>
             </div>
-            <img src={spriteImg} alt="sprite" className='sprite-icon' />
+            <div className="sprite-box flex-box">
+                <div className="number-box flex-box-justify-between">
+                    {
+                        [5000, 4, 3, 2, '0.0', -2, -3, -4, -5000].map((item: any, index: number) => {
+                            return <div
+                                className="number-item"
+                                key={`number-${index}`}
+                                style={(index === 0 || index === 8 || index === 4) ? { fontWeight: 600 } : { opacity: .7 }}
+                                onClick={() => { console.log(item) }}
+                            >
+                                {item}
+                            </div>
+                        })
+                    }
+                </div>
+                <div className="sprite-icon" onClick={(e: any) => {
+                    const { clientX, clientY, target } = e;
+                    console.log(e)
+                    console.log('点击的box的大小', target.clientHeight, target.clientWidth);
+                    console.log('实际点击的位置', clientX - target.offsetLeft, clientY - target.offsetTop);
+                }} />
+            </div>
+            {/* <img src={spriteImg} alt="sprite" className='sprite-icon' onClick={(e: any) => {
+                const { clientX, clientY, target } = e;
+                console.log(e)
+                console.log('点击的box的大小', target.clientHeight, target.clientWidth);
+                console.log('实际点击的位置', clientX - target.offsetLeft, clientY - target.offsetTop);
+            }} /> */}
             <div className='camera-box'>
                 <div className="camera-box-pointer">
                     {

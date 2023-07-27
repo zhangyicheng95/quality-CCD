@@ -1204,7 +1204,8 @@ const Home: React.FC<any> = (props: any) => {
     let newParams = paramsData;
     if (!_.isObject(contentHeader) || _.isEmpty(contentHeader)) {
       const header = {};
-      home?.forEach((item: any) => header[item.i] = item.i !== 'slider-4');
+      // 默认显示/隐藏header
+      home?.forEach((item: any) => header[item.i] = (item.i !== 'slider-4' && item.i !== 'slider-1'));
       if (_.isArray(content)) {
         content?.forEach((item: any) => header[item.id] = true);
       } else {
@@ -1638,7 +1639,7 @@ const Home: React.FC<any> = (props: any) => {
     } else {
       setContentList([]);
     }
-  }, [gridContentList, addContentList]);
+  }, [addContentList]);
   // 批量启动任务
   const startProjects = (item: any, list: any, index: number, projectStatus: any) => {
     const data = projectStatus?.filter((i: any) => i.value === item.key)?.[0] || {};

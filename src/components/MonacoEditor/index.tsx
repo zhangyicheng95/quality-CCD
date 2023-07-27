@@ -1,10 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Select,
   Modal,
+  Input,
 } from 'antd';
 import Monaco from 'react-monaco-editor';
+import * as _ from 'lodash';
 import './index.less';
+import { useModel } from 'umi';
+import { formatJson } from '@/utils/utils';
 
 const { Option } = Select;
 interface Props {
@@ -25,12 +29,19 @@ const MonacoEditor: React.FC<Props> = (props) => {
     onOk,
     onCancel,
   } = props;
+  const { initialState } = useModel<any>('@@initialState');
+  const { params } = initialState;
   const editorRef = useRef<any>({
     editor: null,
     editorValue: '',
   });
   const [editorValue, setEditorValue] = useState('');
   const [editorLanguage, setEditorLanguage] = useState('');
+
+  const theme = useMemo(() => {
+    return params?.contentData?.theme || 'realDark';
+  }, [params?.contentData?.theme]);
+
   useEffect(() => {
     document.oncontextmenu = function (e) {/*屏蔽浏览器默认右键事件*/
       e = e || window.event;
@@ -46,6 +57,7 @@ const MonacoEditor: React.FC<Props> = (props) => {
   }, [])
   useEffect(() => {
     setEditorValue(defaultValue);
+    editorRef.current.editorValue = defaultValue;
   }, [defaultValue]);
   useEffect(() => {
     setEditorLanguage(language);
@@ -102,11 +114,23 @@ const MonacoEditor: React.FC<Props> = (props) => {
       }}
     // getContainer={false}
     >
-      <Monaco
+      <Input.TextArea
+        style={{ height: '100%' }}
+        onChange={(e: any) => {
+          const { value } = e.target;
+          // timer && clearTimeout(timer);
+          // timer = setTimeout(() => {
+          editorRef.current.editorValue = value;
+          setEditorValue(value);
+          // }, 300);
+        }}
+        value={_.isObject(editorValue) ? formatJson(editorValue) : editorValue}
+      />
+      {/* <Monaco
         width="100%"
         height="calc(100vh - 216px)"
         language={editorLanguage}
-        theme="vs-dark"
+        theme={theme === 'realDark' ? "vs-dark" : "vs-light"}
         value={editorValue}
         onChange={(value: any) => {
           timer && clearTimeout(timer);
@@ -125,7 +149,7 @@ const MonacoEditor: React.FC<Props> = (props) => {
         editorDidMount={(editor: any, monaco: any) => {
           editorRef.current.editor = editor;
         }}
-      />
+      /> */}
     </Modal>
   );
 };
