@@ -434,9 +434,9 @@
   :global {
     .charts-header-box {
       position: fixed;
-      left: 0;
+      left: 8px;
       right: 0;
-      width: calc(100% - 8px);
+      width: calc(100% - 21px);
       background-color: @background-color-base;
 
       .charts-header-item {
@@ -462,7 +462,7 @@
     }
 
     .charts-body-box {
-      width: calc(100% - 8px);
+      width: 100%; //calc(100% - 8px);
       // height: calc(100% - 38px);
       margin-top: 38px;
       align-items: normal;
@@ -976,6 +976,7 @@
       .param-item {
         flex: 1;
         padding-bottom: 16px;
+        overflow: hidden;
 
         &-underline {
           text-decoration: underline;
@@ -1057,6 +1058,27 @@
           }
         }
 
+      }
+
+      .param-group-item {
+        .param-group-item-title {
+          padding: 2px 4px;
+          background-color: @background-color-base;
+          cursor: pointer;
+        }
+
+        .param-group-item-body {
+          padding-top: 4px;
+          overflow: hidden;
+
+          .param-group-item-body-box {
+
+            .param-line-row {
+              padding: 0 4px;
+              padding-bottom: 16px;
+            }
+          }
+        }
       }
     }
 

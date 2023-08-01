@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { connect, useModel } from 'umi';
-import { Button, Checkbox, Form, Input, InputNumber, message, Radio, Select, Switch } from 'antd';
+import { Button, Checkbox, Form, Input, InputNumber, message, Popconfirm, Radio, Select, Switch } from 'antd';
 import MonacoEditor from '@/components/MonacoEditor';
 import PlatFormModal from '@/components/platForm';
 import FileManager from '@/components/FileManager';
@@ -13,6 +13,7 @@ import Measurement from '@/components/Measurement';
 import SliderGroup from '@/components/SliderGroup';
 import { formatJson, guid } from '@/utils/utils';
 import IpInput from '@/components/IpInputGroup';
+import Item from 'antd/lib/list/Item';
 
 const FormItem = Form.Item;
 interface Props {
@@ -23,8 +24,11 @@ interface Props {
 }
 
 const Operation2Charts: React.FC<Props> = (props: any) => {
-    const { data = {}, id, started } = props;
+    let { data = {}, id, started } = props;
     const { operationList, dataValue, xName, fontSize } = data;
+    if (process.env.NODE_ENV === 'development') {
+        started = true;
+    }
     const [form] = Form.useForm();
     const { validateFields, resetFields } = form;
     const { initialState } = useModel<any>('@@initialState');
@@ -33,8 +37,9 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     const { nodes } = flowData;
     const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
     const { config = {} } = node;
-    const { initParams = {} } = config;
+    const { group = [], initParams = {} } = config;
 
+    const [configGroup, setConfigGroup] = useState<any>([]);
     const [configList, setConfigList] = useState<any>([]);
     const [editorVisible, setEditorVisible] = useState(false);
     const [editorValue, setEditorValue] = useState<any>({});
@@ -48,8 +53,9 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         let resConfig: any = [],
             selectedOptions = {};
         operationList?.forEach((item: any) => {
+            const itemGroup = group.filter((i: any) => i.children.includes(item))?.[0];
             if (initParams?.[item]) {
-                resConfig = resConfig.concat(initParams[item]);
+                resConfig = resConfig.concat({ ...initParams[item], show: !itemGroup });
                 if (initParams[item]?.widget?.type === "TagRadio") {
                     const children = (
                         (initParams[item]?.widget?.options || [])
@@ -60,6 +66,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
 
             }
         });
+        setConfigGroup(group.map((i: any) => ({ ...i, show: true })));
         setSelectedOption(selectedOptions);
         setConfigList(resConfig);
     };
@@ -73,7 +80,6 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         init();
     }, [operationList, params]);
     useEffect(() => {
-        console.log(selectedOption)
         // const children = (selectedOption || []).map((item: any) => ({
         //     ...item,
         //     addType: 'tagRadio'
@@ -84,7 +90,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     const widgetChange = (key: string, value: any) => {
         setConfigList((prev: any) => (prev || [])?.map((item: any) => {
             if (item.name === key) {
-                if (!!value?.widget?.type) {
+                if (!!value?.widget?.type || item?.widget?.type === "codeEditor") {
                     return {
                         ...item,
                         ...value,
@@ -98,46 +104,19 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             return item;
         }));
     };
+
     const onOk = () => {
         validateFields()
             .then((values) => {
-                const { flowData, } = params;
-                let { nodes } = flowData;
-                nodes = nodes.map((node: any) => {
-                    const { config = {} } = node;
-                    if (node.id === id.split('$$')?.[0]) {
-                        const { initParams = {} } = config;
-                        let obj = Object.entries(initParams)?.reduce((pre: any, cen: any) => {
-                            return Object.assign({}, pre, (!!cen[1]?.type && !!cen[1]?.name) ? { [cen[0]]: cen[1] } : {})
-                        }, {});
-                        (Object.entries(values) || []).forEach((res: any, index: number) => {
-                            const name = res[0]?.split('$$')?.[0];
-                            const value = res[1];
-                            let optionList: any = [];
-                            Object.values(selectedOption)?.forEach(option => {
-                                optionList = optionList.concat(option);
-                            });
-                            const item = optionList.filter((i: any) => i.name === name)?.[0] || obj[name] || {};
-                            obj[name] = {
-                                ...item,
-                                value,
-                            }
-                        });
-                        return Object.assign({}, node, {
-                            config: Object.assign({}, config, {
-                                initParams: obj
-                            })
-                        });
-                    }
-                    return node
+                let result = {};
+                (Object.entries(values) || []).forEach((res: any, index: number) => {
+                    const name = res[0]?.split('$$')?.[0];
+                    const value = !!res[1] ? res[1] : configList?.filter((i: any) => i.name === name)?.[0]?.value;
+                    result[name] = value
                 });
                 const requestParams = {
                     id: params.id,
-                    data: Object.assign({}, params, {
-                        flowData: Object.assign({}, flowData, {
-                            nodes
-                        })
-                    })
+                    data: result
                 };
                 console.log(requestParams);
                 btnFetch('post', xName, requestParams);
@@ -149,6 +128,52 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         resetFields();
         init();
     };
+
+    const initItem = (item: any) => {
+        const { name, alias, widget = {}, addType, show } = item;
+        const { type } = widget;
+        let optionList: any = [];
+        Object.values(selectedOption)?.forEach(option => {
+            optionList = optionList.concat(option);
+        });
+        if (optionList?.filter((i: any) => i.name === name)?.length) return null;
+        return <div
+            className={`${type === 'TagRadio' ? '' : 'flex-box'} param-item`}
+            key={`${id}@$@${name}`}
+            style={show ? {} : { height: 0, padding: 0 }}
+        >
+            <div className="flex-box">
+                {/* <div className="icon-box flex-box">
+                                            {_.toUpper(type.slice(0, 1))} */}
+                {/* <BlockOutlined className="item-icon" /> */}
+                {/* </div> */}
+                <div className="title-box">
+                    <TooltipDiv style={{ fontSize: fontSize + 4 }} className="first" title={alias || name}>{alias || name}</TooltipDiv>
+                    <TooltipDiv className="second" style={{ fontSize }}>{name}</TooltipDiv>
+                </div>
+            </div>
+            <div className="value-box" style={type === 'TagRadio' ?
+                { width: 'calc(100% - 16px)' } :
+                {}
+            }>
+                <FormatWidgetToDom
+                    key={item?.name}
+                    id={item?.name}
+                    config={[item?.name, item]}
+                    selectedOption={selectedOption}
+                    setSelectedOption={setSelectedOption}
+                    form={form}
+                    disabled={!started}
+                    setEditorVisible={setEditorVisible}
+                    setEditorValue={setEditorValue}
+                    setPlatFormVisible={setPlatFormVisible}
+                    setPlatFormValue={setPlatFormValue}
+                    setSelectPathVisible={setSelectPathVisible}
+                    setSelectedPath={setSelectedPath}
+                />
+            </div>
+        </div>
+    }
 
     return (
         <div
@@ -163,53 +188,59 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                 >
                     {
                         useMemo(() => {
-                            return configList?.map((item: any, index: number) => {
-                                const { name, alias, widget = {}, addType } = item;
-                                const { type } = widget;
-                                let optionList: any = [];
-                                Object.values(selectedOption)?.forEach(option => {
-                                    optionList = optionList.concat(option);
-                                });
-                                if (optionList?.filter((i: any) => i.name === name)?.length) return null;
-                                return <div className={`${type === 'TagRadio' ? '' : 'flex-box'} param-item`} key={`${id}@$@${name}`}>
-                                    <div className="flex-box">
-                                        <div className="icon-box flex-box">
-                                            {_.toUpper(type.slice(0, 1))}
-                                            {/* <BlockOutlined className="item-icon" /> */}
+                            return <Fragment>
+                                {
+                                    configList?.map((item: any, index: number) => initItem(item))
+                                }
+                                {
+                                    configGroup?.map((group: any, index: number) => {
+                                        const { name, id, children, show } = group;
+                                        return <div className="param-item param-group-item" key={id}>
+                                            <div className="flex-box param-group-item-title" onClick={() => setConfigGroup((prev: any) => prev.map((item: any) => {
+                                                if (item.id === id) {
+                                                    return {
+                                                        ...item,
+                                                        show: !show,
+                                                    };
+                                                };
+                                                return item;
+                                            }))}>
+                                                {name}
+                                            </div>
+                                            <div className="param-group-item-body" style={!show ? { height: 0 } : {}}>
+                                                {
+                                                    (children || [])?.map((child: any, index: number) => {
+                                                        const item = configList.filter((i: any) => i?.name === child)?.[0];
+                                                        if (!item) return null;
+                                                        return <div className="flex-box param-group-item-body-box">
+                                                            <div className="param-line-row" >--</div>
+                                                            {
+                                                                initItem({ ...item, show })
+                                                            }
+                                                        </div>
+                                                    })
+                                                }
+                                            </div>
                                         </div>
-                                        <div className="title-box">
-                                            <TooltipDiv className="first" title={alias || name}>{alias || name}</TooltipDiv>
-                                            <TooltipDiv className="second">{name}</TooltipDiv>
-                                        </div>
-                                    </div>
-                                    <div className="value-box" style={type === 'TagRadio' ?
-                                        { width: 'calc(100% - 16px)' } :
-                                        {}
-                                    }>
-                                        <FormatWidgetToDom
-                                            key={item?.name}
-                                            id={item?.name}
-                                            config={[item?.name, item]}
-                                            selectedOption={selectedOption}
-                                            setSelectedOption={setSelectedOption}
-                                            form={form}
-                                            disabled={!started}
-                                            setEditorVisible={setEditorVisible}
-                                            setEditorValue={setEditorValue}
-                                            setPlatFormVisible={setPlatFormVisible}
-                                            setPlatFormValue={setPlatFormValue}
-                                            setSelectPathVisible={setSelectPathVisible}
-                                            setSelectedPath={setSelectedPath}
-                                        />
-                                    </div>
-                                </div>
-                            })
-                        }, [selectedOption, configList, started])
+                                    })
+                                }
+                            </Fragment>
+                        }, [selectedOption, configList, configGroup, started])
                     }
                 </Form>
             </div>
             <div className="operation-footer flex-box-center">
-                <Button type="primary" disabled={!started} onClick={() => onOk()} >发送</Button>
+                <Popconfirm
+                    disabled={!started}
+                    title="确认修改吗?"
+                    onConfirm={() => {
+                        onOk()
+                    }}
+                    okText="确认"
+                    cancelText="取消"
+                >
+                    <Button type="primary" disabled={!started}>修改</Button>
+                </Popconfirm>
                 <Button disabled={!started} onClick={() => onCancel()}>重置</Button>
             </div>
 

@@ -41,27 +41,27 @@ interface Props {
 const ThreeCharts: React.FC<Props> = (props: any) => {
     // models/ply/ascii/tx.ply / models/obj/walt/tx.obj / models/stl/ascii/tx.stl
     const { data = {}, id, } = props;
-    const { dataValue = {}, fontSize, guid, modelRotate = false, modelScale = false, } = data;
-    let { name, value = [], addType } = dataValue;
+    const { dataValue = {}, fontSize, modelRotate = false, modelScale = false, } = data;
+    let { name, value = [], guid, addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
         // addType = 'add';
         name = "models/output.ply"; // models/pressure.json  models/tx.stl
         value = [
-            { "name": "模具长轴最小值", "standardValue": 651, "measureValue": 651.01, "offsetValue": 0.01, "position": [{ "x": -228.03, "y": -324.21, "z": 172.48 }, { "x": -228.03, "y": -324.21, "z": 172.48 }] },
-            { "name": "模具长轴平均值", "standardValue": 651, "measureValue": 652.5, "offsetValue": 1.5, "position": [{ "x": -226.3, "y": -325.62, "z": -77.52 }, { "x": -226.3, "y": -325.62, "z": -77.52 }] },
-            { "name": "模具长轴最大值", "standardValue": 651, "measureValue": 653.93, "offsetValue": 2.93, "position": [{ "x": -222.99, "y": -327.37, "z": -377.52 }, { "x": -222.99, "y": -327.37, "z": -377.52 }] },
+            { "type": "left", "name": "模具长轴最小值", "standardValue": 651, "measureValue": 651.01, "offsetValue": 0.01, "position": [{ "x": -228.03, "y": -324.21, "z": 172.48 }, { "x": -228.03, "y": -324.21, "z": 172.48 }] },
+            { "type": "left", "name": "模具长轴平均值", "standardValue": 651, "measureValue": 652.5, "offsetValue": 1.5, "position": [{ "x": -226.3, "y": -325.62, "z": -77.52 }, { "x": -226.3, "y": -325.62, "z": -77.52 }] },
+            { "type": "left", "name": "模具长轴最大值", "standardValue": 651, "measureValue": 653.93, "offsetValue": 2.93, "position": [{ "x": -222.99, "y": -327.37, "z": -377.52 }, { "x": -222.99, "y": -327.37, "z": -377.52 }] },
 
-            { "name": "模具短轴最小值", "standardValue": 461, "measureValue": 458.98, "offsetValue": -2.02, "position": [{ "x": -222.99, "y": -327.37, "z": -377.52 }, { "x": -222.99, "y": -327.37, "z": -377.52 }] },
-            { "name": "模具短轴平均值", "standardValue": 461, "measureValue": 460.13, "offsetValue": -0.87, "position": [{ "x": -226.3, "y": -325.62, "z": -77.52 }, { "x": -226.3, "y": -325.62, "z": -77.52 }] },
-            { "name": "模具短轴最大值", "standardValue": 461, "measureValue": 460.85, "offsetValue": -0.15, "position": [{ "x": -227.73, "y": -324.38, "z": 122.48 }, { "x": -227.73, "y": -324.38, "z": 122.48 }] },
+            { "type": "right", "name": "模具短轴最小值", "standardValue": 461, "measureValue": 458.98, "offsetValue": -2.02, "position": [{ "x": -222.99, "y": -327.37, "z": -377.52 }, { "x": -222.99, "y": -327.37, "z": -377.52 }] },
+            { "type": "right", "name": "模具短轴平均值", "standardValue": 461, "measureValue": 460.13, "offsetValue": -0.87, "position": [{ "x": -226.3, "y": -325.62, "z": -77.52 }, { "x": -226.3, "y": -325.62, "z": -77.52 }] },
+            { "type": "right", "name": "模具短轴最大值", "standardValue": 461, "measureValue": 460.85, "offsetValue": -0.15, "position": [{ "x": -227.73, "y": -324.38, "z": 122.48 }, { "x": -227.73, "y": -324.38, "z": 122.48 }] },
 
-            { "name": "模具高度最小值", "standardValue": 735, "measureValue": 736.15, "offsetValue": 1.15, "position": [{ "x": 66.16, "y": -370.85, "z": -418.66 }, { "x": 66.16, "y": -370.85, "z": -418.66 }] },
-            { "name": "模具高度平均值", "standardValue": 735, "measureValue": 736.82, "offsetValue": 1.82, "position": [{ "x": -33.84, "y": -378.88, "z": -419.73 }, { "x": -33.84, "y": -378.88, "z": -419.73 }] },
-            { "name": "模具高度最大值", "standardValue": 735, "measureValue": 737.65, "offsetValue": 2.65, "position": [{ "x": -233.84, "y": -307.3, "z": -422.31 }, { "x": -233.84, "y": -307.3, "z": -422.31 }] },
+            { "type": "top", "name": "模具高度最小值", "standardValue": 735, "measureValue": 736.15, "offsetValue": 1.15, "position": [{ "x": 66.16, "y": -370.85, "z": -418.66 }, { "x": 66.16, "y": -370.85, "z": -418.66 }] },
+            { "type": "top", "name": "模具高度平均值", "standardValue": 735, "measureValue": 736.82, "offsetValue": 1.82, "position": [{ "x": -33.84, "y": -378.88, "z": -419.73 }, { "x": -33.84, "y": -378.88, "z": -419.73 }] },
+            { "type": "top", "name": "模具高度最大值", "standardValue": 735, "measureValue": 737.65, "offsetValue": 2.65, "position": [{ "x": -233.84, "y": -307.3, "z": -422.31 }, { "x": -233.84, "y": -307.3, "z": -422.31 }] },
 
-            { "name": "止口短轴宽度", "standardValue": 735, "measureValue": 736.15, "offsetValue": 1.15, "position": [{ "x": 66.16, "y": -370.85, "z": -418.66 }, { "x": 66.16, "y": -370.85, "z": -418.66 }] },
-            { "name": "止口凸台宽度", "standardValue": 735, "measureValue": 736.82, "offsetValue": 1.82, "position": [{ "x": -33.84, "y": -378.88, "z": -419.73 }, { "x": -33.84, "y": -378.88, "z": -419.73 }] },
-            { "name": "止口长轴宽度", "standardValue": 735, "measureValue": 737.65, "offsetValue": 2.65, "position": [{ "x": -233.84, "y": -307.3, "z": -422.31 }, { "x": -233.84, "y": -307.3, "z": -422.31 }] }
+            { "type": "bottom", "name": "止口短轴宽度", "standardValue": 735, "measureValue": 736.15, "offsetValue": 1.15, "position": [{ "x": 66.16, "y": -370.85, "z": -418.66 }, { "x": 66.16, "y": -370.85, "z": -418.66 }] },
+            { "type": "bottom", "name": "止口凸台宽度", "standardValue": 735, "measureValue": 736.82, "offsetValue": 1.82, "position": [{ "x": -33.84, "y": -378.88, "z": -419.73 }, { "x": -33.84, "y": -378.88, "z": -419.73 }] },
+            { "type": "bottom", "name": "止口长轴宽度", "standardValue": 735, "measureValue": 737.65, "offsetValue": 2.65, "position": [{ "x": -233.84, "y": -307.3, "z": -422.31 }, { "x": -233.84, "y": -307.3, "z": -422.31 }] }
         ];
         // let arr = [];
         // for (let i = 1; i < 48; i++) {
@@ -83,6 +83,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const [selectedBtn, setSelectedBtn] = useState(['']);
     const [cameraSwitchTime, setCameraSwitchTime] = useState(2);
     const [cameraSwitch, setCameraSwitch] = useState(false);
+    const [meshHasColor, setMeshHasColor] = useState(false);
 
     const theme = useMemo(() => {
         return params?.contentData?.theme || 'realDark';
@@ -406,7 +407,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         function bzBtnFun06(type: number) {
             const currentPosition = camera.current.position;
             const currentZoom = !!localStorage.getItem('cameraScale') ? Number(localStorage.getItem('cameraScale')) : 1.6;
-            const targetZoom = currentZoom + type
+            const targetZoom = (currentZoom + type) > 0.1 ? (
+                (currentZoom + type) < 10 ? (currentZoom + type) : 10
+            ) : 0.1;
+
             camera.current.zoom = targetZoom;
             localStorage.setItem('cameraScale', targetZoom + '');
             const targetPosition = new THREE.Vector3(
@@ -600,7 +604,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 clearCanvas();
             }
         };
-    }, [theme, guid]);
+    }, [theme, name, guid]);
     // 获取场景中的全部模型对象
     function getAllModelsFromScene(scene: any) {
         const models: any = [];
@@ -612,7 +616,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         });
 
         return models;
-    }
+    };
     // 初始化场景之后，渲染点云
     const loadModel = (name: string, value: any, addType?: string) => {
         // 蒙层
@@ -708,6 +712,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 // }
             });
             maskBox.style.display = "none";
+
             // 创建一个旋转轴向量
             const axis = new THREE.Vector3(1, 0, 0); // 这里以x轴为例，你可以根据需要修改旋转轴向量
             // 创建一个旋转角度
@@ -716,7 +721,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             const rotationMatrix = new THREE.Matrix4().makeRotationAxis(axis, angle);
             // 应用旋转矩阵到物体
             mesh.applyMatrix4(rotationMatrix);
-
             scene.current.add(mesh);
             // 开启相机巡航
             setCameraSwitch(modelRotate);
@@ -755,35 +759,52 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         function effectMeasureLine(mesh: any, value: any) {
             // const models = getAllModelsFromScene(scene.current);
             if (!!scene.current && !!value?.length && !!mesh) {
-                const cardValue = [
-                    { "name": "模具长轴最小值", "standardValue": 651, "measureValue": 651.01, "offsetValue": 0.01, "position": [{ "x": -228.03, "y": -324.21, "z": 172.48 }, { "x": -228.03, "y": -324.21, "z": 172.48 }] },
-                    { "name": "模具长轴平均值", "standardValue": 651, "measureValue": 652.5, "offsetValue": 1.5, "position": [{ "x": -226.3, "y": -325.62, "z": -77.52 }, { "x": -226.3, "y": -325.62, "z": -77.52 }] },
-                    { "name": "模具长轴最大值", "standardValue": 651, "measureValue": 653.93, "offsetValue": 2.93, "position": [{ "x": -222.99, "y": -327.37, "z": -377.52 }, { "x": -222.99, "y": -327.37, "z": -377.52 }] },
 
-                    { "name": "模具短轴最小值", "standardValue": 461, "measureValue": 458.98, "offsetValue": -2.02, "position": [{ "x": -222.99, "y": -327.37, "z": -377.52 }, { "x": -222.99, "y": -327.37, "z": -377.52 }] },
-                    { "name": "模具短轴平均值", "standardValue": 461, "measureValue": 460.13, "offsetValue": -0.87, "position": [{ "x": -226.3, "y": -325.62, "z": -77.52 }, { "x": -226.3, "y": -325.62, "z": -77.52 }] },
-                    { "name": "模具短轴最大值", "standardValue": 461, "measureValue": 460.85, "offsetValue": -0.15, "position": [{ "x": -227.73, "y": -324.38, "z": 122.48 }, { "x": -227.73, "y": -324.38, "z": 122.48 }] },
-
-                    { "name": "模具高度最小值", "standardValue": 735, "measureValue": 736.15, "offsetValue": 1.15, "position": [{ "x": 66.16, "y": -370.85, "z": -418.66 }, { "x": 66.16, "y": -370.85, "z": -418.66 }] },
-                    { "name": "模具高度平均值", "standardValue": 735, "measureValue": 736.82, "offsetValue": 1.82, "position": [{ "x": -33.84, "y": -378.88, "z": -419.73 }, { "x": -33.84, "y": -378.88, "z": -419.73 }] },
-                    { "name": "模具高度最大值", "standardValue": 735, "measureValue": 737.65, "offsetValue": 2.65, "position": [{ "x": -233.84, "y": -307.3, "z": -422.31 }, { "x": -233.84, "y": -307.3, "z": -422.31 }] },
-
-                    { "name": "止口短轴宽度", "standardValue": 735, "measureValue": 736.15, "offsetValue": 1.15, "position": [{ "x": 66.16, "y": -370.85, "z": -418.66 }, { "x": 66.16, "y": -370.85, "z": -418.66 }] },
-                    { "name": "止口凸台宽度", "standardValue": 735, "measureValue": 736.82, "offsetValue": 1.82, "position": [{ "x": -33.84, "y": -378.88, "z": -419.73 }, { "x": -33.84, "y": -378.88, "z": -419.73 }] },
-                    { "name": "止口长轴宽度", "standardValue": 735, "measureValue": 737.65, "offsetValue": 2.65, "position": [{ "x": -233.84, "y": -307.3, "z": -422.31 }, { "x": -233.84, "y": -307.3, "z": -422.31 }] }
-                ];
-                (cardValue || []).forEach((item: any, index: number) => {
-                    const data = value.filter((i: any) => i.name === item.name);
-                    if (!data || !data[0]) {
-                        return;
-                    }
-                    let { name, standardValue, measureValue, offsetValue, position = [] } = data[0];
+                (value || []).forEach((item: any, index: number) => {
+                    let { type, name, standardValue, measureValue, offsetValue, position = [] } = item;
                     const box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
                     const length = box.max.x - box.min.x; // 模型长度
                     const width = box.max.z - box.min.z; // 模型宽度
                     const height = box.max.y - box.min.y; // 模型高度
                     let localPosition: any = [];
-                    if (index < 3) {
+                    if (type === "left1") {
+                        const point = {
+                            x: -1 * length,
+                            y: 0,
+                            z: -1 * width / 2 / ((index % 2) ? 3 : 1)
+                        };
+                        console.log(point)
+                        position = [point, point];
+                        localPosition = [
+                            {
+                                ...point,
+                                x: -1 * length / 3,
+
+                            },
+                            {
+                                ...point,
+                                x: -1 * length / 3
+                            }
+                        ];
+                    } else if (type === "left2") {
+                        const point = {
+                            x: -1 * length,
+                            y: 0,
+                            z: width / 2 / ((index % 2) ? 3 : 1)
+                        };
+                        position = [point, point];
+                        localPosition = [
+                            {
+                                ...point,
+                                x: -1 * length / 3,
+
+                            },
+                            {
+                                ...point,
+                                x: -1 * length / 3
+                            }
+                        ];
+                    } else if ((type === "left") || (index < 3)) {
                         const point = {
                             x: -1 * length,
                             y: 0,
@@ -800,7 +821,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 x: -1 * length / 3
                             }
                         ];
-                    } else if (index >= 3 && index < 6) {
+                    } else if ((type === "right") || (index >= 3 && index < 6)) {
                         const point = {
                             x: length,
                             y: 0,
@@ -817,7 +838,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 x: length / 3,
                             }
                         ];
-                    } else if (index >= 6 && index < 9) {
+                    } else if ((type === "top") || (index >= 6 && index < 9)) {
                         const point = {
                             x: length / 3 * (index - 7) * -1,
                             y: 0,
@@ -834,7 +855,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 z: -1 / 2 * width
                             }
                         ];
-                    } else if (index >= 9 && index < 12) {
+                    } else if ((type === "bottom") || (index >= 9 && index < 12)) {
                         const point = {
                             x: length / 2 * (index - 10) * -1,
                             y: 0,
@@ -1029,9 +1050,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         //     sprite.position.set(1.4, 0, 0);
                         //     uiScene.current.add(sprite);
                         // }
+                        setMeshHasColor(true);
                         material = new THREE.MeshBasicMaterial({   // MeshStandardMaterial,MeshBasicMaterial,PointsMaterial
                             vertexColors: true
-                        })
+                        });
                     } else {
                         /** 没有颜色则手动添加
                          *  金色：#ffd700
@@ -1380,28 +1402,30 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 </div>
                 <canvas id="demoBox"></canvas>
             </div>
-            <div className="sprite-box flex-box">
-                <div className="number-box flex-box-justify-between">
-                    {
-                        [5000, 4, 3, 2, '0.0', -2, -3, -4, -5000].map((item: any, index: number) => {
-                            return <div
-                                className="number-item"
-                                key={`number-${index}`}
-                                style={(index === 0 || index === 8 || index === 4) ? { fontWeight: 600 } : { opacity: .7 }}
-                                onClick={() => { console.log(item) }}
-                            >
-                                {item}
+            {
+                useMemo(() => {
+                    return meshHasColor ?
+                        <div className="sprite-box flex-box">
+                            <div className="number-box flex-box-justify-between">
+                                {
+                                    [5000, 4, 3, 2, '0.0', -2, -3, -4, -5000].map((item: any, index: number) => {
+                                        return <div
+                                            className="number-item"
+                                            key={`number-${index}`}
+                                            style={(index === 0 || index === 8 || index === 4) ? { fontWeight: 600 } : { opacity: .7 }}
+                                            onClick={() => { console.log(item) }}
+                                        >
+                                            {item}
+                                        </div>
+                                    })
+                                }
                             </div>
-                        })
-                    }
-                </div>
-                <div className="sprite-icon" onClick={(e: any) => {
-                    const { clientX, clientY, target } = e;
-                    console.log(e)
-                    console.log('点击的box的大小', target.clientHeight, target.clientWidth);
-                    console.log('实际点击的位置', clientX - target.offsetLeft, clientY - target.offsetTop);
-                }} />
-            </div>
+
+                            <div className="sprite-icon" />
+                        </div>
+                        : null;
+                }, [meshHasColor])
+            }
             {/* <img src={spriteImg} alt="sprite" className='sprite-icon' onClick={(e: any) => {
                 const { clientX, clientY, target } = e;
                 console.log(e)

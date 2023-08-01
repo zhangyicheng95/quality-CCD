@@ -1,4 +1,5 @@
 import { website } from '@/services/consts';
+import { guid } from '@/utils/utils';
 import _ from 'lodash';
 
 let socket: any = null;
@@ -30,7 +31,8 @@ const listen = (action: any) => {
                   ? cen[1]
                     ? 'RUNNING'
                     : 'STOPPED'
-                  : cen[1];
+                  : (!!cen[1]?.name?.indexOf('utput.ply')) ? { ...cen[1], guid: guid() } : cen[1];
+
               if (key == 'uid') {
                 return {
                   uid,

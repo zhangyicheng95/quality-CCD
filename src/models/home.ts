@@ -41,7 +41,7 @@ export default {
     *takeSnapshot(action: any, { put, select }: any) {
       const started: boolean = yield select((state: any) => state.home.started);
       // @ts-ignore
-      if (started || window.QUALITY_CCD_CONFIG.type === 'vision' || process.env.NODE_ENV === 'development') {
+      if (started || window.QUALITY_CCD_CONFIG.type === 'vision') {
         yield put({ type: 'snapshot' });
       }
     },

@@ -471,79 +471,9 @@ const Home: React.FC<any> = (props: any) => {
                           type: 'home/set',
                           payload: {
                             gridContentList: [
-                              {
-                                "value": ["fca93e5a-e010-4e8e-8475-bfa8fcbaecbd", "result"],
-                                "type": "three",
-                                "fontSize": 12,
-                                "yName": "资源名",
-                                "xName": "实时数据",
-                                "store_path": {
-                                  "name": "models/output.ply",
-                                  "value": [
-                                    { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: -200, z: 300 }, { x: 0, y: -200, z: 300 },], },
-                                  ]
-                                },
-                                "result": Math.random() > 0.5 ?
-                                  {
-                                    "name": "http://localhost:5000/files/C:/ProgramData/UBVision/task/output.ply",
-                                    "value": [
-                                      { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: -200, z: 300 }, { x: 0, y: -200, z: 300 },], },
-                                    ]
-                                  }
-                                  :
-                                  {
-                                    "name": "http://localhost:5000/files/C:/ProgramData/UBVision/task/01.stl",
-                                    "value": [
-                                      { name: "7", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 0, y: -200, z: 300 }, { x: 0, y: -200, z: 300 },], },
-                                      { name: "8", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: -20, y: -200, z: 100 }, { x: -20, y: -200, z: 100 },], },
-                                      { name: "9", standardValue: "536", measureValue: "562.365", offsetValue: "0.765", position: [{ x: 200, y: -200, z: 200 }, { x: 200, y: -200, z: -200 },], }
-                                    ]
-                                  },
-                                "size": {
-                                  h: 25,
-                                  i: "fca93e5a-e010-4e8e-8475-bfa8fcbaecbd$$result$$three",
-                                  maxH: 100,
-                                  maxW: 100,
-                                  minH: 2,
-                                  minW: 1,
-                                  w: 82,
-                                  x: 14,
-                                  y: 17,
-                                },
-                                "id": "fca93e5a-e010-4e8e-8475-bfa8fcbaecbd$$result$$three",
-                                "key": "fca93e5a-e010-4e8e-8475-bfa8fcbaecbd"
-                              },
-                              {
-                                "value": ["b4f890bc-3254-4e03-a4bb-7e16b8d5534d"],
-                                "size": { "i": "b4f890bc-3254-4e03-a4bb-7e16b8d5534d$$table2", "x": 9, "y": 18, "w": 42, "h": 26, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
-                                "type": "table2",
-                                "tab": "1",
-                                "yName": "qwe",
-                                "xName": "asd",
-                                "id": "b4f890bc-3254-4e03-a4bb-7e16b8d5534d$$table2",
-                                "key": "b4f890bc-3254-4e03-a4bb-7e16b8d5534d"
-                              },
-                              {
-                                "value": ["56284350-1bc5-465f-b7d4-2c7fbe94097d", "store_path"],
-                                "size": { "i": "56284350-1bc5-465f-b7d4-2c7fbe94097d$$store_path$$pie", "x": 51, "y": 2, "w": 45, "h": 16, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
-                                "type": "pie",
-                                "tab": "1",
-                                "yName": "123",
-                                "xName": "sdf",
-                                "dataZoom": 4,
-                                "id": "56284350-1bc5-465f-b7d4-2c7fbe94097d$$store_path$$pie",
-                                "key": "56284350-1bc5-465f-b7d4-2c7fbe94097d"
-                              },
-                              {
-                                "value": ["3e41e3d3-2ef4-44fc-9771-d352e634dfdf", "heart"],
-                                "size": { "i": "3e41e3d3-2ef4-44fc-9771-d352e634dfdf$$heart$$line", "x": 51, "y": 18, "w": 45, "h": 26, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
-                                "type": "line",
-                                "tab": "1",
-                                "yName": "sdfdfv",
-                                "xName": "r5y4gr",
-                                "id": "3e41e3d3-2ef4-44fc-9771-d352e634dfdf$$heart$$line",
-                                "key": "3e41e3d3-2ef4-44fc-9771-d352e634dfdf"
-                              }
+                              { "id": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "value": ["96c525f8-fada-4512-8b44-7e8995278e63", "filepath"], "filepath": { "name": "models/output.ply", "value": [{}, {}] }, "size": { "i": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "x": 7, "y": 3, "w": 36, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "three", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "comparison": false, "interlacing": false, "modelRotate": false, "modelScale": false },
+                              { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "frame"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "x": 43, "y": 3, "w": 30, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "img", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "magnifier": false },
+                              { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "cam_name"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "x": 73, "y": 3, "w": 23, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "pie", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true }
                             ],
                           },
                         });
@@ -1518,9 +1448,9 @@ const Home: React.FC<any> = (props: any) => {
                                 <ThreeCharts
                                   id={key}
                                   data={{
-                                    dataValue: dataValue || { name: "" },
+                                    dataValue: dataValue || { name: "", value: [] },
                                     modelRotate, modelScale,
-                                    fontSize, guid: guid(),
+                                    fontSize,
                                   }}
                                 />
                                 :
@@ -1639,7 +1569,7 @@ const Home: React.FC<any> = (props: any) => {
     } else {
       setContentList([]);
     }
-  }, [addContentList]);
+  }, [gridContentList, addContentList]);
   // 批量启动任务
   const startProjects = (item: any, list: any, index: number, projectStatus: any) => {
     const data = projectStatus?.filter((i: any) => i.value === item.key)?.[0] || {};
@@ -2170,7 +2100,7 @@ const Home: React.FC<any> = (props: any) => {
                       const params = ['operation'].includes(windowType) ?
                         config?.initParams :
                         ['operation2'].includes(windowType) ?
-                          config?.execParams :
+                          (!_.isEmpty(config?.execParams) ? config?.execParams : config?.initParams) :
                           null;
                       if (!!params && _.isObject(params)) {
                         setSelectedNodeConfig(() => Object.entries(params)?.map((item: any) => {
@@ -2203,7 +2133,7 @@ const Home: React.FC<any> = (props: any) => {
                       const params = (val === 'operation') ?
                         config?.initParams :
                         (val === 'operation2') ?
-                          config?.execParams :
+                          (!_.isEmpty(config?.execParams) ? config?.execParams : config?.initParams) :
                           null;
                       if (!!params && _.isObject(params)) {
                         setSelectedNodeConfig(() => Object.entries(params)?.map((item: any) => {
