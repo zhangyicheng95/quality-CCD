@@ -31,7 +31,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         started = true;
     }
     const [form] = Form.useForm();
-    const { validateFields, resetFields } = form;
+    const { validateFields, resetFields, setFieldsValue } = form;
     const { initialState, setInitialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const { flowData, } = params;
@@ -70,6 +70,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
 
             }
         });
+
         setConfigGroup(group.map((i: any) => ({ ...i, show: true })));
         setSelectedOption(selectedOptions);
         setConfigList(resConfig);
@@ -95,10 +96,11 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         setConfigList((prev: any) => (prev || [])?.map((item: any) => {
             if (item.name === key) {
                 if (!!value?.widget?.type || item?.widget?.type === "codeEditor") {
+                    setFieldsValue({ [key]: value?.value });
                     return {
                         ...item,
                         ...value,
-                    }
+                    };
                 }
                 return {
                     ...item,
@@ -116,8 +118,9 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                 let result = {};
                 (Object.entries(values) || []).forEach((res: any, index: number) => {
                     const name = res[0]?.split('$$')?.[0];
-                    const value = !!res[1] ? res[1] : configList?.filter((i: any) => i.name === name)?.[0]?.value;
-                    result[name] = value
+                    const value: any = !!res[1] ? res[1] : configList?.filter((i: any) => i.name === name)?.[0]?.value;
+                    // @ts-ignore
+                    result[name] = (value instanceof moment) ? new Date(value).getTime() : value
                 });
                 const requestParams = {
                     id: params.id,
@@ -131,14 +134,17 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                 nodes = nodes.map((node: any) => {
                     const { config = {} } = node;
                     if (node.id === id.split('$$')[0]) {
-                        const { initParams = {} } = config;
-                        let obj = Object.assign({}, initParams);
+                        let { initParams = {}, execParams } = config;
+                        if (!execParams || _.isEmpty(execParams)) {
+                            execParams = initParams;
+                        }
+                        let obj = Object.assign({}, execParams);
                         configList.forEach((item: any, index: number) => {
-                            obj[item?.id || item?.name] = item;
+                            obj[item?.id || item?.name] = { ...item, value: result[item?.id || item?.name] };
                         });
                         return Object.assign({}, node, {
                             config: Object.assign({}, config, {
-                                initParams: obj
+                                execParams: obj
                             })
                         });
                     }
