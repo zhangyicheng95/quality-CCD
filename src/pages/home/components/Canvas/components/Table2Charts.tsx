@@ -531,7 +531,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                             const { value, color } = val;
                                             return <TooltipDiv
                                                 className={`charts-body-td ${(_.isBoolean(interlacing) ? interlacing : true) ? 'charts-body-td-interlacing' : ''}`}
-                                                key={`echart-${id}-tr-td-${sIndex}`}
+                                                key={`echart-${id}-tr-td-${sIndex}-${value}`}
                                                 title={value?.length > 15 ? value : ''}
                                                 style={!!color ? { color } : {}}
                                             >
@@ -540,7 +540,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                         }
                                         return <TooltipDiv
                                             className="charts-body-td"
-                                            key={`echart-${id}-tr-td-${sIndex}`}
+                                            key={`echart-${id}-tr-td-${sIndex}-${val}`}
                                             title={val?.length > 15 ? val : ''}
                                         >
                                             {val}

@@ -40,7 +40,7 @@ interface Props {
 
 const ThreeCharts: React.FC<Props> = (props: any) => {
     // models/ply/ascii/tx.ply / models/obj/walt/tx.obj / models/stl/ascii/tx.stl
-    const { data = {}, id, } = props;
+    const { data = {}, id, started } = props;
     const { dataValue = {}, fontSize, modelRotate = false, modelScale = false, } = data;
     let { name, value = [], guid, addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
@@ -183,7 +183,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     processBox.style.display = 'none';
                     processText.style.display = 'block';
                     processText.style.textAlign = 'center';
-                    processText.innerText = `点云数据路径为空`;
+                    processText.style.fontSize = `${fontSize + 20}px`;
+                    processText.innerText = !!started ? `正在扫描，请稍候` : `点云数据路径为空`;
                 }
             }
             return;
@@ -604,7 +605,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 clearCanvas();
             }
         };
-    }, [theme, name, guid]);
+    }, [theme, name, guid, started]);
     // 获取场景中的全部模型对象
     function getAllModelsFromScene(scene: any) {
         const models: any = [];
@@ -1507,4 +1508,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
 
 };
 
-export default ThreeCharts;
+export default connect(({ home, themeStore }) => ({
+    started: home.started || false,
+}))(ThreeCharts);

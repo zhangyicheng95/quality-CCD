@@ -31,7 +31,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     }
     const [form] = Form.useForm();
     const { validateFields, resetFields } = form;
-    const { initialState } = useModel<any>('@@initialState');
+    const { initialState, setInitialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const { flowData, } = params;
     const { nodes } = flowData;
@@ -108,6 +108,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     const onOk = () => {
         validateFields()
             .then((values) => {
+                // 1.直接发送动态数据
                 let result = {};
                 (Object.entries(values) || []).forEach((res: any, index: number) => {
                     const name = res[0]?.split('$$')?.[0];
@@ -118,8 +119,46 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                     id: params.id,
                     data: result
                 };
-                console.log(requestParams);
                 btnFetch('post', xName, requestParams);
+
+                // 2.保存数据到节点中
+                const { flowData, } = params;
+                let { nodes } = flowData;
+                nodes = nodes.map((node: any) => {
+                    const { config = {} } = node;
+                    if (node.id === id.split('$$')[0]) {
+                        const { initParams = {} } = config;
+                        let obj = Object.assign({}, initParams);
+                        configList.forEach((item: any, index: number) => {
+                            obj[item?.id || item?.name] = item;
+                        });
+                        return Object.assign({}, node, {
+                            config: Object.assign({}, config, {
+                                initParams: obj
+                            })
+                        });
+                    }
+                    return node
+                });
+                const resultParams = {
+                    id: params.id,
+                    data: Object.assign({}, params, {
+                        flowData: Object.assign({}, flowData, {
+                            nodes
+                        })
+                    })
+                };
+                updateParams(resultParams).then((res: any) => {
+                    if (res && res.code === 'SUCCESS') {
+                        message.success('修改成功');
+                        setInitialState((preInitialState: any) => ({
+                            ...preInitialState,
+                            params: res.data
+                        }));
+                    } else {
+                        message.error(res?.msg || res?.message || '接口异常');
+                    }
+                });
             }).catch((err) => {
                 console.log(err);
             });
