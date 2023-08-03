@@ -121,6 +121,122 @@ const getProjectsList = (req: Request, res: Response) => {
             }
           }],
           "nodes": [{
+            "name": "LogAnalyzer",
+            "alias": "日志分析Analyzer",
+            "version": "2.0.0",
+            "category": "Callback",
+            "description": "用于ubv运行日志分析，目前仅支持耗时分析，后续版本将加入异常分析等功能",
+            "author": "liwen",
+            "config": {
+              "module": "B__LogAnalyzer",
+              "executor": "LogAnalyzer",
+              "initParams": {
+                "log_file": {
+                  "name": "log_file",
+                  "alias": "日志文件",
+                  "orderId": 0,
+                  "require": true,
+                  "default": "",
+                  "type": "File",
+                  "widget": {
+                    "type": "File",
+                    "id": "log_file",
+                    "suffix": [
+                      "log"
+                    ]
+                  }
+                },
+                "start_time": {
+                  "name": "start_time",
+                  "alias": "开始时间",
+                  "orderId": 1,
+                  "require": false,
+                  "default": 0,
+                  "value": 0,
+                  "type": "int",
+                  "widget": {
+                    "type": "DatePicker"
+                  }
+                },
+                "end_time": {
+                  "name": "end_time",
+                  "alias": "结束时间",
+                  "orderId": 2,
+                  "require": false,
+                  "default": 1691027321043,
+                  "value": 1691027321043,
+                  "type": "int",
+                  "widget": {
+                    "type": "DatePicker"
+                  }
+                }
+              },
+              "execParams": {
+                "log_file": {
+                  "name": "log_file",
+                  "alias": "日志文件",
+                  "orderId": 0,
+                  "require": true,
+                  "default": "",
+                  "type": "File",
+                  "widget": {
+                    "type": "File",
+                    "id": "log_file",
+                    "suffix": [
+                      "log"
+                    ]
+                  }
+                },
+                "start_time": {
+                  "name": "start_time",
+                  "alias": "开始时间",
+                  "orderId": 1,
+                  "require": false,
+                  "default": 0,
+                  "value": 0,
+                  "type": "int",
+                  "widget": {
+                    "type": "DatePicker"
+                  }
+                },
+                "end_time": {
+                  "name": "end_time",
+                  "alias": "结束时间",
+                  "orderId": 2,
+                  "require": false,
+                  "default": 1691027321043,
+                  "value": 1691027321043,
+                  "type": "int",
+                  "widget": {
+                    "type": "DatePicker"
+                  }
+                }
+              },
+              "input": {
+                "cond": {
+                  "type": "dict",
+                  "require": true,
+                  "alias": "执行信息"
+                }
+              },
+              "output": {
+                "data": {
+                  "type": "list",
+                  "alias": "data"
+                },
+                "percent": {
+                  "type": "list",
+                  "alias": "percent"
+                },
+                "trend_data": {
+                  "type": "list",
+                  "alias": "趋势数据"
+                }
+              },
+              "group": []
+            },
+            "buildIn": false
+          }, {
             "name": "ImageStorge",
             "version": "0.0.2",
             "category": "DS",
@@ -4842,6 +4958,124 @@ const getParams = (req: Request, res: Response) => {
           }
         }],
         "nodes": [
+          {
+            "name": "LogAnalyzer",
+            "alias": "日志分析Analyzer",
+            "version": "2.0.0",
+            "id": "45e063e4-8e3e-4e10-a1cd-48be6g78e97a",
+            "category": "Callback",
+            "description": "用于ubv运行日志分析，目前仅支持耗时分析，后续版本将加入异常分析等功能",
+            "author": "liwen",
+            "config": {
+              "module": "B__LogAnalyzer",
+              "executor": "LogAnalyzer",
+              "initParams": {
+                "log_file": {
+                  "name": "log_file",
+                  "alias": "日志文件",
+                  "orderId": 0,
+                  "require": true,
+                  "default": "",
+                  "type": "File",
+                  "widget": {
+                    "type": "File",
+                    "id": "log_file",
+                    "suffix": [
+                      "log"
+                    ]
+                  }
+                },
+                "start_time": {
+                  "name": "start_time",
+                  "alias": "开始时间",
+                  "orderId": 1,
+                  "require": false,
+                  "default": 0,
+                  "value": 0,
+                  "type": "int",
+                  "widget": {
+                    "type": "DatePicker"
+                  }
+                },
+                "end_time": {
+                  "name": "end_time",
+                  "alias": "结束时间",
+                  "orderId": 2,
+                  "require": false,
+                  "default": 1691027321043,
+                  "value": 1691027321043,
+                  "type": "int",
+                  "widget": {
+                    "type": "DatePicker"
+                  }
+                }
+              },
+              "execParams": {
+                "log_file": {
+                  "name": "log_file",
+                  "alias": "日志文件",
+                  "orderId": 0,
+                  "require": true,
+                  "default": "",
+                  "type": "File",
+                  "widget": {
+                    "type": "File",
+                    "id": "log_file",
+                    "suffix": [
+                      "log"
+                    ]
+                  }
+                },
+                "start_time": {
+                  "name": "start_time",
+                  "alias": "开始时间",
+                  "orderId": 1,
+                  "require": false,
+                  "default": 0,
+                  "value": 0,
+                  "type": "int",
+                  "widget": {
+                    "type": "DatePicker"
+                  }
+                },
+                "end_time": {
+                  "name": "end_time",
+                  "alias": "结束时间",
+                  "orderId": 2,
+                  "require": false,
+                  "default": 1691027321043,
+                  "value": 1691027321043,
+                  "type": "int",
+                  "widget": {
+                    "type": "DatePicker"
+                  }
+                }
+              },
+              "input": {
+                "cond": {
+                  "type": "dict",
+                  "require": true,
+                  "alias": "执行信息"
+                }
+              },
+              "output": {
+                "data": {
+                  "type": "list",
+                  "alias": "data"
+                },
+                "percent": {
+                  "type": "list",
+                  "alias": "percent"
+                },
+                "trend_data": {
+                  "type": "list",
+                  "alias": "趋势数据"
+                }
+              },
+              "group": []
+            },
+            "buildIn": false
+          },
           {
             "name": "ImageStorge",
             "version": "0.0.2",

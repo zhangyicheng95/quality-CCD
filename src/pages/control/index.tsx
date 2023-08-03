@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import styles from "./index.module.less";
-import { Button, message, Form, Input, Radio, Select, Checkbox, InputNumber, Switch, Modal, Row, Col, } from "antd";
+import { Button, message, Form, Input, Radio, Select, Checkbox, InputNumber, Switch, Modal, Row, Col, DatePicker, } from "antd";
 import * as _ from "lodash";
 import { updateParams } from "@/services/api";
 import { AppstoreOutlined, CaretDownOutlined, CaretRightOutlined, DownOutlined, FolderOpenOutlined, FolderOutlined, MinusCircleOutlined, RightOutlined, UnorderedListOutlined } from "@ant-design/icons";
@@ -18,6 +18,7 @@ import DropSortableItem from "@/components/DragComponents/DropSortableItem";
 import DragSortableItem from "@/components/DragComponents/DragSortableItem";
 import Measurement from "@/components/Measurement";
 import { formatJson, guid } from "@/utils/utils";
+import moment from "moment";
 
 const FormItem = Form.Item;
 const { confirm } = Modal;
@@ -704,7 +705,7 @@ export default connect(({ home, themeStore }) => ({
 
 }))(Control);
 
-export const FormatWidgetToDom = (props: any) => {
+export const FormatWidgetToDom: any = (props: any) => {
   const {
     form, id, label = '', node, config = [],
     parent = undefined, disabled, widgetChange,
@@ -760,6 +761,29 @@ export const FormatWidgetToDom = (props: any) => {
             }}
           />
         </FormItem>
+      );
+    case 'DatePicker':
+      return (
+        <Form.Item
+          name={name}
+          label={label}
+          tooltip={description}
+          initialValue={moment(value || undefined)}
+          rules={[{ required: require, message: `${alias}` }]}
+        >
+          {
+            // @ts-ignore
+            <DatePicker
+              placeholder={`请输入${alias}`}
+              disabled={disabled}
+              onBlur={(e: any) => {
+                widgetChange?.(name, new Date(e.target.value).getTime(), parent);
+              }}
+              showTime
+              style={{ width: '100%' }}
+            />
+          }
+        </Form.Item>
       );
     case 'IpInput':
       return (

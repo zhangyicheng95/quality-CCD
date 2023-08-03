@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { connect, useModel } from 'umi';
-import { Button, Checkbox, Form, Input, InputNumber, message, Popconfirm, Radio, Select, Switch } from 'antd';
+import { Button, Checkbox, DatePicker, Form, Input, InputNumber, message, Popconfirm, Radio, Select, Switch } from 'antd';
 import MonacoEditor from '@/components/MonacoEditor';
 import PlatFormModal from '@/components/platForm';
 import FileManager from '@/components/FileManager';
@@ -14,6 +14,7 @@ import SliderGroup from '@/components/SliderGroup';
 import { formatJson, guid } from '@/utils/utils';
 import IpInput from '@/components/IpInputGroup';
 import Item from 'antd/lib/list/Item';
+import moment from 'moment';
 
 const FormItem = Form.Item;
 interface Props {
@@ -35,9 +36,6 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     const { params } = initialState;
     const { flowData, } = params;
     const { nodes } = flowData;
-    const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
-    const { config = {} } = node;
-    const { group = [], initParams = {} } = config;
 
     const [configGroup, setConfigGroup] = useState<any>([]);
     const [configList, setConfigList] = useState<any>([]);
@@ -50,6 +48,9 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     const [selectedOption, setSelectedOption] = useState<any>({});
     // 初始化
     const init = () => {
+        const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
+        const { config = {} } = node;
+        const { group = [], initParams = {} } = config;
         let resConfig: any = [],
             selectedOptions = {};
         operationList?.forEach((item: any) => {
@@ -66,6 +67,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
 
             }
         });
+
         setConfigGroup(group.map((i: any) => ({ ...i, show: true })));
         setSelectedOption(selectedOptions);
         setConfigList(resConfig);
@@ -348,7 +350,7 @@ export default connect(({ home, themeStore }) => ({
 }))(Operation2Charts);
 
 
-const FormatWidgetToDom = (props: any) => {
+function FormatWidgetToDom(props: any) {
     const {
         form, id, label = '', node, config = [],
         parent = undefined, disabled, widgetChange,
@@ -406,6 +408,29 @@ const FormatWidgetToDom = (props: any) => {
                         }}
                     />
                 </FormItem>
+            );
+        case 'DatePicker':
+            return (
+                <Form.Item
+                    name={name}
+                    label={label}
+                    tooltip={description}
+                    initialValue={moment(value || undefined)}
+                    rules={[{ required: require, message: `${alias}` }]}
+                >
+                    {
+                        // @ts-ignore
+                        <DatePicker
+                            placeholder={`请输入${alias}`}
+                            disabled={disabled}
+                            onBlur={(e: any) => {
+                                widgetChange?.(name, new Date(e.target.value).getTime(), parent);
+                            }}
+                            showTime
+                            style={{ width: '100%' }}
+                        />
+                    }
+                </Form.Item>
             );
         case 'IpInput':
             return (

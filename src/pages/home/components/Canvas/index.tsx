@@ -2093,6 +2093,10 @@ const Home: React.FC<any> = (props: any) => {
                   style={{ width: '100%' }}
                   options={nodeList}
                   onChange={(val) => {
+                    if (!val[0]) {
+                      message.error('该节点缺少节点ID，请联系管理员');
+                      return;
+                    }
                     const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === val[0])?.[0];
                     if (!!res) {
                       setFieldsValue({ operationList: [] });
