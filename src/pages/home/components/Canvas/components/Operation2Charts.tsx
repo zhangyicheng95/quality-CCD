@@ -50,24 +50,26 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     const init = () => {
         const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
         const { config = {} } = node;
-        const { group = [], initParams = {} } = config;
+        let { group = [], initParams = {}, execParams = {} } = config;
+        if (!execParams || _.isEmpty(execParams)) {
+            execParams = initParams;
+        }
         let resConfig: any = [],
             selectedOptions = {};
         operationList?.forEach((item: any) => {
             const itemGroup = group.filter((i: any) => i.children.includes(item))?.[0];
-            if (initParams?.[item]) {
-                resConfig = resConfig.concat({ ...initParams[item], show: !itemGroup });
-                if (initParams[item]?.widget?.type === "TagRadio") {
+            if (execParams?.[item]) {
+                resConfig = resConfig.concat({ ...execParams[item], show: !itemGroup });
+                if (execParams[item]?.widget?.type === "TagRadio") {
                     const children = (
-                        (initParams[item]?.widget?.options || [])
-                            .filter((i: any) => i.name === initParams[item]?.value)?.[0]?.children || []
+                        (execParams[item]?.widget?.options || [])
+                            .filter((i: any) => i.name === execParams[item]?.value)?.[0]?.children || []
                     );
                     selectedOptions[item] = children;
                 }
 
             }
         });
-
         setConfigGroup(group.map((i: any) => ({ ...i, show: true })));
         setSelectedOption(selectedOptions);
         setConfigList(resConfig);
