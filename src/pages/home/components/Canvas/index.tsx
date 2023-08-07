@@ -75,6 +75,7 @@ import ThreeCharts from './components/ThreeCharts';
 import OperationCharts from './components/OperationCharts';
 import StatisticCharts from './components/StatisticCharts';
 import Operation2Charts from './components/Operation2Charts';
+import leftIcon from '@/assets/imgs/left-icon.svg';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -121,6 +122,7 @@ const Home: React.FC<any> = (props: any) => {
     position: { bottom: 16, right: 16 },
     direction: 'column'
   });
+  const [leftPanelVisible, setLeftPanelVisible] = useState(true);
 
   const ifCanEdit = useMemo(() => {
     return window.location.hash.indexOf('edit') > -1;
@@ -1934,21 +1936,49 @@ const Home: React.FC<any> = (props: any) => {
 
   return (
     <div className={`${styles.home}`}>
-      <div className="home-body">
-        {
-          useMemo(() => {
-            return !_.isEmpty(gridHomeList) ? (
-              <GridLayout
-                dragName={ifCanEdit ? '.common-card-title' : ''}
-                list={gridList.concat(contentList)}
-                layout={gridHomeList.concat(contentLayout)}
-                onChange={(data: any) => {
-                  saveGridFunc(data);
-                }}
-              />
-            ) : null
-          }, [gridHomeList, contentLayout, gridList, contentList])
-        }
+      <div className="flex-box home-body">
+        <div className="left-panel" style={leftPanelVisible ? {} : { width: 0 }}>
+          <div
+            className="flex-box-center left-panel-switch-button"
+            style={leftPanelVisible ? {} : { right: '-54px', transform: 'rotate(180deg)' }}
+            onClick={() => {
+              setLeftPanelVisible((prev: any) => !prev);
+            }}
+          >
+            <img src={leftIcon} alt="icon" />
+          </div>
+          <div className="left-panel-body" style={leftPanelVisible ? {} : { display: 'none' }}>
+            <div className="flex-box-justify-between left-panel-search">
+              全部
+              <Input.Search placeholder="input search text" allowClear onSearch={(val: any) => {
+                console.log(val)
+              }} style={{ width: 150 }} />
+            </div>
+            <div className="left-panel-list">
+              {
+                (windowTypeList || []).map((item: any, index: number) => {
+
+                })
+              }
+            </div>
+          </div>
+        </div>
+        <div className="right-canvas">
+          {
+            useMemo(() => {
+              return !_.isEmpty(gridHomeList) ? (
+                <GridLayout
+                  dragName={ifCanEdit ? '.common-card-title' : ''}
+                  list={gridList.concat(contentList)}
+                  layout={gridHomeList.concat(contentLayout)}
+                  onChange={(data: any) => {
+                    saveGridFunc(data);
+                  }}
+                />
+              ) : null
+            }, [gridHomeList, contentLayout, gridList, contentList])
+          }
+        </div>
       </div>
       <div className="flex-box home-footer">
         {
