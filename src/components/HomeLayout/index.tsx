@@ -107,8 +107,8 @@ const HomeLayout: React.FC<any> = (props) => {
         const data = (params?.contentData?.ipList || []).map((item: any) => {
           if (item.key === id) {
             return Object.assign({}, item, {
-              name: quality_name || name,
-              label: (quality_name || name),
+              name: name,
+              label: name,
             });
           }
           const alias = !!item.name ? item.name : item.label;
@@ -129,9 +129,9 @@ const HomeLayout: React.FC<any> = (props) => {
         }));
       } catch (err) { }
     } else {
-      if (!!quality_name || !!name) {
+      if (!!name) {
         const list = [
-          { label: quality_name || name, name: quality_name || name, children: null, key: id },
+          { label: name, name: name, children: null, key: id },
         ];
         setInitialState((preInitialState: any) => ({
           ...preInitialState,

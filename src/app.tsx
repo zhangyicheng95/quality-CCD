@@ -99,7 +99,7 @@ export async function getInitialState(): Promise<{
               if (item.key === res.data.id) {
                 return {
                   ...item,
-                  label: res?.data?.quality_name || res?.data?.name
+                  label: res?.data?.name
                 };
               };
               return item;

@@ -19,7 +19,7 @@ import {
 } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 import {
     AimOutlined,
-    BorderlessTableOutlined, BorderOuterOutlined, ClearOutlined, EyeOutlined, FontSizeOutlined, MinusOutlined, PlusOutlined
+    BorderlessTableOutlined, BorderOuterOutlined, ClearOutlined, EyeOutlined, FontSizeOutlined, MinusOutlined, PlusOutlined, ScissorOutlined
 } from '@ant-design/icons';
 import rectIcon from '@/assets/imgs/rect.svg';
 import rectAllIcon from '@/assets/imgs/rect-all.svg';
@@ -29,7 +29,7 @@ import rectTopIcon from '@/assets/imgs/rect-top.svg';
 import rectBottomIcon from '@/assets/imgs/rect-bottom.svg';
 import rectFrontIcon from '@/assets/imgs/rect-front.svg';
 import rectBackIcon from '@/assets/imgs/rect-back.svg';
-import { equalsObj } from '@/utils/utils';
+import { equalsObj, uuid } from '@/utils/utils';
 import spriteImg from '@/assets/imgs/sprite.png';
 
 interface Props {
@@ -215,6 +215,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         const bzBtn06: any = document.querySelector("#bzBtn06");
         // 按钮-放大模型
         const bzBtn07: any = document.querySelector("#bzBtn07");
+        // 按钮-截图
+        const bzBtn08: any = document.querySelector("#bzBtn08");
         // 初始化dom
         renderer.current = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
         // 防止后渲染的scene覆盖前面的scene
@@ -398,6 +400,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             (measurements || []).forEach((line: any) => {
                 scene.current.remove(line);
                 scene.current.remove(measurementLabels[line.name]);
+                measurementLabels[line.name] = null;
             });
             lineId = "measure_0";
             measurements = [];
@@ -432,6 +435,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         };
         bzBtn06?.addEventListener("click", () => bzBtnFun06(0.1));
         bzBtn07?.addEventListener("click", () => bzBtnFun06(-0.1));
+        // 截图
+        function bzBtnFun08() {
+            captureScreenshot('download');
+        };
+        bzBtn08?.addEventListener("click", () => bzBtnFun08());
         // 取消标注
         function onKeyUp(event: any) {
             if (event.key === "Escape") {
@@ -593,13 +601,15 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             bzBtn04?.removeEventListener?.('click', bzBtnFun04);
             bzBtn05?.removeEventListener?.("click", bzBtnFun05);
             bzBtn06?.removeEventListener?.("click", bzBtnFun06);
+            bzBtn07?.removeEventListener?.("click", bzBtnFun06);
+            bzBtn08?.removeEventListener?.("click", bzBtnFun08);
             renderer?.current?.domElement?.removeEventListener?.("pointerdown", onMouseDown, false);
             renderer?.current?.domElement?.removeEventListener?.("pointerup", onMouseUp, false);
             renderer?.current?.domElement?.removeEventListener?.("mousemove", onDocumentMouseMove, false);
             window?.removeEventListener?.("keyup", onKeyUp);
             setCameraSwitch && setCameraSwitch?.(false);
             if (cameraRef?.current) {
-                clearInterval(cameraRef?.current);
+                clearTimeout(cameraRef?.current);
             };
             if (addType !== 'add') {
                 clearCanvas();
@@ -655,6 +665,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             if (!!localStorage.getItem('cameraScale')) {
                 scale = Number(localStorage.getItem('cameraScale'));
             }
+            const basicPosition = new THREE.Vector3(0, -scale * max, 0);
             if (addType === 'add') {
                 models?.forEach((model: any) => {
                     model.material = new THREE.PointsMaterial({   // MeshStandardMaterial,MeshBasicMaterial,PointsMaterial
@@ -691,7 +702,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 // } else if (max === box.max.y) {
                 //     camera.current.position.set(0, 0, scale * max);
                 // } else {
-                camera.current.position.set(0, scale * max, 0);
+
+                animateCamera(basicPosition);
                 // }
                 camera.current.zoom = scale;
                 effectMeasureLine(mesh, value);
@@ -725,6 +737,32 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             scene.current.add(mesh);
             // 开启相机巡航
             setCameraSwitch(modelRotate);
+            if (1) {
+                // 开启循环自动截图
+                if (!maskBox) return;
+                const processBox = maskBox?.querySelector('.process');
+                const processText = maskBox?.querySelector('.process-text');
+                maskBox.style.display = "flex";
+                processBox.style.display = 'none';
+                processText.style.display = 'block';
+                processText.style.textAlign = 'center';
+                processText.style.fontSize = `${fontSize + 20}px`;
+                processText.innerText = `自动截图上传中`;
+
+                var cameraList = [
+                    new THREE.Vector3(max * -scale, 0, 0),
+                    new THREE.Vector3(0, 0, max * scale),
+
+                    new THREE.Vector3(0, max * scale, 0),
+                    new THREE.Vector3(0, 0, max * scale),
+                    new THREE.Vector3(0, max * -scale, 0),
+
+                    new THREE.Vector3(max * scale, 0, 0),
+                    new THREE.Vector3(0, 0, max * -scale),
+
+                ];
+                loopScreenshot(cameraList, 0, basicPosition, maskBox);
+            }
         };
         function processFun(xhr: any) {
             if (addType === 'add') return;
@@ -774,7 +812,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             y: 0,
                             z: -1 * width / 2 / ((index % 2) ? 3 : 1)
                         };
-                        console.log(point)
                         position = [point, point];
                         localPosition = [
                             {
@@ -843,34 +880,34 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         const point = {
                             x: length / 3 * (index - 7) * -1,
                             y: 0,
-                            z: -1 * width,
+                            z: width,
                         }
                         position = [point, point];
                         localPosition = [
                             {
                                 ...point,
-                                z: -1 / 2 * width
+                                z: 1 / 2 * width
                             },
                             {
                                 ...point,
-                                z: -1 / 2 * width
+                                z: 1 / 2 * width
                             }
                         ];
                     } else if ((type === "bottom") || (index >= 9 && index < 12)) {
                         const point = {
                             x: length / 2 * (index - 10) * -1,
                             y: 0,
-                            z: width,
+                            z: -1 * width,
                         };
                         position = [point, point];
                         localPosition = [
                             {
                                 ...point,
-                                z: width / 2
+                                z: -1 * width / 2
                             },
                             {
                                 ...point,
-                                z: width / 2
+                                z: -1 * width / 2
                             }
                         ];
                     }
@@ -888,7 +925,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         })
                     );
                     line.computeLineDistances();  // 虚线
-                    line.name = `measure_${index}`;
+                    line.name = `measure_`;
+                    line.visible = true;
                     line.frustumCulled = false;
                     scene.current.add(line);
                     measurements = measurements.concat(line);
@@ -1012,7 +1050,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     lineId = `measure_${index + 1}`;
                     // const closeDom = measurementDiv.querySelector('.close');
                     // closeDom?.addEventListener('dbclick', () => {
-                    //     console.log(123)
                     //     scene.current.remove(measurementLabel);
                     //     scene.current.remove(line);
                     // });
@@ -1200,6 +1237,49 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         camera.current.zoom = cameraScale;
         return { length, width, height, max, cameraScale };
     };
+    // 点云截图
+    const captureScreenshot = (type?: any) => {
+        return new Promise((resolve, reject) => {
+            // 将射线隐藏
+            (measurements || []).forEach((line: any) => {
+                scene.current?.remove?.(line);
+            });
+            // requestAnimationFrame 确保截图在页面完全加载和渲染之后进行
+            requestAnimationFrame(function () {
+                const box: any = renderer.current.domElement;
+                var imageDataURL = box?.toDataURL('image/png');
+                if (type === 'download') {
+                    var link = document.createElement('a');
+                    link.href = imageDataURL;
+                    link.download = `output_${uuid()}.png`;
+                    link.click();
+                }
+                // 将射线显示回来
+                (measurements || []).forEach((line: any) => {
+                    scene.current?.add?.(line);
+                });
+                resolve(imageDataURL);
+            });
+        });
+    };
+    // 旋转视角-自动截图
+    const loopScreenshot = (list: any, index: number, basicPosition: any, processText: any) => {
+        if (index + 1 > list.length) {
+            animateCamera(basicPosition);
+            processText.style.display = 'none';
+            return;
+        }
+        animateCamera(list[index]);
+        captureScreenshot().then((res: any) => {
+            // 首先走保存
+            console.log(res)
+            console.log(index)
+            // 然后走循环
+            setTimeout(() => {
+                loopScreenshot(list, index + 1, basicPosition, processText);
+            }, cameraSwitchTime * 1000);
+        });
+    };
     // 不同视角点击函数
     const animationClick = (targetPos: any) => {
         // 先停止自动旋转
@@ -1224,15 +1304,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     // 自动旋转函数
     const cameraRotate = (list: any, index: number) => {
         if (cameraRef?.current) {
-            clearInterval(cameraRef?.current);
+            clearTimeout(cameraRef?.current);
         };
-
         if (index + 1 > list.length) {
             return;
         }
         animateCamera(list[index]);
-
         cameraRef.current = setTimeout(() => {
+            console.log(index, cameraSwitchTime)
             cameraRotate(list, ((index + 1 === list.length) ? 0 : index + 1))
         }, cameraSwitchTime * 1000);
     };
@@ -1255,21 +1334,25 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
 
             new THREE.Vector3(width, height, length),
         ];
+        if (cameraRef?.current) {
+            clearTimeout(cameraRef?.current);
+        }
+
         if (cameraSwitch) {
             if (cameraRef?.current) {
-                clearInterval(cameraRef?.current);
+                clearTimeout(cameraRef?.current);
             }
             cameraRotate(cameraList, 0)
         } else {
             if (cameraRef?.current) {
-                clearInterval(cameraRef?.current);
+                clearTimeout(cameraRef?.current);
             }
             cameraRotate(cameraList, cameraList.length);
         }
 
         return () => {
             if (cameraRef?.current) {
-                clearInterval(cameraRef?.current);
+                clearTimeout(cameraRef?.current);
             }
             cameraRotate(cameraList, cameraList.length);
         }
@@ -1370,6 +1453,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             icon={<ClearOutlined />}
                             type={'default'}
                             id="bzBtn05"
+                            className='btn'
+                        />
+                    </Tooltip>
+                    <Tooltip title="截图">
+                        <Button
+                            icon={<ScissorOutlined />}
+                            type={'default'}
+                            id="bzBtn08"
                             className='btn'
                         />
                     </Tooltip>
@@ -1503,6 +1594,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     视图
                 </div>
             </div>
+
         </div>
     );
 

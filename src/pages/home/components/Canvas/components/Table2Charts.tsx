@@ -510,6 +510,10 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                     _.isArray(dataValue) ?
                         (dataValue || []).map((item: any, index: number) => {
                             const { value = [], color } = item;
+                            if (!_.isArray(value)) {
+                                message.error('推送信息错误，请检查', 5);
+                                return null;
+                            }
                             return <div
                                 className={`charts-body-tr`}
                                 key={`echart-${id}-tr-${index}`}
