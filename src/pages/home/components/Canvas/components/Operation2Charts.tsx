@@ -832,6 +832,10 @@ function FormatWidgetToDom(props: any) {
                         onChange={(val: any) => {
                             widgetChange?.(name, val, parent);
                         }}
+                        precision={precision}
+                        step={step}
+                        max={max}
+                        min={min}
                     />
                 </Form.Item>
             );
