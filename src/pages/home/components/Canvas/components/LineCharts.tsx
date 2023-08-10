@@ -30,17 +30,17 @@ const LineCharts: React.FC<Props> = (props: any) => {
         dataValue = [
             {
                 "name": "上限",
-                "value": 8.2,
+                "value": 7.2,
                 "type": "markLine"
             },
             {
                 "name": "标准值",
-                "value": 1,
+                "value": 2,
                 "type": "markLine"
             },
             {
                 "name": "下限",
-                "value": -9.53,
+                "value": -17.53,
                 "type": "markLine"
             },
             {

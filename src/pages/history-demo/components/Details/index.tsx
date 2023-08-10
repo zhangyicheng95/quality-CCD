@@ -9,13 +9,13 @@ import ImageDom from "@/components/ImageDom";
 const HistoryDetail: React.FC<any> = (props: any) => {
   const history = useHistory();
   const { state = {} } = useLocation<any>();
-  const { orderId, uid, data = {} } = state;
-  const { store_path } = data;
+  const { orderId, uid, store_path } = state;
   const [imgSize, setImgSize] = useState(1);
 
   useEffect(() => {
+    console.log(state);
     if (!state || _.isEmpty(state)) {
-      history.replace({ pathname: '/history' });
+      // history.replace({ pathname: '/history' });
     }
   }, [])
 
