@@ -17,7 +17,7 @@ const colorOption = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3b
 const BarCharts: React.FC<Props> = (props: any) => {
     let myChart: any = null;
     const { data = {}, id, setMyChartVisible, } = props;
-    let { dataValue = [], yName, xName, direction, align, barColor = [] } = data;
+    let { dataValue = [], yName, xName = '', direction, align, barColor = [] } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = [{ "name": "data1", "value": 8.04, "color": "black" }, { "name": "data2", "value": 6.95, "color": "blue" }, { "name": "上限", "value": 2.2, "type": "markLine", "color": "red" }, { "name": "标准值", "value": 1.6, "type": "markLine", "color": "green" }, { "name": "下限", "value": 1.53, "type": "markLine", "color": "red" }, { "name": "开始", "value": 2.2, "type": "start" }, { "name": "截止", "value": 2.2, "type": "end" }];
     }
@@ -69,10 +69,10 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 show: false
             },
             grid: Object.assign({ top: '35px', }, options.grid, align === 'right' ? {
-                left: `${xName.length * (xName.length < 4 ? 24 : 16)}px`,
+                left: `${xName?.length * (xName?.length < 4 ? 24 : 16)}px`,
                 right: '3%'
             } : {
-                right: `${xName.length * (xName.length < 4 ? 24 : 16)}px`,
+                right: `${xName?.length * (xName?.length < 4 ? 24 : 16)}px`,
             }),
             yAxis: Object.assign({}, options.yAxis, {
                 type: direction === 'rows' ? 'category' : 'value',

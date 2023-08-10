@@ -26,7 +26,7 @@ interface Props {
 
 const Operation2Charts: React.FC<Props> = (props: any) => {
     let { data = {}, id, started } = props;
-    const { operationList, dataValue, xName, fontSize } = data;
+    const { operationList, dataValue, xName = '', fontSize } = data;
     if (process.env.NODE_ENV === 'development') {
         started = true;
     }

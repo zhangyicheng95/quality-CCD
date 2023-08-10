@@ -17,7 +17,7 @@ interface Props {
 const LineCharts: React.FC<Props> = (props: any) => {
     let myChart: any = null;
     const { data = {}, id, legend, dispatch, setMyChartVisible } = props;
-    let { dataValue = [], yName, xName, dataZoom } = data;
+    let { dataValue = [], yName, xName = '', dataZoom } = data;
     if (process.env.NODE_ENV === 'development') {
         let base = +new Date(1988, 9, 3);
         let oneDay = 24 * 3600 * 1000;
@@ -229,7 +229,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
                 legend[id] ? { selected: legend[id], } : {}
             ),
             grid: Object.assign({}, options.grid, {
-                right: `${xName.length * (xName.length < 4 ? 24 : 16)}px`,
+                right: `${xName?.length * (xName?.length < 4 ? 24 : 16)}px`,
                 bottom: 30
             }),
             dataZoom: [
