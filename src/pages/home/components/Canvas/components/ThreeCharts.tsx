@@ -835,7 +835,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             {
                                 ...point,
                                 x: -1 * length / 3,
-
                             },
                             {
                                 ...point,
@@ -1500,7 +1499,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         <div className="sprite-box flex-box">
                             <div className="number-box flex-box-justify-between">
                                 {
-                                    [5000, 4, 3, 2, '0.0', -2, -3, -4, -5000].map((item: any, index: number) => {
+                                    [2, 1.5, 1, 0.5, '0.0', -0.5, -1, -1.5, -2].map((item: any, index: number) => {
                                         return <div
                                             className="number-item"
                                             key={`number-${index}`}
