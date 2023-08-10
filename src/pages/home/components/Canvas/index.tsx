@@ -1212,6 +1212,13 @@ const Home: React.FC<any> = (props: any) => {
                                       value: item[0],
                                     }
                                   }));
+                                } else if (!!config?.initParams && _.isObject(config?.initParams)) {
+                                  setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
+                                    return {
+                                      label: item[1]?.alias,
+                                      value: item[0],
+                                    }
+                                  }));
                                 }
                               }
                             }
