@@ -1,0 +1,29 @@
+@import '~antd/es/style/themes/default.less';
+
+.historyList {
+  height: 100%;
+  overflow: hidden;
+
+  :global {
+    .history-content-box {
+      flex-direction: column;
+      width: 100%;
+
+      .search-box {
+        height: auto;
+        // width: 100%;
+        margin-bottom: 32px;
+
+        .flex-box {
+          gap: 24px;
+          flex-wrap: wrap;
+        }
+      }
+
+      .table-box {
+        flex: 1;
+        width: 100%;
+      }
+    }
+  }
+}

@@ -36,15 +36,15 @@
     icon: 'history',
     path: '/history',
     access: 'canHistory',
-    component: './history',
+    component: './history-demo',
     routes: [
       {
         path: '/history',
-        redirect: './history/components/List',
+        redirect: './history-demo/components/List',
       },
       {
         path: '/history/detail',
-        component: './history/components/Details',
+        component: './history-demo/components/Details',
       },
     ]
   },
