@@ -7,6 +7,7 @@ import { Link } from 'umi';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import defaultSettings from '../config/defaultSettings';
 import icon from '@/assets/sany-logo.svg';
+import UBIcon from '@/assets/sany-ubs-logo.svg';
 import HomeLayout from '@/components/HomeLayout';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import RightContent from './components/RightContent';
@@ -140,7 +141,8 @@ const iconDom = (
       !!localStorage.getItem('quality_icon')
         ? `${BASE_IP}file_browser${localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'
         }${localStorage.getItem('quality_icon')}`
-        : icon
+        // @ts-ignore
+        : (window.QUALITY_CCD_CONFIG?.type === 'szpx' ? UBIcon : icon)
     }
     alt="logo"
   />

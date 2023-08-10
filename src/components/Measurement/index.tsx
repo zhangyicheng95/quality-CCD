@@ -9,11 +9,16 @@ interface Props {
   className?: any,
   onChange?: any,
   titleColor?: Boolean,
+  precision?: number;
+  step?: number;
+  max?: number;
+  min?: number;
 };
 
 const Measurement: React.FC<Props> = (props: any) => {
   const {
-    onChange = null, value = '', disabled, className = '', titleColor
+    onChange = null, value = '', disabled, className = '', titleColor,
+    precision = 0, step = 1, max = 100000, min = -100000
   } = props;
   const refnum_0 = useRef();
   const refnum_1 = useRef();
@@ -89,6 +94,10 @@ const Measurement: React.FC<Props> = (props: any) => {
               className={`self_input ${className}`}
               ref={refList[index]}
               value={value}
+              precision={precision}
+              step={step}
+              max={max}
+              min={min}
               // onChange={(e) => { handleNumberChange(e, `num_${index}`, index) }}
               onKeyUp={(e) => turnIpPOS(e, index)}
               onFocus={() => setFocus((prev: any) => Object.assign({}, prev, { [`refnum_${index}`]: true }))}

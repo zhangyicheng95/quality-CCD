@@ -737,7 +737,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             scene.current.add(mesh);
             // 开启相机巡航
             setCameraSwitch(modelRotate);
-            if (1) {
+            if (!1) {
                 // 开启循环自动截图
                 if (!maskBox) return;
                 const processBox = maskBox?.querySelector('.process');

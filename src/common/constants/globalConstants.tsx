@@ -1,5 +1,26 @@
-
 import _ from 'lodash';
+import imgIcon from '@/assets/dashboard-imgs/img.png';
+import imgsIcon from '@/assets/dashboard-imgs/imgs.png';
+import lineIcon from '@/assets/dashboard-imgs/line.png';
+import pointIcon from '@/assets/dashboard-imgs/point.png';
+import barIcon from '@/assets/dashboard-imgs/bar.png';
+import pieIcon from '@/assets/dashboard-imgs/pie.png';
+import tableIcon from '@/assets/dashboard-imgs/table.png';
+import table2Icon from '@/assets/dashboard-imgs/table2.png';
+import threeIcon from '@/assets/dashboard-imgs/three.png';
+import alertIcon from '@/assets/dashboard-imgs/alert.png';
+import buttonIcon from '@/assets/dashboard-imgs/button.png';
+import buttonIpIcon from '@/assets/dashboard-imgs/button2.png';
+import processIcon from '@/assets/dashboard-imgs/process.png';
+import descriptionIcon from '@/assets/dashboard-imgs/description.png';
+import operationIcon from '@/assets/dashboard-imgs/operation.png';
+import operation2Icon from '@/assets/dashboard-imgs/operation2.png';
+import statisticIcon from '@/assets/dashboard-imgs/statistic.png';
+import slider1Icon from '@/assets/dashboard-imgs/slider1.png';
+import slider4Icon from '@/assets/dashboard-imgs/slider4.png';
+import footer1Icon from '@/assets/dashboard-imgs/slider1.png';
+import footer2Icon from '@/assets/dashboard-imgs/slider1.png';
+import gunyaIcon from '@/assets/dashboard-imgs/gunya_background.png';
 
 export const layoutTransform = {
   0: { i: '0', x: 0, y: 0, w: 5, h: 20, minW: 2, maxW: 10, minH: 4, maxH: 32 },
@@ -13,74 +34,133 @@ export const layoutTransform = {
 
 // @ts-ignore
 export const systemType = window.QUALITY_CCD_CONFIG.type;
+// 自定义组件
 export const windowTypeList: any = [
   {
     value: 'img',
     label: '图片窗口',
+    icon: imgIcon,
   },
   {
     value: 'imgs',
     label: '图片列表窗口',
+    icon: imgsIcon,
   },
   {
     value: 'line',
     label: '折线趋势图窗口',
+    icon: lineIcon,
   },
   {
     value: 'point',
     label: '散点图窗口',
+    icon: pointIcon,
   },
   {
     value: 'bar',
     label: '柱状图窗口',
+    icon: barIcon,
   },
   {
     value: 'pie',
     label: '饼状图窗口',
+    icon: pieIcon,
   },
   {
     value: 'table',
     label: '双列表格窗口',
+    icon: tableIcon,
   },
   {
     value: 'table2',
     label: '通用表格窗口',
+    icon: table2Icon,
   },
   {
     value: 'three',
     label: '3D窗口',
+    icon: threeIcon,
   },
   {
     value: 'alert',
     label: '状态窗口',
+    icon: alertIcon,
   },
   {
     value: 'button',
     label: '按钮组件',
+    icon: buttonIcon,
   },
   {
     value: 'buttonInp',
     label: '参数按钮组件',
+    icon: buttonIpIcon,
   },
   {
     value: 'progress',
     label: '进度条组件',
+    icon: processIcon,
   },
   {
     value: 'description',
     label: '描述窗口',
+    icon: descriptionIcon,
   },
   {
     value: 'operation',
     label: '功能操作窗口',
+    icon: operationIcon,
   },
   {
     value: 'operation2',
     label: '动态操作窗口',
+    icon: operation2Icon,
   },
   {
     value: 'statistic',
-    label: '统计数据窗口'
+    label: '统计数据窗口',
+    icon: statisticIcon,
+  }
+];
+// 默认基础组件
+export const basicWindowList: any = [
+  {
+    value: 'slider-1',
+    label: '功能按钮',
+    icon: slider1Icon,
+  },
+  {
+    value: 'slider-4',
+    label: '方案列表',
+    icon: slider4Icon,
+  },
+  {
+    value: 'footer-1',
+    label: '日志信息',
+    icon: footer1Icon,
+  },
+  {
+    value: 'footer-2',
+    label: '错误信息',
+    icon: footer2Icon,
+  }
+];
+// 仿真涂层-背景图
+export const simulatedCoatingList: any = [
+  {
+    value: 'tbj',
+    label: '涂布机仿真',
+    icon: slider4Icon,
+  },
+  {
+    value: 'dpj',
+    label: '叠片机仿真',
+    icon: footer1Icon,
+  },
+  {
+    value: 'gyj',
+    label: '辊压机仿真',
+    icon: gunyaIcon,
   }
 ];
 export const logColors = {

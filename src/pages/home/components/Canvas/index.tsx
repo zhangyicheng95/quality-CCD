@@ -18,6 +18,7 @@ import {
   Switch,
   Col,
   Row,
+  Image,
 } from 'antd';
 import * as _ from 'lodash';
 import {
@@ -41,6 +42,7 @@ import {
   PlusOutlined,
   ReloadOutlined,
   SafetyOutlined,
+  SaveOutlined,
   SwapOutlined,
 } from '@ant-design/icons';
 import { connect, useHistory, useModel } from 'umi';
@@ -66,9 +68,9 @@ import ButtonCharts from './components/ButtonCharts';
 import ChartPreviewModal from './components/ChartPreviewModal';
 import ProgressCharts from './components/ProgressCharts';
 import ImgCharts from './components/ImgCharts';
-import { windowTypeList, } from '@/common/constants/globalConstants';
+import { basicWindowList, simulatedCoatingList, windowTypeList, } from '@/common/constants/globalConstants';
 import LogPreviewModal from './components/LogPreviewModal';
-import { guid } from '@/utils/utils';
+import { getuid, guid } from '@/utils/utils';
 import DescriptionCharts from './components/DescriptionCharts';
 import moment from 'moment';
 import ThreeCharts from './components/ThreeCharts';
@@ -76,6 +78,12 @@ import OperationCharts from './components/OperationCharts';
 import StatisticCharts from './components/StatisticCharts';
 import Operation2Charts from './components/Operation2Charts';
 import leftIcon from '@/assets/imgs/left-icon.svg';
+import dirIcon from '@/assets/imgs/dir-icon.svg';
+import NodeDetailWrapper from '@/components/NodeDetailWrapper';
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
+import DropSortableItem from "@/components/DragComponents/DropSortableItem";
+import DragSortableItem from "@/components/DragComponents/DragSortableItem";
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -86,6 +94,7 @@ const Home: React.FC<any> = (props: any) => {
   } = props;
   const { logStr, gridContentList, footerData, errorData } = snapshot;
   const [form] = Form.useForm();
+  const [form2] = Form.useForm();
   const { validateFields, setFieldsValue, getFieldValue } = form;
   // @ts-ignore
   const { type } = window.QUALITY_CCD_CONFIG;
@@ -123,6 +132,26 @@ const Home: React.FC<any> = (props: any) => {
     direction: 'column'
   });
   const [leftPanelVisible, setLeftPanelVisible] = useState(true);
+  const [leftPanelData, setLeftPanelData] = useState<any>([
+    {
+      key: 'main',
+      title: '监控窗口',
+      open: true,
+      children: windowTypeList
+    },
+    {
+      key: 'basic',
+      title: '基础窗口',
+      open: true,
+      children: basicWindowList
+    },
+    {
+      key: 'coating',
+      title: '背景涂层',
+      open: true,
+      children: simulatedCoatingList
+    }
+  ]);
 
   const ifCanEdit = useMemo(() => {
     return window.location.hash.indexOf('edit') > -1;
@@ -213,6 +242,33 @@ const Home: React.FC<any> = (props: any) => {
                     >
                       编辑
                     </div>
+                    <Popconfirm
+                      title="确认删除 基本信息 窗口吗?"
+                      onConfirm={() => {
+                        const home = gridHomeList?.map((item: any) => {
+                          if (item.i === 'slider-1') {
+                            return {
+                              ...item,
+                              w: 0,
+                              h: 0,
+                              minW: 0,
+                              minH: 0,
+                            };
+                          }
+                          return item;
+                        });
+                        setParamData((prev: any) => {
+                          return Object.assign({}, prev, {
+                            contentData: Object.assign({}, prev?.contentData, { home })
+                          })
+                        });
+                        setGridHomeList(home);
+                      }}
+                      okText="确认"
+                      cancelText="取消"
+                    >
+                      <div className='common-btn'>删除</div>
+                    </Popconfirm>
                   </div>
                   : null
               }
@@ -223,271 +279,76 @@ const Home: React.FC<any> = (props: any) => {
           ...(ifCanEdit || paramData?.contentData?.contentHeader?.['slider-1']) ?
             { height: 'calc(100% - 28px)' } : { height: '100%' }
         }}>
-          {
-            ifCanEdit ?
-              <Fragment>
-                <Popover
-                  placement="right"
-                  title={'添加窗口'}
-                  trigger="click"
-                  content={
-                    <Menu
-                      items={[
-                        {
-                          label: '添加监控窗口', key: 'add', onClick: () => {
-                            setAddWindowVisible(true);
-                          }
-                        },
-                        {
-                          label: '显示首页窗口',
-                          key: 'home-content',
-                          children: [
-                            {
-                              label: '显示基本信息',
-                              key: 'slider-2',
-                              disabled: (
-                                gridHomeList?.filter((i: any) => i.i === 'slider-2')[0]?.w !== 0 &&
-                                gridHomeList?.filter((i: any) => i.i === 'slider-2')[0]?.h !== 0
-                              ),
-                              onClick: () =>
-                                setGridHomeList((prev: any) => {
-                                  return prev?.map((item: any) => {
-                                    if (item.i === 'slider-2') {
-                                      return {
-                                        ...item,
-                                        w: 9,
-                                        h: 4,
-                                        minW: 1,
-                                        minH: 2,
-                                      };
-                                    }
-                                    return item;
-                                  })
-                                })
-                            },
-                            {
-                              label: '显示实时信息',
-                              key: 'slider-3',
-                              disabled: (
-                                gridHomeList?.filter((i: any) => i.i === 'slider-3')[0]?.w !== 0 &&
-                                gridHomeList?.filter((i: any) => i.i === 'slider-3')[0]?.h !== 0
-                              ),
-                              onClick: () =>
-                                setGridHomeList((prev: any) => {
-                                  return prev?.map((item: any) => {
-                                    if (item.i === 'slider-3') {
-                                      return {
-                                        ...item,
-                                        w: 9,
-                                        h: 4,
-                                        minW: 1,
-                                        minH: 2,
-                                      };
-                                    }
-                                    return item;
-                                  })
-                                })
-                            },
-                            {
-                              label: '显示方案列表',
-                              key: 'slider-4',
-                              disabled: (
-                                gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w !== 0 &&
-                                gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.h !== 0
-                              ),
-                              onClick: () =>
-                                setGridHomeList((prev: any) => {
-                                  return prev?.map((item: any) => {
-                                    if (item.i === 'slider-4') {
-                                      return {
-                                        ...item,
-                                        w: 9,
-                                        h: 4,
-                                        minW: 1,
-                                        minH: 1,
-                                      };
-                                    }
-                                    return item;
-                                  })
-                                })
-                            },
-                            {
-                              label: '显示日志信息',
-                              key: 'footer-1',
-                              disabled: (
-                                gridHomeList?.filter((i: any) => i.i === 'footer-1')[0]?.w !== 0 &&
-                                gridHomeList?.filter((i: any) => i.i === 'footer-1')[0]?.h !== 0
-                              ),
-                              onClick: () =>
-                                setGridHomeList((prev: any) => {
-                                  return prev?.map((item: any) => {
-                                    if (item.i === 'footer-1') {
-                                      return {
-                                        ...item,
-                                        w: 9,
-                                        h: 4,
-                                        minW: 1,
-                                        minH: 2,
-                                      };
-                                    }
-                                    return item;
-                                  })
-                                })
-                            },
-                            {
-                              label: '显示错误信息',
-                              key: 'footer-2',
-                              disabled: (
-                                gridHomeList?.filter((i: any) => i.i === 'footer-2')[0]?.w !== 0 &&
-                                gridHomeList?.filter((i: any) => i.i === 'footer-2')[0]?.h !== 0
-                              ),
-                              onClick: () =>
-                                setGridHomeList((prev: any) => {
-                                  return prev?.map((item: any) => {
-                                    if (item.i === 'footer-2') {
-                                      return {
-                                        ...item,
-                                        w: 9,
-                                        h: 4,
-                                        minW: 1,
-                                        minH: 2,
-                                      };
-                                    }
-                                    return item;
-                                  })
-                                })
-                            },
-                          ],
-                        },
-                      ]}
-                    ></Menu>
-                  }
-                >
-                  <Button
-                    className="flex-box btn"
-                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
-                    icon={<PlusCircleOutlined className="btn-icon" />}
-                    type="text"
-                  >
-                    添加
-                  </Button>
-                </Popover>
-                <Button
-                  className="flex-box btn"
-                  style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
-                  icon={<SafetyOutlined className="btn-icon" />}
-                  type="link"
-                  onClick={() => {
-                    updateParams({
-                      id: paramData.id,
-                      data: {
-                        ...paramData,
-                        contentData: {
-                          ...paramData?.contentData,
-                          pageIconPosition,
-                          homeSetting: homeSettingData
-                        }
-                      },
-                    }).then((res: any) => {
-                      if (res && res.code === 'SUCCESS') {
-                        history.push({ pathname: `/home` });
-                        window.location.reload();
-                      } else {
-                        message.error(res?.msg || res?.message || '接口异常');
-                      }
-                    });
-                  }}
-                >
-                  保存
-                </Button>
-              </Fragment>
-              :
-              isVision ?
-                <Button
-                  className="flex-box btn"
-                  icon={
-                    <Badge status="success" />
-                    // <div style={{ height: 30, width: 30, marginRight: 8 }}>
-                    //   <div className="k-loader" />
-                    // </div>
-                  }
-                  type="link"
-                  disabled
-                >
-                  {'检测中'}
-                </Button>
-                :
-                <Fragment>
-                  <Button
-                    className="flex-box btn"
-                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
-                    icon={
-                      started ? (
-                        <div className="btn-icon btn-self-icon flex-box-center success" >
-                        </div>
-                      ) : (
-                        <PlayCircleOutlined className="btn-icon" />
-                      )
-                    }
-                    type="link"
-                    onClick={() => start()}
-                    disabled={started}
-                    loading={!started && loading}
-                  >
-                    {started ? '检测' : '启动'}
-                  </Button>
-                  <Button
-                    className="flex-box btn"
-                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
-                    danger
-                    icon={<div className="btn-icon btn-self-icon flex-box-center" >
-                      <div className={`btn-self-icon-rect ${started ? 'active' : 'disabled'}`} />
-                    </div>}
-                    type="text"
-                    onClick={() => end()}
-                    disabled={!started}
-                    loading={started && loading}
-                  >
-                    停止
-                  </Button>
-                  <Button
-                    className="flex-box btn"
-                    style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
-                    danger
-                    icon={<ReloadOutlined className="btn-icon" />}
-                    type="text"
-                    onClick={() => reStart()}
-                    disabled={!started}
-                    loading={started && loading}
-                  >
-                    重启
-                  </Button>
-                  {process.env.NODE_ENV === 'development' ? (
-                    <Button
-                      className="flex-box btn"
-                      style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
-                      icon={<AndroidOutlined className="btn-icon" />}
-                      type="link"
-                      onClick={() => {
-                        dispatch({
-                          type: 'home/set',
-                          payload: {
-                            gridContentList: [
-                              { "id": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "value": ["96c525f8-fada-4512-8b44-7e8995278e63", "filepath"], "filepath": { "name": "models/output.ply", "value": [{}, {}] }, "size": { "i": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "x": 7, "y": 3, "w": 36, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "three", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "comparison": false, "interlacing": false, "modelRotate": false, "modelScale": false },
-                              { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "frame"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "x": 43, "y": 3, "w": 30, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "img", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "magnifier": false },
-                              { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "cam_name"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "x": 73, "y": 3, "w": 23, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "pie", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true }
-                            ],
-                          },
-                        });
-                        // touchFlowService()
-                      }}
-                      disabled={!started && process.env.NODE_ENV !== 'development'}
-                      loading={started && loading}
-                    >
-                      自助
-                    </Button>
-                  ) : null}
-                </Fragment>
+
+          <Button
+            className="flex-box btn"
+            style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
+            icon={
+              started ? (
+                <div className="btn-icon btn-self-icon flex-box-center success" >
+                </div>
+              ) : (
+                <PlayCircleOutlined className="btn-icon" />
+              )
+            }
+            type="link"
+            onClick={() => start()}
+            disabled={started || ifCanEdit}
+            loading={!started && loading}
+          >
+            {started ? '检测' : '启动'}
+          </Button>
+          <Button
+            className="flex-box btn"
+            style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
+            danger
+            icon={<div className="btn-icon btn-self-icon flex-box-center" >
+              <div className={`btn-self-icon-rect ${started ? 'active' : 'disabled'}`} />
+            </div>}
+            type="text"
+            onClick={() => end()}
+            disabled={!started || ifCanEdit}
+            loading={started && loading}
+          >
+            停止
+          </Button>
+          <Button
+            className="flex-box btn"
+            style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
+            danger
+            icon={<ReloadOutlined className="btn-icon" />}
+            type="text"
+            onClick={() => reStart()}
+            disabled={!started}
+            loading={started && loading}
+          >
+            重启
+          </Button>
+          {process.env.NODE_ENV === 'development' ?
+            <Button
+              className="flex-box btn"
+              style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
+              icon={<AndroidOutlined className="btn-icon" />}
+              type="link"
+              onClick={() => {
+                dispatch({
+                  type: 'home/set',
+                  payload: {
+                    gridContentList: [
+                      { "id": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "value": ["96c525f8-fada-4512-8b44-7e8995278e63", "filepath"], "filepath": { "name": "models/output.ply", "value": [{}, {}] }, "size": { "i": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "x": 7, "y": 3, "w": 36, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "three", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "comparison": false, "interlacing": false, "modelRotate": false, "modelScale": false },
+                      { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "frame"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "x": 43, "y": 3, "w": 30, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "img", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "magnifier": false },
+                      { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "cam_name"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "x": 73, "y": 3, "w": 23, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "pie", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true }
+                    ],
+                  },
+                });
+                // touchFlowService()
+              }}
+              disabled={!started && process.env.NODE_ENV !== 'development' || ifCanEdit}
+              loading={started && loading}
+            >
+              自助
+            </Button>
+            : null
           }
         </div>
       </div>
@@ -713,8 +574,7 @@ const Home: React.FC<any> = (props: any) => {
         }
         <div className={`info-box-content tabs-box`} style={{
           ...homeSettingData?.['slider-4'],
-          ...(ifCanEdit || paramData?.contentData?.contentHeader?.['slider-4']) ?
-            {} : { display: 'flex', alignItems: 'center', padding: '0 8px' }
+          ...{ display: 'flex', alignItems: 'center', padding: '0 8px' }
         }}>
           {
             !!paramData?.contentData?.ipList?.length ?
@@ -1101,7 +961,7 @@ const Home: React.FC<any> = (props: any) => {
         { "i": "footer-1", "x": 7, "y": 8, "w": 89, "h": 20, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
         { "i": "footer-2", "x": 7, "y": 0, "w": 89, "h": 8, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }
       ],
-      content = {}, footerSelectList, contentHeader = {}, pageIconPosition,
+      content = {}, footerSelectList, contentHeader = {}, pageIconPosition, contentSize,
       homeSetting = {
         log: { fontSize: 14 },
         error: { fontSize: 20 },
@@ -1197,6 +1057,12 @@ const Home: React.FC<any> = (props: any) => {
       }));
       setParamData(resultParams);
     };
+    if (ifCanEdit) {
+      form2.setFieldsValue({
+        canvasWidth: contentSize?.width,
+        canvasHeight: contentSize?.height,
+      });
+    };
 
     if (selfStart) {
       // 开机自启动-延时15秒启动
@@ -1287,7 +1153,7 @@ const Home: React.FC<any> = (props: any) => {
               (ifCanEdit || paramData?.contentData?.contentHeader?.[key]) ?
                 <div className="common-card-title-box flex-box ">
                   <TooltipDiv className="flex-box common-card-title">
-                    {`${CCDName || alias || name}`}
+                    {`${CCDName || alias || name || '无效的节点'}`}
                     <span className='title-span'>{`- ${SecLabel?.label?.alias || value[1] || ''}`}</span>
                   </TooltipDiv>
                   {
@@ -1358,9 +1224,6 @@ const Home: React.FC<any> = (props: any) => {
                           title="确认删除监控窗口吗?"
                           onConfirm={() => {
                             const result = addContentList?.filter((item: any) => item.id !== key);
-                            const params = Object.assign({}, paramData, {
-                              contentData: Object.assign({}, paramData.contentData, { content: result }),
-                            });
                             setAddContentList(result);
                             dispatch({
                               type: 'home/set',
@@ -1369,7 +1232,9 @@ const Home: React.FC<any> = (props: any) => {
                               },
                             });
                             dispatch({ type: 'home/snapshot' });
-                            setParamData(params);
+                            setParamData((prev: any) => Object.assign({}, prev, {
+                              contentData: Object.assign({}, prev.contentData, { content: result }),
+                            }));
                           }}
                           okText="确认"
                           cancelText="取消"
@@ -1777,36 +1642,50 @@ const Home: React.FC<any> = (props: any) => {
     };
   }, [started, dispatch]);
   // 添加监控窗口
-  const addWindow = () => {
-    validateFields()
-      .then((values) => {
-        const {
-          value, type, yName, xName, fontSize, defaultImg, reverse, direction, symbol,
-          fetchType, fetchParams, align, backgroundColor, barColor,
-          progressType, progressSize, progressSteps, windowControl,
-          des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-          CCDName, imgs_width, imgs_height, magnifier, comparison = false, operationList, dataZoom,
-          fontColor, interlacing = false, modelRotate = false, modelScale = false
-        } = values;
-        if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
-          try {
-            JSON.parse(fetchParams);
-          } catch (e) {
-            message.error('传递参数 格式不正确');
-            return;
-          }
-        };
-        const id = `${value?.join('$$')}$$${type}`;
-        if (_.isEmpty(editWindowData) && addContentList?.filter((i: any) => i.id === id).length) {
-          message.error('已存在，请求改 “模块，节点，类型” 中的任一项');
-          return;
-        }
-        let result = [];
-        if (_.isEmpty(editWindowData)) {
-          result = addContentList.concat(Object.assign({}, {
+  const addWindow = (values?: any) => {
+    const {
+      value, type, size, yName, xName, fontSize, defaultImg, reverse, direction, symbol,
+      fetchType, fetchParams, align, backgroundColor, barColor,
+      progressType, progressSize, progressSteps, windowControl,
+      des_bordered, des_column, des_layout, des_size, ifLocalStorage,
+      CCDName, imgs_width, imgs_height, magnifier, comparison = false, operationList, dataZoom,
+      fontColor, interlacing = false, modelRotate = false, modelScale = false
+    } = values;
+    if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
+      try {
+        JSON.parse(fetchParams);
+      } catch (e) {
+        message.error('传递参数 格式不正确');
+        return;
+      }
+    };
+    const id = `${value?.join('$$')}$$${type}`;
+    if (_.isEmpty(editWindowData) && addContentList?.filter((i: any) => i.id === id).length) {
+      message.error('已存在，请求改 “模块，节点，类型” 中的任一项');
+      return;
+    }
+    let result: any = [];
+    if (_.isEmpty(editWindowData)) {
+      result = addContentList.concat(Object.assign({}, {
+        id,
+        value,
+        size: { i: id, x: 16, y: 0, w: 10, h: 4, minW: 1, maxW: 100, minH: 2, maxH: 100, ...size },
+        type,
+        tab: activeTab,
+        yName, xName, defaultImg, fontSize, reverse, direction, symbol,
+        fetchType, fetchParams, align, backgroundColor, barColor,
+        progressType, progressSize, progressSteps, windowControl,
+        des_bordered, des_column, des_layout, des_size, ifLocalStorage,
+        CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
+        fontColor, interlacing, modelRotate, modelScale
+      }, ['description'].includes(windowType) ? { basicInfoData } : {}));
+    } else {
+      result = (addContentList || [])?.map((item: any) => {
+        if (item.id === `${editWindowData?.value?.join('$$')}$$${editWindowData.type}`) {
+          return Object.assign({}, {
             id,
             value,
-            size: { i: id, x: 8, y: 0, w: 10, h: 4, minW: 1, maxW: 100, minH: 2, maxH: 100 },
+            size: Object.assign({}, editWindowData.size, { i: id }),
             type,
             tab: activeTab,
             yName, xName, defaultImg, fontSize, reverse, direction, symbol,
@@ -1815,49 +1694,21 @@ const Home: React.FC<any> = (props: any) => {
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
             CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
             fontColor, interlacing, modelRotate, modelScale
-          }, ['description'].includes(windowType) ? { basicInfoData } : {}));
-        } else {
-          result = (addContentList || [])?.map((item: any) => {
-            if (item.id === `${editWindowData?.value?.join('$$')}$$${editWindowData.type}`) {
-              return Object.assign({}, {
-                id,
-                value,
-                size: Object.assign({}, editWindowData.size, { i: id }),
-                type,
-                tab: activeTab,
-                yName, xName, defaultImg, fontSize, reverse, direction, symbol,
-                fetchType, fetchParams, align, backgroundColor, barColor,
-                progressType, progressSize, progressSteps, windowControl,
-                des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-                CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
-                fontColor, interlacing, modelRotate, modelScale
-              }, ['description'].includes(windowType) ? { basicInfoData } : {});
-            };
-            return item;
-          })
-        }
-        setAddContentList(result);
-        if (paramsData.id) {
-          const params = Object.assign({}, paramsData, {
-            contentData: Object.assign({}, paramsData.contentData, { content: result }),
-          });
-          setParamData(params);
+          }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
-        form.resetFields();
-        setEditWindowData({});
-        // dispatch({
-        //   type: 'home/set',
-        //   payload: {
-        //     gridContentList: result,
-        //   },
-        // });
-        // dispatch({ type: 'home/snapshot' });
-        onCancel();
+        return item;
       })
-      .catch((err) => {
-        const { errorFields } = err;
-        _.isArray(errorFields) && message.error(`${errorFields[0]?.errors[0]} 是必填项`);
-      });
+    };
+    console.log(result);
+    setAddContentList(result);
+    if (paramsData.id) {
+      setParamData((prev: any) => Object.assign({}, prev, {
+        contentData: Object.assign({}, prev.contentData, { content: result }),
+      }));
+    };
+    form.resetFields();
+    setEditWindowData({});
+    onCancel();
   };
   // 关闭添加弹框
   const onCancel = () => {
@@ -1937,48 +1788,1018 @@ const Home: React.FC<any> = (props: any) => {
   return (
     <div className={`${styles.home}`}>
       <div className="flex-box home-body">
-        <div className="left-panel" style={leftPanelVisible ? {} : { width: 0 }}>
-          <div
-            className="flex-box-center left-panel-switch-button"
-            style={leftPanelVisible ? {} : { right: '-54px', transform: 'rotate(180deg)' }}
-            onClick={() => {
-              setLeftPanelVisible((prev: any) => !prev);
-            }}
-          >
-            <img src={leftIcon} alt="icon" />
-          </div>
-          <div className="left-panel-body" style={leftPanelVisible ? {} : { display: 'none' }}>
-            <div className="flex-box-justify-between left-panel-search">
-              全部
-              <Input.Search placeholder="input search text" allowClear onSearch={(val: any) => {
-                console.log(val)
-              }} style={{ width: 150 }} />
-            </div>
-            <div className="left-panel-list">
-              {
-                (windowTypeList || []).map((item: any, index: number) => {
+        <DndProvider backend={HTML5Backend}>
 
-                })
-              }
-            </div>
-          </div>
-        </div>
-        <div className="right-canvas">
           {
-            useMemo(() => {
-              return !_.isEmpty(gridHomeList) ? (
-                <GridLayout
-                  dragName={ifCanEdit ? '.common-card-title' : ''}
-                  list={gridList.concat(contentList)}
-                  layout={gridHomeList.concat(contentLayout)}
-                  onChange={(data: any) => {
-                    saveGridFunc(data);
+            ifCanEdit ?
+              <div className="left-panel" style={leftPanelVisible ? {} : { left: '-260px' }}>
+                <div
+                  className="flex-box-center left-panel-switch-button"
+                  style={leftPanelVisible ? {} : { right: '-54px', transform: 'rotate(180deg)' }}
+                  onClick={() => {
+                    setLeftPanelVisible((prev: any) => !prev);
                   }}
-                />
-              ) : null
-            }, [gridHomeList, contentLayout, gridList, contentList])
+                >
+                  <img src={leftIcon} alt="icon" />
+                </div>
+                <div className="left-panel-body">
+                  <div className="flex-box-justify-between left-panel-search">
+                    全部
+                    <span>
+                      Plugins
+                    </span>
+                  </div>
+                  <div className="left-panel-list">
+                    {
+                      (leftPanelData || [])?.map((panel: any, sIndex: number) => {
+                        const { title, key, open, children } = panel;
+                        return <div className="left-panel-item-box" key={`left-panel-item-box-${key}-${sIndex}`}>
+                          <div className="flex-box left-panel-list-title" onClick={() => {
+                            setLeftPanelData((prev: any) => {
+                              return prev.map((pre: any) => {
+                                if (pre.key === key) {
+                                  return { ...pre, open: !open }
+                                };
+                                return pre;
+                              })
+                            });
+                          }}>
+                            <img src={leftIcon} alt="icon" className='arrow' style={open ? {} : { transform: 'rotate(180deg)' }} />
+                            <img src={dirIcon} alt="icon" className='dir' />
+                            {title}
+                          </div>
+                          {
+                            open ?
+                              (children || []).map((item: any, index: number) => {
+                                const { value, label, icon } = item;
+                                return <div key={`panel-${value}-${index}`}>
+                                  {
+                                    // @ts-ignore
+                                    <DragSortableItem index={JSON.stringify({ ...item, key })} >
+                                      <div className="flex-box left-panel-item">
+                                        <div className="left-panel-item-icon">
+                                          <Image src={icon} alt="logo" />
+                                        </div>
+                                        <div className="left-panel-item-title">
+                                          {label}
+                                        </div>
+                                      </div>
+                                    </DragSortableItem>
+                                  }
+                                </div>
+                              })
+                              : null
+                          }
+                        </div>
+                      })
+                    }
+                  </div>
+                </div>
+              </div>
+              : null
           }
-        </div>
+          <div className="flex-box right-canvas">
+            {
+              // @ts-ignore
+              <DropSortableItem moveCard={(dragIndex: any, hoverIndex: any, e: any) => {
+                console.log(e)
+                const item = JSON.parse(dragIndex);
+                const { key, value, label, icon } = item;
+                if ((!paramData?.contentData?.contentSize?.width || !paramData?.contentData?.contentSize?.height)) {
+                  message.error("请先设置画布尺寸");
+                  return;
+                }
+                const { width, height } = paramData?.contentData?.contentSize;
+                // 画布与实际屏幕的宽度差值
+                const diffWidth = (window.screen.width - width) / 2;
+                // 计算实际的x,y坐标
+                const x = (e.x - diffWidth) / width * 96;
+                const y = e.y / height * (height / 300 * 12);
+                if (key === 'main') {
+                  // 添加监控窗口
+                  const uuid32 = nodeList?.[0]?.key || getuid();
+                  const port = nodeList?.[0]?.children?.[0]?.value;
+                  addWindow({ value: [uuid32, port], type: value, size: { x, y } });
+                } else if (key === 'basic') {
+                  // 添加基础窗口
+                  setGridHomeList((prev: any) => {
+                    return prev?.map((item: any) => {
+                      if (item.i === value) {
+                        return {
+                          ...item,
+                          x, y,
+                          w: 9,
+                          h: 4,
+                          minW: 1,
+                          minH: 2,
+                        };
+                      }
+                      return item;
+                    })
+                  })
+                } else if (key === 'coating') {
+                  // 添加涂层
+                  if (paramsData.id) {
+                    setParamData((prev: any) => Object.assign({}, prev, {
+                      contentData: Object.assign({}, prev.contentData, {
+                        contentBackground: prev?.contentData?.contentBackground === icon ? '' : icon
+                      }),
+                    }));
+                  };
+                }
+              }} >
+                <div className="flex-box right-canvas">
+                  {
+                    ifCanEdit ?
+                      <div
+                        className="flex-box-justify-between right-canvas-toolbar"
+                        style={leftPanelVisible ? { paddingLeft: 276 } : {}}
+                      >
+                        <Tooltip placement="bottom" title="保存数据">
+                          <Button
+                            icon={<SaveOutlined className="toolbar-btn-icon" />}
+                            className="toolbar-btn"
+                            type="primary"
+                            onClick={() => {
+                              updateParams({
+                                id: paramData.id,
+                                data: {
+                                  ...paramData,
+                                  contentData: {
+                                    ...paramData?.contentData,
+                                    pageIconPosition,
+                                    homeSetting: homeSettingData
+                                  }
+                                },
+                              }).then((res: any) => {
+                                if (res && res.code === 'SUCCESS') {
+                                  history.push({ pathname: `/home` });
+                                  window.location.reload();
+                                } else {
+                                  message.error(res?.msg || res?.message || '接口异常');
+                                }
+                              });
+                            }}
+                          />
+                        </Tooltip>
+                        <div className="flex-box right-canvas-toolbar-center">
+                          画布尺寸:
+                          <Form form={form2} scrollToFirstError style={{
+                            display: 'inherit', alignItems: 'inherit', gap: 'inherit'
+                          }}>
+                            <Form.Item
+                              name={`canvasWidth`}
+                              label={""}
+                              rules={[{ required: false, message: '画布宽度' }]}
+                              style={{ marginBottom: 0 }}
+                            >
+                              <InputNumber
+                                className="right-canvas-toolbar-center-input"
+                              />
+                            </Form.Item>
+                            x
+                            <Form.Item
+                              name={`canvasHeight`}
+                              label={""}
+                              rules={[{ required: false, message: '画布高度' }]}
+                              style={{ marginBottom: 0 }}
+                            >
+                              <InputNumber
+                                className="right-canvas-toolbar-center-input"
+                              />
+                            </Form.Item>
+                          </Form>
+                          <Button onClick={() => {
+                            form2.validateFields()
+                              .then((values) => {
+                                const { canvasWidth = '', canvasHeight = '' } = values;
+                                updateParams({
+                                  id: paramData.id,
+                                  data: {
+                                    ...paramData,
+                                    contentData: {
+                                      ...paramData?.contentData,
+                                      home: gridHomeList,
+                                      pageIconPosition,
+                                      homeSetting: homeSettingData,
+                                      contentSize: Object.assign({}, paramData?.contentData?.contentSize, { width: Number(canvasWidth), height: Number(canvasHeight) })
+                                    }
+                                  },
+                                }).then((res: any) => {
+                                  if (res && res.code === 'SUCCESS') {
+                                    window.location.reload();
+                                  } else {
+                                    message.error(res?.msg || res?.message || '接口异常');
+                                  }
+                                });
+                              });
+                          }}>修改</Button>
+                        </div>
+                        <div></div>
+                      </div>
+                      : null
+                  }
+                  {
+                    useMemo(() => {
+                      return (!paramData?.contentData?.contentSize?.width || !paramData?.contentData?.contentSize?.height) ?
+                        null
+                        :
+                        <div
+                          className="flex-box right-canvas-body"
+                          style={Object.assign({},
+                            !!paramData?.contentData?.contentBackground ?
+                              { backgroundImage: `url(${paramData?.contentData?.contentBackground})` } : {},
+                            paramData?.contentData?.contentSize?.width ?
+                              {
+                                width: `${paramData?.contentData?.contentSize?.width}px`,
+                              } : {},
+                            paramData?.contentData?.contentSize?.height ?
+                              {
+                                height: `${paramData?.contentData?.contentSize?.height - 75}px`
+                              } : {},
+                          )}
+                        >
+                          {
+                            !_.isEmpty(gridHomeList) ?
+                              <GridLayout
+                                dragName={ifCanEdit ? '.common-card-title' : ''}
+                                list={gridList.concat(contentList)}
+                                layout={gridHomeList.concat(contentLayout)}
+                                onChange={(data: any) => {
+                                  saveGridFunc(data);
+                                }}
+                              />
+                              : null
+                          }
+                        </div>
+                    }, [
+                      gridHomeList, contentLayout, gridList, contentList,
+                      paramData?.contentData?.contentBackground,
+                      paramData?.contentData?.contentSize,
+                    ])
+                  }
+                </div>
+              </DropSortableItem>
+            }
+          </div>
+        </DndProvider>
+        <NodeDetailWrapper
+          className="config-panel"
+          style={addWindowVisible ? {} : { right: '-450px' }}
+          title={'插件配置 PluginConfig '}
+          onSave={() => {
+            form.validateFields()
+              .then((values) => {
+                addWindow(values);
+              })
+              .catch((err) => {
+                const { errorFields } = err;
+                _.isArray(errorFields) && message.error(`${errorFields[0]?.errors[0]} 是必填项`);
+              });
+          }}
+          onCancel={onCancel}
+        >
+          {/* <Modal
+              title={`${_.isEmpty(editWindowData) ? '添加' : '编辑'}监控窗口`}
+              wrapClassName="history-window-modal"
+              centered
+              width="50vw"
+              open={addWindowVisible}
+              // maskClosable={false}
+              onOk={() => addWindow()}
+              onCancel={() => onCancel()}
+              getContainer={false}
+              destroyOnClose={true}
+            > */}
+          <Form form={form} scrollToFirstError>
+            <Form.Item
+              name={`CCDName`}
+              label={"监控窗口名称"}
+              rules={[{ required: false, message: '监控窗口名称' }]}
+            >
+              <Input size='large' />
+            </Form.Item>
+            <Form.Item
+              name={'value'}
+              label="绑定节点"
+              rules={[{ required: true, message: '绑定节点' }]}
+            >
+              <Cascader
+                style={{ width: '100%' }}
+                options={nodeList}
+                onChange={(val) => {
+                  if (!val[0]) {
+                    message.error('该节点缺少节点ID，请联系管理员');
+                    return;
+                  }
+                  const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === val[0])?.[0];
+                  if (!!res) {
+                    setFieldsValue({ operationList: [] });
+                    const { config = {} } = res;
+                    const params = ['operation'].includes(windowType) ?
+                      config?.initParams :
+                      ['operation2'].includes(windowType) ?
+                        (!_.isEmpty(config?.execParams) ? config?.execParams : config?.initParams) :
+                        null;
+                    if (!!params && _.isObject(params)) {
+                      setSelectedNodeConfig(() => Object.entries(params)?.map((item: any) => {
+                        return {
+                          label: item[1]?.alias,
+                          value: item[0],
+                        }
+                      }));
+                    } else {
+                      setSelectedNodeConfig([]);
+                    }
+                  }
+                }}
+              />
+            </Form.Item>
+            <Form.Item
+              name={'type'}
+              label="窗口类型"
+              initialValue={'img'}
+              rules={[{ required: true, message: '窗口类型' }]}
+            >
+              <Select
+                style={{ width: '100%' }}
+                options={windowTypeList}
+                onChange={val => {
+                  const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === getFieldValue('value')?.[0])?.[0];
+                  if (!!res) {
+                    setFieldsValue({ operationList: [] });
+                    const { config = {} } = res;
+                    const params = (val === 'operation') ?
+                      config?.initParams :
+                      (val === 'operation2') ?
+                        (!_.isEmpty(config?.execParams) ? config?.execParams : config?.initParams) :
+                        null;
+                    if (!!params && _.isObject(params)) {
+                      setSelectedNodeConfig(() => Object.entries(params)?.map((item: any) => {
+                        return {
+                          label: item[1]?.alias,
+                          value: item[0],
+                        }
+                      }));
+                    } else {
+                      setSelectedNodeConfig([]);
+                    }
+                  }
+                  setWindowType(val);
+                }}
+              />
+            </Form.Item>
+            <Form.Item
+              name={`backgroundColor`}
+              label={'窗口背景色'}
+              initialValue={"default"}
+              rules={[{ required: false, message: '窗口背景色' }]}
+            >
+              <Select
+                style={{ width: '100%' }}
+                options={[
+                  {
+                    value: 'default',
+                    label: '默认',
+                  },
+                  {
+                    value: 'transparent',
+                    label: '透明色',
+                  }
+                ]}
+              />
+            </Form.Item>
+            {
+              (['img'].includes(windowType) && !isVision) ?
+                <Fragment>
+                  <Form.Item
+                    name={`windowControl`}
+                    label={'窗口控制'}
+                    tooltip={"控制其他窗口的显示与隐藏"}
+                    rules={[{ required: false, message: '窗口控制' }]}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      allowClear
+                      options={contentList.map((dom: any) => {
+                        const { key, props } = dom;
+                        const { children } = props;
+                        const keySp = key?.split("$$");
+                        const name = `${children?.[0]?.props?.children?.[0]?.props?.children?.[0]} - ${windowTypeList?.filter((i: any) => i.value === keySp?.[2])?.[0]?.label}`
+                        return {
+                          value: key,
+                          label: name,
+                          disabled: key === editWindowData?.id
+                        }
+                      })}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name={'defaultImg'}
+                    label="默认图片"
+                    rules={[{ required: false, message: '默认图片' }]}
+                  >
+                    <div className="flex-box">
+                      <TooltipDiv style={{ paddingRight: 10 }}>
+                        {selectedPath.value}
+                      </TooltipDiv>
+                      {
+                        !selectedPath.value ?
+                          <Button
+                            onClick={() => {
+                              setFieldsValue({ defaultImg: undefined });
+                              setSelectPathVisible(true);
+                            }}
+                          >
+                            选择文件
+                          </Button>
+                          :
+                          <Button
+                            type="link"
+                            icon={<DeleteOutlined />}
+                            onClick={() => {
+                              setFieldsValue({ defaultImg: undefined });
+                              setSelectedPath({ fileType: 'file', value: '' });
+                            }}
+                          />
+                      }
+                    </div>
+                  </Form.Item>
+                  <Form.Item
+                    name="magnifier"
+                    label="开启放大镜"
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                  <Form.Item
+                    name="comparison"
+                    label="开启对比图"
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                </Fragment>
+                : null
+            }
+            {
+              ['point', 'bar', 'line', 'table'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    name={`yName`}
+                    label={windowType === "table" ? "表格key名" : "y 轴名称"}
+                    rules={[{ required: true, message: 'y轴名称' }]}
+                  >
+                    <Input size='large' />
+                  </Form.Item>
+                  <Form.Item
+                    name={`xName`}
+                    label={windowType === "table" ? "表格value名" : "x 轴名称"}
+                    rules={[{ required: true, message: 'x轴名称' }]}
+                  >
+                    <Input size='large' />
+                  </Form.Item>
+                  {
+                    ['table'].includes(windowType) ?
+                      null
+                      :
+                      <Form.Item
+                        name={`dataZoom`}
+                        label={'展示最新的'}
+                        rules={[{ required: false, message: '展示最新的' }]}
+                        initialValue={0}
+                      >
+                        <InputNumber min={0} />
+                      </Form.Item>
+                  }
+                </Fragment>
+                : null
+            }
+            {
+              ['point', 'bar'].includes(windowType) ?
+                <Form.Item
+                  name={`direction`}
+                  label={'图形方向'}
+                  rules={[{ required: false, message: '图形方向' }]}
+                >
+                  <Select
+                    style={{ width: '100%' }}
+                    options={[
+                      {
+                        value: 'rows',
+                        label: '横向',
+                      },
+                      {
+                        value: 'column',
+                        label: '纵向',
+                      }
+                    ]}
+                  />
+                </Form.Item>
+                : null
+            }
+            {
+              ['bar'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    name={`align`}
+                    label={'对齐方向'}
+                    initialValue={"left"}
+                    rules={[{ required: false, message: '对齐方向' }]}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      options={[
+                        {
+                          value: 'left',
+                          label: '左对齐',
+                        },
+                        {
+                          value: 'right',
+                          label: '右对齐',
+                        }
+                      ]}
+                    />
+                  </Form.Item>
+                </Fragment>
+                : null
+            }
+            {
+              ['bar', 'progress'].includes(windowType) ?
+                <Form.Item
+                  name={`barColor`}
+                  label={'图形颜色'}
+                  initialValue={"default"}
+                  rules={[{ required: false, message: '图形颜色' }]}
+                >
+                  <Select
+                    style={{ width: '100%' }}
+                    mode={['bar'].includes(windowType) ? 'multiple' : undefined}
+                    options={[['default', '默认'], ['#73c0de', '蓝色'],
+                    ['#5470c6', '深蓝'], ['#91cc75', '绿色'],
+                    ['#3ba272', '深绿'], ['#fac858', '黄色'],
+                    ['#ee6666', '红色'], ['#fc8452', '橘红'],
+                    ['#9a60b4', '紫色'], ['#ea7ccc', '粉色'],
+                    ['#000', '黑色'], ['#fff', '白色']]
+                      .map((item: any, index: number) => {
+                        return {
+                          value: item[0],
+                          label: index === 0 ? item[1] : <div className='flex-box'>
+                            <div className='item-label-icon' style={{ backgroundColor: item[0] }} />
+                            {item[1]}
+                          </div>
+                        }
+                      })
+                    }
+                    onChange={(value) => {
+                      if (value.includes('default')) {
+                        setFieldsValue({
+                          barColor: 'default'
+                        });
+                      }
+                    }}
+                  />
+                </Form.Item>
+                : null
+            }
+            {
+              ['progress'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    name={`progressType`}
+                    label={'进度条形状'}
+                    initialValue={"line"}
+                    rules={[{ required: false, message: '进度条形状' }]}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      options={[
+                        {
+                          value: 'line',
+                          label: '直线'
+                        },
+                        {
+                          value: 'circle',
+                          label: '环形'
+                        },
+                        {
+                          value: 'dashboard',
+                          label: '仪表盘'
+                        }
+                      ]}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name={`progressSize`}
+                    label={'进度条高度'}
+                    initialValue={8}
+                    rules={[{ required: false, message: '进度条高度' }]}
+                  >
+                    <InputNumber min={2} max={99} step={1} />
+                  </Form.Item>
+                  {
+                    form.getFieldValue('progressType') === 'line' ?
+                      <Form.Item
+                        name={`progressSteps`}
+                        label={'进度格数'}
+                        initialValue={5}
+                        rules={[{ required: false, message: '进度格数' }]}
+                      >
+                        <InputNumber min={0} max={99} step={1} />
+                      </Form.Item>
+                      :
+                      null
+                  }
+                </Fragment>
+                : null
+            }
+            {
+              ['point'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    name={`symbol`}
+                    label={'散点形状'}
+                    rules={[{ required: true, message: '散点形状' }]}
+                    initialValue={'rect'}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      options={[
+                        {
+                          value: 'circle',
+                          label: '圆点',
+                        },
+                        {
+                          value: 'rect',
+                          label: '正方形',
+                        },
+                        {
+                          value: 'roundRect',
+                          label: '圆角正方形',
+                        },
+                        {
+                          value: 'triangle',
+                          label: '三角形',
+                        },
+                        {
+                          value: 'diamond',
+                          label: '菱形',
+                        },
+                        {
+                          value: 'pin',
+                          label: '小气球',
+                        },
+                        {
+                          value: 'arrow',
+                          label: '箭头',
+                        }
+                      ]}
+                    />
+                  </Form.Item>
+                </Fragment>
+                : null
+            }
+            {
+              ['table2', 'table'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    name={`reverse`}
+                    label={'数据倒叙'}
+                    rules={[{ required: true, message: '数据倒叙' }]}
+                    initialValue={false}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      options={[
+                        {
+                          value: false,
+                          label: '正序显示',
+                        },
+                        {
+                          value: true,
+                          label: '倒叙显示',
+                        }
+                      ]}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name="interlacing"
+                    label="隔行换色"
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                </Fragment>
+                : null
+            }
+            {
+              ['imgs'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    name={`imgs_width`}
+                    label={'小图的宽'}
+                    rules={[{ required: true, message: '小图的宽' }]}
+                    initialValue={150}
+                  >
+                    <InputNumber />
+                  </Form.Item>
+                  <Form.Item
+                    name={`imgs_height`}
+                    label={'小图的高'}
+                    rules={[{ required: true, message: '小图的高' }]}
+                    initialValue={150}
+                  >
+                    <InputNumber />
+                  </Form.Item>
+                </Fragment>
+                : null
+            }
+            {
+              ['button', 'buttonInp'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    name={`yName`}
+                    label={"按钮名称"}
+                    rules={[{ required: true, message: '按钮名称' }]}
+                  >
+                    <Input size='large' />
+                  </Form.Item>
+                  <Form.Item
+                    name={`fetchType`}
+                    label={"http类型"}
+                    rules={[{ required: true, message: 'http类型' }]}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      options={['get', 'post', 'put', 'delete'].map((item: any) => ({ value: item, label: _.toUpper(item) }))}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name={`xName`}
+                    label={"接口地址"}
+                    rules={[{ required: true, message: '接口地址' }]}
+                  >
+                    <Input size='large' />
+                  </Form.Item>
+                  {
+                    ['button'].includes(windowType) ?
+                      <Form.Item
+                        name={`fetchParams`}
+                        label={"传递参数"}
+                        rules={[{ required: false, message: '传递参数' }]}
+                      >
+                        <Input.TextArea
+                          size='large'
+                          autoSize={{ minRows: 1, maxRows: 5 }}
+                        />
+                      </Form.Item>
+                      : null
+                  }
+                </Fragment>
+                : null
+            }
+            {
+              ['description'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    label="静态数据"
+                  >
+                    {
+                      _.isArray(basicInfoData) ?
+                        basicInfoData.map((item: any, index: number) => {
+                          if (!item || _.isEmpty(item)) return null;
+
+                          const { id, name, value } = item;
+                          return <Row
+                            key={`commonInfo-${id || index}`}
+                            gutter={8}
+                            style={{ marginBottom: 8, height: '27px', }}
+                          >
+                            <Col flex={1}>
+                              <Input
+                                placeholder='key'
+                                value={name}
+                                onChange={e => {
+                                  const val = e?.target?.value;
+                                  setBasicInfoData((prev: any) => {
+                                    return prev.map((info: any) => {
+                                      if (info.id === id) {
+                                        return { ...info, name: val }
+                                      }
+                                      return info;
+                                    })
+                                  });
+                                }}
+                              />
+                            </Col>
+                            <Col flex={2}>
+                              <Input
+                                placeholder='value'
+                                value={value}
+                                onChange={e => {
+                                  const val = e?.target?.value;
+                                  setBasicInfoData((prev: any) => {
+                                    return prev.map((info: any) => {
+                                      if (info.id === id) {
+                                        return { ...info, value: val }
+                                      }
+                                      return info;
+                                    })
+                                  });
+                                }}
+                              />
+                            </Col>
+                            <Col style={{ height: '100%' }}>
+                              <Button
+                                style={{ height: '100%' }}
+                                icon={<MinusOutlined />}
+                                onClick={() => {
+                                  setBasicInfoData((prev: any) => {
+                                    return prev.filter((i: any) => i.id !== id)?.length ?
+                                      prev.filter((i: any) => i.id !== id) :
+                                      [{ id: guid(), name: '', value: '' }]
+                                  })
+                                }}
+                              />
+                            </Col>
+                          </Row>
+                        })
+                        :
+                        null
+                    }
+                    <Button
+                      icon={<PlusOutlined />}
+                      onClick={() => {
+                        setBasicInfoData((prev: any) => prev.concat({ id: guid(), name: '', value: '' }))
+                      }}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name="des_column"
+                    label="列数"
+                  >
+                    <InputNumber />
+                  </Form.Item>
+                  <Form.Item
+                    name="des_layout"
+                    label="布局方向"
+                  >
+                    <Select
+                      options={[
+                        { label: '横向', value: 'horizontal' },
+                        { label: '纵向', value: 'vertical' }
+                      ]}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name="des_bordered"
+                    label="是否展示边框"
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                  {
+                    !!form.getFieldValue('des_bordered') ?
+                      <Form.Item
+                        name="des_size"
+                        label="布局大小"
+                      >
+                        <Select
+                          options={[
+                            { label: '自适应', value: 'default' },
+                            { label: '中', value: 'middle' },
+                            { label: '小', value: 'small' }
+                          ]}
+                        />
+                      </Form.Item>
+                      : null
+                  }
+                </Fragment>
+                : null
+            }
+            {
+              ['three'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    name="modelRotate"
+                    label="开启模型旋转"
+                    initialValue={false}
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                  <Form.Item
+                    name="modelScale"
+                    label="开启模型缩放"
+                    initialValue={false}
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                </Fragment>
+                : null
+            }
+            {
+              ['operation', 'operation2'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    name={`operationList`}
+                    label={"操作项"}
+                    rules={[{ required: true, message: '操作项' }]}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      mode="multiple"
+                      options={selectedNodeConfig}
+                    />
+                  </Form.Item>
+                  {
+                    ['operation2'].includes(windowType) ?
+                      <Form.Item
+                        name={`xName`}
+                        label={"接口地址"}
+                        rules={[{ required: true, message: '接口地址' }]}
+                      >
+                        <Input size='large' />
+                      </Form.Item>
+                      : null
+                  }
+                </Fragment>
+                : null
+            }
+            {
+              ['statistic'].includes(windowType) ?
+                <Fragment>
+                  <Form.Item
+                    name={`yName`}
+                    label={"标题名称"}
+                    rules={[{ required: true, message: '标题名称' }]}
+                  >
+                    <Input size='large' />
+                  </Form.Item>
+                  <Form.Item
+                    name={`direction`}
+                    label={'对齐方向'}
+                    initialValue={'center'}
+                    rules={[{ required: true, message: '对齐方向' }]}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      options={[
+                        {
+                          value: 'flex-start',
+                          label: '左对齐',
+                        },
+                        {
+                          value: 'center',
+                          label: '居中',
+                        },
+                        {
+                          value: 'flex-end',
+                          label: '右对齐',
+                        }
+                      ]}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name={`fontColor`}
+                    label={'内容颜色'}
+                    rules={[{ required: false, message: '内容颜色' }]}
+                  >
+                    <ChromePicker
+                      color={fontColor}
+                      onChange={(value: any) => {
+                        const { rgb } = value;
+                        setFontColor(rgb);
+                      }}
+                    />
+                  </Form.Item>
+                </Fragment>
+                : null
+            }
+            <Form.Item
+              name={'fontSize'}
+              label="字号"
+              initialValue={24}
+              rules={[{ required: true, message: '字号' }]}
+            >
+              <InputNumber
+                min={12}
+                placeholder="12"
+              />
+            </Form.Item>
+            <Form.Item
+              name="ifLocalStorage"
+              label="开启缓存"
+              initialValue={true}
+              valuePropName="checked"
+              style={{ marginBottom: 0 }}
+            >
+              <Switch />
+            </Form.Item>
+          </Form>
+          {/* </Modal> */}
+        </NodeDetailWrapper>
       </div>
       <div className="flex-box home-footer">
         {
@@ -2090,751 +2911,6 @@ const Home: React.FC<any> = (props: any) => {
             />
           </Modal>
           : null
-      }
-
-      {
-        addWindowVisible ? (
-          <Modal
-            title={`${_.isEmpty(editWindowData) ? '添加' : '编辑'}监控窗口`}
-            wrapClassName="history-window-modal"
-            centered
-            width="50vw"
-            open={addWindowVisible}
-            // maskClosable={false}
-            onOk={() => addWindow()}
-            onCancel={() => onCancel()}
-            getContainer={false}
-            destroyOnClose={true}
-          >
-            <Form form={form} scrollToFirstError>
-              <Form.Item
-                name={`CCDName`}
-                label={"监控窗口名称"}
-                rules={[{ required: false, message: '监控窗口名称' }]}
-              >
-                <Input size='large' />
-              </Form.Item>
-              <Form.Item
-                name={'value'}
-                label="绑定节点"
-                rules={[{ required: true, message: '绑定节点' }]}
-              >
-                <Cascader
-                  style={{ width: '100%' }}
-                  options={nodeList}
-                  onChange={(val) => {
-                    if (!val[0]) {
-                      message.error('该节点缺少节点ID，请联系管理员');
-                      return;
-                    }
-                    const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === val[0])?.[0];
-                    if (!!res) {
-                      setFieldsValue({ operationList: [] });
-                      const { config = {} } = res;
-                      const params = ['operation'].includes(windowType) ?
-                        config?.initParams :
-                        ['operation2'].includes(windowType) ?
-                          (!_.isEmpty(config?.execParams) ? config?.execParams : config?.initParams) :
-                          null;
-                      if (!!params && _.isObject(params)) {
-                        setSelectedNodeConfig(() => Object.entries(params)?.map((item: any) => {
-                          return {
-                            label: item[1]?.alias,
-                            value: item[0],
-                          }
-                        }));
-                      } else {
-                        setSelectedNodeConfig([]);
-                      }
-                    }
-                  }}
-                />
-              </Form.Item>
-              <Form.Item
-                name={'type'}
-                label="窗口类型"
-                initialValue={'img'}
-                rules={[{ required: true, message: '窗口类型' }]}
-              >
-                <Select
-                  style={{ width: '100%' }}
-                  options={windowTypeList}
-                  onChange={val => {
-                    const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === getFieldValue('value')?.[0])?.[0];
-                    if (!!res) {
-                      setFieldsValue({ operationList: [] });
-                      const { config = {} } = res;
-                      const params = (val === 'operation') ?
-                        config?.initParams :
-                        (val === 'operation2') ?
-                          (!_.isEmpty(config?.execParams) ? config?.execParams : config?.initParams) :
-                          null;
-                      if (!!params && _.isObject(params)) {
-                        setSelectedNodeConfig(() => Object.entries(params)?.map((item: any) => {
-                          return {
-                            label: item[1]?.alias,
-                            value: item[0],
-                          }
-                        }));
-                      } else {
-                        setSelectedNodeConfig([]);
-                      }
-                    }
-                    setWindowType(val);
-                  }}
-                />
-              </Form.Item>
-              <Form.Item
-                name={`backgroundColor`}
-                label={'窗口背景色'}
-                initialValue={"default"}
-                rules={[{ required: false, message: '窗口背景色' }]}
-              >
-                <Select
-                  style={{ width: '100%' }}
-                  options={[
-                    {
-                      value: 'default',
-                      label: '默认',
-                    },
-                    {
-                      value: 'transparent',
-                      label: '透明色',
-                    }
-                  ]}
-                />
-              </Form.Item>
-              {
-                (['img'].includes(windowType) && !isVision) ?
-                  <Fragment>
-                    <Form.Item
-                      name={`windowControl`}
-                      label={'窗口控制'}
-                      tooltip={"控制其他窗口的显示与隐藏"}
-                      rules={[{ required: false, message: '窗口控制' }]}
-                    >
-                      <Select
-                        style={{ width: '100%' }}
-                        allowClear
-                        options={contentList.map((dom: any) => {
-                          const { key, props } = dom;
-                          const { children } = props;
-                          const keySp = key?.split("$$");
-                          const name = `${children?.[0]?.props?.children?.[0]?.props?.children?.[0]} - ${windowTypeList?.filter((i: any) => i.value === keySp?.[2])?.[0]?.label}`
-                          return {
-                            value: key,
-                            label: name,
-                            disabled: key === editWindowData?.id
-                          }
-                        })}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name={'defaultImg'}
-                      label="默认图片"
-                      rules={[{ required: false, message: '默认图片' }]}
-                    >
-                      <div className="flex-box">
-                        <TooltipDiv style={{ paddingRight: 10 }}>
-                          {selectedPath.value}
-                        </TooltipDiv>
-                        {
-                          !selectedPath.value ?
-                            <Button
-                              onClick={() => {
-                                setFieldsValue({ defaultImg: undefined });
-                                setSelectPathVisible(true);
-                              }}
-                            >
-                              选择文件
-                            </Button>
-                            :
-                            <Button
-                              type="link"
-                              icon={<DeleteOutlined />}
-                              onClick={() => {
-                                setFieldsValue({ defaultImg: undefined });
-                                setSelectedPath({ fileType: 'file', value: '' });
-                              }}
-                            />
-                        }
-                      </div>
-                    </Form.Item>
-                    <Form.Item
-                      name="magnifier"
-                      label="开启放大镜"
-                      valuePropName="checked"
-                    >
-                      <Switch />
-                    </Form.Item>
-                    <Form.Item
-                      name="comparison"
-                      label="开启对比图"
-                      valuePropName="checked"
-                    >
-                      <Switch />
-                    </Form.Item>
-                  </Fragment>
-                  : null
-              }
-              {
-                ['point', 'bar', 'line', 'table'].includes(windowType) ?
-                  <Fragment>
-                    <Form.Item
-                      name={`yName`}
-                      label={windowType === "table" ? "表格key名" : "y 轴名称"}
-                      rules={[{ required: true, message: 'y轴名称' }]}
-                    >
-                      <Input size='large' />
-                    </Form.Item>
-                    <Form.Item
-                      name={`xName`}
-                      label={windowType === "table" ? "表格value名" : "x 轴名称"}
-                      rules={[{ required: true, message: 'x轴名称' }]}
-                    >
-                      <Input size='large' />
-                    </Form.Item>
-                    {
-                      ['table'].includes(windowType) ?
-                        null
-                        :
-                        <Form.Item
-                          name={`dataZoom`}
-                          label={'展示最新的'}
-                          rules={[{ required: false, message: '展示最新的' }]}
-                          initialValue={0}
-                        >
-                          <InputNumber min={0} />
-                        </Form.Item>
-                    }
-                  </Fragment>
-                  : null
-              }
-              {
-                ['point', 'bar'].includes(windowType) ?
-                  <Form.Item
-                    name={`direction`}
-                    label={'图形方向'}
-                    rules={[{ required: false, message: '图形方向' }]}
-                  >
-                    <Select
-                      style={{ width: '100%' }}
-                      options={[
-                        {
-                          value: 'rows',
-                          label: '横向',
-                        },
-                        {
-                          value: 'column',
-                          label: '纵向',
-                        }
-                      ]}
-                    />
-                  </Form.Item>
-                  : null
-              }
-              {
-                ['bar'].includes(windowType) ?
-                  <Fragment>
-                    <Form.Item
-                      name={`align`}
-                      label={'对齐方向'}
-                      initialValue={"left"}
-                      rules={[{ required: false, message: '对齐方向' }]}
-                    >
-                      <Select
-                        style={{ width: '100%' }}
-                        options={[
-                          {
-                            value: 'left',
-                            label: '左对齐',
-                          },
-                          {
-                            value: 'right',
-                            label: '右对齐',
-                          }
-                        ]}
-                      />
-                    </Form.Item>
-                  </Fragment>
-                  : null
-              }
-              {
-                ['bar', 'progress'].includes(windowType) ?
-                  <Form.Item
-                    name={`barColor`}
-                    label={'图形颜色'}
-                    initialValue={"default"}
-                    rules={[{ required: false, message: '图形颜色' }]}
-                  >
-                    <Select
-                      style={{ width: '100%' }}
-                      mode={['bar'].includes(windowType) ? 'multiple' : undefined}
-                      options={[['default', '默认'], ['#73c0de', '蓝色'],
-                      ['#5470c6', '深蓝'], ['#91cc75', '绿色'],
-                      ['#3ba272', '深绿'], ['#fac858', '黄色'],
-                      ['#ee6666', '红色'], ['#fc8452', '橘红'],
-                      ['#9a60b4', '紫色'], ['#ea7ccc', '粉色'],
-                      ['#000', '黑色'], ['#fff', '白色']]
-                        .map((item: any, index: number) => {
-                          return {
-                            value: item[0],
-                            label: index === 0 ? item[1] : <div className='flex-box'>
-                              <div className='item-label-icon' style={{ backgroundColor: item[0] }} />
-                              {item[1]}
-                            </div>
-                          }
-                        })
-                      }
-                      onChange={(value) => {
-                        if (value.includes('default')) {
-                          setFieldsValue({
-                            barColor: 'default'
-                          });
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                  : null
-              }
-              {
-                ['progress'].includes(windowType) ?
-                  <Fragment>
-                    <Form.Item
-                      name={`progressType`}
-                      label={'进度条形状'}
-                      initialValue={"line"}
-                      rules={[{ required: false, message: '进度条形状' }]}
-                    >
-                      <Select
-                        style={{ width: '100%' }}
-                        options={[
-                          {
-                            value: 'line',
-                            label: '直线'
-                          },
-                          {
-                            value: 'circle',
-                            label: '环形'
-                          },
-                          {
-                            value: 'dashboard',
-                            label: '仪表盘'
-                          }
-                        ]}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name={`progressSize`}
-                      label={'进度条高度'}
-                      initialValue={8}
-                      rules={[{ required: false, message: '进度条高度' }]}
-                    >
-                      <InputNumber min={2} max={99} step={1} />
-                    </Form.Item>
-                    {
-                      form.getFieldValue('progressType') === 'line' ?
-                        <Form.Item
-                          name={`progressSteps`}
-                          label={'进度格数'}
-                          initialValue={5}
-                          rules={[{ required: false, message: '进度格数' }]}
-                        >
-                          <InputNumber min={0} max={99} step={1} />
-                        </Form.Item>
-                        :
-                        null
-                    }
-                  </Fragment>
-                  : null
-              }
-              {
-                ['point'].includes(windowType) ?
-                  <Fragment>
-                    <Form.Item
-                      name={`symbol`}
-                      label={'散点形状'}
-                      rules={[{ required: true, message: '散点形状' }]}
-                      initialValue={'rect'}
-                    >
-                      <Select
-                        style={{ width: '100%' }}
-                        options={[
-                          {
-                            value: 'circle',
-                            label: '圆点',
-                          },
-                          {
-                            value: 'rect',
-                            label: '正方形',
-                          },
-                          {
-                            value: 'roundRect',
-                            label: '圆角正方形',
-                          },
-                          {
-                            value: 'triangle',
-                            label: '三角形',
-                          },
-                          {
-                            value: 'diamond',
-                            label: '菱形',
-                          },
-                          {
-                            value: 'pin',
-                            label: '小气球',
-                          },
-                          {
-                            value: 'arrow',
-                            label: '箭头',
-                          }
-                        ]}
-                      />
-                    </Form.Item>
-                  </Fragment>
-                  : null
-              }
-              {
-                ['table2', 'table'].includes(windowType) ?
-                  <Fragment>
-                    <Form.Item
-                      name={`reverse`}
-                      label={'数据倒叙'}
-                      rules={[{ required: true, message: '数据倒叙' }]}
-                      initialValue={false}
-                    >
-                      <Select
-                        style={{ width: '100%' }}
-                        options={[
-                          {
-                            value: false,
-                            label: '正序显示',
-                          },
-                          {
-                            value: true,
-                            label: '倒叙显示',
-                          }
-                        ]}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="interlacing"
-                      label="隔行换色"
-                      valuePropName="checked"
-                    >
-                      <Switch />
-                    </Form.Item>
-                  </Fragment>
-                  : null
-              }
-              {
-                ['imgs'].includes(windowType) ?
-                  <Fragment>
-                    <Form.Item
-                      name={`imgs_width`}
-                      label={'小图的宽'}
-                      rules={[{ required: true, message: '小图的宽' }]}
-                      initialValue={150}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                    <Form.Item
-                      name={`imgs_height`}
-                      label={'小图的高'}
-                      rules={[{ required: true, message: '小图的高' }]}
-                      initialValue={150}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Fragment>
-                  : null
-              }
-              {
-                ['button', 'buttonInp'].includes(windowType) ?
-                  <Fragment>
-                    <Form.Item
-                      name={`yName`}
-                      label={"按钮名称"}
-                      rules={[{ required: true, message: '按钮名称' }]}
-                    >
-                      <Input size='large' />
-                    </Form.Item>
-                    <Form.Item
-                      name={`fetchType`}
-                      label={"http类型"}
-                      rules={[{ required: true, message: 'http类型' }]}
-                    >
-                      <Select
-                        style={{ width: '100%' }}
-                        options={['get', 'post', 'put', 'delete'].map((item: any) => ({ value: item, label: _.toUpper(item) }))}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name={`xName`}
-                      label={"接口地址"}
-                      rules={[{ required: true, message: '接口地址' }]}
-                    >
-                      <Input size='large' />
-                    </Form.Item>
-                    {
-                      ['button'].includes(windowType) ?
-                        <Form.Item
-                          name={`fetchParams`}
-                          label={"传递参数"}
-                          rules={[{ required: false, message: '传递参数' }]}
-                        >
-                          <Input.TextArea
-                            size='large'
-                            autoSize={{ minRows: 1, maxRows: 5 }}
-                          />
-                        </Form.Item>
-                        : null
-                    }
-                  </Fragment>
-                  : null
-              }
-              {
-                ['description'].includes(windowType) ?
-                  <Fragment>
-                    <Form.Item
-                      label="静态数据"
-                    >
-                      {
-                        _.isArray(basicInfoData) ?
-                          basicInfoData.map((item: any, index: number) => {
-                            if (!item || _.isEmpty(item)) return null;
-
-                            const { id, name, value } = item;
-                            return <Row
-                              key={`commonInfo-${id || index}`}
-                              gutter={8}
-                              style={{ marginBottom: 8, height: '27px', }}
-                            >
-                              <Col flex={1}>
-                                <Input
-                                  placeholder='key'
-                                  value={name}
-                                  onChange={e => {
-                                    const val = e?.target?.value;
-                                    setBasicInfoData((prev: any) => {
-                                      return prev.map((info: any) => {
-                                        if (info.id === id) {
-                                          return { ...info, name: val }
-                                        }
-                                        return info;
-                                      })
-                                    });
-                                  }}
-                                />
-                              </Col>
-                              <Col flex={2}>
-                                <Input
-                                  placeholder='value'
-                                  value={value}
-                                  onChange={e => {
-                                    const val = e?.target?.value;
-                                    setBasicInfoData((prev: any) => {
-                                      return prev.map((info: any) => {
-                                        if (info.id === id) {
-                                          return { ...info, value: val }
-                                        }
-                                        return info;
-                                      })
-                                    });
-                                  }}
-                                />
-                              </Col>
-                              <Col style={{ height: '100%' }}>
-                                <Button
-                                  style={{ height: '100%' }}
-                                  icon={<MinusOutlined />}
-                                  onClick={() => {
-                                    setBasicInfoData((prev: any) => {
-                                      return prev.filter((i: any) => i.id !== id)?.length ?
-                                        prev.filter((i: any) => i.id !== id) :
-                                        [{ id: guid(), name: '', value: '' }]
-                                    })
-                                  }}
-                                />
-                              </Col>
-                            </Row>
-                          })
-                          :
-                          null
-                      }
-                      <Button
-                        icon={<PlusOutlined />}
-                        onClick={() => {
-                          setBasicInfoData((prev: any) => prev.concat({ id: guid(), name: '', value: '' }))
-                        }}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="des_column"
-                      label="列数"
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                    <Form.Item
-                      name="des_layout"
-                      label="布局方向"
-                    >
-                      <Select
-                        options={[
-                          { label: '横向', value: 'horizontal' },
-                          { label: '纵向', value: 'vertical' }
-                        ]}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="des_bordered"
-                      label="是否展示边框"
-                      valuePropName="checked"
-                    >
-                      <Switch />
-                    </Form.Item>
-                    {
-                      !!form.getFieldValue('des_bordered') ?
-                        <Form.Item
-                          name="des_size"
-                          label="布局大小"
-                        >
-                          <Select
-                            options={[
-                              { label: '自适应', value: 'default' },
-                              { label: '中', value: 'middle' },
-                              { label: '小', value: 'small' }
-                            ]}
-                          />
-                        </Form.Item>
-                        : null
-                    }
-                  </Fragment>
-                  : null
-              }
-              {
-                ['three'].includes(windowType) ?
-                  <Fragment>
-                    <Form.Item
-                      name="modelRotate"
-                      label="开启模型旋转"
-                      initialValue={false}
-                      valuePropName="checked"
-                    >
-                      <Switch />
-                    </Form.Item>
-                    <Form.Item
-                      name="modelScale"
-                      label="开启模型缩放"
-                      initialValue={false}
-                      valuePropName="checked"
-                    >
-                      <Switch />
-                    </Form.Item>
-                  </Fragment>
-                  : null
-              }
-              {
-                ['operation', 'operation2'].includes(windowType) ?
-                  <Fragment>
-                    <Form.Item
-                      name={`operationList`}
-                      label={"操作项"}
-                      rules={[{ required: true, message: '操作项' }]}
-                    >
-                      <Select
-                        style={{ width: '100%' }}
-                        mode="multiple"
-                        options={selectedNodeConfig}
-                      />
-                    </Form.Item>
-                    {
-                      ['operation2'].includes(windowType) ?
-                        <Form.Item
-                          name={`xName`}
-                          label={"接口地址"}
-                          rules={[{ required: true, message: '接口地址' }]}
-                        >
-                          <Input size='large' />
-                        </Form.Item>
-                        : null
-                    }
-                  </Fragment>
-                  : null
-              }
-              {
-                ['statistic'].includes(windowType) ?
-                  <Fragment>
-                    <Form.Item
-                      name={`yName`}
-                      label={"标题名称"}
-                      rules={[{ required: true, message: '标题名称' }]}
-                    >
-                      <Input size='large' />
-                    </Form.Item>
-                    <Form.Item
-                      name={`direction`}
-                      label={'对齐方向'}
-                      initialValue={'center'}
-                      rules={[{ required: true, message: '对齐方向' }]}
-                    >
-                      <Select
-                        style={{ width: '100%' }}
-                        options={[
-                          {
-                            value: 'flex-start',
-                            label: '左对齐',
-                          },
-                          {
-                            value: 'center',
-                            label: '居中',
-                          },
-                          {
-                            value: 'flex-end',
-                            label: '右对齐',
-                          }
-                        ]}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name={`fontColor`}
-                      label={'内容颜色'}
-                      rules={[{ required: false, message: '内容颜色' }]}
-                    >
-                      <ChromePicker
-                        color={fontColor}
-                        onChange={(value: any) => {
-                          const { rgb } = value;
-                          setFontColor(rgb);
-                        }}
-                      />
-                    </Form.Item>
-                  </Fragment>
-                  : null
-              }
-              <Form.Item
-                name={'fontSize'}
-                label="字号"
-                initialValue={24}
-                rules={[{ required: true, message: '字号' }]}
-              >
-                <InputNumber
-                  min={12}
-                  placeholder="12"
-                />
-              </Form.Item>
-              <Form.Item
-                name="ifLocalStorage"
-                label="开启缓存"
-                initialValue={true}
-                valuePropName="checked"
-                style={{ marginBottom: 0 }}
-              >
-                <Switch />
-              </Form.Item>
-            </Form>
-          </Modal>
-        ) : null
       }
 
       {
@@ -3001,4 +3077,55 @@ export default connect(({ home, themeStore }) => ({
   projectStatus: themeStore.projectStatus,
 }))(Home);
 
-// 告警提示框
+// 拖拽节点的外层
+const DragComponents = (props: any) => {
+  const { name, index, icon, label } = props;
+  // @ts-ignore
+  return <DropSortableItem name={name}
+    index={index}
+    moveCard={(dragIndex: any, hoverIndex: any) => {
+
+    }}
+    setStartDrag={() => { }}
+  >
+    <div className="left-panel-item-icon">
+      <Image src={icon} alt="logo" />
+    </div>
+    <div className="left-panel-item-title" onClick={() => {
+      // if ((!paramData?.contentData?.contentSize?.width || !paramData?.contentData?.contentSize?.height)) {
+      //   message.error("请先设置画布尺寸");
+      //   return;
+      // }
+      // if (key === 'main') {
+      //   const uuid32 = nodeList?.[0]?.key || getuid();
+      //   const port = nodeList?.[0]?.children?.[0]?.value;
+      //   addWindow({ value: [uuid32, port], type: value });
+      // } else if (key === 'basic') {
+      //   setGridHomeList((prev: any) => {
+      //     return prev?.map((item: any) => {
+      //       if (item.i === value) {
+      //         return {
+      //           ...item,
+      //           w: 9,
+      //           h: 4,
+      //           minW: 1,
+      //           minH: 2,
+      //         };
+      //       }
+      //       return item;
+      //     })
+      //   })
+      // } else if (key === 'coating') {
+      //   if (paramsData.id) {
+      //     setParamData((prev: any) => Object.assign({}, prev, {
+      //       contentData: Object.assign({}, prev.contentData, {
+      //         contentBackground: prev?.contentData?.contentBackground === icon ? '' : icon
+      //       }),
+      //     }));
+      //   };
+      // }
+    }}>
+      {label}
+    </div>
+  </DropSortableItem>
+}

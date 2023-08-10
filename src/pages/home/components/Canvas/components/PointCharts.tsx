@@ -16,7 +16,7 @@ interface Props {
 const PointCharts: React.FC<Props> = (props: any) => {
     let myChart: any = null;
     const { data = {}, id, setMyChartVisible, } = props;
-    let { dataValue = [], yName, xName, direction, symbol = "rect", dataZoom } = data;
+    let { dataValue = [], yName = '', xName = '', direction, symbol = "rect", dataZoom } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = [
             {
@@ -100,7 +100,7 @@ const PointCharts: React.FC<Props> = (props: any) => {
                 itemHeight: 8,
             }),
             grid: Object.assign({}, options.grid, {
-                right: `${xName.length * (xName.length < 4 ? 24 : 16)}px`,
+                right: `${xName.length * (xName?.length < 4 ? 24 : 16)}px`,
             }, direction === 'rows' ? { left: 30, } : { bottom: 30, }),
             yAxis: Object.assign({}, options.yAxis, {
                 type: 'value',//direction === 'rows' ? 'category' : 'value',

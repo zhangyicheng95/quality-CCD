@@ -27,6 +27,7 @@ const cardTarget = {
     const clientOffset = monitor.getClientOffset();
 
     const hoverClientY = clientOffset?.y - hoverBoundingRect?.top;
+    const hoverClientX = clientOffset?.x - hoverBoundingRect?.left;
     /* if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
       return;
     }
@@ -35,7 +36,7 @@ const cardTarget = {
       return;
     } */
 
-    props.moveCard(dragIndex, hoverIndex);
+    props.moveCard(dragIndex, hoverIndex, { x: hoverClientX, y: hoverClientY });
     monitor.getItem().index = hoverIndex;
   },
 };
