@@ -79,7 +79,7 @@ export async function outLogin() {
 
 }
 
-export async function btnFetch(type: string, url: string, params: any) {
+export async function btnFetch(type: string, url: string, params = {}) {
   if (url.indexOf('/') === 0) {
     url = url.slice(1);
   }

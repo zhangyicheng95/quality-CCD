@@ -75,6 +75,7 @@ import ThreeCharts from './components/ThreeCharts';
 import OperationCharts from './components/OperationCharts';
 import StatisticCharts from './components/StatisticCharts';
 import Operation2Charts from './components/Operation2Charts';
+import ButtonPWCharts from './components/ButtonPWCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -1267,7 +1268,7 @@ const Home: React.FC<any> = (props: any) => {
           progressSize = 8, progressSteps = 5, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
           CCDName, imgs_width, imgs_height, tableSize, magnifier, comparison, operationList,
-          dataZoom, fontColor, interlacing, modelRotate, modelScale,
+          dataZoom, fontColor, interlacing, modelRotate, modelScale, password, passwordHelp,
           basicInfoData = [{ id: guid(), name: '', value: '' }]
         } = item;
         // const id = key?.split('$$')[0];
@@ -1516,44 +1517,53 @@ const Home: React.FC<any> = (props: any) => {
                                               }}
                                             />
                                             :
-                                            type === 'operation' ?
-                                              <OperationCharts
+                                            type === 'buttonPassword' ?
+                                              <ButtonPWCharts
                                                 id={key}
                                                 data={{
-                                                  operationList,
-                                                  dataValue,
-                                                  fontSize
+                                                  yName, xName, fetchType, password, passwordHelp,
+                                                  fetchParams
                                                 }}
                                               />
                                               :
-                                              type === 'operation2' ?
-                                                <Operation2Charts
+                                              type === 'operation' ?
+                                                <OperationCharts
                                                   id={key}
                                                   data={{
                                                     operationList,
                                                     dataValue,
-                                                    fontSize,
-                                                    xName
+                                                    fontSize
                                                   }}
                                                 />
                                                 :
-                                                type === 'statistic' ?
-                                                  <StatisticCharts
+                                                type === 'operation2' ?
+                                                  <Operation2Charts
                                                     id={key}
                                                     data={{
-                                                      dataValue, fontSize,
-                                                      yName, fontColor, direction
+                                                      operationList,
+                                                      dataValue,
+                                                      fontSize,
+                                                      xName
                                                     }}
                                                   />
                                                   :
-                                                  <ImgCharts
-                                                    id={key}
-                                                    data={{
-                                                      defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                      dataValue, windowControl,
-                                                      setContentList, magnifier, comparison
-                                                    }}
-                                                  />
+                                                  type === 'statistic' ?
+                                                    <StatisticCharts
+                                                      id={key}
+                                                      data={{
+                                                        dataValue, fontSize,
+                                                        yName, fontColor, direction
+                                                      }}
+                                                    />
+                                                    :
+                                                    <ImgCharts
+                                                      id={key}
+                                                      data={{
+                                                        defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                        dataValue, windowControl,
+                                                        setContentList, magnifier, comparison
+                                                      }}
+                                                    />
                 }
               </div>
             </div>
@@ -1791,7 +1801,8 @@ const Home: React.FC<any> = (props: any) => {
           progressType, progressSize, progressSteps, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
           CCDName, imgs_width, imgs_height, magnifier, comparison = false, operationList, dataZoom,
-          fontColor, interlacing = false, modelRotate = false, modelScale = false
+          fontColor, interlacing = false, modelRotate = false, modelScale = false, password = '',
+          passwordHelp = '',
         } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
@@ -1819,7 +1830,7 @@ const Home: React.FC<any> = (props: any) => {
             progressType, progressSize, progressSteps, windowControl,
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
             CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
-            fontColor, interlacing, modelRotate, modelScale
+            fontColor, interlacing, modelRotate, modelScale, password, passwordHelp
           }, ['description'].includes(windowType) ? { basicInfoData } : {}));
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1835,7 +1846,7 @@ const Home: React.FC<any> = (props: any) => {
                 progressType, progressSize, progressSteps, windowControl,
                 des_bordered, des_column, des_layout, des_size, ifLocalStorage,
                 CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
-                fontColor, interlacing, modelRotate, modelScale
+                fontColor, interlacing, modelRotate, modelScale, password, passwordHelp
               }, ['description'].includes(windowType) ? { basicInfoData } : {});
             };
             return item;
@@ -1875,7 +1886,8 @@ const Home: React.FC<any> = (props: any) => {
       align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line',
       progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: undefined,
       CCDName: undefined, magnifier: false, comparison: false, operationList: [], dataZoom: 0,
-      fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false
+      fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false, password: undefined,
+      passwordHelp: undefined
     });
     setWindowType('img');
     setAddWindowVisible(false);
@@ -2077,7 +2089,7 @@ const Home: React.FC<any> = (props: any) => {
             centered
             width="50vw"
             open={addWindowVisible}
-            // maskClosable={false}
+            maskClosable={false}
             onOk={() => addWindow()}
             onCancel={() => onCancel()}
             getContainer={false}
@@ -2567,6 +2579,60 @@ const Home: React.FC<any> = (props: any) => {
                         </Form.Item>
                         : null
                     }
+                  </Fragment>
+                  : null
+              }
+              {
+                ['buttonPassword'].includes(windowType) ?
+                  <Fragment>
+                    <Form.Item
+                      name={`yName`}
+                      label={"按钮名称"}
+                      rules={[{ required: true, message: '按钮名称' }]}
+                    >
+                      <Input size='large' />
+                    </Form.Item>
+                    <Form.Item
+                      name={`fetchType`}
+                      label={"http类型"}
+                      rules={[{ required: true, message: 'http类型' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={['get', 'post', 'put', 'delete'].map((item: any) => ({ value: item, label: _.toUpper(item) }))}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={`xName`}
+                      label={"接口地址"}
+                      rules={[{ required: true, message: '接口地址' }]}
+                    >
+                      <Input size='large' />
+                    </Form.Item>
+                    <Form.Item
+                      name={`fetchParams`}
+                      label={"传递参数"}
+                      rules={[{ required: false, message: '传递参数' }]}
+                    >
+                      <Input.TextArea
+                        size='large'
+                        autoSize={{ minRows: 1, maxRows: 5 }}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={`password`}
+                      label={"设置密码"}
+                      rules={[{ required: true, message: '设置密码' }]}
+                    >
+                      <Input size='large' />
+                    </Form.Item>
+                    <Form.Item
+                      name={`passwordHelp`}
+                      label={"密码提示"}
+                      rules={[{ required: false, message: '密码提示' }]}
+                    >
+                      <Input size='large' />
+                    </Form.Item>
                   </Fragment>
                   : null
               }

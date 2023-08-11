@@ -63,6 +63,10 @@ export const windowTypeList: any = [
     label: '参数按钮组件',
   },
   {
+    value: 'buttonPassword',
+    label: '密码按钮组件',
+  },
+  {
     value: 'progress',
     label: '进度条组件',
   },
