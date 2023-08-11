@@ -259,7 +259,11 @@
     }
 
     .home-body {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
       height: calc(100% - 34px);
+      overflow-y: auto;
 
       .common-card-title {
         min-width: 28px;
@@ -320,6 +324,11 @@
         .active {
           color: @primary-color;
         }
+      }
+
+      &-bottom-powerby {
+        font-size: 12px;
+        opacity: 0.7;
       }
     }
 

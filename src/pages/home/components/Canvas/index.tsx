@@ -1968,6 +1968,9 @@ const Home: React.FC<any> = (props: any) => {
             ) : null
           }, [gridHomeList, contentLayout, gridList, contentList])
         }
+        <div className="flex-box-center home-body-bottom-powerby">
+          &copy;技术支持: 三一重工股份有限公司-盛景智能科技（嘉兴）有限公司-UBVision团队
+        </div>
       </div>
       <div className="flex-box home-footer">
         {
