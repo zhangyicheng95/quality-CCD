@@ -2026,18 +2026,20 @@ const Home: React.FC<any> = (props: any) => {
                               } : {},
                           )}
                         >
-                          {
-                            !_.isEmpty(gridHomeList) ?
-                              <GridLayout
-                                dragName={ifCanEdit ? '.common-card-title' : ''}
-                                list={gridList.concat(contentList)}
-                                layout={gridHomeList.concat(contentLayout)}
-                                onChange={(data: any) => {
-                                  saveGridFunc(data);
-                                }}
-                              />
-                              : null
-                          }
+                          <div className="right-canvas-body-grid">
+                            {
+                              !_.isEmpty(gridHomeList) ?
+                                <GridLayout
+                                  dragName={ifCanEdit ? '.common-card-title' : ''}
+                                  list={gridList.concat(contentList)}
+                                  layout={gridHomeList.concat(contentLayout)}
+                                  onChange={(data: any) => {
+                                    saveGridFunc(data);
+                                  }}
+                                />
+                                : null
+                            }
+                          </div>
                         </div>
                     }, [
                       gridHomeList, contentLayout, gridList, contentList,
@@ -2045,6 +2047,9 @@ const Home: React.FC<any> = (props: any) => {
                       paramData?.contentData?.contentSize,
                     ])
                   }
+                  <div className="flex-box-center right-canvas-bottom-powerby">
+                    &copy;技术支持: 三一重工股份有限公司-盛景智能科技（嘉兴）有限公司-UBVision团队
+                  </div>
                 </div>
               </DropSortableItem>
             }
