@@ -29,8 +29,7 @@ import rectTopIcon from '@/assets/imgs/rect-top.svg';
 import rectBottomIcon from '@/assets/imgs/rect-bottom.svg';
 import rectFrontIcon from '@/assets/imgs/rect-front.svg';
 import rectBackIcon from '@/assets/imgs/rect-back.svg';
-import { equalsObj, uuid } from '@/utils/utils';
-import spriteImg from '@/assets/imgs/sprite.png';
+import { uuid } from '@/utils/utils';
 
 interface Props {
     data: any,
@@ -45,7 +44,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     let { name, value = [], guid, addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
         // addType = 'add';
-        name = "models/cloud.ply"; // models/pressure.json  models/tx.stl
+        name = "models/output.ply"; // models/pressure.json  models/tx.stl
         value = [
             { "type": "left", "name": "模具长轴最小值", "standardValue": 651, "measureValue": 651.01, "offsetValue": 0.01, "position": [{ "x": -228.03, "y": -324.21, "z": 172.48 }, { "x": -228.03, "y": -324.21, "z": 172.48 }] },
             { "type": "left", "name": "模具长轴平均值", "standardValue": 651, "measureValue": 652.5, "offsetValue": 1.5, "position": [{ "x": -226.3, "y": -325.62, "z": -77.52 }, { "x": -226.3, "y": -325.62, "z": -77.52 }] },
@@ -77,6 +76,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         //         }
         //     }, 1000 + index * 300);
         // })
+    }
+
+    if (!localStorage.getItem('cameraScale')) {
+        localStorage.setItem('cameraScale', '2.7');
     }
 
     const { initialState } = useModel<any>('@@initialState');
