@@ -44,7 +44,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     let { name, value = [], guid, addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
         // addType = 'add';
-        name = "models/output.ply"; // models/pressure.json  models/tx.stl
+        name = "models/heatMapOutput.ply"; // models/pressure.json  models/tx.stl
         value = [
             { "type": "left", "name": "模具长轴最小值", "standardValue": 651, "measureValue": 651.01, "offsetValue": 0.01, "position": [{ "x": -228.03, "y": -324.21, "z": 172.48 }, { "x": -228.03, "y": -324.21, "z": 172.48 }] },
             { "type": "left", "name": "模具长轴平均值", "standardValue": 651, "measureValue": 652.5, "offsetValue": 1.5, "position": [{ "x": -226.3, "y": -325.62, "z": -77.52 }, { "x": -226.3, "y": -325.62, "z": -77.52 }] },
@@ -77,10 +77,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         //     }, 1000 + index * 300);
         // })
     }
-
-    if (!localStorage.getItem('cameraScale')) {
-        localStorage.setItem('cameraScale', '2.7');
-    }
+    // 进来给默认展示比例
+    // if (!localStorage.getItem('cameraScale')) {
+    //     localStorage.setItem('cameraScale', '2.7');
+    // }
 
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
@@ -416,19 +416,19 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         // 缩放
         function bzBtnFun06(type: number) {
             const currentPosition = camera.current.position;
-            const currentZoom = !!localStorage.getItem('cameraScale') ? Number(localStorage.getItem('cameraScale')) : 1.6;
+            const currentZoom = !!localStorage.getItem('cameraScale') ? Number(localStorage.getItem('cameraScale')) : camera.current.zoom || 1.5;
             const targetZoom = (currentZoom + type) > 0.1 ? (
                 (currentZoom + type) < 10 ? (currentZoom + type) : 10
             ) : 0.1;
 
             camera.current.zoom = targetZoom;
-            localStorage.setItem('cameraScale', targetZoom + '');
+            // localStorage.setItem('cameraScale', targetZoom + '');
             const targetPosition = new THREE.Vector3(
                 currentPosition?.x / currentZoom * targetZoom,
                 currentPosition?.y / currentZoom * targetZoom,
                 currentPosition?.z / currentZoom * targetZoom
             );
-            console.log('修改后的相机角度：', targetPosition);
+            console.log('相机倍数：', targetZoom);
 
             var tween = new TWEEN.Tween(currentPosition)
                 .to(targetPosition, 1000)
@@ -661,16 +661,22 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             // 居中显示
             let box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
             let mdlen = box.max.x - box.min.x; // 模型长度
-            let mdwid = box.max.z - box.min.z; // 模型宽度
             let mdhei = box.max.y - box.min.y; // 模型高度
+            let mdwid = box.max.z - box.min.z; // 模型宽度
             let x1 = box.min.x + mdlen / 2; // 模型中心点坐标X
             let y1 = box.min.y + mdhei / 2; // 模型中心点坐标Y
             let z1 = box.min.z + mdwid / 2; // 模型中心点坐标Z
-            const max = Math.max(...Object.values(box.max));
-            let scale = 1.6;
+            const max = Math.max(mdlen, mdhei, mdwid);
+            let scale = 1.3 * mdwid / dom.current.clientHeight;
+            if (scale >= 2) {
+                scale = mdwid / dom.current.clientHeight;
+            } else if (scale <= 1.5) {
+                scale = 1.5;
+            }
             if (!!localStorage.getItem('cameraScale')) {
                 scale = Number(localStorage.getItem('cameraScale'));
             }
+            console.log('scale:', scale);
             const basicPosition = new THREE.Vector3(0, -scale * max, 0);
             if (addType === 'add') {
                 models?.forEach((model: any) => {
@@ -712,6 +718,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 animateCamera(basicPosition);
                 // }
                 camera.current.zoom = scale;
+                // localStorage.setItem('cameraScale', JSON.stringify(scale));
                 effectMeasureLine(mesh, value);
             }
             // 把点云放到可控数组里，用于画线标注
@@ -829,10 +836,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         const length = box.max.x - box.min.x; // 模型长度
                         const width = box.max.z - box.min.z; // 模型宽度
                         const height = box.max.y - box.min.y; // 模型高度
+                        const labelDashLength = 3 / 4;
                         let localPosition: any = [];
                         if ((type === "left")) {
                             const point = {
-                                x: -1 * length,
+                                x: -1 * length * labelDashLength,
                                 y: 0,
                                 z: (index === 0 || index + 1 === count[1].length) ?
                                     width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
@@ -866,7 +874,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             counter.left += 1;
                         } else if ((type === "right")) {
                             const point = {
-                                x: length,
+                                x: length * labelDashLength,
                                 y: 0,
                                 z: (index === 0 || index + 1 === count[1].length) ?
                                     width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
