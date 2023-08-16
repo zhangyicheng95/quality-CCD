@@ -17,7 +17,7 @@ interface Props {
 const LineCharts: React.FC<Props> = (props: any) => {
     let myChart: any = null;
     const { data = {}, id, legend, dispatch, setMyChartVisible } = props;
-    let { dataValue = [], yName = '', xName = '', dataZoom } = data;
+    let { dataValue = [], yName, xName = '', dataZoom } = data;
     if (process.env.NODE_ENV === 'development') {
         let base = +new Date(1988, 9, 3);
         let oneDay = 24 * 3600 * 1000;
@@ -30,17 +30,17 @@ const LineCharts: React.FC<Props> = (props: any) => {
         dataValue = [
             {
                 "name": "上限",
-                "value": 2.2,
+                "value": 7.2,
                 "type": "markLine"
             },
             {
                 "name": "标准值",
-                "value": 1.6,
+                "value": 2,
                 "type": "markLine"
             },
             {
                 "name": "下限",
-                "value": 1.53,
+                "value": -17.53,
                 "type": "markLine"
             },
             {

@@ -16,7 +16,8 @@ interface Props {
 const Table2Charts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
     let {
-        dataValue = [], fontSize, reverse, tableSize = [], interlacing
+        dataValue = [], fontSize, reverse, tableSize = [], interlacing,
+        des_bordered
     } = data;
     if (process.env.NODE_ENV === 'development') {
         reverse = true;
@@ -24,29 +25,6 @@ const Table2Charts: React.FC<Props> = (props: any) => {
             {
                 name: '左极耳',
                 value: [
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.506, color: 'green' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
                     { value: 37.69, color: 'red' },
                     { value: 37.69, color: 'red' },
                     { value: 37.69, color: 'red' },
@@ -67,29 +45,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                     { value: 2.313, color: 'red' },
                     { value: 2.313, color: 'red' },
                     { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.497, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
+
                 ],
                 color: null,
             },
@@ -103,29 +59,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                     { value: 377.083, color: 'red' },
                     { value: 377.083, color: 'red' },
                     { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
+
                 ],
                 color: null,
             },
@@ -139,29 +73,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                     { value: 1.754, color: 'red' },
                     { value: 1.754, color: 'red' },
                     { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 2.01, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 2.01, color: 'red' },
-                    { value: 2.01, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 2.229, color: 'red' },
-                    { value: 1.754, color: 'red' },
+
                 ],
                 color: null,
             },
@@ -175,29 +87,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                     { value: 79.556, color: 'red' },
                     { value: 79.556, color: 'red' },
                     { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
+
                 ],
                 color: null,
             },
@@ -211,29 +101,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                     { value: -1, color: 'red' },
                     { value: -1, color: 'red' },
                     { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
+
                 ],
                 color: null,
             },
@@ -247,29 +115,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                     { value: 376.853, color: 'red' },
                     { value: 376.853, color: 'red' },
                     { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
+
                 ],
                 color: null,
             },
@@ -283,29 +129,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                     { value: -1, color: 'red' },
                     { value: -1, color: 'red' },
                     { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
+
                 ],
                 color: null,
             },
@@ -319,29 +143,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                     { value: 39.898, color: 'red' },
                     { value: 39.898, color: 'red' },
                     { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 45.343, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
+
                 ],
                 color: null,
             },
@@ -355,29 +157,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                     { value: 0, color: null },
                     { value: 0, color: null },
                     { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
+
                 ],
                 color: null,
             },
@@ -387,12 +167,21 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     const { params } = initialState;
     const domRef = useRef<any>(null);
     const [tableSizeSelf, setTableSizeSelf] = useState(tableSize);
+    const [tableScroll, setTableScroll] = useState(false);
 
     useEffect(() => {
         if (!_.isArray(dataValue)) {
             message.error('数据格式不正确，请检查');
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
+        }
+
+        const height = domRef?.current?.clientHeight;
+        const valueLength = dataValue[0]?.value?.length;
+        if (height > valueLength * 38) {
+            setTableScroll(false);
+        } else {
+            setTableScroll(true);
         }
     }, [dataValue,]);
 
@@ -505,7 +294,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                     })
                 }
             </div>
-            <div className="charts-body-box flex-box">
+            <div className="charts-body-box flex-box" style={des_bordered ? {
+                borderWidth: '1px'
+            } : {}}>
                 {
                     _.isArray(dataValue) ?
                         (dataValue || []).map((item: any, index: number) => {
@@ -537,7 +328,10 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                                 className={`charts-body-td ${(_.isBoolean(interlacing) ? interlacing : true) ? 'charts-body-td-interlacing' : ''}`}
                                                 key={`echart-${id}-tr-td-${sIndex}-${value}`}
                                                 title={value?.length > 15 ? value : ''}
-                                                style={!!color ? { color } : {}}
+                                                style={Object.assign(
+                                                    !!color ? { color } : {},
+                                                    des_bordered ? { borderWidth: '1px' } : {}
+                                                )}
                                             >
                                                 {value}
                                             </TooltipDiv>
@@ -546,6 +340,10 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                             className="charts-body-td"
                                             key={`echart-${id}-tr-td-${sIndex}-${val}`}
                                             title={val?.length > 15 ? val : ''}
+                                            style={Object.assign(
+                                                !!color ? { color } : {},
+                                                des_bordered ? { borderWidth: '1px' } : {}
+                                            )}
                                         >
                                             {val}
                                         </TooltipDiv>
