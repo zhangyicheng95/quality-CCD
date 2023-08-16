@@ -14,7 +14,8 @@ interface Props {
 const TableCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
     let {
-        dataValue = [], yName, xName = '', fontSize, reverse, interlacing
+        dataValue = [], yName, xName = '', fontSize, reverse, interlacing,
+        des_bordered
     } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = [
@@ -43,7 +44,9 @@ const TableCharts: React.FC<Props> = (props: any) => {
                     {xName}
                 </TooltipDiv>
             </div>
-            <div className="charts-body-box">
+            <div className="charts-body-box" style={des_bordered ? {
+                borderWidth: '1px'
+            } : {}}>
                 {
                     _.isArray(dataValue) ?
                         (!!reverse ? _.cloneDeep(dataValue).reverse() : dataValue).map((item: any, index: number) => {
@@ -53,11 +56,18 @@ const TableCharts: React.FC<Props> = (props: any) => {
                                 const { value, color } = item?.value[0];
                                 const text = _.isArray(value) ? value.join(',') : value;
                                 return <div className={`charts-body-tr flex-box ${(_.isBoolean(interlacing) ? interlacing : true) ? 'charts-body-tr-interlacing' : ''}`} key={`echart-${id}-tr-${index}`}>
-                                    <div className="charts-body-td flex-box-center">{name}</div>
+                                    <TooltipDiv
+                                        className="charts-body-td flex-box-center"
+                                        style={des_bordered ? { borderWidth: '1px' } : {}}
+                                    >{name}</TooltipDiv>
+
                                     <TooltipDiv
                                         className="charts-body-td flex-box-center"
                                         title={text?.length > 10 ? text : ''}
-                                        style={!!color ? { color } : {}}
+                                        style={Object.assign(
+                                            !!color ? { color } : {},
+                                            des_bordered ? { borderWidth: '1px' } : {}
+                                        )}
                                     >
                                         {text}
                                     </TooltipDiv>
@@ -69,7 +79,10 @@ const TableCharts: React.FC<Props> = (props: any) => {
                                 <TooltipDiv
                                     className="charts-body-td flex-box-center"
                                     title={text.length > 10 ? text : ''}
-                                    style={!!color ? { color } : {}}
+                                    style={Object.assign(
+                                        !!color ? { color } : {},
+                                        des_bordered ? { borderWidth: '1px' } : {}
+                                    )}
                                 >
                                     {text}
                                 </TooltipDiv>

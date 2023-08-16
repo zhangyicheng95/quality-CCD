@@ -1439,7 +1439,8 @@ const Home: React.FC<any> = (props: any) => {
                               id={key}
                               data={{
                                 dataValue: dataValue || [],
-                                yName, xName, fontSize, reverse, tableSize, interlacing
+                                yName, xName, fontSize, reverse, tableSize, interlacing,
+                                des_bordered
                               }}
                             />
                             :
@@ -1448,7 +1449,7 @@ const Home: React.FC<any> = (props: any) => {
                                 id={key}
                                 data={{
                                   dataValue: dataValue || [],
-                                  fontSize, reverse, tableSize, interlacing
+                                  fontSize, reverse, tableSize, interlacing, des_bordered
                                 }}
                               />
                               :
@@ -2512,6 +2513,13 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name="interlacing"
                       label="隔行换色"
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name="des_bordered"
+                      label="是否展示边框"
                       valuePropName="checked"
                     >
                       <Switch />
