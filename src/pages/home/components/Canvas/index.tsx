@@ -35,6 +35,7 @@ import {
   CloseOutlined,
   CompressOutlined,
   DeleteOutlined,
+  DragOutlined,
   LoadingOutlined,
   MinusOutlined,
   PlayCircleOutlined,
@@ -46,37 +47,41 @@ import {
   SwapOutlined,
 } from '@ant-design/icons';
 import { connect, useHistory, useModel } from 'umi';
-import {
-  ChromePicker,
-} from 'react-color';
+import { ChromePicker, } from 'react-color';
 import socketErrorListen from '@/services/socketError';
 import socketLogListen from '@/services/socketLog';
 import socketDataListen from '@/services/socketData';
 import socketStateListen from '@/services/socketState';
 import TooltipDiv from '@/components/TooltipDiv';
+
 import LineCharts from '@/pages/home/components/Canvas/components/LineCharts';
 import PointCharts from '@/pages/home/components/Canvas/components/PointCharts';
 import BarCharts from '@/pages/home/components/Canvas/components/BarCharts';
 import PieCharts from '@/pages/home/components/Canvas/components/PieCharts';
 import TableCharts from '@/pages/home/components/Canvas/components/TableCharts';
 import AlertCharts from '@/pages/home/components/Canvas/components/AlertCharts';
+import Table2Charts from '@/pages/home/components/Canvas/components/Table2Charts';
+import ImgsCharts from '@/pages/home/components/Canvas/components/ImgsCharts';
+import ButtonCharts from '@/pages/home/components/Canvas/components/ButtonCharts';
+import ImgCharts from '@/pages/home/components/Canvas/components/ImgCharts';
+import ProgressCharts from '@/pages/home/components/Canvas/components/ProgressCharts';
+import DescriptionCharts from '@/pages/home/components/Canvas/components/DescriptionCharts';
+import ThreeCharts from '@/pages/home/components/Canvas/components/ThreeCharts';
+import OperationCharts from '@/pages/home/components/Canvas/components/OperationCharts';
+import StatisticCharts from '@/pages/home/components/Canvas/components/StatisticCharts';
+import Operation2Charts from '@/pages/home/components/Canvas/components/Operation2Charts';
+import ButtonPWCharts from '@/pages/home/components/Canvas/components/ButtonPWCharts';
+
+import ChartPreviewModal from '@/pages/home/components/Canvas/components/ChartPreviewModal';
+import LogPreviewModal from '@/pages/home/components/Canvas/components/LogPreviewModal';
+
 import { useThrottleAndMerge } from "@/utils/useThrottleAndMerge";
 import FileManager from '@/components/FileManager';
-import Table2Charts from './components/Table2Charts';
-import ImgsCharts from './components/ImgsCharts';
-import ButtonCharts from './components/ButtonCharts';
-import ChartPreviewModal from './components/ChartPreviewModal';
-import ProgressCharts from './components/ProgressCharts';
-import ImgCharts from './components/ImgCharts';
-import { basicWindowList, simulatedCoatingList, windowTypeList, } from '@/common/constants/globalConstants';
-import LogPreviewModal from './components/LogPreviewModal';
+import {
+  basicWindowList, simulatedCoatingList, windowTypeList,
+} from '@/common/constants/globalConstants';
 import { getuid, guid } from '@/utils/utils';
-import DescriptionCharts from './components/DescriptionCharts';
 import moment from 'moment';
-import ThreeCharts from './components/ThreeCharts';
-import OperationCharts from './components/OperationCharts';
-import StatisticCharts from './components/StatisticCharts';
-import Operation2Charts from './components/Operation2Charts';
 import leftIcon from '@/assets/imgs/left-icon.svg';
 import dirIcon from '@/assets/imgs/dir-icon.svg';
 import NodeDetailWrapper from '@/components/NodeDetailWrapper';
@@ -1135,8 +1140,8 @@ const Home: React.FC<any> = (props: any) => {
           progressSize = 8, progressSteps = 5, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
           CCDName, imgs_width, imgs_height, tableSize, magnifier, comparison, operationList,
-          dataZoom, fontColor, interlacing, modelRotate, modelScale,
-          basicInfoData = [{ id: guid(), name: '', value: '' }]
+          dataZoom, fontColor, interlacing, modelRotate, modelScale, password, passwordHelp,
+          basicInfoData = [{ id: guid(), name: '', value: '' }], ifShowHeader
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1147,110 +1152,17 @@ const Home: React.FC<any> = (props: any) => {
         const { alias, name, ports = {} } = parent[0] || {};
         const { items = [] } = ports;
         const SecLabel = items?.filter((i: any) => i.group === 'bottom' && (i?.label?.name === value[1]))[0];
+        var clickTime = 0;
+
         listData = listData.concat(
           <div key={key} className={` drag-item-content-box ${backgroundColor === 'default' ? "background-ubv" : ""}`}>
             {
-              (ifCanEdit || paramData?.contentData?.contentHeader?.[key]) ?
+              (ifShowHeader || paramData?.contentData?.contentHeader?.[key]) ?
                 <div className="common-card-title-box flex-box ">
                   <TooltipDiv className="flex-box common-card-title">
                     {`${CCDName || alias || name || '无效的节点'}`}
                     <span className='title-span'>{`- ${SecLabel?.label?.alias || value[1] || ''}`}</span>
                   </TooltipDiv>
-                  {
-                    ifCanEdit ?
-                      <div className="flex-box drag-item-btn-box">
-                        <Switch
-                          size="small"
-                          checkedChildren="显示头"
-                          unCheckedChildren="隐藏头"
-                          defaultChecked={paramData?.contentData?.contentHeader?.[key]}
-                          onChange={(e) => {
-                            setParamData((prev: any) => {
-                              return Object.assign({}, prev, {
-                                contentData: Object.assign({}, prev?.contentData, {
-                                  contentHeader: e ?
-                                    Object.assign({}, prev?.contentData?.contentHeader, { [key]: e })
-                                    :
-                                    _.omit(prev?.contentData?.contentHeader, key)
-                                })
-                              })
-                            })
-                          }}
-                        />
-                        <div
-                          className='common-btn'
-                          onClick={() => {
-                            !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
-                            setBasicInfoData(basicInfoData);
-                            setEditWindowData(item);
-                            setFieldsValue(Object.assign({}, item, !fontSize ? { fontSize: 12 } : {}));
-                            if (!!fontColor && !!fontColor?.rgb) {
-                              setFontColor(fontColor.rgb);
-                            }
-                            setWindowType(type);
-                            if (type === 'operation') {
-                              const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
-                              if (!!res) {
-                                const { config = {} } = res;
-                                if (!!config?.initParams && _.isObject(config?.initParams)) {
-                                  setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
-                                    return {
-                                      label: item[1]?.alias,
-                                      value: item[0],
-                                    }
-                                  }));
-                                }
-                              }
-                            } else if (type === 'operation2') {
-                              const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
-                              if (!!res) {
-                                const { config = {} } = res;
-                                if (!!config?.execParams && _.isObject(config?.execParams)) {
-                                  setSelectedNodeConfig(() => Object.entries(config.execParams)?.map((item: any) => {
-                                    return {
-                                      label: item[1]?.alias,
-                                      value: item[0],
-                                    }
-                                  }));
-                                } else if (!!config?.initParams && _.isObject(config?.initParams)) {
-                                  setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
-                                    return {
-                                      label: item[1]?.alias,
-                                      value: item[0],
-                                    }
-                                  }));
-                                }
-                              }
-                            }
-                            setAddWindowVisible(true);
-                          }}
-                        >
-                          编辑
-                        </div>
-                        <Popconfirm
-                          title="确认删除监控窗口吗?"
-                          onConfirm={() => {
-                            const result = addContentList?.filter((item: any) => item.id !== key);
-                            setAddContentList(result);
-                            dispatch({
-                              type: 'home/set',
-                              payload: {
-                                gridContentList: result,
-                              },
-                            });
-                            dispatch({ type: 'home/snapshot' });
-                            setParamData((prev: any) => Object.assign({}, prev, {
-                              contentData: Object.assign({}, prev.contentData, { content: result }),
-                            }));
-                          }}
-                          okText="确认"
-                          cancelText="取消"
-                        >
-                          <div className='common-btn'>删除</div>
-                        </Popconfirm>
-                      </div>
-                      : null
-                  }
                 </div>
                 :
                 null
@@ -1305,7 +1217,8 @@ const Home: React.FC<any> = (props: any) => {
                               id={key}
                               data={{
                                 dataValue: dataValue || [],
-                                yName, xName, fontSize, reverse, tableSize, interlacing
+                                yName, xName, fontSize, reverse, tableSize, interlacing,
+                                des_bordered
                               }}
                             />
                             :
@@ -1314,7 +1227,7 @@ const Home: React.FC<any> = (props: any) => {
                                 id={key}
                                 data={{
                                   dataValue: dataValue || [],
-                                  fontSize, reverse, tableSize, interlacing
+                                  fontSize, reverse, tableSize, interlacing, des_bordered
                                 }}
                               />
                               :
@@ -1383,47 +1296,137 @@ const Home: React.FC<any> = (props: any) => {
                                               }}
                                             />
                                             :
-                                            type === 'operation' ?
-                                              <OperationCharts
+                                            type === 'buttonPassword' ?
+                                              <ButtonPWCharts
                                                 id={key}
                                                 data={{
-                                                  operationList,
-                                                  dataValue,
-                                                  fontSize
+                                                  yName, xName, fetchType, password, passwordHelp,
+                                                  fetchParams
                                                 }}
                                               />
                                               :
-                                              type === 'operation2' ?
-                                                <Operation2Charts
+                                              type === 'operation' ?
+                                                <OperationCharts
                                                   id={key}
                                                   data={{
                                                     operationList,
                                                     dataValue,
-                                                    fontSize,
-                                                    xName
+                                                    fontSize
                                                   }}
                                                 />
                                                 :
-                                                type === 'statistic' ?
-                                                  <StatisticCharts
+                                                type === 'operation2' ?
+                                                  <Operation2Charts
                                                     id={key}
                                                     data={{
-                                                      dataValue, fontSize,
-                                                      yName, fontColor, direction
+                                                      operationList,
+                                                      dataValue,
+                                                      fontSize,
+                                                      xName
                                                     }}
                                                   />
                                                   :
-                                                  <ImgCharts
-                                                    id={key}
-                                                    data={{
-                                                      defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                      dataValue, windowControl,
-                                                      setContentList, magnifier, comparison
-                                                    }}
-                                                  />
+                                                  type === 'statistic' ?
+                                                    <StatisticCharts
+                                                      id={key}
+                                                      data={{
+                                                        dataValue, fontSize,
+                                                        yName, fontColor, direction
+                                                      }}
+                                                    />
+                                                    :
+                                                    <ImgCharts
+                                                      id={key}
+                                                      data={{
+                                                        defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                        dataValue, windowControl,
+                                                        setContentList, magnifier, comparison
+                                                      }}
+                                                    />
                 }
               </div>
             </div>
+            {
+              ifCanEdit ?
+                <div className="flex-box-center drag-item-content-mask common-card-title" onClick={() => {
+                  var now = new Date().getTime();
+                  if (now - clickTime < 300) { // 设置判断条件为300毫秒
+                    // 双击事件触发的操作
+                    !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
+                    setBasicInfoData(basicInfoData);
+                    setEditWindowData(item);
+                    setFieldsValue(Object.assign({}, item, !fontSize ? { fontSize: 12 } : {}));
+                    if (!!fontColor && !!fontColor?.rgb) {
+                      setFontColor(fontColor.rgb);
+                    }
+                    setWindowType(type);
+                    if (type === 'operation') {
+                      const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
+                      if (!!res) {
+                        const { config = {} } = res;
+                        if (!!config?.initParams && _.isObject(config?.initParams)) {
+                          setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
+                            return {
+                              label: item[1]?.alias,
+                              value: item[0],
+                            }
+                          }));
+                        }
+                      }
+                    } else if (type === 'operation2') {
+                      const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
+                      if (!!res) {
+                        const { config = {} } = res;
+                        if (!!config?.execParams && _.isObject(config?.execParams)) {
+                          setSelectedNodeConfig(() => Object.entries(config.execParams)?.map((item: any) => {
+                            return {
+                              label: item[1]?.alias,
+                              value: item[0],
+                            }
+                          }));
+                        } else if (!!config?.initParams && _.isObject(config?.initParams)) {
+                          setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
+                            return {
+                              label: item[1]?.alias,
+                              value: item[0],
+                            }
+                          }));
+                        }
+                      }
+                    }
+                    setAddWindowVisible(true);
+                  }
+                  clickTime = now;
+                }}>
+                  {/* <DragOutlined className='drag-item-content-mask-icon' /> */}
+                  {
+                    addWindowVisible ?
+                      <Popconfirm
+                        title="确认删除监控窗口吗?"
+                        onConfirm={() => {
+                          const result = addContentList?.filter((item: any) => item.id !== key);
+                          setAddContentList(result);
+                          dispatch({
+                            type: 'home/set',
+                            payload: {
+                              gridContentList: result,
+                            },
+                          });
+                          dispatch({ type: 'home/snapshot' });
+                          setParamData((prev: any) => Object.assign({}, prev, {
+                            contentData: Object.assign({}, prev.contentData, { content: result }),
+                          }));
+                        }}
+                        okText="确认"
+                        cancelText="取消"
+                      >
+                        <DeleteOutlined className='drag-item-content-mask-icon' />
+                      </Popconfirm>
+                      : null
+                  }
+                </div>
+                : null
+            }
           </div>,
         );
         layoutData = layoutData.concat(size);
@@ -1443,7 +1446,7 @@ const Home: React.FC<any> = (props: any) => {
     } else {
       setContentList([]);
     }
-  }, [gridContentList, addContentList]);
+  }, [gridContentList, addContentList, addWindowVisible]);
   // 批量启动任务
   const startProjects = (item: any, list: any, index: number, projectStatus: any) => {
     const data = projectStatus?.filter((i: any) => i.value === item.key)?.[0] || {};
@@ -1656,7 +1659,8 @@ const Home: React.FC<any> = (props: any) => {
       progressType, progressSize, progressSteps, windowControl,
       des_bordered, des_column, des_layout, des_size, ifLocalStorage,
       CCDName, imgs_width, imgs_height, magnifier, comparison = false, operationList, dataZoom,
-      fontColor, interlacing = false, modelRotate = false, modelScale = false
+      fontColor, interlacing = false, modelRotate = false, modelScale = false, password = '',
+      passwordHelp = '', ifShowHeader = false,
     } = values;
     if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
       try {
@@ -1684,7 +1688,7 @@ const Home: React.FC<any> = (props: any) => {
         progressType, progressSize, progressSteps, windowControl,
         des_bordered, des_column, des_layout, des_size, ifLocalStorage,
         CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
-        fontColor, interlacing, modelRotate, modelScale
+        fontColor, interlacing, modelRotate, modelScale, password, passwordHelp, ifShowHeader
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1700,13 +1704,12 @@ const Home: React.FC<any> = (props: any) => {
             progressType, progressSize, progressSteps, windowControl,
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
             CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
-            fontColor, interlacing, modelRotate, modelScale
+            fontColor, interlacing, modelRotate, modelScale, password, passwordHelp, ifShowHeader
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
       })
     };
-    console.log(result);
     setAddContentList(result);
     if (paramsData.id) {
       setParamData((prev: any) => Object.assign({}, prev, {
@@ -1728,11 +1731,13 @@ const Home: React.FC<any> = (props: any) => {
       align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line',
       progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: undefined,
       CCDName: undefined, magnifier: false, comparison: false, operationList: [], dataZoom: 0,
-      fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false
+      fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false, password: undefined,
+      passwordHelp: undefined, ifShowHeader: false,
     });
     setWindowType('img');
     setAddWindowVisible(false);
     setFooterSelectVisible(false);
+    setHomeSettingVisible('');
   };
 
   const homeDom: any = useMemo(() => {
@@ -1757,18 +1762,17 @@ const Home: React.FC<any> = (props: any) => {
         right = 16;
       // 2.鼠标按下事件
       oBox.onmousedown = function (ev: any) {
-        var ev = ev || window.event;
         // 获取鼠标相对于盒子的坐标
         // 3.鼠标移动
         document.onmousemove = function (ev: any) {
           var ev = ev || window.event;
-          var x3 = ev.pageX;
+          var x3 = ev.pageX - (window.innerWidth - paramData?.contentData?.contentSize?.width);
           var y3 = ev.pageY;
           if (pageIconPosition?.direction === 'column') {
             top = y3;
             left = x3 + 12;
           } else {
-            top = y3 - 72;
+            top = y3 - 108;
             left = x3 + (homePageIcon.length * 40 + 16) / 2 - 4;
           }
           bottom = homeDom?.clientHeight - top;
@@ -1790,13 +1794,12 @@ const Home: React.FC<any> = (props: any) => {
         }
       }
     };
-  }, [ifCanEdit, homeDom, pageIconPosition.direction])
+  }, [ifCanEdit, homeDom, pageIconPosition.direction, paramData?.contentData?.contentSize?.width])
 
   return (
     <div className={`${styles.home}`}>
       <div className="flex-box home-body">
         <DndProvider backend={HTML5Backend}>
-
           {
             ifCanEdit ?
               <div className="left-panel" style={leftPanelVisible ? {} : { left: '-260px' }}>
@@ -1869,7 +1872,6 @@ const Home: React.FC<any> = (props: any) => {
             {
               // @ts-ignore
               <DropSortableItem moveCard={(dragIndex: any, hoverIndex: any, e: any) => {
-                console.log(e)
                 const item = JSON.parse(dragIndex);
                 const { key, value, label, icon } = item;
                 if ((!paramData?.contentData?.contentSize?.width || !paramData?.contentData?.contentSize?.height)) {
@@ -2057,12 +2059,18 @@ const Home: React.FC<any> = (props: any) => {
         </DndProvider>
         <NodeDetailWrapper
           className="config-panel"
-          style={addWindowVisible ? {} : { right: '-450px' }}
+          style={(addWindowVisible || !!homeSettingVisible) ? {} : { right: '-450px' }}
           title={'插件配置 PluginConfig '}
           onSave={() => {
             form.validateFields()
               .then((values) => {
-                addWindow(values);
+                if (addWindowVisible) {
+                  addWindow(values);
+                } else if (!!homeSettingVisible) {
+                  setHomeSettingData((prev: any) => ({ ...prev, [homeSettingVisible]: { ...prev?.[homeSettingVisible], ...values } }));
+                  setHomeSettingVisible('');
+                  form.resetFields();
+                }
               })
               .catch((err) => {
                 const { errorFields } = err;
@@ -2071,490 +2079,537 @@ const Home: React.FC<any> = (props: any) => {
           }}
           onCancel={onCancel}
         >
-          {/* <Modal
-              title={`${_.isEmpty(editWindowData) ? '添加' : '编辑'}监控窗口`}
-              wrapClassName="history-window-modal"
-              centered
-              width="50vw"
-              open={addWindowVisible}
-              // maskClosable={false}
-              onOk={() => addWindow()}
-              onCancel={() => onCancel()}
-              getContainer={false}
-              destroyOnClose={true}
-            > */}
-          <Form form={form} scrollToFirstError>
-            <Form.Item
-              name={`CCDName`}
-              label={"监控窗口名称"}
-              rules={[{ required: false, message: '监控窗口名称' }]}
-            >
-              <Input size='large' />
-            </Form.Item>
-            <Form.Item
-              name={'value'}
-              label="绑定节点"
-              rules={[{ required: true, message: '绑定节点' }]}
-            >
-              <Cascader
-                style={{ width: '100%' }}
-                options={nodeList}
-                onChange={(val) => {
-                  if (!val[0]) {
-                    message.error('该节点缺少节点ID，请联系管理员');
-                    return;
-                  }
-                  const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === val[0])?.[0];
-                  if (!!res) {
-                    setFieldsValue({ operationList: [] });
-                    const { config = {} } = res;
-                    const params = ['operation'].includes(windowType) ?
-                      config?.initParams :
-                      ['operation2'].includes(windowType) ?
-                        (!_.isEmpty(config?.execParams) ? config?.execParams : config?.initParams) :
-                        null;
-                    if (!!params && _.isObject(params)) {
-                      setSelectedNodeConfig(() => Object.entries(params)?.map((item: any) => {
-                        return {
-                          label: item[1]?.alias,
-                          value: item[0],
-                        }
-                      }));
-                    } else {
-                      setSelectedNodeConfig([]);
-                    }
-                  }
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              name={'type'}
-              label="窗口类型"
-              initialValue={'img'}
-              rules={[{ required: true, message: '窗口类型' }]}
-            >
-              <Select
-                style={{ width: '100%' }}
-                options={windowTypeList}
-                onChange={val => {
-                  const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === getFieldValue('value')?.[0])?.[0];
-                  if (!!res) {
-                    setFieldsValue({ operationList: [] });
-                    const { config = {} } = res;
-                    const params = (val === 'operation') ?
-                      config?.initParams :
-                      (val === 'operation2') ?
-                        (!_.isEmpty(config?.execParams) ? config?.execParams : config?.initParams) :
-                        null;
-                    if (!!params && _.isObject(params)) {
-                      setSelectedNodeConfig(() => Object.entries(params)?.map((item: any) => {
-                        return {
-                          label: item[1]?.alias,
-                          value: item[0],
-                        }
-                      }));
-                    } else {
-                      setSelectedNodeConfig([]);
-                    }
-                  }
-                  setWindowType(val);
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              name={`backgroundColor`}
-              label={'窗口背景色'}
-              initialValue={"default"}
-              rules={[{ required: false, message: '窗口背景色' }]}
-            >
-              <Select
-                style={{ width: '100%' }}
-                options={[
-                  {
-                    value: 'default',
-                    label: '默认',
-                  },
-                  {
-                    value: 'transparent',
-                    label: '透明色',
-                  }
-                ]}
-              />
-            </Form.Item>
-            {
-              (['img'].includes(windowType) && !isVision) ?
-                <Fragment>
-                  <Form.Item
-                    name={`windowControl`}
-                    label={'窗口控制'}
-                    tooltip={"控制其他窗口的显示与隐藏"}
-                    rules={[{ required: false, message: '窗口控制' }]}
-                  >
-                    <Select
-                      style={{ width: '100%' }}
-                      allowClear
-                      options={contentList.map((dom: any) => {
-                        const { key, props } = dom;
-                        const { children } = props;
-                        const keySp = key?.split("$$");
-                        const name = `${children?.[0]?.props?.children?.[0]?.props?.children?.[0]} - ${windowTypeList?.filter((i: any) => i.value === keySp?.[2])?.[0]?.label}`
-                        return {
-                          value: key,
-                          label: name,
-                          disabled: key === editWindowData?.id
-                        }
-                      })}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    name={'defaultImg'}
-                    label="默认图片"
-                    rules={[{ required: false, message: '默认图片' }]}
-                  >
-                    <div className="flex-box">
-                      <TooltipDiv style={{ paddingRight: 10 }}>
-                        {selectedPath.value}
-                      </TooltipDiv>
-                      {
-                        !selectedPath.value ?
-                          <Button
-                            onClick={() => {
-                              setFieldsValue({ defaultImg: undefined });
-                              setSelectPathVisible(true);
-                            }}
-                          >
-                            选择文件
-                          </Button>
-                          :
-                          <Button
-                            type="link"
-                            icon={<DeleteOutlined />}
-                            onClick={() => {
-                              setFieldsValue({ defaultImg: undefined });
-                              setSelectedPath({ fileType: 'file', value: '' });
-                            }}
-                          />
-                      }
-                    </div>
-                  </Form.Item>
-                  <Form.Item
-                    name="magnifier"
-                    label="开启放大镜"
-                    valuePropName="checked"
-                  >
-                    <Switch />
-                  </Form.Item>
-                  <Form.Item
-                    name="comparison"
-                    label="开启对比图"
-                    valuePropName="checked"
-                  >
-                    <Switch />
-                  </Form.Item>
-                </Fragment>
-                : null
-            }
-            {
-              ['point', 'bar', 'line', 'table'].includes(windowType) ?
-                <Fragment>
-                  <Form.Item
-                    name={`yName`}
-                    label={windowType === "table" ? "表格key名" : "y 轴名称"}
-                    rules={[{ required: true, message: 'y轴名称' }]}
-                  >
-                    <Input size='large' />
-                  </Form.Item>
-                  <Form.Item
-                    name={`xName`}
-                    label={windowType === "table" ? "表格value名" : "x 轴名称"}
-                    rules={[{ required: true, message: 'x轴名称' }]}
-                  >
-                    <Input size='large' />
-                  </Form.Item>
-                  {
-                    ['table'].includes(windowType) ?
-                      null
-                      :
-                      <Form.Item
-                        name={`dataZoom`}
-                        label={'展示最新的'}
-                        rules={[{ required: false, message: '展示最新的' }]}
-                        initialValue={0}
-                      >
-                        <InputNumber min={0} />
-                      </Form.Item>
-                  }
-                </Fragment>
-                : null
-            }
-            {
-              ['point', 'bar'].includes(windowType) ?
+          {
+            addWindowVisible ?
+              <Form form={form} scrollToFirstError>
                 <Form.Item
-                  name={`direction`}
-                  label={'图形方向'}
-                  rules={[{ required: false, message: '图形方向' }]}
+                  name={`CCDName`}
+                  label={"监控窗口名称"}
+                  rules={[{ required: false, message: '监控窗口名称' }]}
+                >
+                  <Input size='large' />
+                </Form.Item>
+                <Form.Item
+                  name={'value'}
+                  label="绑定节点"
+                  rules={[{ required: true, message: '绑定节点' }]}
+                >
+                  <Cascader
+                    style={{ width: '100%' }}
+                    options={nodeList}
+                    onChange={(val) => {
+                      if (!val[0]) {
+                        message.error('该节点缺少节点ID，请联系管理员');
+                        return;
+                      }
+                      const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === val[0])?.[0];
+                      if (!!res) {
+                        setFieldsValue({ operationList: [] });
+                        const { config = {} } = res;
+                        const params = ['operation'].includes(windowType) ?
+                          config?.initParams :
+                          ['operation2'].includes(windowType) ?
+                            (!_.isEmpty(config?.execParams) ? config?.execParams : config?.initParams) :
+                            null;
+                        if (!!params && _.isObject(params)) {
+                          setSelectedNodeConfig(() => Object.entries(params)?.map((item: any) => {
+                            return {
+                              label: item[1]?.alias,
+                              value: item[0],
+                            }
+                          }));
+                        } else {
+                          setSelectedNodeConfig([]);
+                        }
+                      }
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name={'type'}
+                  label="窗口类型"
+                  initialValue={'img'}
+                  rules={[{ required: true, message: '窗口类型' }]}
+                >
+                  <Select
+                    style={{ width: '100%' }}
+                    options={windowTypeList}
+                    onChange={val => {
+                      const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === getFieldValue('value')?.[0])?.[0];
+                      if (!!res) {
+                        setFieldsValue({ operationList: [] });
+                        const { config = {} } = res;
+                        const params = (val === 'operation') ?
+                          config?.initParams :
+                          (val === 'operation2') ?
+                            (!_.isEmpty(config?.execParams) ? config?.execParams : config?.initParams) :
+                            null;
+                        if (!!params && _.isObject(params)) {
+                          setSelectedNodeConfig(() => Object.entries(params)?.map((item: any) => {
+                            return {
+                              label: item[1]?.alias,
+                              value: item[0],
+                            }
+                          }));
+                        } else {
+                          setSelectedNodeConfig([]);
+                        }
+                      }
+                      setWindowType(val);
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="ifShowHeader"
+                  label="显示头部"
+                  initialValue={false}
+                  valuePropName="checked"
+                >
+                  <Switch />
+                </Form.Item>
+                <Form.Item
+                  name={`backgroundColor`}
+                  label={'窗口背景色'}
+                  initialValue={"default"}
+                  rules={[{ required: false, message: '窗口背景色' }]}
                 >
                   <Select
                     style={{ width: '100%' }}
                     options={[
                       {
-                        value: 'rows',
-                        label: '横向',
+                        value: 'default',
+                        label: '默认',
                       },
                       {
-                        value: 'column',
-                        label: '纵向',
+                        value: 'transparent',
+                        label: '透明色',
                       }
                     ]}
                   />
                 </Form.Item>
-                : null
-            }
-            {
-              ['bar'].includes(windowType) ?
-                <Fragment>
-                  <Form.Item
-                    name={`align`}
-                    label={'对齐方向'}
-                    initialValue={"left"}
-                    rules={[{ required: false, message: '对齐方向' }]}
-                  >
-                    <Select
-                      style={{ width: '100%' }}
-                      options={[
-                        {
-                          value: 'left',
-                          label: '左对齐',
-                        },
-                        {
-                          value: 'right',
-                          label: '右对齐',
-                        }
-                      ]}
-                    />
-                  </Form.Item>
-                </Fragment>
-                : null
-            }
-            {
-              ['bar', 'progress'].includes(windowType) ?
-                <Form.Item
-                  name={`barColor`}
-                  label={'图形颜色'}
-                  initialValue={"default"}
-                  rules={[{ required: false, message: '图形颜色' }]}
-                >
-                  <Select
-                    style={{ width: '100%' }}
-                    mode={['bar'].includes(windowType) ? 'multiple' : undefined}
-                    options={[['default', '默认'], ['#73c0de', '蓝色'],
-                    ['#5470c6', '深蓝'], ['#91cc75', '绿色'],
-                    ['#3ba272', '深绿'], ['#fac858', '黄色'],
-                    ['#ee6666', '红色'], ['#fc8452', '橘红'],
-                    ['#9a60b4', '紫色'], ['#ea7ccc', '粉色'],
-                    ['#000', '黑色'], ['#fff', '白色']]
-                      .map((item: any, index: number) => {
-                        return {
-                          value: item[0],
-                          label: index === 0 ? item[1] : <div className='flex-box'>
-                            <div className='item-label-icon' style={{ backgroundColor: item[0] }} />
-                            {item[1]}
-                          </div>
-                        }
-                      })
-                    }
-                    onChange={(value) => {
-                      if (value.includes('default')) {
-                        setFieldsValue({
-                          barColor: 'default'
-                        });
-                      }
-                    }}
-                  />
-                </Form.Item>
-                : null
-            }
-            {
-              ['progress'].includes(windowType) ?
-                <Fragment>
-                  <Form.Item
-                    name={`progressType`}
-                    label={'进度条形状'}
-                    initialValue={"line"}
-                    rules={[{ required: false, message: '进度条形状' }]}
-                  >
-                    <Select
-                      style={{ width: '100%' }}
-                      options={[
-                        {
-                          value: 'line',
-                          label: '直线'
-                        },
-                        {
-                          value: 'circle',
-                          label: '环形'
-                        },
-                        {
-                          value: 'dashboard',
-                          label: '仪表盘'
-                        }
-                      ]}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    name={`progressSize`}
-                    label={'进度条高度'}
-                    initialValue={8}
-                    rules={[{ required: false, message: '进度条高度' }]}
-                  >
-                    <InputNumber min={2} max={99} step={1} />
-                  </Form.Item>
-                  {
-                    form.getFieldValue('progressType') === 'line' ?
+                {
+                  (['img'].includes(windowType) && !isVision) ?
+                    <Fragment>
                       <Form.Item
-                        name={`progressSteps`}
-                        label={'进度格数'}
-                        initialValue={5}
-                        rules={[{ required: false, message: '进度格数' }]}
+                        name={`windowControl`}
+                        label={'窗口控制'}
+                        tooltip={"控制其他窗口的显示与隐藏"}
+                        rules={[{ required: false, message: '窗口控制' }]}
                       >
-                        <InputNumber min={0} max={99} step={1} />
+                        <Select
+                          style={{ width: '100%' }}
+                          allowClear
+                          options={contentList.map((dom: any) => {
+                            const { key, props } = dom;
+                            const { children } = props;
+                            const keySp = key?.split("$$");
+                            const name = `${children?.[0]?.props?.children?.[0]?.props?.children?.[0]} - ${windowTypeList?.filter((i: any) => i.value === keySp?.[2])?.[0]?.label}`
+                            return {
+                              value: key,
+                              label: name,
+                              disabled: key === editWindowData?.id
+                            }
+                          })}
+                        />
                       </Form.Item>
-                      :
-                      null
-                  }
-                </Fragment>
-                : null
-            }
-            {
-              ['point'].includes(windowType) ?
-                <Fragment>
-                  <Form.Item
-                    name={`symbol`}
-                    label={'散点形状'}
-                    rules={[{ required: true, message: '散点形状' }]}
-                    initialValue={'rect'}
-                  >
-                    <Select
-                      style={{ width: '100%' }}
-                      options={[
-                        {
-                          value: 'circle',
-                          label: '圆点',
-                        },
-                        {
-                          value: 'rect',
-                          label: '正方形',
-                        },
-                        {
-                          value: 'roundRect',
-                          label: '圆角正方形',
-                        },
-                        {
-                          value: 'triangle',
-                          label: '三角形',
-                        },
-                        {
-                          value: 'diamond',
-                          label: '菱形',
-                        },
-                        {
-                          value: 'pin',
-                          label: '小气球',
-                        },
-                        {
-                          value: 'arrow',
-                          label: '箭头',
+                      <Form.Item
+                        name={'defaultImg'}
+                        label="默认图片"
+                        rules={[{ required: false, message: '默认图片' }]}
+                      >
+                        <div className="flex-box">
+                          <TooltipDiv style={{ paddingRight: 10 }}>
+                            {selectedPath.value}
+                          </TooltipDiv>
+                          {
+                            !selectedPath.value ?
+                              <Button
+                                onClick={() => {
+                                  setFieldsValue({ defaultImg: undefined });
+                                  setSelectPathVisible(true);
+                                }}
+                              >
+                                选择文件
+                              </Button>
+                              :
+                              <Button
+                                type="link"
+                                icon={<DeleteOutlined />}
+                                onClick={() => {
+                                  setFieldsValue({ defaultImg: undefined });
+                                  setSelectedPath({ fileType: 'file', value: '' });
+                                }}
+                              />
+                          }
+                        </div>
+                      </Form.Item>
+                      <Form.Item
+                        name="magnifier"
+                        label="开启放大镜"
+                        valuePropName="checked"
+                      >
+                        <Switch />
+                      </Form.Item>
+                      <Form.Item
+                        name="comparison"
+                        label="开启对比图"
+                        valuePropName="checked"
+                      >
+                        <Switch />
+                      </Form.Item>
+                    </Fragment>
+                    : null
+                }
+                {
+                  ['point', 'bar', 'line', 'table'].includes(windowType) ?
+                    <Fragment>
+                      <Form.Item
+                        name={`yName`}
+                        label={windowType === "table" ? "表格key名" : "y 轴名称"}
+                        rules={[{ required: true, message: 'y轴名称' }]}
+                      >
+                        <Input size='large' />
+                      </Form.Item>
+                      <Form.Item
+                        name={`xName`}
+                        label={windowType === "table" ? "表格value名" : "x 轴名称"}
+                        rules={[{ required: true, message: 'x轴名称' }]}
+                      >
+                        <Input size='large' />
+                      </Form.Item>
+                      {
+                        ['table'].includes(windowType) ?
+                          null
+                          :
+                          <Form.Item
+                            name={`dataZoom`}
+                            label={'展示最新的'}
+                            rules={[{ required: false, message: '展示最新的' }]}
+                            initialValue={0}
+                          >
+                            <InputNumber min={0} />
+                          </Form.Item>
+                      }
+                    </Fragment>
+                    : null
+                }
+                {
+                  ['point', 'bar'].includes(windowType) ?
+                    <Form.Item
+                      name={`direction`}
+                      label={'图形方向'}
+                      rules={[{ required: false, message: '图形方向' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={[
+                          {
+                            value: 'rows',
+                            label: '横向',
+                          },
+                          {
+                            value: 'column',
+                            label: '纵向',
+                          }
+                        ]}
+                      />
+                    </Form.Item>
+                    : null
+                }
+                {
+                  ['bar'].includes(windowType) ?
+                    <Fragment>
+                      <Form.Item
+                        name={`align`}
+                        label={'对齐方向'}
+                        initialValue={"left"}
+                        rules={[{ required: false, message: '对齐方向' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: 'left',
+                              label: '左对齐',
+                            },
+                            {
+                              value: 'right',
+                              label: '右对齐',
+                            }
+                          ]}
+                        />
+                      </Form.Item>
+                    </Fragment>
+                    : null
+                }
+                {
+                  ['bar', 'progress'].includes(windowType) ?
+                    <Form.Item
+                      name={`barColor`}
+                      label={'图形颜色'}
+                      initialValue={"default"}
+                      rules={[{ required: false, message: '图形颜色' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        mode={['bar'].includes(windowType) ? 'multiple' : undefined}
+                        options={[['default', '默认'], ['#73c0de', '蓝色'],
+                        ['#5470c6', '深蓝'], ['#91cc75', '绿色'],
+                        ['#3ba272', '深绿'], ['#fac858', '黄色'],
+                        ['#ee6666', '红色'], ['#fc8452', '橘红'],
+                        ['#9a60b4', '紫色'], ['#ea7ccc', '粉色'],
+                        ['#000', '黑色'], ['#fff', '白色']]
+                          .map((item: any, index: number) => {
+                            return {
+                              value: item[0],
+                              label: index === 0 ? item[1] : <div className='flex-box'>
+                                <div className='item-label-icon' style={{ backgroundColor: item[0] }} />
+                                {item[1]}
+                              </div>
+                            }
+                          })
                         }
-                      ]}
-                    />
-                  </Form.Item>
-                </Fragment>
-                : null
-            }
-            {
-              ['table2', 'table'].includes(windowType) ?
-                <Fragment>
-                  <Form.Item
-                    name={`reverse`}
-                    label={'数据倒叙'}
-                    rules={[{ required: true, message: '数据倒叙' }]}
-                    initialValue={false}
-                  >
-                    <Select
-                      style={{ width: '100%' }}
-                      options={[
-                        {
-                          value: false,
-                          label: '正序显示',
-                        },
-                        {
-                          value: true,
-                          label: '倒叙显示',
-                        }
-                      ]}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    name="interlacing"
-                    label="隔行换色"
-                    valuePropName="checked"
-                  >
-                    <Switch />
-                  </Form.Item>
-                </Fragment>
-                : null
-            }
-            {
-              ['imgs'].includes(windowType) ?
-                <Fragment>
-                  <Form.Item
-                    name={`imgs_width`}
-                    label={'小图的宽'}
-                    rules={[{ required: true, message: '小图的宽' }]}
-                    initialValue={150}
-                  >
-                    <InputNumber />
-                  </Form.Item>
-                  <Form.Item
-                    name={`imgs_height`}
-                    label={'小图的高'}
-                    rules={[{ required: true, message: '小图的高' }]}
-                    initialValue={150}
-                  >
-                    <InputNumber />
-                  </Form.Item>
-                </Fragment>
-                : null
-            }
-            {
-              ['button', 'buttonInp'].includes(windowType) ?
-                <Fragment>
-                  <Form.Item
-                    name={`yName`}
-                    label={"按钮名称"}
-                    rules={[{ required: true, message: '按钮名称' }]}
-                  >
-                    <Input size='large' />
-                  </Form.Item>
-                  <Form.Item
-                    name={`fetchType`}
-                    label={"http类型"}
-                    rules={[{ required: true, message: 'http类型' }]}
-                  >
-                    <Select
-                      style={{ width: '100%' }}
-                      options={['get', 'post', 'put', 'delete'].map((item: any) => ({ value: item, label: _.toUpper(item) }))}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    name={`xName`}
-                    label={"接口地址"}
-                    rules={[{ required: true, message: '接口地址' }]}
-                  >
-                    <Input size='large' />
-                  </Form.Item>
-                  {
-                    ['button'].includes(windowType) ?
+                        onChange={(value) => {
+                          if (value.includes('default')) {
+                            setFieldsValue({
+                              barColor: 'default'
+                            });
+                          }
+                        }}
+                      />
+                    </Form.Item>
+                    : null
+                }
+                {
+                  ['progress'].includes(windowType) ?
+                    <Fragment>
+                      <Form.Item
+                        name={`progressType`}
+                        label={'进度条形状'}
+                        initialValue={"line"}
+                        rules={[{ required: false, message: '进度条形状' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: 'line',
+                              label: '直线'
+                            },
+                            {
+                              value: 'circle',
+                              label: '环形'
+                            },
+                            {
+                              value: 'dashboard',
+                              label: '仪表盘'
+                            }
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`progressSize`}
+                        label={'进度条高度'}
+                        initialValue={8}
+                        rules={[{ required: false, message: '进度条高度' }]}
+                      >
+                        <InputNumber min={2} max={99} step={1} />
+                      </Form.Item>
+                      {
+                        form.getFieldValue('progressType') === 'line' ?
+                          <Form.Item
+                            name={`progressSteps`}
+                            label={'进度格数'}
+                            initialValue={5}
+                            rules={[{ required: false, message: '进度格数' }]}
+                          >
+                            <InputNumber min={0} max={99} step={1} />
+                          </Form.Item>
+                          :
+                          null
+                      }
+                    </Fragment>
+                    : null
+                }
+                {
+                  ['point'].includes(windowType) ?
+                    <Fragment>
+                      <Form.Item
+                        name={`symbol`}
+                        label={'散点形状'}
+                        rules={[{ required: true, message: '散点形状' }]}
+                        initialValue={'rect'}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: 'circle',
+                              label: '圆点',
+                            },
+                            {
+                              value: 'rect',
+                              label: '正方形',
+                            },
+                            {
+                              value: 'roundRect',
+                              label: '圆角正方形',
+                            },
+                            {
+                              value: 'triangle',
+                              label: '三角形',
+                            },
+                            {
+                              value: 'diamond',
+                              label: '菱形',
+                            },
+                            {
+                              value: 'pin',
+                              label: '小气球',
+                            },
+                            {
+                              value: 'arrow',
+                              label: '箭头',
+                            }
+                          ]}
+                        />
+                      </Form.Item>
+                    </Fragment>
+                    : null
+                }
+                {
+                  ['table2', 'table'].includes(windowType) ?
+                    <Fragment>
+                      <Form.Item
+                        name={`reverse`}
+                        label={'数据倒叙'}
+                        rules={[{ required: true, message: '数据倒叙' }]}
+                        initialValue={false}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: false,
+                              label: '正序显示',
+                            },
+                            {
+                              value: true,
+                              label: '倒叙显示',
+                            }
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="interlacing"
+                        label="隔行换色"
+                        valuePropName="checked"
+                      >
+                        <Switch />
+                      </Form.Item>
+                      <Form.Item
+                        name="des_bordered"
+                        label="是否展示边框"
+                        valuePropName="checked"
+                      >
+                        <Switch />
+                      </Form.Item>
+                    </Fragment>
+                    : null
+                }
+                {
+                  ['imgs'].includes(windowType) ?
+                    <Fragment>
+                      <Form.Item
+                        name={`imgs_width`}
+                        label={'小图的宽'}
+                        rules={[{ required: true, message: '小图的宽' }]}
+                        initialValue={150}
+                      >
+                        <InputNumber />
+                      </Form.Item>
+                      <Form.Item
+                        name={`imgs_height`}
+                        label={'小图的高'}
+                        rules={[{ required: true, message: '小图的高' }]}
+                        initialValue={150}
+                      >
+                        <InputNumber />
+                      </Form.Item>
+                    </Fragment>
+                    : null
+                }
+                {
+                  ['button', 'buttonInp'].includes(windowType) ?
+                    <Fragment>
+                      <Form.Item
+                        name={`yName`}
+                        label={"按钮名称"}
+                        rules={[{ required: true, message: '按钮名称' }]}
+                      >
+                        <Input size='large' />
+                      </Form.Item>
+                      <Form.Item
+                        name={`fetchType`}
+                        label={"http类型"}
+                        rules={[{ required: true, message: 'http类型' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={['get', 'post', 'put', 'delete'].map((item: any) => ({ value: item, label: _.toUpper(item) }))}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`xName`}
+                        label={"接口地址"}
+                        rules={[{ required: true, message: '接口地址' }]}
+                      >
+                        <Input size='large' />
+                      </Form.Item>
+                      {
+                        ['button'].includes(windowType) ?
+                          <Form.Item
+                            name={`fetchParams`}
+                            label={"传递参数"}
+                            rules={[{ required: false, message: '传递参数' }]}
+                          >
+                            <Input.TextArea
+                              size='large'
+                              autoSize={{ minRows: 1, maxRows: 5 }}
+                            />
+                          </Form.Item>
+                          : null
+                      }
+                    </Fragment>
+                    : null
+                }
+                {
+                  ['buttonPassword'].includes(windowType) ?
+                    <Fragment>
+                      <Form.Item
+                        name={`yName`}
+                        label={"按钮名称"}
+                        rules={[{ required: true, message: '按钮名称' }]}
+                      >
+                        <Input size='large' />
+                      </Form.Item>
+                      <Form.Item
+                        name={`fetchType`}
+                        label={"http类型"}
+                        rules={[{ required: true, message: 'http类型' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={['get', 'post', 'put', 'delete'].map((item: any) => ({ value: item, label: _.toUpper(item) }))}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`xName`}
+                        label={"接口地址"}
+                        rules={[{ required: true, message: '接口地址' }]}
+                      >
+                        <Input size='large' />
+                      </Form.Item>
                       <Form.Item
                         name={`fetchParams`}
                         label={"传递参数"}
@@ -2565,252 +2620,288 @@ const Home: React.FC<any> = (props: any) => {
                           autoSize={{ minRows: 1, maxRows: 5 }}
                         />
                       </Form.Item>
-                      : null
-                  }
-                </Fragment>
-                : null
-            }
-            {
-              ['description'].includes(windowType) ?
-                <Fragment>
-                  <Form.Item
-                    label="静态数据"
-                  >
-                    {
-                      _.isArray(basicInfoData) ?
-                        basicInfoData.map((item: any, index: number) => {
-                          if (!item || _.isEmpty(item)) return null;
-
-                          const { id, name, value } = item;
-                          return <Row
-                            key={`commonInfo-${id || index}`}
-                            gutter={8}
-                            style={{ marginBottom: 8, height: '27px', }}
-                          >
-                            <Col flex={1}>
-                              <Input
-                                placeholder='key'
-                                value={name}
-                                onChange={e => {
-                                  const val = e?.target?.value;
-                                  setBasicInfoData((prev: any) => {
-                                    return prev.map((info: any) => {
-                                      if (info.id === id) {
-                                        return { ...info, name: val }
-                                      }
-                                      return info;
-                                    })
-                                  });
-                                }}
-                              />
-                            </Col>
-                            <Col flex={2}>
-                              <Input
-                                placeholder='value'
-                                value={value}
-                                onChange={e => {
-                                  const val = e?.target?.value;
-                                  setBasicInfoData((prev: any) => {
-                                    return prev.map((info: any) => {
-                                      if (info.id === id) {
-                                        return { ...info, value: val }
-                                      }
-                                      return info;
-                                    })
-                                  });
-                                }}
-                              />
-                            </Col>
-                            <Col style={{ height: '100%' }}>
-                              <Button
-                                style={{ height: '100%' }}
-                                icon={<MinusOutlined />}
-                                onClick={() => {
-                                  setBasicInfoData((prev: any) => {
-                                    return prev.filter((i: any) => i.id !== id)?.length ?
-                                      prev.filter((i: any) => i.id !== id) :
-                                      [{ id: guid(), name: '', value: '' }]
-                                  })
-                                }}
-                              />
-                            </Col>
-                          </Row>
-                        })
-                        :
-                        null
-                    }
-                    <Button
-                      icon={<PlusOutlined />}
-                      onClick={() => {
-                        setBasicInfoData((prev: any) => prev.concat({ id: guid(), name: '', value: '' }))
-                      }}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    name="des_column"
-                    label="列数"
-                  >
-                    <InputNumber />
-                  </Form.Item>
-                  <Form.Item
-                    name="des_layout"
-                    label="布局方向"
-                  >
-                    <Select
-                      options={[
-                        { label: '横向', value: 'horizontal' },
-                        { label: '纵向', value: 'vertical' }
-                      ]}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    name="des_bordered"
-                    label="是否展示边框"
-                    valuePropName="checked"
-                  >
-                    <Switch />
-                  </Form.Item>
-                  {
-                    !!form.getFieldValue('des_bordered') ?
                       <Form.Item
-                        name="des_size"
-                        label="布局大小"
-                      >
-                        <Select
-                          options={[
-                            { label: '自适应', value: 'default' },
-                            { label: '中', value: 'middle' },
-                            { label: '小', value: 'small' }
-                          ]}
-                        />
-                      </Form.Item>
-                      : null
-                  }
-                </Fragment>
-                : null
-            }
-            {
-              ['three'].includes(windowType) ?
-                <Fragment>
-                  <Form.Item
-                    name="modelRotate"
-                    label="开启模型旋转"
-                    initialValue={false}
-                    valuePropName="checked"
-                  >
-                    <Switch />
-                  </Form.Item>
-                  <Form.Item
-                    name="modelScale"
-                    label="开启模型缩放"
-                    initialValue={false}
-                    valuePropName="checked"
-                  >
-                    <Switch />
-                  </Form.Item>
-                </Fragment>
-                : null
-            }
-            {
-              ['operation', 'operation2'].includes(windowType) ?
-                <Fragment>
-                  <Form.Item
-                    name={`operationList`}
-                    label={"操作项"}
-                    rules={[{ required: true, message: '操作项' }]}
-                  >
-                    <Select
-                      style={{ width: '100%' }}
-                      mode="multiple"
-                      options={selectedNodeConfig}
-                    />
-                  </Form.Item>
-                  {
-                    ['operation2'].includes(windowType) ?
-                      <Form.Item
-                        name={`xName`}
-                        label={"接口地址"}
-                        rules={[{ required: true, message: '接口地址' }]}
+                        name={`password`}
+                        label={"设置密码"}
+                        rules={[{ required: true, message: '设置密码' }]}
                       >
                         <Input size='large' />
                       </Form.Item>
-                      : null
-                  }
-                </Fragment>
-                : null
-            }
-            {
-              ['statistic'].includes(windowType) ?
-                <Fragment>
-                  <Form.Item
-                    name={`yName`}
-                    label={"标题名称"}
-                    rules={[{ required: true, message: '标题名称' }]}
-                  >
-                    <Input size='large' />
-                  </Form.Item>
-                  <Form.Item
-                    name={`direction`}
-                    label={'对齐方向'}
-                    initialValue={'center'}
-                    rules={[{ required: true, message: '对齐方向' }]}
-                  >
-                    <Select
-                      style={{ width: '100%' }}
-                      options={[
+                      <Form.Item
+                        name={`passwordHelp`}
+                        label={"密码提示"}
+                        rules={[{ required: false, message: '密码提示' }]}
+                      >
+                        <Input size='large' />
+                      </Form.Item>
+                    </Fragment>
+                    : null
+                }
+                {
+                  ['description'].includes(windowType) ?
+                    <Fragment>
+                      <Form.Item
+                        label="静态数据"
+                      >
                         {
-                          value: 'flex-start',
-                          label: '左对齐',
-                        },
-                        {
-                          value: 'center',
-                          label: '居中',
-                        },
-                        {
-                          value: 'flex-end',
-                          label: '右对齐',
+                          _.isArray(basicInfoData) ?
+                            basicInfoData.map((item: any, index: number) => {
+                              if (!item || _.isEmpty(item)) return null;
+
+                              const { id, name, value } = item;
+                              return <Row
+                                key={`commonInfo-${id || index}`}
+                                gutter={8}
+                                style={{ marginBottom: 8, height: '27px', }}
+                              >
+                                <Col flex={1}>
+                                  <Input
+                                    placeholder='key'
+                                    value={name}
+                                    onChange={e => {
+                                      const val = e?.target?.value;
+                                      setBasicInfoData((prev: any) => {
+                                        return prev.map((info: any) => {
+                                          if (info.id === id) {
+                                            return { ...info, name: val }
+                                          }
+                                          return info;
+                                        })
+                                      });
+                                    }}
+                                  />
+                                </Col>
+                                <Col flex={2}>
+                                  <Input
+                                    placeholder='value'
+                                    value={value}
+                                    onChange={e => {
+                                      const val = e?.target?.value;
+                                      setBasicInfoData((prev: any) => {
+                                        return prev.map((info: any) => {
+                                          if (info.id === id) {
+                                            return { ...info, value: val }
+                                          }
+                                          return info;
+                                        })
+                                      });
+                                    }}
+                                  />
+                                </Col>
+                                <Col style={{ height: '100%' }}>
+                                  <Button
+                                    style={{ height: '100%' }}
+                                    icon={<MinusOutlined />}
+                                    onClick={() => {
+                                      setBasicInfoData((prev: any) => {
+                                        return prev.filter((i: any) => i.id !== id)?.length ?
+                                          prev.filter((i: any) => i.id !== id) :
+                                          [{ id: guid(), name: '', value: '' }]
+                                      })
+                                    }}
+                                  />
+                                </Col>
+                              </Row>
+                            })
+                            :
+                            null
                         }
-                      ]}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    name={`fontColor`}
-                    label={'内容颜色'}
-                    rules={[{ required: false, message: '内容颜色' }]}
-                  >
-                    <ChromePicker
-                      color={fontColor}
-                      onChange={(value: any) => {
-                        const { rgb } = value;
-                        setFontColor(rgb);
-                      }}
-                    />
-                  </Form.Item>
-                </Fragment>
+                        <Button
+                          icon={<PlusOutlined />}
+                          onClick={() => {
+                            setBasicInfoData((prev: any) => prev.concat({ id: guid(), name: '', value: '' }))
+                          }}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="des_column"
+                        label="列数"
+                      >
+                        <InputNumber />
+                      </Form.Item>
+                      <Form.Item
+                        name="des_layout"
+                        label="布局方向"
+                      >
+                        <Select
+                          options={[
+                            { label: '横向', value: 'horizontal' },
+                            { label: '纵向', value: 'vertical' }
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="des_bordered"
+                        label="是否展示边框"
+                        valuePropName="checked"
+                      >
+                        <Switch />
+                      </Form.Item>
+                      {
+                        !!form.getFieldValue('des_bordered') ?
+                          <Form.Item
+                            name="des_size"
+                            label="布局大小"
+                          >
+                            <Select
+                              options={[
+                                { label: '自适应', value: 'default' },
+                                { label: '中', value: 'middle' },
+                                { label: '小', value: 'small' }
+                              ]}
+                            />
+                          </Form.Item>
+                          : null
+                      }
+                    </Fragment>
+                    : null
+                }
+                {
+                  ['three'].includes(windowType) ?
+                    <Fragment>
+                      <Form.Item
+                        name="modelRotate"
+                        label="开启模型旋转"
+                        initialValue={false}
+                        valuePropName="checked"
+                      >
+                        <Switch />
+                      </Form.Item>
+                      <Form.Item
+                        name="modelScale"
+                        label="开启模型缩放"
+                        initialValue={false}
+                        valuePropName="checked"
+                      >
+                        <Switch />
+                      </Form.Item>
+                    </Fragment>
+                    : null
+                }
+                {
+                  ['operation', 'operation2'].includes(windowType) ?
+                    <Fragment>
+                      <Form.Item
+                        name={`operationList`}
+                        label={"操作项"}
+                        rules={[{ required: true, message: '操作项' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          mode="multiple"
+                          options={selectedNodeConfig}
+                        />
+                      </Form.Item>
+                      {
+                        ['operation2'].includes(windowType) ?
+                          <Form.Item
+                            name={`xName`}
+                            label={"接口地址"}
+                            rules={[{ required: true, message: '接口地址' }]}
+                          >
+                            <Input size='large' />
+                          </Form.Item>
+                          : null
+                      }
+                    </Fragment>
+                    : null
+                }
+                {
+                  ['statistic'].includes(windowType) ?
+                    <Fragment>
+                      <Form.Item
+                        name={`yName`}
+                        label={"标题名称"}
+                        rules={[{ required: true, message: '标题名称' }]}
+                      >
+                        <Input size='large' />
+                      </Form.Item>
+                      <Form.Item
+                        name={`direction`}
+                        label={'对齐方向'}
+                        initialValue={'center'}
+                        rules={[{ required: true, message: '对齐方向' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: 'flex-start',
+                              label: '左对齐',
+                            },
+                            {
+                              value: 'center',
+                              label: '居中',
+                            },
+                            {
+                              value: 'flex-end',
+                              label: '右对齐',
+                            }
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`fontColor`}
+                        label={'内容颜色'}
+                        rules={[{ required: false, message: '内容颜色' }]}
+                      >
+                        <ChromePicker
+                          color={fontColor}
+                          onChange={(value: any) => {
+                            const { rgb } = value;
+                            setFontColor(rgb);
+                          }}
+                        />
+                      </Form.Item>
+                    </Fragment>
+                    : null
+                }
+                <Form.Item
+                  name={'fontSize'}
+                  label="字号"
+                  initialValue={24}
+                  rules={[{ required: true, message: '字号' }]}
+                >
+                  <InputNumber
+                    min={12}
+                    placeholder="12"
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="ifLocalStorage"
+                  label="开启缓存"
+                  initialValue={true}
+                  valuePropName="checked"
+                  style={{ marginBottom: 0 }}
+                >
+                  <Switch />
+                </Form.Item>
+              </Form>
+              :
+              !!homeSettingVisible ?
+                <Form form={form} scrollToFirstError initialValues={homeSettingData[homeSettingVisible]}>
+                  {
+                    homeSettingVisible === 'slider-1' ?
+                      <Form.Item
+                        name="des_column"
+                        label="列数"
+                      >
+                        <InputNumber />
+                      </Form.Item>
+                      :
+                      <Form.Item
+                        name={'fontSize'}
+                        label="字号"
+                        rules={[{ required: true, message: '字号' }]}
+                      >
+                        <InputNumber
+                          min={12}
+                        />
+                      </Form.Item>
+                  }
+                </Form>
                 : null
-            }
-            <Form.Item
-              name={'fontSize'}
-              label="字号"
-              initialValue={24}
-              rules={[{ required: true, message: '字号' }]}
-            >
-              <InputNumber
-                min={12}
-                placeholder="12"
-              />
-            </Form.Item>
-            <Form.Item
-              name="ifLocalStorage"
-              label="开启缓存"
-              initialValue={true}
-              valuePropName="checked"
-              style={{ marginBottom: 0 }}
-            >
-              <Switch />
-            </Form.Item>
-          </Form>
-          {/* </Modal> */}
+          }
         </NodeDetailWrapper>
       </div>
       <div className="flex-box home-footer">
@@ -2884,6 +2975,7 @@ const Home: React.FC<any> = (props: any) => {
         </div>
       </div>
       {
+        // footer节点显示选择
         footerSelectVisible ?
           <Modal
             title={'选择底部展示的状态信息'}
@@ -2924,8 +3016,8 @@ const Home: React.FC<any> = (props: any) => {
           </Modal>
           : null
       }
-
       {
+        // 资源选择器
         selectPathVisible ?
           <FileManager
             fileType={selectedPath.fileType}
@@ -2943,6 +3035,7 @@ const Home: React.FC<any> = (props: any) => {
           : null
       }
       {
+        // 监控列表-添加监控方案
         !!addItemsVisible ?
           <Modal
             title={`添加方案窗口`}
@@ -3014,50 +3107,7 @@ const Home: React.FC<any> = (props: any) => {
           : null
       }
       {
-        // home 设置字号
-        !!homeSettingVisible ?
-          <Modal
-            title={`基础组件编辑窗口`}
-            wrapClassName="history-window-modal"
-            centered
-            open={!!homeSettingVisible}
-            // maskClosable={false}
-            destroyOnClose
-            onOk={() => {
-              validateFields().then(values => {
-                setHomeSettingData((prev: any) => ({ ...prev, [homeSettingVisible]: { ...prev?.[homeSettingVisible], ...values } }));
-                setHomeSettingVisible('');
-                form.resetFields();
-              });
-            }}
-            onCancel={() => setHomeSettingVisible('')}
-            getContainer={false}
-          >
-            <Form form={form} scrollToFirstError initialValues={homeSettingData[homeSettingVisible]}>
-              {
-                homeSettingVisible === 'slider-1' ?
-                  <Form.Item
-                    name="des_column"
-                    label="列数"
-                  >
-                    <InputNumber />
-                  </Form.Item>
-                  :
-                  <Form.Item
-                    name={'fontSize'}
-                    label="字号"
-                    rules={[{ required: true, message: '字号' }]}
-                  >
-                    <InputNumber
-                      min={12}
-                    />
-                  </Form.Item>
-              }
-            </Form>
-          </Modal>
-          : null
-      }
-      {
+        // 图表放大预览
         (_.isObject(myChartVisible) && !_.isEmpty(myChartVisible)) ?
           <ChartPreviewModal
             option={myChartVisible}
@@ -3066,6 +3116,7 @@ const Home: React.FC<any> = (props: any) => {
           : null
       }
       {
+        // 日志放大预览
         !!logDataVisible ?
           <LogPreviewModal
             type={logDataVisible}

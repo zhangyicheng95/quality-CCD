@@ -97,6 +97,11 @@ export const windowTypeList: any = [
     icon: buttonIpIcon,
   },
   {
+    value: 'buttonPassword',
+    label: '密码按钮组件',
+    icon: buttonIpIcon,
+  },
+  {
     value: 'progress',
     label: '进度条组件',
     icon: processIcon,

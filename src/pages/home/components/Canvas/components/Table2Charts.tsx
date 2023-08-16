@@ -178,11 +178,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
 
         const height = domRef?.current?.clientHeight;
         const valueLength = dataValue[0]?.value?.length;
-        if (height > valueLength * 38) {
-            setTableScroll(false);
-        } else {
-            setTableScroll(true);
-        }
+        setTableScroll((height - 38) < valueLength * 38);
     }, [dataValue,]);
 
     const onMoveIconMouseDown = (ev: any, index: number) => {
@@ -258,7 +254,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
             ref={domRef}
             style={{ fontSize }}
         >
-            <div className="charts-header-box flex-box">
+            <div className="charts-header-box flex-box" style={tableScroll ? {
+                width: "calc(100% - 22px)",
+            } : {}}>
                 {
                     _.isArray(dataValue) && (dataValue || []).map((item: any, index: number) => {
                         const { name } = item;

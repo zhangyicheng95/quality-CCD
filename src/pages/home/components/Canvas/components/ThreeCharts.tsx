@@ -45,26 +45,26 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     if (process.env.NODE_ENV === 'development') {
         // addType = 'add';
         name = "models/heatMapOutput.ply"; // models/pressure.json  models/tx.stl
-        value = [
-            { "type": "left", "name": "模具长轴最小值", "standardValue": 651, "measureValue": 651.01, "offsetValue": 0.01, "position": [{ "x": -228.03, "y": -324.21, "z": 172.48 }, { "x": -228.03, "y": -324.21, "z": 172.48 }] },
-            { "type": "left", "name": "模具长轴平均值", "standardValue": 651, "measureValue": 652.5, "offsetValue": 1.5, "position": [{ "x": -226.3, "y": -325.62, "z": -77.52 }, { "x": -226.3, "y": -325.62, "z": -77.52 }] },
-            { "type": "left", "name": "模具长轴最大值", "standardValue": 651, "measureValue": 653.93, "offsetValue": 2.93, "position": [{ "x": -222.99, "y": -327.37, "z": -377.52 }, { "x": -222.99, "y": -327.37, "z": -377.52 }] },
+        // value = [
+        //     { "type": "left", "name": "模具长轴最小值", "standardValue": 651, "measureValue": 651.01, "offsetValue": 0.01, "position": [{ "x": -228.03, "y": -324.21, "z": 172.48 }, { "x": -228.03, "y": -324.21, "z": 172.48 }] },
+        //     { "type": "left", "name": "模具长轴平均值", "standardValue": 651, "measureValue": 652.5, "offsetValue": 1.5, "position": [{ "x": -226.3, "y": -325.62, "z": -77.52 }, { "x": -226.3, "y": -325.62, "z": -77.52 }] },
+        //     { "type": "left", "name": "模具长轴最大值", "standardValue": 651, "measureValue": 653.93, "offsetValue": 2.93, "position": [{ "x": -222.99, "y": -327.37, "z": -377.52 }, { "x": -222.99, "y": -327.37, "z": -377.52 }] },
 
-            { "type": "bottom", "name": "止口短轴宽度", "standardValue": 735, "measureValue": 736.15, "offsetValue": 1.15, "position": [{ "x": 66.16, "y": -370.85, "z": -418.66 }, { "x": 66.16, "y": -370.85, "z": -418.66 }] },
-            { "type": "bottom", "name": "止口凸台宽度", "standardValue": 735, "measureValue": 736.82, "offsetValue": 1.82, "position": [{ "x": -33.84, "y": -378.88, "z": -419.73 }, { "x": -33.84, "y": -378.88, "z": -419.73 }] },
-            { "type": "bottom", "name": "止口长轴宽度", "standardValue": 735, "measureValue": 737.65, "offsetValue": 2.65, "position": [{ "x": -233.84, "y": -307.3, "z": -422.31 }, { "x": -233.84, "y": -307.3, "z": -422.31 }] },
+        //     { "type": "bottom", "name": "止口短轴宽度", "standardValue": 735, "measureValue": 736.15, "offsetValue": 1.15, "position": [{ "x": 66.16, "y": -370.85, "z": -418.66 }, { "x": 66.16, "y": -370.85, "z": -418.66 }] },
+        //     { "type": "bottom", "name": "止口凸台宽度", "standardValue": 735, "measureValue": 736.82, "offsetValue": 1.82, "position": [{ "x": -33.84, "y": -378.88, "z": -419.73 }, { "x": -33.84, "y": -378.88, "z": -419.73 }] },
+        //     { "type": "bottom", "name": "止口长轴宽度", "standardValue": 735, "measureValue": 737.65, "offsetValue": 2.65, "position": [{ "x": -233.84, "y": -307.3, "z": -422.31 }, { "x": -233.84, "y": -307.3, "z": -422.31 }] },
 
-            { "type": "top", "name": "模具高度最小值", "standardValue": 735, "measureValue": 736.15, "offsetValue": 1.15, "position": [{ "x": 66.16, "y": -370.85, "z": -418.66 }, { "x": 66.16, "y": -370.85, "z": -418.66 }] },
-            { "type": "top", "name": "模具高度平均值", "standardValue": 735, "measureValue": 736.82, "offsetValue": 1.82, "position": [{ "x": -33.84, "y": -378.88, "z": -419.73 }, { "x": -33.84, "y": -378.88, "z": -419.73 }] },
-            { "type": "top", "name": "模具高度最大值", "standardValue": 735, "measureValue": 737.65, "offsetValue": 2.65, "position": [{ "x": -233.84, "y": -307.3, "z": -422.31 }, { "x": -233.84, "y": -307.3, "z": -422.31 }] },
+        //     { "type": "top", "name": "模具高度最小值", "standardValue": 735, "measureValue": 736.15, "offsetValue": 1.15, "position": [{ "x": 66.16, "y": -370.85, "z": -418.66 }, { "x": 66.16, "y": -370.85, "z": -418.66 }] },
+        //     { "type": "top", "name": "模具高度平均值", "standardValue": 735, "measureValue": 736.82, "offsetValue": 1.82, "position": [{ "x": -33.84, "y": -378.88, "z": -419.73 }, { "x": -33.84, "y": -378.88, "z": -419.73 }] },
+        //     { "type": "top", "name": "模具高度最大值", "standardValue": 735, "measureValue": 737.65, "offsetValue": 2.65, "position": [{ "x": -233.84, "y": -307.3, "z": -422.31 }, { "x": -233.84, "y": -307.3, "z": -422.31 }] },
 
-            { "type": "right", "name": "模具短轴最小值", "standardValue": 461, "measureValue": 458.98, "offsetValue": -2.02, "position": [{ "x": -222.99, "y": -327.37, "z": -377.52 }, { "x": -222.99, "y": -327.37, "z": -377.52 }] },
-            { "type": "right", "name": "模具短轴平均值", "standardValue": 461, "measureValue": 460.13, "offsetValue": -0.87, "position": [{ "x": -226.3, "y": -325.62, "z": -77.52 }, { "x": -226.3, "y": -325.62, "z": -77.52 }] },
-            { "type": "right", "name": "模具短轴最大值1", "standardValue": 461, "measureValue": 460.85, "offsetValue": -0.15, "position": [{ "x": -227.73, "y": -324.38, "z": 122.48 }, { "x": -227.73, "y": -324.38, "z": 122.48 }] },
-            { "type": "right", "name": "模具短轴最大值2", "standardValue": 461, "measureValue": 460.85, "offsetValue": -0.15, "position": [{ "x": -227.73, "y": -324.38, "z": 122.48 }, { "x": -227.73, "y": -324.38, "z": 122.48 }] },
-            { "type": "right", "name": "模具短轴最大值3", "standardValue": 461, "measureValue": 460.85, "offsetValue": -0.15, "position": [{ "x": -227.73, "y": -324.38, "z": 122.48 }, { "x": -227.73, "y": -324.38, "z": 122.48 }] },
-            { "type": "right", "name": "模具短轴最大值4", "standardValue": 461, "measureValue": 460.85, "offsetValue": -0.15, "position": [{ "x": -227.73, "y": -324.38, "z": 122.48 }, { "x": -227.73, "y": -324.38, "z": 122.48 }] },
-        ];
+        //     { "type": "right", "name": "模具短轴最小值", "standardValue": 461, "measureValue": 458.98, "offsetValue": -2.02, "position": [{ "x": -222.99, "y": -327.37, "z": -377.52 }, { "x": -222.99, "y": -327.37, "z": -377.52 }] },
+        //     { "type": "right", "name": "模具短轴平均值", "standardValue": 461, "measureValue": 460.13, "offsetValue": -0.87, "position": [{ "x": -226.3, "y": -325.62, "z": -77.52 }, { "x": -226.3, "y": -325.62, "z": -77.52 }] },
+        //     { "type": "right", "name": "模具短轴最大值1", "standardValue": 461, "measureValue": 460.85, "offsetValue": -0.15, "position": [{ "x": -227.73, "y": -324.38, "z": 122.48 }, { "x": -227.73, "y": -324.38, "z": 122.48 }] },
+        //     { "type": "right", "name": "模具短轴最大值2", "standardValue": 461, "measureValue": 460.85, "offsetValue": -0.15, "position": [{ "x": -227.73, "y": -324.38, "z": 122.48 }, { "x": -227.73, "y": -324.38, "z": 122.48 }] },
+        //     { "type": "right", "name": "模具短轴最大值3", "standardValue": 461, "measureValue": 460.85, "offsetValue": -0.15, "position": [{ "x": -227.73, "y": -324.38, "z": 122.48 }, { "x": -227.73, "y": -324.38, "z": 122.48 }] },
+        //     { "type": "right", "name": "模具短轴最大值4", "standardValue": 461, "measureValue": 460.85, "offsetValue": -0.15, "position": [{ "x": -227.73, "y": -324.38, "z": 122.48 }, { "x": -227.73, "y": -324.38, "z": 122.48 }] },
+        // ];
         // let arr = [];
         // for (let i = 1; i < 48; i++) {
         //     arr.push(i);
@@ -1171,6 +1171,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         });
                     }
                     const mesh = new THREE.Mesh(geometry, material); // Points,Mesh
+                    console.log(mesh)
                     addPickable(mesh);
                 },
                 (xhr) => processFun(xhr),
