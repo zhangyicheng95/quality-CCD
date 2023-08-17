@@ -1348,6 +1348,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         setTimeout(() => {
                             loopScreenshot(list, index + 1, basicPosition, processText);
                         }, cameraSwitchTime * 1000);
+                    } else {
+                        message.error("截图上传时，接口报错", 5);
+                        animateCamera(basicPosition);
+                        processText.style.display = 'none';
                     }
                 });
             }
