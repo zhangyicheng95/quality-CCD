@@ -30,6 +30,7 @@ import rectBottomIcon from '@/assets/imgs/rect-bottom.svg';
 import rectFrontIcon from '@/assets/imgs/rect-front.svg';
 import rectBackIcon from '@/assets/imgs/rect-back.svg';
 import { uuid } from '@/utils/utils';
+import { btnFetch } from '@/services/api';
 
 interface Props {
     data: any,
@@ -41,13 +42,13 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     // models/ply/ascii/tx.ply / models/obj/walt/tx.obj / models/stl/ascii/tx.stl
     const { data = {}, id, started } = props;
     const {
-        dataValue = {}, fontSize,
+        dataValue = {}, fontSize, fetchType, xName,
         modelRotate = false, modelScale = false, modelRotateScreenshot = false,
     } = data;
     let { name, value = [], guid, addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
         // addType = 'add';
-        name = "models/heatMapOutput.ply"; // models/pressure.json  models/tx.stl
+        name = "models/output.ply"; // models/pressure.json  models/tx.stl
         value = [
             { "type": "left", "name": "模具长轴最小值", "standardValue": 651, "measureValue": 651.01, "offsetValue": 0.01, "position": [{ "x": -228.03, "y": -324.21, "z": 172.48 }, { "x": -228.03, "y": -324.21, "z": 172.48 }] },
             { "type": "left", "name": "模具长轴平均值", "standardValue": 651, "measureValue": 652.5, "offsetValue": 1.5, "position": [{ "x": -226.3, "y": -325.62, "z": -77.52 }, { "x": -226.3, "y": -325.62, "z": -77.52 }] },
@@ -1337,15 +1338,21 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             processText.style.display = 'none';
             return;
         }
-        animateCamera(list[index]);
-        captureScreenshot().then((res: any) => {
+        animateCamera(list[index], 500);
+        captureScreenshot().then((base64: any) => {
             // 首先走保存
-            console.log(res)
-            console.log(index)
-            // 然后走循环
-            setTimeout(() => {
-                loopScreenshot(list, index + 1, basicPosition, processText);
-            }, cameraSwitchTime * 1000);
+            if (!!fetchType && !!xName) {
+                btnFetch(fetchType, xName, {
+                    body: { img: base64 }
+                }).then((res: any) => {
+                    if (res && res.code === 'SUCCESS') {
+                        // 然后走循环
+                        setTimeout(() => {
+                            loopScreenshot(list, index + 1, basicPosition, processText);
+                        }, cameraSwitchTime * 1000);
+                    }
+                });
+            }
         });
     };
     // 不同视角点击函数
@@ -1356,11 +1363,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         animateCamera(targetPos);
     };
     // 动态旋转视角
-    const animateCamera = (targetPos: any) => {
+    const animateCamera = (targetPos: any, timehost = 1000) => {
         if (!!camera?.current && camera?.current?.position) {
             var currentPos = camera.current.position;
             var tween = new TWEEN.Tween(currentPos)
-                .to(targetPos, 1000)
+                .to(targetPos, timehost)
                 .easing(TWEEN.Easing.Quadratic.Out)
                 .onUpdate(function () {
                     camera?.current?.position?.copy?.(currentPos);
