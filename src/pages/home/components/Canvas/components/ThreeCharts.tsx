@@ -1342,9 +1342,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         captureScreenshot().then((base64: any) => {
             // 首先走保存
             if (!!fetchType && !!xName) {
-                btnFetch(fetchType, xName, {
-                    body: { img: base64 }
-                }).then((res: any) => {
+                btnFetch(fetchType, xName, { img: base64 }).then((res: any) => {
                     if (res && res.code === 'SUCCESS') {
                         // 然后走循环
                         setTimeout(() => {
