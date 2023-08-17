@@ -1268,7 +1268,8 @@ const Home: React.FC<any> = (props: any) => {
           progressSize = 8, progressSteps = 5, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
           CCDName, imgs_width, imgs_height, tableSize, magnifier, comparison, operationList,
-          dataZoom, fontColor, interlacing, modelRotate, modelScale, password, passwordHelp,
+          dataZoom, fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
+          password, passwordHelp,
           basicInfoData = [{ id: guid(), name: '', value: '' }]
         } = item;
         // const id = key?.split('$$')[0];
@@ -1458,7 +1459,7 @@ const Home: React.FC<any> = (props: any) => {
                                   id={key}
                                   data={{
                                     dataValue: dataValue || { name: "", value: [] },
-                                    modelRotate, modelScale,
+                                    modelRotate, modelScale, modelRotateScreenshot,
                                     fontSize,
                                   }}
                                 />
@@ -1802,8 +1803,8 @@ const Home: React.FC<any> = (props: any) => {
           progressType, progressSize, progressSteps, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
           CCDName, imgs_width, imgs_height, magnifier, comparison = false, operationList, dataZoom,
-          fontColor, interlacing = false, modelRotate = false, modelScale = false, password = '',
-          passwordHelp = '',
+          fontColor, interlacing = false, modelRotate = false, modelScale = false, modelRotateScreenshot = false,
+          password = '', passwordHelp = '',
         } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
@@ -1831,7 +1832,8 @@ const Home: React.FC<any> = (props: any) => {
             progressType, progressSize, progressSteps, windowControl,
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
             CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
-            fontColor, interlacing, modelRotate, modelScale, password, passwordHelp
+            fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
+            password, passwordHelp
           }, ['description'].includes(windowType) ? { basicInfoData } : {}));
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1847,7 +1849,8 @@ const Home: React.FC<any> = (props: any) => {
                 progressType, progressSize, progressSteps, windowControl,
                 des_bordered, des_column, des_layout, des_size, ifLocalStorage,
                 CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
-                fontColor, interlacing, modelRotate, modelScale, password, passwordHelp
+                fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
+                password, passwordHelp
               }, ['description'].includes(windowType) ? { basicInfoData } : {});
             };
             return item;
@@ -1887,7 +1890,8 @@ const Home: React.FC<any> = (props: any) => {
       align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line',
       progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: undefined,
       CCDName: undefined, magnifier: false, comparison: false, operationList: [], dataZoom: 0,
-      fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false, password: undefined,
+      fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false, modelRotateScreenshot: false,
+      password: undefined,
       passwordHelp: undefined
     });
     setWindowType('img');
@@ -2780,6 +2784,14 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name="modelScale"
                       label="开启模型缩放"
+                      initialValue={false}
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name="modelRotateScreenshot"
+                      label="开启自动旋转截图"
                       initialValue={false}
                       valuePropName="checked"
                     >

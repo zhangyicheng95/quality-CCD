@@ -40,7 +40,10 @@ interface Props {
 const ThreeCharts: React.FC<Props> = (props: any) => {
     // models/ply/ascii/tx.ply / models/obj/walt/tx.obj / models/stl/ascii/tx.stl
     const { data = {}, id, started } = props;
-    const { dataValue = {}, fontSize, modelRotate = false, modelScale = false, } = data;
+    const {
+        dataValue = {}, fontSize,
+        modelRotate = false, modelScale = false, modelRotateScreenshot = false,
+    } = data;
     let { name, value = [], guid, addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
         // addType = 'add';
@@ -750,7 +753,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             scene.current.add(mesh);
             // 开启相机巡航
             setCameraSwitch(modelRotate);
-            if (!1) {
+            if (modelRotateScreenshot) {
                 // 开启循环自动截图
                 if (!maskBox) return;
                 const processBox = maskBox?.querySelector('.process');
