@@ -1162,6 +1162,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             vertexColors: true
                         });
                     } else {
+                        setMeshHasColor(false);
                         /** 没有颜色则手动添加
                          *  金色：#ffd700
                          *  银色：#c0c0c0
