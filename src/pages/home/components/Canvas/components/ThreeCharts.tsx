@@ -42,7 +42,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     // models/ply/ascii/tx.ply / models/obj/walt/tx.obj / models/stl/ascii/tx.stl
     const { data = {}, id, started } = props;
     const {
-        dataValue = {}, fontSize, fetchType, xName,
+        dataValue = {}, fontSize, fetchType, xName, ifShowColorList = false,
         modelRotate = false, modelScale = false, modelRotateScreenshot = false,
     } = data;
     let { name, value = [], guid, addType } = dataValue;
@@ -1574,7 +1574,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             </div>
             {
                 useMemo(() => {
-                    return meshHasColor ?
+                    return (ifShowColorList && meshHasColor) ?
                         <div className="sprite-box flex-box">
                             <div className="number-box flex-box-justify-between">
                                 {
@@ -1594,7 +1594,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             <div className="sprite-icon" />
                         </div>
                         : null;
-                }, [meshHasColor])
+                }, [meshHasColor, ifShowColorList])
             }
             {/* <img src={spriteImg} alt="sprite" className='sprite-icon' onClick={(e: any) => {
                 const { clientX, clientY, target } = e;

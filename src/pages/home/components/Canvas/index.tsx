@@ -472,7 +472,7 @@ const Home: React.FC<any> = (props: any) => {
                           type: 'home/set',
                           payload: {
                             gridContentList: [
-                              { "id": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "value": ["96c525f8-fada-4512-8b44-7e8995278e63", "filepath"], "filepath": { "name": "models/output.ply", "value": [{}, {}] }, "size": { "i": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "x": 7, "y": 3, "w": 36, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "three", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "comparison": false, "interlacing": false, "modelRotate": false, "modelScale": false },
+                              { "id": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "value": ["96c525f8-fada-4512-8b44-7e8995278e63", "filepath"], "filepath": { "name": "models/output.ply", "value": [{}, {}] }, "size": { "i": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "x": 7, "y": 3, "w": 36, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "three", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "comparison": false, "interlacing": false, "modelRotate": false, "modelScale": false, "ifShowColorList": false, },
                               { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "frame"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "x": 43, "y": 3, "w": 30, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "img", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "magnifier": false },
                               { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "cam_name"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "x": 73, "y": 3, "w": 23, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "pie", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true }
                             ],
@@ -1269,7 +1269,7 @@ const Home: React.FC<any> = (props: any) => {
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
           CCDName, imgs_width, imgs_height, tableSize, magnifier, comparison, operationList,
           dataZoom, fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
-          password, passwordHelp,
+          password, passwordHelp, ifShowColorList,
           basicInfoData = [{ id: guid(), name: '', value: '' }]
         } = item;
         // const id = key?.split('$$')[0];
@@ -1460,7 +1460,7 @@ const Home: React.FC<any> = (props: any) => {
                                   data={{
                                     dataValue: dataValue || { name: "", value: [] },
                                     modelRotate, modelScale, modelRotateScreenshot,
-                                    fontSize, fetchType, xName,
+                                    ifShowColorList, fontSize, fetchType, xName,
                                   }}
                                 />
                                 :
@@ -1804,7 +1804,7 @@ const Home: React.FC<any> = (props: any) => {
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
           CCDName, imgs_width, imgs_height, magnifier, comparison = false, operationList, dataZoom,
           fontColor, interlacing = false, modelRotate = false, modelScale = false, modelRotateScreenshot = false,
-          password = '', passwordHelp = '',
+          password = '', passwordHelp = '', ifShowColorList = false,
         } = values;
         if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
           try {
@@ -1833,7 +1833,7 @@ const Home: React.FC<any> = (props: any) => {
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
             CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
             fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
-            password, passwordHelp
+            password, passwordHelp, ifShowColorList
           }, ['description'].includes(windowType) ? { basicInfoData } : {}));
         } else {
           result = (addContentList || [])?.map((item: any) => {
@@ -1850,7 +1850,7 @@ const Home: React.FC<any> = (props: any) => {
                 des_bordered, des_column, des_layout, des_size, ifLocalStorage,
                 CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
                 fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
-                password, passwordHelp
+                password, passwordHelp, ifShowColorList
               }, ['description'].includes(windowType) ? { basicInfoData } : {});
             };
             return item;
@@ -1891,8 +1891,7 @@ const Home: React.FC<any> = (props: any) => {
       progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: undefined,
       CCDName: undefined, magnifier: false, comparison: false, operationList: [], dataZoom: 0,
       fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false, modelRotateScreenshot: false,
-      password: undefined,
-      passwordHelp: undefined
+      password: undefined, passwordHelp: undefined, ifShowColorList: false,
     });
     setWindowType('img');
     setAddWindowVisible(false);
@@ -2773,6 +2772,14 @@ const Home: React.FC<any> = (props: any) => {
               {
                 ['three'].includes(windowType) ?
                   <Fragment>
+                    <Form.Item
+                      name="ifShowColorList"
+                      label="展示颜色对比条"
+                      initialValue={false}
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
                     <Form.Item
                       name="modelRotate"
                       label="开启模型旋转"
