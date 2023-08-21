@@ -109,7 +109,7 @@ const Home: React.FC<any> = (props: any) => {
   const updateTimer = useRef<any>();
   const [loading, setLoading] = useState(false);
   const [fontColor, setFontColor] = useState('#fff');
-  const [addWindowVisible, setAddWindowVisible] = useState(false);
+  const [addWindowVisible, setAddWindowVisible] = useState('');
   const [editWindowData, setEditWindowData] = useState<any>({});
   const [gridHomeList, setGridHomeList] = useState<any>([]);
   const [addContentList, setAddContentList] = useState<any>([]);
@@ -304,6 +304,10 @@ const Home: React.FC<any> = (props: any) => {
               var now = new Date().getTime();
               if (now - clickTime < 300) { // 设置判断条件为300毫秒
                 // 双击事件触发的操作
+                if (!!addWindowVisible || !!homeSettingVisible) {
+                  setAddWindowVisible("");
+                  setHomeSettingVisible("");
+                }
                 setFieldsValue({ des_column: homeSettingData?.['slider-1']?.des_column || 1 });
                 setHomeSettingVisible('slider-1');
               }
@@ -472,6 +476,10 @@ const Home: React.FC<any> = (props: any) => {
               var now = new Date().getTime();
               if (now - clickTime < 300) { // 设置判断条件为300毫秒
                 // 双击事件触发的操作
+                if (!!addWindowVisible || !!homeSettingVisible) {
+                  setAddWindowVisible("");
+                  setHomeSettingVisible("");
+                }
                 setFieldsValue({ fontSize: homeSettingData?.['slider-4']?.fontSize || 20 });
                 setHomeSettingVisible('slider-4');
               }
@@ -544,6 +552,10 @@ const Home: React.FC<any> = (props: any) => {
               var now = new Date().getTime();
               if (now - clickTime < 300) { // 设置判断条件为300毫秒
                 // 双击事件触发的操作
+                if (!!addWindowVisible || !!homeSettingVisible) {
+                  setAddWindowVisible("");
+                  setHomeSettingVisible("");
+                }
                 setFieldsValue({ fontSize: homeSettingData?.['footer-1']?.fontSize || 14 });
                 setHomeSettingVisible('footer-1');
               }
@@ -630,6 +642,10 @@ const Home: React.FC<any> = (props: any) => {
               var now = new Date().getTime();
               if (now - clickTime < 300) { // 设置判断条件为300毫秒
                 // 双击事件触发的操作
+                if (!!addWindowVisible || !!homeSettingVisible) {
+                  setAddWindowVisible("");
+                  setHomeSettingVisible("");
+                }
                 setFieldsValue({ fontSize: homeSettingData?.['error']?.fontSize || 20 });
                 setHomeSettingVisible('footer-2');
               }
@@ -1147,6 +1163,10 @@ const Home: React.FC<any> = (props: any) => {
                   var now = new Date().getTime();
                   if (now - clickTime < 300) { // 设置判断条件为300毫秒
                     // 双击事件触发的操作
+                    if (!!addWindowVisible || !!homeSettingVisible) {
+                      setAddWindowVisible("");
+                      setHomeSettingVisible("");
+                    }
                     !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
                     setBasicInfoData(basicInfoData);
                     setEditWindowData(item);
@@ -1189,13 +1209,13 @@ const Home: React.FC<any> = (props: any) => {
                         }
                       }
                     }
-                    setAddWindowVisible(true);
+                    setAddWindowVisible(key);
                   }
                   clickTime = now;
                 }}>
                   {/* <DragOutlined className='drag-item-content-mask-icon' /> */}
                   {
-                    addWindowVisible ?
+                    (addWindowVisible === key) ?
                       <Popconfirm
                         title="确认删除监控窗口吗?"
                         onConfirm={() => {
@@ -1532,7 +1552,7 @@ const Home: React.FC<any> = (props: any) => {
       password: undefined, passwordHelp: undefined, ifShowHeader: false,
     });
     setWindowType('img');
-    setAddWindowVisible(false);
+    setAddWindowVisible('');
     setFooterSelectVisible(false);
     setHomeSettingVisible('');
   };
@@ -1856,12 +1876,12 @@ const Home: React.FC<any> = (props: any) => {
         </DndProvider>
         <NodeDetailWrapper
           className="config-panel"
-          style={(addWindowVisible || !!homeSettingVisible) ? {} : { right: '-450px' }}
+          style={(!!addWindowVisible || !!homeSettingVisible) ? {} : { right: '-450px' }}
           title={'插件配置 PluginConfig '}
           onSave={() => {
             form.validateFields()
               .then((values) => {
-                if (addWindowVisible) {
+                if (!!addWindowVisible) {
                   addWindow(values);
                 } else if (!!homeSettingVisible) {
                   setHomeSettingData((prev: any) => ({ ...prev, [homeSettingVisible]: { ...prev?.[homeSettingVisible], ...values } }));
@@ -1877,7 +1897,7 @@ const Home: React.FC<any> = (props: any) => {
           onCancel={onCancel}
         >
           {
-            addWindowVisible ?
+            !!addWindowVisible ?
               <Form form={form} scrollToFirstError>
                 <Form.Item
                   name={`CCDName`}
