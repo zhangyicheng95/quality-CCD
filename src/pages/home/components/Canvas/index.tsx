@@ -2932,7 +2932,6 @@ const Home: React.FC<any> = (props: any) => {
           </Modal>
         ) : null
       }
-
       {
         selectPathVisible ?
           <FileManager
@@ -2958,7 +2957,7 @@ const Home: React.FC<any> = (props: any) => {
             centered
             width="50vw"
             open={!!addItemsVisible}
-            // maskClosable={false}
+            maskClosable={false}
             onOk={() => {
               validateFields().then(values => {
                 const { value } = values;

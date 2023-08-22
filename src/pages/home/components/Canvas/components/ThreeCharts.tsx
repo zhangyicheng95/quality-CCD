@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { connect, useModel } from 'umi';
-import { Button, Input, InputNumber, message, Popover, Select, Switch, Tooltip } from 'antd';
+import { Button, Input, InputNumber, message, Popover, Select, Switch, Tooltip, Upload } from 'antd';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Lut } from "three/examples/jsm/math/Lut.js";
@@ -19,7 +19,7 @@ import {
 } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 import {
     AimOutlined,
-    BorderlessTableOutlined, BorderOuterOutlined, ClearOutlined, EyeOutlined, FontSizeOutlined, MinusOutlined, PlusOutlined, ScissorOutlined
+    BorderlessTableOutlined, BorderOuterOutlined, ClearOutlined, DeleteOutlined, EyeOutlined, FontSizeOutlined, MinusOutlined, PlusOutlined, ScissorOutlined, UploadOutlined
 } from '@ant-design/icons';
 import rectIcon from '@/assets/imgs/rect.svg';
 import rectAllIcon from '@/assets/imgs/rect-all.svg';
@@ -31,6 +31,7 @@ import rectFrontIcon from '@/assets/imgs/rect-front.svg';
 import rectBackIcon from '@/assets/imgs/rect-back.svg';
 import { uuid } from '@/utils/utils';
 import { btnFetch } from '@/services/api';
+import FileManager from '@/components/FileManager';
 
 interface Props {
     data: any,
@@ -94,6 +95,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const [cameraSwitchTime, setCameraSwitchTime] = useState(2);
     const [cameraSwitch, setCameraSwitch] = useState(false);
     const [meshHasColor, setMeshHasColor] = useState(false);
+    const [selectPathVisible, setSelectPathVisible] = useState(false);
+    const [selectedPath, setSelectedPath] = useState<any>("");
 
     const theme = useMemo(() => {
         return params?.contentData?.theme || 'realDark';
@@ -184,12 +187,13 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         if (ifCanEdit) {
             return;
         }
-        if (!name) {
+        if (!name && !selectedPath) {
             if (!!dom.current && dom.current.innerHTML) {
                 const maskBox: any = document?.querySelector(".three-mask");
                 const processBox = maskBox?.querySelector('.process');
                 const processText = maskBox?.querySelector('.process-text');
                 if (!!processBox && !!processText) {
+                    maskBox.style.display = 'flex';
                     processBox.style.display = 'none';
                     processText.style.display = 'block';
                     processText.style.textAlign = 'center';
@@ -199,7 +203,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             }
             return;
         };
-        console.log('three160行: 点云路径', name);
+        console.log('three160行: 点云路径', selectedPath || name);
         // addType为add时，代表增量渲染，不清除其他数据
         if (!!scene.current && addType === 'add') {
             loadModel(name, value, addType);
@@ -295,7 +299,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         controls.current.enableDamping = true;
         controls.current.enableZoom = modelScale;
         // 开始渲染,加载url
-        loadModel(name, value);
+        loadModel(selectedPath || name, value);
         // 取消标注的公共方法
         function cancelMeasurement() {
             ctrlDown = false;
@@ -625,7 +629,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 clearCanvas();
             }
         };
-    }, [theme, name, guid, started]);
+    }, [theme, name, guid, started, selectedPath]);
     // 获取场景中的全部模型对象
     function getAllModelsFromScene(scene: any) {
         const models: any = [];
@@ -760,6 +764,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 const processBox = maskBox?.querySelector('.process');
                 const processText = maskBox?.querySelector('.process-text');
                 maskBox.style.display = "flex";
+                maskBox.style.zIndex = 99;
                 processBox.style.display = 'none';
                 processText.style.display = 'block';
                 processText.style.textAlign = 'center';
@@ -787,6 +792,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             if (!maskBox) return;
             const processBox = maskBox?.querySelector('.process');
             const processText = maskBox?.querySelector('.process-text');
+            maskBox.style.display = 'flex';
             processBox.style.display = 'block';
             processText.style.display = 'block';
             if (!!loaded && !!total) {
@@ -1542,6 +1548,24 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             className='btn'
                         />
                     </Tooltip>
+                    <Tooltip title={!!selectedPath ? "清除上传的文件" : "上传本地点云文件"}>
+                        {
+                            !!selectedPath ?
+                                <Button
+                                    icon={<DeleteOutlined />}
+                                    onClick={() => {
+                                        setSelectedPath("");
+                                    }}
+                                />
+                                :
+                                <Button
+                                    icon={<UploadOutlined />}
+                                    onClick={() => {
+                                        setSelectPathVisible(true);
+                                    }}
+                                />
+                        }
+                    </Tooltip>
                 </div>
                 <div className="flex-box">
                     <Tooltip title="缩小">
@@ -1566,7 +1590,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 // @ts-ignore
                 ref={dom}
             >
-                <div className="three-mask flex-box">
+                <div className="three-mask flex-box" style={{ display: "none" }}>
                     <progress className="process" value="0" ></progress>
                     <span className="process-text">0%</span>
                 </div>
@@ -1673,6 +1697,21 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 </div>
             </div>
 
+            {
+                selectPathVisible ?
+                    <FileManager
+                        onOk={(val: any) => {
+                            const { value } = val;
+                            setSelectedPath(`http://localhost:5000/files/${value}`);
+                            setSelectPathVisible(false);
+                        }}
+                        onCancel={() => {
+                            setSelectPathVisible(false);
+                            setSelectedPath("");
+                        }}
+                    />
+                    : null
+            }
         </div>
     );
 
