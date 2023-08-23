@@ -1334,6 +1334,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 (measurements || []).forEach((line: any) => {
                     scene.current?.add?.(line);
                 });
+                imageDataURL = imageDataURL.split('data:image/png;base64,')[1];
                 resolve(imageDataURL);
             });
         });
@@ -1349,7 +1350,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         captureScreenshot().then((base64: any) => {
             // 首先走保存
             if (!!fetchType && !!xName) {
-                btnFetch(fetchType, xName, { img: base64 }).then((res: any) => {
+                btnFetch(fetchType, xName, { image: encodeURIComponent(base64) }, { headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then((res: any) => {
                     if (res && res.code === 'SUCCESS') {
                         // 然后走循环
                         setTimeout(() => {

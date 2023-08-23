@@ -191,7 +191,9 @@ export function fetchPost(url, options) {
   if (options && options.body) {
     config.data = options.body;
   }
-
+  if (options.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
+    // config.data =
+  }
   return axiosRequest(config);
 }
 
