@@ -677,7 +677,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             const max = Math.max(mdlen, mdhei, mdwid);
             let scale = 1.3 * mdwid / dom.current.clientHeight;
             if (scale >= 2) {
-                scale = mdwid / (dom.current.clientHeight - 50);
+                scale = mdwid / dom.current.clientHeight;
             } else if (scale <= 1.5) {
                 scale = 1.5;
             }
@@ -936,7 +936,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                                 ((count[1].length / 2) - index))
                                         ),
                                 y: 0,
-                                z: width * 5 / 6,
+                                z: width,
                             };
                             position = [point, point];
                             localPosition = [

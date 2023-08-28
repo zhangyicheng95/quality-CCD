@@ -325,7 +325,7 @@ const Setting: React.FC<any> = (props) => {
                 前往配置
               </Button>
             </Col>
-            <Col span={8}>
+            {/* <Col span={8}>
               <Form.Item
                 name="selfStart"
                 label="开机自启动"
@@ -346,7 +346,7 @@ const Setting: React.FC<any> = (props) => {
               >
                 <Switch />
               </Form.Item>
-            </Col>
+            </Col> */}
           </Row>
           {
             (!isVision && !_.isEmpty(treeData) && !!treeData?.length) ?

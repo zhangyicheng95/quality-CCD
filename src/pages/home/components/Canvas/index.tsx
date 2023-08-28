@@ -1030,32 +1030,24 @@ const Home: React.FC<any> = (props: any) => {
           maxH: 100
         });
       } else {
-        const preContent = _.isArray(paramData?.contentData?.content) ?
-          paramData?.contentData?.content?.filter((i: any) => i.id === item.i)[0]
-          :
-          paramData?.contentData?.content[item.i];
-        content = content.concat({
-          ...preContent,
-          size: {
-            ...item,
-            minW: 1,
-            minH: 2,
-            maxW: 100,
-            maxH: 100
-          }
+        setParamData((prev: any) => {
+          const preContent = _.isArray(prev?.contentData?.content) ?
+            prev?.contentData?.content?.filter((i: any) => i.id === item.i)[0]
+            :
+            prev?.contentData?.content[item.i];
+          content = content.concat({
+            ...preContent,
+            size: {
+              ...item,
+              minW: 1,
+              minH: 2,
+              maxW: 100,
+              maxH: 100
+            }
+          });
+
+          return prev;
         });
-        // Object.assign({}, content, !!paramData?.contentData?.content[item.i] ? {
-        //   [item.i]: {
-        //     ...paramData?.contentData?.content[item.i],
-        //     size: {
-        //       ...item,
-        //       maxW: 100,
-        //       minW: 1,
-        //       maxH: 100,
-        //       minH: 2,
-        //     }
-        //   }
-        // } : {})
       }
     });
     setGridHomeList(home);
@@ -1068,10 +1060,11 @@ const Home: React.FC<any> = (props: any) => {
     });
     dispatch({ type: 'home/snapshot' });
     if (paramData.id) {
-      const params = Object.assign({}, paramData, {
-        contentData: Object.assign({}, paramData.contentData, { home }, !_.isEmpty(content) ? { content } : {}),
+      setParamData((prev: any) => {
+        return Object.assign({}, prev, {
+          contentData: Object.assign({}, prev.contentData, { home }, !_.isEmpty(content) ? { content } : {}),
+        });
       });
-      setParamData(params);
     }
   };
   // 运行状态
