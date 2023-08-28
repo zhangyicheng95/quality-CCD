@@ -32,6 +32,7 @@ import rectBackIcon from '@/assets/imgs/rect-back.svg';
 import { uuid } from '@/utils/utils';
 import { btnFetch } from '@/services/api';
 import FileManager from '@/components/FileManager';
+import { transform } from 'lodash';
 
 interface Props {
     data: any,
@@ -468,7 +469,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 intersects = raycaster.intersectObjects(pickableObjects, false);
                 if (intersects.length > 0) {
                     if (!drawingLine) {
-                        //start the line
+                        // 起点
                         const points = [];
                         points.push(intersects[0].point);
                         points.push(intersects[0].point.clone());
@@ -501,7 +502,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         scene.current.add(measurementLabels[lineId]);
                         drawingLine = true;
                     } else {
-                        //finish the line
+                        // 终点
                         const positions = line.geometry.attributes.position.array;
                         positions[3] = intersects[0].point.x;
                         positions[4] = intersects[0].point.y;
@@ -509,6 +510,36 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         line.geometry.attributes.position.needsUpdate = true;
                         lineId = `measure_${measurements.length}`;
                         drawingLine = false;
+
+                        console.log(positions)
+                        const cameraPosition = camera?.current?.position || {};
+                        const cameraMax = Math.max(
+                            Math.abs(cameraPosition.x),
+                            Math.abs(cameraPosition.y),
+                            Math.abs(cameraPosition.z)
+                        )
+                        let cameraDirection = '';
+                        if (cameraMax === Math.abs(cameraPosition.x)) {
+                            cameraDirection = 'y';
+                        } else if (cameraMax === Math.abs(cameraPosition.y)) {
+                            cameraDirection = 'z';
+                        } else if (cameraMax === Math.abs(cameraPosition.z)) {
+                            cameraDirection = 'y';
+                        }
+                        const geometry = new THREE.BoxGeometry(
+                            Math.abs(positions[3] - positions[0]),
+                            Math.abs(positions[4] - positions[1]),
+                            Math.abs(positions[5] - positions[2]),
+                        );
+                        const material = new THREE.MeshBasicMaterial({ opacity: 0 });
+                        material.opacity = 0;
+                        material.transparent = true;
+                        const cube = new THREE.Mesh(geometry, material);
+                        var boxHelper = new THREE.BoxHelper(cube, 0xff0000);
+                        boxHelper.name = "measureBoxHelper";
+                        boxHelper.visible = true;
+                        cube.attach(boxHelper);
+                        scene.current.add(cube);
                     }
                 }
             } else {
@@ -580,7 +611,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 if (!(prev || []).includes('bzBtn02')) {
                     // 隐藏边框
                     models.forEach((mesh: any) => {
-                        (mesh.children || []).filter((i: any) => i.type === "BoxHelper")[0].visible = false;
+                        const item = (mesh.children || []).filter((i: any) => i.name !== "measureBoxHelper" && i.type === "BoxHelper");
+                        if (item?.[0]) {
+                            item[0].visible = false;
+                        }
                     });
                 }
                 if (!(prev || []).includes('bzBtn03')) {
@@ -677,7 +711,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             const max = Math.max(mdlen, mdhei, mdwid);
             let scale = 1.3 * mdwid / dom.current.clientHeight;
             if (scale >= 2) {
-                scale = mdwid / dom.current.clientHeight;
+                scale = mdwid / (dom.current.clientHeight - 50);
             } else if (scale <= 1.5) {
                 scale = 1.5;
             }
@@ -747,14 +781,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             });
             maskBox.style.display = "none";
 
-            // 创建一个旋转轴向量
-            const axis = new THREE.Vector3(1, 0, 0); // 这里以x轴为例，你可以根据需要修改旋转轴向量
-            // 创建一个旋转角度
-            const angle = Math.PI * 2; // 360度旋转
-            // 创建一个旋转矩阵
-            const rotationMatrix = new THREE.Matrix4().makeRotationAxis(axis, angle);
-            // 应用旋转矩阵到物体
-            mesh.applyMatrix4(rotationMatrix);
             scene.current.add(mesh);
             // 开启相机巡航
             setCameraSwitch(modelRotate);
@@ -827,6 +853,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     bottom: [],
                     left: []
                 };
+                let indexCount = 0;
                 (value || []).forEach((item: any, index: number) => {
                     let { type, } = item;
                     if ((type === "left")) {
@@ -936,7 +963,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                                 ((count[1].length / 2) - index))
                                         ),
                                 y: 0,
-                                z: width,
+                                z: width * 5 / 6,
                             };
                             position = [point, point];
                             localPosition = [
@@ -999,107 +1026,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             })
                         );
                         line.computeLineDistances();  // 虚线
-                        line.name = `measure_`;
+                        line.name = `measure_${indexCount}`;
                         line.visible = true;
                         line.frustumCulled = false;
                         scene.current.add(line);
                         measurements = measurements.concat(line);
-                        // if (!!position[0] && !!position[1] && equalsObj(position[0], position[1])) {
-                        //     // 线段的两个点相同，代表只绘制卡片
-                        //     const box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
-                        //     const length = box.max.x - box.min.x; // 模型长度
-                        //     const width = box.max.z - box.min.z; // 模型宽度
-                        //     const height = box.max.y - box.min.y; // 模型高度
-                        //     const localPosition = [].concat(position);
-                        //     const scale = 3;
-                        //     position = [
-                        //         {
-                        //             ...position[0],
-                        //             x: position[0].x + (position[0].x >= 0 ? 1 : -1) * length / 2,
-                        //             // y: position[0].y + (position[0].y >= 0 ? height / scale : -height / scale),
-                        //             // z: position[0].z + (position[0].z >= 0 ? width / scale : -width / scale),
-                        //         },
-                        //         {
-                        //             ...position[0],
-                        //             x: position[0].x + (position[0].x >= 0 ? 1 : -1) * length / 2,
-                        //             // y: position[0].y + (position[0].y >= 0 ? height / scale : -height / scale),
-                        //             // z: position[0].z + (position[0].z >= 0 ? width / scale : -width / scale),
-                        //         }
-                        //     ];
-                        //     const geometry = new THREE.BufferGeometry().setFromPoints([localPosition[0], position[0]]);
-                        //     line = new THREE.LineSegments(
-                        //         geometry,
-                        //         new THREE.LineDashedMaterial({
-                        //             color: 0xff0000, // 射线颜色
-                        //             linewidth: 1,
-                        //             scale: 1,
-                        //             dashSize: 10,
-                        //             gapSize: 10
-                        //             // depthTest: false,
-                        //             // depthWrite: false,
-                        //         })
-                        //     );
-                        //     line.computeLineDistances();  // 虚线
-                        //     line.name = `measure_${index}`;
-                        //     line.frustumCulled = false;
-                        //     scene.current.add(line);
-                        //     measurements = measurements.concat(line);
-                        // } else {
-                        //     // 线段的两个点不同，卡片外移
-                        //     const box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
-                        //     const length = box.max.x - box.min.x; // 模型长度
-                        //     const width = box.max.z - box.min.z; // 模型宽度
-                        //     const height = box.max.y - box.min.y; // 模型高度
-                        //     const localPosition = [].concat(position);
-                        //     const scale = 3;
-                        //     position = [
-                        //         {
-                        //             ...position[0],
-                        //             x: position[0].x + (position[0].x >= 0 ? 1 : -1) * length / 2,
-                        //         },
-                        //         {
-                        //             ...position[1],
-                        //             x: position[1].x + (position[0].x >= 0 ? 1 : -1) * length / 2,
-                        //         }
-                        //     ];
-                        //     for (let i = 0; i < 2; i++) {
-                        //         // @ts-ignore
-                        //         const geometry = new THREE.BufferGeometry().setFromPoints([localPosition[i], position[i]]);
-                        //         const line = new THREE.Line(
-                        //             geometry,
-                        //             new THREE.LineDashedMaterial({
-                        //                 color: 0xff0000, // 射线颜色
-                        //                 linewidth: 1,
-                        //                 scale: 1,
-                        //                 dashSize: 10,
-                        //                 gapSize: 10
-                        //                 // depthTest: false,
-                        //                 // depthWrite: false,
-                        //             })
-                        //         );
-                        //         line.computeLineDistances();  // 虚线
-                        //         line.name = `measure_${index}_${i}`;
-                        //         line.frustumCulled = false;
-                        //         scene.current.add(line);
-                        //         measurements = measurements.concat(line);
-                        //     }
-                        //     // 渲染线
-                        //     const geometry = new THREE.BufferGeometry().setFromPoints(position);
-                        //     line = new THREE.LineSegments(
-                        //         geometry,
-                        //         new THREE.LineBasicMaterial({
-                        //             color: 0xff0000, // 射线颜色
-                        //             transparent: true,
-                        //             opacity: 0.75,
-                        //             // depthTest: false,
-                        //             // depthWrite: false,
-                        //         })
-                        //     );
-                        //     line.name = `measure_${index}`;
-                        //     line.frustumCulled = false;
-                        //     scene.current.add(line);
-                        //     measurements = measurements.concat(line);
-                        // }
                         // 渲染信息卡片
                         const measurementDiv = document.createElement("div");
                         measurementDiv.className = "label";
@@ -1119,9 +1050,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             y: (position[0].y + position[1].y) / 2,
                             z: (position[0].z + position[1].z) / 2,
                         });
-                        measurementLabels[`measure_${index}`] = measurementLabel;
-                        scene.current.add(measurementLabels[`measure_${index}`]);
-                        lineId = `measure_${index + 1}`;
+                        measurementLabels[line.name] = measurementLabel;
+                        scene.current.add(measurementLabels[line.name]);
+                        lineId = line.name;
+                        indexCount += 1;
                         // const closeDom = measurementDiv.querySelector('.close');
                         // closeDom?.addEventListener('dbclick', () => {
                         //     scene.current.remove(measurementLabel);

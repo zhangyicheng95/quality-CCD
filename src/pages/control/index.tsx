@@ -86,7 +86,7 @@ const Control: React.FC<any> = (props: any) => {
   const widgetChange = (key: any, value: any, parent?: any) => {
     key = key.split('@$@');
     parent = parent?.split('@$@');
-    console.log(key, parent)
+    console.log(key, value, parent)
     setNodeList((prev: any) => {
       return prev.map((item: any, index: any) => {
         if (item.id === key[0]) {
@@ -103,31 +103,22 @@ const Control: React.FC<any> = (props: any) => {
                 (!!initParams?.[key[1]]?.name && !!initParams?.[key[1]]?.type) ? {
                   [key[1]]: Object.assign({},
                     initParams?.[key[1]],
-                    ((_.isObject(value) && !_.isArray(value)) && initParams[key[1]]?.widget?.type !== "Measurement") ? value : { value },
-                    initParams?.[key[1]]?.widget?.type === 'codeEditor'
-                      ? {
-                        value: value?.language === 'json' ?
-                          (
-                            _.isString(value?.value) ?
-                              JSON.parse(value?.value) :
-                              value?.value
-                          )
-                          :
-                          value?.value,
-                      }
-                      : {},
-                    // initParams?.[key[1]]?.widget?.type === 'TagRadio' ? {
-                    //   widget: Object.assign({}, initParams?.[key[1]]?.widget, {
-                    //     options: initParams?.[key[1]]?.widget?.options?.map((option: any) => {
-                    //       if (option.name === values[cent[0]]) {
-                    //         return Object.assign({}, option, {
-                    //           children: selectedOption
-                    //         })
-                    //       }
-                    //       return option;
-                    //     })
-                    //   })
-                    // } : {}
+                    ((_.isObject(value) && !_.isArray(value)) && initParams[key[1]]?.widget?.type !== "Measurement")
+                      ? value : { value },
+                    (
+                      (initParams?.[key[1]]?.widget?.type === 'codeEditor')
+                        ? {
+                          value: value?.language === 'json' ?
+                            (
+                              _.isString(value?.value) ?
+                                JSON.parse(value?.value) :
+                                value?.value
+                            )
+                            :
+                            value?.value,
+                        }
+                        : {}
+                    ),
                   )
                 } : {},
                 // 有parent代表是TagRadio
@@ -326,7 +317,7 @@ const Control: React.FC<any> = (props: any) => {
         message.error(res?.msg || res?.message || '接口异常');
       }
     });
-  }
+  };
 
   return (
     <div className={`${styles.control} flex-box page-size background-ubv`}>
@@ -659,6 +650,7 @@ const Control: React.FC<any> = (props: any) => {
             onOk={(val: any) => {
               const { id, value, ...rest } = val;
               widgetChange(id, { value, ...rest, localPath: value });
+              setFieldsValue({ [id]: value });
               setSelectedPath({});
               setSelectPathVisible(false);
             }}

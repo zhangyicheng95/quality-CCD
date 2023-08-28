@@ -324,10 +324,12 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                         if (_.isObject(val)) {
                                             // @ts-ignore
                                             const { value, color } = val;
-                                            return <div className={`flex-box charts-body-td ${(_.isBoolean(interlacing) ? interlacing : true) ? 'charts-body-td-interlacing' : ''}`}>
+                                            return <div
+                                                key={`echart-${id}-tr-td-${sIndex}-${value}`}
+                                                className={`flex-box charts-body-td ${(_.isBoolean(interlacing) ? interlacing : true) ? 'charts-body-td-interlacing' : ''}`}
+                                            >
                                                 <TooltipDiv
                                                     className={`charts-body-td-title`}
-                                                    key={`echart-${id}-tr-td-${sIndex}-${value}`}
                                                     title={value?.length > 15 ? value : ''}
                                                     style={Object.assign(
                                                         !!color ? { color } : {},
@@ -342,10 +344,12 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                                 }
                                             </div>
                                         }
-                                        return <div className={`flex-box charts-body-td ${(_.isBoolean(interlacing) ? interlacing : true) ? 'charts-body-td-interlacing' : ''}`}>
+                                        return <div
+                                            key={`echart-${id}-tr-td-${sIndex}-${val}`}
+                                            className={`flex-box charts-body-td ${(_.isBoolean(interlacing) ? interlacing : true) ? 'charts-body-td-interlacing' : ''}`}
+                                        >
                                             <TooltipDiv
                                                 className={`charts-body-td`}
-                                                key={`echart-${id}-tr-td-${sIndex}-${val}`}
                                                 title={val?.length > 15 ? val : ''}
                                                 style={Object.assign(
                                                     !!color ? { color } : {},
