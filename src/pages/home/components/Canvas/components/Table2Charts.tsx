@@ -349,7 +349,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                             className={`flex-box charts-body-td ${(_.isBoolean(interlacing) ? interlacing : true) ? 'charts-body-td-interlacing' : ''}`}
                                         >
                                             <TooltipDiv
-                                                className={`charts-body-td`}
+                                                className={`charts-body-td-title`}
                                                 title={val?.length > 15 ? val : ''}
                                                 style={Object.assign(
                                                     !!color ? { color } : {},
