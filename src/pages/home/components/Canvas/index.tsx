@@ -1878,7 +1878,7 @@ const Home: React.FC<any> = (props: any) => {
     setEditWindowData({});
     setSelectedPath({ fileType: 'file', value: '' });
     setFieldsValue({
-      value: [], type: 'img', yName: undefined, xName: undefined, fontSize: undefined, reverse: false,
+      value: [], type: 'img', yName: undefined, xName: undefined, fontSize: undefined, reverse: true,
       direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined,
       align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line',
       progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: undefined,
@@ -2490,7 +2490,7 @@ const Home: React.FC<any> = (props: any) => {
                       name={`reverse`}
                       label={'数据倒叙'}
                       rules={[{ required: true, message: '数据倒叙' }]}
-                      initialValue={false}
+                      initialValue={true}
                     >
                       <Select
                         style={{ width: '100%' }}
