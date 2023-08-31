@@ -492,7 +492,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         // 更新marker位置
         const targetMarker = gMap.markerLayer.getMarkerById(markerId);
         const directionMarker = gMap.markerLayer.getMarkerById(directionId);
-        console.log(feature.getPoints())
         const deleteMarkPosition = type === 'RECT' ? feature.getPoints()[1] :
           type === 'CIRCLE' ? { x: shape.cx + shape.r, y: shape.cy - shape.r } :
             type === 'POLYGON' ? shape.location :
