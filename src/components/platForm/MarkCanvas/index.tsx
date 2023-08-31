@@ -487,16 +487,19 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           feature2?.updateShape(shape2);
         }
         const markerId = feature.props.deleteMarkerId;
+        const directionId = feature.props.directionMarkerId;
         const textId = feature.props.textId;
         // 更新marker位置
         const targetMarker = gMap.markerLayer.getMarkerById(markerId);
+        const directionMarker = gMap.markerLayer.getMarkerById(directionId);
+        console.log(feature.getPoints())
         const deleteMarkPosition = type === 'RECT' ? feature.getPoints()[1] :
           type === 'CIRCLE' ? { x: shape.cx + shape.r, y: shape.cy - shape.r } :
             type === 'POLYGON' ? shape.location :
               type === 'LINE' ? shape.start :
                 type === 'POLYLINE' ? shape.points[0] :
                   type === 'POINT' ? shape : {};
-        targetMarker.updatePosition(deleteMarkPosition);
+        targetMarker?.updatePosition?.(deleteMarkPosition);
         // 更新text位置
         const textPosition = type === 'RECT' ? feature.getPoints()[0] :
           type === 'CIRCLE' ? { x: shape.cx - shape.r, y: shape.cy - shape.r } :
@@ -506,6 +509,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                   type === 'POINT' ? shape : {};
         const targetText = gFirstTextLayer.getTextById(textId);
         targetText?.updatePosition(textPosition);
+        directionMarker?.updatePosition?.(textPosition);
+
       });
       gMap.events.on('featureDeleted', (feature: any) => {
         const { id: featureId } = feature;
