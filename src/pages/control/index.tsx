@@ -830,25 +830,25 @@ export const FormatWidgetToDom: any = (props: any) => {
             initialValue={(_.isArray(value) ? value[0] : value) || undefined}
             rules={[{ required: require, message: `${alias}` }]}
           >
-            <Radio.Group
+            <Select
               disabled={disabled}
-              onChange={(e: any) => {
-                const { value, propsKey } = e.target;
+              onChange={(e: any, option: any) => {
+                const { value, propsKey } = option;
                 const { children = [] } = JSON.parse(propsKey);
                 setSelectedOption(children);
                 widgetChange?.(name, value, parent);
               }}
             >
-              {options.map((option: any, index: any) => {
-                const { name } = option;
+              {(options || []).map((option: any) => {
+                const { id, name } = option;
                 return (
                   //@ts-ignore
-                  <Radio key={name} value={name} propsKey={JSON.stringify(option)}>
+                  <Option key={name} value={name} propsKey={JSON.stringify(option)}>
                     {name}
-                  </Radio>
+                  </Option>
                 );
               })}
-            </Radio.Group>
+            </Select>
           </FormItem>
           {
             (selectedOption || []).map((item: any, index: number) => {
