@@ -11,6 +11,10 @@ import * as _ from "lodash";
 import styles from "./index.less";
 import markIcon from '@/assets/imgs/marker.png';
 import deleteIcon from '@/assets/imgs/delete.png';
+import directionTopIcon from '@/assets/imgs/direction-top.png';
+import directionRightIcon from '@/assets/imgs/direction-right.png';
+import directionBottomIcon from '@/assets/imgs/direction-bottom.png';
+import directionLeftIcon from '@/assets/imgs/direction-left.png';
 import { BASE_IP } from "@/services/api";
 import { FormatWidgetToDom } from "@/pages/control";
 import { downFileFun, guid, } from "@/utils/utils";
@@ -127,6 +131,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         setGetDataFun((prev: any) => ({ ...prev, zoom: gMap.zoom }));
         const relatedTextId = `label-text-id-${+new Date()}`;
         const relatedDeleteMarkerId = `label-marker-id-${+new Date()}`;
+        const directionMarkerId = `label-direction-marker-id-${+new Date()}`;
         if (type === 'MARKER') {
           const marker = new AILabel.Marker(
             `${+new Date()}`, // id
@@ -141,11 +146,9 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             { name: 'marker注记' } // props
           );
           marker.events.on('dragEnd', (marker: any, newPosition: any) => {
-            console.log('marker dragEnd');
             marker.updatePosition(newPosition);
           });
           marker.events.on('rightClick', (marker: any) => {
-            console.log('marker click');
             gMap.markerLayer.removeMarkerById(marker.id);
           });
           marker.enableDragging();
@@ -217,10 +220,29 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           const rectFeature = new AILabel.Feature.Rect(
             `${+new Date()}`, // id
             data, // shape
-            { name: '矩形矢量图形', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: 'label' }, // props
+            {
+              name: '矩形矢量图形', textId: relatedTextId,
+              deleteMarkerId: relatedDeleteMarkerId,
+              directionMarkerId: directionMarkerId,
+              label: 'label'
+            }, // props
             drawingStyle // style
           );
           gFirstFeatureLayer.addFeature(rectFeature);
+          // 添加direction-icon
+          const gFirstMarker = new AILabel.Marker(
+            directionMarkerId, // id
+            {
+              src: directionTopIcon,
+              position: { x: data.x, y: data.y },
+              offset: {
+                x: -20,
+                y: 0
+              }
+            }, // markerInfo
+            { name: 'direction-icon注记' } // props
+          );
+          gMap.markerLayer.addMarker(gFirstMarker);
           addFeatureText(data, relatedTextId, 'label');
         } else if (type === 'POLYGON') {
           let xList: any = [],
@@ -295,6 +317,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         setSelectedFeature(id);
         gMap.setActiveFeature(feature);
         const markerId = feature.props.deleteMarkerId;
+        const directionMarkerId = feature.props.directionMarkerId;
         const textId = feature.props.textId;
 
         const mappedMarker = gMap.markerLayer.getMarkerById(markerId);
@@ -322,6 +345,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         gFirstMarker.events.on('click', (marker: any) => {
           // 首先删除当前marker
           gMap.markerLayer.removeMarkerById(marker.id);
+          gMap.markerLayer.removeMarkerById(directionMarkerId);
           // 删除对应text
           gFirstTextLayer.removeTextById(textId);
           // 删除对应feature
@@ -484,7 +508,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         targetText?.updatePosition(textPosition);
       });
       gMap.events.on('featureDeleted', (feature: any) => {
-        console.log('featureDeleted');
         const { id: featureId } = feature;
         gFirstFeatureLayer.removeFeatureById(featureId);
       });
@@ -513,7 +536,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         setLoading(true);
       });
       gFirstImageLayer.events.on('loadEnd', (a: any, b: any) => {
-        // console.log(b.imageInfo);
         setLoading(false);
       });
       gFirstImageLayer.events.on('loadError', (a: any, b: any) => {
@@ -599,7 +621,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     const { x: ltx, y: lty, } = data;
     const gFirstText = new AILabel.Text(
       relatedTextId, // id
-      { text, position: { x: ltx, y: lty }, offset: { x: 0, y: 0 } }, // shape, 左上角
+      { text: text || 'label', position: { x: ltx, y: lty }, offset: { x: 0, y: 0 } }, // shape, 左上角
       { name: '文本对象' }, // props
       {
         fillStyle: 'rgba(1,1,1,.9)',
@@ -637,6 +659,29 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         id, shape, props, style
       );
       gFirstFeatureLayer.addFeature(gFirstFeatureRect);
+      // 添加direction-icon
+      const gFirstMarker = new AILabel.Marker(
+        props.directionMarkerId, // id
+        {
+          src: style.direction === 90 ?
+            directionRightIcon
+            :
+            style.direction === 180 ?
+              directionBottomIcon
+              :
+              style.direction === 270 ?
+                directionLeftIcon
+                :
+                directionTopIcon,
+          position: { x: shape.x, y: shape.y },
+          offset: {
+            x: -20,
+            y: 0
+          }
+        }, // markerInfo
+        { name: 'direction-icon注记' } // props
+      );
+      gMap.markerLayer.addMarker(gFirstMarker);
       addFeatureText(shape, props.textId, props.label);
     } else if (type === "POLYGON") {
       const gFirstFeaturePolygon = new AILabel.Feature.Polygon(
@@ -760,7 +805,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   const feature = useMemo(() => {
     return gFirstFeatureLayer?.getFeatureById?.(selectedFeature);
   }, [gFirstFeatureLayer, selectedFeature]);
-
   // 导出数据
   const exportData = () => {
     const data1 = ((getFeatures().map((item: any) => _.omit(item, 'layer'))) || []).map((item: any) => {
@@ -818,7 +862,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     });
     downFileFun(JSON.stringify(params), `${data?.nodeName}_ROI.json`);
   }
-
   // 导出图片上护具
   async function exportImage(type: any) {
     const shareContent: any = document.getElementById(CONTAINER_ID);
@@ -858,14 +901,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     aLink.click();
     document.body.removeChild(aLink);
   }
-
   // 获取所有features
   function getFeatures() {
     const allFeatures = gFirstFeatureLayer.getAllFeatures();
     // console.log('--allFeatures--', allFeatures);
     return allFeatures;
   }
-
   // 实例销毁
   function destroy() {
     gMap && gMap.destroy();
@@ -975,7 +1016,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                     <Select
                       style={{ width: '100%' }}
                       options={_.isObject(options) ? Object.entries(options)?.map((res: any) => {
-                        return { label: res[0], value: res[0], };
+                        return { key: res[0], label: res[0], value: res[0], };
                       }) : []}
                       placeholder="参数类型"
                       onChange={(val, option: any) => {
@@ -994,7 +1035,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       <Select
                         style={{ width: '100%' }}
                         options={[0, 90, 180, 270, 360].map((res: any) => {
-                          return { label: res, value: res, };
+                          return { key: res, label: res, value: res, };
                         })}
                         placeholder="旋转角度"
                       />
@@ -1060,6 +1101,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                 }
                               }
                               return <Form.Item
+                                key={`${item[0]}$$${guid()}`}
                                 name={`${item[0]}$$${guid()}`}
                                 label={"位置信息"}
                                 initialValue={value || {
@@ -1170,6 +1212,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                             }
                           }
                           return <Form.Item
+                            key={`${item[0]}$$${guid()}`}
                             name={`${item[0]}$$${guid()}`}
                             label={"位置信息"}
                             initialValue={value || {
@@ -1284,10 +1327,37 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                   ) {
                                     message.warning('标注位置 不能超出图片范围！');
                                   } else {
+                                    feature.style['direction'] = range;
                                     feature.updateShape(shape);
                                     const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
                                     targetText?.updatePosition({ x: shape.x, y: shape.y });
+                                    // 删除delete-icon
                                     gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
+                                    // 先删除direction-icon
+                                    gMap.markerLayer.removeMarkerById(feature.props.directionMarkerId);
+                                    // 后添加direction-icon
+                                    const gFirstMarker = new AILabel.Marker(
+                                      feature?.props?.directionMarkerId, // id
+                                      {
+                                        src: range === 90 ?
+                                          directionRightIcon
+                                          :
+                                          range === 180 ?
+                                            directionBottomIcon
+                                            :
+                                            range === 270 ?
+                                              directionLeftIcon
+                                              :
+                                              directionTopIcon,
+                                        position: { x: shape.x, y: shape.y },
+                                        offset: {
+                                          x: -20,
+                                          y: 0
+                                        }
+                                      }, // markerInfo
+                                      { name: 'direction-icon注记' } // props
+                                    );
+                                    gMap.markerLayer.addMarker(gFirstMarker);
                                   }
                                   /****************通过roi更新图层******************/
                                 }
