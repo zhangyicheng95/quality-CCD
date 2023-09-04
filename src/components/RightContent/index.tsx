@@ -54,21 +54,24 @@ const GlobalHeaderRight: React.FC = () => {
         }}
       />
       {
-        full ?
-          <CompressOutlined
-            onClick={() => {
-              setFull(false);
-              exitFullScreen();
-            }}
-          />
+        window.location.hash?.indexOf('&id=') > -1 ?
+          <div className="full-screen-box"></div>
           :
-          <ExpandOutlined
-            id="full-screen-icon"
-            onClick={() => {
-              setFull(true);
-              requestFullScreen();
-            }}
-          />
+          full ?
+            <CompressOutlined
+              onClick={() => {
+                setFull(false);
+                exitFullScreen();
+              }}
+            />
+            :
+            <ExpandOutlined
+              id="full-screen-icon"
+              onClick={() => {
+                setFull(true);
+                requestFullScreen();
+              }}
+            />
       }
     </Space>
   );
