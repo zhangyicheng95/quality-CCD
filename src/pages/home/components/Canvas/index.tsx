@@ -114,7 +114,7 @@ const Home: React.FC<any> = (props: any) => {
   const [homeSettingData, setHomeSettingData] = useState({
     log: { fontSize: 14 },
     error: { fontSize: 20 },
-    "slider-4": { fontSize: 20 },
+    "slider-4": { fontSize: 20, show_start_end: true },
     "slider-1": { des_column: 1 }
   });
   const [basicInfoData, setBasicInfoData] = useState<any>([]);
@@ -716,7 +716,7 @@ const Home: React.FC<any> = (props: any) => {
             {} : { display: 'flex', alignItems: 'center', padding: '0 8px' }
         }}>
           {
-            !!paramData?.contentData?.ipList?.length ?
+            (!!paramData?.contentData?.ipList?.length && !!homeSettingData?.['slider-4']?.show_start_end) ?
               <Fragment>
                 <Button
                   type="text"
@@ -3052,6 +3052,18 @@ const Home: React.FC<any> = (props: any) => {
                       min={12}
                     />
                   </Form.Item>
+              }
+              {
+                homeSettingVisible === 'slider-4' ?
+                  <Form.Item
+                    name="show_start_end"
+                    label="应用一键启停"
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                  :
+                  null
               }
             </Form>
           </Modal>

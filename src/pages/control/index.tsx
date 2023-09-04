@@ -19,6 +19,7 @@ import DragSortableItem from "@/components/DragComponents/DragSortableItem";
 import Measurement from "@/components/Measurement";
 import { formatJson, guid } from "@/utils/utils";
 import moment from "moment";
+import { rest } from "lodash";
 
 const FormItem = Form.Item;
 const { confirm } = Modal;
@@ -29,7 +30,8 @@ const Control: React.FC<any> = (props: any) => {
   const { validateFields, setFieldsValue, getFieldValue } = form;
   const [paramData, setParamData] = useState<any>({});
   const [nodeList, setNodeList] = useState<any>([]);
-  const [selectedOption, setSelectedOption] = useState<any>([]);
+  const [selectedOption, setSelectedOption] = useState<any>({});
+  const [tagRadioIds, setTagRadioIds] = useState<any>([]);
   const [editorVisible, setEditorVisible] = useState(false);
   const [editorValue, setEditorValue] = useState<any>({});
   const [platFormVisible, setPlatFormVisible] = useState(false);
@@ -44,13 +46,37 @@ const Control: React.FC<any> = (props: any) => {
     if (!_.isEmpty(paramsData) && !_.isEmpty(paramsData?.flowData)) {
       const { flowData, configList, selectedConfig } = paramsData;
       const { nodes, edges } = flowData;
-      setParamData(paramsData);
-      setNodeList(nodes.map((item: any, index: number) => {
-        if (!item.sortId || item.sortId !== 0) {
-          return { ...item, sortId: index };
+      let configOption: any = {},
+        TagRadioList: any = [];
+      const list = nodes.map((node: any, index: number) => {
+        const { config } = node;
+        const { initParams } = config;
+        (Object.entries(initParams) || [])?.forEach((res: any) => {
+          const item = res[1];
+          if (item?.widget?.type === 'TagRadio') {
+            configOption[item.name] = (item?.widget?.options || {}).filter((i: any) => i.name === item.value)?.[0]?.children?.map((child: any) => {
+              return {
+                ...child,
+                parent: res[0]
+              }
+            });
+            let ids = (item?.widget?.options || []).reduce((optionP: any, optionC: any) => {
+              const { children } = optionC;
+              const childIds = children.map((item: any) => item.id || item.name);
+              return optionP.concat(childIds);
+            }, []);
+            TagRadioList = Array.from(new Set(TagRadioList.concat(ids)));
+          };
+        });
+        if (!node.sortId || node.sortId !== 0) {
+          return { ...node, sortId: index };
         }
-        return item;
-      }));
+        return node;
+      });
+      setParamData(paramsData);
+      setNodeList(list);
+      setSelectedOption(configOption);
+      setTagRadioIds(TagRadioList);
       if (!!configList?.length) {
         setConfigList(configList.map((config: any) => {
           if (config.value === 'default') {
@@ -86,7 +112,6 @@ const Control: React.FC<any> = (props: any) => {
   const widgetChange = (key: any, value: any, parent?: any) => {
     key = key.split('@$@');
     parent = parent?.split('@$@');
-    console.log(key, value, parent)
     setNodeList((prev: any) => {
       return prev.map((item: any, index: any) => {
         if (item.id === key[0]) {
@@ -731,7 +756,7 @@ export const FormatWidgetToDom: any = (props: any) => {
   useEffect(() => {
     if (type1 === 'TagRadio') {
       const children = (options || []).filter((i: any) => i.name === value)[0]?.children;
-      setSelectedOption(children);
+      setSelectedOption({ [aliasDefault]: children });
     };
   }, [type1]);
 
@@ -835,7 +860,7 @@ export const FormatWidgetToDom: any = (props: any) => {
               onChange={(e: any, option: any) => {
                 const { value, propsKey } = option;
                 const { children = [] } = JSON.parse(propsKey);
-                setSelectedOption(children);
+                setSelectedOption({ [aliasDefault]: children });
                 widgetChange?.(name, value, parent);
               }}
             >
@@ -851,7 +876,7 @@ export const FormatWidgetToDom: any = (props: any) => {
             </Select>
           </FormItem>
           {
-            (selectedOption || []).map((item: any, index: number) => {
+            (selectedOption?.[value] || []).map((item: any, index: number) => {
               if (!item || !item.widget) {
                 return null;
               }

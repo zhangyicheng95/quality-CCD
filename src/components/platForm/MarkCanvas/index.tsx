@@ -355,6 +355,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             gFirstFeatureLayer.removeFeatureById(feature.id + 100);
             gFirstFeatureLayer.removeFeatureById(feature.id - 100);
           }
+          setSelectedFeature(0);
         });
 
         gMap.markerLayer.addMarker(gFirstMarker);
@@ -599,6 +600,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
               }, ...(props?.initParams)
             },
           });
+          if (!style.direction) {
+            style['direction'] = props?.initParams?.['旋转角度']?.value || 0
+          };
+          if (!props.directionMarkerId) {
+            props['directionMarkerId'] = `label-direction-marker-id-${+new Date()}`;
+          }
           addFeature(type, id, shape, props, style);
         });
         setFeatureList(obj);

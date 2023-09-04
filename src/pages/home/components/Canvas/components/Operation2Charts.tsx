@@ -70,7 +70,6 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
 
             }
         });
-
         setConfigGroup(group.map((i: any) => ({ ...i, show: true })));
         setSelectedOption(selectedOptions);
         setConfigList(resConfig);
@@ -93,6 +92,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         //     .filter((i: any) => i.addType !== 'tagRadio').concat(children));
     }, [selectedOption]);
     const widgetChange = (key: string, value: any) => {
+        console.log(value)
         setConfigList((prev: any) => (prev || [])?.map((item: any) => {
             if (item.name === key) {
                 if (!!value?.widget?.type || item?.widget?.type === "codeEditor") {
@@ -101,7 +101,16 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                         ...item,
                         ...value,
                     };
-                }
+                };
+                console.log(value)
+                if (!!value?.widget?.type || item?.widget?.type === "TagRadio") {
+                    console.log(value)
+                    setFieldsValue({ [key]: value?.value });
+                    return {
+                        ...item,
+                        ...value,
+                    };
+                };
                 return {
                     ...item,
                     value,
@@ -110,7 +119,6 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             return item;
         }));
     };
-
     const onOk = () => {
         validateFields()
             .then((values) => {
@@ -183,11 +191,11 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     const initItem = (item: any) => {
         const { name, alias, widget = {}, addType, show } = item;
         const { type } = widget;
-        let optionList: any = [];
-        Object.values(selectedOption)?.forEach(option => {
-            optionList = optionList.concat(option);
-        });
-        if (optionList?.filter((i: any) => i.name === name)?.length) return null;
+        // let optionList: any = [];
+        // Object.values(selectedOption)?.forEach(option => {
+        //     optionList = optionList.concat(option);
+        // });
+        // if (optionList?.filter((i: any) => i.name === name)?.length) return null;
         return <div
             className={`${type === 'TagRadio' ? '' : 'flex-box'} param-item`}
             key={`${id}@$@${name}`}
@@ -369,7 +377,7 @@ function FormatWidgetToDom(props: any) {
         setPlatFormVisible, setPlatFormValue,
         setSelectPathVisible, setSelectedPath,
     } = props;
-    // const { getFieldDecorator, setFieldsValue, getFieldValue } = form;
+    const { setFieldsValue, getFieldValue } = form;
     const {
         name: aliasDefault,
         alias = '默认输入框',
@@ -503,6 +511,13 @@ function FormatWidgetToDom(props: any) {
                                 setSelectedOption?.((prev: any) => Object.assign({}, prev, {
                                     [name]: children
                                 }));
+                                const result = children.reduce((pre: any, cen: any) => {
+                                    return {
+                                        ...pre,
+                                        [cen.name]: cen.value
+                                    }
+                                }, {});
+                                setFieldsValue(result);
                                 widgetChange?.(name, value);
                             }}
                         >
@@ -518,24 +533,24 @@ function FormatWidgetToDom(props: any) {
                         </Select>
                     </FormItem>
                     {
-                        (selectedOption?.[name] || []).map((item: any, index: number) => {
-                            if (!item || !item.widget) {
-                                return null;
-                            }
-                            return <div style={{ marginTop: 24 }} key={item.id}>
-                                <FormatWidgetToDom
-                                    key={item.name || guid()}
-                                    id={node?.id ? `${node.id}@$@${item?.name}` : item?.name}
-                                    config={[item.name, item]}
-                                    label={item?.alias || item?.name}
-                                    parent={name}
-                                    form={form}
-                                    setEditorVisible={setEditorVisible}
-                                    disabled={disabled}
-                                    widgetChange={widgetChange}
-                                />
-                            </div>
-                        })
+                        // (selectedOption?.[name] || []).map((item: any, index: number) => {
+                        //     if (!item || !item.widget) {
+                        //         return null;
+                        //     }
+                        //     return <div style={{ marginTop: 24 }} key={item.id}>
+                        //         <FormatWidgetToDom
+                        //             key={item.name || guid()}
+                        //             id={node?.id ? `${node.id}@$@${item?.name}` : item?.name}
+                        //             config={[item.name, item]}
+                        //             label={item?.alias || item?.name}
+                        //             parent={name}
+                        //             form={form}
+                        //             setEditorVisible={setEditorVisible}
+                        //             disabled={disabled}
+                        //             widgetChange={widgetChange}
+                        //         />
+                        //     </div>
+                        // })
                     }
                 </>
             );
