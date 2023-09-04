@@ -150,13 +150,13 @@ const Table2Charts: React.FC<Props> = (props: any) => {
             {
                 name: '距离(mm)',
                 value: [
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
+                    { value: 'http://D:/123/asd/img.png', color: null },
+                    { value: 'http://D:/123/asd/img.png', color: null },
+                    { value: 'http://D:/123/asd/img.png', color: null },
+                    { value: 'http://D:/123/asd/img.png', color: null },
+                    { value: 'http://D:/123/asd/img.png', color: null },
+                    { value: 'http://D:/123/asd/img.png', color: null },
+                    { value: 'http://D:/123/asd/img.png', color: null },
 
                 ],
                 color: null,
@@ -335,8 +335,12 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                                         !!color ? { color } : {},
                                                         des_bordered ? { borderWidth: '1px' } : {}
                                                     )}
+                                                    placement={"top"}
+                                                    onClick={value?.indexOf?.('http://') > -1 ? () => {
+                                                        window.open(value, "_blank");
+                                                    } : null}
                                                 >
-                                                    {value}
+                                                    {value?.indexOf?.('http://') > -1 ? "查看" : value}
                                                 </TooltipDiv>
                                                 {
                                                     (!des_bordered || (index + 1) === dataValue?.length) ? null :
@@ -355,8 +359,12 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                                     !!color ? { color } : {},
                                                     des_bordered ? { borderWidth: '1px' } : {}
                                                 )}
+                                                placement={"top"}
+                                                onClick={val?.indexOf?.('http://') > -1 ? () => {
+                                                    window.open(val, "_blank");
+                                                } : null}
                                             >
-                                                {val}
+                                                {val?.indexOf?.('http://') > -1 ? "查看" : val}
                                             </TooltipDiv>
                                             {
                                                 (!des_bordered || (index + 1) === dataValue?.length) ? null :
