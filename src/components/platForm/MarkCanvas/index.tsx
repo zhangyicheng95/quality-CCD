@@ -572,7 +572,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       gMap.addLayer(gFirstTextLayer);
       let obj = {};
       if (_.isArray(platFormValue)) {
-        (platFormValue || [])?.forEach((plat: any) => {
+        (platFormValue || [])?.forEach((plat: any, index: number) => {
           const { type, id, shape, props, style } = plat;
           obj = Object.assign({}, obj, {
             [id]: {
@@ -604,7 +604,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             style['direction'] = props?.initParams?.['旋转角度']?.value || 0
           };
           if (!props.directionMarkerId) {
-            props['directionMarkerId'] = `label-direction-marker-id-${+new Date()}`;
+            props['directionMarkerId'] = `label-direction-marker-id-${+new Date()}${index}`;
           }
           addFeature(type, id, shape, props, style);
         });
