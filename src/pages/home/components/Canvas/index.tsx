@@ -2631,7 +2631,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={"设置密码"}
                       rules={[{ required: true, message: '设置密码' }]}
                     >
-                      <Input size='large' />
+                      <Input.Password visibilityToggle={false} allowClear size='large' />
                     </Form.Item>
                     <Form.Item
                       name={`passwordHelp`}
