@@ -391,19 +391,26 @@
 .tableCharts {
   width: 100%;
   height: 100%;
-  padding: 8px;
+  overflow-y: auto;
+  padding: 0 8px;
+  font-size: 18px;
   user-select: text;
+
 
   :global {
     .charts-header-box {
-      width: 100%;
+      position: fixed;
+      left: 8px;
+      right: 0;
+      width: calc(100% - 22px);
       background-color: @background-color-base;
+      border-left: 1px solid @border-color-base;
 
       .charts-header-item {
         padding: 2px 8px;
         flex: 1;
-        height: 42px;
-        line-height: 42px;
+        height: 38px;
+        line-height: 38px;
         border-right: 1px solid @body-background;
         overflow: hidden;
         text-align: center;
@@ -416,7 +423,7 @@
 
     .charts-body-box {
       overflow-y: auto;
-      // height: calc(100% - 42px);
+      margin-top: 38px;
       border-right: 0 solid @border-color-base;
       border-bottom: 0 solid @border-color-base;
 
@@ -445,7 +452,7 @@
   width: 100%;
   height: 100%;
   overflow-y: auto;
-  padding: 8px;
+  padding: 0 8px;
   font-size: 18px;
   user-select: text;
 
@@ -454,7 +461,7 @@
       position: fixed;
       left: 8px;
       right: 0;
-      width: calc(100% - 17px);
+      width: calc(100% - 22px);
       background-color: @background-color-base;
       border-left: 1px solid @border-color-base;
 

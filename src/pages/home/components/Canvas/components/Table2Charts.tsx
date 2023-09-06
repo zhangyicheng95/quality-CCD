@@ -258,7 +258,10 @@ const Table2Charts: React.FC<Props> = (props: any) => {
             ref={domRef}
             style={{ fontSize }}
         >
-            <div className="charts-header-box flex-box">
+            <div
+                className="charts-header-box flex-box"
+                style={tableScroll ? { width: 'calc(100% - 22px)' } : { width: 'calc(100% - 17px)' }}
+            >
                 {
                     _.isArray(dataValue) && (dataValue || []).map((item: any, index: number) => {
                         const { name } = item;
