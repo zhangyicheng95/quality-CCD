@@ -1,4 +1,5 @@
-import { fetchGet, fetchPost, fetchPut, fetchDelete } from '@/services/fetch';
+import { fetchGet, fetchPost, fetchPut, fetchDelete, upload } from '@/services/fetch';
+import { parseParamsToUrl } from '@/utils/utils';
 import _ from 'lodash';
 export const BASE_IP = localStorage.getItem("ipUrl-realtime") ?
   `http://${localStorage.getItem("ipUrl-realtime")}/` : `http://localhost:8866/`;
@@ -79,7 +80,7 @@ export async function outLogin() {
 
 }
 
-export async function btnFetch(type: string, url: string, params: any) {
+export async function btnFetch(type: string, url: string, params = {}, options?: any) {
   if (url.indexOf('/') === 0) {
     url = url.slice(1);
   }
@@ -91,23 +92,30 @@ export async function btnFetch(type: string, url: string, params: any) {
   }
   if (type === 'get') {
     if (_.isObject(params)) {
-      return fetchGet(url, { params, });
+      return fetchGet(url, { params, ...options });
     }
     return fetchGet(`${url}/${params}`);
   } if (type === 'delete') {
     if (_.isObject(params)) {
-      return fetchDelete(url, { params, });
+      return fetchDelete(url, { params, ...options });
     }
     return fetchDelete(`${url}/${params}`);
   } else if (type === 'post') {
     if (_.isObject(params)) {
-      return fetchPost(url, { body: params });
+      return fetchPost(url, {
+        body: (options?.headers["Content-Type"] === "application/x-www-form-urlencoded") ? parseParamsToUrl(params) : params,
+        ...options
+      });
     }
     return fetchPost(`${url}/${params}`);
   } else if (type === 'put') {
     if (_.isObject(params)) {
-      return fetchPut(url, { body: params });
+      return fetchPut(url, { body: params, ...options });
     }
     return fetchPut(`${url}/${params}`);
+  } else if (type === 'upload') {
+    if (_.isObject(params)) {
+      return upload(url, { body: params, ...options });
+    }
   }
 }

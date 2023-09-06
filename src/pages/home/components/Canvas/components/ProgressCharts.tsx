@@ -24,7 +24,8 @@ const ProgressCharts: React.FC<Props> = (props: any) => {
 
     useEffect(() => {
         if (!_.isNumber(dataValue)) {
-            message.error('数据格式不正确，请检查');
+            message.error('进度条组件数据格式不正确，请检查');
+            console.log('ProgressCharts:', dataValue);
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }

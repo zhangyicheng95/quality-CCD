@@ -77,7 +77,8 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     // 进来初始化
     useEffect(() => {
         if (!_.isArray(operationList)) {
-            message.error('数据格式不正确，请检查');
+            message.error('动态参数组件数据格式不正确，请检查');
+            console.log('Operation2Charts:', dataValue);
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }

@@ -171,7 +171,8 @@ const Table2Charts: React.FC<Props> = (props: any) => {
 
     useEffect(() => {
         if (!_.isArray(dataValue)) {
-            message.error('数据格式不正确，请检查');
+            message.error('通用表格组件数据格式不正确，请检查');
+            console.log('Table2Charts:', dataValue);
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }

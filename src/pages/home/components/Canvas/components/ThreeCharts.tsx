@@ -95,7 +95,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     }, [window.location.hash]);
     useEffect(() => {
         if (!_.isString(name)) {
-            message.error('数据格式不正确，请检查');
+            message.error('3D组件数据格式不正确，请检查');
+            console.log('ThreeCharts:', dataValue);
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
