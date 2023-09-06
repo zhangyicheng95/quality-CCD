@@ -65,7 +65,7 @@ const ButtonPWCharts: React.FC<Props> = (props: any) => {
                                 rules={[{ required: true, message: '请输入密码' }]}
                                 {...passwordvalidate}
                             >
-                                <Input allowClear />
+                                <Input.Password visibilityToggle={false} allowClear />
                             </Form.Item>
                         </Form>
                     </Modal>
