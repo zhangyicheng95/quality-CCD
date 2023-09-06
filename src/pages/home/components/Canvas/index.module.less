@@ -371,6 +371,13 @@
           padding: 4px 16px;
           gap: 16px;
 
+          .ant-btn-icon-only {
+            min-width: 32px;
+            min-height: 32px;
+            max-width: 32px;
+            max-height: 32px;
+          }
+
           .toolbar-btn {
             padding: 2px;
             overflow: hidden;
@@ -384,7 +391,7 @@
           &-center {
             width: 40%;
             min-width: 240px;
-            max-width: 350px;
+            max-width: 450px;
             white-space: nowrap;
             font-size: 14px;
             gap: 6px;
@@ -401,12 +408,13 @@
           flex-direction: column;
           width: 100%;
           height: 100%;
-          background: linear-gradient(to right, #d6d6d6, #fff, #d6d6d6);
+          background-color: rgba(154, 154, 154, 0.35);
           background-size: 100% 100%;
 
           &-grid {
             width: 100%;
             height: 100%;
+            overflow-y: auto;
           }
         }
 

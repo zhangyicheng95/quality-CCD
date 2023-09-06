@@ -7,8 +7,6 @@ import {
   Badge,
   Cascader,
   Form,
-  Popover,
-  Menu,
   Tooltip,
   Popconfirm,
   Select,
@@ -26,7 +24,6 @@ import {
   btnFetch,
   startFlowService,
   stopFlowService,
-  touchFlowService,
   updateParams,
 } from '@/services/api';
 import GridLayout from '@/components/GridLayout';
@@ -35,15 +32,13 @@ import {
   CloseOutlined,
   CompressOutlined,
   DeleteOutlined,
-  DragOutlined,
   LoadingOutlined,
   MinusOutlined,
   PlayCircleOutlined,
-  PlusCircleOutlined,
   PlusOutlined,
   ReloadOutlined,
-  SafetyOutlined,
   SaveOutlined,
+  SettingOutlined,
   SwapOutlined,
 } from '@ant-design/icons';
 import { connect, useHistory, useModel } from 'umi';
@@ -78,7 +73,7 @@ import LogPreviewModal from '@/pages/home/components/Canvas/components/LogPrevie
 import { useThrottleAndMerge } from "@/utils/useThrottleAndMerge";
 import FileManager from '@/components/FileManager';
 import {
-  basicWindowList, simulatedCoatingList, windowTypeList,
+  basicWindowList, windowTypeList,
 } from '@/common/constants/globalConstants';
 import { getuid, guid } from '@/utils/utils';
 import moment from 'moment';
@@ -108,8 +103,13 @@ const Home: React.FC<any> = (props: any) => {
   const ipString: any = localStorage.getItem('ipString') || '';
   const updateTimer = useRef<any>();
   const [loading, setLoading] = useState(false);
-  const [fontColor, setFontColor] = useState('#fff');
+  const [colorSelector, setColorSelector] = useState<any>({
+    fontColor: '#FFFFFF',
+    backgroundColor: '#FFFFFF',
+    overallBackgroundColor: '',
+  });
   const [addWindowVisible, setAddWindowVisible] = useState('');
+  const [overallVisible, setOverallVisible] = useState(false);
   const [editWindowData, setEditWindowData] = useState<any>({});
   const [gridHomeList, setGridHomeList] = useState<any>([]);
   const [addContentList, setAddContentList] = useState<any>([]);
@@ -152,12 +152,12 @@ const Home: React.FC<any> = (props: any) => {
       open: true,
       children: basicWindowList
     },
-    {
-      key: 'coating',
-      title: '背景涂层',
-      open: true,
-      children: simulatedCoatingList
-    }
+    // {
+    //   key: 'coating',
+    //   title: '背景涂层',
+    //   open: true,
+    //   children: simulatedCoatingList
+    // }
   ]);
 
   const ifCanEdit = useMemo(() => {
@@ -282,9 +282,9 @@ const Home: React.FC<any> = (props: any) => {
                   type: 'home/set',
                   payload: {
                     gridContentList: [
-                      { "id": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "value": ["96c525f8-fada-4512-8b44-7e8995278e63", "filepath"], "filepath": { "name": "models/output.ply", "value": [{}, {}] }, "size": { "i": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "x": 7, "y": 3, "w": 36, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "three", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "comparison": false, "interlacing": false, "modelRotate": false, "modelScale": false },
-                      { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "frame"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "x": 43, "y": 3, "w": 30, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "img", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "magnifier": false },
-                      { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "cam_name"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "x": 73, "y": 3, "w": 23, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "pie", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true }
+                      { "id": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "value": ["96c525f8-fada-4512-8b44-7e8995278e63", "filepath"], "filepath": { "name": "models/output.ply", "value": [{}, {}] }, "size": { "i": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "x": 7, "y": 3, "w": 36, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "three", "tab": "1", "fontSize": 12, "backgroundColor": "#FFFFFF", "ifLocalStorage": true, "comparison": false, "interlacing": false, "modelRotate": false, "modelScale": false },
+                      { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "frame"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "x": 43, "y": 3, "w": 30, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "img", "tab": "1", "fontSize": 12, "backgroundColor": "#FFFFFF", "ifLocalStorage": true, "magnifier": false },
+                      { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "cam_name"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "x": 73, "y": 3, "w": 23, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "pie", "tab": "1", "fontSize": 12, "backgroundColor": "#FFFFFF", "ifLocalStorage": true }
                     ],
                   },
                 });
@@ -756,6 +756,13 @@ const Home: React.FC<any> = (props: any) => {
     setHomeSettingData(homeSetting);
     setPageIconPosition(pageIconPosition || {});
     let newParams = paramsData;
+    if (!contentSize?.width || !contentSize?.height) {
+      newParams = Object.assign({}, paramsData, {
+        contentData: Object.assign({}, contentData, {
+          contentSize: { width: 800, height: 600 },
+        })
+      });
+    }
     if (!_.isObject(contentHeader) || _.isEmpty(contentHeader)) {
       const header = {};
       // 默认显示/隐藏header
@@ -821,8 +828,8 @@ const Home: React.FC<any> = (props: any) => {
     };
     if (ifCanEdit) {
       form2.setFieldsValue({
-        canvasWidth: contentSize?.width,
-        canvasHeight: contentSize?.height,
+        canvasWidth: newParams?.contentData?.contentSize?.width,
+        canvasHeight: newParams?.contentData?.contentSize?.height,
       });
     };
 
@@ -893,7 +900,7 @@ const Home: React.FC<any> = (props: any) => {
         const {
           id: key, size, value = [], type, yName, xName, defaultImg, fontSize,
           reverse, direction, symbol, fetchType, fetchParams, align,
-          backgroundColor = 'default', barColor = 'default', progressType = 'line',
+          backgroundColor = '#FFFFFF', barColor = 'default', progressType = 'line',
           progressSize = 8, progressSteps = 5, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
           CCDName, imgs_width, imgs_height, tableSize, magnifier, comparison, operationList,
@@ -912,7 +919,11 @@ const Home: React.FC<any> = (props: any) => {
         const SecLabel = items?.filter((i: any) => i.group === 'bottom' && (i?.label?.name === value[1]))[0];
 
         listData = listData.concat(
-          <div key={key} className={` drag-item-content-box ${backgroundColor === 'default' ? "background-ubv" : ""}`}>
+          <div
+            key={key}
+            className={` drag-item-content-box ${backgroundColor === 'default' ? "background-ubv" : ""}`}
+            style={(!!backgroundColor && !!backgroundColor?.rgb) ? { backgroundColor: `rgba(${backgroundColor.rgb.r},${backgroundColor.rgb.g},${backgroundColor.rgb.b},${backgroundColor.rgb.a})` } : {}}
+          >
             {
               ifShowHeader ?
                 <div className="common-card-title-box flex-box ">
@@ -1116,10 +1127,19 @@ const Home: React.FC<any> = (props: any) => {
                     !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
                     setBasicInfoData(basicInfoData);
                     setEditWindowData(item);
-                    setFieldsValue(Object.assign({}, item, !fontSize ? { fontSize: 12 } : {}));
-                    if (!!fontColor && !!fontColor?.rgb) {
-                      setFontColor(fontColor.rgb);
-                    }
+                    setFieldsValue(Object.assign(
+                      {},
+                      item,
+                      !fontSize ? { fontSize: 12 } : {},
+                      (!!backgroundColor && !!backgroundColor?.rgb) ? { backgroundColor: backgroundColor } : {}
+                    ));
+
+                    setColorSelector((prev: any) => ({
+                      ...prev,
+                      ...((!!fontColor && !!fontColor?.rgb) ? { fontColor: fontColor.rgb } : {}),
+                      ...((!!backgroundColor && !!backgroundColor?.rgb) ? { backgroundColor: backgroundColor?.rgb } : {})
+                    }));
+
                     setWindowType(type);
                     if (type === 'operation') {
                       const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
@@ -1491,7 +1511,7 @@ const Home: React.FC<any> = (props: any) => {
     setFieldsValue({
       value: [], type: 'img', yName: undefined, xName: undefined, fontSize: undefined, reverse: false,
       direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined,
-      align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line',
+      align: 'left', backgroundColor: '#FFFFFF', barColor: 'default', progressType: 'line',
       progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: undefined,
       CCDName: undefined, magnifier: false, comparison: false, operationList: [], dataZoom: 0,
       fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false, modelRotateScreenshot: false,
@@ -1500,6 +1520,7 @@ const Home: React.FC<any> = (props: any) => {
     setWindowType('img');
     setAddWindowVisible('');
     setFooterSelectVisible(false);
+    setOverallVisible(false);
     setHomeSettingVisible('');
   };
 
@@ -1766,6 +1787,24 @@ const Home: React.FC<any> = (props: any) => {
                                 });
                               });
                           }}>修改</Button>
+                          <Tooltip placement="bottom" title="全局设置">
+                            <Button
+                              className="toolbar-btn"
+                              icon={<SettingOutlined className="toolbar-btn-icon" />}
+                              onClick={() => {
+                                setColorSelector((prev: any) => {
+                                  return {
+                                    ...prev,
+                                    overallBackgroundColor: paramData?.contentData?.overallBackgroundColor?.rgb || '#FFFFFF'
+                                  }
+                                });
+                                form.setFieldsValue({ overallBackgroundColor: paramData?.contentData?.overallBackgroundColor?.rgb || '#FFFFFF' });
+                                setAddWindowVisible('');
+                                setHomeSettingVisible('');
+                                setOverallVisible(true);
+                              }}
+                            />
+                          </Tooltip>
                         </div>
                         <div></div>
                       </div>
@@ -1789,6 +1828,10 @@ const Home: React.FC<any> = (props: any) => {
                               {
                                 height: `${paramData?.contentData?.contentSize?.height - 75}px`
                               } : {},
+                            (paramData?.contentData?.overallBackgroundColor && paramData?.contentData?.overallBackgroundColor?.rgb) ?
+                              {
+                                backgroundColor: `rgba(${paramData?.contentData?.overallBackgroundColor.rgb.r},${paramData?.contentData?.overallBackgroundColor.rgb.g},${paramData?.contentData?.overallBackgroundColor.rgb.b},${paramData?.contentData?.overallBackgroundColor.rgb.a})`
+                              } : {}
                           )}
                         >
                           <div className="right-canvas-body-grid">
@@ -1822,7 +1865,7 @@ const Home: React.FC<any> = (props: any) => {
         </DndProvider>
         <NodeDetailWrapper
           className="config-panel"
-          style={(!!addWindowVisible || !!homeSettingVisible) ? {} : { right: '-450px' }}
+          style={(!!addWindowVisible || !!homeSettingVisible || !!overallVisible) ? {} : { right: '-450px' }}
           title={'插件配置 PluginConfig '}
           onSave={() => {
             form.validateFields()
@@ -1831,9 +1874,15 @@ const Home: React.FC<any> = (props: any) => {
                   addWindow(values);
                 } else if (!!homeSettingVisible) {
                   setHomeSettingData((prev: any) => ({ ...prev, [homeSettingVisible]: { ...prev?.[homeSettingVisible], ...values } }));
-                  setHomeSettingVisible('');
-                  form.resetFields();
+                } else if (!!overallVisible) {
+                  setParamData((prev: any) => {
+                    return {
+                      ...prev,
+                      contentData: Object.assign({}, prev.contentData, values)
+                    }
+                  })
                 }
+                onCancel();
               })
               .catch((err) => {
                 const { errorFields } = err;
@@ -1933,10 +1982,22 @@ const Home: React.FC<any> = (props: any) => {
                 <Form.Item
                   name={`backgroundColor`}
                   label={'窗口背景色'}
-                  initialValue={"default"}
+                  initialValue={"#FFFFFF"}
                   rules={[{ required: false, message: '窗口背景色' }]}
                 >
-                  <Select
+                  <ChromePicker
+                    color={colorSelector?.backgroundColor}
+                    onChange={(value: any) => {
+                      const { rgb } = value;
+                      setColorSelector((prev: any) => {
+                        return {
+                          ...prev,
+                          backgroundColor: rgb
+                        }
+                      });
+                    }}
+                  />
+                  {/* <Select
                     style={{ width: '100%' }}
                     options={[
                       {
@@ -1948,7 +2009,7 @@ const Home: React.FC<any> = (props: any) => {
                         label: '透明色',
                       }
                     ]}
-                  />
+                  /> */}
                 </Form.Item>
                 {
                   (['img'].includes(windowType) && !isVision) ?
@@ -2648,10 +2709,15 @@ const Home: React.FC<any> = (props: any) => {
                         rules={[{ required: false, message: '内容颜色' }]}
                       >
                         <ChromePicker
-                          color={fontColor}
+                          color={colorSelector?.fontColor}
                           onChange={(value: any) => {
                             const { rgb } = value;
-                            setFontColor(rgb);
+                            setColorSelector((prev: any) => {
+                              return {
+                                ...prev,
+                                fontColor: rgb
+                              }
+                            });
                           }}
                         />
                       </Form.Item>
@@ -2722,7 +2788,29 @@ const Home: React.FC<any> = (props: any) => {
                     <Switch />
                   </Form.Item>
                 </Form>
-                : null
+                :
+                !!overallVisible ?
+                  <Form form={form} scrollToFirstError>
+                    <Form.Item
+                      name="overallBackgroundColor"
+                      label="背景色"
+                      initialValue={''}
+                    >
+                      <ChromePicker
+                        color={colorSelector?.overallBackgroundColor}
+                        onChange={(value: any) => {
+                          const { rgb } = value;
+                          setColorSelector((prev: any) => {
+                            return {
+                              ...prev,
+                              overallBackgroundColor: rgb
+                            }
+                          });
+                        }}
+                      />
+                    </Form.Item>
+                  </Form>
+                  : null
           }
         </NodeDetailWrapper>
       </div>
