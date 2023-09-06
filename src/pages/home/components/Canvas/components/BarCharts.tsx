@@ -26,7 +26,8 @@ const BarCharts: React.FC<Props> = (props: any) => {
     barColor = [].concat(barColor)
     useEffect(() => {
         if (!_.isArray(dataValue)) {
-            message.error('数据格式不正确，请检查');
+            message.error('柱状图数据格式不正确，请检查');
+            console.log('BarCharts:', dataValue);
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
