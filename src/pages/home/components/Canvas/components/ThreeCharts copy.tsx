@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { connect, useModel } from 'umi';
-import { Button, Input, InputNumber, message, Popover, Select, Switch, Tooltip } from 'antd';
+import { Button, Input, InputNumber, message, Popover, Select, Switch, Tooltip, Upload } from 'antd';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Lut } from "three/examples/jsm/math/Lut.js";
@@ -32,6 +32,7 @@ import rectBackIcon from '@/assets/imgs/rect-back.svg';
 import { uuid } from '@/utils/utils';
 import { btnFetch } from '@/services/api';
 import FileManager from '@/components/FileManager';
+import { transform } from 'lodash';
 
 interface Props {
     data: any,
@@ -51,13 +52,24 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         // addType = 'add';
         name = "models/output.ply"; // models/pressure.json  models/tx.stl
         value = [
-            { "type": "left", "name": "模具长轴", "standardValue": 651, "maxValue": 651.01, "minValue": 0.01, "averageValue": 651, "position": [{ "x": -228.03, "y": -324.21, "z": 172.48 }, { "x": -228.03, "y": -324.21, "z": 172.48 }] },
+            { "type": "left", "name": "模具长轴最小值", "standardValue": 651, "measureValue": 651.01, "offsetValue": 0.01, "position": [{ "x": -228.03, "y": -324.21, "z": 172.48 }, { "x": -228.03, "y": -324.21, "z": 172.48 }] },
+            { "type": "left", "name": "模具长轴平均值", "standardValue": 651, "measureValue": 652.5, "offsetValue": 1.5, "position": [{ "x": -226.3, "y": -325.62, "z": -77.52 }, { "x": -226.3, "y": -325.62, "z": -77.52 }] },
+            { "type": "left", "name": "模具长轴最大值", "standardValue": 651, "measureValue": 653.93, "offsetValue": 2.93, "position": [{ "x": -222.99, "y": -327.37, "z": -377.52 }, { "x": -222.99, "y": -327.37, "z": -377.52 }] },
 
-            { "type": "bottom", "name": "止口短轴宽度", "standardValue": 735, "maxValue": 736.15, "minValue": 1.15, "averageValue": 651, "position": [{ "x": 66.16, "y": -370.85, "z": -418.66 }, { "x": 66.16, "y": -370.85, "z": -418.66 }] },
+            { "type": "bottom", "name": "止口短轴宽度", "standardValue": 735, "measureValue": 736.15, "offsetValue": 1.15, "position": [{ "x": 66.16, "y": -370.85, "z": -418.66 }, { "x": 66.16, "y": -370.85, "z": -418.66 }] },
+            { "type": "bottom", "name": "止口凸台宽度", "standardValue": 735, "measureValue": 736.82, "offsetValue": 1.82, "position": [{ "x": -33.84, "y": -378.88, "z": -419.73 }, { "x": -33.84, "y": -378.88, "z": -419.73 }] },
+            { "type": "bottom", "name": "止口长轴宽度", "standardValue": 735, "measureValue": 737.65, "offsetValue": 2.65, "position": [{ "x": -233.84, "y": -307.3, "z": -422.31 }, { "x": -233.84, "y": -307.3, "z": -422.31 }] },
 
-            { "type": "top", "name": "模具高度", "standardValue": 735, "maxValue": 736.15, "minValue": 1.15, "averageValue": 651, "position": [{ "x": 66.16, "y": -370.85, "z": -418.66 }, { "x": 66.16, "y": -370.85, "z": -418.66 }] },
+            { "type": "top", "name": "模具高度最小值", "standardValue": 735, "measureValue": 736.15, "offsetValue": 1.15, "position": [{ "x": 66.16, "y": -370.85, "z": -418.66 }, { "x": 66.16, "y": -370.85, "z": -418.66 }] },
+            { "type": "top", "name": "模具高度平均值", "standardValue": 735, "measureValue": 736.82, "offsetValue": 1.82, "position": [{ "x": -33.84, "y": -378.88, "z": -419.73 }, { "x": -33.84, "y": -378.88, "z": -419.73 }] },
+            { "type": "top", "name": "模具高度最大值", "standardValue": 735, "measureValue": 737.65, "offsetValue": 2.65, "position": [{ "x": -233.84, "y": -307.3, "z": -422.31 }, { "x": -233.84, "y": -307.3, "z": -422.31 }] },
 
-            { "type": "right", "name": "模具短轴", "standardValue": 461, "maxValue": 458.98, "minValue": -2.02, "averageValue": 651, "position": [{ "x": -222.99, "y": -327.37, "z": -377.52 }, { "x": -222.99, "y": -327.37, "z": -377.52 }] },
+            { "type": "right", "name": "模具短轴最小值", "standardValue": 461, "measureValue": 458.98, "offsetValue": -2.02, "position": [{ "x": -222.99, "y": -327.37, "z": -377.52 }, { "x": -222.99, "y": -327.37, "z": -377.52 }] },
+            { "type": "right", "name": "模具短轴平均值", "standardValue": 461, "measureValue": 460.13, "offsetValue": -0.87, "position": [{ "x": -226.3, "y": -325.62, "z": -77.52 }, { "x": -226.3, "y": -325.62, "z": -77.52 }] },
+            { "type": "right", "name": "模具短轴最大值1", "standardValue": 461, "measureValue": 460.85, "offsetValue": -0.15, "position": [{ "x": -227.73, "y": -324.38, "z": 122.48 }, { "x": -227.73, "y": -324.38, "z": 122.48 }] },
+            { "type": "right", "name": "模具短轴最大值2", "standardValue": 461, "measureValue": 460.85, "offsetValue": -0.15, "position": [{ "x": -227.73, "y": -324.38, "z": 122.48 }, { "x": -227.73, "y": -324.38, "z": 122.48 }] },
+            { "type": "right", "name": "模具短轴最大值3", "standardValue": 461, "measureValue": 460.85, "offsetValue": -0.15, "position": [{ "x": -227.73, "y": -324.38, "z": 122.48 }, { "x": -227.73, "y": -324.38, "z": 122.48 }] },
+            { "type": "right", "name": "模具短轴最大值4", "standardValue": 461, "measureValue": 460.85, "offsetValue": -0.15, "position": [{ "x": -227.73, "y": -324.38, "z": 122.48 }, { "x": -227.73, "y": -324.38, "z": 122.48 }] },
         ];
         // let arr = [];
         // for (let i = 1; i < 48; i++) {
@@ -320,16 +332,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             setSelectedBtn((prev: any) => {
                 if ((prev || []).includes('bzBtn02')) {
                     models.forEach((mesh: any) => {
-                        if (!!(mesh.children || []).filter((i: any) => i.name === "border")?.[0]) {
-                            (mesh.children || []).filter((i: any) => i.name === "border")[0].visible = false;
-                        }
+                        (mesh.children || []).filter((i: any) => i.type === "BoxHelper")[0].visible = false;
                     });
                     return prev.filter((i: any) => i !== 'bzBtn02');
                 } else {
                     models.forEach((mesh: any) => {
-                        if (!!(mesh.children || []).filter((i: any) => i.name === "border")?.[0]) {
-                            (mesh.children || []).filter((i: any) => i.name === "border")[0].visible = true;
-                        }
+                        (mesh.children || []).filter((i: any) => i.type === "BoxHelper")[0].visible = true;
                     });
                     return (prev || []).concat('bzBtn02');
                 }
@@ -404,12 +412,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         bzBtn04?.addEventListener("click", bzBtnFun04);
         // 清理数据
         function bzBtnFun05() {
-            const models = getAllModelsFromScene(scene.current);
-            models.forEach((mesh: any) => {
-                if (!!(mesh.children || []).filter((i: any) => i.name === "measureBoxHelper")?.[0]) {
-                    (mesh.children || []).filter((i: any) => i.name === "measureBoxHelper")[0].visible = false;
-                }
+            (measurements || []).forEach((line: any) => {
+                scene.current.remove(line);
+                scene.current.remove(measurementLabels[line.name]);
+                measurementLabels[line.name] = null;
             });
+            lineId = "measure_0";
+            measurements = [];
+            measurementLabels = {};
         };
         bzBtn05?.addEventListener("click", bzBtnFun05);
         // 缩放
@@ -445,26 +455,13 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             captureScreenshot('download');
         };
         bzBtn08?.addEventListener("click", () => bzBtnFun08());
-        // 开始标注
-        const onKeyDown = (e: any) => {
-            if (e.keyCode === 17) {
-                // ctrl 键按下
-                ctrlDown = true;
-                controls.current.enabled = false;
-                renderer.current.domElement.style.cursor = "crosshair";
-                setSelectedBtn((prev: any) => (prev || []).concat('bzBtn01'));
-            }
-        };
-        window.addEventListener("keydown", onKeyDown);
         // 取消标注
-        function onKeyUp(e: any) {
-            if (e.keyCode === 17 || e.keyCode === 27) {
-                // 17是ctrl，27是esc
+        function onKeyUp(event: any) {
+            if (event.key === "Escape") {
                 cancelMeasurement();
             }
         };
         window.addEventListener("keyup", onKeyUp);
-        const positions: any = [];
         function onMouseDown(event: any) {
             setCameraSwitch(false);
             if (ctrlDown) {
@@ -473,16 +470,48 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 if (intersects.length > 0) {
                     if (!drawingLine) {
                         // 起点
-                        positions[0] = intersects[0].point.x;
-                        positions[1] = intersects[0].point.y;
-                        positions[2] = intersects[0].point.z;
+                        const points = [];
+                        points.push(intersects[0].point);
+                        points.push(intersects[0].point.clone());
+                        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                        line = new THREE.LineSegments(
+                            geometry,
+                            new THREE.LineBasicMaterial({
+                                color: 0xff0000, // 射线颜色
+                                transparent: true,
+                                opacity: 0.75,
+                                // depthTest: false,
+                                // depthWrite: false,
+                            })
+                        );
+                        line.name = `measure_${measurements.length}`;
+                        line.frustumCulled = false;
+                        scene.current.add(line);
+                        measurements = measurements.concat(line);
+                        const measurementDiv = document.createElement("div");
+                        measurementDiv.className = "label";
+                        measurementDiv.innerHTML = `
+                        <div>
+                            开始
+                        </div>
+                        <div style="display: none;">开始</div>
+                        `;
+                        const measurementLabel: any = new CSS2DObject(measurementDiv);
+                        measurementLabel.position.copy(intersects[0].point);
+                        measurementLabels[lineId] = measurementLabel;
+                        scene.current.add(measurementLabels[lineId]);
                         drawingLine = true;
                     } else {
                         // 终点
+                        const positions = line.geometry.attributes.position.array;
                         positions[3] = intersects[0].point.x;
                         positions[4] = intersects[0].point.y;
                         positions[5] = intersects[0].point.z;
+                        line.geometry.attributes.position.needsUpdate = true;
+                        lineId = `measure_${measurements.length}`;
                         drawingLine = false;
+
+                        console.log(positions)
                         const cameraPosition = camera?.current?.position || {};
                         const cameraMax = Math.max(
                             Math.abs(cameraPosition.x),
@@ -497,28 +526,15 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         } else if (cameraMax === Math.abs(cameraPosition.z)) {
                             cameraDirection = 'y';
                         }
-                        let sizeObj: any = [];
-                        if (cameraDirection === 'z') {
-                            sizeObj = [
-                                Math.abs(positions[3] - positions[0]),
-                                Math.abs(positions[4] - positions[1]),
-                                Math.abs(positions[5] - positions[2])
-                            ]
-                        } else if (cameraDirection === 'y') {
-                            sizeObj = [
-                                Math.abs(positions[3] - positions[0]),
-                                Math.abs(positions[4] - positions[1]),
-                                Math.abs(positions[5] - positions[2])
-                            ]
-                        }
-                        const geometry = new THREE.BoxGeometry(...sizeObj);
+                        const geometry = new THREE.BoxGeometry(
+                            Math.abs(positions[3] - positions[0]),
+                            Math.abs(positions[4] - positions[1]),
+                            Math.abs(positions[5] - positions[2]),
+                        );
                         const material = new THREE.MeshBasicMaterial({ opacity: 0 });
                         material.opacity = 0;
                         material.transparent = true;
                         const cube = new THREE.Mesh(geometry, material);
-                        cube.position.x = positions[3] + (positions[0] - positions[3]) / 2;
-                        cube.position.y = positions[4] + (positions[1] - positions[4]) / 2;
-                        cube.position.z = positions[5] + (positions[2] - positions[5]) / 2;
                         var boxHelper = new THREE.BoxHelper(cube, 0xff0000);
                         boxHelper.name = "measureBoxHelper";
                         boxHelper.visible = true;
@@ -537,7 +553,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 const models = getAllModelsFromScene(scene.current);
                 const axis: any = scene?.current?.getObjectByName?.("axis");
                 models.forEach((mesh: any) => {
-                    (mesh.children || []).filter((i: any) => i.name === "border").forEach((child: any) => {
+                    (mesh.children || []).filter((i: any) => i.type === "BoxHelper").forEach((child: any) => {
                         child.visible = true;
                     });
                 });
@@ -549,43 +565,43 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             event.preventDefault();
             mouse.x = (event.offsetX / renderer.current.domElement.offsetWidth) * 2 - 1;
             mouse.y = -(event.offsetY / renderer.current.domElement.offsetHeight) * 2 + 1;
-            // if (drawingLine) {
-            //     raycaster.setFromCamera(mouse, camera.current);
-            //     intersects = raycaster.intersectObjects(pickableObjects, false);
-            //     if (intersects.length > 0) {
-            //         const positions = line.geometry.attributes.position.array;
-            //         const v0 = new THREE.Vector3(
-            //             positions[0],
-            //             positions[1],
-            //             positions[2]
-            //         );
-            //         const v1 = new THREE.Vector3(
-            //             intersects[0].point.x,
-            //             intersects[0].point.y,
-            //             intersects[0].point.z
-            //         );
-            //         positions[3] = intersects[0].point.x;
-            //         positions[4] = intersects[0].point.y;
-            //         positions[5] = intersects[0].point.z;
-            //         line.geometry.attributes.position.needsUpdate = true;
-            //         const distance = v0.distanceTo(v1);
-            //         let scale = { value: 1, unit: "m" };
-            //         try {
-            //             scale = JSON.parse(localStorage.getItem("scale") || JSON.stringify({ value: 1, unit: "m" }));
-            //         } catch (err) {
-            //             console.log('localStorge中的scale格式不对', err);
-            //             localStorage.removeItem("scale");
-            //         }
-            //         const value = (distance * Number(scale?.value || "1")).toFixed(2) + (scale?.unit || "m");
-            //         measurementLabels[lineId].element.innerHTML = `
-            //         <div>
-            //             ${value}
-            //         </div>
-            //         <div style="display: none;">${value}</div>
-            //         `;
-            //         measurementLabels[lineId].position.lerpVectors(v0, v1, 0.5);
-            //     }
-            // }
+            if (drawingLine) {
+                raycaster.setFromCamera(mouse, camera.current);
+                intersects = raycaster.intersectObjects(pickableObjects, false);
+                if (intersects.length > 0) {
+                    const positions = line.geometry.attributes.position.array;
+                    const v0 = new THREE.Vector3(
+                        positions[0],
+                        positions[1],
+                        positions[2]
+                    );
+                    const v1 = new THREE.Vector3(
+                        intersects[0].point.x,
+                        intersects[0].point.y,
+                        intersects[0].point.z
+                    );
+                    positions[3] = intersects[0].point.x;
+                    positions[4] = intersects[0].point.y;
+                    positions[5] = intersects[0].point.z;
+                    line.geometry.attributes.position.needsUpdate = true;
+                    const distance = v0.distanceTo(v1);
+                    let scale = { value: 1, unit: "m" };
+                    try {
+                        scale = JSON.parse(localStorage.getItem("scale") || JSON.stringify({ value: 1, unit: "m" }));
+                    } catch (err) {
+                        console.log('localStorge中的scale格式不对', err);
+                        localStorage.removeItem("scale");
+                    }
+                    const value = (distance * Number(scale?.value || "1")).toFixed(2) + (scale?.unit || "m");
+                    measurementLabels[lineId].element.innerHTML = `
+                    <div>
+                        ${value}
+                    </div>
+                    <div style="display: none;">${value}</div>
+                    `;
+                    measurementLabels[lineId].position.lerpVectors(v0, v1, 0.5);
+                }
+            }
         }
         function onMouseUp() {
             if (!renderer.current) return;
@@ -595,7 +611,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 if (!(prev || []).includes('bzBtn02')) {
                     // 隐藏边框
                     models.forEach((mesh: any) => {
-                        const item = (mesh.children || []).filter((i: any) => i.name !== "measureBoxHelper" && i.name === "border");
+                        const item = (mesh.children || []).filter((i: any) => i.name !== "measureBoxHelper" && i.type === "BoxHelper");
                         if (item?.[0]) {
                             item[0].visible = false;
                         }
@@ -638,7 +654,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             renderer?.current?.domElement?.removeEventListener?.("pointerdown", onMouseDown, false);
             renderer?.current?.domElement?.removeEventListener?.("pointerup", onMouseUp, false);
             renderer?.current?.domElement?.removeEventListener?.("mousemove", onDocumentMouseMove, false);
-            window?.removeEventListener("keydown", onKeyDown);
             window?.removeEventListener?.("keyup", onKeyUp);
             setCameraSwitch && setCameraSwitch?.(false);
             if (cameraRef?.current) {
@@ -853,7 +868,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 });
                 Object.entries(counter)?.forEach((count: any) => {
                     (count[1] || []).forEach((item: any, index: number) => {
-                        let { type, name, standardValue, maxValue, minValue, averageValue, position = [] } = item;
+                        let { type, name, standardValue, measureValue, offsetValue, position = [] } = item;
                         const box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
                         const length = box.max.x - box.min.x; // 模型长度
                         const width = box.max.z - box.min.z; // 模型宽度
@@ -864,29 +879,23 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             const point = {
                                 x: -1 * length * labelDashLength,
                                 y: 0,
-                                z: count[1].length === 1 ?
-                                    0
+                                z: (index === 0 || index + 1 === count[1].length) ?
+                                    width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
                                     :
-                                    count[1].length === 2 ?
-                                        width / 3 * (index === 0 ? -1 : 1)
+                                    (index * 2 + 1 === count[1].length) ? 0
                                         :
-                                        (index === 0 || index + 1 === count[1].length) ?
-                                            width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
-                                            :
-                                            (index * 2 + 1 === count[1].length) ? 0
-                                                :
-                                                (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                        (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                        (
+                                            (((index + 1) > count[1].length / 2) ?
                                                 (
-                                                    (((index + 1) > count[1].length / 2) ?
-                                                        (
-                                                            Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
-                                                                ((count[1].length / 2) - index - 1)
-                                                                :
-                                                                (count[1].length / 2) * -1
-                                                        )
+                                                    Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                                        ((count[1].length / 2) - index - 1)
                                                         :
-                                                        ((count[1].length / 2) - index))
-                                                ),
+                                                        (count[1].length / 2) * -1
+                                                )
+                                                :
+                                                ((count[1].length / 2) - index))
+                                        ),
                             };
                             position = [point, point];
                             localPosition = [
@@ -904,29 +913,23 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             const point = {
                                 x: length * labelDashLength,
                                 y: 0,
-                                z: count[1].length === 1 ?
-                                    0
+                                z: (index === 0 || index + 1 === count[1].length) ?
+                                    width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
                                     :
-                                    count[1].length === 2 ?
-                                        width / 3 * (index === 0 ? -1 : 1)
+                                    (index * 2 + 1 === count[1].length) ? 0
                                         :
-                                        (index === 0 || index + 1 === count[1].length) ?
-                                            width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
-                                            :
-                                            (index * 2 + 1 === count[1].length) ? 0
-                                                :
-                                                (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                        (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                        (
+                                            (((index + 1) > count[1].length / 2) ?
                                                 (
-                                                    (((index + 1) > count[1].length / 2) ?
-                                                        (
-                                                            Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
-                                                                ((count[1].length / 2) - index - 1)
-                                                                :
-                                                                (count[1].length / 2) * -1
-                                                        )
+                                                    Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                                        ((count[1].length / 2) - index - 1)
                                                         :
-                                                        ((count[1].length / 2) - index))
-                                                ),
+                                                        (count[1].length / 2) * -1
+                                                )
+                                                :
+                                                ((count[1].length / 2) - index))
+                                        ),
                             };
                             position = [point, point];
                             localPosition = [
@@ -942,29 +945,23 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             counter.right += 1;
                         } else if ((type === "top")) {
                             const point = {
-                                x: count[1].length === 1 ?
-                                    0
+                                x: (index === 0 || index + 1 === count[1].length) ?
+                                    length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
                                     :
-                                    count[1].length === 2 ?
-                                        length / 3 * (index === 0 ? -1 : 1)
+                                    (index * 2 + 1 === count[1].length) ? 0
                                         :
-                                        (index === 0 || index + 1 === count[1].length) ?
-                                            length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
-                                            :
-                                            (index * 2 + 1 === count[1].length) ? 0
-                                                :
-                                                (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                        (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                        (
+                                            (((index + 1) > count[1].length / 2) ?
                                                 (
-                                                    (((index + 1) > count[1].length / 2) ?
-                                                        (
-                                                            Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
-                                                                ((count[1].length / 2) - index - 1)
-                                                                :
-                                                                (count[1].length / 2) * -1
-                                                        )
+                                                    Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                                        ((count[1].length / 2) - index - 1)
                                                         :
-                                                        ((count[1].length / 2) - index))
-                                                ),
+                                                        (count[1].length / 2) * -1
+                                                )
+                                                :
+                                                ((count[1].length / 2) - index))
+                                        ),
                                 y: 0,
                                 z: width * 5 / 6,
                             };
@@ -982,29 +979,23 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             counter.top += 1;
                         } else if ((type === "bottom")) {
                             const point = {
-                                x: count[1].length === 1 ?
-                                    0
+                                x: (index === 0 || index + 1 === count[1].length) ?
+                                    length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
                                     :
-                                    count[1].length === 2 ?
-                                        length / 3 * (index === 0 ? -1 : 1)
+                                    (index * 2 + 1 === count[1].length) ? 0
                                         :
-                                        (index === 0 || index + 1 === count[1].length) ?
-                                            length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
-                                            :
-                                            (index * 2 + 1 === count[1].length) ? 0
-                                                :
-                                                (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                        (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                        (
+                                            (((index + 1) > count[1].length / 2) ?
                                                 (
-                                                    (((index + 1) > count[1].length / 2) ?
-                                                        (
-                                                            Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
-                                                                ((count[1].length / 2) - index - 1)
-                                                                :
-                                                                (count[1].length / 2) * -1
-                                                        )
+                                                    Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                                        ((count[1].length / 2) - index - 1)
                                                         :
-                                                        ((count[1].length / 2) - index))
-                                                ),
+                                                        (count[1].length / 2) * -1
+                                                )
+                                                :
+                                                ((count[1].length / 2) - index))
+                                        ),
                                 y: 0,
                                 z: -1 * width,
                             };
@@ -1046,12 +1037,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         measurementDiv.innerHTML = `
                         <div>
                             <div class="item">${name}</div>
+                            <div class="item" style="text-align:center;">${standardValue} ± ${offsetValue}</div>
                             <div class="flex-box item"><div class="key">标准值</div><div class="value">${standardValue}</div></div>
-                            <div class="flex-box item"><div class="key">最大值</div><div class="value">${maxValue}</div></div>
-                            <div class="flex-box item"><div class="key">最小值</div><div class="value">${minValue}</div></div>
-                            <div class="flex-box item"><div class="key">平均值</div><div class="value">${averageValue}</div></div>
+                            <div class="flex-box item"><div class="key">实测值</div><div class="value">${measureValue}</div></div>
+                            <div class="flex-box item"><div class="key">偏差值</div><div class="value">${offsetValue}</div></div>
                         </div>
-                        <div style="display: none;">${standardValue}</div>
+                        <div style="display: none;">${measureValue}</div>
                     `;
                         const measurementLabel: any = new CSS2DObject(measurementDiv);
                         measurementLabel.position.copy({

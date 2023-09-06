@@ -1,7 +1,7 @@
 import TooltipDiv from '@/components/TooltipDiv';
 import { message } from 'antd';
 import _ from 'lodash';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useModel } from 'umi';
 import styles from '../index.module.less';
 
@@ -23,8 +23,10 @@ const TableCharts: React.FC<Props> = (props: any) => {
             { "name": "创建时间", "value": [{ "value": "value1", "color": "red" }, { "value": "value2", "color": "red" }, { "value": "value1", "color": "red" }] }
         ];
     }
+    const domRef = useRef<any>(null);
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
+    const [tableScroll, setTableScroll] = useState(false);
 
     useEffect(() => {
         if (!_.isArray(dataValue)) {
@@ -32,11 +34,27 @@ const TableCharts: React.FC<Props> = (props: any) => {
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
+
+        const height = domRef?.current?.clientHeight;
+        const valueLength = dataValue[0]?.value?.length;
+        if (height > valueLength * 38) {
+            setTableScroll(false);
+        } else {
+            setTableScroll(true);
+        }
     }, [dataValue]);
 
     return (
-        <div id={`echart-${id}`} className={styles.tableCharts} style={{ fontSize }}>
-            <div className="charts-header-box flex-box">
+        <div
+            id={`echart-${id}`}
+            className={styles.tableCharts}
+            ref={domRef}
+            style={{ fontSize }}
+        >
+            <div
+                className="charts-header-box flex-box"
+                style={tableScroll ? { width: 'calc(100% - 22px)' } : { width: 'calc(100% - 17px)' }}
+            >
                 <TooltipDiv title={yName} className="charts-header-item">
                     {yName}
                 </TooltipDiv>

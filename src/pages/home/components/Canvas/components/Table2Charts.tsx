@@ -150,13 +150,13 @@ const Table2Charts: React.FC<Props> = (props: any) => {
             {
                 name: '距离(mm)',
                 value: [
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
-                    { value: 0, color: null },
+                    { value: 'http://D:/123/asd/img.png', color: null },
+                    { value: 'http://D:/123/asd/img.png', color: null },
+                    { value: 'http://D:/123/asd/img.png', color: null },
+                    { value: 'http://D:/123/asd/img.png', color: null },
+                    { value: 'http://D:/123/asd/img.png', color: null },
+                    { value: 'http://D:/123/asd/img.png', color: null },
+                    { value: 'http://D:/123/asd/img.png', color: null },
 
                 ],
                 color: null,
@@ -178,7 +178,11 @@ const Table2Charts: React.FC<Props> = (props: any) => {
 
         const height = domRef?.current?.clientHeight;
         const valueLength = dataValue[0]?.value?.length;
-        setTableScroll((height - 38) < valueLength * 38);
+        if (height > valueLength * 38) {
+            setTableScroll(false);
+        } else {
+            setTableScroll(true);
+        }
     }, [dataValue,]);
 
     const onMoveIconMouseDown = (ev: any, index: number) => {
@@ -254,9 +258,10 @@ const Table2Charts: React.FC<Props> = (props: any) => {
             ref={domRef}
             style={{ fontSize }}
         >
-            <div className="charts-header-box flex-box" style={tableScroll ? {
-                width: "calc(100% - 22px)",
-            } : {}}>
+            <div
+                className="charts-header-box flex-box"
+                style={tableScroll ? { width: 'calc(100% - 22px)' } : { width: 'calc(100% - 17px)' }}
+            >
                 {
                     _.isArray(dataValue) && (dataValue || []).map((item: any, index: number) => {
                         const { name } = item;
@@ -322,29 +327,53 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                         if (_.isObject(val)) {
                                             // @ts-ignore
                                             const { value, color } = val;
-                                            return <TooltipDiv
-                                                className={`charts-body-td ${(_.isBoolean(interlacing) ? interlacing : true) ? 'charts-body-td-interlacing' : ''}`}
+                                            return <div
                                                 key={`echart-${id}-tr-td-${sIndex}-${value}`}
-                                                title={value?.length > 15 ? value : ''}
+                                                className={`flex-box charts-body-td ${(_.isBoolean(interlacing) ? interlacing : true) ? 'charts-body-td-interlacing' : ''}`}
+                                            >
+                                                <TooltipDiv
+                                                    className={`charts-body-td-title`}
+                                                    title={value?.length > 15 ? value : ''}
+                                                    style={Object.assign(
+                                                        !!color ? { color } : {},
+                                                        des_bordered ? { borderWidth: '1px' } : {}
+                                                    )}
+                                                    placement={"top"}
+                                                    onClick={value?.indexOf?.('http://') > -1 ? () => {
+                                                        window.open(value, "_blank");
+                                                    } : null}
+                                                >
+                                                    {value?.indexOf?.('http://') > -1 ? "查看" : value}
+                                                </TooltipDiv>
+                                                {
+                                                    (!des_bordered || (index + 1) === dataValue?.length) ? null :
+                                                        <div className="charts-body-item-border" />
+                                                }
+                                            </div>
+                                        }
+                                        return <div
+                                            key={`echart-${id}-tr-td-${sIndex}-${val}`}
+                                            className={`flex-box charts-body-td ${(_.isBoolean(interlacing) ? interlacing : true) ? 'charts-body-td-interlacing' : ''}`}
+                                        >
+                                            <TooltipDiv
+                                                className={`charts-body-td-title`}
+                                                title={val?.length > 15 ? val : ''}
                                                 style={Object.assign(
                                                     !!color ? { color } : {},
                                                     des_bordered ? { borderWidth: '1px' } : {}
                                                 )}
+                                                placement={"top"}
+                                                onClick={val?.indexOf?.('http://') > -1 ? () => {
+                                                    window.open(val, "_blank");
+                                                } : null}
                                             >
-                                                {value}
+                                                {val?.indexOf?.('http://') > -1 ? "查看" : val}
                                             </TooltipDiv>
-                                        }
-                                        return <TooltipDiv
-                                            className="charts-body-td"
-                                            key={`echart-${id}-tr-td-${sIndex}-${val}`}
-                                            title={val?.length > 15 ? val : ''}
-                                            style={Object.assign(
-                                                !!color ? { color } : {},
-                                                des_bordered ? { borderWidth: '1px' } : {}
-                                            )}
-                                        >
-                                            {val}
-                                        </TooltipDiv>
+                                            {
+                                                (!des_bordered || (index + 1) === dataValue?.length) ? null :
+                                                    <div className="charts-body-item-border" />
+                                            }
+                                        </div>
                                     })
                                 }
                             </div>

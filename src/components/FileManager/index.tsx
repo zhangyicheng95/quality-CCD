@@ -8,13 +8,13 @@ import moment from 'moment';
 
 interface Props {
   fileType?: any;
-  data: any;
+  data?: any;
   onOk: any;
   onCancel: any;
 }
 
 const FileManager: React.FC<Props> = (props) => {
-  const { fileType = 'file', data, onOk, onCancel, } = props;
+  const { fileType = 'file', data = {}, onOk, onCancel, } = props;
   const { value } = data;
   const [loading, setLoading] = useState<any>(false);
   const [list, setList] = useState<any>([]);

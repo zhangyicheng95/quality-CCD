@@ -129,7 +129,7 @@ const Home: React.FC<any> = (props: any) => {
   const [homeSettingVisible, setHomeSettingVisible] = useState('');
   const [homeSettingData, setHomeSettingData] = useState({
     "slider-1": { des_column: 1, ifShowHeader: false },
-    "slider-4": { fontSize: 20, ifShowHeader: false },
+    "slider-4": { fontSize: 20, ifShowHeader: false, show_start_end: false },
     "footer-1": { fontSize: 14, ifShowHeader: false },
     "footer-2": { fontSize: 20, ifShowHeader: false },
   });
@@ -318,26 +318,7 @@ const Home: React.FC<any> = (props: any) => {
                 !!homeSettingVisible ?
                   <Popconfirm
                     title="确认删除监控窗口吗?"
-                    onConfirm={() => {
-                      const home = gridHomeList?.map((item: any) => {
-                        if (item.i === 'slider-1') {
-                          return {
-                            ...item,
-                            w: 0,
-                            h: 0,
-                            minW: 0,
-                            minH: 0,
-                          };
-                        }
-                        return item;
-                      });
-                      setParamData((prev: any) => {
-                        return Object.assign({}, prev, {
-                          contentData: Object.assign({}, prev?.contentData, { home })
-                        })
-                      });
-                      setGridHomeList(home);
-                    }}
+                    onConfirm={() => deleteBasic('slider-1')}
                     okText="确认"
                     cancelText="取消"
                   >
@@ -364,7 +345,7 @@ const Home: React.FC<any> = (props: any) => {
           ...{ display: 'flex', alignItems: 'center', padding: '0 8px' }
         }}>
           {
-            !!paramData?.contentData?.ipList?.length ?
+            (!!paramData?.contentData?.ipList?.length && !!homeSettingData?.['slider-4']?.show_start_end) ?
               <Fragment>
                 <Button
                   type="text"
@@ -490,26 +471,7 @@ const Home: React.FC<any> = (props: any) => {
                 !!homeSettingVisible ?
                   <Popconfirm
                     title="确认删除监控窗口吗?"
-                    onConfirm={() => {
-                      const home = gridHomeList?.map((item: any) => {
-                        if (item.i === 'slider-4') {
-                          return {
-                            ...item,
-                            w: 0,
-                            h: 0,
-                            minW: 0,
-                            minH: 0,
-                          };
-                        }
-                        return item;
-                      });
-                      setParamData((prev: any) => {
-                        return Object.assign({}, prev, {
-                          contentData: Object.assign({}, prev?.contentData, { home })
-                        })
-                      });
-                      setGridHomeList(home);
-                    }}
+                    onConfirm={() => deleteBasic('slider-4')}
                     okText="确认"
                     cancelText="取消"
                   >
@@ -566,26 +528,7 @@ const Home: React.FC<any> = (props: any) => {
                 !!homeSettingVisible ?
                   <Popconfirm
                     title="确认删除监控窗口吗?"
-                    onConfirm={() => {
-                      const home = gridHomeList?.map((item: any) => {
-                        if (item.i === 'footer-1') {
-                          return {
-                            ...item,
-                            w: 0,
-                            h: 0,
-                            minW: 0,
-                            minH: 0,
-                          };
-                        }
-                        return item;
-                      });
-                      setParamData((prev: any) => {
-                        return Object.assign({}, prev, {
-                          contentData: Object.assign({}, prev?.contentData, { home })
-                        })
-                      });
-                      setGridHomeList(home);
-                    }}
+                    onConfirm={() => deleteBasic('footer-1')}
                     okText="确认"
                     cancelText="取消"
                   >
@@ -656,26 +599,7 @@ const Home: React.FC<any> = (props: any) => {
                 !!homeSettingVisible ?
                   <Popconfirm
                     title="确认删除监控窗口吗?"
-                    onConfirm={() => {
-                      const home = gridHomeList?.map((item: any) => {
-                        if (item.i === 'footer-2') {
-                          return {
-                            ...item,
-                            w: 0,
-                            h: 0,
-                            minW: 0,
-                            minH: 0,
-                          };
-                        }
-                        return item;
-                      });
-                      setParamData((prev: any) => {
-                        return Object.assign({}, prev, {
-                          contentData: Object.assign({}, prev?.contentData, { home })
-                        })
-                      });
-                      setGridHomeList(home);
-                    }}
+                    onConfirm={() => deleteBasic('footer-2')}
                     okText="确认"
                     cancelText="取消"
                   >
@@ -692,6 +616,28 @@ const Home: React.FC<any> = (props: any) => {
     isVision, started, taskDataConnect, loading, paramData, projectStatus,
     logStr, footerData, errorData, pageIconPosition, homeSettingData, homeSettingVisible,
   ]);
+  // 删除基础组件
+  const deleteBasic = (type: string) => {
+    const home = gridHomeList?.map((item: any) => {
+      if (item.i === type) {
+        return {
+          ...item,
+          w: 0,
+          h: 0,
+          minW: 0,
+          minH: 0,
+        };
+      }
+      return item;
+    });
+    setParamData((prev: any) => {
+      return Object.assign({}, prev, {
+        contentData: Object.assign({}, prev?.contentData, { home })
+      })
+    });
+    setGridHomeList(home);
+    setHomeSettingVisible('');
+  };
   // 保存布局状态
   const saveGridFunc = (data: any) => {
     let home: any = [],
@@ -952,7 +898,7 @@ const Home: React.FC<any> = (props: any) => {
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
           CCDName, imgs_width, imgs_height, tableSize, magnifier, comparison, operationList,
           dataZoom, fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
-          password, passwordHelp, ifShowHeader,
+          password, passwordHelp, ifShowHeader, ifShowColorList,
           basicInfoData = [{ id: guid(), name: '', value: '' }],
         } = item;
         // const id = key?.split('$$')[0];
@@ -1048,7 +994,7 @@ const Home: React.FC<any> = (props: any) => {
                                   data={{
                                     dataValue: dataValue || { name: "", value: [] },
                                     modelRotate, modelScale, modelRotateScreenshot,
-                                    fontSize, fetchType, xName,
+                                    fontSize, fetchType, xName, ifShowColorList,
                                   }}
                                 />
                                 :
@@ -1475,7 +1421,7 @@ const Home: React.FC<any> = (props: any) => {
       des_bordered, des_column, des_layout, des_size, ifLocalStorage,
       CCDName, imgs_width, imgs_height, magnifier, comparison = false, operationList, dataZoom,
       fontColor, interlacing = false, modelRotate = false, modelScale = false, modelRotateScreenshot = false,
-      password = '', passwordHelp = '', ifShowHeader = false,
+      password = '', passwordHelp = '', ifShowHeader = false, ifShowColorList = false,
     } = values;
     if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
       try {
@@ -1504,7 +1450,7 @@ const Home: React.FC<any> = (props: any) => {
         des_bordered, des_column, des_layout, des_size, ifLocalStorage,
         CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
         fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
-        password, passwordHelp, ifShowHeader
+        password, passwordHelp, ifShowHeader, ifShowColorList
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1521,7 +1467,7 @@ const Home: React.FC<any> = (props: any) => {
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
             CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
             fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
-            password, passwordHelp, ifShowHeader
+            password, passwordHelp, ifShowHeader, ifShowColorList
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -1549,7 +1495,7 @@ const Home: React.FC<any> = (props: any) => {
       progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: undefined,
       CCDName: undefined, magnifier: false, comparison: false, operationList: [], dataZoom: 0,
       fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false, modelRotateScreenshot: false,
-      password: undefined, passwordHelp: undefined, ifShowHeader: false,
+      password: undefined, passwordHelp: undefined, ifShowHeader: false, ifShowColorList: false,
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -2577,6 +2523,14 @@ const Home: React.FC<any> = (props: any) => {
                   ['three'].includes(windowType) ?
                     <Fragment>
                       <Form.Item
+                        name="ifShowColorList"
+                        label="展示颜色对比条"
+                        initialValue={false}
+                        valuePropName="checked"
+                      >
+                        <Switch />
+                      </Form.Item>
+                      <Form.Item
                         name="modelRotate"
                         label="开启模型旋转"
                         initialValue={false}
@@ -2746,6 +2700,18 @@ const Home: React.FC<any> = (props: any) => {
                           min={12}
                         />
                       </Form.Item>
+                  }
+                  {
+                    homeSettingVisible === 'slider-4' ?
+                      <Form.Item
+                        name="show_start_end"
+                        label="应用一键启停"
+                        valuePropName="checked"
+                      >
+                        <Switch />
+                      </Form.Item>
+                      :
+                      null
                   }
                   <Form.Item
                     name="ifShowHeader"
