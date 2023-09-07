@@ -92,14 +92,20 @@ export async function btnFetch(type: string, url: string, params = {}, options?:
   }
   if (type === 'get') {
     if (_.isObject(params)) {
-      return fetchGet(url, { params, ...options });
+      return fetchGet(`${url}?${parseParamsToUrl(params)}`, { ...options });
     }
-    return fetchGet(`${url}/${params}`);
+    if (!_.isUndefined(params) && !_.isNull(params) && (_.isString(params) && !!params)) {
+      return fetchGet(`${url}/${params}`);
+    }
+    return fetchGet(url);
   } if (type === 'delete') {
     if (_.isObject(params)) {
       return fetchDelete(url, { params, ...options });
     }
-    return fetchDelete(`${url}/${params}`);
+    if (!_.isUndefined(params) && !_.isNull(params)) {
+      return fetchDelete(`${url}/${params}`);
+    }
+    return fetchDelete(url);
   } else if (type === 'post') {
     if (_.isObject(params)) {
       return fetchPost(url, {
@@ -107,12 +113,18 @@ export async function btnFetch(type: string, url: string, params = {}, options?:
         ...options
       });
     }
-    return fetchPost(`${url}/${params}`);
+    if (!_.isUndefined(params) && !_.isNull(params)) {
+      return fetchPost(`${url}/${params}`);
+    }
+    return fetchPost(url);
   } else if (type === 'put') {
     if (_.isObject(params)) {
       return fetchPut(url, { body: params, ...options });
     }
-    return fetchPut(`${url}/${params}`);
+    if (!_.isUndefined(params) && !_.isNull(params)) {
+      return fetchPut(`${url}/${params}`);
+    }
+    return fetchPut(url);
   } else if (type === 'upload') {
     if (_.isObject(params)) {
       return upload(url, { body: params, ...options });
