@@ -12,7 +12,7 @@ interface Props {
 
 const ButtonPWCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { yName, xName = '', fetchType, fetchParams, password, passwordHelp } = data;
+    const { yName, xName = '', fetchType, fetchParams = undefined, password, passwordHelp } = data;
     const [form] = Form.useForm();
     const { validateFields, } = form;
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -20,7 +20,11 @@ const ButtonPWCharts: React.FC<Props> = (props: any) => {
 
     // 执行发送指令
     const onOk = () => {
-        btnFetch(fetchType, xName, fetchParams);
+        try {
+            btnFetch(fetchType, xName, JSON.parse(fetchParams || ""));
+        } catch (e) {
+            btnFetch(fetchType, xName, fetchParams);
+        }
         setPasswordVisible(false);
         setPasswordvalidate({});
         form.resetFields();

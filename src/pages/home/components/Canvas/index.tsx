@@ -1799,7 +1799,7 @@ const Home: React.FC<any> = (props: any) => {
           fontColor, interlacing = false, modelRotate = false, modelScale = false, modelRotateScreenshot = false,
           password = '', passwordHelp = '', ifShowColorList = false,
         } = values;
-        if (['button', 'buttonInp'].includes(type) && !!fetchParams) {
+        if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
           try {
             JSON.parse(fetchParams);
           } catch (e) {
