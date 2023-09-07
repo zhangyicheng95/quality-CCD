@@ -471,3 +471,12 @@ export function equalsObj(oldData: any, newData: any) {
         return false;
     }
 }
+
+// 获取localStorage中所有的key
+export function getAllLocalStorageKeys() {
+    var keys = [];
+    for (var i = 0; i < localStorage.length; i++) {
+        keys.push(localStorage.key(i));
+    }
+    return keys;
+}
