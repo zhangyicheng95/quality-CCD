@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button, Image, message, Modal, Skeleton } from 'antd';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
@@ -27,9 +27,17 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     const [selectedNum, setSelectedNum] = useState(0);
     const [imgVisible, setImgVisible] = useState(false);
     const [visibleDirection, setVisibleDirection] = useState<any>('column');
+    const [visible, setVisible] = useState(false);
 
     const dom = useRef<any>();
-
+    useLayoutEffect(() => {
+        try {
+            const list = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || "[]");
+            setUrlList(list);
+        } catch (err) {
+            console.log(err);
+        }
+    }, []);
     useEffect(() => {
         if (!_.isString(dataValue)) {
             message.error('图片组件数据格式不正确，请检查');
@@ -44,12 +52,11 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             const { width = 1, height = 1 } = img;
             setFontSize(width / height);
         };
-        if (!!comparison) {
-            setUrlList((pre: any) => {
-                let list = Array.from(new Set(pre.concat(dataValue)));
-                return list.slice(list.length - 19);
-            });
-        }
+        setUrlList((pre: any) => {
+            let list = Array.from(new Set(pre.concat(dataValue)));
+            localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
+            return list.slice(list.length - 99);
+        });
     }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight, comparison]);
     useEffect(() => {
         if (!magnifier) {
@@ -168,6 +175,8 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                         { width: '100%', height: 'auto' } :
                                         { width: 'auto', height: '100%' }
                                 }
+                                preview={{ visible: false }}
+                                onClick={() => setVisible(true)}
                             />
                             <div className="mask" />
                         </div>
@@ -180,12 +189,29 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                     { width: '100%', height: 'auto' } :
                                     { width: 'auto', height: '100%' }
                             }
+                            preview={{ visible: false }}
+                            onClick={() => setVisible(true)}
                         />)
                     :
                     <Skeleton.Image
                         active={true}
                     />
             }
+            <div style={{ display: 'none' }}>
+                <Image.PreviewGroup
+                    preview={{
+                        visible,
+                        current: urlList.length - 1,
+                        onVisibleChange: vis => setVisible(vis)
+                    }}
+                >
+                    {
+                        (urlList || []).map((url: string) => {
+                            return <Image src={url} alt={url} />
+                        })
+                    }
+                </Image.PreviewGroup>
+            </div>
             {
                 !!windowControl ?
                     <div className="preview-box flex-box-center">

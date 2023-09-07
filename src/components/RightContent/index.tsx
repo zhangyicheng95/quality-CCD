@@ -3,10 +3,12 @@ import { CompressOutlined, ExpandOutlined, SettingOutlined, ClearOutlined } from
 import React, { useEffect, useState } from 'react';
 import { useModel, SelectLang } from 'umi';
 import styles from './index.less';
-import { exitFullScreen, isFullscreenElement, requestFullScreen } from '@/utils/utils';
+import { exitFullScreen, getAllLocalStorageKeys, isFullscreenElement, requestFullScreen } from '@/utils/utils';
 import Avatar from './AvatarDropdown';
 
 const { version } = require('../../../package.json');
+const local = ["ipUrl-realtime", "ipUrl-history", "ipString"];
+
 export type SiderTheme = 'light' | 'dark';
 
 const GlobalHeaderRight: React.FC = () => {
@@ -42,7 +44,12 @@ const GlobalHeaderRight: React.FC = () => {
       <Avatar menu={false} />
       <ClearOutlined style={{ marginRight: 12 }} onClick={() => {
         if (!!localStorage.getItem(`localGridContentList-${params.id}`)) {
-          localStorage.removeItem(`localGridContentList-${params.id}`);
+          const localStorageKeys = getAllLocalStorageKeys();
+          (localStorageKeys || []).forEach((key: any) => {
+            if (key?.indexOf(params.id) > -1) {
+              localStorage.removeItem(key);
+            }
+          });
           window.location.reload();
         }
       }} />
