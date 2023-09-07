@@ -54,7 +54,7 @@ const TableCharts: React.FC<Props> = (props: any) => {
         >
             <div
                 className="charts-header-box flex-box"
-                style={tableScroll ? { width: 'calc(100% - 22px)' } : { width: 'calc(100% - 17px)' }}
+                style={tableScroll ? { width: 'calc(100% - 6px)' } : { width: 'calc(100% - 1px)' }}
             >
                 <TooltipDiv title={yName} className="charts-header-item">
                     {yName}
