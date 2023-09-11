@@ -20,11 +20,17 @@ const ButtonPWCharts: React.FC<Props> = (props: any) => {
 
     // 执行发送指令
     const onOk = () => {
-        try {
-            btnFetch(fetchType, xName, JSON.parse(fetchParams || ""));
-        } catch (e) {
-            btnFetch(fetchType, xName, fetchParams);
+        let params = '';
+        if (!_.isUndefined(fetchParams) && !_.isNull(fetchParams)) {
+            try {
+                params = JSON.parse(fetchParams)
+            } catch (e) {
+                console.log('密码按钮传递参数格式不对:', e);
+                message.error('传递参数 格式不正确');
+                params = '';
+            }
         }
+        btnFetch(fetchType, xName, params);
         setPasswordVisible(false);
         setPasswordvalidate({});
         form.resetFields();

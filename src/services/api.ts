@@ -102,7 +102,7 @@ export async function btnFetch(type: string, url: string, params = {}, options?:
     if (_.isObject(params)) {
       return fetchDelete(url, { params, ...options });
     }
-    if (!_.isUndefined(params) && !_.isNull(params)) {
+    if (!_.isUndefined(params) && !_.isNull(params) && (_.isString(params) && !!params)) {
       return fetchDelete(`${url}/${params}`);
     }
     return fetchDelete(url);
@@ -113,7 +113,7 @@ export async function btnFetch(type: string, url: string, params = {}, options?:
         ...options
       });
     }
-    if (!_.isUndefined(params) && !_.isNull(params)) {
+    if (!_.isUndefined(params) && !_.isNull(params) && (_.isString(params) && !!params)) {
       return fetchPost(`${url}/${params}`);
     }
     return fetchPost(url);
@@ -121,7 +121,7 @@ export async function btnFetch(type: string, url: string, params = {}, options?:
     if (_.isObject(params)) {
       return fetchPut(url, { body: params, ...options });
     }
-    if (!_.isUndefined(params) && !_.isNull(params)) {
+    if (!_.isUndefined(params) && !_.isNull(params) && (_.isString(params) && !!params)) {
       return fetchPut(`${url}/${params}`);
     }
     return fetchPut(url);

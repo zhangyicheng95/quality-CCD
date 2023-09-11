@@ -1498,7 +1498,16 @@ const Home: React.FC<any> = (props: any) => {
                                             type={'primary'}
                                             id={key}
                                             onClick={() => {
-                                              btnFetch(fetchType, xName, JSON.parse(fetchParams));
+                                              let params = '';
+                                              if (!_.isUndefined(value) && !_.isNull(value)) {
+                                                try {
+                                                  params = JSON.parse(value)
+                                                } catch (e) {
+                                                  console.log('按钮传递参数格式不对:', e);
+                                                  params = '';
+                                                }
+                                              }
+                                              btnFetch(fetchType, xName, params);
                                             }}
                                           >
                                             {yName}
