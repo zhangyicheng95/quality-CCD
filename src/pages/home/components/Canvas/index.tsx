@@ -1499,7 +1499,7 @@ const Home: React.FC<any> = (props: any) => {
                                             id={key}
                                             onClick={() => {
                                               let params = '';
-                                              if (!_.isUndefined(value) && !_.isNull(value)) {
+                                              if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {
                                                 try {
                                                   params = JSON.parse(value)
                                                 } catch (e) {

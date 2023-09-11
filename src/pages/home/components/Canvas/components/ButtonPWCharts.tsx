@@ -21,7 +21,7 @@ const ButtonPWCharts: React.FC<Props> = (props: any) => {
     // 执行发送指令
     const onOk = () => {
         let params = '';
-        if (!_.isUndefined(fetchParams) && !_.isNull(fetchParams)) {
+        if (!_.isUndefined(fetchParams) && !_.isNull(fetchParams) && (_.isString(fetchParams) && !!fetchParams)) {
             try {
                 params = JSON.parse(fetchParams)
             } catch (e) {

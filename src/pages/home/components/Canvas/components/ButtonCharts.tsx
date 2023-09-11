@@ -33,7 +33,7 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
             <Input placeholder='传递参数' onChange={(e) => onChange(e)} />
             <Button type="primary" onClick={() => {
                 let params = '';
-                if (!_.isUndefined(value) && !_.isNull(value)) {
+                if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {
                     try {
                         params = JSON.parse(value)
                     } catch (e) {
