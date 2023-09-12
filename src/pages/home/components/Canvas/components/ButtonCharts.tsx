@@ -32,13 +32,17 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
         >
             <Input placeholder='传递参数' onChange={(e) => onChange(e)} />
             <Button type="primary" onClick={() => {
-                try {
-                    JSON.parse(value)
-                } catch (e) {
-                    message.error('传递参数 格式不正确');
-                    return;
+                let params = '';
+                if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {
+                    try {
+                        params = JSON.parse(value)
+                    } catch (e) {
+                        console.log('参数按钮传递参数格式不对:', e);
+                        message.error('传递参数 格式不正确');
+                        params = '';
+                    }
                 }
-                btnFetch(fetchType, xName, JSON.parse(value));
+                btnFetch(fetchType, xName, params);
             }}>{yName}</Button>
         </div>
     );

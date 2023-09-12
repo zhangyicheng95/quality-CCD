@@ -31,7 +31,7 @@ const TableCharts: React.FC<Props> = (props: any) => {
     useEffect(() => {
         if (!_.isArray(dataValue)) {
             message.error('双列表格组件数据格式不正确，请检查');
-            console.log('TableCharts:', dataValue);
+            console.log('TableCharts', dataValue);
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }

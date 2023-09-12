@@ -29,7 +29,7 @@ import rectTopIcon from '@/assets/imgs/rect-top.svg';
 import rectBottomIcon from '@/assets/imgs/rect-bottom.svg';
 import rectFrontIcon from '@/assets/imgs/rect-front.svg';
 import rectBackIcon from '@/assets/imgs/rect-back.svg';
-import { uuid } from '@/utils/utils';
+import { equalsObj, uuid } from '@/utils/utils';
 import { btnFetch } from '@/services/api';
 import FileManager from '@/components/FileManager';
 
@@ -51,13 +51,138 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         // addType = 'add';
         name = "models/output.ply"; // models/pressure.json  models/tx.stl
         value = [
-            { "type": "left", "name": "模具长轴", "standardValue": 651, "maxValue": 651.01, "minValue": 0.01, "averageValue": 651, "position": [{ "x": -228.03, "y": -324.21, "z": 172.48 }, { "x": -228.03, "y": -324.21, "z": 172.48 }] },
-
-            { "type": "bottom", "name": "止口短轴宽度", "standardValue": 735, "maxValue": 736.15, "minValue": 1.15, "averageValue": 651, "position": [{ "x": 66.16, "y": -370.85, "z": -418.66 }, { "x": 66.16, "y": -370.85, "z": -418.66 }] },
-
-            { "type": "top", "name": "模具高度", "standardValue": 735, "maxValue": 736.15, "minValue": 1.15, "averageValue": 651, "position": [{ "x": 66.16, "y": -370.85, "z": -418.66 }, { "x": 66.16, "y": -370.85, "z": -418.66 }] },
-
-            { "type": "right", "name": "模具短轴", "standardValue": 461, "maxValue": 458.98, "minValue": -2.02, "averageValue": 651, "position": [{ "x": -222.99, "y": -327.37, "z": -377.52 }, { "x": -222.99, "y": -327.37, "z": -377.52 }] },
+            {
+                "name": "模具高度",
+                "infoName": "mould_hight",
+                "position": [
+                    {
+                        "x": -35.32,
+                        "y": -285.39,
+                        "z": -301.47
+                    },
+                    {
+                        "x": 14.68,
+                        "y": 289.53,
+                        "z": 438.14
+                    }
+                ],
+                "standardValue": 750,
+                "offsetValue": -0.71,
+                "type": "top",
+                "maxValue": 749.94,
+                "minValue": 749.03,
+                "averageValue": 749.29
+            },
+            {
+                "name": "模具长轴",
+                "infoName": "TQ_NMWJCZ",
+                "position": [
+                    {
+                        "x": -178.08,
+                        "y": -284.31,
+                        "z": 45.58
+                    },
+                    {
+                        "x": 173.39,
+                        "y": 288.62,
+                        "z": 95.58
+                    }
+                ],
+                "standardValue": 570,
+                "offsetValue": 2.93,
+                "type": "left",
+                "maxValue": 574,
+                "minValue": 571.53,
+                "averageValue": 572.93
+            },
+            {
+                "name": "模具短轴",
+                "infoName": "inside_diameter",
+                "position": [
+                    {
+                        "x": -178.08,
+                        "y": -284.31,
+                        "z": 45.58
+                    },
+                    {
+                        "x": 173.39,
+                        "y": 288.62,
+                        "z": 95.58
+                    }
+                ],
+                "standardValue": 350,
+                "offsetValue": 1.47,
+                "type": "right",
+                "maxValue": 352.46,
+                "minValue": 351.39,
+                "averageValue": 351.47
+            },
+            {
+                "name": "止口长轴",
+                "infoName": "TQ_ZKWJCZ",
+                "position": [
+                    {
+                        "x": 5.21,
+                        "y": -329.72,
+                        "z": -310.79
+                    },
+                    {
+                        "x": 5.21,
+                        "y": 373.72,
+                        "z": -310.79
+                    }
+                ],
+                "standardValue": 705,
+                "offsetValue": -1.57,
+                "type": "bottom",
+                "averageValue": 703.43,
+                "maxValue": 703.43,
+                "minValue": 703.43
+            },
+            {
+                "name": "止口短轴",
+                "infoName": "outside_diameter",
+                "position": [
+                    {
+                        "x": -216.6,
+                        "y": 22,
+                        "z": -310.79
+                    },
+                    {
+                        "x": 227.01,
+                        "y": 22,
+                        "z": -310.79
+                    }
+                ],
+                "standardValue": 445,
+                "offsetValue": -1.38,
+                "type": "bottom",
+                "averageValue": 443.62,
+                "maxValue": 443.62,
+                "minValue": 443.62
+            },
+            {
+                "name": "止口凸台宽度",
+                "infoName": "panel_width",
+                "position": [
+                    {
+                        "x": 54.29,
+                        "y": 373.46,
+                        "z": -304.57
+                    },
+                    {
+                        "x": -44.72,
+                        "y": 372,
+                        "z": -306.76
+                    }
+                ],
+                "standardValue": 100,
+                "offsetValue": -0.95,
+                "type": "bottom",
+                "averageValue": 99.05,
+                "maxValue": 99.05,
+                "minValue": 99.05
+            }
         ];
         // let arr = [];
         // for (let i = 1; i < 48; i++) {
@@ -96,7 +221,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     useEffect(() => {
         if (!_.isString(name)) {
             message.error('3D组件数据格式不正确，请检查');
-            console.log('ThreeCharts:', dataValue);
+            console.log('ThreeCharts', dataValue);
             localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
@@ -860,197 +985,375 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         const width = box.max.z - box.min.z; // 模型宽度
                         const height = box.max.y - box.min.y; // 模型高度
                         const labelDashLength = 3 / 4;
-                        let localPosition: any = [];
-                        if ((type === "left")) {
-                            const point = {
-                                x: -1 * length * labelDashLength,
-                                y: 0,
-                                z: count[1].length === 1 ?
-                                    0
-                                    :
-                                    count[1].length === 2 ?
-                                        width / 3 * (index === 0 ? -1 : 1)
+
+                        if (!!position[0] && !!position[1] && equalsObj(position[0], position[1])) {
+                            // 线段的两个点相同，代表只绘制卡片
+                            let localPosition: any = [];
+                            if ((type === "left")) {
+                                const point = {
+                                    x: -1 * length * labelDashLength,
+                                    y: 0,
+                                    z: count[1].length === 1 ?
+                                        0
                                         :
-                                        (index === 0 || index + 1 === count[1].length) ?
-                                            width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
+                                        count[1].length === 2 ?
+                                            width / 3 * (index === 0 ? -1 : 1)
                                             :
-                                            (index * 2 + 1 === count[1].length) ? 0
+                                            (index === 0 || index + 1 === count[1].length) ?
+                                                width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
                                                 :
-                                                (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
-                                                (
-                                                    (((index + 1) > count[1].length / 2) ?
-                                                        (
-                                                            Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
-                                                                ((count[1].length / 2) - index - 1)
-                                                                :
-                                                                (count[1].length / 2) * -1
-                                                        )
-                                                        :
-                                                        ((count[1].length / 2) - index))
-                                                ),
-                            };
-                            position = [point, point];
-                            localPosition = [
-                                {
-                                    ...point,
-                                    x: -1 * length / 3
-                                },
-                                {
-                                    ...point,
-                                    x: -1 * length / 3
-                                }
-                            ];
-                            counter.left += 1;
-                        } else if ((type === "right")) {
-                            const point = {
-                                x: length * labelDashLength,
-                                y: 0,
-                                z: count[1].length === 1 ?
-                                    0
-                                    :
-                                    count[1].length === 2 ?
-                                        width / 3 * (index === 0 ? -1 : 1)
+                                                (index * 2 + 1 === count[1].length) ? 0
+                                                    :
+                                                    (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                                    (
+                                                        (((index + 1) > count[1].length / 2) ?
+                                                            (
+                                                                Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                                                    ((count[1].length / 2) - index - 1)
+                                                                    :
+                                                                    (count[1].length / 2) * -1
+                                                            )
+                                                            :
+                                                            ((count[1].length / 2) - index))
+                                                    ),
+                                };
+                                position = [point, point];
+                                localPosition = [
+                                    {
+                                        ...point,
+                                        x: -1 * length / 3
+                                    },
+                                    {
+                                        ...point,
+                                        x: -1 * length / 3
+                                    }
+                                ];
+                                counter.left += 1;
+                            } else if ((type === "right")) {
+                                const point = {
+                                    x: length * labelDashLength,
+                                    y: 0,
+                                    z: count[1].length === 1 ?
+                                        0
                                         :
-                                        (index === 0 || index + 1 === count[1].length) ?
-                                            width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
+                                        count[1].length === 2 ?
+                                            width / 3 * (index === 0 ? -1 : 1)
                                             :
-                                            (index * 2 + 1 === count[1].length) ? 0
+                                            (index === 0 || index + 1 === count[1].length) ?
+                                                width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
                                                 :
-                                                (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
-                                                (
-                                                    (((index + 1) > count[1].length / 2) ?
-                                                        (
-                                                            Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
-                                                                ((count[1].length / 2) - index - 1)
-                                                                :
-                                                                (count[1].length / 2) * -1
-                                                        )
-                                                        :
-                                                        ((count[1].length / 2) - index))
-                                                ),
-                            };
-                            position = [point, point];
-                            localPosition = [
-                                {
-                                    ...point,
-                                    x: length / 3,
-                                },
-                                {
-                                    ...point,
-                                    x: length / 3,
-                                }
-                            ];
-                            counter.right += 1;
-                        } else if ((type === "top")) {
-                            const point = {
-                                x: count[1].length === 1 ?
-                                    0
-                                    :
-                                    count[1].length === 2 ?
-                                        length / 3 * (index === 0 ? -1 : 1)
+                                                (index * 2 + 1 === count[1].length) ? 0
+                                                    :
+                                                    (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                                    (
+                                                        (((index + 1) > count[1].length / 2) ?
+                                                            (
+                                                                Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                                                    ((count[1].length / 2) - index - 1)
+                                                                    :
+                                                                    (count[1].length / 2) * -1
+                                                            )
+                                                            :
+                                                            ((count[1].length / 2) - index))
+                                                    ),
+                                };
+                                position = [point, point];
+                                localPosition = [
+                                    {
+                                        ...point,
+                                        x: length / 3,
+                                    },
+                                    {
+                                        ...point,
+                                        x: length / 3,
+                                    }
+                                ];
+                                counter.right += 1;
+                            } else if ((type === "top")) {
+                                const point = {
+                                    x: count[1].length === 1 ?
+                                        0
                                         :
-                                        (index === 0 || index + 1 === count[1].length) ?
-                                            length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
+                                        count[1].length === 2 ?
+                                            length / 3 * (index === 0 ? -1 : 1)
                                             :
-                                            (index * 2 + 1 === count[1].length) ? 0
+                                            (index === 0 || index + 1 === count[1].length) ?
+                                                length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
                                                 :
-                                                (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
-                                                (
-                                                    (((index + 1) > count[1].length / 2) ?
-                                                        (
-                                                            Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
-                                                                ((count[1].length / 2) - index - 1)
-                                                                :
-                                                                (count[1].length / 2) * -1
-                                                        )
-                                                        :
-                                                        ((count[1].length / 2) - index))
-                                                ),
-                                y: 0,
-                                z: width * 5 / 6,
-                            };
-                            position = [point, point];
-                            localPosition = [
-                                {
-                                    ...point,
-                                    z: 1 / 2 * width
-                                },
-                                {
-                                    ...point,
-                                    z: 1 / 2 * width
-                                }
-                            ];
-                            counter.top += 1;
-                        } else if ((type === "bottom")) {
-                            const point = {
-                                x: count[1].length === 1 ?
-                                    0
-                                    :
-                                    count[1].length === 2 ?
-                                        length / 3 * (index === 0 ? -1 : 1)
+                                                (index * 2 + 1 === count[1].length) ? 0
+                                                    :
+                                                    (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                                    (
+                                                        (((index + 1) > count[1].length / 2) ?
+                                                            (
+                                                                Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                                                    ((count[1].length / 2) - index - 1)
+                                                                    :
+                                                                    (count[1].length / 2) * -1
+                                                            )
+                                                            :
+                                                            ((count[1].length / 2) - index))
+                                                    ),
+                                    y: 0,
+                                    z: width * 5 / 6,
+                                };
+                                position = [point, point];
+                                localPosition = [
+                                    {
+                                        ...point,
+                                        z: 1 / 2 * width
+                                    },
+                                    {
+                                        ...point,
+                                        z: 1 / 2 * width
+                                    }
+                                ];
+                                counter.top += 1;
+                            } else if ((type === "bottom")) {
+                                const point = {
+                                    x: count[1].length === 1 ?
+                                        0
                                         :
-                                        (index === 0 || index + 1 === count[1].length) ?
-                                            length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
+                                        count[1].length === 2 ?
+                                            length / 3 * (index === 0 ? -1 : 1)
                                             :
-                                            (index * 2 + 1 === count[1].length) ? 0
+                                            (index === 0 || index + 1 === count[1].length) ?
+                                                length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
                                                 :
-                                                (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
-                                                (
-                                                    (((index + 1) > count[1].length / 2) ?
-                                                        (
-                                                            Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
-                                                                ((count[1].length / 2) - index - 1)
-                                                                :
-                                                                (count[1].length / 2) * -1
-                                                        )
-                                                        :
-                                                        ((count[1].length / 2) - index))
-                                                ),
-                                y: 0,
-                                z: -1 * width,
-                            };
-                            position = [point, point];
-                            localPosition = [
-                                {
-                                    ...point,
-                                    z: -1 * width / 2
-                                },
-                                {
-                                    ...point,
-                                    z: -1 * width / 2
-                                }
-                            ];
-                            counter.bottom += 1;
+                                                (index * 2 + 1 === count[1].length) ? 0
+                                                    :
+                                                    (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                                    (
+                                                        (((index + 1) > count[1].length / 2) ?
+                                                            (
+                                                                Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                                                    ((count[1].length / 2) - index - 1)
+                                                                    :
+                                                                    (count[1].length / 2) * -1
+                                                            )
+                                                            :
+                                                            ((count[1].length / 2) - index))
+                                                    ),
+                                    y: 0,
+                                    z: -1 * width,
+                                };
+                                position = [point, point];
+                                localPosition = [
+                                    {
+                                        ...point,
+                                        z: -1 * width / 2
+                                    },
+                                    {
+                                        ...point,
+                                        z: -1 * width / 2
+                                    }
+                                ];
+                                counter.bottom += 1;
+                            }
+                            const geometry = new THREE.BufferGeometry().setFromPoints([localPosition[0], position[0]]);
+                            line = new THREE.LineSegments(
+                                geometry,
+                                new THREE.LineDashedMaterial({
+                                    color: 0xff0000, // 射线颜色
+                                    linewidth: 1,
+                                    scale: 1,
+                                    dashSize: 10,
+                                    gapSize: 10
+                                    // depthTest: false,
+                                    // depthWrite: false,
+                                })
+                            );
+                            line.computeLineDistances();  // 虚线
+                            line.name = `measure_${indexCount}`;
+                            line.visible = true;
+                            line.frustumCulled = false;
+                            scene.current.add(line);
+                            measurements = measurements.concat(line);
+                        } else {
+                            // 线段的两个点不同，卡片外移
+                            const localPosition: any = [].concat(position);
+                            if ((type === "left")) {
+                                const point = {
+                                    x: -1 * length * labelDashLength,
+                                    z: count[1].length === 1 ?
+                                        position[0].z
+                                        :
+                                        count[1].length === 2 ?
+                                            width / 3 * (index === 0 ? -1 : 1)
+                                            :
+                                            (index === 0 || index + 1 === count[1].length) ?
+                                                width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
+                                                :
+                                                (index * 2 + 1 === count[1].length) ? position[0].z
+                                                    :
+                                                    (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                                    (
+                                                        (((index + 1) > count[1].length / 2) ?
+                                                            (
+                                                                Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                                                    ((count[1].length / 2) - index - 1)
+                                                                    :
+                                                                    (count[1].length / 2) * -1
+                                                            )
+                                                            :
+                                                            ((count[1].length / 2) - index))
+                                                    ),
+                                };
+                                position = [
+                                    { ...position[0], ...point },
+                                    { ...position[1], ...point, z: point.z + Math.abs(position[1].z - position[0].z) }
+                                ];
+                                counter.left += 1;
+                            } else if ((type === "right")) {
+                                const point = {
+                                    x: length * labelDashLength,
+                                    z: count[1].length === 1 ?
+                                        position[0].z
+                                        :
+                                        count[1].length === 2 ?
+                                            width / 3 * (index === 0 ? -1 : 1)
+                                            :
+                                            (index === 0 || index + 1 === count[1].length) ?
+                                                width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
+                                                :
+                                                (index * 2 + 1 === count[1].length) ? position[0].z
+                                                    :
+                                                    (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                                    (
+                                                        (((index + 1) > count[1].length / 2) ?
+                                                            (
+                                                                Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                                                    ((count[1].length / 2) - index - 1)
+                                                                    :
+                                                                    (count[1].length / 2) * -1
+                                                            )
+                                                            :
+                                                            ((count[1].length / 2) - index))
+                                                    ),
+                                };
+                                position = [
+                                    { ...position[0], ...point },
+                                    { ...position[1], ...point, z: point.z + Math.abs(position[1].z - position[0].z) }
+                                ];
+                                counter.right += 1;
+                            } else if ((type === "top")) {
+                                const point = {
+                                    x: count[1].length === 1 ?
+                                        position[0].x
+                                        :
+                                        count[1].length === 2 ?
+                                            length / 3 * (index === 0 ? -1 : 1)
+                                            :
+                                            (index === 0 || index + 1 === count[1].length) ?
+                                                length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
+                                                :
+                                                (index * 2 + 1 === count[1].length) ? position[0].x
+                                                    :
+                                                    (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                                    (
+                                                        (((index + 1) > count[1].length / 2) ?
+                                                            (
+                                                                Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                                                    ((count[1].length / 2) - index - 1)
+                                                                    :
+                                                                    (count[1].length / 2) * -1
+                                                            )
+                                                            :
+                                                            ((count[1].length / 2) - index))
+                                                    ),
+                                    z: width * 5 / 6,
+                                };
+                                position = [
+                                    { ...position[0], ...point },
+                                    { ...position[1], ...point, x: point.x + Math.abs(position[1].x - position[0].x) }
+                                ];
+                                counter.top += 1;
+                            } else if ((type === "bottom")) {
+                                const point = {
+                                    x: count[1].length === 1 ?
+                                        position[0].x
+                                        :
+                                        count[1].length === 2 ?
+                                            length / 3 * (index === 0 ? -1 : 1)
+                                            :
+                                            (index === 0 || index + 1 === count[1].length) ?
+                                                length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
+                                                :
+                                                (index * 2 + 1 === count[1].length) ? position[0].x
+                                                    :
+                                                    (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                                    (
+                                                        (((index + 1) > count[1].length / 2) ?
+                                                            (
+                                                                Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                                                    ((count[1].length / 2) - index - 1)
+                                                                    :
+                                                                    (count[1].length / 2) * -1
+                                                            )
+                                                            :
+                                                            ((count[1].length / 2) - index))
+                                                    ),
+                                    z: -1 * width,
+                                };
+                                position = [
+                                    { ...position[0], ...point },
+                                    { ...position[1], ...point, x: point.x + Math.abs(position[1].x - position[0].x) }
+                                ];
+                                counter.bottom += 1;
+                            }
+                            for (let i = 0; i < 2; i++) {
+                                // @ts-ignore
+                                const geometry = new THREE.BufferGeometry().setFromPoints([localPosition[i], position[i]]);
+                                const line = new THREE.Line(
+                                    geometry,
+                                    new THREE.LineDashedMaterial({
+                                        color: 0xff0000, // 射线颜色
+                                        linewidth: 1,
+                                        scale: 1,
+                                        dashSize: 10,
+                                        gapSize: 10
+                                        // depthTest: false,
+                                        // depthWrite: false,
+                                    })
+                                );
+                                line.computeLineDistances();  // 虚线
+                                line.name = `measure_${indexCount}`;
+                                line.frustumCulled = false;
+                                scene.current.add(line);
+                                measurements = measurements.concat(line);
+                            }
+                            // 渲染线
+                            const geometry = new THREE.BufferGeometry().setFromPoints(position);
+                            line = new THREE.LineSegments(
+                                geometry,
+                                new THREE.LineDashedMaterial({
+                                    color: 0xff0000, // 射线颜色
+                                    linewidth: 1,
+                                    scale: 1,
+                                    dashSize: 10,
+                                    gapSize: 10
+                                    // depthTest: false,
+                                    // depthWrite: false,
+                                })
+                            );
+                            // line.computeLineDistances();  // 虚线
+                            line.name = `measure_${indexCount}`;
+                            line.visible = true;
+                            line.frustumCulled = false;
+                            scene.current.add(line);
+                            measurements = measurements.concat(line);
                         }
-                        const geometry = new THREE.BufferGeometry().setFromPoints([localPosition[0], position[0]]);
-                        line = new THREE.LineSegments(
-                            geometry,
-                            new THREE.LineDashedMaterial({
-                                color: 0xff0000, // 射线颜色
-                                linewidth: 1,
-                                scale: 1,
-                                dashSize: 10,
-                                gapSize: 10
-                                // depthTest: false,
-                                // depthWrite: false,
-                            })
-                        );
-                        line.computeLineDistances();  // 虚线
-                        line.name = `measure_${indexCount}`;
-                        line.visible = true;
-                        line.frustumCulled = false;
-                        scene.current.add(line);
-                        measurements = measurements.concat(line);
+
                         // 渲染信息卡片
                         const measurementDiv = document.createElement("div");
                         measurementDiv.className = "label";
                         measurementDiv.innerHTML = `
                         <div>
                             <div class="item">${name}</div>
-                            <div class="flex-box item"><div class="key">标准值</div><div class="value">${standardValue}</div></div>
-                            <div class="flex-box item"><div class="key">最大值</div><div class="value">${maxValue}</div></div>
-                            <div class="flex-box item"><div class="key">最小值</div><div class="value">${minValue}</div></div>
-                            <div class="flex-box item"><div class="key">平均值</div><div class="value">${averageValue}</div></div>
+                            <div class="flex-box item" style="display:${_.isNumber(standardValue) ? '' : 'none'}"><div class="key">标准值</div><div class="value">${standardValue}</div></div>
+                            <div class="flex-box item" style="display:${_.isNumber(maxValue) ? '' : 'none'}"><div class="key">最大值</div><div class="value">${maxValue}</div></div>
+                            <div class="flex-box item" style="display:${_.isNumber(minValue) ? '' : 'none'}"><div class="key">最小值</div><div class="value">${minValue}</div></div>
+                            <div class="flex-box item" style="display:${_.isNumber(averageValue) ? '' : 'none'}"><div class="key">平均值</div><div class="value">${averageValue}</div></div>
                         </div>
                         <div style="display: none;">${standardValue}</div>
                     `;
