@@ -129,7 +129,7 @@ const Control: React.FC<any> = (props: any) => {
                   [key[1]]: Object.assign({},
                     initParams?.[key[1]],
                     ((_.isObject(value) && !_.isArray(value)) && initParams[key[1]]?.widget?.type !== "Measurement")
-                      ? value : { value },
+                      ? value : { value: value || 0 },
                     (
                       (initParams?.[key[1]]?.widget?.type === 'codeEditor')
                         ? {
