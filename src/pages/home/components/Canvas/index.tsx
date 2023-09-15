@@ -759,7 +759,7 @@ const Home: React.FC<any> = (props: any) => {
     if (!contentSize?.width || !contentSize?.height) {
       newParams = Object.assign({}, paramsData, {
         contentData: Object.assign({}, contentData, {
-          contentSize: { width: 800, height: 600 },
+          contentSize: { width: 1600, height: 900 },
         })
       });
     }
