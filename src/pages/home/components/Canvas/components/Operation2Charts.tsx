@@ -93,7 +93,6 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         //     .filter((i: any) => i.addType !== 'tagRadio').concat(children));
     }, [selectedOption]);
     const widgetChange = (key: string, value: any) => {
-        console.log(value)
         setConfigList((prev: any) => (prev || [])?.map((item: any) => {
             if (item.name === key) {
                 if (!!value?.widget?.type || item?.widget?.type === "codeEditor") {
@@ -138,7 +137,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                     data: result
                 };
                 btnFetch('post', xName, requestParams);
-
+                console.log(result)
                 // 2.保存数据到节点中
                 const { flowData, } = params;
                 let { nodes } = flowData;
@@ -151,7 +150,29 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                         }
                         let obj = Object.assign({}, execParams);
                         configList.forEach((item: any, index: number) => {
-                            obj[item?.id || item?.name] = { ...item, value: result[item?.id || item?.name] };
+                            obj[item?.id || item?.name] = {
+                                ...item,
+                                value: result[item?.id || item?.name],
+                                ...(item?.widget?.type === "TagRadio" ? {
+                                    widget: {
+                                        ...item?.widget,
+                                        options: (item?.widget?.options || [])?.map((option: any) => {
+                                            if (option.name === item?.value) {
+                                                return {
+                                                    ...option,
+                                                    children: (option?.children || [])?.map((child: any) => {
+                                                        return {
+                                                            ...child,
+                                                            value: result[child?.id || child?.name],
+                                                        }
+                                                    })
+                                                }
+                                            };
+                                            return option;
+                                        })
+                                    }
+                                } : {})
+                            };
                         });
                         return Object.assign({}, node, {
                             config: Object.assign({}, config, {

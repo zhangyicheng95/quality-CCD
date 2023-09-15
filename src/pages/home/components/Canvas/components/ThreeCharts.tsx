@@ -230,6 +230,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     let renderer = useRef<any>();
     const labelRenderer = new CSS2DRenderer();
     let scene = useRef<any>(),
+        mesh = useRef<any>(),
         uiScene = useRef<any>(),
         orthoCamera = useRef<any>(),
         camera = useRef<any>(),
@@ -255,7 +256,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     if (!localStorage.getItem("scale")) {
         localStorage.setItem("scale", JSON.stringify({ value: "1", unit: "m" }));
     };
-    const clearCanvas = () => {
+    const clearCanvas = (value: any) => {
         console.log("清理缓存");
         cancelAnimationFrame(animateId);
         stats?.current?.dom && dom?.current?.removeChild(stats?.current?.dom);
@@ -268,6 +269,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             }
             child = null;
         });
+        mesh.current?.dispose?.();
+        mesh.current?.material?.dispose?.();
+        mesh.current?.geometry?.dispose?.();
         (Object.values(measurementLabels) || [])?.forEach((label: any) => {
             scene?.current?.remove?.(label);
         });
@@ -287,15 +291,19 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         }
         // renderer.current.forceContextLoss();
         renderer?.current?.dispose?.();
-        renderer.current = undefined;
+        renderer.current = null;
         // dom.current.removeChild(renderer.current.domElement);
         // dom.current.removeChild(labelRenderer.domElement);
         scene.current?.clear();
-        scene.current = undefined;
-        stats.current = undefined;
-        camera.current = undefined;
-        controls.current = undefined;
+        scene.current = null;
+        mesh.current = null;
+        stats.current = null;
+        camera.current = null;
+        controls.current = null;
         setSelectedBtn([]);
+        if (!!name && !value.length) {
+            window.location.reload();
+        }
     };
     // 初始化场景数据，渲染点云
     useEffect(() => {
@@ -319,6 +327,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             return;
         };
         console.log('three160行: 点云路径', selectedPath || name);
+        console.log('卡片数据：', value);
         // addType为add时，代表增量渲染，不清除其他数据
         if (!!scene.current && addType === 'add') {
             loadModel(name, value, addType);
@@ -771,7 +780,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 clearTimeout(cameraRef?.current);
             };
             if (addType !== 'add') {
-                clearCanvas();
+                clearCanvas(value);
             }
         };
     }, [theme, name, guid, started, selectedPath]);
@@ -861,7 +870,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     });
                 tween.start();
             } else {
-                mesh.position.set(-x1, -y1, -z1); // 将模型进行偏移
                 // if (max === box.max.x) {
                 //     camera.current.position.set(0, mdhei / 2, scale * max);
                 // } else if (max === box.max.y) {
@@ -873,6 +881,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 camera.current.zoom = scale;
                 // localStorage.setItem('cameraScale', JSON.stringify(scale));
                 effectMeasureLine(mesh, value);
+                // mesh.position.set(-x1, -y1, -z1); // 将模型进行偏移
             }
             // 把点云放到可控数组里，用于画线标注
             mesh.frustumCulled = false;
@@ -1398,16 +1407,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     var colors = geometry?.attributes?.color?.array || [];
                     let material: any = null;
                     if (colors?.length) {
-                        // if (!sprite) {
-                        //     // colors 有值代表ply文件本身包含了颜色，则使用本身的颜色渲染
-                        //     sprite = new THREE.Sprite(new THREE.SpriteMaterial({
-                        //         map: new THREE.CanvasTexture(lut.createCanvas())
-                        //     }));
-                        //     sprite.material.map.colorSpace = THREE.SRGBColorSpace;
-                        //     sprite.scale.x = 0.125;
-                        //     sprite.position.set(1.4, 0, 0);
-                        //     uiScene.current.add(sprite);
-                        // }
                         setMeshHasColor(true);
                         material = new THREE.MeshBasicMaterial({   // MeshStandardMaterial,MeshBasicMaterial,PointsMaterial
                             vertexColors: true
@@ -1426,8 +1425,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             color: addType === 'add' ? "#55fdfd" : '#808080'
                         });
                     }
-                    const mesh = new THREE.Mesh(geometry, material); // Points,Mesh
-                    addPickable(mesh);
+                    mesh.current = new THREE.Mesh(geometry, material); // Points,Mesh
+                    addPickable(mesh.current);
                 },
                 (xhr) => processFun(xhr),
                 (error) => processError(error)
@@ -1441,8 +1440,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         color: 0xff9c7c
                     });
 
-                    const mesh = new THREE.Mesh(geometry, material);
-                    addPickable(mesh);
+                    mesh.current = new THREE.Mesh(geometry, material);
+                    addPickable(mesh.current);
                 },
                 (xhr) => processFun(xhr),
                 (error) => processError(error)

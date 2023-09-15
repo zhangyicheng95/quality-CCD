@@ -207,7 +207,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                 >
                     {
                         (urlList || []).map((url: string) => {
-                            return <Image src={url} alt={url} />
+                            return <Image src={url} alt={url} key={url} />
                         })
                     }
                 </Image.PreviewGroup>
