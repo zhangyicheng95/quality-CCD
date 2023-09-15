@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, } from 'antd';
+import { message, Modal, } from 'antd';
 import * as _ from 'lodash';
 import styles from './index.less';
 import MarkCanvas from './MarkCanvas';
@@ -19,6 +19,7 @@ const PlatFormModal: React.FC<Props> = (props) => {
     onCancel,
   } = props;
   const [getDataFun, setGetDataFun] = useState<any>({ feat: null, pen: null });
+  const [selectedFeature, setSelectedFeature] = useState(0);
 
   return (
     <Modal
@@ -29,6 +30,10 @@ const PlatFormModal: React.FC<Props> = (props) => {
       open={visible}
       maskClosable={false}
       onOk={() => {
+        if (!!selectedFeature) {
+          message.warning("请先保存设置框");
+          return false;
+        }
         const { feat, pen, zoom, value, } = getDataFun;
         const data1 = ((feat && feat().map((item: any) => _.omit(item, 'layer'))) || []).map((item: any) => {
           return Object.assign({}, item, {
@@ -119,6 +124,8 @@ const PlatFormModal: React.FC<Props> = (props) => {
         data={data}
         setGetDataFun={setGetDataFun}
         getDataFun={getDataFun}
+        selectedFeature={selectedFeature}
+        setSelectedFeature={setSelectedFeature}
       />
     </Modal>
   );

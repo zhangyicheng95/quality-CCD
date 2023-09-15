@@ -25,6 +25,8 @@ interface Props {
   data?: any;
   setGetDataFun?: any;
   getDataFun?: any;
+  selectedFeature: any;
+  setSelectedFeature: any;
 }
 const AILabel = require('ailabel');
 const CONTAINER_ID = 'mark-canvas';
@@ -40,7 +42,7 @@ let drawingStyle: any = { strokeStyle: '#F00' }; // 绘制过程中样式
 const MarkCanvas: React.FC<Props> = (props: any) => {
   const [form] = Form.useForm();
   const { validateFields, resetFields } = form;
-  const { data, setGetDataFun, getDataFun } = props;
+  const { data, setGetDataFun, getDataFun, selectedFeature, setSelectedFeature } = props;
   const { platFormValue, localPath, zoom, widget } = data;
   const { options } = widget;
   const [{ color }, open] = useEyeDropper();
@@ -48,7 +50,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   const [loading, setLoading] = useState(false);
   const [selectedBtn, setSelectedBtn] = useState('RECT');
   const [featureList, setFeatureList] = useState({});
-  const [selectedFeature, setSelectedFeature] = useState(0);
   const [selectedOptionType, setSelectedOptionType] = useState({});
 
   useEffect(() => {
@@ -288,77 +289,84 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       });
       // 双击选中
       gMap.events.on('featureSelected', (feature: any) => {
-        const { id, type, shape, props } = feature;
-        if (type === 'LINE') {
-          // 线段，把label显示为两点坐标
-          let { start, end } = shape;
-          start = {
-            x: start.x.toFixed(2),
-            y: start.y.toFixed(2)
-          };
-          end = {
-            x: end.x.toFixed(2),
-            y: end.y.toFixed(2)
-          };
-          // 线段长度
-          const length = AILabel.Util.MathUtil.distance(start, end);
-          const text = `(${start.x}, ${start.y}), (${end.x}, ${end.y}),  ${(length.toFixed(2))}`;
-          const targetText = gFirstTextLayer.getTextById(props?.textId);
-          if (targetText) {
-            targetText?.updateText(text);
-          } else {
-            const { id, shape, props, style, type } = feature;
-            gFirstFeatureLayer.removeFeatureById(id);
-            gFirstTextLayer.removeTextById(props?.textId);
-            addFeature(type, id, shape, { ...props, label: text }, style);
+        setSelectedFeature((prev: number) => {
+          console.log(prev)
+          if (!!prev) {
+            message.warning("请先保存设置框");
+            return prev;
           }
-        };
-
-        setSelectedFeature(id);
-        gMap.setActiveFeature(feature);
-        const markerId = feature.props.deleteMarkerId;
-        const directionMarkerId = feature.props.directionMarkerId;
-        const textId = feature.props.textId;
-
-        const mappedMarker = gMap.markerLayer.getMarkerById(markerId);
-        if (mappedMarker) {
-          return;
-        }
-        // 添加delete-icon
-        const gFirstMarker = new AILabel.Marker(
-          markerId, // id
-          {
-            src: deleteIcon,
-            position: type === 'RECT' ? feature.getPoints()[1] :
-              type === 'CIRCLE' ? { x: shape.cx + shape.r, y: shape.cy - shape.r } :
-                type === 'POLYGON' ? shape.location :
-                  type === 'LINE' ? shape.start :
-                    type === 'POLYLINE' ? shape.points[0] :
-                      type === 'POINT' ? shape : {},
-            offset: {
-              x: -20,
-              y: -4
+          const { id, type, shape, props } = feature;
+          if (type === 'LINE') {
+            // 线段，把label显示为两点坐标
+            let { start, end } = shape;
+            start = {
+              x: start.x.toFixed(2),
+              y: start.y.toFixed(2)
+            };
+            end = {
+              x: end.x.toFixed(2),
+              y: end.y.toFixed(2)
+            };
+            // 线段长度
+            const length = AILabel.Util.MathUtil.distance(start, end);
+            const text = `(${start.x}, ${start.y}), (${end.x}, ${end.y}),  ${(length.toFixed(2))}`;
+            const targetText = gFirstTextLayer.getTextById(props?.textId);
+            if (targetText) {
+              targetText?.updateText(text);
+            } else {
+              const { id, shape, props, style, type } = feature;
+              gFirstFeatureLayer.removeFeatureById(id);
+              gFirstTextLayer.removeTextById(props?.textId);
+              addFeature(type, id, shape, { ...props, label: text }, style);
             }
-          }, // markerInfo
-          { name: 'marker注记' } // props
-        );
-        gFirstMarker.events.on('click', (marker: any) => {
-          // 首先删除当前marker
-          gMap.markerLayer.removeMarkerById(marker.id);
-          gMap.markerLayer.removeMarkerById(directionMarkerId);
-          // 删除对应text
-          gFirstTextLayer.removeTextById(textId);
-          // 删除对应feature
-          gFirstFeatureLayer.removeFeatureById(feature.id);
+          };
 
-          if (props.type === 'DOUBLE_CIRCLE') {
-            gFirstFeatureLayer.removeFeatureById(feature.id + 100);
-            gFirstFeatureLayer.removeFeatureById(feature.id - 100);
+          gMap.setActiveFeature(feature);
+          const markerId = feature.props.deleteMarkerId;
+          const directionMarkerId = feature.props.directionMarkerId;
+          const textId = feature.props.textId;
+
+          const mappedMarker = gMap.markerLayer.getMarkerById(markerId);
+          if (mappedMarker) {
+            return;
           }
-          setSelectedFeature(0);
-        });
+          // 添加delete-icon
+          const gFirstMarker = new AILabel.Marker(
+            markerId, // id
+            {
+              src: deleteIcon,
+              position: type === 'RECT' ? feature.getPoints()[1] :
+                type === 'CIRCLE' ? { x: shape.cx + shape.r, y: shape.cy - shape.r } :
+                  type === 'POLYGON' ? shape.location :
+                    type === 'LINE' ? shape.start :
+                      type === 'POLYLINE' ? shape.points[0] :
+                        type === 'POINT' ? shape : {},
+              offset: {
+                x: -20,
+                y: -4
+              }
+            }, // markerInfo
+            { name: 'marker注记' } // props
+          );
+          gFirstMarker.events.on('click', (marker: any) => {
+            // 首先删除当前marker
+            gMap.markerLayer.removeMarkerById(marker.id);
+            gMap.markerLayer.removeMarkerById(directionMarkerId);
+            // 删除对应text
+            gFirstTextLayer.removeTextById(textId);
+            // 删除对应feature
+            gFirstFeatureLayer.removeFeatureById(feature.id);
 
-        gMap.markerLayer.addMarker(gFirstMarker);
+            if (props.type === 'DOUBLE_CIRCLE') {
+              gFirstFeatureLayer.removeFeatureById(feature.id + 100);
+              gFirstFeatureLayer.removeFeatureById(feature.id - 100);
+            }
+            setSelectedFeature(0);
+          });
+
+          gMap.markerLayer.addMarker(gFirstMarker);
+          return id;
+        });
       });
       // 取消featureSelected
       gMap.events.on('featureUnselected', (feature: any) => {
