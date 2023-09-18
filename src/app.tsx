@@ -68,8 +68,8 @@ export async function getInitialState(): Promise<{
 
   let params: any = {};
   let title: any = '';
-  const ipUrl = !!Object.keys(query).length ? (query?.ipUrl || 'localhost:8866') : 'localhost:8866';
-  const ipString = localStorage.getItem("ipString") || query?.id || '';
+  const ipUrl = query?.ipUrl || 'localhost:8866';
+  const ipString = query?.id || localStorage.getItem("ipString") || '';
 
   if (!localStorage.getItem("ipString")) {
     localStorage.setItem("ipString", ipString);
