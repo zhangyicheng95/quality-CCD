@@ -28,7 +28,6 @@ const BarCharts: React.FC<Props> = (props: any) => {
         if (!_.isArray(dataValue)) {
             message.error('柱状图数据格式不正确，请检查');
             console.log('BarCharts:', dataValue);
-            localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
         let seriesData: any = [],

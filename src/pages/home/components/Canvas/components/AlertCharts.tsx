@@ -24,7 +24,6 @@ const AlertCharts: React.FC<Props> = (props: any) => {
         if (!_.isArray(dataValue)) {
             message.error('状态窗口数据格式不正确，请检查');
             console.log('AlertCharts:', dataValue);
-            localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
     }, [dataValue]);

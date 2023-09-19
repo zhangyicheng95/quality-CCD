@@ -70,6 +70,21 @@ export async function selectFilePathService(path: string) {
   return fetchGet(`${BASE_IP}file_browser${path.indexOf('\\') === 0 ? '' : '\\'}${path}`);
 }
 
+// 根据id获取缓存
+export async function getStorageService(id: string) {
+  return fetchGet(`${BASE_IP}project_cache/${id}`);
+}
+
+// 根据id保存缓存
+export async function addStorageService(id: string, params?: any) {
+  return fetchPost(`${BASE_IP}project_cache/${id}`, { body: params });
+}
+
+// 根据id删除缓存
+export async function deleteStorageService(id: string) {
+  return fetchDelete(`${BASE_IP}project_cache/${id}`);
+}
+
 // 登录
 export async function login(params: any) {
 

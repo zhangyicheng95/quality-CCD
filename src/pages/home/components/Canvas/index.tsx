@@ -21,8 +21,11 @@ import {
 } from 'antd';
 import * as _ from 'lodash';
 import {
+  addStorageService,
   BASE_IP,
   btnFetch,
+  deleteStorageService,
+  getStorageService,
   startFlowService,
   stopFlowService,
   touchFlowService,
@@ -1243,350 +1246,357 @@ const Home: React.FC<any> = (props: any) => {
   // 监控窗口动态添加
   useEffect(() => {
     if (!_.isEmpty(addContentList) && !_.isEmpty(paramData)) {
-      const newGridContentList = !!localStorage.getItem(`localGridContentList-${paramData.id}`) ?
-        JSON.parse(localStorage.getItem(`localGridContentList-${paramData.id}`) || "{}")
-        : [];
-      if (!_.isArray(newGridContentList)) {
-        localStorage.removeItem(`localGridContentList-${paramData.id}`);
-        window.location.reload();
-      }
-      let listData: any = [],
-        layoutData: any = [],
-        resultData: any = [];
-      addContentList?.forEach((item: any, index: number) => {
-        const {
-          id: key, size, value = [], type, yName, xName, defaultImg, fontSize,
-          reverse, direction, symbol, fetchType, fetchParams, align,
-          backgroundColor = 'default', barColor = 'default', progressType = 'line',
-          progressSize = 8, progressSteps = 5, windowControl,
-          des_bordered, des_column, des_layout, des_size, ifLocalStorage,
-          CCDName, imgs_width, imgs_height, tableSize, magnifier, comparison, operationList,
-          dataZoom, fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
-          password, passwordHelp, ifShowColorList,
-          basicInfoData = [{ id: guid(), name: '', value: '' }]
-        } = item;
-        // const id = key?.split('$$')[0];
-        const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
-        const newGridValue = newGridContentList?.filter((i: any) => i?.id === key)?.[0];
-        // socket有数据就渲染新的，没有就渲染localStorage缓存的
-        const dataValue = gridValue?.[value[1]] || newGridValue?.[value[1]] || undefined;
-        const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
-        const { alias, name, ports = {} } = parent[0] || {};
-        const { items = [] } = ports;
-        const SecLabel = items?.filter((i: any) => i.group === 'bottom' && (i?.label?.name === value[1]))[0];
-        listData = listData.concat(
-          <div key={key} className={` drag-item-content-box ${backgroundColor === 'default' ? "background-ubv" : ""}`}>
-            {
-              (ifCanEdit || paramData?.contentData?.contentHeader?.[key]) ?
-                <div className="common-card-title-box flex-box ">
-                  <TooltipDiv className="flex-box common-card-title">
-                    {`${CCDName || alias || name}`}
-                    <span className='title-span'>{`- ${SecLabel?.label?.alias || value[1] || ''}`}</span>
-                  </TooltipDiv>
-                  {
-                    ifCanEdit ?
-                      <div className="flex-box drag-item-btn-box">
-                        <Switch
-                          size="small"
-                          checkedChildren="显示头"
-                          unCheckedChildren="隐藏头"
-                          defaultChecked={paramData?.contentData?.contentHeader?.[key]}
-                          onChange={(e) => {
-                            setParamData((prev: any) => {
-                              return Object.assign({}, prev, {
-                                contentData: Object.assign({}, prev?.contentData, {
-                                  contentHeader: e ?
-                                    Object.assign({}, prev?.contentData?.contentHeader, { [key]: e })
-                                    :
-                                    _.omit(prev?.contentData?.contentHeader, key)
-                                })
-                              })
-                            })
-                          }}
-                        />
-                        <div
-                          className='common-btn'
-                          onClick={() => {
-                            !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
-                            setBasicInfoData(basicInfoData);
-                            setEditWindowData(item);
-                            setFieldsValue(Object.assign({}, item, !fontSize ? { fontSize: 12 } : {}));
-                            if (!!fontColor && !!fontColor?.rgb) {
-                              setFontColor(fontColor.rgb);
-                            }
-                            setWindowType(type);
-                            if (type === 'operation') {
-                              const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
-                              if (!!res) {
-                                const { config = {} } = res;
-                                if (!!config?.initParams && _.isObject(config?.initParams)) {
-                                  setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
-                                    return {
-                                      label: item[1]?.alias,
-                                      value: item[0],
-                                    }
-                                  }));
-                                }
-                              }
-                            } else if (type === 'operation2') {
-                              const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
-                              if (!!res) {
-                                const { config = {} } = res;
-                                if (!!config?.execParams && _.isObject(config?.execParams)) {
-                                  setSelectedNodeConfig(() => Object.entries(config.execParams)?.map((item: any) => {
-                                    return {
-                                      label: item[1]?.alias,
-                                      value: item[0],
-                                    }
-                                  }));
-                                } else if (!!config?.initParams && _.isObject(config?.initParams)) {
-                                  setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
-                                    return {
-                                      label: item[1]?.alias,
-                                      value: item[0],
-                                    }
-                                  }));
-                                }
-                              }
-                            }
-                            setAddWindowVisible(true);
-                          }}
-                        >
-                          编辑
-                        </div>
-                        <Popconfirm
-                          title="确认删除监控窗口吗?"
-                          onConfirm={() => {
-                            const result = addContentList?.filter((item: any) => item.id !== key);
-                            const params = Object.assign({}, paramData, {
-                              contentData: Object.assign({}, paramData.contentData, { content: result }),
-                            });
-                            setAddContentList(result);
-                            dispatch({
-                              type: 'home/set',
-                              payload: {
-                                gridContentList: result,
-                              },
-                            });
-                            dispatch({ type: 'home/snapshot' });
-                            setParamData(params);
-                          }}
-                          okText="确认"
-                          cancelText="取消"
-                        >
-                          <div className='common-btn'>删除</div>
-                        </Popconfirm>
-                      </div>
-                      : null
-                  }
-                </div>
-                :
-                null
-            }
-            <div className="card-body-box"
-              style={paramData?.contentData?.contentHeader?.[key] ? { height: 'calc(100% - 28px)' } : { height: '100%' }}
-            >
-              <div className="flex-box-center" style={{ height: '100%' }}>
+      getStorageService(paramData.id).then((res: any) => {
+        if (res && res.code === 'SUCCESS') {
+          const newGridContentList = res?.localGridContentList || [];
+          if (!_.isArray(newGridContentList)) {
+            deleteStorageService(paramData.id).then((res: any) => {
+              if (res && res.code === 'SUCCESS') {
+                window.location.reload();
+              }
+            });
+          }
+          let listData: any = [],
+            layoutData: any = [],
+            resultData: any = [];
+          addContentList?.forEach((item: any, index: number) => {
+            const {
+              id: key, size, value = [], type, yName, xName, defaultImg, fontSize,
+              reverse, direction, symbol, fetchType, fetchParams, align,
+              backgroundColor = 'default', barColor = 'default', progressType = 'line',
+              progressSize = 8, progressSteps = 5, windowControl,
+              des_bordered, des_column, des_layout, des_size, ifLocalStorage,
+              CCDName, imgs_width, imgs_height, tableSize, magnifier, comparison, operationList,
+              dataZoom, fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
+              password, passwordHelp, ifShowColorList,
+              basicInfoData = [{ id: guid(), name: '', value: '' }]
+            } = item;
+            // const id = key?.split('$$')[0];
+            const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
+            const newGridValue = newGridContentList?.filter((i: any) => i?.id === key)?.[0];
+            // socket有数据就渲染新的，没有就渲染localStorage缓存的
+            const dataValue = gridValue?.[value[1]] || newGridValue?.[value[1]] || undefined;
+            const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
+            const { alias, name, ports = {} } = parent[0] || {};
+            const { items = [] } = ports;
+            const SecLabel = items?.filter((i: any) => i.group === 'bottom' && (i?.label?.name === value[1]))[0];
+            listData = listData.concat(
+              <div key={key} className={` drag-item-content-box ${backgroundColor === 'default' ? "background-ubv" : ""}`}>
                 {
-                  type === 'line' ?
-                    <LineCharts
-                      id={key}
-                      setMyChartVisible={setMyChartVisible}
-                      data={{
-                        dataValue: dataValue || [],
-                        yName, xName, dataZoom,
-                      }}
-                    />
+                  (ifCanEdit || paramData?.contentData?.contentHeader?.[key]) ?
+                    <div className="common-card-title-box flex-box ">
+                      <TooltipDiv className="flex-box common-card-title">
+                        {`${CCDName || alias || name}`}
+                        <span className='title-span'>{`- ${SecLabel?.label?.alias || value[1] || ''}`}</span>
+                      </TooltipDiv>
+                      {
+                        ifCanEdit ?
+                          <div className="flex-box drag-item-btn-box">
+                            <Switch
+                              size="small"
+                              checkedChildren="显示头"
+                              unCheckedChildren="隐藏头"
+                              defaultChecked={paramData?.contentData?.contentHeader?.[key]}
+                              onChange={(e) => {
+                                setParamData((prev: any) => {
+                                  return Object.assign({}, prev, {
+                                    contentData: Object.assign({}, prev?.contentData, {
+                                      contentHeader: e ?
+                                        Object.assign({}, prev?.contentData?.contentHeader, { [key]: e })
+                                        :
+                                        _.omit(prev?.contentData?.contentHeader, key)
+                                    })
+                                  })
+                                })
+                              }}
+                            />
+                            <div
+                              className='common-btn'
+                              onClick={() => {
+                                !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
+                                setBasicInfoData(basicInfoData);
+                                setEditWindowData(item);
+                                setFieldsValue(Object.assign({}, item, !fontSize ? { fontSize: 12 } : {}));
+                                if (!!fontColor && !!fontColor?.rgb) {
+                                  setFontColor(fontColor.rgb);
+                                }
+                                setWindowType(type);
+                                if (type === 'operation') {
+                                  const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
+                                  if (!!res) {
+                                    const { config = {} } = res;
+                                    if (!!config?.initParams && _.isObject(config?.initParams)) {
+                                      setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
+                                        return {
+                                          label: item[1]?.alias,
+                                          value: item[0],
+                                        }
+                                      }));
+                                    }
+                                  }
+                                } else if (type === 'operation2') {
+                                  const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
+                                  if (!!res) {
+                                    const { config = {} } = res;
+                                    if (!!config?.execParams && _.isObject(config?.execParams)) {
+                                      setSelectedNodeConfig(() => Object.entries(config.execParams)?.map((item: any) => {
+                                        return {
+                                          label: item[1]?.alias,
+                                          value: item[0],
+                                        }
+                                      }));
+                                    } else if (!!config?.initParams && _.isObject(config?.initParams)) {
+                                      setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
+                                        return {
+                                          label: item[1]?.alias,
+                                          value: item[0],
+                                        }
+                                      }));
+                                    }
+                                  }
+                                }
+                                setAddWindowVisible(true);
+                              }}
+                            >
+                              编辑
+                            </div>
+                            <Popconfirm
+                              title="确认删除监控窗口吗?"
+                              onConfirm={() => {
+                                const result = addContentList?.filter((item: any) => item.id !== key);
+                                const params = Object.assign({}, paramData, {
+                                  contentData: Object.assign({}, paramData.contentData, { content: result }),
+                                });
+                                setAddContentList(result);
+                                dispatch({
+                                  type: 'home/set',
+                                  payload: {
+                                    gridContentList: result,
+                                  },
+                                });
+                                dispatch({ type: 'home/snapshot' });
+                                setParamData(params);
+                              }}
+                              okText="确认"
+                              cancelText="取消"
+                            >
+                              <div className='common-btn'>删除</div>
+                            </Popconfirm>
+                          </div>
+                          : null
+                      }
+                    </div>
                     :
-                    type === 'point' ?
-                      <PointCharts
-                        id={key}
-                        setMyChartVisible={setMyChartVisible}
-                        data={{
-                          dataValue: dataValue || [],
-                          yName, xName, direction, symbol, dataZoom
-                        }}
-                      />
-                      :
-                      type === 'bar' ?
-                        <BarCharts
+                    null
+                }
+                <div className="card-body-box"
+                  style={paramData?.contentData?.contentHeader?.[key] ? { height: 'calc(100% - 28px)' } : { height: '100%' }}
+                >
+                  <div className="flex-box-center" style={{ height: '100%' }}>
+                    {
+                      type === 'line' ?
+                        <LineCharts
                           id={key}
                           setMyChartVisible={setMyChartVisible}
                           data={{
                             dataValue: dataValue || [],
-                            yName, xName, direction, align, barColor,
+                            yName, xName, dataZoom,
                           }}
                         />
                         :
-                        type === 'pie' ?
-                          <PieCharts
+                        type === 'point' ?
+                          <PointCharts
                             id={key}
                             setMyChartVisible={setMyChartVisible}
                             data={{
                               dataValue: dataValue || [],
-                              fontSize
+                              yName, xName, direction, symbol, dataZoom
                             }}
                           />
                           :
-                          type === 'table' ?
-                            <TableCharts
+                          type === 'bar' ?
+                            <BarCharts
                               id={key}
+                              setMyChartVisible={setMyChartVisible}
                               data={{
                                 dataValue: dataValue || [],
-                                yName, xName, fontSize, reverse, tableSize, interlacing,
-                                des_bordered
+                                yName, xName, direction, align, barColor,
                               }}
                             />
                             :
-                            type === 'table2' ?
-                              <Table2Charts
+                            type === 'pie' ?
+                              <PieCharts
                                 id={key}
+                                setMyChartVisible={setMyChartVisible}
                                 data={{
                                   dataValue: dataValue || [],
-                                  fontSize, reverse, tableSize, interlacing, des_bordered
+                                  fontSize
                                 }}
                               />
                               :
-                              type === 'three' ?
-                                <ThreeCharts
+                              type === 'table' ?
+                                <TableCharts
                                   id={key}
                                   data={{
-                                    dataValue: dataValue || { name: "", value: [] },
-                                    modelRotate, modelScale, modelRotateScreenshot,
-                                    ifShowColorList, fontSize, fetchType, xName,
+                                    dataValue: dataValue || [],
+                                    yName, xName, fontSize, reverse, tableSize, interlacing,
+                                    des_bordered
                                   }}
                                 />
                                 :
-                                type === 'alert' ?
-                                  <AlertCharts
+                                type === 'table2' ?
+                                  <Table2Charts
                                     id={key}
                                     data={{
                                       dataValue: dataValue || [],
-                                      fontSize
+                                      fontSize, reverse, tableSize, interlacing, des_bordered
                                     }}
                                   />
                                   :
-                                  type === 'imgs' ?
-                                    <ImgsCharts
+                                  type === 'three' ?
+                                    <ThreeCharts
                                       id={key}
                                       data={{
-                                        dataValue: dataValue || [],
-                                        imgs_width, imgs_height
+                                        dataValue: dataValue || { name: "", value: [] },
+                                        modelRotate, modelScale, modelRotateScreenshot,
+                                        ifShowColorList, fontSize, fetchType, xName,
                                       }}
                                     />
                                     :
-                                    type === 'progress' ?
-                                      <ProgressCharts
+                                    type === 'alert' ?
+                                      <AlertCharts
                                         id={key}
                                         data={{
-                                          dataValue: dataValue || 0, barColor, progressType, progressSize, progressSteps
+                                          dataValue: dataValue || [],
+                                          fontSize
                                         }}
                                       />
                                       :
-                                      type === 'description' ?
-                                        <DescriptionCharts
+                                      type === 'imgs' ?
+                                        <ImgsCharts
                                           id={key}
                                           data={{
                                             dataValue: dataValue || [],
-                                            basicInfoData, fontSize,
-                                            des_bordered, des_column, des_layout, des_size,
+                                            imgs_width, imgs_height
                                           }}
                                         />
                                         :
-                                        type === 'button' ?
-                                          <Button
-                                            type={'primary'}
+                                        type === 'progress' ?
+                                          <ProgressCharts
                                             id={key}
-                                            onClick={() => {
-                                              let params = '';
-                                              if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {
-                                                try {
-                                                  params = JSON.parse(value)
-                                                } catch (e) {
-                                                  console.log('按钮传递参数格式不对:', e);
-                                                  params = '';
-                                                }
-                                              }
-                                              btnFetch(fetchType, xName, params);
+                                            data={{
+                                              dataValue: dataValue || 0, barColor, progressType, progressSize, progressSteps
                                             }}
-                                          >
-                                            {yName}
-                                          </Button>
+                                          />
                                           :
-                                          type === 'buttonInp' ?
-                                            <ButtonCharts
+                                          type === 'description' ?
+                                            <DescriptionCharts
                                               id={key}
                                               data={{
-                                                yName, xName, fetchType
+                                                dataValue: dataValue || [],
+                                                basicInfoData, fontSize,
+                                                des_bordered, des_column, des_layout, des_size,
                                               }}
                                             />
                                             :
-                                            type === 'buttonPassword' ?
-                                              <ButtonPWCharts
+                                            type === 'button' ?
+                                              <Button
+                                                type={'primary'}
                                                 id={key}
-                                                data={{
-                                                  yName, xName, fetchType, password, passwordHelp,
-                                                  fetchParams
+                                                onClick={() => {
+                                                  let params = '';
+                                                  if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {
+                                                    try {
+                                                      params = JSON.parse(value)
+                                                    } catch (e) {
+                                                      console.log('按钮传递参数格式不对:', e);
+                                                      params = '';
+                                                    }
+                                                  }
+                                                  btnFetch(fetchType, xName, params);
                                                 }}
-                                              />
+                                              >
+                                                {yName}
+                                              </Button>
                                               :
-                                              type === 'operation' ?
-                                                <OperationCharts
+                                              type === 'buttonInp' ?
+                                                <ButtonCharts
                                                   id={key}
                                                   data={{
-                                                    operationList,
-                                                    dataValue,
-                                                    fontSize
+                                                    yName, xName, fetchType
                                                   }}
                                                 />
                                                 :
-                                                type === 'operation2' ?
-                                                  <Operation2Charts
+                                                type === 'buttonPassword' ?
+                                                  <ButtonPWCharts
                                                     id={key}
                                                     data={{
-                                                      operationList,
-                                                      dataValue,
-                                                      fontSize,
-                                                      xName
+                                                      yName, xName, fetchType, password, passwordHelp,
+                                                      fetchParams
                                                     }}
                                                   />
                                                   :
-                                                  type === 'statistic' ?
-                                                    <StatisticCharts
+                                                  type === 'operation' ?
+                                                    <OperationCharts
                                                       id={key}
                                                       data={{
-                                                        dataValue, fontSize,
-                                                        yName, fontColor, direction
+                                                        operationList,
+                                                        dataValue,
+                                                        fontSize
                                                       }}
                                                     />
                                                     :
-                                                    <ImgCharts
-                                                      id={key}
-                                                      data={{
-                                                        defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                        dataValue, windowControl,
-                                                        setContentList, magnifier, comparison
-                                                      }}
-                                                    />
-                }
-              </div>
-            </div>
-          </div>,
-        );
-        layoutData = layoutData.concat(size);
-        if (ifLocalStorage || !_.isBoolean(ifLocalStorage)) {
-          resultData = resultData.concat(
-            !!dataValue ? {
-              ...item,
-              [value[1]]: dataValue
-            } : item
-          );
+                                                    type === 'operation2' ?
+                                                      <Operation2Charts
+                                                        id={key}
+                                                        data={{
+                                                          operationList,
+                                                          dataValue,
+                                                          fontSize,
+                                                          xName
+                                                        }}
+                                                      />
+                                                      :
+                                                      type === 'statistic' ?
+                                                        <StatisticCharts
+                                                          id={key}
+                                                          data={{
+                                                            dataValue, fontSize,
+                                                            yName, fontColor, direction
+                                                          }}
+                                                        />
+                                                        :
+                                                        <ImgCharts
+                                                          id={key}
+                                                          data={{
+                                                            defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                            dataValue, windowControl,
+                                                            setContentList, magnifier, comparison
+                                                          }}
+                                                        />
+                    }
+                  </div>
+                </div>
+              </div>,
+            );
+            layoutData = layoutData.concat(size);
+            if (ifLocalStorage || !_.isBoolean(ifLocalStorage)) {
+              resultData = resultData.concat(
+                !!dataValue ? {
+                  ...item,
+                  [value[1]]: dataValue
+                } : item
+              );
+            }
+          });
+          addStorageService(paramData.id, { ...res.data, localGridContentList: resultData });
+
+          setContentList(listData);
+          setContentLayout(layoutData);
+        } else {
+          message.error(res?.msg || res?.message || '接口异常');
         }
       });
-      localStorage.setItem(`localGridContentList-${paramData.id}`, JSON.stringify(resultData));
-
-      setContentList(listData);
-      setContentLayout(layoutData);
     } else {
       setContentList([]);
     }

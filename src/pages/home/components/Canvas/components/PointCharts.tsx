@@ -78,7 +78,6 @@ const PointCharts: React.FC<Props> = (props: any) => {
         if (!_.isArray(dataValue)) {
             message.error('散点图数据格式不正确，请检查');
             console.log('PointCharts:', dataValue);
-            localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
         let maxLength = 0;
