@@ -763,6 +763,7 @@ const Home: React.FC<any> = (props: any) => {
       newParams = Object.assign({}, paramsData, {
         contentData: Object.assign({}, contentData, {
           contentSize: { width: 1600, height: 900 },
+          autoSize: _.isBoolean(contentData?.autoSize) ? contentData?.autoSize : true,
         })
       });
     }
@@ -821,6 +822,7 @@ const Home: React.FC<any> = (props: any) => {
       const resultParams = Object.assign({}, newParams, {
         contentData: Object.assign({}, contentData, {
           content: result,
+          autoSize: _.isBoolean(contentData?.autoSize) ? contentData?.autoSize : true,
         })
       });
 
@@ -861,6 +863,7 @@ const Home: React.FC<any> = (props: any) => {
       }
     };
   }, [paramsData]);
+
   // 检测错误信息，如果有数据，代表有异常，自动重启
   useEffect(() => {
     const { errorSelfStart = false } = paramsData;
@@ -1853,7 +1856,8 @@ const Home: React.FC<any> = (props: any) => {
                               {
                                 backgroundColor: `rgba(${paramData?.contentData?.overallBackgroundColor.rgb.r},${paramData?.contentData?.overallBackgroundColor.rgb.g},${paramData?.contentData?.overallBackgroundColor.rgb.b},${paramData?.contentData?.overallBackgroundColor.rgb.a})`
                               } : {},
-                            !!paramData?.contentData?.autoSize ? { width: '100%', height: '100%' } : {}
+                            (!!paramData?.contentData?.autoSize || !_.isBoolean(paramData?.contentData?.autoSize)) ?
+                              { width: '100%', height: '100%' } : {}
                           )}
                         >
                           <div className="right-canvas-body-grid">
