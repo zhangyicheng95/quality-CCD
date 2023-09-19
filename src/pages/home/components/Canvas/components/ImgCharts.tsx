@@ -4,6 +4,7 @@ import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
 import { BlockOutlined, EyeOutlined, LeftCircleOutlined, RightCircleOutlined, SwapOutlined } from '@ant-design/icons';
+import { addStorageService, getStorageService } from '@/services/api';
 
 interface Props {
     data: any,
@@ -31,18 +32,17 @@ const ImgCharts: React.FC<Props> = (props: any) => {
 
     const dom = useRef<any>();
     useLayoutEffect(() => {
-        try {
-            const list = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || "[]");
-            setUrlList(list);
-        } catch (err) {
-            console.log(err);
-        }
+        getStorageService(params.id).then((res: any) => {
+            if (res && res.code === 'SUCCESS') {
+                const list = res?.data?.imgList || [];
+                setUrlList(list);
+            }
+        });
     }, []);
     useEffect(() => {
         if (!_.isString(dataValue)) {
             message.error('图片组件数据格式不正确，请检查');
             console.log('ImgCharts:', dataValue);
-            localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
         const img = document.createElement('img');
@@ -54,7 +54,11 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         };
         setUrlList((pre: any) => {
             let list = Array.from(new Set(pre.concat(dataValue)));
-            localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
+            getStorageService(params.id).then((res: any) => {
+                if (res && res.code === 'SUCCESS') {
+                    addStorageService(params.id, { ...res.data, imgList: list });
+                }
+            });
             return list.slice(list.length - 99);
         });
     }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight, comparison]);
@@ -145,14 +149,18 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             }
         }
         // 4.鼠标离开事件
-        eventDom.onmouseleave = function (ev: any) {
-            const bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
-            bigDom.style.display = 'none';
+        if (!!eventDom) {
+            eventDom.onmouseleave = function (ev: any) {
+                const bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
+                bigDom.style.display = 'none';
+            }
         }
         const domBox = dom.current.querySelector('.img-box');
-        domBox.onmouseleave = function (ev: any) {
-            const bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
-            bigDom.style.display = 'none';
+        if (!!domBox) {
+            domBox.onmouseleave = function (ev: any) {
+                const bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
+                bigDom.style.display = 'none';
+            }
         }
     }, [magnifier, dataValue, id, fontSize, dom?.current?.clientWidth, dom?.current?.clientHeight]);
 

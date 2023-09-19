@@ -182,7 +182,6 @@ const LineCharts: React.FC<Props> = (props: any) => {
         if (!_.isArray(dataValue)) {
             message.error('趋势图数据格式不正确，请检查');
             console.log('LineCharts', dataValue);
-            localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
 

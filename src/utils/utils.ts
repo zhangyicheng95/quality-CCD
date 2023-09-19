@@ -80,6 +80,17 @@ export function parseParamsToUrl(params: any) {
     }
     return queryParam;
 }
+// url的参数转换成对象
+export function GetQueryObj(url: any) {
+    let arr = url?.split('?') || [];
+    let params = arr?.[1]?.split('&') || [];
+    let obj = {};
+    for (let i = 0; i < params.length; i++) {
+        let param = params[i].split('=');
+        obj[param[0]] = param[1];
+    }
+    return obj;
+};
 
 export const arr2obj = (arr: (string | any)[], key?: string): IObjMap => {
     return arr.reduce((pre, cur) => ({

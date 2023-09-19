@@ -70,6 +70,21 @@ export async function selectFilePathService(path: string) {
   return fetchGet(`${BASE_IP}file_browser${path.indexOf('\\') === 0 ? '' : '\\'}${path}`);
 }
 
+// 根据id获取缓存
+export async function getStorageService(id: string) {
+  return fetchGet(`${BASE_IP}project_cache/${id}`);
+}
+
+// 根据id保存缓存
+export async function addStorageService(id: string, params?: any) {
+  return fetchPost(`${BASE_IP}project_cache/${id}`, { body: params });
+}
+
+// 根据id删除缓存
+export async function deleteStorageService(id: string) {
+  return fetchDelete(`${BASE_IP}project_cache/${id}`);
+}
+
 // 登录
 export async function login(params: any) {
 
@@ -102,7 +117,7 @@ export async function btnFetch(type: string, url: string, params = {}, options?:
     if (_.isObject(params)) {
       return fetchDelete(url, { params, ...options });
     }
-    if (!_.isUndefined(params) && !_.isNull(params)) {
+    if (!_.isUndefined(params) && !_.isNull(params) && (_.isString(params) && !!params)) {
       return fetchDelete(`${url}/${params}`);
     }
     return fetchDelete(url);
@@ -113,7 +128,7 @@ export async function btnFetch(type: string, url: string, params = {}, options?:
         ...options
       });
     }
-    if (!_.isUndefined(params) && !_.isNull(params)) {
+    if (!_.isUndefined(params) && !_.isNull(params) && (_.isString(params) && !!params)) {
       return fetchPost(`${url}/${params}`);
     }
     return fetchPost(url);
@@ -121,7 +136,7 @@ export async function btnFetch(type: string, url: string, params = {}, options?:
     if (_.isObject(params)) {
       return fetchPut(url, { body: params, ...options });
     }
-    if (!_.isUndefined(params) && !_.isNull(params)) {
+    if (!_.isUndefined(params) && !_.isNull(params) && (_.isString(params) && !!params)) {
       return fetchPut(`${url}/${params}`);
     }
     return fetchPut(url);

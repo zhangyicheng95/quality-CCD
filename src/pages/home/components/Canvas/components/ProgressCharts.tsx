@@ -26,7 +26,6 @@ const ProgressCharts: React.FC<Props> = (props: any) => {
         if (!_.isNumber(dataValue)) {
             message.error('进度条组件数据格式不正确，请检查');
             console.log('ProgressCharts:', dataValue);
-            localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
         if (dom?.current?.clientWidth > dom?.current?.clientHeight) {

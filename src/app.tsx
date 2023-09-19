@@ -7,7 +7,6 @@ import { Link } from 'umi';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import defaultSettings from '../config/defaultSettings';
 import icon from '@/assets/sany-logo.svg';
-import UBIcon from '@/assets/sany-ubs-logo.svg';
 import HomeLayout from '@/components/HomeLayout';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import RightContent from './components/RightContent';
@@ -109,6 +108,32 @@ export async function getInitialState(): Promise<{
         };
 
         defaultSettings.navTheme = theme || 'realDark';
+      } else if (!!query?.id) {
+        const res = await getParams(query?.id || '');
+        if (res && res.code === 'SUCCESS') {
+          localStorage.setItem("ipString", query?.id);
+          params = res?.data || {};
+          title = res?.data?.quality_name || res?.data?.name;
+          const { contentData = {} } = params;
+          const { theme, ipList = [] } = contentData;
+          params = ['contentData']['ipList'] = {
+            ...params,
+            contentData: {
+              ...contentData,
+              ipList: (ipList || [])?.map((item: any) => {
+                if (item.key === res.data.id) {
+                  return {
+                    ...item,
+                    label: res?.data?.name
+                  };
+                };
+                return item;
+              })
+            }
+          };
+
+          defaultSettings.navTheme = theme || 'realDark';
+        }
       }
     }
   }
@@ -141,8 +166,7 @@ const iconDom = (
       !!localStorage.getItem('quality_icon')
         ? `${BASE_IP}file_browser${localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'
         }${localStorage.getItem('quality_icon')}`
-        // @ts-ignore
-        : (window.QUALITY_CCD_CONFIG?.type === 'szpx' ? UBIcon : icon)
+        : icon
     }
     alt="logo"
   />

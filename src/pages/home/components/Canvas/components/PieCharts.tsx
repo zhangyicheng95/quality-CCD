@@ -29,7 +29,6 @@ const PieCharts: React.FC<Props> = (props: any) => {
         if (!_.isArray(dataValue)) {
             message.error('饼状图数据格式不正确，请检查');
             console.log('PieCharts:', dataValue);
-            localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
         const dom: any = document.getElementById(`echart-${id}`);

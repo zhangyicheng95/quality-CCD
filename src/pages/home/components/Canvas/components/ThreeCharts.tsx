@@ -222,7 +222,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         if (!_.isString(name)) {
             message.error('3D组件数据格式不正确，请检查');
             console.log('ThreeCharts', dataValue);
-            localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
     }, [name]);
@@ -258,6 +257,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     };
     const clearCanvas = (value: any) => {
         console.log("清理缓存");
+        console.log(value)
         cancelAnimationFrame(animateId);
         stats?.current?.dom && dom?.current?.removeChild(stats?.current?.dom);
         scene?.current?.traverse((child: any) => {

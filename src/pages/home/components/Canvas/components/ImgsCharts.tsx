@@ -33,7 +33,6 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
         if (!_.isArray(dataValue)) {
             message.error('图片列表数据格式不正确，请检查');
             console.log('ImgsCharts:', dataValue);
-            localStorage.removeItem(`localGridContentList-${params.id}`);
             return;
         }
         if (_.isEmpty(dataValue)) return;
