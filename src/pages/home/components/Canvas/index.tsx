@@ -783,6 +783,7 @@ const Home: React.FC<any> = (props: any) => {
       newParams = Object.assign({}, paramsData, {
         contentData: Object.assign({}, contentData, {
           contentHeader: header,
+          autoSize: _.isBoolean(contentData?.autoSize) ? contentData?.autoSize : true,
         })
       });
     };
