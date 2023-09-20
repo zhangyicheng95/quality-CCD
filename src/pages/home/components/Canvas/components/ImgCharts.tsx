@@ -29,6 +29,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     const [imgVisible, setImgVisible] = useState(false);
     const [visibleDirection, setVisibleDirection] = useState<any>('column');
     const [visible, setVisible] = useState(false);
+    const [storageParams, setStorageParams] = useState<any>({});
 
     const dom = useRef<any>();
     useLayoutEffect(() => {
@@ -36,6 +37,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             if (res && res.code === 'SUCCESS') {
                 const list = res?.data?.imgList || [];
                 setUrlList(list);
+                setStorageParams(res.data);
             }
         });
     }, []);
@@ -54,14 +56,10 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         };
         setUrlList((pre: any) => {
             let list = Array.from(new Set(pre.concat(dataValue)));
-            getStorageService(params.id).then((res: any) => {
-                if (res && res.code === 'SUCCESS') {
-                    addStorageService(params.id, { ...res.data, imgList: list });
-                }
-            });
+            addStorageService(params.id, { ...storageParams, imgList: list });
             return list.slice(list.length - 99);
         });
-    }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight, comparison]);
+    }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight, comparison, storageParams]);
     useEffect(() => {
         if (!magnifier) {
             return;
