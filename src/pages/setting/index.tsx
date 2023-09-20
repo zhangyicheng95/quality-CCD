@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useMemo, useState, } from "react";
-import { Form, Input, message, Button, Tree, Select, Switch, Row, Col } from "antd";
+import { Form, Input, message, Button, Tree, Select, Switch, Row, Col, Modal } from "antd";
 import * as _ from "lodash";
 import styles from "./index.module.less";
 import { getAllProject, updateParams } from "@/services/api";
@@ -22,6 +22,8 @@ const Setting: React.FC<any> = (props) => {
   const [selectPathVisible, setSelectPathVisible] = useState(false);
   const [selectedPath, setSelectedPath] = useState<any>('');
   const [ipUrlList, setIpUrlList] = useState<any>([]);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [passwordvalidate, setPasswordvalidate] = useState({});
 
   const isVision = useMemo(() => {
     // @ts-ignore
@@ -318,8 +320,13 @@ const Setting: React.FC<any> = (props) => {
                 icon={<FormOutlined />}
                 type="primary"
                 onClick={() => {
-                  history.push({ pathname: `/home/edit` });
-                  window.location.reload();
+                  // @ts-ignore
+                  if (window.QUALITY_CCD_CONFIG?.needPasswordtoModify) {
+                    setPasswordVisible(true);
+                  } else {
+                    history.push({ pathname: `/home/edit` });
+                    window.location.reload();
+                  }
                 }}
               >
                 前往配置
@@ -391,6 +398,46 @@ const Setting: React.FC<any> = (props) => {
               setSelectedPath('');
             }}
           />
+          : null
+      }
+      {
+        // 密码框
+        !!passwordVisible ?
+          <Modal
+            title={`请输入密码`}
+            wrapClassName="button-password-modal"
+            centered
+            open={!!passwordVisible}
+            maskClosable={false}
+            destroyOnClose
+            onOk={() => {
+              validateFields().then(values => {
+                // @ts-ignore
+                if (values?.password === window.QUALITY_CCD_CONFIG?.passwordtoModify) {
+                  history.push({ pathname: `/home/edit` });
+                  window.location.reload();
+                } else {
+                  message.error('密码错误');
+                  setPasswordvalidate({
+                    validateStatus: "error",
+                    help: "密码错误，请重试"
+                  });
+                }
+              });
+            }}
+            onCancel={() => setPasswordVisible(false)}
+          >
+            <Form form={form} scrollToFirstError >
+              <Form.Item
+                name="password"
+                label="密码"
+                rules={[{ required: true, message: '请输入密码' }]}
+                {...passwordvalidate}
+              >
+                <Input.Password visibilityToggle={false} allowClear />
+              </Form.Item>
+            </Form>
+          </Modal>
           : null
       }
     </div>
