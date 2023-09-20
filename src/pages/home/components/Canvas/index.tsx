@@ -931,7 +931,7 @@ const Home: React.FC<any> = (props: any) => {
             listData = listData.concat(
               <div
                 key={key}
-                className={` drag-item-content-box ${backgroundColor === 'default' ? "background-ubv" : ""}`}
+                className={`drag-item-content-box background-ubv`}
                 style={(!!backgroundColor && !!backgroundColor?.rgb) ? { backgroundColor: `rgba(${backgroundColor.rgb.r},${backgroundColor.rgb.g},${backgroundColor.rgb.b},${backgroundColor.rgb.a})` } : {}}
               >
                 {
@@ -2012,7 +2012,7 @@ const Home: React.FC<any> = (props: any) => {
                   initialValue={"#FFFFFF"}
                   rules={[{ required: false, message: '窗口背景色' }]}
                 >
-                  <ChromePicker
+                  {/* <ChromePicker
                     color={colorSelector?.backgroundColor}
                     onChange={(value: any) => {
                       const { rgb } = value;
@@ -2023,8 +2023,8 @@ const Home: React.FC<any> = (props: any) => {
                         }
                       });
                     }}
-                  />
-                  {/* <Select
+                  /> */}
+                  <Select
                     style={{ width: '100%' }}
                     options={[
                       {
@@ -2036,7 +2036,7 @@ const Home: React.FC<any> = (props: any) => {
                         label: '透明色',
                       }
                     ]}
-                  /> */}
+                  />
                 </Form.Item>
                 {
                   (['img'].includes(windowType) && !isVision) ?
