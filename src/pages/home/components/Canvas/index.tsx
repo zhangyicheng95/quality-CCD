@@ -931,8 +931,8 @@ const Home: React.FC<any> = (props: any) => {
             listData = listData.concat(
               <div
                 key={key}
-                className={`drag-item-content-box background-ubv`}
-                style={(!!backgroundColor && !!backgroundColor?.rgb) ? { backgroundColor: `rgba(${backgroundColor.rgb.r},${backgroundColor.rgb.g},${backgroundColor.rgb.b},${backgroundColor.rgb.a})` } : {}}
+                className={`drag-item-content-box ${backgroundColor === 'default' ? "background-ubv" : ""}`}
+              // style={(!!backgroundColor && !!backgroundColor?.rgb) ? { backgroundColor: `rgba(${backgroundColor.rgb.r},${backgroundColor.rgb.g},${backgroundColor.rgb.b},${backgroundColor.rgb.a})` } : {}}
               >
                 {
                   ifShowHeader ?
