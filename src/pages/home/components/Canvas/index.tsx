@@ -780,7 +780,7 @@ const Home: React.FC<any> = (props: any) => {
                   }
                 </div>
                 {
-                  (localStorage.getItem('ipString') === key) ?
+                  (localStorage.getItem('ipString') === key || !ifCanEdit) ?
                     null
                     :
                     <CloseOutlined onClick={() => {
