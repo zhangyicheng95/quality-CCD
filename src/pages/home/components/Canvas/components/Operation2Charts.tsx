@@ -121,84 +121,87 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     const onOk = () => {
         validateFields()
             .then((values) => {
-                // 1.直接发送动态数据
-                let result = {};
-                (Object.entries(values) || []).forEach((res: any, index: number) => {
-                    const name = res[0]?.split('$$')?.[0];
-                    const value: any = (!_.isUndefined(res[1]) && !_.isNull(res[1]))
-                        ? res[1]
-                        : configList?.filter((i: any) => i.name === name)?.[0]?.value;
-                    // @ts-ignore
-                    result[name] = (value instanceof moment) ? new Date(value).getTime() : value
-                });
-                const requestParams = {
-                    id: params.id,
-                    data: result
-                };
-                btnFetch('post', xName, requestParams);
-                console.log(result)
-                // 2.保存数据到节点中
-                const { flowData, } = params;
-                let { nodes } = flowData;
-                nodes = nodes.map((node: any) => {
-                    const { config = {} } = node;
-                    if (node.id === id.split('$$')[0]) {
-                        let { initParams = {}, execParams } = config;
-                        if (!execParams || _.isEmpty(execParams)) {
-                            execParams = initParams;
+                setConfigList((pre: any) => {
+                    // 1.直接发送动态数据
+                    let result = {};
+                    (Object.entries(values) || []).forEach((res: any, index: number) => {
+                        const name = res[0]?.split('$$')?.[0];
+                        const value: any = (!_.isUndefined(res[1]) && !_.isNull(res[1]))
+                            ? res[1]
+                            : pre?.filter((i: any) => i.name === name)?.[0]?.value;
+                        // @ts-ignore
+                        result[name] = (value instanceof moment) ? new Date(value).getTime() : value
+                    });
+                    const requestParams = {
+                        id: params.id,
+                        data: result
+                    };
+                    btnFetch('post', xName, requestParams);
+                    console.log(result)
+                    // 2.保存数据到节点中
+                    const { flowData, } = params;
+                    let { nodes } = flowData;
+                    nodes = nodes.map((node: any) => {
+                        const { config = {} } = node;
+                        if (node.id === id.split('$$')[0]) {
+                            let { initParams = {}, execParams } = config;
+                            if (!execParams || _.isEmpty(execParams)) {
+                                execParams = initParams;
+                            }
+                            let obj = Object.assign({}, execParams);
+                            pre.forEach((item: any, index: number) => {
+                                obj[item?.name] = {
+                                    ...item,
+                                    value: result[item?.name],
+                                    ...(item?.widget?.type === "TagRadio" ? {
+                                        widget: {
+                                            ...item?.widget,
+                                            options: (item?.widget?.options || [])?.map((option: any) => {
+                                                if (option.name === item?.value) {
+                                                    return {
+                                                        ...option,
+                                                        children: (option?.children || [])?.map((child: any) => {
+                                                            return {
+                                                                ...child,
+                                                                value: result[child?.name],
+                                                            }
+                                                        })
+                                                    }
+                                                };
+                                                return option;
+                                            })
+                                        }
+                                    } : {})
+                                };
+                            });
+                            return Object.assign({}, node, {
+                                config: Object.assign({}, config, {
+                                    execParams: obj
+                                })
+                            });
                         }
-                        let obj = Object.assign({}, execParams);
-                        configList.forEach((item: any, index: number) => {
-                            obj[item?.id || item?.name] = {
-                                ...item,
-                                value: result[item?.id || item?.name],
-                                ...(item?.widget?.type === "TagRadio" ? {
-                                    widget: {
-                                        ...item?.widget,
-                                        options: (item?.widget?.options || [])?.map((option: any) => {
-                                            if (option.name === item?.value) {
-                                                return {
-                                                    ...option,
-                                                    children: (option?.children || [])?.map((child: any) => {
-                                                        return {
-                                                            ...child,
-                                                            value: result[child?.id || child?.name],
-                                                        }
-                                                    })
-                                                }
-                                            };
-                                            return option;
-                                        })
-                                    }
-                                } : {})
-                            };
-                        });
-                        return Object.assign({}, node, {
-                            config: Object.assign({}, config, {
-                                execParams: obj
+                        return node
+                    });
+                    const resultParams = {
+                        id: params.id,
+                        data: Object.assign({}, params, {
+                            flowData: Object.assign({}, flowData, {
+                                nodes
                             })
-                        });
-                    }
-                    return node
-                });
-                const resultParams = {
-                    id: params.id,
-                    data: Object.assign({}, params, {
-                        flowData: Object.assign({}, flowData, {
-                            nodes
                         })
-                    })
-                };
-                updateParams(resultParams).then((res: any) => {
-                    if (res && res.code === 'SUCCESS') {
-                        message.success('修改成功');
-                        setInitialState((preInitialState: any) => ({
-                            ...preInitialState,
-                            params: res.data
-                        }));
-                    } else {
-                        message.error(res?.msg || res?.message || '接口异常');
-                    }
+                    };
+                    updateParams(resultParams).then((res: any) => {
+                        if (res && res.code === 'SUCCESS') {
+                            message.success('修改成功');
+                            setInitialState((preInitialState: any) => ({
+                                ...preInitialState,
+                                params: res.data
+                            }));
+                        } else {
+                            message.error(res?.msg || res?.message || '接口异常');
+                        }
+                    });
+                    return pre;
                 });
             }).catch((err) => {
                 console.log(err);
