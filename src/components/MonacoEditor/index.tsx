@@ -3,12 +3,16 @@ import {
   Select,
   Modal,
   Input,
+  message,
+  Upload,
+  Button,
 } from 'antd';
 import Monaco from 'react-monaco-editor';
 import * as _ from 'lodash';
 import './index.less';
 import { useModel } from 'umi';
 import { formatJson } from '@/utils/utils';
+import { UploadOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 interface Props {
@@ -63,6 +67,30 @@ const MonacoEditor: React.FC<Props> = (props) => {
     setEditorLanguage(language);
   }, [language]);
 
+  // 导入项目
+  const uploadProps = {
+    accept: '.json',
+    showUploadList: false,
+    multiple: true,
+    beforeUpload(file: any) {
+      const reader = new FileReader(); // 创建文件对象
+      reader.readAsText(file); // 读取文件的内容/URL
+      reader.onload = (res: any) => {
+        const {
+          target: { result },
+        } = res;
+        try {
+          setEditorLanguage('json');
+          setEditorValue(result);
+        } catch (err) {
+          message.error('json文件格式错误，请修改后上传。');
+          console.error(err);
+        }
+      };
+      return false;
+    },
+  };
+
   return (
     <Modal
       title={
@@ -86,15 +114,14 @@ const MonacoEditor: React.FC<Props> = (props) => {
             <Option value="shell">shell</Option>
             <Option value="java">java</Option>
           </Select>
-          {/* <Button
-            onClick={() => {
-              editorRef?.current.editor
-                ?.getAction('editor.action.formatDocument')
-                .run(); // 格式化
-            }}
-          >
-            格式化
-          </Button> */}
+          <Upload {...uploadProps}>
+            <Button
+              icon={<UploadOutlined />}
+            // type="primary"
+            >
+              导入本地json
+            </Button>
+          </Upload>
         </div>
       }
       width="calc(100vw - 48px)"
