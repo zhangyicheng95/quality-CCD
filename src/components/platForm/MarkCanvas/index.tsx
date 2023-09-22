@@ -53,7 +53,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   const [selectedOptionType, setSelectedOptionType] = useState({});
 
   useEffect(() => {
-    // const dom: any = document.getElementById(CONTAINER_ID);
+    const dom: any = document.getElementById(CONTAINER_ID);
     // const width = dom?.clientWidth,
     // height = dom?.clientHeight;
     img = new Image();
@@ -65,18 +65,28 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     img.title = 'img.png';
     img.onload = (res: any) => {
       const { width = 1, height = 1 } = img;
-      // img.width = width;
-      // img.height = height;
+      let trueWidth = width,
+        trueHeight = height;
+      if (width > height) {
+        trueWidth = dom?.clientWidth;
+        trueHeight = dom?.clientWidth * height / width;
+      } else {
+        trueWidth = dom?.clientHeight * width / height;
+        trueHeight = dom?.clientHeight;
+      }
+      console.log(width, height, zoom, trueWidth, trueHeight);
+      // img.width = trueWidth;
+      // img.height = trueHeight;
       gMap && gMap.destroy();
       // 声明容器
       gMap = new AILabel.Map(CONTAINER_ID, {
-        // size: { width: dom?.clientWidth, height: dom?.clientHeight },
+        // size: { width: width, height: height },
         center: { x: width / 2, y: height / 2 },
         zoom: zoom ? zoom : height * 3.5,
         mode: 'RECT', // 绘制线段
         refreshDelayWhenZooming: true, // 缩放时是否允许刷新延时，性能更优
 
-        zoomWhenDrawing: true,
+        zoomWhenDrawing: false,
         zoomWheelRatio: 8, // 控制滑轮缩放缩率[0, 10), 值越小，则缩放越快，反之越慢
         withHotKeys: true // 关闭快捷键
       });

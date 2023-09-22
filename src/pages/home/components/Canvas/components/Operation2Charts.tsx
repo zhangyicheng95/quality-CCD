@@ -34,9 +34,8 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     const { validateFields, resetFields, setFieldsValue } = form;
     const { initialState, setInitialState } = useModel<any>('@@initialState');
     const { params } = initialState;
-    const { flowData, } = params;
-    const { nodes } = flowData;
 
+    const [paramData, setParamData] = useState<any>({});
     const [configGroup, setConfigGroup] = useState<any>([]);
     const [configList, setConfigList] = useState<any>([]);
     const [editorVisible, setEditorVisible] = useState(false);
@@ -48,31 +47,44 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     const [selectedOption, setSelectedOption] = useState<any>({});
     // 初始化
     const init = () => {
-        const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
-        const { config = {} } = node;
-        let { group = [], initParams = {}, execParams = {} } = config;
-        if (!execParams || _.isEmpty(execParams)) {
-            execParams = initParams;
-        }
-        let resConfig: any = [],
-            selectedOptions = {};
-        operationList?.forEach((item: any) => {
-            const itemGroup = group.filter((i: any) => i.children.includes(item))?.[0];
-            if (execParams?.[item]) {
-                resConfig = resConfig.concat({ ...execParams[item], show: !itemGroup });
-                if (execParams[item]?.widget?.type === "TagRadio") {
-                    const children = (
-                        (execParams[item]?.widget?.options || [])
-                            .filter((i: any) => i.name === execParams[item]?.value)?.[0]?.children || []
-                    );
-                    selectedOptions[item] = children;
-                }
-
+        setParamData((prev: any) => {
+            const { flowData, } = prev;
+            const { nodes } = flowData;
+            const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
+            const { config = {} } = node;
+            let { group = [], initParams = {}, execParams = {} } = config;
+            if (!execParams || _.isEmpty(execParams)) {
+                execParams = initParams;
             }
+            let resConfig: any = [],
+                selectedOptions = {};
+            operationList?.forEach((item: any) => {
+                const itemGroup = group.filter((i: any) => i.children.includes(item))?.[0];
+                if (execParams?.[item]) {
+                    resConfig = resConfig.concat({ ...execParams[item], show: !itemGroup });
+                    if (execParams[item]?.widget?.type === "TagRadio") {
+                        const children = (
+                            (execParams[item]?.widget?.options || [])
+                                .filter((i: any) => i.name === execParams[item]?.value)?.[0]?.children || []
+                        );
+                        selectedOptions[item] = children;
+                    }
+
+                }
+            });
+            setConfigGroup(group.map((i: any) => ({ ...i, show: true })));
+            setSelectedOption(selectedOptions);
+            setConfigList(resConfig.map((item: any) => {
+                // @ts-ignore
+                const itemList = Object.entries(selectedOptions)?.[0]?.[1]?.filter((i: any) => i.name === item.name)?.[0];
+                return {
+                    ...item,
+                    ...(!!itemList ? { value: itemList?.value } : {})
+                };
+            }));
+
+            return prev;
         });
-        setConfigGroup(group.map((i: any) => ({ ...i, show: true })));
-        setSelectedOption(selectedOptions);
-        setConfigList(resConfig);
     };
     // 进来初始化
     useEffect(() => {
@@ -81,8 +93,11 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             console.log('Operation2Charts:', dataValue);
             return;
         }
-        init();
+        setParamData(params);
     }, [operationList, params]);
+    useEffect(() => {
+        init();
+    }, [paramData]);
     useEffect(() => {
         // const children = (selectedOption || []).map((item: any) => ({
         //     ...item,
@@ -101,9 +116,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                         ...value,
                     };
                 };
-                console.log(value)
                 if (!!value?.widget?.type || item?.widget?.type === "TagRadio") {
-                    console.log(value)
                     setFieldsValue({ [key]: value?.value });
                     return {
                         ...item,
@@ -157,7 +170,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                                         widget: {
                                             ...item?.widget,
                                             options: (item?.widget?.options || [])?.map((option: any) => {
-                                                if (option.name === item?.value) {
+                                                if (option.name === result[item?.name]) {
                                                     return {
                                                         ...option,
                                                         children: (option?.children || [])?.map((child: any) => {
@@ -193,6 +206,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                     updateParams(resultParams).then((res: any) => {
                         if (res && res.code === 'SUCCESS') {
                             message.success('修改成功');
+                            setParamData(res.data);
                             setInitialState((preInitialState: any) => ({
                                 ...preInitialState,
                                 params: res.data
