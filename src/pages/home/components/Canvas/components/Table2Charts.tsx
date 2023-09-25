@@ -17,7 +17,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
     let {
         dataValue = [], fontSize, reverse, tableSize = [], interlacing,
-        des_bordered
+        des_bordered, headerBackgroundColor
     } = data;
     if (process.env.NODE_ENV === 'development') {
         reverse = true;
@@ -260,7 +260,10 @@ const Table2Charts: React.FC<Props> = (props: any) => {
         >
             <div
                 className="charts-header-box flex-box"
-                style={tableScroll ? { width: 'calc(100% - 6px)' } : { width: 'calc(100% - 1px)' }}
+                style={Object.assign({},
+                    tableScroll ? { width: 'calc(100% - 6px)' } : { width: 'calc(100% - 1px)' },
+                    (headerBackgroundColor === 'transparent') ? { backgroundColor: 'transparent' } : {}
+                )}
             >
                 {
                     _.isArray(dataValue) && (dataValue || []).map((item: any, index: number) => {

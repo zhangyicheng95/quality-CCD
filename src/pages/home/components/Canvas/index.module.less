@@ -552,6 +552,8 @@
   height: 100%;
   overflow-y: auto;
   font-size: 18px;
+  user-select: text;
+
 
   :global {
     .charts-header-box {
@@ -560,13 +562,14 @@
       right: 0;
       width: calc(100% - 6px);
       background-color: @background-color-base;
+      border-left: 1px solid @border-color-base;
 
       .charts-header-item {
         padding: 2px 8px;
         flex: 1;
-        height: 42px;
-        line-height: 42px;
-        border-right: 5px solid @body-background;
+        height: 38px;
+        line-height: 38px;
+        border-right: 1px solid @body-background;
         overflow: hidden;
         text-align: center;
 
@@ -578,7 +581,7 @@
 
     .charts-body-box {
       overflow-y: auto;
-      // height: calc(100% - 42px);
+      margin-top: 38px;
       border-right: 0 solid @border-color-base;
       border-bottom: 0 solid @border-color-base;
 
@@ -596,10 +599,8 @@
         }
       }
 
-      .charts-body-tr-interlacing {
-        &:nth-child(even) {
-          background-color: rgba(144, 144, 144, .6);
-        }
+      .charts-body-tr-interlacing:nth-child(even) {
+        background-color: rgba(144, 144, 144, .6);
       }
     }
   }
@@ -610,6 +611,7 @@
   height: 100%;
   overflow-y: auto;
   font-size: 18px;
+  user-select: text;
 
   :global {
     .charts-header-box {
@@ -618,23 +620,23 @@
       right: 0;
       width: calc(100% - 6px);
       background-color: @background-color-base;
+      border-left: 1px solid @border-color-base;
 
       .charts-header-item {
-        // flex: 1;
         width: 100%;
         overflow: hidden;
         height: 38px;
-        // line-height: 38px;
+
 
         .charts-header-item-title {
           padding: 0 8px;
-          flex: 1;
+          width: 100%;
           text-align: center;
         }
 
         .charts-header-item-border {
           height: 100%;
-          width: 5px;
+          width: 1px;
           background-color: @body-background;
           cursor: ew-resize;
         }
@@ -643,9 +645,9 @@
 
     .charts-body-box {
       width: 100%; //calc(100% - 8px);
-      // height: calc(100% - 38px);
       margin-top: 38px;
       align-items: normal;
+      border-left: 0 solid @border-color-base;
       border-right: 0 solid @border-color-base;
       border-bottom: 0 solid @border-color-base;
 
@@ -654,31 +656,25 @@
         overflow: hidden;
 
         .charts-body-td {
-          padding: 2px 8px;
-          width: 100%;
-          height: 38px;
-          line-height: 34px;
-          text-align: center;
-          overflow: hidden;
-          font-weight: 300;
-          border-right: 5px solid transparent;
-          border-top: 0 solid @border-color-base;
-          border-left: 0 solid @border-color-base;
+          .charts-body-td-title {
+            padding: 2px 8px;
+            width: 100%;
+            height: 38px;
+            line-height: 34px;
+            text-align: center;
+            overflow: hidden;
+            font-weight: 300;
+            border-top: 0 solid @border-color-base;
+          }
 
-          // &:nth-child(even) {
-          //   background-color: rgba(144, 144, 144, .6);
-          // }
-        }
-
-        .charts-body-td-interlacing {
-          &:nth-child(even) {
-            background-color: rgba(144, 144, 144, .6);
+          .charts-body-item-border {
+            height: 38px;
+            width: 1px;
+            background-color: @border-color-base;
           }
         }
-      }
 
-      .charts-body-tr-interlacing {
-        &:nth-child(even) {
+        .charts-body-td-interlacing:nth-child(even) {
           background-color: rgba(144, 144, 144, .6);
         }
       }

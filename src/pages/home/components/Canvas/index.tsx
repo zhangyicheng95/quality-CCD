@@ -906,7 +906,7 @@ const Home: React.FC<any> = (props: any) => {
               des_bordered, des_column, des_layout, des_size, ifLocalStorage,
               CCDName, imgs_width, imgs_height, tableSize, magnifier, comparison, operationList,
               dataZoom, fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
-              password, passwordHelp, ifShowHeader, ifShowColorList,
+              password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
               basicInfoData = [{ id: guid(), name: '', value: '' }],
             } = item;
             // const id = key?.split('$$')[0];
@@ -987,7 +987,7 @@ const Home: React.FC<any> = (props: any) => {
                                   data={{
                                     dataValue: dataValue || [],
                                     yName, xName, fontSize, reverse, tableSize, interlacing,
-                                    des_bordered
+                                    des_bordered, headerBackgroundColor
                                   }}
                                 />
                                 :
@@ -996,7 +996,8 @@ const Home: React.FC<any> = (props: any) => {
                                     id={key}
                                     data={{
                                       dataValue: dataValue || [],
-                                      fontSize, reverse, tableSize, interlacing, des_bordered
+                                      fontSize, reverse, tableSize, interlacing, des_bordered,
+                                      headerBackgroundColor
                                     }}
                                   />
                                   :
@@ -1450,6 +1451,7 @@ const Home: React.FC<any> = (props: any) => {
       CCDName, imgs_width, imgs_height, magnifier, comparison = false, operationList, dataZoom,
       fontColor, interlacing = false, modelRotate = false, modelScale = false, modelRotateScreenshot = false,
       password = '', passwordHelp = '', ifShowHeader = false, ifShowColorList = false,
+      headerBackgroundColor = 'default'
     } = values;
     if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
       try {
@@ -1478,7 +1480,7 @@ const Home: React.FC<any> = (props: any) => {
         des_bordered, des_column, des_layout, des_size, ifLocalStorage,
         CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
         fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
-        password, passwordHelp, ifShowHeader, ifShowColorList
+        password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1495,7 +1497,7 @@ const Home: React.FC<any> = (props: any) => {
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
             CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
             fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
-            password, passwordHelp, ifShowHeader, ifShowColorList
+            password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -1519,11 +1521,12 @@ const Home: React.FC<any> = (props: any) => {
     setFieldsValue({
       value: [], type: 'img', yName: undefined, xName: undefined, fontSize: undefined, reverse: false,
       direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined,
-      align: 'left', backgroundColor: '#FFFFFF', barColor: 'default', progressType: 'line',
+      align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line',
       progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: undefined,
       CCDName: undefined, magnifier: false, comparison: false, operationList: [], dataZoom: 0,
       fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false, modelRotateScreenshot: false,
       password: undefined, passwordHelp: undefined, ifShowHeader: false, ifShowColorList: false,
+      headerBackgroundColor: 'default'
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -2338,6 +2341,26 @@ const Home: React.FC<any> = (props: any) => {
                             {
                               value: true,
                               label: '倒叙显示',
+                            }
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`headerBackgroundColor`}
+                        label={'窗口背景色'}
+                        initialValue={"default"}
+                        rules={[{ required: false, message: '窗口背景色' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: 'default',
+                              label: '默认',
+                            },
+                            {
+                              value: 'transparent',
+                              label: '透明色',
                             }
                           ]}
                         />

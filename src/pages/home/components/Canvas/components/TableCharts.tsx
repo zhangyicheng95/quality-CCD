@@ -15,7 +15,7 @@ const TableCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
     let {
         dataValue = [], yName, xName = '', fontSize, reverse, interlacing,
-        des_bordered
+        des_bordered, headerBackgroundColor
     } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = [
@@ -53,7 +53,10 @@ const TableCharts: React.FC<Props> = (props: any) => {
         >
             <div
                 className="charts-header-box flex-box"
-                style={tableScroll ? { width: 'calc(100% - 6px)' } : { width: 'calc(100% - 1px)' }}
+                style={Object.assign({},
+                    tableScroll ? { width: 'calc(100% - 6px)' } : { width: 'calc(100% - 1px)' },
+                    (headerBackgroundColor === 'transparent') ? { backgroundColor: 'transparent' } : {}
+                )}
             >
                 <TooltipDiv title={yName} className="charts-header-item">
                     {yName}
