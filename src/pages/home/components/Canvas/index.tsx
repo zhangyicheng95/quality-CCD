@@ -1831,13 +1831,17 @@ const Home: React.FC<any> = (props: any) => {
                           style={Object.assign({},
                             !!paramData?.contentData?.contentBackground ?
                               { backgroundImage: `url(${paramData?.contentData?.contentBackground})` } : {},
-                            paramData?.contentData?.contentSize?.width ?
+                            (!_.isBoolean(paramData?.contentData?.autoSize) && paramData?.contentData?.contentSize?.width) ?
                               {
                                 width: `${paramData?.contentData?.contentSize?.width}px`,
+                                minWidth: `${paramData?.contentData?.contentSize?.width}px`,
+                                maxWidth: `${paramData?.contentData?.contentSize?.width}px`,
                               } : {},
                             paramData?.contentData?.contentSize?.height ?
                               {
-                                height: `${paramData?.contentData?.contentSize?.height - 75}px`
+                                height: `${paramData?.contentData?.contentSize?.height - 75}px`,
+                                minHeight: `${paramData?.contentData?.contentSize?.height - 75}px`,
+                                maxHeight: `${paramData?.contentData?.contentSize?.height - 75}px`
                               } : {},
                             (paramData?.contentData?.overallBackgroundColor && paramData?.contentData?.overallBackgroundColor?.rgb) ?
                               {
