@@ -1,26 +1,35 @@
 import { getAllProject, getListStatusService } from "@/services/api";
-import { Badge, message, } from "antd";
+import { Button, Form, Input, message, Modal, } from "antd";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as _ from 'lodash';
 import styles from "./index.module.less";
 import { connect } from "umi";
+import { useHistory } from "react-router";
 
 const HomeLayout: React.FC<any> = (props) => {
   const { children, initialState, setInitialState, dispatch } = props;
+  const { location } = useHistory();
   const { params = {} } = initialState;
   const { quality_name, name, id } = params;
+  const [form] = Form.useForm();
+  const { validateFields, setFieldsValue, getFieldValue } = form;
   const timerRef = useRef<any>();
   const [list, setList] = useState<any>([]);
   const [projectList, setProjectList] = useState([]);
+  const [currentLoginStatus, setCurrentLoginStatus] = useState(false);
+  const [passwordvalidate, setPasswordvalidate] = useState({});
+  const [visiable, setVisiable] = useState(true);
 
   const isVision = useMemo(() => {
     // @ts-ignore
     return window.QUALITY_CCD_CONFIG.type === 'vision';
   }, []);
+  useEffect(() => {
+    setVisiable(true);
+  }, [location?.pathname]);
   // 获取方案列表
   useEffect(() => {
     if (isVision) return;
-
     try {
       const list = JSON.parse(localStorage.getItem("ipUrlList") || JSON.stringify([{ name: '本地服务', value: 'localhost:8866' }]));
       if (!!list.length) {
@@ -155,12 +164,62 @@ const HomeLayout: React.FC<any> = (props) => {
       }
     }
   }, []);
+  const handleOk = () => {
+    validateFields()
+      .then((values) => {
+        console.log(values);
+        const { password } = values;
+        if (password === params?.password) {
+          setCurrentLoginStatus(true);
+        } else {
+          message.error('密码错误');
+          setPasswordvalidate({
+            validateStatus: "error",
+            help: "密码错误，请重试"
+          });
+        }
+      });
+  };
+  const handleCancel = () => {
+    setVisiable(false);
+  };
 
   return (
     <div className={styles.reportWrap}>
       <div className="box flex-box">
         <div className="content-box">
-          {children}
+          {
+            ["/control", "/setting"].includes(location?.pathname) ?
+              (
+                (params?.password && !!currentLoginStatus) ?
+                  children
+                  :
+                  <div className="mask-body">
+                    <Modal
+                      title="权限校验"
+                      open={visiable}
+                      centered
+                      onOk={handleOk}
+                      onCancel={handleCancel}
+                    >
+                      <Form
+                        form={form}
+                        scrollToFirstError
+                      >
+                        <Form.Item
+                          name="password"
+                          label="权限密码"
+                          rules={[{ required: true, message: "权限密码" }]}
+                          {...passwordvalidate}
+                        >
+                          <Input placeholder="权限密码" />
+                        </Form.Item>
+                      </Form>
+                    </Modal>
+                  </div>
+              )
+              : children
+          }
         </div>
       </div>
     </div>
