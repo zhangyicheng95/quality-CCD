@@ -14,6 +14,7 @@ const Setting: React.FC<any> = (props) => {
   const { params: paramsData } = initialState;
   const { projectStatus, projectListStore } = props;
   const [form] = Form.useForm();
+  const [form1] = Form.useForm();
   const history = useHistory();
   const { validateFields, setFieldsValue, getFieldValue } = form;
   const [paramData, setParamData] = useState<any>({});
@@ -64,7 +65,6 @@ const Setting: React.FC<any> = (props) => {
       setCheckedKeys(checkedList);
       setFieldsValue({
         quality_name: quality_name || name,
-        password: password,
         selfStart: paramsData.selfStart || false,
         errorSelfStart: paramsData.errorSelfStart || false
       });
@@ -117,7 +117,7 @@ const Setting: React.FC<any> = (props) => {
   const onFinish = () => {
     validateFields()
       .then((values) => {
-        const { quality_icon, quality_name, password, selfStart, errorSelfStart } = values;
+        const { quality_icon, quality_name, selfStart, errorSelfStart } = values;
         let nodeList: any = [].concat(paramData?.flowData?.nodes);
         (paramData?.flowData?.nodes || []).forEach((key: any) => {
           nodeList = nodeList.map((node: any) => {
@@ -137,7 +137,7 @@ const Setting: React.FC<any> = (props) => {
           })
         });
         const result = Object.assign({}, paramData, {
-          quality_name, password,
+          quality_name,
           selfStart, errorSelfStart,
           contentData: {
             ...(paramData?.contentData || {}),
@@ -321,13 +321,8 @@ const Setting: React.FC<any> = (props) => {
                 icon={<FormOutlined />}
                 type="primary"
                 onClick={() => {
-                  // @ts-ignore
-                  if (window.QUALITY_CCD_CONFIG?.needPasswordtoModify) {
-                    setPasswordVisible(true);
-                  } else {
-                    history.push({ pathname: `/home/edit` });
-                    window.location.reload();
-                  }
+                  history.push({ pathname: `/home/edit` });
+                  window.location.reload();
                 }}
               >
                 前往配置
@@ -362,7 +357,15 @@ const Setting: React.FC<any> = (props) => {
             initialValue={paramData.password}
             rules={[{ required: false, message: "权限密码" }]}
           >
-            <Input placeholder="权限密码" />
+            <Button
+              icon={<FormOutlined />}
+              type="primary"
+              onClick={() => {
+                setPasswordVisible(true);
+              }}
+            >
+              修改权限密码
+            </Button>
           </Form.Item>
           {
             (!isVision && !_.isEmpty(treeData) && !!treeData?.length) ?
@@ -413,37 +416,53 @@ const Setting: React.FC<any> = (props) => {
         // 密码框
         !!passwordVisible ?
           <Modal
-            title={`请输入密码`}
+            title={`修改权限密码`}
             wrapClassName="button-password-modal"
             centered
             open={!!passwordVisible}
             maskClosable={false}
             destroyOnClose
             onOk={() => {
-              validateFields().then(values => {
-                // @ts-ignore
-                if (values?.password === window.QUALITY_CCD_CONFIG?.passwordtoModify) {
-                  history.push({ pathname: `/home/edit` });
-                  window.location.reload();
-                } else {
-                  message.error('密码错误');
-                  setPasswordvalidate({
-                    validateStatus: "error",
-                    help: "密码错误，请重试"
+              form1.validateFields().then(values => {
+                const { prePassword, password } = values;
+                if (prePassword === paramData?.password) {
+                  updateParams({
+                    id: paramData.id,
+                    data: {
+                      ...paramData,
+                      password
+                    }
+                  }).then((res: any) => {
+                    if (res && res.code === 'SUCCESS') {
+                      message.success('更新配置成功')
+                    } else {
+                      message.error(res?.msg || res?.message || '接口异常');
+                    }
+                    window.location.reload();
                   });
+                } else {
+                  message.error('原始密码错误', 5);
                 }
               });
             }}
             onCancel={() => setPasswordVisible(false)}
           >
-            <Form form={form} scrollToFirstError >
+            <Form form={form1} scrollToFirstError >
               <Form.Item
-                name="password"
-                label="密码"
-                rules={[{ required: true, message: '请输入密码' }]}
+                name="prePassword"
+                label="原始密码"
+                rules={[{ required: true, message: '原始密码' }]}
                 {...passwordvalidate}
               >
-                <Input.Password visibilityToggle={false} allowClear />
+                <Input.Password visibilityToggle={false} allowClear placeholder="原始密码" />
+              </Form.Item>
+              <Form.Item
+                name="password"
+                label="权限密码"
+                rules={[{ required: true, message: '权限密码' }]}
+                {...passwordvalidate}
+              >
+                <Input.Password visibilityToggle={false} allowClear placeholder="权限密码" />
               </Form.Item>
             </Form>
           </Modal>

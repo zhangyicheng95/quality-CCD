@@ -12,7 +12,7 @@ const HomeLayout: React.FC<any> = (props) => {
   const { params = {} } = initialState;
   const { quality_name, name, id } = params;
   const [form] = Form.useForm();
-  const { validateFields, setFieldsValue, getFieldValue } = form;
+  const { validateFields, setFieldsValue, resetFields } = form;
   const timerRef = useRef<any>();
   const [list, setList] = useState<any>([]);
   const [projectList, setProjectList] = useState([]);
@@ -25,6 +25,7 @@ const HomeLayout: React.FC<any> = (props) => {
     return window.QUALITY_CCD_CONFIG.type === 'vision';
   }, []);
   useEffect(() => {
+    setCurrentLoginStatus(false);
     setVisiable(true);
   }, [location?.pathname]);
   // 获取方案列表
@@ -167,9 +168,9 @@ const HomeLayout: React.FC<any> = (props) => {
   const handleOk = () => {
     validateFields()
       .then((values) => {
-        console.log(values);
         const { password } = values;
         if (password === params?.password) {
+          handleCancel();
           setCurrentLoginStatus(true);
         } else {
           message.error('密码错误');
@@ -182,6 +183,7 @@ const HomeLayout: React.FC<any> = (props) => {
   };
   const handleCancel = () => {
     setVisiable(false);
+    resetFields();
   };
 
   return (
@@ -201,6 +203,8 @@ const HomeLayout: React.FC<any> = (props) => {
                       centered
                       onOk={handleOk}
                       onCancel={handleCancel}
+                      destroyOnClose
+                      maskClosable={false}
                     >
                       <Form
                         form={form}
@@ -212,7 +216,7 @@ const HomeLayout: React.FC<any> = (props) => {
                           rules={[{ required: true, message: "权限密码" }]}
                           {...passwordvalidate}
                         >
-                          <Input placeholder="权限密码" />
+                          <Input.Password visibilityToggle={false} allowClear placeholder="权限密码" />
                         </Form.Item>
                       </Form>
                     </Modal>
