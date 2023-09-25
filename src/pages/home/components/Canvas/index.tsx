@@ -303,18 +303,14 @@ const Home: React.FC<any> = (props: any) => {
         </div>
         {
           ifCanEdit ?
-            <div className="flex-box-center drag-item-content-mask common-card-title" onClick={() => {
-              var now = new Date().getTime();
-              if (now - clickTime < 300) { // 设置判断条件为300毫秒
-                // 双击事件触发的操作
-                if (!!addWindowVisible || !!homeSettingVisible) {
-                  setAddWindowVisible("");
-                  setHomeSettingVisible("");
-                }
-                setFieldsValue({ des_column: homeSettingData?.['slider-1']?.des_column || 1 });
-                setHomeSettingVisible('slider-1');
+            <div className="flex-box-center drag-item-content-mask common-card-title" onDoubleClick={() => {
+              // 双击事件触发的操作
+              if (!!addWindowVisible || !!homeSettingVisible) {
+                setAddWindowVisible("");
+                setHomeSettingVisible("");
               }
-              clickTime = now;
+              setFieldsValue({ des_column: homeSettingData?.['slider-1']?.des_column || 1 });
+              setHomeSettingVisible('slider-1');
             }}>
               {/* <DragOutlined className='drag-item-content-mask-icon' /> */}
               {
@@ -456,18 +452,14 @@ const Home: React.FC<any> = (props: any) => {
         </div>
         {
           ifCanEdit ?
-            <div className="flex-box-center drag-item-content-mask common-card-title" onClick={() => {
-              var now = new Date().getTime();
-              if (now - clickTime < 300) { // 设置判断条件为300毫秒
-                // 双击事件触发的操作
-                if (!!addWindowVisible || !!homeSettingVisible) {
-                  setAddWindowVisible("");
-                  setHomeSettingVisible("");
-                }
-                setFieldsValue({ fontSize: homeSettingData?.['slider-4']?.fontSize || 20 });
-                setHomeSettingVisible('slider-4');
+            <div className="flex-box-center drag-item-content-mask common-card-title" onDoubleClick={() => {
+              // 双击事件触发的操作
+              if (!!addWindowVisible || !!homeSettingVisible) {
+                setAddWindowVisible("");
+                setHomeSettingVisible("");
               }
-              clickTime = now;
+              setFieldsValue({ fontSize: homeSettingData?.['slider-4']?.fontSize || 20 });
+              setHomeSettingVisible('slider-4');
             }}>
               {/* <DragOutlined className='drag-item-content-mask-icon' /> */}
               {
@@ -513,18 +505,14 @@ const Home: React.FC<any> = (props: any) => {
         </div>
         {
           ifCanEdit ?
-            <div className="flex-box-center drag-item-content-mask common-card-title" onClick={() => {
-              var now = new Date().getTime();
-              if (now - clickTime < 300) { // 设置判断条件为300毫秒
-                // 双击事件触发的操作
-                if (!!addWindowVisible || !!homeSettingVisible) {
-                  setAddWindowVisible("");
-                  setHomeSettingVisible("");
-                }
-                setFieldsValue({ fontSize: homeSettingData?.['footer-1']?.fontSize || 14 });
-                setHomeSettingVisible('footer-1');
+            <div className="flex-box-center drag-item-content-mask common-card-title" onDoubleClick={() => {
+              // 双击事件触发的操作
+              if (!!addWindowVisible || !!homeSettingVisible) {
+                setAddWindowVisible("");
+                setHomeSettingVisible("");
               }
-              clickTime = now;
+              setFieldsValue({ fontSize: homeSettingData?.['footer-1']?.fontSize || 14 });
+              setHomeSettingVisible('footer-1');
             }}>
               {/* <DragOutlined className='drag-item-content-mask-icon' /> */}
               {
@@ -584,18 +572,14 @@ const Home: React.FC<any> = (props: any) => {
         </div>
         {
           ifCanEdit ?
-            <div className="flex-box-center drag-item-content-mask common-card-title" onClick={() => {
-              var now = new Date().getTime();
-              if (now - clickTime < 300) { // 设置判断条件为300毫秒
-                // 双击事件触发的操作
-                if (!!addWindowVisible || !!homeSettingVisible) {
-                  setAddWindowVisible("");
-                  setHomeSettingVisible("");
-                }
-                setFieldsValue({ fontSize: homeSettingData?.['error']?.fontSize || 20 });
-                setHomeSettingVisible('footer-2');
+            <div className="flex-box-center drag-item-content-mask common-card-title" onDoubleClick={() => {
+              // 双击事件触发的操作
+              if (!!addWindowVisible || !!homeSettingVisible) {
+                setAddWindowVisible("");
+                setHomeSettingVisible("");
               }
-              clickTime = now;
+              setFieldsValue({ fontSize: homeSettingData?.['error']?.fontSize || 20 });
+              setHomeSettingVisible('footer-2');
             }}>
               {/* <DragOutlined className='drag-item-content-mask-icon' /> */}
               {
@@ -760,13 +744,20 @@ const Home: React.FC<any> = (props: any) => {
     setPageIconPosition(pageIconPosition || {});
     let newParams = paramsData;
     if (!contentSize?.width || !contentSize?.height) {
-      newParams = Object.assign({}, paramsData, {
-        contentData: Object.assign({}, contentData, {
+      newParams = Object.assign({}, newParams, {
+        contentData: Object.assign({}, newParams?.contentData, {
           contentSize: { width: 1600, height: 900 },
-          autoSize: _.isBoolean(contentData?.autoSize) ? contentData?.autoSize : true,
         })
       });
     }
+    if (!_.isBoolean(contentData?.autoSize)) {
+      newParams = Object.assign({}, newParams, {
+        contentData: Object.assign({}, newParams?.contentData, {
+          autoSize: true,
+        })
+      });
+    }
+    console.log(newParams)
     if (!_.isObject(contentHeader) || _.isEmpty(contentHeader)) {
       const header = {};
       // 默认显示/隐藏header
@@ -1135,68 +1126,64 @@ const Home: React.FC<any> = (props: any) => {
                 </div>
                 {
                   ifCanEdit ?
-                    <div className="flex-box-center drag-item-content-mask common-card-title" onClick={() => {
-                      var now = new Date().getTime();
-                      if (now - clickTime < 300) { // 设置判断条件为300毫秒
-                        // 双击事件触发的操作
-                        if (!!addWindowVisible || !!homeSettingVisible) {
-                          setAddWindowVisible("");
-                          setHomeSettingVisible("");
-                        }
-                        !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
-                        setBasicInfoData(basicInfoData);
-                        setEditWindowData(item);
-                        setFieldsValue(Object.assign(
-                          {},
-                          item,
-                          !fontSize ? { fontSize: 12 } : {},
-                          (!!backgroundColor && !!backgroundColor?.rgb) ? { backgroundColor: backgroundColor } : {}
-                        ));
-
-                        setColorSelector((prev: any) => ({
-                          ...prev,
-                          ...((!!fontColor && !!fontColor?.rgb) ? { fontColor: fontColor.rgb } : {}),
-                          ...((!!backgroundColor && !!backgroundColor?.rgb) ? { backgroundColor: backgroundColor?.rgb } : {})
-                        }));
-
-                        setWindowType(type);
-                        if (type === 'operation') {
-                          const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
-                          if (!!res) {
-                            const { config = {} } = res;
-                            if (!!config?.initParams && _.isObject(config?.initParams)) {
-                              setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
-                                return {
-                                  label: item[1]?.alias,
-                                  value: item[0],
-                                }
-                              }));
-                            }
-                          }
-                        } else if (type === 'operation2') {
-                          const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
-                          if (!!res) {
-                            const { config = {} } = res;
-                            if (!!config?.execParams && _.isObject(config?.execParams)) {
-                              setSelectedNodeConfig(() => Object.entries(config.execParams)?.map((item: any) => {
-                                return {
-                                  label: item[1]?.alias,
-                                  value: item[0],
-                                }
-                              }));
-                            } else if (!!config?.initParams && _.isObject(config?.initParams)) {
-                              setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
-                                return {
-                                  label: item[1]?.alias,
-                                  value: item[0],
-                                }
-                              }));
-                            }
-                          }
-                        }
-                        setAddWindowVisible(key);
+                    <div className="flex-box-center drag-item-content-mask common-card-title" onDoubleClick={() => {
+                      // 双击事件触发的操作
+                      if (!!addWindowVisible || !!homeSettingVisible) {
+                        setAddWindowVisible("");
+                        setHomeSettingVisible("");
                       }
-                      clickTime = now;
+                      !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
+                      setBasicInfoData(basicInfoData);
+                      setEditWindowData(item);
+                      setFieldsValue(Object.assign(
+                        {},
+                        item,
+                        !fontSize ? { fontSize: 12 } : {},
+                        (!!backgroundColor && !!backgroundColor?.rgb) ? { backgroundColor: backgroundColor } : {}
+                      ));
+
+                      setColorSelector((prev: any) => ({
+                        ...prev,
+                        ...((!!fontColor && !!fontColor?.rgb) ? { fontColor: fontColor.rgb } : {}),
+                        ...((!!backgroundColor && !!backgroundColor?.rgb) ? { backgroundColor: backgroundColor?.rgb } : {})
+                      }));
+
+                      setWindowType(type);
+                      if (type === 'operation') {
+                        const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
+                        if (!!res) {
+                          const { config = {} } = res;
+                          if (!!config?.initParams && _.isObject(config?.initParams)) {
+                            setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
+                              return {
+                                label: item[1]?.alias,
+                                value: item[0],
+                              }
+                            }));
+                          }
+                        }
+                      } else if (type === 'operation2') {
+                        const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
+                        if (!!res) {
+                          const { config = {} } = res;
+                          if (!!config?.execParams && _.isObject(config?.execParams)) {
+                            setSelectedNodeConfig(() => Object.entries(config.execParams)?.map((item: any) => {
+                              return {
+                                label: item[1]?.alias,
+                                value: item[0],
+                              }
+                            }));
+                          } else if (!!config?.initParams && _.isObject(config?.initParams)) {
+                            setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
+                              return {
+                                label: item[1]?.alias,
+                                value: item[0],
+                              }
+                            }));
+                          }
+                        }
+                      }
+                      setAddWindowVisible(key);
                     }}>
                       {/* <DragOutlined className='drag-item-content-mask-icon' /> */}
                       {
@@ -1857,7 +1844,7 @@ const Home: React.FC<any> = (props: any) => {
                                 backgroundColor: `rgba(${paramData?.contentData?.overallBackgroundColor.rgb.r},${paramData?.contentData?.overallBackgroundColor.rgb.g},${paramData?.contentData?.overallBackgroundColor.rgb.b},${paramData?.contentData?.overallBackgroundColor.rgb.a})`
                               } : {},
                             (!!paramData?.contentData?.autoSize || !_.isBoolean(paramData?.contentData?.autoSize)) ?
-                              { width: '100%', height: '100%' } : {}
+                              { width: '100%', } : {}
                           )}
                         >
                           <div className="right-canvas-body-grid">
