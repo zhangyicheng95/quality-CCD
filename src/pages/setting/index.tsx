@@ -33,7 +33,7 @@ const Setting: React.FC<any> = (props) => {
   // 获取数据信息
   useEffect(() => {
     if (!_.isEmpty(paramsData) && !_.isEmpty(paramsData?.flowData)) {
-      const { quality_name, name, flowData } = paramsData;
+      const { quality_name, name, password, flowData } = paramsData;
       const { nodes } = flowData;
       let checkedList: any = [];
       const result: any = (nodes || []).map((node: any) => {
@@ -64,6 +64,7 @@ const Setting: React.FC<any> = (props) => {
       setCheckedKeys(checkedList);
       setFieldsValue({
         quality_name: quality_name || name,
+        password: password,
         selfStart: paramsData.selfStart || false,
         errorSelfStart: paramsData.errorSelfStart || false
       });
@@ -116,7 +117,7 @@ const Setting: React.FC<any> = (props) => {
   const onFinish = () => {
     validateFields()
       .then((values) => {
-        const { quality_icon, quality_name, selfStart, errorSelfStart } = values;
+        const { quality_icon, quality_name, password, selfStart, errorSelfStart } = values;
         let nodeList: any = [].concat(paramData?.flowData?.nodes);
         (paramData?.flowData?.nodes || []).forEach((key: any) => {
           nodeList = nodeList.map((node: any) => {
@@ -136,7 +137,7 @@ const Setting: React.FC<any> = (props) => {
           })
         });
         const result = Object.assign({}, paramData, {
-          quality_name,
+          quality_name, password,
           selfStart, errorSelfStart,
           contentData: {
             ...(paramData?.contentData || {}),
@@ -355,6 +356,14 @@ const Setting: React.FC<any> = (props) => {
               </Form.Item>
             </Col> */}
           </Row>
+          <Form.Item
+            name="password"
+            label="权限密码"
+            initialValue={paramData.password}
+            rules={[{ required: false, message: "权限密码" }]}
+          >
+            <Input placeholder="权限密码" />
+          </Form.Item>
           {
             (!isVision && !_.isEmpty(treeData) && !!treeData?.length) ?
               <Form.Item
