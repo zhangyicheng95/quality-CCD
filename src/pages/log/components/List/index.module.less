@@ -1,0 +1,68 @@
+@import '~antd/es/style/themes/default.less';
+
+.logList {
+  height: 100%;
+  overflow: hidden;
+
+  :global {
+    .log-content-box {
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      height: calc(100% - 74px);
+      padding: 0 24px;
+
+      .search-box {
+        height: 50px;
+        // width: 100%;
+        margin-bottom: 24px;
+
+        .ant-form-item {
+          height: 38px;
+          line-height: 38px;
+          margin-bottom: 12px;
+        }
+
+        .ant-form-item-control,
+        .ant-picker-range,
+        .ant-select-selector,
+        .ant-input,
+        .ant-input-search-large .ant-input-search-button {
+          height: 38px;
+        }
+
+        .ant-btn {
+          height: 36px;
+          margin-top: 3px;
+        }
+
+        .ant-select-selector {
+          overflow: auto;
+          font-size: 18px;
+        }
+      }
+
+      .table-box {
+        height: calc(100% - 74px);
+        width: 100%;
+        overflow: auto;
+
+        .content-item-span {
+          // height: calc(100% - 28px);
+          font-size: 20px;
+          line-height: 1.3;
+          flex: 1;
+          overflow-y: auto;
+          word-break: break-all;
+        }
+      }
+
+      .log-footer {
+        width: 100%;
+        padding-top: 24px;
+        height: 50px;
+        gap: 24px;
+      }
+    }
+  }
+}

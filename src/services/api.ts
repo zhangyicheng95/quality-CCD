@@ -85,6 +85,11 @@ export async function deleteStorageService(id: string) {
   return fetchDelete(`${BASE_IP}project_cache/${id}`);
 }
 
+// 获取日志信息
+export async function getLogService(id: string, params: any) {
+  return fetchPost(`${BASE_IP}project_log/${id}`, { body: params });
+}
+
 // 登录
 export async function login(params: any) {
 

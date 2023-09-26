@@ -191,7 +191,7 @@ const HomeLayout: React.FC<any> = (props) => {
       <div className="box flex-box">
         <div className="content-box">
           {
-            ["/control", "/setting"].includes(location?.pathname) ?
+            (!!params?.password && ["/control", "/setting"].includes(location?.pathname)) ?
               (
                 (params?.password && !!currentLoginStatus) ?
                   children

@@ -6,6 +6,7 @@ export default {
   'menu.control': '参数控制',
   'menu.settingAlgorithm': '算法参数',
   'menu.setting': '设置',
+  'menu.log': '日志',
   'menu.mark': '数据标注',
   'menu.admin': '管理页',
   'menu.admin.sub-page': '二级管理页',

@@ -425,7 +425,7 @@ const Setting: React.FC<any> = (props) => {
             onOk={() => {
               form1.validateFields().then(values => {
                 const { prePassword, password } = values;
-                if (prePassword === paramData?.password) {
+                if (!paramData?.password || (prePassword === paramData?.password)) {
                   updateParams({
                     id: paramData.id,
                     data: {
@@ -448,14 +448,18 @@ const Setting: React.FC<any> = (props) => {
             onCancel={() => setPasswordVisible(false)}
           >
             <Form form={form1} scrollToFirstError >
-              <Form.Item
-                name="prePassword"
-                label="原始密码"
-                rules={[{ required: true, message: '原始密码' }]}
-                {...passwordvalidate}
-              >
-                <Input.Password visibilityToggle={false} allowClear placeholder="原始密码" />
-              </Form.Item>
+              {
+                !!paramData?.password ?
+                  <Form.Item
+                    name="prePassword"
+                    label="原始密码"
+                    rules={[{ required: true, message: '原始密码' }]}
+                    {...passwordvalidate}
+                  >
+                    <Input.Password visibilityToggle={false} allowClear placeholder="原始密码" />
+                  </Form.Item>
+                  : null
+              }
               <Form.Item
                 name="password"
                 label="权限密码"

@@ -78,6 +78,12 @@
     path: '/setting',
     component: './setting',
   },
+  {
+    name: 'log',
+    icon: 'highlight',
+    path: '/log',
+    component: './log',
+  },
 
   // {
   //   path: '/dashboard',

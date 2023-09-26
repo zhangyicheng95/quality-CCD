@@ -150,7 +150,7 @@ export async function getInitialState(): Promise<{
     // @ts-ignore
     type: window.QUALITY_CCD_CONFIG.type,
     currentUser,
-    routes: ['home', 'history', 'control', 'setting'],
+    routes: ['home', 'history', 'control', 'setting', 'log'],
     settings: defaultSettings,
     title,
     params,

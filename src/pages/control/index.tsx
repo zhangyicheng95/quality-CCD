@@ -48,7 +48,7 @@ const Control: React.FC<any> = (props: any) => {
       const { nodes, edges } = flowData;
       let configOption: any = {},
         TagRadioList: any = [];
-      const list = nodes.map((node: any, index: number) => {
+      const list = (nodes || [])?.map((node: any, index: number) => {
         const { config } = node;
         const { initParams } = config;
         (Object.entries(initParams) || [])?.forEach((res: any) => {
@@ -82,8 +82,10 @@ const Control: React.FC<any> = (props: any) => {
           if (config.value === 'default') {
             return {
               ...config,
-              data: (config?.data?.length >= nodes?.length) ? config?.data : nodes,
-              edges,
+              ...(config?.data?.length >= nodes?.length) ? {
+                data: nodes,
+                edges,
+              } : {}
             };
           };
           return !!config?.edges ? config : { ...config, edges };
@@ -219,7 +221,7 @@ const Control: React.FC<any> = (props: any) => {
         const { flowData, configList } = paramsData;
         const { nodes, edges } = flowData;
         const id = guid();
-        const result = configList.concat({
+        const result = {
           label: values['config-name'],
           value: id,
           data: nodeList,
@@ -227,8 +229,8 @@ const Control: React.FC<any> = (props: any) => {
             return (nodes || []).filter((node: any) => node.id === edge?.source?.cell || node.id === edge?.target?.cell).length;
           }),
           listType: 'line'
-        });
-        setConfigList(result);
+        };
+        setConfigList(configList.concat(result));
         setFieldsValue({ 'config-value': id });
         setAddConfigVisible(false);
 
@@ -239,7 +241,7 @@ const Control: React.FC<any> = (props: any) => {
               nodes: result.data,
               edges: result.edges,
             }),
-            configList: result,
+            configList: configList.concat(result),
             selectedConfig: id,
           })
         };
@@ -381,13 +383,17 @@ const Control: React.FC<any> = (props: any) => {
                   return option?.option?.label?.indexOf(inputValue) > -1;
                 }}
                 onChange={(val, option: any) => {
-                  selectUpdate(val, option?.option)
+                  console.log(val, option);
+                  const { value, propsKey } = option;
+                  const item = JSON.parse(propsKey);
+                  selectUpdate(val, item)
                 }}
               >
                 {
                   configList.map((item: any) => {
+                    console.log(item)
                     const { value, label } = item;
-                    return <Select.Option value={value} option={item} key={value}>
+                    return <Select.Option value={value} propsKey={JSON.stringify(item)} key={value}>
                       <div className="flex-box">
                         <div style={{ flex: 1 }}>{label}</div>
                         {
