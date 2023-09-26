@@ -61,9 +61,31 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         "z": -301.47
                     },
                     {
-                        "x": 14.68,
-                        "y": 289.53,
-                        "z": 438.14
+                        "x": -35.32,
+                        "y": -285.39,
+                        "z": -301.47
+                    }
+                ],
+                "standardValue": 750,
+                "offsetValue": -0.71,
+                "type": "top",
+                "maxValue": 749.94,
+                "minValue": 749.03,
+                "averageValue": 749.29
+            },
+            {
+                "name": "模具高度",
+                "infoName": "mould_hight",
+                "position": [
+                    {
+                        "x": 335.32,
+                        "y": -285.39,
+                        "z": -301.47
+                    },
+                    {
+                        "x": 335.32,
+                        "y": -285.39,
+                        "z": -301.47
                     }
                 ],
                 "standardValue": 750,
@@ -122,15 +144,15 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 "infoName": "TQ_ZKWJCZ",
                 "position": [
                     {
-                        "x": 5.21,
+                        "x": -205.21,
                         "y": -329.72,
                         "z": -310.79
                     },
                     {
-                        "x": 5.21,
-                        "y": 373.72,
+                        "x": -205.21,
+                        "y": -329.72,
                         "z": -310.79
-                    }
+                    },
                 ],
                 "standardValue": 705,
                 "offsetValue": -1.57,
@@ -140,16 +162,38 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 "minValue": 703.43
             },
             {
+                "name": "止口凸台宽度",
+                "infoName": "panel_width",
+                "position": [
+                    {
+                        "x": 5.29,
+                        "y": 373.46,
+                        "z": -304.57
+                    },
+                    {
+                        "x": 5.29,
+                        "y": 373.46,
+                        "z": -304.57
+                    }
+                ],
+                "standardValue": 100,
+                "offsetValue": -0.95,
+                "type": "bottom",
+                "averageValue": 99.05,
+                "maxValue": 99.05,
+                "minValue": 99.05
+            },
+            {
                 "name": "止口短轴",
                 "infoName": "outside_diameter",
                 "position": [
                     {
-                        "x": -216.6,
+                        "x": 216.6,
                         "y": 22,
                         "z": -310.79
                     },
                     {
-                        "x": 227.01,
+                        "x": 216.6,
                         "y": 22,
                         "z": -310.79
                     }
@@ -160,28 +204,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 "averageValue": 443.62,
                 "maxValue": 443.62,
                 "minValue": 443.62
-            },
-            {
-                "name": "止口凸台宽度",
-                "infoName": "panel_width",
-                "position": [
-                    {
-                        "x": 54.29,
-                        "y": 373.46,
-                        "z": -304.57
-                    },
-                    {
-                        "x": -44.72,
-                        "y": 372,
-                        "z": -306.76
-                    }
-                ],
-                "standardValue": 100,
-                "offsetValue": -0.95,
-                "type": "bottom",
-                "averageValue": 99.05,
-                "maxValue": 99.05,
-                "minValue": 99.05
             }
         ];
         // let arr = [];
@@ -326,8 +348,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             }
             return;
         };
-        console.log('three160行: 点云路径', selectedPath || name);
-        console.log('卡片数据：', value);
         // addType为add时，代表增量渲染，不清除其他数据
         if (!!scene.current && addType === 'add') {
             loadModel(name, value, addType);
@@ -335,6 +355,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         } else {
 
         }
+        console.log('three160行: 点云路径', selectedPath || name);
+        console.log('卡片数据：', value);
         // 外层盒子
         const box: any = dom?.current;
         // 渲染场景盒子
@@ -360,9 +382,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         // 防止后渲染的scene覆盖前面的scene
         renderer.current.autoClear = false;    // 缓冲区数据清理，默认为true
         renderer.current.shadowMap.enabled = true;
-        renderer.current.setSize(box.offsetWidth, box.offsetHeight);
+        renderer.current.setSize(canvas.offsetWidth, canvas.offsetHeight);
         box.appendChild(renderer.current.domElement);
-        labelRenderer.setSize(box.offsetWidth, box.offsetHeight);
+        labelRenderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
         labelRenderer.domElement.style.position = "absolute";
         labelRenderer.domElement.style.top = "0px";
         labelRenderer.domElement.style.pointerEvents = "none";
@@ -783,7 +805,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 clearCanvas(value);
             }
         };
-    }, [theme, name, guid, started, selectedPath]);
+    }, [theme, name, guid, started, selectedPath, dom.current?.clientHeight]);
     // 获取场景中的全部模型对象
     function getAllModelsFromScene(scene: any) {
         const models: any = [];
@@ -933,7 +955,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             }
         };
         function processFun(xhr: any) {
-            if (addType === 'add') return;
+            if (addType === 'add' || dom.current?.clientHeight < 50) return;
             const { loaded = 0, total = 1 } = xhr;
             if (!maskBox) return;
             const processBox = maskBox?.querySelector('.process');
@@ -1002,29 +1024,30 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 const point = {
                                     x: -1 * length * labelDashLength,
                                     y: 0,
-                                    z: count[1].length === 1 ?
-                                        0
-                                        :
-                                        count[1].length === 2 ?
-                                            width / 3 * (index === 0 ? -1 : 1)
-                                            :
-                                            (index === 0 || index + 1 === count[1].length) ?
-                                                width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
-                                                :
-                                                (index * 2 + 1 === count[1].length) ? 0
-                                                    :
-                                                    (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
-                                                    (
-                                                        (((index + 1) > count[1].length / 2) ?
-                                                            (
-                                                                Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
-                                                                    ((count[1].length / 2) - index - 1)
-                                                                    :
-                                                                    (count[1].length / 2) * -1
-                                                            )
-                                                            :
-                                                            ((count[1].length / 2) - index))
-                                                    ),
+                                    z: position[0].z,
+                                    // count[1].length === 1 ?
+                                    //     0
+                                    //     :
+                                    //     count[1].length === 2 ?
+                                    //         width / 3 * (index === 0 ? -1 : 1)
+                                    //         :
+                                    //         (index === 0 || index + 1 === count[1].length) ?
+                                    //             width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
+                                    //             :
+                                    //             (index * 2 + 1 === count[1].length) ? 0
+                                    //                 :
+                                    //                 (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                    //                 (
+                                    //                     (((index + 1) > count[1].length / 2) ?
+                                    //                         (
+                                    //                             Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                    //                                 ((count[1].length / 2) - index - 1)
+                                    //                                 :
+                                    //                                 (count[1].length / 2) * -1
+                                    //                         )
+                                    //                         :
+                                    //                         ((count[1].length / 2) - index))
+                                    //                 ),
                                 };
                                 position = [point, point];
                                 localPosition = [
@@ -1037,34 +1060,34 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                         x: -1 * length / 3
                                     }
                                 ];
-                                counter.left += 1;
                             } else if ((type === "right")) {
                                 const point = {
                                     x: length * labelDashLength,
                                     y: 0,
-                                    z: count[1].length === 1 ?
-                                        0
-                                        :
-                                        count[1].length === 2 ?
-                                            width / 3 * (index === 0 ? -1 : 1)
-                                            :
-                                            (index === 0 || index + 1 === count[1].length) ?
-                                                width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
-                                                :
-                                                (index * 2 + 1 === count[1].length) ? 0
-                                                    :
-                                                    (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
-                                                    (
-                                                        (((index + 1) > count[1].length / 2) ?
-                                                            (
-                                                                Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
-                                                                    ((count[1].length / 2) - index - 1)
-                                                                    :
-                                                                    (count[1].length / 2) * -1
-                                                            )
-                                                            :
-                                                            ((count[1].length / 2) - index))
-                                                    ),
+                                    z: position[0].z,
+                                    // count[1].length === 1 ?
+                                    //     0
+                                    //     :
+                                    //     count[1].length === 2 ?
+                                    //         width / 3 * (index === 0 ? -1 : 1)
+                                    //         :
+                                    //         (index === 0 || index + 1 === count[1].length) ?
+                                    //             width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
+                                    //             :
+                                    //             (index * 2 + 1 === count[1].length) ? 0
+                                    //                 :
+                                    //                 (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                    //                 (
+                                    //                     (((index + 1) > count[1].length / 2) ?
+                                    //                         (
+                                    //                             Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                    //                                 ((count[1].length / 2) - index - 1)
+                                    //                                 :
+                                    //                                 (count[1].length / 2) * -1
+                                    //                         )
+                                    //                         :
+                                    //                         ((count[1].length / 2) - index))
+                                    //                 ),
                                 };
                                 position = [point, point];
                                 localPosition = [
@@ -1077,32 +1100,32 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                         x: length / 3,
                                     }
                                 ];
-                                counter.right += 1;
                             } else if ((type === "top")) {
                                 const point = {
-                                    x: count[1].length === 1 ?
-                                        0
-                                        :
-                                        count[1].length === 2 ?
-                                            length / 3 * (index === 0 ? -1 : 1)
-                                            :
-                                            (index === 0 || index + 1 === count[1].length) ?
-                                                length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
-                                                :
-                                                (index * 2 + 1 === count[1].length) ? 0
-                                                    :
-                                                    (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
-                                                    (
-                                                        (((index + 1) > count[1].length / 2) ?
-                                                            (
-                                                                Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
-                                                                    ((count[1].length / 2) - index - 1)
-                                                                    :
-                                                                    (count[1].length / 2) * -1
-                                                            )
-                                                            :
-                                                            ((count[1].length / 2) - index))
-                                                    ),
+                                    x: position[0].x,
+                                    // count[1].length === 1 ?
+                                    //     0
+                                    //     :
+                                    //     count[1].length === 2 ?
+                                    //         length / 3 * (index === 0 ? -1 : 1)
+                                    //         :
+                                    //         (index === 0 || index + 1 === count[1].length) ?
+                                    //             length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
+                                    //             :
+                                    //             (index * 2 + 1 === count[1].length) ? 0
+                                    //                 :
+                                    //                 (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                    //                 (
+                                    //                     (((index + 1) > count[1].length / 2) ?
+                                    //                         (
+                                    //                             Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                    //                                 ((count[1].length / 2) - index - 1)
+                                    //                                 :
+                                    //                                 (count[1].length / 2) * -1
+                                    //                         )
+                                    //                         :
+                                    //                         ((count[1].length / 2) - index))
+                                    //                 ),
                                     y: 0,
                                     z: width * 5 / 6,
                                 };
@@ -1117,32 +1140,32 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                         z: 1 / 2 * width
                                     }
                                 ];
-                                counter.top += 1;
                             } else if ((type === "bottom")) {
                                 const point = {
-                                    x: count[1].length === 1 ?
-                                        0
-                                        :
-                                        count[1].length === 2 ?
-                                            length / 3 * (index === 0 ? -1 : 1)
-                                            :
-                                            (index === 0 || index + 1 === count[1].length) ?
-                                                length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
-                                                :
-                                                (index * 2 + 1 === count[1].length) ? 0
-                                                    :
-                                                    (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
-                                                    (
-                                                        (((index + 1) > count[1].length / 2) ?
-                                                            (
-                                                                Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
-                                                                    ((count[1].length / 2) - index - 1)
-                                                                    :
-                                                                    (count[1].length / 2) * -1
-                                                            )
-                                                            :
-                                                            ((count[1].length / 2) - index))
-                                                    ),
+                                    x: position[0].x,
+                                    // count[1].length === 1 ?
+                                    //     0
+                                    //     :
+                                    //     count[1].length === 2 ?
+                                    //         length / 3 * (index === 0 ? -1 : 1)
+                                    //         :
+                                    //         (index === 0 || index + 1 === count[1].length) ?
+                                    //             length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
+                                    //             :
+                                    //             (index * 2 + 1 === count[1].length) ? 0
+                                    //                 :
+                                    //                 (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                    //                 (
+                                    //                     (((index + 1) > count[1].length / 2) ?
+                                    //                         (
+                                    //                             Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                    //                                 ((count[1].length / 2) - index - 1)
+                                    //                                 :
+                                    //                                 (count[1].length / 2) * -1
+                                    //                         )
+                                    //                         :
+                                    //                         ((count[1].length / 2) - index))
+                                    //                 ),
                                     y: 0,
                                     z: -1 * width,
                                 };
@@ -1157,7 +1180,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                         z: -1 * width / 2
                                     }
                                 ];
-                                counter.bottom += 1;
                             }
                             const geometry = new THREE.BufferGeometry().setFromPoints([localPosition[0], position[0]]);
                             line = new THREE.LineSegments(
@@ -1212,7 +1234,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                     { ...position[0], ...point },
                                     { ...position[1], ...point, z: point.z + Math.abs(position[1].z - position[0].z) }
                                 ];
-                                counter.left += 1;
                             } else if ((type === "right")) {
                                 const point = {
                                     x: length * labelDashLength,
@@ -1244,7 +1265,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                     { ...position[0], ...point },
                                     { ...position[1], ...point, z: point.z + Math.abs(position[1].z - position[0].z) }
                                 ];
-                                counter.right += 1;
                             } else if ((type === "top")) {
                                 const point = {
                                     x: count[1].length === 1 ?
@@ -1276,7 +1296,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                     { ...position[0], ...point },
                                     { ...position[1], ...point, x: point.x + Math.abs(position[1].x - position[0].x) }
                                 ];
-                                counter.top += 1;
                             } else if ((type === "bottom")) {
                                 const point = {
                                     x: count[1].length === 1 ?
@@ -1308,7 +1327,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                     { ...position[0], ...point },
                                     { ...position[1], ...point, x: point.x + Math.abs(position[1].x - position[0].x) }
                                 ];
-                                counter.bottom += 1;
                             }
                             for (let i = 0; i < 2; i++) {
                                 // @ts-ignore
