@@ -731,7 +731,7 @@ export default connect(({ home, themeStore }) => ({
 export const FormatWidgetToDom: any = (props: any) => {
   const {
     form, id, label = '', node, config = [],
-    parent = undefined, disabled, widgetChange,
+    parent = undefined, disabled, display, widgetChange,
     selectedOption, setSelectedOption,
     setEditorVisible, setEditorValue,
     setPlatFormVisible, setPlatFormValue,
@@ -772,6 +772,7 @@ export const FormatWidgetToDom: any = (props: any) => {
         <FormItem
           name={name}
           label={label}
+          style={display ? { display: 'none' } : {}}
           tooltip={description}
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
@@ -790,6 +791,7 @@ export const FormatWidgetToDom: any = (props: any) => {
         <Form.Item
           name={name}
           label={label}
+          style={display ? { display: 'none' } : {}}
           tooltip={description}
           initialValue={moment(value || undefined)}
           rules={[{ required: require, message: `${alias}` }]}
@@ -813,6 +815,7 @@ export const FormatWidgetToDom: any = (props: any) => {
         <Form.Item
           name={name}
           label={label}
+          style={display ? { display: 'none' } : {}}
           tooltip={description}
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
@@ -830,6 +833,7 @@ export const FormatWidgetToDom: any = (props: any) => {
         <FormItem
           name={name}
           label={label}
+          style={display ? { display: 'none' } : {}}
           tooltip={description}
           initialValue={(_.isArray(value) ? value[0] : value) || undefined}
           rules={[{ required: require, message: `${alias}` }]}
@@ -857,6 +861,7 @@ export const FormatWidgetToDom: any = (props: any) => {
           <FormItem
             name={name}
             label={label}
+            style={display ? { display: 'none' } : {}}
             tooltip={description}
             initialValue={(_.isArray(value) ? value[0] : value) || undefined}
             rules={[{ required: require, message: `${alias}` }]}
@@ -908,6 +913,7 @@ export const FormatWidgetToDom: any = (props: any) => {
         <FormItem
           name={name}
           label={label}
+          style={display ? { display: 'none' } : {}}
           tooltip={description}
           initialValue={(_.isArray(value) ? value[0] : value) || false}
           rules={[{ required: require, message: `${alias}` }]}
@@ -935,6 +941,7 @@ export const FormatWidgetToDom: any = (props: any) => {
         <FormItem
           name={name}
           label={label}
+          style={display ? { display: 'none' } : {}}
           tooltip={description}
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
@@ -963,6 +970,7 @@ export const FormatWidgetToDom: any = (props: any) => {
         <FormItem
           name={name}
           label={label}
+          style={display ? { display: 'none' } : {}}
           tooltip={description}
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
@@ -978,35 +986,35 @@ export const FormatWidgetToDom: any = (props: any) => {
       );
     case 'InputNumber':
       return (
-        <Fragment>
-          <FormItem
-            name={name}
-            label={label}
-            tooltip={description}
-            initialValue={(value || value == 0) ? value : ((defaultValue || defaultValue == 0) ? defaultValue : undefined)}
-            rules={[{ required: require, message: `${alias}` }]}
-          >
-            <InputNumber
-              controls={true}
-              placeholder={`请输入${alias}`}
-              precision={precision}
-              step={step}
-              max={max}
-              min={min}
-              disabled={disabled}
-              onBlur={(e: any) => {
-                const value = e.target.value;
-                widgetChange?.(name, Number(value < max ? value : max), parent);
-              }}
-            />
-          </FormItem>
-        </Fragment>
+        <FormItem
+          name={name}
+          label={label}
+          style={display ? { display: 'none' } : {}}
+          tooltip={description}
+          initialValue={(value || value == 0) ? value : ((defaultValue || defaultValue == 0) ? defaultValue : undefined)}
+          rules={[{ required: require, message: `${alias}` }]}
+        >
+          <InputNumber
+            controls={true}
+            placeholder={`请输入${alias}`}
+            precision={precision}
+            step={step}
+            max={max}
+            min={min}
+            disabled={disabled}
+            onBlur={(e: any) => {
+              const value = e.target.value;
+              widgetChange?.(name, Number(value < max ? value : max), parent);
+            }}
+          />
+        </FormItem>
       );
     case 'Slider':
       return (
         <FormItem
           name={name}
           label={label}
+          style={display ? { display: 'none' } : {}}
           tooltip={description}
           initialValue={(value || value == 0) ? value : defaultValue}
           rules={[{ required: require, message: `${alias}` }]}
@@ -1031,6 +1039,7 @@ export const FormatWidgetToDom: any = (props: any) => {
         <FormItem
           name={name}
           label={label}
+          style={display ? { display: 'none' } : {}}
           tooltip={description}
           initialValue={value || false}
           valuePropName="checked"
@@ -1050,6 +1059,7 @@ export const FormatWidgetToDom: any = (props: any) => {
           shouldUpdate
           name={name}
           label={label}
+          style={display ? { display: 'none' } : {}}
           tooltip={description}
           initialValue={value || undefined}
           valuePropName="file"
@@ -1076,6 +1086,7 @@ export const FormatWidgetToDom: any = (props: any) => {
         <FormItem
           name={name}
           label={label}
+          style={display ? { display: 'none' } : {}}
           tooltip={description}
           initialValue={value || undefined}
           valuePropName="file"
@@ -1110,6 +1121,7 @@ export const FormatWidgetToDom: any = (props: any) => {
         <FormItem
           name={name}
           label={label}
+          style={display ? { display: 'none' } : {}}
           tooltip={description}
           className="codeEditor"
         >
@@ -1146,6 +1158,7 @@ export const FormatWidgetToDom: any = (props: any) => {
             shouldUpdate
             name={name}
             label={label}
+            style={display ? { display: 'none' } : {}}
             tooltip={description}
             initialValue={localPath || undefined}
             valuePropName="file"
@@ -1184,6 +1197,7 @@ export const FormatWidgetToDom: any = (props: any) => {
         <Form.Item
           name={name}
           label={label}
+          style={display ? { display: 'none' } : {}}
           tooltip={description}
           initialValue={value || defaultValue || {
             num_0: { alias: 'num_0', value: undefined },

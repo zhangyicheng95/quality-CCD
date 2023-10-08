@@ -1044,10 +1044,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                     />
                   </Form.Item>
                   {
-                    // feature?.type === 'RECT' ?
+                    // !['POINT', 'LINE'].includes(feature?.type) ?
                     <Form.Item
                       name={`旋转角度`}
                       label="旋转角度"
+                      style={['POINT', 'LINE'].includes(feature?.type) ? { display: 'none' } : {}}
                       initialValue={featureList?.[selectedFeature] ? featureList?.[selectedFeature]?.['旋转角度']?.value : 0}
                       rules={[{ required: true, message: "旋转角度" }]}
                     >
@@ -1141,6 +1142,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                               config={item}
                               form={form}
                               disabled={false}
+                              display={['POINT', 'LINE'].includes(feature?.type)}
                             />
                           })
                           :
@@ -1210,6 +1212,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                 "r": { alias: "r", value: item[1].r },
                               };
                               if (feature?.props?.type === "DOUBLE_CIRCLE") {
+                                // 同心圆
                                 const feature2 = gFirstFeatureLayer.getFeatureById(feature?.id + 100) || gFirstFeatureLayer.getFeatureById(feature?.id - 100);
                                 value = {
                                   ...value,
@@ -1252,6 +1255,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           config={item}
                           form={form}
                           disabled={false}
+                          display={['POINT', 'LINE'].includes(feature?.type)}
                         />
                       })
                   }
