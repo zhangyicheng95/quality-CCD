@@ -907,7 +907,7 @@ const Home: React.FC<any> = (props: any) => {
               CCDName, imgs_width, imgs_height, tableSize, magnifier, comparison, operationList,
               dataZoom, fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
               password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
-              basicInfoData = [{ id: guid(), name: '', value: '' }],
+              basicInfoData = [{ id: guid(), name: '', value: '' }], ifNeedClear,
             } = item;
             // const id = key?.split('$$')[0];
             const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1071,7 +1071,7 @@ const Home: React.FC<any> = (props: any) => {
                                                 <ButtonCharts
                                                   id={key}
                                                   data={{
-                                                    yName, xName, fetchType
+                                                    yName, xName, fetchType, ifNeedClear
                                                   }}
                                                 />
                                                 :
@@ -1451,7 +1451,7 @@ const Home: React.FC<any> = (props: any) => {
       CCDName, imgs_width, imgs_height, magnifier, comparison = false, operationList, dataZoom,
       fontColor, interlacing = false, modelRotate = false, modelScale = false, modelRotateScreenshot = false,
       password = '', passwordHelp = '', ifShowHeader = false, ifShowColorList = false,
-      headerBackgroundColor = 'default'
+      headerBackgroundColor = 'default', ifNeedClear
     } = values;
     if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
       try {
@@ -1480,7 +1480,8 @@ const Home: React.FC<any> = (props: any) => {
         des_bordered, des_column, des_layout, des_size, ifLocalStorage,
         CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
         fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
-        password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor
+        password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
+        ifNeedClear,
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1497,7 +1498,8 @@ const Home: React.FC<any> = (props: any) => {
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
             CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
             fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
-            password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor
+            password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
+            ifNeedClear,
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -1526,7 +1528,7 @@ const Home: React.FC<any> = (props: any) => {
       CCDName: undefined, magnifier: false, comparison: false, operationList: [], dataZoom: 0,
       fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false, modelRotateScreenshot: false,
       password: undefined, passwordHelp: undefined, ifShowHeader: false, ifShowColorList: false,
-      headerBackgroundColor: 'default'
+      headerBackgroundColor: 'default', ifNeedClear: false,
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -2430,6 +2432,13 @@ const Home: React.FC<any> = (props: any) => {
                         rules={[{ required: true, message: '接口地址' }]}
                       >
                         <Input size='large' />
+                      </Form.Item>
+                      <Form.Item
+                        name="ifNeedClear"
+                        label="手动清空按钮"
+                        valuePropName="checked"
+                      >
+                        <Switch />
                       </Form.Item>
                       {
                         ['button'].includes(windowType) ?

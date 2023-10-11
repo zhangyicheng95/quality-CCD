@@ -430,15 +430,15 @@ const Setting: React.FC<any> = (props) => {
                     id: paramData.id,
                     data: {
                       ...paramData,
-                      password
+                      password: password || ''
                     }
                   }).then((res: any) => {
                     if (res && res.code === 'SUCCESS') {
-                      message.success('更新配置成功')
+                      message.success('更新配置成功');
+                      window.location.reload();
                     } else {
                       message.error(res?.msg || res?.message || '接口异常');
                     }
-                    window.location.reload();
                   });
                 } else {
                   message.error('原始密码错误', 5);
@@ -463,7 +463,7 @@ const Setting: React.FC<any> = (props) => {
               <Form.Item
                 name="password"
                 label="权限密码"
-                rules={[{ required: true, message: '权限密码' }]}
+                rules={[{ required: false, message: '权限密码' }]}
                 {...passwordvalidate}
               >
                 <Input.Password visibilityToggle={false} allowClear placeholder="权限密码" />
