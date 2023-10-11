@@ -912,7 +912,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     setSelectedOptionType({});
     resetFields();
   };
-  console.log(feature?.type)
+
   return <div className={`${styles.markCanvas} flex-box`} ref={markRef}>
     {/* <div className="canvas-header flex-box-justify-end">
       <Button onClick={() => getFeatures()} style={{ marginRight: 10 }} >获取标注数据</Button>
