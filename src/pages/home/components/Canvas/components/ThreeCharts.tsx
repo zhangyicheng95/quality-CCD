@@ -323,9 +323,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         camera.current = null;
         controls.current = null;
         setSelectedBtn([]);
-        if (!!name && !value.length) {
-            window.location.reload();
-        }
+        // if (!!name && !value.length) {
+        //     window.location.reload();
+        // }
     };
     // 初始化场景数据，渲染点云
     useEffect(() => {

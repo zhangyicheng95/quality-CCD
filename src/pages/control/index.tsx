@@ -391,7 +391,6 @@ const Control: React.FC<any> = (props: any) => {
               >
                 {
                   configList.map((item: any) => {
-                    console.log(item)
                     const { value, label } = item;
                     return <Select.Option value={value} propsKey={JSON.stringify(item)} key={value}>
                       <div className="flex-box">

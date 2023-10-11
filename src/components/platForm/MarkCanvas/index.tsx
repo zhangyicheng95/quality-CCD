@@ -290,36 +290,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       // 双击选中
       gMap.events.on('featureSelected', (feature: any) => {
         setSelectedFeature((prev: number) => {
-          console.log(prev)
           if (!!prev) {
             message.warning("请先保存设置框");
             return prev;
           }
           const { id, type, shape, props } = feature;
-          if (type === 'LINE') {
-            // 线段，把label显示为两点坐标
-            let { start, end } = shape;
-            start = {
-              x: start.x.toFixed(2),
-              y: start.y.toFixed(2)
-            };
-            end = {
-              x: end.x.toFixed(2),
-              y: end.y.toFixed(2)
-            };
-            // 线段长度
-            const length = AILabel.Util.MathUtil.distance(start, end);
-            const text = `(${start.x}, ${start.y}), (${end.x}, ${end.y}),  ${(length.toFixed(2))}`;
-            const targetText = gFirstTextLayer.getTextById(props?.textId);
-            if (targetText) {
-              targetText?.updateText(text);
-            } else {
-              const { id, shape, props, style, type } = feature;
-              gFirstFeatureLayer.removeFeatureById(id);
-              gFirstTextLayer.removeTextById(props?.textId);
-              addFeature(type, id, shape, { ...props, label: text }, style);
-            }
-          };
 
           gMap.setActiveFeature(feature);
           const markerId = feature.props.deleteMarkerId;
@@ -937,7 +912,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     setSelectedOptionType({});
     resetFields();
   };
-
+  console.log(feature?.type)
   return <div className={`${styles.markCanvas} flex-box`} ref={markRef}>
     {/* <div className="canvas-header flex-box-justify-end">
       <Button onClick={() => getFeatures()} style={{ marginRight: 10 }} >获取标注数据</Button>
@@ -1109,6 +1084,13 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                       }
                                     }
                                   }
+                                } else if (!!item[1]?.realValue?.sr) {
+                                  // 点
+                                  value = {
+                                    "x": { alias: "x", value: item[1]?.realValue?.x?.value },
+                                    "y": { alias: "y", value: item[1]?.realValue?.y?.value },
+                                    "sr": { alias: "sr", value: item[1]?.realValue?.sr?.value }
+                                  };
                                 } else {
                                   value = Object.entries(_.omit(item[1], "value")).reduce((pre: any, cen: any) => {
                                     return Object.assign({}, pre, {
