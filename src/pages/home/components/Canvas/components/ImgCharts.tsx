@@ -4,7 +4,7 @@ import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
 import { BlockOutlined, EyeOutlined, LeftCircleOutlined, RightCircleOutlined, SwapOutlined } from '@ant-design/icons';
-import { addStorageService, getStorageService } from '@/services/api';
+import { setStorageService, getStorageService } from '@/services/api';
 
 interface Props {
     data: any,
@@ -56,7 +56,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         };
         setUrlList((pre: any) => {
             let list = Array.from(new Set(pre.concat(dataValue)));
-            addStorageService(params.id, { ...storageParams, imgList: list });
+            setStorageService(params.id, { ...storageParams, imgList: list });
             return list.slice(list.length - 99);
         });
     }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight, comparison, storageParams]);

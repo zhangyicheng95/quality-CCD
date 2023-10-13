@@ -5,7 +5,7 @@ import { useModel, SelectLang } from 'umi';
 import styles from './index.less';
 import { exitFullScreen, getAllLocalStorageKeys, isFullscreenElement, requestFullScreen } from '@/utils/utils';
 import Avatar from './AvatarDropdown';
-import { addStorageService, getStorageService } from '@/services/api';
+import { setStorageService, getStorageService } from '@/services/api';
 
 const { version } = require('../../../package.json');
 export type SiderTheme = 'light' | 'dark';
@@ -44,7 +44,7 @@ const GlobalHeaderRight: React.FC = () => {
       <ClearOutlined style={{ marginRight: 12 }} onClick={() => {
         getStorageService(params.id).then((res: any) => {
           if (res && res.code === 'SUCCESS') {
-            addStorageService(params.id, { ...res.data, localGridContentList: [] }).then((res: any) => {
+            setStorageService(params.id, { ...res.data, localGridContentList: [] }).then((res: any) => {
               if (res && res.code === 'SUCCESS') {
                 window.location.reload();
               }

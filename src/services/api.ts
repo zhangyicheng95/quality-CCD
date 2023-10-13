@@ -76,7 +76,7 @@ export async function getStorageService(id: string) {
 }
 
 // 根据id保存缓存
-export async function addStorageService(id: string, params?: any) {
+export async function setStorageService(id: string, params?: any) {
   return fetchPost(`${BASE_IP}project_cache/${id}`, { body: params });
 }
 

@@ -20,7 +20,7 @@ import {
 } from 'antd';
 import * as _ from 'lodash';
 import {
-  addStorageService,
+  setStorageService,
   BASE_IP,
   btnFetch,
   deleteStorageService,
@@ -1227,7 +1227,7 @@ const Home: React.FC<any> = (props: any) => {
               );
             }
           });
-          addStorageService(paramData.id, { ...res.data, localGridContentList: resultData });
+          setStorageService(paramData.id, { ...res.data, localGridContentList: resultData });
 
           setContentList(listData);
           setContentLayout(layoutData);

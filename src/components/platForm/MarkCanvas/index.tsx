@@ -1043,7 +1043,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       (
                         !!featureList[selectedFeature] ?
                           Object.entries(featureList[selectedFeature])?.map((item: any) => {
-                            if (item[0] === '找线方向') return null;
                             if (item[0] === 'roi') {
                               let value = {};
                               if (_.isObject(item[1]?.realValue) && !_.isEmpty(item[1].realValue)) {
@@ -1154,7 +1153,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       )
                       :
                       Object.entries(selectedOptionType)?.map((item: any) => {
-                        if (item[0] === '找线方向') return null;
                         if (item[0] === 'roi') {
                           let value = {};
                           if (!_.isEmpty(item[1])) {
