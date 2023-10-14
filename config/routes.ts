@@ -31,23 +31,23 @@
     ],
     access: 'canAdmin',
   },
-  {
-    name: 'history',
-    icon: 'history',
-    path: '/history',
-    access: 'canHistory',
-    component: './history',
-    routes: [
-      {
-        path: '/history',
-        redirect: './history/components/List',
-      },
-      {
-        path: '/history/detail',
-        component: './history/components/Details',
-      },
-    ]
-  },
+  // {
+  //   name: 'history',
+  //   icon: 'history',
+  //   path: '/history',
+  //   access: 'canHistory',
+  //   component: './history',
+  //   routes: [
+  //     {
+  //       path: '/history',
+  //       redirect: './history/components/List',
+  //     },
+  //     {
+  //       path: '/history/detail',
+  //       component: './history/components/Details',
+  //     },
+  //   ]
+  // },
   {
     name: 'mark',
     icon: 'highlight',

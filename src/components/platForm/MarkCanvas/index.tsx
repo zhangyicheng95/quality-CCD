@@ -407,7 +407,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         if (type === 'RECT') {
           setFeatureList((prev: any) => {
             return Object.entries(prev).reduce((pre: any, cen: any) => {
-              const range = cen[1]?.['旋转角度']?.value;
+              const range = cen[1]?.['找线方向']?.value;
               return Object.assign({}, pre, {
                 [cen[0]]: Object.assign({}, cen[1], cen[0] === id ? {
                   roi: {
@@ -584,7 +584,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             },
           });
           if (!style.direction) {
-            style['direction'] = props?.initParams?.['旋转角度']?.value || 0
+            style['direction'] = props?.initParams?.['找线方向']?.value || 0
           };
           if (!props.directionMarkerId) {
             props['directionMarkerId'] = `label-direction-marker-id-${+new Date()}${index}`;
@@ -1021,18 +1021,25 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                   {
                     // !['POINT', 'LINE'].includes(feature?.type) ?
                     <Form.Item
-                      name={`旋转角度`}
-                      label="旋转角度"
+                      name={`找线方向`}
+                      label="找线方向"
                       style={['POINT', 'LINE'].includes(feature?.type) ? { display: 'none' } : {}}
-                      initialValue={featureList?.[selectedFeature] ? featureList?.[selectedFeature]?.['旋转角度']?.value : 0}
-                      rules={[{ required: true, message: "旋转角度" }]}
+                      initialValue={featureList?.[selectedFeature] ? featureList?.[selectedFeature]?.['找线方向']?.value : 0}
+                      rules={[{ required: true, message: "找线方向" }]}
                     >
                       <Select
                         style={{ width: '100%' }}
-                        options={[0, 90, 180, 270, 360].map((res: any) => {
-                          return { key: res, label: res, value: res, };
+                        options={[
+                          { label: '下到上', value: 0 },
+                          { label: '左到右', value: 90 },
+                          { label: '上到下', value: 180 },
+                          { label: '右到左', value: 270 },
+                          // { label: '', value: 360 }
+                        ].map((res: any) => {
+                          const { label, value } = res;
+                          return { key: value, label: label, value: value, };
                         })}
-                        placeholder="旋转角度"
+                        placeholder="找线方向"
                       />
                     </Form.Item>
                     // :
@@ -1270,7 +1277,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           addFeature(type, id, shape, { ...props, label: value?.['option_type']?.value }, style);
                         };
                       }
-                      const range = value?.['旋转角度']?.value;
+                      const range = value?.['找线方向']?.value;
                       if (value?.['roi']?.value?.cx && value?.['roi']?.value?.r) {
                         const val = value?.['roi']?.value;
                         // 圆
@@ -1379,7 +1386,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                   value: value[cen[0]]?.value
                                 }
                               })
-                            }, { option_type: { value: value?.['option_type']?.value }, "旋转角度": { value: range } })
+                            }, { option_type: { value: value?.['option_type']?.value }, "找线方向": { value: range } })
                           :
                           {
                             roi: {
