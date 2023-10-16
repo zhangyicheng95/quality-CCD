@@ -5,7 +5,6 @@ import { useModel, SelectLang } from 'umi';
 import styles from './index.less';
 import { exitFullScreen, getAllLocalStorageKeys, isFullscreenElement, requestFullScreen } from '@/utils/utils';
 import Avatar from './AvatarDropdown';
-import { setStorageService, getStorageService } from '@/services/api';
 
 const { version } = require('../../../package.json');
 export type SiderTheme = 'light' | 'dark';
@@ -42,15 +41,15 @@ const GlobalHeaderRight: React.FC = () => {
       <span className='version'>v{version}</span>
       <Avatar menu={false} />
       <ClearOutlined style={{ marginRight: 12 }} onClick={() => {
-        getStorageService(params.id).then((res: any) => {
-          if (res && res.code === 'SUCCESS') {
-            setStorageService(params.id, { ...res.data, localGridContentList: [] }).then((res: any) => {
-              if (res && res.code === 'SUCCESS') {
-                window.location.reload();
-              }
-            });
-          }
-        });
+        if (!!localStorage.getItem(`localGridContentList-${params.id}`)) {
+          const localStorageKeys = getAllLocalStorageKeys();
+          (localStorageKeys || []).forEach((key: any) => {
+            if (key?.indexOf(params.id) > -1) {
+              localStorage.removeItem(key);
+            }
+          });
+          window.location.reload();
+        }
       }} />
       <SettingOutlined />
       <SelectLang

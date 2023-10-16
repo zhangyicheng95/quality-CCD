@@ -4,7 +4,6 @@ import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
 import { BlockOutlined, EyeOutlined, LeftCircleOutlined, RightCircleOutlined, SwapOutlined } from '@ant-design/icons';
-import { setStorageService, getStorageService } from '@/services/api';
 
 interface Props {
     data: any,
@@ -29,17 +28,15 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     const [imgVisible, setImgVisible] = useState(false);
     const [visibleDirection, setVisibleDirection] = useState<any>('column');
     const [visible, setVisible] = useState(false);
-    const [storageParams, setStorageParams] = useState<any>({});
 
     const dom = useRef<any>();
     useLayoutEffect(() => {
-        getStorageService(params.id).then((res: any) => {
-            if (res && res.code === 'SUCCESS') {
-                const list = res?.data?.imgList || [];
-                setUrlList(list);
-                setStorageParams(res.data);
-            }
-        });
+        try {
+            const list = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || "[]");
+            setUrlList(list);
+        } catch (err) {
+            console.log(err);
+        }
     }, []);
     useEffect(() => {
         if (!_.isString(dataValue)) {
@@ -56,10 +53,10 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         };
         setUrlList((pre: any) => {
             let list = Array.from(new Set(pre.concat(dataValue)));
-            setStorageService(params.id, { ...storageParams, imgList: list });
+            localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
             return list.slice(list.length - 99);
         });
-    }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight, comparison, storageParams]);
+    }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight, comparison]);
     useEffect(() => {
         if (!magnifier) {
             return;

@@ -279,7 +279,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     };
     const clearCanvas = (value: any) => {
         console.log("清理缓存");
-        console.log(value)
+        console.log(value);
         cancelAnimationFrame(animateId);
         stats?.current?.dom && dom?.current?.removeChild(stats?.current?.dom);
         scene?.current?.traverse((child: any) => {
@@ -323,9 +323,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         camera.current = null;
         controls.current = null;
         setSelectedBtn([]);
-        // if (!!name && !value.length) {
-        //     window.location.reload();
-        // }
+        if (!!name && !value.length) {
+            window.location.reload();
+        }
     };
     // 初始化场景数据，渲染点云
     useEffect(() => {
