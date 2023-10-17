@@ -709,7 +709,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     setGetDataFun((prev: any) => {
       return {
         ...prev,
-        value: Object.assign({}, prev?.value, featureList)
+        value: { ...prev?.value, ...featureList }
       };
     });
   }, [featureList]);
@@ -1425,17 +1425,24 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                   value: value[cen[0]]?.value
                                 }
                               })
-                            }, { option_type: { value: value?.['option_type']?.value }, "找线方向": { value: range } })
+                            }, {
+                              option_type: { value: value?.['option_type']?.value },
+                              "找线方向": { value: range },
+                              localPath: { value: localPath }
+                            })
                           :
                           {
                             roi: {
                               value: value?.['roi']?.value,
                               realValue: value?.['roi']?.value
-                            }
+                            },
+                            localPath: { value: localPath }
                           }
                       };
                       setGetDataFun((prev: any) => ({
-                        ...prev, zoom: gMap.zoom, value: Object.assign({}, prev?.value, result)
+                        ...prev,
+                        zoom: gMap.zoom,
+                        value: { ...prev?.value, ...result }
                       }));
                       setFeatureList(result);
                       onCancel();

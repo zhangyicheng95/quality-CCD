@@ -49,7 +49,7 @@ const Measurement: React.FC<Props> = (props: any) => {
     let Obj: any = selfValue;
     Obj[`${type}`] = {
       ...Obj[`${type}`],
-      value: (_.isNaN(number) || _.isNull(number) || _.isUndefined(number) || _.isEmpty(number)) ? "0" : Number(number)
+      value: (_.isNaN(number) || _.isNull(number) || _.isUndefined(number)) ? 0 : Number(number)
     };
     setSelfValue(Obj);
     triggerChange(Obj);
@@ -102,8 +102,8 @@ const Measurement: React.FC<Props> = (props: any) => {
               onKeyUp={(e) => turnIpPOS(e, index)}
               onFocus={() => setFocus((prev: any) => Object.assign({}, prev, { [`refnum_${index}`]: true }))}
               onBlur={(e) => {
-                const val = e?.target?.value;
-                setFocus((prev: any) => Object.assign({}, prev, { [`refnum_${index}`]: !!val || (val == "0") }));
+                const val = precision === 0 ? Math.floor(Number(e?.target?.value)) : Number(e?.target?.value);
+                setFocus((prev: any) => Object.assign({}, prev, { [`refnum_${index}`]: !(_.isUndefined(val) || _.isNull(val)) }));
                 handleNumberChange(val, item[0], index)
               }}
             />
