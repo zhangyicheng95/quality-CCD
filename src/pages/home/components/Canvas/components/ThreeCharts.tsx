@@ -323,9 +323,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         camera.current = null;
         controls.current = null;
         setSelectedBtn([]);
-        if (!!name && !value.length) {
-            window.location.reload();
-        }
+        // if (!!name && !value.length) {
+        //     window.location.reload();
+        // }
     };
     // 初始化场景数据，渲染点云
     useEffect(() => {
@@ -1024,30 +1024,32 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 const point = {
                                     x: -1 * length * labelDashLength,
                                     y: 0,
-                                    z: position[0].z,
-                                    // count[1].length === 1 ?
-                                    //     0
-                                    //     :
-                                    //     count[1].length === 2 ?
-                                    //         width / 3 * (index === 0 ? -1 : 1)
-                                    //         :
-                                    //         (index === 0 || index + 1 === count[1].length) ?
-                                    //             width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
-                                    //             :
-                                    //             (index * 2 + 1 === count[1].length) ? 0
-                                    //                 :
-                                    //                 (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
-                                    //                 (
-                                    //                     (((index + 1) > count[1].length / 2) ?
-                                    //                         (
-                                    //                             Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
-                                    //                                 ((count[1].length / 2) - index - 1)
-                                    //                                 :
-                                    //                                 (count[1].length / 2) * -1
-                                    //                         )
-                                    //                         :
-                                    //                         ((count[1].length / 2) - index))
-                                    //                 ),
+                                    z: !(averageValue == 0 && maxValue == 0 && minValue == 0) ?
+                                        position[0].z
+                                        :
+                                        count[1].length === 1 ?
+                                            0
+                                            :
+                                            count[1].length === 2 ?
+                                                width / 3 * (index === 0 ? -1 : 1)
+                                                :
+                                                (index === 0 || index + 1 === count[1].length) ?
+                                                    width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
+                                                    :
+                                                    (index * 2 + 1 === count[1].length) ? 0
+                                                        :
+                                                        (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                                        (
+                                                            (((index + 1) > count[1].length / 2) ?
+                                                                (
+                                                                    Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                                                        ((count[1].length / 2) - index - 1)
+                                                                        :
+                                                                        (count[1].length / 2) * -1
+                                                                )
+                                                                :
+                                                                ((count[1].length / 2) - index))
+                                                        ),
                                 };
                                 position = [point, point];
                                 localPosition = [
@@ -1064,30 +1066,32 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 const point = {
                                     x: length * labelDashLength,
                                     y: 0,
-                                    z: position[0].z,
-                                    // count[1].length === 1 ?
-                                    //     0
-                                    //     :
-                                    //     count[1].length === 2 ?
-                                    //         width / 3 * (index === 0 ? -1 : 1)
-                                    //         :
-                                    //         (index === 0 || index + 1 === count[1].length) ?
-                                    //             width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
-                                    //             :
-                                    //             (index * 2 + 1 === count[1].length) ? 0
-                                    //                 :
-                                    //                 (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
-                                    //                 (
-                                    //                     (((index + 1) > count[1].length / 2) ?
-                                    //                         (
-                                    //                             Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
-                                    //                                 ((count[1].length / 2) - index - 1)
-                                    //                                 :
-                                    //                                 (count[1].length / 2) * -1
-                                    //                         )
-                                    //                         :
-                                    //                         ((count[1].length / 2) - index))
-                                    //                 ),
+                                    z: !(averageValue == 0 && maxValue == 0 && minValue == 0) ?
+                                        position[0].z
+                                        :
+                                        count[1].length === 1 ?
+                                            0
+                                            :
+                                            count[1].length === 2 ?
+                                                width / 3 * (index === 0 ? -1 : 1)
+                                                :
+                                                (index === 0 || index + 1 === count[1].length) ?
+                                                    width / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
+                                                    :
+                                                    (index * 2 + 1 === count[1].length) ? 0
+                                                        :
+                                                        (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                                        (
+                                                            (((index + 1) > count[1].length / 2) ?
+                                                                (
+                                                                    Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                                                        ((count[1].length / 2) - index - 1)
+                                                                        :
+                                                                        (count[1].length / 2) * -1
+                                                                )
+                                                                :
+                                                                ((count[1].length / 2) - index))
+                                                        ),
                                 };
                                 position = [point, point];
                                 localPosition = [
@@ -1102,30 +1106,32 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 ];
                             } else if ((type === "top")) {
                                 const point = {
-                                    x: position[0].x,
-                                    // count[1].length === 1 ?
-                                    //     0
-                                    //     :
-                                    //     count[1].length === 2 ?
-                                    //         length / 3 * (index === 0 ? -1 : 1)
-                                    //         :
-                                    //         (index === 0 || index + 1 === count[1].length) ?
-                                    //             length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
-                                    //             :
-                                    //             (index * 2 + 1 === count[1].length) ? 0
-                                    //                 :
-                                    //                 (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
-                                    //                 (
-                                    //                     (((index + 1) > count[1].length / 2) ?
-                                    //                         (
-                                    //                             Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
-                                    //                                 ((count[1].length / 2) - index - 1)
-                                    //                                 :
-                                    //                                 (count[1].length / 2) * -1
-                                    //                         )
-                                    //                         :
-                                    //                         ((count[1].length / 2) - index))
-                                    //                 ),
+                                    x: !(averageValue == 0 && maxValue == 0 && minValue == 0) ?
+                                        position[0].x
+                                        :
+                                        count[1].length === 1 ?
+                                            0
+                                            :
+                                            count[1].length === 2 ?
+                                                length / 3 * (index === 0 ? -1 : 1)
+                                                :
+                                                (index === 0 || index + 1 === count[1].length) ?
+                                                    length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
+                                                    :
+                                                    (index * 2 + 1 === count[1].length) ? 0
+                                                        :
+                                                        (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                                        (
+                                                            (((index + 1) > count[1].length / 2) ?
+                                                                (
+                                                                    Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                                                        ((count[1].length / 2) - index - 1)
+                                                                        :
+                                                                        (count[1].length / 2) * -1
+                                                                )
+                                                                :
+                                                                ((count[1].length / 2) - index))
+                                                        ),
                                     y: 0,
                                     z: width * 5 / 6,
                                 };
@@ -1142,30 +1148,32 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 ];
                             } else if ((type === "bottom")) {
                                 const point = {
-                                    x: position[0].x,
-                                    // count[1].length === 1 ?
-                                    //     0
-                                    //     :
-                                    //     count[1].length === 2 ?
-                                    //         length / 3 * (index === 0 ? -1 : 1)
-                                    //         :
-                                    //         (index === 0 || index + 1 === count[1].length) ?
-                                    //             length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
-                                    //             :
-                                    //             (index * 2 + 1 === count[1].length) ? 0
-                                    //                 :
-                                    //                 (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
-                                    //                 (
-                                    //                     (((index + 1) > count[1].length / 2) ?
-                                    //                         (
-                                    //                             Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
-                                    //                                 ((count[1].length / 2) - index - 1)
-                                    //                                 :
-                                    //                                 (count[1].length / 2) * -1
-                                    //                         )
-                                    //                         :
-                                    //                         ((count[1].length / 2) - index))
-                                    //                 ),
+                                    x: !(averageValue == 0 && maxValue == 0 && minValue == 0) ?
+                                        position[0].x
+                                        :
+                                        count[1].length === 1 ?
+                                            0
+                                            :
+                                            count[1].length === 2 ?
+                                                length / 3 * (index === 0 ? -1 : 1)
+                                                :
+                                                (index === 0 || index + 1 === count[1].length) ?
+                                                    length / 2 * ((index + 1) > count[1].length / 2 ? -1 : 1)
+                                                    :
+                                                    (index * 2 + 1 === count[1].length) ? 0
+                                                        :
+                                                        (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                                                        (
+                                                            (((index + 1) > count[1].length / 2) ?
+                                                                (
+                                                                    Math.abs((count[1].length / 2) - index - 1) < (count[1].length / 2) ?
+                                                                        ((count[1].length / 2) - index - 1)
+                                                                        :
+                                                                        (count[1].length / 2) * -1
+                                                                )
+                                                                :
+                                                                ((count[1].length / 2) - index))
+                                                        ),
                                     y: 0,
                                     z: -1 * width,
                                 };

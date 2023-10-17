@@ -1019,31 +1019,31 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                     />
                   </Form.Item>
                   {
-                    // !['POINT', 'LINE'].includes(feature?.type) ?
-                    <Form.Item
-                      name={`找线方向`}
-                      label="找线方向"
-                      style={['POINT', 'LINE'].includes(feature?.type) ? { display: 'none' } : {}}
-                      initialValue={featureList?.[selectedFeature] ? featureList?.[selectedFeature]?.['找线方向']?.value : 0}
-                      rules={[{ required: true, message: "找线方向" }]}
-                    >
-                      <Select
-                        style={{ width: '100%' }}
-                        options={[
-                          { label: '下到上', value: 0 },
-                          { label: '左到右', value: 90 },
-                          { label: '上到下', value: 180 },
-                          { label: '右到左', value: 270 },
-                          // { label: '', value: 360 }
-                        ].map((res: any) => {
-                          const { label, value } = res;
-                          return { key: value, label: label, value: value, };
-                        })}
-                        placeholder="找线方向"
-                      />
-                    </Form.Item>
-                    // :
-                    // null
+                    !['POINT', 'LINE'].includes(feature?.type) ?
+                      <Form.Item
+                        name={`找线方向`}
+                        label="找线方向"
+                        style={['POINT', 'LINE'].includes(feature?.type) ? { display: 'none' } : {}}
+                        initialValue={featureList?.[selectedFeature] ? featureList?.[selectedFeature]?.['找线方向']?.value : 0}
+                        rules={[{ required: true, message: "找线方向" }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            { label: '下到上', value: 0 },
+                            { label: '左到右', value: 90 },
+                            { label: '上到下', value: 180 },
+                            { label: '右到左', value: 270 },
+                            // { label: '', value: 360 }
+                          ].map((res: any) => {
+                            const { label, value } = res;
+                            return { key: value, label: label, value: value, };
+                          })}
+                          placeholder="找线方向"
+                        />
+                      </Form.Item>
+                      :
+                      null
                   }
                   {
                     _.isEmpty(selectedOptionType) ?
@@ -1108,6 +1108,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                   }, {});
                                 }
                               }
+
                               return <Form.Item
                                 key={`${item[0]}$$${guid()}`}
                                 name={`${item[0]}$$${guid()}`}
@@ -1134,29 +1135,30 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                             />
                           })
                           :
-                          <Form.Item
-                            name={`roi$$${guid()}`}
-                            label={"位置信息"}
-                            initialValue={Object.assign({},
-                              Object.entries(feature?.shape || {}).reduce((pre: any, cen: any) => {
-                                return Object.assign({}, pre, {
-                                  [cen[0]]: {
-                                    alias: cen[0],
-                                    value: cen[1]
-                                  }
-                                });
-                              }, {}),
-                              feature?.props?.type === "DOUBLE_CIRCLE" ? {
-                                "r2": {
-                                  alias: "r2",
-                                  value: gFirstFeatureLayer?.getFeatureById?.(feature?.id + 100)?.shape?.r || gFirstFeatureLayer?.getFeatureById?.(feature?.id - 100)?.shape?.r
-                                }
-                              } : {}
-                            )}
-                            rules={[{ required: true, message: "位置信息" }]}
-                          >
-                            <Measurement />
-                          </Form.Item>
+                          null
+                        // <Form.Item
+                        //   name={`roi$$${guid()}`}
+                        //   label={"位置信息"}
+                        //   initialValue={Object.assign({},
+                        //     Object.entries(feature?.shape || {}).reduce((pre: any, cen: any) => {
+                        //       return Object.assign({}, pre, {
+                        //         [cen[0]]: {
+                        //           alias: cen[0],
+                        //           value: cen[1]
+                        //         }
+                        //       });
+                        //     }, {}),
+                        //     feature?.props?.type === "DOUBLE_CIRCLE" ? {
+                        //       "r2": {
+                        //         alias: "r2",
+                        //         value: gFirstFeatureLayer?.getFeatureById?.(feature?.id + 100)?.shape?.r || gFirstFeatureLayer?.getFeatureById?.(feature?.id - 100)?.shape?.r
+                        //       }
+                        //     } : {}
+                        //   )}
+                        //   rules={[{ required: true, message: "位置信息" }]}
+                        // >
+                        //   <Measurement />
+                        // </Form.Item>
                       )
                       :
                       Object.entries(selectedOptionType)?.map((item: any) => {
@@ -1277,7 +1279,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           addFeature(type, id, shape, { ...props, label: value?.['option_type']?.value }, style);
                         };
                       }
-                      const range = value?.['找线方向']?.value;
+                      const range = value?.['找线方向']?.value || 0;
                       if (value?.['roi']?.value?.cx && value?.['roi']?.value?.r) {
                         const val = value?.['roi']?.value;
                         // 圆
@@ -1307,8 +1309,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                 let { value: val, } = value[cen[0]];
                                 // realValue：没旋转的 中心点x,y
                                 let realValue = val;
-                                // 矩形
                                 if (val?.x && val?.height) {
+                                  // 矩形
                                   val = {
                                     ...val,
                                     x: { ...val?.x, value: val?.x?.value - val?.width?.value / 2 },
@@ -1369,6 +1371,43 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                     );
                                     gMap.markerLayer.addMarker(gFirstMarker);
                                   }
+                                  /****************通过roi更新图层******************/
+                                } else if (!!val?.x2 && !!val?.y2) {
+                                  // 线
+                                  /****************通过roi更新图层******************/
+                                  const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
+                                  const shape = {
+                                    ...feature?.shape,
+                                    start: {
+                                      x: value?.['roi']?.value?.x1?.value,
+                                      y: value?.['roi']?.value?.y1?.value
+                                    },
+                                    end: {
+                                      x: value?.['roi']?.value?.x2?.value,
+                                      y: value?.['roi']?.value?.y2?.value
+                                    }
+                                  };
+                                  feature.updateShape(shape);
+                                  const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
+                                  targetText?.updatePosition({ ...shape?.start });
+                                  // 删除delete-icon
+                                  gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
+                                  /****************通过roi更新图层******************/
+                                } else if (!!val?.x && !!val?.sr) {
+                                  // 点
+                                  /****************通过roi更新图层******************/
+                                  const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
+                                  const shape = {
+                                    ...feature?.shape,
+                                    x: value?.['roi']?.value?.x?.value,
+                                    y: value?.['roi']?.value?.y?.value,
+                                    sr: value?.['roi']?.value?.sr?.value
+                                  };
+                                  feature.updateShape(shape);
+                                  const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
+                                  targetText?.updatePosition({ ...shape?.start });
+                                  // 删除delete-icon
+                                  gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
                                   /****************通过roi更新图层******************/
                                 }
 

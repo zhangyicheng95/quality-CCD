@@ -105,7 +105,7 @@ const Home: React.FC<any> = (props: any) => {
   const [loading, setLoading] = useState(false);
   const [colorSelector, setColorSelector] = useState<any>({
     fontColor: '#FFFFFF',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'default',
     overallBackgroundColor: '',
   });
   const [addWindowVisible, setAddWindowVisible] = useState('');
@@ -282,9 +282,9 @@ const Home: React.FC<any> = (props: any) => {
                   type: 'home/set',
                   payload: {
                     gridContentList: [
-                      { "id": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "value": ["96c525f8-fada-4512-8b44-7e8995278e63", "filepath"], "filepath": { "name": "models/output.ply", "value": [{}, {}] }, "size": { "i": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "x": 7, "y": 3, "w": 36, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "three", "tab": "1", "fontSize": 12, "backgroundColor": "#FFFFFF", "ifLocalStorage": true, "comparison": false, "interlacing": false, "modelRotate": false, "modelScale": false },
-                      { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "frame"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "x": 43, "y": 3, "w": 30, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "img", "tab": "1", "fontSize": 12, "backgroundColor": "#FFFFFF", "ifLocalStorage": true, "magnifier": false },
-                      { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "cam_name"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "x": 73, "y": 3, "w": 23, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "pie", "tab": "1", "fontSize": 12, "backgroundColor": "#FFFFFF", "ifLocalStorage": true }
+                      { "id": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "value": ["96c525f8-fada-4512-8b44-7e8995278e63", "filepath"], "filepath": { "name": "models/output.ply", "value": [{}, {}] }, "size": { "i": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "x": 7, "y": 3, "w": 36, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "three", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "comparison": false, "interlacing": false, "modelRotate": false, "modelScale": false },
+                      { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "frame"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "x": 43, "y": 3, "w": 30, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "img", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "magnifier": false },
+                      { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "cam_name"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "x": 73, "y": 3, "w": 23, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "pie", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true }
                     ],
                   },
                 });
@@ -895,7 +895,7 @@ const Home: React.FC<any> = (props: any) => {
         const {
           id: key, size, value = [], type, yName, xName, defaultImg, fontSize,
           reverse, direction, symbol, fetchType, fetchParams, align,
-          backgroundColor = '#FFFFFF', barColor = 'default', progressType = 'line',
+          backgroundColor = 'default', barColor = 'default', progressType = 'line',
           progressSize = 8, progressSteps = 5, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
           CCDName, imgs_width, imgs_height, tableSize, magnifier, comparison, operationList,
@@ -1800,11 +1800,11 @@ const Home: React.FC<any> = (props: any) => {
                                 setColorSelector((prev: any) => {
                                   return {
                                     ...prev,
-                                    overallBackgroundColor: paramData?.contentData?.overallBackgroundColor?.rgb || '#FFFFFF'
+                                    overallBackgroundColor: paramData?.contentData?.overallBackgroundColor?.rgb || 'default'
                                   }
                                 });
                                 form.setFieldsValue({
-                                  overallBackgroundColor: paramData?.contentData?.overallBackgroundColor?.rgb || '#FFFFFF',
+                                  overallBackgroundColor: paramData?.contentData?.overallBackgroundColor?.rgb || 'default',
                                   autoSize: _.isBoolean(paramData?.contentData?.autoSize) ? paramData?.contentData?.autoSize : true,
                                 });
                                 setAddWindowVisible('');
@@ -1997,7 +1997,7 @@ const Home: React.FC<any> = (props: any) => {
                 <Form.Item
                   name={`backgroundColor`}
                   label={'窗口背景色'}
-                  initialValue={"#FFFFFF"}
+                  initialValue={"default"}
                   rules={[{ required: false, message: '窗口背景色' }]}
                 >
                   {/* <ChromePicker

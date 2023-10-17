@@ -25,7 +25,7 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
                 setValue(val);
             }
         } catch (e) {
-            setValue(JSON.stringify({ msg: val }));
+            setValue(!!val ? JSON.stringify({ msg: val }) : '');
         }
 
     };
@@ -46,7 +46,6 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
                         params = '';
                     }
                 }
-                console.log(params)
                 btnFetch(fetchType, xName, params);
             }}>{yName}</Button>
             {
