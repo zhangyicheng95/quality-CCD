@@ -1142,6 +1142,7 @@
   width: 100%;
   height: 100%;
   flex-direction: column;
+  position: relative;
 
   :global {
     .operation-body {
@@ -1258,6 +1259,16 @@
           }
         }
       }
+    }
+
+    .operation2-mask-body {
+      position: absolute;
+      top: 0;
+      bottom: 41px;
+      left: 0;
+      right: 0;
+      z-index: 99;
+      background-color: rgba(144, 144, 144, .5);
     }
 
     .operation-footer {

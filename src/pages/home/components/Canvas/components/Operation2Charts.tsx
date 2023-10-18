@@ -26,7 +26,7 @@ interface Props {
 
 const Operation2Charts: React.FC<Props> = (props: any) => {
     let { data = {}, id, started } = props;
-    const { operationList, dataValue, xName = '', fontSize } = data;
+    let { operationList = [], dataValue, xName = '', operationLock, fontSize } = data;
     if (process.env.NODE_ENV === 'development') {
         started = true;
     }
@@ -46,8 +46,9 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     const [selectPathVisible, setSelectPathVisible] = useState(false);
     const [selectedPath, setSelectedPath] = useState<any>({});
     const [selectedOption, setSelectedOption] = useState<any>({});
+    const [locked, setLocked] = useState(true);
     // 初始化
-    const init = () => {
+    const init = (data?: any) => {
         const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
         const { config = {} } = node;
         let { group = [], initParams = {}, execParams = {} } = config;
@@ -59,7 +60,11 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         operationList?.forEach((item: any) => {
             const itemGroup = group.filter((i: any) => i.children.includes(item))?.[0];
             if (execParams?.[item]) {
-                resConfig = resConfig.concat({ ...execParams[item], show: !itemGroup });
+                resConfig = resConfig.concat(Object.assign(
+                    execParams[item],
+                    { show: !itemGroup },
+                    (!!data && !_.isEmpty(data)) ? { value: data[item], } : {}
+                ));
                 if (execParams[item]?.widget?.type === "TagRadio") {
                     const children = (
                         (execParams[item]?.widget?.options || [])
@@ -76,13 +81,20 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     };
     // 进来初始化
     useEffect(() => {
-        if (!_.isArray(operationList)) {
-            message.error('动态参数组件数据格式不正确，请检查');
-            console.log('Operation2Charts:', dataValue);
-            return;
+        if (locked) {
+            if (!!dataValue && !_.isEmpty(dataValue)) {
+                resetFields();
+                init(dataValue);
+                let obj = {};
+                Object.entries(dataValue)?.map((res: any) => {
+                    obj[res[0]] = res[1];
+                });
+                setFieldsValue(obj);
+            } else {
+                init();
+            }
         }
-        init();
-    }, [operationList, params]);
+    }, [dataValue, params, locked]);
     useEffect(() => {
         // const children = (selectedOption || []).map((item: any) => ({
         //     ...item,
@@ -136,7 +148,9 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                         id: params.id,
                         data: result
                     };
-                    btnFetch('post', xName, requestParams);
+                    btnFetch('post', xName, requestParams).then((res) => {
+                        setLocked(true);
+                    });
                     console.log(result)
                     // 2.保存数据到节点中
                     const { flowData, } = params;
@@ -211,7 +225,6 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         resetFields();
         init();
     };
-
     const initItem = (item: any) => {
         const { name, alias, widget = {}, addType, show } = item;
         const { type } = widget;
@@ -256,7 +269,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                 />
             </div>
         </div>
-    }
+    };
 
     return (
         <div
@@ -312,19 +325,31 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                     }
                 </Form>
             </div>
+            {
+                locked ?
+                    <div className="operation2-mask-body" />
+                    : null
+            }
             <div className="operation-footer flex-box-center">
+                {
+                    operationLock ?
+                        <Button type="primary" disabled={!started} onClick={() => {
+                            setLocked((prev) => !prev);
+                        }}>{locked ? '解锁' : '锁定'}</Button>
+                        : null
+                }
                 <Popconfirm
-                    disabled={!started}
+                    disabled={!started || locked}
                     title="确认修改吗?"
                     onConfirm={() => {
-                        onOk()
+                        onOk();
                     }}
                     okText="确认"
                     cancelText="取消"
                 >
-                    <Button type="primary" disabled={!started}>修改</Button>
+                    <Button type="primary" disabled={!started || locked}>修改</Button>
                 </Popconfirm>
-                <Button disabled={!started} onClick={() => onCancel()}>重置</Button>
+                <Button disabled={!started || locked} onClick={() => onCancel()}>重置</Button>
             </div>
 
             {

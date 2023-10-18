@@ -747,13 +747,13 @@ const Home: React.FC<any> = (props: any) => {
         })
       });
     }
-    if (!_.isBoolean(contentData?.autoSize)) {
-      newParams = Object.assign({}, newParams, {
-        contentData: Object.assign({}, newParams?.contentData, {
-          autoSize: true,
-        })
-      });
-    }
+    // if (!_.isBoolean(contentData?.autoSize)) {
+    //   newParams = Object.assign({}, newParams, {
+    //     contentData: Object.assign({}, newParams?.contentData, {
+    //       autoSize: true,
+    //     })
+    //   });
+    // }
     console.log(newParams)
     if (!_.isObject(contentHeader) || _.isEmpty(contentHeader)) {
       const header = {};
@@ -786,6 +786,10 @@ const Home: React.FC<any> = (props: any) => {
       dispatch({ type: 'home/snapshot' });
       setAddContentList(content);
       setParamData(newParams);
+      setInitialState((preInitialState: any) => ({
+        ...preInitialState,
+        params: newParams,
+      }));
     } else {
       const result = Object.entries(content)?.map((item: any) => {
         const { value, type, size } = item[1];
@@ -901,7 +905,7 @@ const Home: React.FC<any> = (props: any) => {
           CCDName, imgs_width, imgs_height, tableSize, magnifier, comparison, operationList,
           dataZoom, fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
           password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
-          basicInfoData = [{ id: guid(), name: '', value: '' }], ifNeedClear,
+          basicInfoData = [{ id: guid(), name: '', value: '' }], ifNeedClear, operationLock,
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1095,7 +1099,8 @@ const Home: React.FC<any> = (props: any) => {
                                                       operationList,
                                                       dataValue,
                                                       fontSize,
-                                                      xName
+                                                      xName,
+                                                      operationLock
                                                     }}
                                                   />
                                                   :
@@ -1443,7 +1448,7 @@ const Home: React.FC<any> = (props: any) => {
       CCDName, imgs_width, imgs_height, magnifier, comparison = false, operationList, dataZoom,
       fontColor, interlacing = false, modelRotate = false, modelScale = false, modelRotateScreenshot = false,
       password = '', passwordHelp = '', ifShowHeader = false, ifShowColorList = false,
-      headerBackgroundColor = 'default', ifNeedClear
+      headerBackgroundColor = 'default', ifNeedClear, operationLock,
     } = values;
     if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
       try {
@@ -1473,7 +1478,7 @@ const Home: React.FC<any> = (props: any) => {
         CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
         fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
         password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
-        ifNeedClear,
+        ifNeedClear, operationLock,
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1491,7 +1496,7 @@ const Home: React.FC<any> = (props: any) => {
             CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
             fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
             password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
-            ifNeedClear,
+            ifNeedClear, operationLock,
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -1520,7 +1525,7 @@ const Home: React.FC<any> = (props: any) => {
       CCDName: undefined, magnifier: false, comparison: false, operationList: [], dataZoom: 0,
       fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false, modelRotateScreenshot: false,
       password: undefined, passwordHelp: undefined, ifShowHeader: false, ifShowColorList: false,
-      headerBackgroundColor: 'default', ifNeedClear: false,
+      headerBackgroundColor: 'default', ifNeedClear: false, operationLock: false,
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -2699,13 +2704,23 @@ const Home: React.FC<any> = (props: any) => {
                       </Form.Item>
                       {
                         ['operation2'].includes(windowType) ?
-                          <Form.Item
-                            name={`xName`}
-                            label={"接口地址"}
-                            rules={[{ required: true, message: '接口地址' }]}
-                          >
-                            <Input size='large' />
-                          </Form.Item>
+                          <Fragment>
+                            <Form.Item
+                              name={`xName`}
+                              label={"接口地址"}
+                              rules={[{ required: true, message: '接口地址' }]}
+                            >
+                              <Input size='large' />
+                            </Form.Item>
+                            <Form.Item
+                              name="operationLock"
+                              label="开启状态锁"
+                              initialValue={false}
+                              valuePropName="checked"
+                            >
+                              <Switch />
+                            </Form.Item>
+                          </Fragment>
                           : null
                       }
                     </Fragment>
