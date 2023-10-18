@@ -754,7 +754,6 @@ const Home: React.FC<any> = (props: any) => {
     //     })
     //   });
     // }
-    console.log(newParams)
     if (!_.isObject(contentHeader) || _.isEmpty(contentHeader)) {
       const header = {};
       // 默认显示/隐藏header
@@ -2326,8 +2325,8 @@ const Home: React.FC<any> = (props: any) => {
                     <Fragment>
                       <Form.Item
                         name={`reverse`}
-                        label={'数据倒叙'}
-                        rules={[{ required: true, message: '数据倒叙' }]}
+                        label={'数据倒序'}
+                        rules={[{ required: true, message: '数据倒序' }]}
                         initialValue={false}
                       >
                         <Select
@@ -2339,7 +2338,7 @@ const Home: React.FC<any> = (props: any) => {
                             },
                             {
                               value: true,
-                              label: '倒叙显示',
+                              label: '倒序显示',
                             }
                           ]}
                         />

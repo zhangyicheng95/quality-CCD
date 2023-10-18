@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { connect, useModel } from 'umi';
-import { Button, Input, InputNumber, message, Popover, Select, Switch, Tooltip } from 'antd';
+import { Button, Form, Input, InputNumber, message, Modal, Popover, Select, Switch, Tooltip } from 'antd';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Lut } from "three/examples/jsm/math/Lut.js";
@@ -48,181 +48,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     } = data;
     let { name, value = [], guid, addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
-        // addType = 'add';
-        name = "models/output.ply"; // models/pressure.json  models/tx.stl
-        value = [
-            {
-                "name": "模具高度",
-                "infoName": "mould_hight",
-                "position": [
-                    {
-                        "x": -35.32,
-                        "y": -285.39,
-                        "z": -301.47
-                    },
-                    {
-                        "x": -35.32,
-                        "y": -285.39,
-                        "z": -301.47
-                    }
-                ],
-                "standardValue": 750,
-                "offsetValue": -0.71,
-                "type": "top",
-                "maxValue": 749.94,
-                "minValue": 749.03,
-                "averageValue": 749.29
-            },
-            {
-                "name": "模具高度",
-                "infoName": "mould_hight",
-                "position": [
-                    {
-                        "x": 335.32,
-                        "y": -285.39,
-                        "z": -301.47
-                    },
-                    {
-                        "x": 335.32,
-                        "y": -285.39,
-                        "z": -301.47
-                    }
-                ],
-                "standardValue": 750,
-                "offsetValue": -0.71,
-                "type": "top",
-                "maxValue": 749.94,
-                "minValue": 749.03,
-                "averageValue": 749.29
-            },
-            {
-                "name": "模具长轴",
-                "infoName": "TQ_NMWJCZ",
-                "position": [
-                    {
-                        "x": -178.08,
-                        "y": -284.31,
-                        "z": 45.58
-                    },
-                    {
-                        "x": 173.39,
-                        "y": 288.62,
-                        "z": 95.58
-                    }
-                ],
-                "standardValue": 570,
-                "offsetValue": 2.93,
-                "type": "left",
-                "maxValue": 574,
-                "minValue": 571.53,
-                "averageValue": 572.93
-            },
-            {
-                "name": "模具短轴",
-                "infoName": "inside_diameter",
-                "position": [
-                    {
-                        "x": -178.08,
-                        "y": -284.31,
-                        "z": 45.58
-                    },
-                    {
-                        "x": 173.39,
-                        "y": 288.62,
-                        "z": 95.58
-                    }
-                ],
-                "standardValue": 350,
-                "offsetValue": 1.47,
-                "type": "right",
-                "maxValue": 352.46,
-                "minValue": 351.39,
-                "averageValue": 351.47
-            },
-            {
-                "name": "止口长轴",
-                "infoName": "TQ_ZKWJCZ",
-                "position": [
-                    {
-                        "x": -205.21,
-                        "y": -329.72,
-                        "z": -310.79
-                    },
-                    {
-                        "x": -205.21,
-                        "y": -329.72,
-                        "z": -310.79
-                    },
-                ],
-                "standardValue": 705,
-                "offsetValue": -1.57,
-                "type": "bottom",
-                "averageValue": 703.43,
-                "maxValue": 703.43,
-                "minValue": 703.43
-            },
-            {
-                "name": "止口凸台宽度",
-                "infoName": "panel_width",
-                "position": [
-                    {
-                        "x": 5.29,
-                        "y": 373.46,
-                        "z": -304.57
-                    },
-                    {
-                        "x": 5.29,
-                        "y": 373.46,
-                        "z": -304.57
-                    }
-                ],
-                "standardValue": 100,
-                "offsetValue": -0.95,
-                "type": "bottom",
-                "averageValue": 99.05,
-                "maxValue": 99.05,
-                "minValue": 99.05
-            },
-            {
-                "name": "止口短轴",
-                "infoName": "outside_diameter",
-                "position": [
-                    {
-                        "x": 216.6,
-                        "y": 22,
-                        "z": -310.79
-                    },
-                    {
-                        "x": 216.6,
-                        "y": 22,
-                        "z": -310.79
-                    }
-                ],
-                "standardValue": 445,
-                "offsetValue": -1.38,
-                "type": "bottom",
-                "averageValue": 443.62,
-                "maxValue": 443.62,
-                "minValue": 443.62
-            }
-        ];
-        // let arr = [];
-        // for (let i = 1; i < 48; i++) {
-        //     arr.push(i);
-        // }
-        // arr.forEach((i: any, index: number) => {
-        //     setTimeout(() => {
-        //         if (!!scene.current) {
-        //             loadModel(`models/lines_${i}.ply`, addType);
-        //         }
-        //     }, 1000 + index * 300);
-        // })
+        name = "models/z1130_3_1.stl"; // models/pressure.json  models/tx.stl
     }
-    // 进来给默认展示比例
-    // if (!localStorage.getItem('cameraScale')) {
-    //     localStorage.setItem('cameraScale', '2.7');
-    // }
 
+    const [form] = Form.useForm();
+    const { validateFields, setFieldsValue, resetFields } = form;
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const dom = useRef<any>();
@@ -233,6 +63,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const [meshHasColor, setMeshHasColor] = useState(false);
     const [selectPathVisible, setSelectPathVisible] = useState(false);
     const [selectedPath, setSelectedPath] = useState<any>("");
+    const [selectedPoint, setSelectedPoint] = useState<any>(null);
 
     const theme = useMemo(() => {
         return params?.contentData?.theme || 'realDark';
@@ -273,6 +104,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         measurements: any = [];
     // loader后能被标注的点云
     const pickableObjects = new Array();
+    // loader后能被编辑的点云
+    const editableObjects = new Array();
 
     if (!localStorage.getItem("scale")) {
         localStorage.setItem("scale", JSON.stringify({ value: "1", unit: "m" }));
@@ -347,6 +180,32 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 }
             }
             return;
+        };
+        if (process.env.NODE_ENV === 'development') {
+            setTimeout(() => {
+                loadModel('', [
+                    {
+                        "x": -35.32,
+                        "y": -385.39,
+                        "z": -301.47
+                    },
+                    {
+                        "x": 35.32,
+                        "y": -385.39,
+                        "z": -301.47
+                    },
+                    {
+                        "x": -35.32,
+                        "y": -385.39,
+                        "z": 301.47
+                    },
+                    {
+                        "x": 35.32,
+                        "y": -385.39,
+                        "z": 301.47
+                    }
+                ], 'add');
+            }, 10000);
         };
         // addType为add时，代表增量渲染，不清除其他数据
         if (!!scene.current && addType === 'add') {
@@ -701,7 +560,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 // 显示坐标轴
                 axis.visible = true;
             }
-        }
+        };
         function onDocumentMouseMove(event: any) {
             event.preventDefault();
             mouse.x = (event.offsetX / renderer.current.domElement.offsetWidth) * 2 - 1;
@@ -743,7 +602,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             //         measurementLabels[lineId].position.lerpVectors(v0, v1, 0.5);
             //     }
             // }
-        }
+        };
         function onMouseUp() {
             if (!renderer.current) return;
             const models = getAllModelsFromScene(scene.current);
@@ -764,10 +623,24 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 }
                 return prev;
             });
-        }
+        };
+        function onMousedblclick(event: any) {
+            raycaster.setFromCamera(mouse, camera.current);
+            const intersects: any = raycaster.intersectObjects(editableObjects, false); // 获取光线投射的对象
+            if (intersects.length > 0) {
+                const intersect: any = intersects[0];
+                console.log(intersect)
+                setSelectedPoint(intersect);
+                setFieldsValue({
+                    ...intersect.object.position
+                });
+            }
+            render();
+        };
         renderer.current.domElement.addEventListener("pointerdown", onMouseDown, false);
         renderer.current.domElement.addEventListener("pointerup", onMouseUp, false);
         renderer.current.domElement.addEventListener("mousemove", onDocumentMouseMove, false);
+        renderer.current.domElement.addEventListener("dblclick", onMousedblclick, false);
         function animate() {
             animateId = requestAnimationFrame(animate);
             controls && controls.current.update();
@@ -863,34 +736,34 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             console.log('scale:', scale);
             const basicPosition = new THREE.Vector3(0, -scale * max, 0);
             if (addType === 'add') {
-                models?.forEach((model: any) => {
-                    model.material = new THREE.PointsMaterial({   // MeshStandardMaterial,MeshBasicMaterial,PointsMaterial
-                        color: '#808080',
-                    });
-                });
+                // models?.forEach((model: any) => {
+                //     model.material = new THREE.PointsMaterial({   // MeshStandardMaterial,MeshBasicMaterial,PointsMaterial
+                //         color: '#808080',
+                //     });
+                // });
                 // if (mesh?.material) {
                 //     mesh.material.color = '#ffd700';
                 // } else if (mesh.children?.[0] && !!mesh.children[0]?.material) {
                 //     mesh.children[0].material.color = '#ffd700';
                 // }
 
-                let targetPos = camera.current.position;
-                if (max === box.max.x) {
-                    targetPos = new THREE.Vector3(scale * max, 0, 0);
-                } else if (max === box.max.z) {
-                    targetPos = new THREE.Vector3(0, 0, scale * max);
-                } else if (max === box.max.y) {
-                    targetPos = new THREE.Vector3(0, scale * max, 0);
-                }
-                var currentPos = camera.current.position;
-                var tween = new TWEEN.Tween(currentPos)
-                    .to(targetPos, 1000)  // 目标位置，动画时间
-                    .easing(TWEEN.Easing.Quadratic.Out)
-                    .onUpdate(function () {
-                        camera.current.position.copy(currentPos);
-                        camera.current.lookAt(box.max.x, box.max.y, box.max.z);
-                    });
-                tween.start();
+                // let targetPos = camera.current.position;
+                // if (max === box.max.x) {
+                //     targetPos = new THREE.Vector3(scale * max, 0, 0);
+                // } else if (max === box.max.z) {
+                //     targetPos = new THREE.Vector3(0, 0, scale * max);
+                // } else if (max === box.max.y) {
+                //     targetPos = new THREE.Vector3(0, scale * max, 0);
+                // }
+                // var currentPos = camera.current.position;
+                // var tween = new TWEEN.Tween(currentPos)
+                //     .to(targetPos, 1000)  // 目标位置，动画时间
+                //     .easing(TWEEN.Easing.Quadratic.Out)
+                //     .onUpdate(function () {
+                //         camera.current.position.copy(currentPos);
+                //         camera.current.lookAt(box.max.x, box.max.y, box.max.z);
+                //     });
+                // tween.start();
             } else {
                 // if (max === box.max.x) {
                 //     camera.current.position.set(0, mdhei / 2, scale * max);
@@ -904,23 +777,21 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 // localStorage.setItem('cameraScale', JSON.stringify(scale));
                 effectMeasureLine(mesh, value);
                 // mesh.position.set(-x1, -y1, -z1); // 将模型进行偏移
+                // 把点云放到可控数组里，用于画线标注
+                mesh.frustumCulled = false;
+                mesh.traverse(function (child: any) {
+                    child.frustumCulled = false;
+                    let m = child;
+                    switch (m.name) {
+                        case "Plane":
+                            m.receiveShadow = true;
+                            break;
+                        default:
+                            m.castShadow = true;
+                    }
+                    pickableObjects.push(m);
+                });
             }
-            // 把点云放到可控数组里，用于画线标注
-            mesh.frustumCulled = false;
-            mesh.traverse(function (child: any) {
-                // if (child.isMesh) {
-                child.frustumCulled = false;
-                let m = child;
-                switch (m.name) {
-                    case "Plane":
-                        m.receiveShadow = true;
-                        break;
-                    default:
-                        m.castShadow = true;
-                }
-                pickableObjects.push(m);
-                // }
-            });
             maskBox.style.display = "none";
 
             scene.current.add(mesh);
@@ -1546,6 +1417,25 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             //             );
             //     }
             // );
+        } else if (!name && addType === 'add') {
+            // 没有name
+            const models = getAllModelsFromScene(scene.current);
+            models.forEach((mesh: any) => {
+                if (mesh.name?.indexOf("editPoint") > -1) {
+                    scene.current.remove(mesh);
+                }
+            });
+            (value || []).forEach((item: any, index: number) => {
+                const geometry = new THREE.SphereGeometry(10, 32, 32);
+                const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+                const cube = new THREE.Mesh(geometry, material);
+                cube.position.x = item.x;
+                cube.position.y = item.y;
+                cube.position.z = item.z;
+                cube.name = `editPoint-${index}`;
+                editableObjects.push(cube);
+                scene.current.add(cube);
+            });
         }
     };
     // 获取模型实际尺寸
@@ -1803,7 +1693,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             className='btn'
                         />
                     </Tooltip>
-                    <Tooltip title="清理测距数据">
+                    <Tooltip title="清理标注数据">
                         <Button
                             icon={<ClearOutlined />}
                             type={'default'}
@@ -1981,6 +1871,53 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             setSelectedPath("");
                         }}
                     />
+                    : null
+            }
+            {
+                (!!selectedPoint && !_.isEmpty(selectedPoint)) ?
+                    <Modal
+                        title="轨迹位置"
+                        open={(!!selectedPoint && !_.isEmpty(selectedPoint))}
+                        centered
+                        onOk={() => {
+                            validateFields()
+                                .then((values) => {
+                                    const { x, y, z } = values;
+                                    selectedPoint.object.position.set(x, y, z);
+                                    setSelectedPoint(null);
+                                });
+                        }}
+                        onCancel={() => setSelectedPoint(null)}
+                        destroyOnClose
+                        maskClosable={false}
+                    >
+                        <Form
+                            form={form}
+                            scrollToFirstError
+                        >
+                            <Form.Item
+                                name="x"
+                                label="x"
+                                rules={[{ required: true, message: "x" }]}
+                            >
+                                <InputNumber placeholder="x坐标" />
+                            </Form.Item>
+                            <Form.Item
+                                name="y"
+                                label="y"
+                                rules={[{ required: true, message: "y" }]}
+                            >
+                                <InputNumber placeholder="y坐标" />
+                            </Form.Item>
+                            <Form.Item
+                                name="z"
+                                label="z"
+                                rules={[{ required: true, message: "z" }]}
+                            >
+                                <InputNumber placeholder="z坐标" />
+                            </Form.Item>
+                        </Form>
+                    </Modal>
                     : null
             }
         </div>
