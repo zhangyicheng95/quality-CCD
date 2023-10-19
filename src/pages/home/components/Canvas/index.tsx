@@ -905,6 +905,7 @@ const Home: React.FC<any> = (props: any) => {
           dataZoom, fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
           password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
           basicInfoData = [{ id: guid(), name: '', value: '' }], ifNeedClear, operationLock,
+          ifUpdateProject,
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1095,11 +1096,9 @@ const Home: React.FC<any> = (props: any) => {
                                                   <Operation2Charts
                                                     id={key}
                                                     data={{
-                                                      operationList,
-                                                      dataValue,
-                                                      fontSize,
-                                                      xName,
-                                                      operationLock
+                                                      operationList, dataValue,
+                                                      fontSize, xName,
+                                                      operationLock, ifUpdateProject,
                                                     }}
                                                   />
                                                   :
@@ -1447,7 +1446,7 @@ const Home: React.FC<any> = (props: any) => {
       CCDName, imgs_width, imgs_height, magnifier, comparison = false, operationList, dataZoom,
       fontColor, interlacing = false, modelRotate = false, modelScale = false, modelRotateScreenshot = false,
       password = '', passwordHelp = '', ifShowHeader = false, ifShowColorList = false,
-      headerBackgroundColor = 'default', ifNeedClear, operationLock,
+      headerBackgroundColor = 'default', ifNeedClear, operationLock, ifUpdateProject,
     } = values;
     if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
       try {
@@ -1477,7 +1476,7 @@ const Home: React.FC<any> = (props: any) => {
         CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
         fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
         password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
-        ifNeedClear, operationLock,
+        ifNeedClear, operationLock, ifUpdateProject,
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1495,7 +1494,7 @@ const Home: React.FC<any> = (props: any) => {
             CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
             fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
             password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
-            ifNeedClear, operationLock,
+            ifNeedClear, operationLock, ifUpdateProject,
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -1524,7 +1523,7 @@ const Home: React.FC<any> = (props: any) => {
       CCDName: undefined, magnifier: false, comparison: false, operationList: [], dataZoom: 0,
       fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false, modelRotateScreenshot: false,
       password: undefined, passwordHelp: undefined, ifShowHeader: false, ifShowColorList: false,
-      headerBackgroundColor: 'default', ifNeedClear: false, operationLock: false,
+      headerBackgroundColor: 'default', ifNeedClear: false, operationLock: false, ifUpdateProject: false,
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -2710,6 +2709,14 @@ const Home: React.FC<any> = (props: any) => {
                               rules={[{ required: true, message: '接口地址' }]}
                             >
                               <Input size='large' />
+                            </Form.Item>
+                            <Form.Item
+                              name="ifUpdateProject"
+                              label="是否同步方案"
+                              initialValue={false}
+                              valuePropName="checked"
+                            >
+                              <Switch />
                             </Form.Item>
                             <Form.Item
                               name="operationLock"

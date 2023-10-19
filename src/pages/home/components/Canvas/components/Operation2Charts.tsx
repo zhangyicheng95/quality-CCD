@@ -26,7 +26,10 @@ interface Props {
 
 const Operation2Charts: React.FC<Props> = (props: any) => {
     let { data = {}, id, started } = props;
-    let { operationList = [], dataValue, xName = '', operationLock, fontSize } = data;
+    let {
+        operationList = [], dataValue, xName = '', operationLock, fontSize,
+        ifUpdateProject,
+    } = data;
     if (process.env.NODE_ENV === 'development') {
         started = true;
     }
@@ -151,70 +154,72 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                     btnFetch('post', xName, requestParams).then((res) => {
                         setLocked(true);
                     });
-                    console.log(result)
-                    // 2.保存数据到节点中
-                    const { flowData, } = params;
-                    let { nodes } = flowData;
-                    nodes = nodes.map((node: any) => {
-                        const { config = {} } = node;
-                        if (node.id === id.split('$$')[0]) {
-                            let { initParams = {}, execParams } = config;
-                            if (!execParams || _.isEmpty(execParams)) {
-                                execParams = initParams;
+                    if (ifUpdateProject) {
+                        console.log(result)
+                        // 2.保存数据到节点中
+                        const { flowData, } = params;
+                        let { nodes } = flowData;
+                        nodes = nodes.map((node: any) => {
+                            const { config = {} } = node;
+                            if (node.id === id.split('$$')[0]) {
+                                let { initParams = {}, execParams } = config;
+                                if (!execParams || _.isEmpty(execParams)) {
+                                    execParams = initParams;
+                                }
+                                let obj = Object.assign({}, execParams);
+                                pre.forEach((item: any, index: number) => {
+                                    obj[item?.name] = {
+                                        ...item,
+                                        value: result[item?.name],
+                                        ...(item?.widget?.type === "TagRadio" ? {
+                                            widget: {
+                                                ...item?.widget,
+                                                options: (item?.widget?.options || [])?.map((option: any) => {
+                                                    if (option.name === item?.value) {
+                                                        return {
+                                                            ...option,
+                                                            children: (option?.children || [])?.map((child: any) => {
+                                                                return {
+                                                                    ...child,
+                                                                    value: result[child?.name],
+                                                                }
+                                                            })
+                                                        }
+                                                    };
+                                                    return option;
+                                                })
+                                            }
+                                        } : {})
+                                    };
+                                });
+                                return Object.assign({}, node, {
+                                    config: Object.assign({}, config, {
+                                        execParams: obj
+                                    })
+                                });
                             }
-                            let obj = Object.assign({}, execParams);
-                            pre.forEach((item: any, index: number) => {
-                                obj[item?.name] = {
-                                    ...item,
-                                    value: result[item?.name],
-                                    ...(item?.widget?.type === "TagRadio" ? {
-                                        widget: {
-                                            ...item?.widget,
-                                            options: (item?.widget?.options || [])?.map((option: any) => {
-                                                if (option.name === item?.value) {
-                                                    return {
-                                                        ...option,
-                                                        children: (option?.children || [])?.map((child: any) => {
-                                                            return {
-                                                                ...child,
-                                                                value: result[child?.name],
-                                                            }
-                                                        })
-                                                    }
-                                                };
-                                                return option;
-                                            })
-                                        }
-                                    } : {})
-                                };
-                            });
-                            return Object.assign({}, node, {
-                                config: Object.assign({}, config, {
-                                    execParams: obj
+                            return node
+                        });
+                        const resultParams = {
+                            id: params.id,
+                            data: Object.assign({}, params, {
+                                flowData: Object.assign({}, flowData, {
+                                    nodes
                                 })
-                            });
-                        }
-                        return node
-                    });
-                    const resultParams = {
-                        id: params.id,
-                        data: Object.assign({}, params, {
-                            flowData: Object.assign({}, flowData, {
-                                nodes
                             })
-                        })
-                    };
-                    updateParams(resultParams).then((res: any) => {
-                        if (res && res.code === 'SUCCESS') {
-                            message.success('修改成功');
-                            setInitialState((preInitialState: any) => ({
-                                ...preInitialState,
-                                params: res.data
-                            }));
-                        } else {
-                            message.error(res?.msg || res?.message || '接口异常');
-                        }
-                    });
+                        };
+                        updateParams(resultParams).then((res: any) => {
+                            if (res && res.code === 'SUCCESS') {
+                                message.success('修改成功');
+                                setInitialState((preInitialState: any) => ({
+                                    ...preInitialState,
+                                    params: res.data
+                                }));
+                            } else {
+                                message.error(res?.msg || res?.message || '接口异常');
+                            }
+                        });
+                    }
                     return pre;
                 });
             }).catch((err) => {
@@ -238,16 +243,16 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             key={`${id}@$@${name}`}
             style={show ? {} : { height: 0, padding: 0 }}
         >
-            <div className="flex-box">
-                {/* <div className="icon-box flex-box">
+            {/* <div className="flex-box"> */}
+            {/* <div className="icon-box flex-box">
                                             {_.toUpper(type.slice(0, 1))} */}
-                {/* <BlockOutlined className="item-icon" /> */}
-                {/* </div> */}
-                <div className="title-box">
-                    <TooltipDiv style={{ fontSize: fontSize + 4 }} className="first" title={alias || name}>{alias || name}</TooltipDiv>
-                    <TooltipDiv className="second" style={{ fontSize }}>{name}</TooltipDiv>
-                </div>
+            {/* <BlockOutlined className="item-icon" /> */}
+            {/* </div> */}
+            <div className="title-box">
+                <TooltipDiv style={{ fontSize: fontSize + 4 }} className="first" title={alias || name}>{alias || name}</TooltipDiv>
+                <TooltipDiv className="second" style={{ fontSize }}>{name}</TooltipDiv>
             </div>
+            {/* </div> */}
             <div className="value-box" style={type === 'TagRadio' ?
                 { width: 'calc(100% - 16px)' } :
                 {}
@@ -309,7 +314,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                                                         const item = configList.filter((i: any) => i?.name === child)?.[0];
                                                         if (!item) return null;
                                                         return <div className="flex-box param-group-item-body-box">
-                                                            <div className="param-line-row" >--</div>
+                                                            {/* <div className="param-line-row" >--</div> */}
                                                             {
                                                                 initItem({ ...item, show })
                                                             }
