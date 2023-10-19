@@ -46,7 +46,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         dataValue = {}, fontSize, fetchType, xName, ifShowColorList = false,
         modelRotate = false, modelScale = false, modelRotateScreenshot = false,
     } = data;
-    let { name, value = [], guid, addType } = dataValue;
+    let { name, value = [], action = '', guid, addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
         name = "models/z1130_3_1.stl"; // models/pressure.json  models/tx.stl
     }
@@ -678,7 +678,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 clearCanvas(value);
             }
         };
-    }, [theme, name, guid, started, selectedPath, dom.current?.clientHeight]);
+    }, [name, guid, selectedPath]);
     // 获取场景中的全部模型对象
     function getAllModelsFromScene(scene: any) {
         const models: any = [];
@@ -797,7 +797,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             scene.current.add(mesh);
             // 开启相机巡航
             setCameraSwitch(modelRotate);
-            if (modelRotateScreenshot) {
+            if (modelRotateScreenshot && action === 'push') {
                 // 开启循环自动截图
                 if (!maskBox) return;
                 const processBox = maskBox?.querySelector('.process');

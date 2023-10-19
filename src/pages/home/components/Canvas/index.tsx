@@ -1219,7 +1219,7 @@ const Home: React.FC<any> = (props: any) => {
           resultData = resultData.concat(
             !!dataValue ? {
               ...item,
-              [value[1]]: dataValue
+              [value[1]]: type === 'three' ? _.omit(dataValue, 'action') : dataValue
             } : item
           );
         }
@@ -2518,12 +2518,12 @@ const Home: React.FC<any> = (props: any) => {
                               if (!item || _.isEmpty(item)) return null;
 
                               const { id, name, value } = item;
-                              return <Row
+                              return <div
                                 key={`commonInfo-${id || index}`}
-                                gutter={8}
-                                style={{ marginBottom: 8, height: '27px', }}
+                                className="flex-box"
+                                style={{ marginBottom: 8, height: '27px', gap: 8 }}
                               >
-                                <Col flex={1}>
+                                <div style={{ flex: 1 }}>
                                   <Input
                                     placeholder='key'
                                     value={name}
@@ -2539,8 +2539,8 @@ const Home: React.FC<any> = (props: any) => {
                                       });
                                     }}
                                   />
-                                </Col>
-                                <Col flex={2}>
+                                </div>
+                                <div style={{ flex: 1 }}>
                                   <Input
                                     placeholder='value'
                                     value={value}
@@ -2556,8 +2556,8 @@ const Home: React.FC<any> = (props: any) => {
                                       });
                                     }}
                                   />
-                                </Col>
-                                <Col style={{ height: '100%' }}>
+                                </div>
+                                <div style={{ height: '100%' }}>
                                   <Button
                                     style={{ height: '100%' }}
                                     icon={<MinusOutlined />}
@@ -2569,8 +2569,8 @@ const Home: React.FC<any> = (props: any) => {
                                       })
                                     }}
                                   />
-                                </Col>
-                              </Row>
+                                </div>
+                              </div>
                             })
                             :
                             null
