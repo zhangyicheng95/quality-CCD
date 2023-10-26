@@ -130,8 +130,8 @@ const Home: React.FC<any> = (props: any) => {
   const [homeSettingData, setHomeSettingData] = useState({
     "slider-1": { des_column: 1, ifShowHeader: false },
     "slider-4": { fontSize: 20, ifShowHeader: false, show_start_end: false },
-    "footer-1": { fontSize: 14, ifShowHeader: false },
-    "footer-2": { fontSize: 20, ifShowHeader: false },
+    "footer-1": { fontSize: 14, ifShowHeader: false, logSize: 50 },
+    "footer-2": { fontSize: 20, ifShowHeader: false, logSize: 50 },
   });
   const [basicInfoData, setBasicInfoData] = useState<any>([]);
   const [pageIconPosition, setPageIconPosition] = useState<any>({
@@ -491,7 +491,7 @@ const Home: React.FC<any> = (props: any) => {
             style={homeSettingData['footer-1']}
             dangerouslySetInnerHTML={{
               // 此处需要处理
-              __html: _.isString(logStr) ? logStr : logStr.join('<br />'),
+              __html: _.isString(logStr) ? logStr : logStr?.slice(homeSettingData['footer-1']?.logSize || 50).join('<br />'),
             }}
           />
           <div className="preview-box flex-box-center">
@@ -540,7 +540,7 @@ const Home: React.FC<any> = (props: any) => {
         }
         <div className="card-body-box">
           <div className="content-item-span">
-            {errorData?.map((log: any, index: number) => {
+            {errorData?.slice(homeSettingData['footer-2']?.logSize || 50)?.map((log: any, index: number) => {
               const { color, node_name, nid, message, time } = log;
               return (
                 <div className="log-item flex-box-start" key={index}>
@@ -905,7 +905,7 @@ const Home: React.FC<any> = (props: any) => {
           dataZoom, fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
           password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
           basicInfoData = [{ id: guid(), name: '', value: '' }], ifNeedClear, operationLock,
-          ifUpdateProject,
+          ifUpdateProject, magnifierSize, listType,
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1099,6 +1099,7 @@ const Home: React.FC<any> = (props: any) => {
                                                       operationList, dataValue,
                                                       fontSize, xName,
                                                       operationLock, ifUpdateProject,
+                                                      listType,
                                                     }}
                                                   />
                                                   :
@@ -1116,7 +1117,7 @@ const Home: React.FC<any> = (props: any) => {
                                                       data={{
                                                         defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
                                                         dataValue, windowControl,
-                                                        setContentList, magnifier, comparison
+                                                        setContentList, magnifier, comparison, magnifierSize
                                                       }}
                                                     />
                 }
@@ -1447,6 +1448,7 @@ const Home: React.FC<any> = (props: any) => {
       fontColor, interlacing = false, modelRotate = false, modelScale = false, modelRotateScreenshot = false,
       password = '', passwordHelp = '', ifShowHeader = false, ifShowColorList = false,
       headerBackgroundColor = 'default', ifNeedClear, operationLock, ifUpdateProject,
+      magnifierSize, logSize, listType,
     } = values;
     if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
       try {
@@ -1476,7 +1478,7 @@ const Home: React.FC<any> = (props: any) => {
         CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
         fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
         password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
-        ifNeedClear, operationLock, ifUpdateProject,
+        ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1494,7 +1496,7 @@ const Home: React.FC<any> = (props: any) => {
             CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
             fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
             password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
-            ifNeedClear, operationLock, ifUpdateProject,
+            ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -1524,6 +1526,7 @@ const Home: React.FC<any> = (props: any) => {
       fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false, modelRotateScreenshot: false,
       password: undefined, passwordHelp: undefined, ifShowHeader: false, ifShowColorList: false,
       headerBackgroundColor: 'default', ifNeedClear: false, operationLock: false, ifUpdateProject: false,
+      magnifierSize: 1, logSize: 50, listType: 'line',
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -1714,7 +1717,7 @@ const Home: React.FC<any> = (props: any) => {
                     ifCanEdit ?
                       <div
                         className="flex-box-justify-between right-canvas-toolbar"
-                        style={leftPanelVisible ? { paddingLeft: 276 } : {}}
+                        style={leftPanelVisible ? { paddingLeft: 276 } : { paddingLeft: 60 }}
                       >
                         <Tooltip placement="bottom" title="保存数据">
                           <Button
@@ -2091,6 +2094,15 @@ const Home: React.FC<any> = (props: any) => {
                         valuePropName="checked"
                       >
                         <Switch />
+                      </Form.Item>
+                      <Form.Item
+                        name="magnifierSize"
+                        label="放大镜倍数"
+                      >
+                        <InputNumber
+                          min={1}
+                          placeholder="放大镜倍数"
+                        />
                       </Form.Item>
                       <Form.Item
                         name="comparison"
@@ -2704,6 +2716,26 @@ const Home: React.FC<any> = (props: any) => {
                         ['operation2'].includes(windowType) ?
                           <Fragment>
                             <Form.Item
+                              name={`listType`}
+                              label={'布局方式'}
+                              initialValue={'line'}
+                              rules={[{ required: true, message: '布局方式' }]}
+                            >
+                              <Select
+                                style={{ width: '100%' }}
+                                options={[
+                                  {
+                                    value: 'line',
+                                    label: '线形布局',
+                                  },
+                                  {
+                                    value: 'block',
+                                    label: '块状布局',
+                                  }
+                                ]}
+                              />
+                            </Form.Item>
+                            <Form.Item
                               name={`xName`}
                               label={"接口地址"}
                               rules={[{ required: true, message: '接口地址' }]}
@@ -2838,6 +2870,17 @@ const Home: React.FC<any> = (props: any) => {
                         valuePropName="checked"
                       >
                         <Switch />
+                      </Form.Item>
+                      :
+                      null
+                  }
+                  {
+                    ['footer-1', 'footer-2'].includes(homeSettingVisible) ?
+                      <Form.Item
+                        name="logSize"
+                        label="展示日志行数"
+                      >
+                        <InputNumber min={1} max={200} />
                       </Form.Item>
                       :
                       null

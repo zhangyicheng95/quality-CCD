@@ -1024,7 +1024,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         name={`找线方向`}
                         label="找线方向"
                         style={['POINT', 'LINE'].includes(feature?.type) ? { display: 'none' } : {}}
-                        initialValue={featureList?.[selectedFeature] ? featureList?.[selectedFeature]?.['找线方向']?.value : 0}
+                        initialValue={featureList?.[selectedFeature]?.['找线方向']?.value || 0}
                         rules={[{ required: true, message: "找线方向" }]}
                       >
                         <Select

@@ -58,7 +58,7 @@ export default {
       yield put({
         type: 'set',
         payload: {
-          logData: _logData.slice(_logData.length - 50),
+          logData: _logData.slice(_logData.length - 200),
         },
       });
     },
@@ -115,7 +115,7 @@ export default {
       ];
       yield put({
         type: 'set',
-        payload: { errorData: _errorData.slice(_errorData.length - 50) },
+        payload: { errorData: _errorData.slice(_errorData.length - 200) },
       });
     },
   },

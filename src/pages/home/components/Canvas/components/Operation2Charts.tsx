@@ -28,7 +28,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     let { data = {}, id, started } = props;
     let {
         operationList = [], dataValue, xName = '', operationLock, fontSize,
-        ifUpdateProject,
+        ifUpdateProject, listType,
     } = data;
     if (process.env.NODE_ENV === 'development') {
         started = true;
@@ -231,7 +231,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         init();
     };
     const initItem = (item: any) => {
-        const { name, alias, widget = {}, addType, show } = item;
+        const { name, alias, widget = {}, addType, show, locked } = item;
         const { type } = widget;
         // let optionList: any = [];
         // Object.values(selectedOption)?.forEach(option => {
@@ -239,7 +239,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         // });
         // if (optionList?.filter((i: any) => i.name === name)?.length) return null;
         return <div
-            className={`${type === 'TagRadio' ? '' : 'flex-box'} param-item`}
+            className={`${type === 'TagRadio' ? '' : 'flex-box'} param-item ${listType}`}
             key={`${id}@$@${name}`}
             style={show ? {} : { height: 0, padding: 0 }}
         >
@@ -264,7 +264,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                     selectedOption={selectedOption}
                     setSelectedOption={setSelectedOption}
                     form={form}
-                    disabled={!started}
+                    disabled={!started || locked}
                     setEditorVisible={setEditorVisible}
                     setEditorValue={setEditorValue}
                     setPlatFormVisible={setPlatFormVisible}
@@ -291,12 +291,12 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                         useMemo(() => {
                             return <Fragment>
                                 {
-                                    configList?.map((item: any, index: number) => initItem(item))
+                                    configList?.map((item: any, index: number) => initItem({ ...item, locked }))
                                 }
                                 {
                                     configGroup?.map((group: any, index: number) => {
                                         const { name, id, children, show } = group;
-                                        return <div className="param-item param-group-item" key={id}>
+                                        return <div className={`param-item param-group-item ${listType}`} key={id}>
                                             <div className="flex-box param-group-item-title" onClick={() => setConfigGroup((prev: any) => prev.map((item: any) => {
                                                 if (item.id === id) {
                                                     return {
@@ -316,7 +316,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                                                         return <div className="flex-box param-group-item-body-box">
                                                             {/* <div className="param-line-row" >--</div> */}
                                                             {
-                                                                initItem({ ...item, show })
+                                                                initItem({ ...item, show, locked })
                                                             }
                                                         </div>
                                                     })
@@ -326,15 +326,15 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                                     })
                                 }
                             </Fragment>
-                        }, [selectedOption, configList, configGroup, started])
+                        }, [selectedOption, configList, configGroup, started, locked])
                     }
                 </Form>
             </div>
-            {
+            {/* {
                 locked ?
                     <div className="operation2-mask-body" />
                     : null
-            }
+            } */}
             <div className="operation-footer flex-box-center">
                 {
                     operationLock ?

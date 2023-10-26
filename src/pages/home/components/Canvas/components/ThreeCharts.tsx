@@ -48,7 +48,119 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     } = data;
     let { name, value = [], action = '', guid, addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
-        name = "models/z1130_3_1.stl"; // models/pressure.json  models/tx.stl
+        name = "models/output.ply"; // models/pressure.json  models/tx.stl
+        value = [
+            {
+                "name": "成品高度",
+                "infoName": "jsdxqgd",
+                "position": [
+                    {
+                        "x": 397.6,
+                        "y": -9.33,
+                        "z": -715.63
+                    },
+                    {
+                        "x": 397.6,
+                        "y": -9.33,
+                        "z": 644.58
+                    }
+                ],
+                "standardValue": 1360,
+                "offsetValue": -0.45,
+                "type": "right",
+                "maxValue": 1360.33,
+                "minValue": 1358.43,
+                "averageValue": 1359.55
+            },
+            {
+                "name": "成品长轴",
+                "infoName": "TQ_XQDXHCZWJ",
+                "position": [
+                    {
+                        "x": -439.65,
+                        "y": -454.95,
+                        "z": 0
+                    },
+                    {
+                        "x": -439.65,
+                        "y": 504.19,
+                        "z": 0
+                    }
+                ],
+                "standardValue": 936,
+                "offsetValue": 4.33,
+                "type": "left",
+                "maxValue": 941.38,
+                "minValue": 938.17,
+                "averageValue": 940.33
+            },
+            {
+                "name": "成品短轴",
+                "infoName": "TQ_XQDZWJ",
+                "position": [
+                    {
+                        "x": -439.65,
+                        "y": 24.62,
+                        "z": -715.63
+                    },
+                    {
+                        "x": 448.86,
+                        "y": 24.62,
+                        "z": -715.63
+                    }
+                ],
+                "standardValue": 886,
+                "offsetValue": 3,
+                "type": "bottom",
+                "maxValue": 889.55,
+                "minValue": 888.46,
+                "averageValue": 889
+            },
+            {
+                "name": "成品内径长轴",
+                "infoName": "TQ_XQDXHCZNJ",
+                "position": [
+                    {
+                        "x": 5.32,
+                        "y": -384.34,
+                        "z": 644.58
+                    },
+                    {
+                        "x": 5.32,
+                        "y": 363.09,
+                        "z": 644.58
+                    }
+                ],
+                "standardValue": 743,
+                "offsetValue": 4.44,
+                "type": "top",
+                "averageValue": 747.44,
+                "maxValue": 747.44,
+                "minValue": 747.44
+            },
+            {
+                "name": "成品内径短轴",
+                "infoName": "TQ_XQDZNJ",
+                "position": [
+                    {
+                        "x": -366.28,
+                        "y": -10.62,
+                        "z": 644.58
+                    },
+                    {
+                        "x": 376.92,
+                        "y": -10.62,
+                        "z": 644.58
+                    }
+                ],
+                "standardValue": 743,
+                "offsetValue": 0.2,
+                "type": "top",
+                "averageValue": 743.2,
+                "maxValue": 743.2,
+                "minValue": 743.2
+            }
+        ];
     }
 
     const [form] = Form.useForm();
@@ -183,29 +295,24 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         };
         if (process.env.NODE_ENV === 'development') {
             setTimeout(() => {
-                loadModel('', [
-                    {
-                        "x": -35.32,
-                        "y": -385.39,
-                        "z": -301.47
-                    },
-                    {
-                        "x": 35.32,
-                        "y": -385.39,
-                        "z": -301.47
-                    },
-                    {
-                        "x": -35.32,
-                        "y": -385.39,
-                        "z": 301.47
-                    },
-                    {
-                        "x": 35.32,
-                        "y": -385.39,
-                        "z": 301.47
+                let pointList = [];
+                for (let i = 0; i < 100; i++) {
+                    if (i < 50) {
+                        pointList.push({
+                            "x": i * 10 * 5,
+                            "y": -385.39,
+                            "z": 101.47
+                        });
+                    } else {
+                        pointList.push({
+                            "x": (i - 50) * 10 * 5,
+                            "y": -385.39,
+                            "z": -101.47
+                        });
                     }
-                ], 'add');
-            }, 10000);
+                };
+                loadModel('', pointList, 'add');
+            }, 5000);
         };
         // addType为add时，代表增量渲染，不清除其他数据
         if (!!scene.current && addType === 'add') {
@@ -1426,7 +1533,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 }
             });
             (value || []).forEach((item: any, index: number) => {
-                const geometry = new THREE.SphereGeometry(10, 32, 32);
+                const scale = camera.current.zoom || 1.5;
+                const geometry = new THREE.SphereGeometry(scale * 10, 32, 32);
                 const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
                 const cube = new THREE.Mesh(geometry, material);
                 cube.position.x = item.x;
@@ -1727,6 +1835,23 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 />
                         }
                     </Tooltip>
+                    {
+                        process.env.NODE_ENV === 'development' ?
+                            <Button onClick={() => {
+                                const models = getAllModelsFromScene(scene.current)?.filter((i: any) => i.name?.indexOf('editPoint') > -1);
+                                const result = models.map((item: any) => {
+                                    return {
+                                        Point: item.position,
+                                        NormVec: item.position,
+                                        PntTpe: 1
+                                    }
+                                })
+                                console.log(result);
+                            }}>
+                                打印轨迹
+                            </Button>
+                            : null
+                    }
                 </div>
                 <div className="flex-box">
                     <Tooltip title="缩小">
@@ -1863,7 +1988,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     <FileManager
                         onOk={(val: any) => {
                             const { value } = val;
-                            setSelectedPath(`http://localhost:5000/files/${value}`);
+                            setSelectedPath(`http://localhost:5001/files/${value}`);
                             setSelectPathVisible(false);
                         }}
                         onCancel={() => {

@@ -15,7 +15,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id } = props;
     let {
         defaultImg, dataValue = '', windowControl, setContentList, magnifier = false,
-        comparison,
+        comparison, magnifierSize = 4,
     } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
@@ -61,7 +61,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         if (!magnifier) {
             return;
         }
-        const size = 4;
+        const size = magnifierSize || 4;
         const eventDom: any = dom.current.querySelector('.ant-image-mask');
         const ImageDom: any = dom.current.querySelector('.ant-image-img');
         const mask: any = dom?.current?.querySelector('.mask');
@@ -157,7 +157,10 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                 bigDom.style.display = 'none';
             }
         }
-    }, [magnifier, dataValue, id, fontSize, dom?.current?.clientWidth, dom?.current?.clientHeight]);
+    }, [
+        magnifier, magnifierSize, dataValue, id, fontSize,
+        dom?.current?.clientWidth, dom?.current?.clientHeight
+    ]);
 
     return (
         <div

@@ -1635,7 +1635,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     <FileManager
                         onOk={(val: any) => {
                             const { value } = val;
-                            setSelectedPath(`http://localhost:5000/files/${value}`);
+                            setSelectedPath(`http://localhost:5001/files/${value}`);
                             setSelectPathVisible(false);
                         }}
                         onCancel={() => {
