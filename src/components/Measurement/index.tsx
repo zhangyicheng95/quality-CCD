@@ -18,7 +18,7 @@ interface Props {
 const Measurement: React.FC<Props> = (props: any) => {
   const {
     onChange = null, value = '', disabled, className = '', titleColor,
-    precision = 0, step = 1, max = 100000, min = -100000
+    precision = 2, step = 0.01, max = 100000, min = -100000
   } = props;
   const refnum_0 = useRef();
   const refnum_1 = useRef();
