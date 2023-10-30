@@ -559,6 +559,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           const { type, id, shape, props, style } = plat;
           obj = Object.assign({}, obj, {
             [id]: {
+              ...(props?.initParams),
               roi: {
                 realValue: type === 'RECT' ? {
                   x: { alias: "cx", value: shape.x + shape.width / 2 },
@@ -569,7 +570,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                   cx: { alias: "cx", value: shape.cx },
                   cy: { alias: "cy", value: shape.cy },
                   r: { alias: "r", value: shape.r },
-                } : {},
+                } : props?.initParams?.roi?.realValue,
                 value: type === 'RECT' ? {
                   x: { alias: "cx", value: shape.x },
                   y: { alias: "cy", value: shape.y },
@@ -579,8 +580,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                   cx: { alias: "cx", value: shape.cx },
                   cy: { alias: "cy", value: shape.cy },
                   r: { alias: "r", value: shape.r },
-                } : {},
-              }, ...(props?.initParams)
+                } : props?.initParams?.roi?.value,
+              },
             },
           });
           if (!style.direction) {
@@ -1306,10 +1307,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           Object.entries(!_.isEmpty(selectedOptionType) ? selectedOptionType : featureList[selectedFeature])
                             ?.reduce((pre: any, cen: any) => {
                               if (cen[0] === 'roi') {
+                                const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
+                                const { type } = feature;
                                 let { value: val, } = value[cen[0]];
                                 // realValue：没旋转的 中心点x,y
                                 let realValue = val;
-                                if (val?.x && val?.height) {
+                                if (type === 'RECT') {
                                   // 矩形
                                   val = {
                                     ...val,
@@ -1372,7 +1375,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                     gMap.markerLayer.addMarker(gFirstMarker);
                                   }
                                   /****************通过roi更新图层******************/
-                                } else if (!!val?.x2 && !!val?.y2) {
+                                } else if (type === 'LINE') {
                                   // 线
                                   /****************通过roi更新图层******************/
                                   const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
@@ -1393,7 +1396,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                   // 删除delete-icon
                                   gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
                                   /****************通过roi更新图层******************/
-                                } else if (!!val?.x && !!val?.sr) {
+                                } else if (type === 'POINT') {
                                   // 点
                                   /****************通过roi更新图层******************/
                                   const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);

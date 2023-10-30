@@ -32,6 +32,7 @@ import rectBackIcon from '@/assets/imgs/rect-back.svg';
 import { equalsObj, uuid } from '@/utils/utils';
 import { btnFetch } from '@/services/api';
 import FileManager from '@/components/FileManager';
+import html2canvas from 'html2canvas';
 
 interface Props {
     data: any,
@@ -1584,27 +1585,58 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     // 点云截图
     const captureScreenshot = (type?: any) => {
         return new Promise((resolve, reject) => {
-            // 将射线隐藏
-            (measurements || []).forEach((line: any) => {
-                scene.current?.remove?.(line);
-            });
+
             // requestAnimationFrame 确保截图在页面完全加载和渲染之后进行
             requestAnimationFrame(function () {
-                const box: any = renderer.current.domElement;
-                var imageDataURL = box?.toDataURL('image/png');
-                if (type === 'download') {
-                    var link = document.createElement('a');
-                    link.href = imageDataURL;
-                    link.download = `output_${uuid()}.png`;
-                    link.click();
-                }
-                // 将射线显示回来
-                (measurements || []).forEach((line: any) => {
-                    scene.current?.add?.(line);
+                const shareContent: any = dom?.current;
+                const maskBox: any = document?.querySelector(".three-mask");
+                const maskStatus = maskBox.style.display;
+                maskBox.style.display = 'none';
+                const width = shareContent?.offsetWidth;
+                const height = shareContent?.offsetHeight;
+                const scale = 2; // 也可以使用设备像素比
+                html2canvas(shareContent, {
+                    scale: scale,
+                    useCORS: true, // 是否尝试使⽤CORS从服务器加载图像
+                    allowTaint: false, // 是否允许跨域图像。会污染画布，导致⽆法使⽤canvas.toDataURL ⽅法
+                    width: width,
+                    height: height,
+                }).then((canvas: any) => {
+                    let imageDataURL = canvas.toDataURL('image/png', { quality: 1 });
+                    if (type === 'download') {
+                        var link = document.createElement('a');
+                        link.href = imageDataURL;
+                        link.download = `output_${uuid()}.png`;
+                        link.click();
+                    }
+                    imageDataURL = imageDataURL.split('data:image/png;base64,')[1];
+                    resolve(imageDataURL);
+                    maskBox.style.display = maskStatus;
                 });
-                imageDataURL = imageDataURL.split('data:image/png;base64,')[1];
-                resolve(imageDataURL);
             });
+
+
+            // 将射线隐藏
+            // (measurements || []).forEach((line: any) => {
+            //     scene.current?.remove?.(line);
+            // });
+            // requestAnimationFrame 确保截图在页面完全加载和渲染之后进行
+            // requestAnimationFrame(function () {
+            //     const box: any = renderer.current.domElement;
+            //     var imageDataURL = box?.toDataURL('image/png');
+            //     if (type === 'download') {
+            //         var link = document.createElement('a');
+            //         link.href = imageDataURL;
+            //         link.download = `output_${uuid()}.png`;
+            //         link.click();
+            //     }
+            //     // 将射线显示回来
+            //     (measurements || []).forEach((line: any) => {
+            //         scene.current?.add?.(line);
+            //     });
+            //     imageDataURL = imageDataURL.split('data:image/png;base64,')[1];
+            //     resolve(imageDataURL);
+            // });
         });
     };
     // 旋转视角-自动截图
