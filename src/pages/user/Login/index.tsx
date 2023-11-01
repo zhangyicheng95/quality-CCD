@@ -1,15 +1,12 @@
 import {
-  AlipayCircleOutlined,
   LockOutlined,
   MobileOutlined,
-  TaobaoCircleOutlined,
   UserOutlined,
-  WeiboCircleOutlined,
 } from '@ant-design/icons';
-import { Alert, message, Tabs } from 'antd';
+import { Alert, message } from 'antd';
 import React, { useState } from 'react';
-import { ProFormCaptcha, ProFormCheckbox, ProFormText, LoginForm } from '@ant-design/pro-form';
-import { useIntl, history, FormattedMessage, SelectLang, useModel } from 'umi';
+import { ProFormCaptcha, ProFormText, LoginForm } from '@ant-design/pro-form';
+import { history, FormattedMessage, SelectLang, useModel } from 'umi';
 import Footer from '@/components/Footer';
 import { login } from '@/services/api';
 import { getFakeCaptcha } from '@/services/ant-design-pro/login';
@@ -131,7 +128,7 @@ const Login: React.FC = () => {
         >
           {status === 'error' && loginType === 'account' && (
             <LoginMessage
-              content={'账户或密码错误(admin/1234)'}
+              content={'账户或密码错误'}
             />
           )}
           {type === 'account' && (
@@ -142,7 +139,7 @@ const Login: React.FC = () => {
                   size: 'large',
                   prefix: <UserOutlined className={"prefixIcon"} />,
                 }}
-                placeholder={'用户名: admin'}
+                placeholder={'用户名'}
                 rules={[
                   {
                     required: true,
@@ -156,7 +153,7 @@ const Login: React.FC = () => {
                   size: 'large',
                   prefix: <LockOutlined className={"prefixIcon"} />,
                 }}
-                placeholder={'密码: 1234'}
+                placeholder={'密码'}
                 rules={[
                   {
                     required: true,
