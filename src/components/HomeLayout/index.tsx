@@ -8,7 +8,7 @@ import { useHistory } from "react-router";
 
 const HomeLayout: React.FC<any> = (props) => {
   const { children, initialState, setInitialState, dispatch } = props;
-  const { location } = useHistory();
+  const { location: historyLocation } = useHistory();
   const { params = {} } = initialState;
   const { quality_name, name, id } = params;
   const [form] = Form.useForm();
@@ -19,6 +19,7 @@ const HomeLayout: React.FC<any> = (props) => {
   const [currentLoginStatus, setCurrentLoginStatus] = useState(false);
   const [passwordvalidate, setPasswordvalidate] = useState({});
   const [visiable, setVisiable] = useState(true);
+  const [hasInit, setHasInit] = useState(false);
 
   const isVision = useMemo(() => {
     // @ts-ignore
@@ -27,10 +28,15 @@ const HomeLayout: React.FC<any> = (props) => {
   useEffect(() => {
     setCurrentLoginStatus(false);
     setVisiable(true);
-  }, [location?.pathname]);
+  }, [historyLocation?.pathname]);
   // 获取方案列表
   useEffect(() => {
     if (isVision) return;
+    if (!localStorage.getItem('userInfo') || !JSON.parse(localStorage.getItem('userInfo') || "{}")?.userName) {
+      location.href = location.href?.split('#/')?.[0] + '#/user/login';
+    }
+
+    setHasInit(true);
     try {
       const list = JSON.parse(localStorage.getItem("ipUrlList") || JSON.stringify([{ name: '本地服务', value: 'localhost:8866' }]));
       if (!!list.length) {
@@ -47,7 +53,8 @@ const HomeLayout: React.FC<any> = (props) => {
     }
 
     return () => {
-      !!timerRef.current && clearTimeout(timerRef.current);
+      timerRef.current && clearTimeout(timerRef.current);
+      setHasInit(false);
     }
   }, []);
   // 循环获取项目列表
@@ -90,7 +97,12 @@ const HomeLayout: React.FC<any> = (props) => {
       if (!!res && res.code === 'SUCCESS') {
         !!timerRef.current && clearTimeout(timerRef.current);
         timerRef.current = setTimeout(() => {
-          loopGetStatus(list);
+          setHasInit((prev: any) => {
+            if (prev) {
+              loopGetStatus(list);
+            };
+            return prev;
+          });
         }, 2500);
         const result = list.map((item: any) => {
           const { value } = item;
@@ -191,7 +203,7 @@ const HomeLayout: React.FC<any> = (props) => {
       <div className="box flex-box">
         <div className="content-box">
           {
-            (!!params?.password && ["/control", "/setting"].includes(location?.pathname)) ?
+            (!!params?.password && ["/control", "/setting"].includes(historyLocation?.pathname)) ?
               (
                 (params?.password && !!currentLoginStatus) ?
                   children

@@ -791,7 +791,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     function getAllModelsFromScene(scene: any) {
         const models: any = [];
 
-        scene.traverse((object: any) => {
+        scene?.traverse((object: any) => {
             if (object.isMesh || object.isPoints) {
                 models.push(object);
             }
@@ -1530,20 +1530,22 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             const models = getAllModelsFromScene(scene.current);
             models.forEach((mesh: any) => {
                 if (mesh.name?.indexOf("editPoint") > -1) {
-                    scene.current.remove(mesh);
+                    scene.current?.remove?.(mesh);
                 }
             });
             (value || []).forEach((item: any, index: number) => {
-                const scale = camera.current.zoom || 1.5;
+                const scale = camera?.current?.zoom || 1.5;
                 const geometry = new THREE.SphereGeometry(scale * 10, 32, 32);
                 const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
                 const cube = new THREE.Mesh(geometry, material);
-                cube.position.x = item.x;
-                cube.position.y = item.y;
-                cube.position.z = item.z;
-                cube.name = `editPoint-${index}`;
-                editableObjects.push(cube);
-                scene.current.add(cube);
+                if (!!cube) {
+                    cube.position.x = item.x;
+                    cube.position.y = item.y;
+                    cube.position.z = item.z;
+                    cube.name = `editPoint-${index}`;
+                    editableObjects?.push?.(cube);
+                    scene.current?.add?.(cube);
+                }
             });
         }
     };

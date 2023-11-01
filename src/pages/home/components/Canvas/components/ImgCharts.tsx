@@ -147,14 +147,18 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         if (!!eventDom) {
             eventDom.onmouseleave = function (ev: any) {
                 const bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
-                bigDom.style.display = 'none';
+                if (!!bigDom) {
+                    bigDom.style.display = 'none';
+                }
             }
         }
         const domBox = dom.current.querySelector('.img-box');
         if (!!domBox) {
             domBox.onmouseleave = function (ev: any) {
                 const bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
-                bigDom.style.display = 'none';
+                if (!!bigDom) {
+                    bigDom.style.display = 'none';
+                }
             }
         }
     }, [

@@ -15,6 +15,7 @@ import { login } from '@/services/api';
 import { getFakeCaptcha } from '@/services/ant-design-pro/login';
 
 import styles from './index.less';
+import { cryptoEncryption } from '@/utils/utils';
 
 const LoginMessage: React.FC<{
   content: string;
@@ -44,50 +45,62 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (values: API.LoginParams) => {
+  const handleSubmit = async (values: any) => {
     try {
       // 登录
-      // const msg: any = await login({ ...values, type });
-      // if (msg?.status === 'ok') {
-      //   const defaultLoginSuccessMessage = intl.formatMessage({
-      //     id: 'pages.login.success',
-      //     defaultMessage: '登录成功！',
-      //   });
-      //   message.success(defaultLoginSuccessMessage);
-      //   await fetchUserInfo();
-      /** 此方法会跳转到 redirect 参数所在的位置 */
-      if (!history) return;
-      await setInitialState((s: any) => ({
-        ...s,
-        currentUser: {
-          name: 'admin',
-          avatar: '',
-          userid: '',
-          email: '',
-          signature: '',
-          title: '',
-          group: '',
-          tags: { key: '', label: '' },
-          notifyCount: 1,
-          unreadCount: 1,
-          country: '',
-          access: '',
-          geographic: {
-            province: { label: '', key: '' },
-            city: { label: '', key: '' },
-          },
-          address: '',
-          phone: '',
-        },
-      }));
-      const { query } = history.location;
-      const { redirect } = query as { redirect: string };
-      history.push(redirect || '/');
-      return;
-      // }
-      // console.log(msg);
-      // 如果失败去设置用户错误信息
-      // setUserLoginState(msg);
+      const { password, ...rest } = values;
+      const res: any = await login({
+        password: cryptoEncryption(password),
+        ...rest,
+      });
+      if (res?.code === 'SUCCESS') {
+        message.success('登录成功！');
+        localStorage.setItem('userInfo', JSON.stringify(Object.assign({},
+          res?.data,
+          { loginTime: new Date().getTime() },
+          // res?.data?.auth === 'superAdmin' ? {
+          //   authList: Object.keys(authorToChinese)
+          // } : {}
+        )));
+        /** 此方法会跳转到 redirect 参数所在的位置 */
+        if (!history) return;
+        // await setInitialState((s: any) => ({
+        //   ...s,
+        //   currentUser: {
+        //     name: 'admin',
+        //     avatar: '',
+        //     userid: '',
+        //     email: '',
+        //     signature: '',
+        //     title: '',
+        //     group: '',
+        //     tags: { key: '', label: '' },
+        //     notifyCount: 1,
+        //     unreadCount: 1,
+        //     country: '',
+        //     access: '',
+        //     geographic: {
+        //       province: { label: '', key: '' },
+        //       city: { label: '', key: '' },
+        //     },
+        //     address: '',
+        //     phone: '',
+        //     ...res?.data
+        //   },
+        // }));
+        const { query } = history.location;
+        const { redirect } = query as { redirect: string };
+        // history.push(redirect || '/home');s
+        location.href = location.href?.split('#/')?.[0] + '#/home';
+        window.location.reload();
+        return;
+        // }
+        // console.log(msg);
+        // 如果失败去设置用户错误信息
+        // setUserLoginState(msg);
+      } else {
+        message.error(res?.message || '接口异常');
+      }
     } catch (error) {
       const defaultLoginFailureMessage = '登录失败，请重试！';
       message.error(defaultLoginFailureMessage);
@@ -124,7 +137,7 @@ const Login: React.FC = () => {
           {type === 'account' && (
             <>
               <ProFormText
-                name="username"
+                name="userName"
                 fieldProps={{
                   size: 'large',
                   prefix: <UserOutlined className={"prefixIcon"} />,

@@ -1,5 +1,7 @@
 import { message } from "antd";
 import * as _ from "lodash";
+// import Base64 from 'base-64';
+const Base64 = require('base-64');
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
 const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
@@ -506,4 +508,40 @@ export function getAllLocalStorageKeys() {
         keys.push(localStorage.key(i));
     }
     return keys;
+}
+//获取用户信息
+export function getUserData() {
+    try {
+        const res = JSON.parse(localStorage.getItem('userInfo') || "{}");
+        return res;
+    } catch (err) {
+        return {};
+    }
+}
+//获取用户权限
+export function getUserAuth() {
+    const res = getUserData();
+    return res?.auth || [];
+}
+//获取用户权限列表
+export function getUserAuthList() {
+    const res = getUserData();
+    return res?.authList || [];
+}
+//获取用户登录时间
+export function getLoginTime() {
+    const res = getUserData();
+    return res?.loginTime || 0;
+}
+// base64加密
+export function cryptoEncryption(message: string) {
+    message = message.padEnd(32, 'ubvision');
+    var encodeStr = Base64.encode(message);
+    return encodeStr;
+}
+// base64解密
+export function cryptoDecrypt(message: string) {
+    message = message.padEnd(32, 'ubvision');
+    var decodeStr = Base64.decode(message);
+    return decodeStr;
 }

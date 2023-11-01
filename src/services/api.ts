@@ -92,7 +92,7 @@ export async function getLogService(id: string, params: any) {
 
 // 登录
 export async function login(params: any) {
-
+  return fetchPost(`${BASE_IP}login`, { body: params });
 }
 
 // 退出登录

@@ -81,31 +81,18 @@ axiosInstance.interceptors.response.use(
           // 取消所有请求
           source.cancel();
           // 清空本地缓存，然后退出
-          // localStorage.clear();  //2020-08-04
-          if (error.response.headers.location) {
-            // sso
-            // 对接douc
-            // 1. 获取跳转地址
-            // const loginUrl = error.response.headers.location;
-            // // 2. 获取请求错误嘛为401的接⼝口作为service参数
-            // const checklogin = API.CHECK_LOGIN
-            // // const restapi = error.response.config.url;
-            // // 固定401时候restapi请求地址
-            // const restapi = error.response.config.baseURL+checklogin;
-            // // 3. 获取当前⻚页⾯面地址作为pageUrl参数
-            // const service = `${location.origin}${location.pathname}`
-            // const jumpAddress = `${loginUrl}?restapi=${restapi}&service=${service}`; // 4. 跳转⻚页⾯面
-            // location.href = jumpAddress
-            // 对接gateway
-            window.location.href = error.response.headers.location;
-          }
+          localStorage.removeItem('userInfo');
+          location.href = location.href?.split('#/')?.[0] + '#/login';
+          throw error;
           break;
         case 403:
           // window.location.hash = '/';
+          throw error;
           break;
         // license 过期
         case 499:
           // hashHistory.push('/logout');
+          throw error;
           break;
         default:
           throw error;
@@ -131,7 +118,14 @@ function axiosRequest(config) {
       }
       if (error.response) {
         const { status } = error.response;
-        if (status === 400 || status === 404 || status === 500) {
+        if (
+          status === 302 ||
+          status === 304 ||
+          status === 400 ||
+          status === 403 ||
+          status === 404 ||
+          status === 500
+        ) {
           if (status === 500) {
             message.error('后台服务异常，请尝试重启机器');
           }
