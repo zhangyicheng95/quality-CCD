@@ -84,6 +84,7 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import DropSortableItem from "@/components/DragComponents/DropSortableItem";
 import DragSortableItem from "@/components/DragComponents/DragSortableItem";
+import Table3Charts from './components/Table3Charts';
 
 var clickTime = 0;
 
@@ -905,7 +906,7 @@ const Home: React.FC<any> = (props: any) => {
           dataZoom, fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
           password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
           basicInfoData = [{ id: guid(), name: '', value: '' }], ifNeedClear, operationLock,
-          ifUpdateProject, magnifierSize, listType,
+          ifUpdateProject, magnifierSize, listType, valueColor,
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -985,7 +986,7 @@ const Home: React.FC<any> = (props: any) => {
                               data={{
                                 dataValue: dataValue || [],
                                 yName, xName, fontSize, reverse, tableSize, interlacing,
-                                des_bordered, headerBackgroundColor
+                                des_bordered, headerBackgroundColor, valueColor
                               }}
                             />
                             :
@@ -995,131 +996,141 @@ const Home: React.FC<any> = (props: any) => {
                                 data={{
                                   dataValue: dataValue || [],
                                   fontSize, reverse, tableSize, interlacing, des_bordered,
-                                  headerBackgroundColor
+                                  headerBackgroundColor, valueColor
                                 }}
                               />
                               :
-                              type === 'three' ?
-                                <ThreeCharts
+                              type === 'table3' ?
+                                <Table3Charts
                                   id={key}
                                   data={{
-                                    dataValue: dataValue || { name: "", value: [] },
-                                    modelRotate, modelScale, modelRotateScreenshot,
-                                    fontSize, fetchType, xName, ifShowColorList,
+                                    dataValue: dataValue || [],
+                                    fontSize, reverse, tableSize, interlacing, des_bordered,
+                                    headerBackgroundColor, valueColor
                                   }}
                                 />
                                 :
-                                type === 'alert' ?
-                                  <AlertCharts
+                                type === 'three' ?
+                                  <ThreeCharts
                                     id={key}
                                     data={{
-                                      dataValue: dataValue || [],
-                                      fontSize
+                                      dataValue: dataValue || { name: "", value: [] },
+                                      modelRotate, modelScale, modelRotateScreenshot,
+                                      fontSize, fetchType, xName, ifShowColorList,
                                     }}
                                   />
                                   :
-                                  type === 'imgs' ?
-                                    <ImgsCharts
+                                  type === 'alert' ?
+                                    <AlertCharts
                                       id={key}
                                       data={{
                                         dataValue: dataValue || [],
-                                        imgs_width, imgs_height
+                                        fontSize
                                       }}
                                     />
                                     :
-                                    type === 'progress' ?
-                                      <ProgressCharts
+                                    type === 'imgs' ?
+                                      <ImgsCharts
                                         id={key}
                                         data={{
-                                          dataValue: dataValue || 0, barColor, progressType, progressSize, progressSteps
+                                          dataValue: dataValue || [],
+                                          imgs_width, imgs_height
                                         }}
                                       />
                                       :
-                                      type === 'description' ?
-                                        <DescriptionCharts
+                                      type === 'progress' ?
+                                        <ProgressCharts
                                           id={key}
                                           data={{
-                                            dataValue: dataValue || [],
-                                            basicInfoData, fontSize,
-                                            des_bordered, des_column, des_layout, des_size,
+                                            dataValue: dataValue || 0, barColor, progressType, progressSize, progressSteps
                                           }}
                                         />
                                         :
-                                        type === 'button' ?
-                                          <Button
-                                            type={'primary'}
+                                        type === 'description' ?
+                                          <DescriptionCharts
                                             id={key}
-                                            onClick={() => {
-                                              let params = '';
-                                              if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {
-                                                try {
-                                                  params = JSON.parse(value)
-                                                } catch (e) {
-                                                  console.log('按钮传递参数格式不对:', e);
-                                                  params = '';
-                                                }
-                                              }
-                                              btnFetch(fetchType, xName, params);
+                                            data={{
+                                              dataValue: dataValue || [],
+                                              basicInfoData, fontSize,
+                                              des_bordered, des_column, des_layout, des_size,
                                             }}
-                                          >
-                                            {yName}
-                                          </Button>
+                                          />
                                           :
-                                          type === 'buttonInp' ?
-                                            <ButtonCharts
+                                          type === 'button' ?
+                                            <Button
+                                              type={'primary'}
                                               id={key}
-                                              data={{
-                                                yName, xName, fetchType, ifNeedClear
+                                              onClick={() => {
+                                                let params = '';
+                                                if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {
+                                                  try {
+                                                    params = JSON.parse(value)
+                                                  } catch (e) {
+                                                    console.log('按钮传递参数格式不对:', e);
+                                                    params = '';
+                                                  }
+                                                }
+                                                btnFetch(fetchType, xName, params);
                                               }}
-                                            />
+                                            >
+                                              {yName}
+                                            </Button>
                                             :
-                                            type === 'buttonPassword' ?
-                                              <ButtonPWCharts
+                                            type === 'buttonInp' ?
+                                              <ButtonCharts
                                                 id={key}
                                                 data={{
-                                                  yName, xName, fetchType, password, passwordHelp,
-                                                  fetchParams
+                                                  yName, xName, fetchType, ifNeedClear
                                                 }}
                                               />
                                               :
-                                              type === 'operation' ?
-                                                <OperationCharts
+                                              type === 'buttonPassword' ?
+                                                <ButtonPWCharts
                                                   id={key}
                                                   data={{
-                                                    operationList,
-                                                    dataValue,
-                                                    fontSize
+                                                    yName, xName, fetchType, password, passwordHelp,
+                                                    fetchParams
                                                   }}
                                                 />
                                                 :
-                                                type === 'operation2' ?
-                                                  <Operation2Charts
+                                                type === 'operation' ?
+                                                  <OperationCharts
                                                     id={key}
                                                     data={{
-                                                      operationList, dataValue,
-                                                      fontSize, xName,
-                                                      operationLock, ifUpdateProject,
-                                                      listType,
+                                                      operationList,
+                                                      dataValue,
+                                                      fontSize
                                                     }}
                                                   />
                                                   :
-                                                  type === 'statistic' ?
-                                                    <StatisticCharts
+                                                  type === 'operation2' ?
+                                                    <Operation2Charts
                                                       id={key}
                                                       data={{
-                                                        dataValue, fontSize,
-                                                        yName, fontColor, direction
+                                                        operationList, dataValue,
+                                                        fontSize, xName,
+                                                        operationLock, ifUpdateProject,
+                                                        listType,
                                                       }}
                                                     />
                                                     :
-                                                    <ImgCharts
-                                                      id={key}
-                                                      data={{
-                                                        defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                        dataValue, windowControl,
-                                                        setContentList, magnifier, comparison, magnifierSize
-                                                      }}
-                                                    />
+                                                    type === 'statistic' ?
+                                                      <StatisticCharts
+                                                        id={key}
+                                                        data={{
+                                                          dataValue, fontSize,
+                                                          yName, fontColor, direction
+                                                        }}
+                                                      />
+                                                      :
+                                                      <ImgCharts
+                                                        id={key}
+                                                        data={{
+                                                          defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                          dataValue, windowControl,
+                                                          setContentList, magnifier, comparison, magnifierSize
+                                                        }}
+                                                      />
                 }
               </div>
             </div>
@@ -1202,6 +1213,8 @@ const Home: React.FC<any> = (props: any) => {
                           setParamData((prev: any) => Object.assign({}, prev, {
                             contentData: Object.assign({}, prev.contentData, { content: result }),
                           }));
+                          setAddWindowVisible("");
+                          setHomeSettingVisible("");
                         }}
                         okText="确认"
                         cancelText="取消"
@@ -1448,7 +1461,7 @@ const Home: React.FC<any> = (props: any) => {
       fontColor, interlacing = false, modelRotate = false, modelScale = false, modelRotateScreenshot = false,
       password = '', passwordHelp = '', ifShowHeader = false, ifShowColorList = false,
       headerBackgroundColor = 'default', ifNeedClear, operationLock, ifUpdateProject,
-      magnifierSize, logSize, listType,
+      magnifierSize, logSize, listType, valueColor,
     } = values;
     if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
       try {
@@ -1479,6 +1492,7 @@ const Home: React.FC<any> = (props: any) => {
         fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
         password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
         ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
+        valueColor,
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1497,6 +1511,7 @@ const Home: React.FC<any> = (props: any) => {
             fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
             password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
             ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
+            valueColor,
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -2332,7 +2347,7 @@ const Home: React.FC<any> = (props: any) => {
                     : null
                 }
                 {
-                  ['table2', 'table'].includes(windowType) ?
+                  ['table3', 'table2', 'table'].includes(windowType) ?
                     <Fragment>
                       <Form.Item
                         name={`reverse`}
@@ -2387,6 +2402,26 @@ const Home: React.FC<any> = (props: any) => {
                         valuePropName="checked"
                       >
                         <Switch />
+                      </Form.Item>
+                      <Form.Item
+                        name={`valueColor`}
+                        label={'颜色渲染'}
+                        initialValue={"value"}
+                        rules={[{ required: false, message: '颜色渲染' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: 'value',
+                              label: '数据颜色渲染到文字上',
+                            },
+                            {
+                              value: 'background',
+                              label: '数据颜色渲染到背景',
+                            }
+                          ]}
+                        />
                       </Form.Item>
                     </Fragment>
                     : null

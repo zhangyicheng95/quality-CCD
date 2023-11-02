@@ -1,13 +1,14 @@
-import { getAllProject, getListStatusService } from "@/services/api";
+import { getAllProject, getListStatusService, login } from "@/services/api";
 import { Button, Form, Input, message, Modal, } from "antd";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as _ from 'lodash';
 import styles from "./index.module.less";
 import { connect } from "umi";
 import { useHistory } from "react-router";
+import { cryptoEncryption, getLoginTime, getUserData } from "@/utils/utils";
 
 const HomeLayout: React.FC<any> = (props) => {
-  const { children, initialState, setInitialState, dispatch } = props;
+  const { children, initialState = {}, setInitialState, dispatch } = props;
   const { location: historyLocation } = useHistory();
   const { params = {} } = initialState;
   const { quality_name, name, id } = params;
@@ -17,17 +18,23 @@ const HomeLayout: React.FC<any> = (props) => {
   const [list, setList] = useState<any>([]);
   const [projectList, setProjectList] = useState([]);
   const [currentLoginStatus, setCurrentLoginStatus] = useState(false);
-  const [passwordvalidate, setPasswordvalidate] = useState({});
   const [visiable, setVisiable] = useState(true);
   const [hasInit, setHasInit] = useState(false);
 
   const isVision = useMemo(() => {
     // @ts-ignore
-    return window.QUALITY_CCD_CONFIG.type === 'vision';
+    return window?.QUALITY_CCD_CONFIG?.type === 'vision';
   }, []);
   useEffect(() => {
-    setCurrentLoginStatus(false);
-    setVisiable(true);
+    const time = getLoginTime();
+    const current = new Date().getTime();
+    if (current - time >= 5 * 60 * 1000) {
+      setCurrentLoginStatus(false);
+      setVisiable(true);
+    } else {
+      setCurrentLoginStatus(true);
+      setVisiable(false);
+    }
   }, [historyLocation?.pathname]);
   // 获取方案列表
   useEffect(() => {
@@ -180,17 +187,24 @@ const HomeLayout: React.FC<any> = (props) => {
   const handleOk = () => {
     validateFields()
       .then((values) => {
-        const { password } = values;
-        if (password === params?.password) {
-          handleCancel();
-          setCurrentLoginStatus(true);
-        } else {
-          message.error('密码错误');
-          setPasswordvalidate({
-            validateStatus: "error",
-            help: "密码错误，请重试"
-          });
-        }
+        const userData = getUserData();
+        const { password, ...rest } = values;
+        login({
+          ...rest,
+          password: cryptoEncryption(password),
+        }).then((res: any) => {
+          if (res?.code === 'SUCCESS') {
+            localStorage.setItem('userInfo', JSON.stringify(Object.assign({},
+              res?.data,
+              { loginTime: new Date().getTime() },
+            )));
+            handleCancel();
+            setCurrentLoginStatus(true);
+          } else {
+            message.error(res?.msg || res?.message || '接口异常');
+            console.log('输入的', cryptoEncryption(password), '正确的', userData)
+          }
+        });
       });
   };
   const handleCancel = () => {
@@ -203,9 +217,9 @@ const HomeLayout: React.FC<any> = (props) => {
       <div className="box flex-box">
         <div className="content-box">
           {
-            (!!params?.password && ["/control", "/setting"].includes(historyLocation?.pathname)) ?
+            (["/control", "/setting"].includes(historyLocation?.pathname)) ?
               (
-                (params?.password && !!currentLoginStatus) ?
+                (!!currentLoginStatus) ?
                   children
                   :
                   <div className="mask-body">
@@ -223,10 +237,16 @@ const HomeLayout: React.FC<any> = (props) => {
                         scrollToFirstError
                       >
                         <Form.Item
+                          name="userName"
+                          label="用户账号"
+                          rules={[{ required: true, message: "用户账号" }]}
+                        >
+                          <Input allowClear placeholder="用户账号" />
+                        </Form.Item>
+                        <Form.Item
                           name="password"
-                          label="权限密码"
-                          rules={[{ required: true, message: "权限密码" }]}
-                          {...passwordvalidate}
+                          label="用户密码"
+                          rules={[{ required: true, message: "用户密码" }]}
                         >
                           <Input.Password visibilityToggle={false} allowClear placeholder="权限密码" />
                         </Form.Item>

@@ -55,9 +55,6 @@ const Login: React.FC = () => {
         localStorage.setItem('userInfo', JSON.stringify(Object.assign({},
           res?.data,
           { loginTime: new Date().getTime() },
-          // res?.data?.auth === 'superAdmin' ? {
-          //   authList: Object.keys(authorToChinese)
-          // } : {}
         )));
         /** 此方法会跳转到 redirect 参数所在的位置 */
         if (!history) return;

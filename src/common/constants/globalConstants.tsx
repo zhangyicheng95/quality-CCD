@@ -33,7 +33,7 @@ export const layoutTransform = {
 };
 
 // @ts-ignore
-export const systemType = window.QUALITY_CCD_CONFIG.type;
+export const systemType = window?.QUALITY_CCD_CONFIG?.type;
 // 自定义组件
 export const windowTypeList: any = [
   {
@@ -74,6 +74,11 @@ export const windowTypeList: any = [
   {
     value: 'table2',
     label: '通用表格窗口',
+    icon: table2Icon,
+  },
+  {
+    value: 'table3',
+    label: '多分组表格窗口',
     icon: table2Icon,
   },
   {

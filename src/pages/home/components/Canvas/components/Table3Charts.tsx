@@ -13,7 +13,7 @@ interface Props {
     onClick?: any,
 }
 
-const Table2Charts: React.FC<Props> = (props: any) => {
+const Table3Charts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
     let {
         dataValue = [], fontSize, reverse, tableSize = [], interlacing,
@@ -23,149 +23,77 @@ const Table2Charts: React.FC<Props> = (props: any) => {
         reverse = true;
         dataValue = [
             {
-                name: '左极耳',
-                value: [
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                    { value: 37.69, color: 'red' },
-                ],
-                color: null,
+                "tab": "tab1",
+                "children": [
+                    {
+                        "name": "序号1",
+                        "value": [
+                            { "value": "value1", "color": "red" },
+                            { "value": "value2", "color": "red" },
+                            { "value": "value1", "color": "red" }
+                        ],
+                        "color": "red"
+                    },
+                    {
+                        "name": "创建时间1",
+                        "value": [
+                            { "value": "value1", "color": "red" },
+                            { "value": "value2", "color": "red" },
+                            { "value": "value1", "color": "red" }
+                        ]
+                    }
+                ]
             },
             {
-                name: '左陶瓷',
-                value: [
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-                    { value: 2.313, color: 'red' },
-
-                ],
-                color: null,
+                "tab": "tab2",
+                "children": [
+                    {
+                        "name": "序号2",
+                        "value": [
+                            { "value": "value2", "color": "red" },
+                            { "value": "value2", "color": "red" },
+                            { "value": "value2", "color": "red" }
+                        ],
+                        "color": "red2"
+                    },
+                    {
+                        "name": "创建时间2",
+                        "value": [
+                            { "value": "value1222", "color": "red" },
+                            { "value": "value2222", "color": "red" },
+                            { "value": "value1222", "color": "red" }
+                        ]
+                    }
+                ]
             },
             {
-                name: '左涂覆',
-                value: [
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-                    { value: 377.083, color: 'red' },
-
-                ],
-                color: null,
-            },
-            {
-                name: '左中陶瓷',
-                value: [
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-                    { value: 1.754, color: 'red' },
-
-                ],
-                color: null,
-            },
-            {
-                name: '中极耳',
-                value: [
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.519, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-                    { value: 79.556, color: 'red' },
-
-                ],
-                color: null,
-            },
-            {
-                name: '右中陶瓷',
-                value: [
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-
-                ],
-                color: null,
-            },
-            {
-                name: '右涂覆',
-                value: [
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-                    { value: 376.853, color: 'red' },
-
-                ],
-                color: null,
-            },
-            {
-                name: '右陶瓷',
-                value: [
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-                    { value: -1, color: 'red' },
-
-                ],
-                color: null,
-            },
-            {
-                name: '右极耳',
-                value: [
-                    { value: 39.898, color: 'red' },
-                    { value: 45.343, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-                    { value: 39.898, color: 'red' },
-
-                ],
-                color: null,
-            },
-            {
-                name: '距离(mm)',
-                value: [
-                    { value: 'http://D:/123/asd/img.png', color: null },
-                    { value: 'http://D:/123/asd/img.png', color: null },
-                    { value: 'http://D:/123/asd/img.png', color: null },
-                    { value: 'http://D:/123/asd/img.png', color: null },
-                    { value: 'http://D:/123/asd/img.png', color: null },
-                    { value: 'http://D:/123/asd/img.png', color: null },
-                    { value: 'http://D:/123/asd/img.png', color: null },
-
-                ],
-                color: null,
-            },
+                "tab": "tab3",
+                "children": [
+                    {
+                        "name": "序号3",
+                        "value": [
+                            { "value": "value3", "color": "red" },
+                            { "value": "value3", "color": "red" },
+                            { "value": "value3", "color": "red" }
+                        ],
+                        "color": "red"
+                    },
+                    {
+                        "name": "创建时间3",
+                        "value": [
+                            { "value": "value3", "color": "red" },
+                            { "value": "value3", "color": "red" },
+                            { "value": "value3", "color": "red" }
+                        ]
+                    }
+                ]
+            }
         ];
     }
-    const { initialState, setInitialState } = useModel<any>('@@initialState');
+    const { initialState = {}, setInitialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const domRef = useRef<any>(null);
+    const [tabSelected, setTabSelected] = useState(0);
     const [tableSizeSelf, setTableSizeSelf] = useState(tableSize);
     const [tableScroll, setTableScroll] = useState(false);
 
@@ -254,19 +182,32 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     return (
         <div
             id={`echart-${id}`}
-            className={styles.table2Charts}
+            className={styles.table3Charts}
             ref={domRef}
             style={{ fontSize }}
         >
-            <div
-                className="charts-header-box flex-box"
-                style={Object.assign({},
-                    tableScroll ? { width: 'calc(100% - 6px)' } : { width: 'calc(100% - 1px)' },
-                    (headerBackgroundColor === 'transparent') ? { backgroundColor: 'transparent' } : {}
-                )}
-            >
+            <div className="flex-box charts-tab-box">
                 {
-                    _.isArray(dataValue) && (dataValue || []).map((item: any, index: number) => {
+                    dataValue?.map((item: any, index: number) => {
+                        const { tab } = item;
+                        return <div
+                            className={`charts-tab-item ${tabSelected === index ? 'charts-tab-item-selected' : ''}`}
+                            key={`tab-${index}`}
+                            onClick={() => {
+                                setTabSelected(index);
+                            }}
+                        >
+                            {tab}
+                        </div>
+                    })
+                }
+            </div>
+            <div className="charts-header-box flex-box" style={Object.assign({},
+                tableScroll ? { width: 'calc(100% - 6px)' } : { width: 'calc(100% - 1px)' },
+                (headerBackgroundColor === 'transparent') ? { backgroundColor: 'transparent' } : {}
+            )}>
+                {
+                    _.isArray(dataValue[tabSelected]?.children) && (dataValue[tabSelected]?.children || []).map((item: any, index: number) => {
                         const { name } = item;
                         return <div
                             className="charts-header-item flex-box"
@@ -285,7 +226,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                 {name}
                             </TooltipDiv>
                             {
-                                (index + 1) === dataValue?.length ? null :
+                                (index + 1) === dataValue[tabSelected]?.children?.length ? null :
                                     <div
                                         id={`charts-header-item-move-${index}`}
                                         className="charts-header-item-border"
@@ -304,8 +245,8 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                 borderWidth: '1px'
             } : {}}>
                 {
-                    _.isArray(dataValue) ?
-                        (dataValue || []).map((item: any, index: number) => {
+                    _.isArray(dataValue[tabSelected]?.children) ?
+                        (dataValue[tabSelected]?.children || []).map((item: any, index: number) => {
                             const { value = [], color } = item;
                             if (!_.isArray(value)) {
                                 message.error('推送信息错误，请检查', 5);
@@ -322,6 +263,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                             maxWidth: tableSizeSelf?.[index],
                                         }
                                         : {},
+                                    !!color ? (valueColor === 'value' ? { color } : { backgroundColor: color }) : {}
                                 )}
                             >
                                 {
@@ -348,7 +290,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                                     {value?.indexOf?.('http://') > -1 ? "查看" : value}
                                                 </TooltipDiv>
                                                 {
-                                                    (!des_bordered || (index + 1) === dataValue?.length) ? null :
+                                                    (!des_bordered || (index + 1) === dataValue[tabSelected]?.children?.length) ? null :
                                                         <div className="charts-body-item-border" />
                                                 }
                                             </div>
@@ -372,7 +314,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                                 {val?.indexOf?.('http://') > -1 ? "查看" : val}
                                             </TooltipDiv>
                                             {
-                                                (!des_bordered || (index + 1) === dataValue?.length) ? null :
+                                                (!des_bordered || (index + 1) === dataValue[tabSelected]?.children?.length) ? null :
                                                     <div className="charts-body-item-border" />
                                             }
                                         </div>
@@ -388,4 +330,4 @@ const Table2Charts: React.FC<Props> = (props: any) => {
 
 };
 
-export default Table2Charts;
+export default Table3Charts;

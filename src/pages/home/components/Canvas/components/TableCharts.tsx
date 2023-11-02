@@ -15,7 +15,7 @@ const TableCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
     let {
         dataValue = [], yName, xName = '', fontSize, reverse, interlacing,
-        des_bordered, headerBackgroundColor
+        des_bordered, headerBackgroundColor, valueColor = 'value'
     } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = [
@@ -86,7 +86,7 @@ const TableCharts: React.FC<Props> = (props: any) => {
                                         className="charts-body-td flex-box-center"
                                         title={text?.length > 10 ? text : ''}
                                         style={Object.assign(
-                                            !!color ? { color } : {},
+                                            !!color ? (valueColor === 'value' ? { color } : { backgroundColor: color }) : {},
                                             des_bordered ? { borderWidth: '1px' } : {}
                                         )}
                                     >
@@ -101,7 +101,7 @@ const TableCharts: React.FC<Props> = (props: any) => {
                                     className="charts-body-td flex-box-center"
                                     title={text.length > 10 ? text : ''}
                                     style={Object.assign(
-                                        !!color ? { color } : {},
+                                        !!color ? (valueColor === 'value' ? { color } : { backgroundColor: color }) : {},
                                         des_bordered ? { borderWidth: '1px' } : {}
                                     )}
                                 >

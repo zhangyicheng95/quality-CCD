@@ -58,12 +58,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     {
                         "x": 397.6,
                         "y": -9.33,
-                        "z": -715.63
+                        "z": -515.63
                     },
                     {
                         "x": 397.6,
                         "y": -9.33,
-                        "z": 644.58
+                        "z": 364.58
                     }
                 ],
                 "standardValue": 1360,
@@ -117,28 +117,28 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 "minValue": 888.46,
                 "averageValue": 889
             },
-            {
-                "name": "成品内径长轴",
-                "infoName": "TQ_XQDXHCZNJ",
-                "position": [
-                    {
-                        "x": 5.32,
-                        "y": -384.34,
-                        "z": 644.58
-                    },
-                    {
-                        "x": 5.32,
-                        "y": 363.09,
-                        "z": 644.58
-                    }
-                ],
-                "standardValue": 743,
-                "offsetValue": 4.44,
-                "type": "top",
-                "averageValue": 747.44,
-                "maxValue": 747.44,
-                "minValue": 747.44
-            },
+            // {
+            //     "name": "成品内径长轴",
+            //     "infoName": "TQ_XQDXHCZNJ",
+            //     "position": [
+            //         {
+            //             "x": 5.32,
+            //             "y": -384.34,
+            //             "z": 644.58
+            //         },
+            //         {
+            //             "x": 5.32,
+            //             "y": 363.09,
+            //             "z": 644.58
+            //         }
+            //     ],
+            //     "standardValue": 743,
+            //     "offsetValue": 4.44,
+            //     "type": "top",
+            //     "averageValue": 747.44,
+            //     "maxValue": 747.44,
+            //     "minValue": 747.44
+            // },
             {
                 "name": "成品内径短轴",
                 "infoName": "TQ_XQDZNJ",
@@ -146,12 +146,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     {
                         "x": -366.28,
                         "y": -10.62,
-                        "z": 644.58
+                        "z": 364.58
                     },
                     {
                         "x": 376.92,
                         "y": -10.62,
-                        "z": 644.58
+                        "z": 364.58
                     }
                 ],
                 "standardValue": 743,

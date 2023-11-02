@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { Button, Form, message, Popover, Select, Spin } from 'antd';
 import Icon, {
-  AimOutlined, BorderOutlined, DownloadOutlined, DragOutlined, HighlightOutlined, MinusCircleOutlined,
+  AimOutlined, BorderInnerOutlined, BorderOutlined, DownloadOutlined, DragOutlined, HighlightOutlined, MinusCircleOutlined,
   PictureOutlined, PlusCircleOutlined, StockOutlined
 } from "@ant-design/icons";
 // @ts-ignore
@@ -212,39 +212,92 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             const circleFeature = new AILabel.Feature.Circle(
               id + 100, // id
               { ...data, r: data.r / 2 }, // data1代表屏幕坐标 shape
-              { name: '圆形矢量图层', deleteMarkerId: relatedDeleteMarkerId, parent: id }, // props 
+              { name: '圆形矢量图层', deleteMarkerId: relatedDeleteMarkerId, type: 'DOUBLE_CIRCLE_CHILD', parent: id }, // props 
               drawingStyle // style
             );
             gFirstFeatureLayer.addFeature(circleFeature);
           }
         } else if (type === 'RECT') {
-          const rectFeature = new AILabel.Feature.Rect(
-            `${+new Date()}`, // id
-            data, // shape
-            {
-              name: '矩形矢量图形', textId: relatedTextId,
-              deleteMarkerId: relatedDeleteMarkerId,
-              directionMarkerId: directionMarkerId,
-              label: 'label'
-            }, // props
-            drawingStyle // style
-          );
-          gFirstFeatureLayer.addFeature(rectFeature);
-          // 添加direction-icon
-          const gFirstMarker = new AILabel.Marker(
-            directionMarkerId, // id
-            {
-              src: directionTopIcon,
-              position: { x: data.x, y: data.y },
-              offset: {
-                x: -20,
-                y: 0
-              }
-            }, // markerInfo
-            { name: 'direction-icon注记' } // props
-          );
-          gMap.markerLayer.addMarker(gFirstMarker);
-          addFeatureText(data, relatedTextId, 'label');
+          const id = +new Date();
+          if (btn === 'AXIS') {
+            // 坐标系
+            console.log(btn);
+            const rectFeature = new AILabel.Feature.Rect(
+              id, // id
+              data, // shape
+              {
+                name: '矩形矢量图形', textId: relatedTextId,
+                deleteMarkerId: relatedDeleteMarkerId,
+                directionMarkerId: directionMarkerId,
+                label: 'label',
+                type: 'AXIS'
+              }, // props
+              { ...drawingStyle, strokeStyle: 'transparent' } // style
+            );
+            gFirstFeatureLayer.addFeature(rectFeature);
+            // 横轴
+            const line1 = {
+              start: { x: data.x, y: data.y + data.height / 2 },
+              end: { x: data.x + data.width, y: data.y + data.height / 2 }
+            }
+            // 纵轴
+            const line2 = {
+              start: { x: data.x + data.width / 2, y: data.y },
+              end: { x: data.x + data.width / 2, y: data.y + data.height }
+            }
+            const scale = gMap.getScale();
+            const width = drawingStyle.lineWidth / scale;
+            const lineFeature1 = new AILabel.Feature.Line(
+              id + 100, // id
+              { ...line1, width }, // shape
+              { name: '线段矢量图层', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, type: 'AXIS' }, // props
+              drawingStyle // style
+            );
+            gFirstFeatureLayer.addFeature(lineFeature1);
+            const lineFeature2 = new AILabel.Feature.Line(
+              id + 200, // id
+              { ...line2, width }, // shape
+              { name: '线段矢量图层', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, type: 'AXIS' }, // props
+              drawingStyle // style
+            );
+            gFirstFeatureLayer.addFeature(lineFeature2);
+            // const { start, end } = data;
+            // let position = { x: 0, y: 0 };
+            // if (start.y <= end.y) {
+            //   position = { x: start.x, y: start.y - 2 };
+            // } else {
+            //   position = { x: end.x, y: end.y - 2 };
+            // }
+            // addFeatureText(position, relatedTextId, 'label');
+          } else {
+            const rectFeature = new AILabel.Feature.Rect(
+              id, // id
+              data, // shape
+              {
+                name: '矩形矢量图形', textId: relatedTextId,
+                deleteMarkerId: relatedDeleteMarkerId,
+                directionMarkerId: directionMarkerId,
+                label: 'label'
+              }, // props
+              drawingStyle // style
+            );
+            gFirstFeatureLayer.addFeature(rectFeature);
+            // 添加direction-icon
+            const gFirstMarker = new AILabel.Marker(
+              directionMarkerId, // id
+              {
+                src: directionTopIcon,
+                position: { x: data.x, y: data.y },
+                offset: {
+                  x: -20,
+                  y: 0
+                }
+              }, // markerInfo
+              { name: 'direction-icon注记' } // props
+            );
+            gMap.markerLayer.addMarker(gFirstMarker);
+            addFeatureText(data, relatedTextId, 'label');
+          }
         } else if (type === 'POLYGON') {
           let xList: any = [],
             yList: any = [];
@@ -295,7 +348,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             return prev;
           }
           const { id, type, shape, props } = feature;
-
+          console.log('--- featureSelected', feature);
           gMap.setActiveFeature(feature);
           const markerId = feature.props.deleteMarkerId;
           const directionMarkerId = feature.props.directionMarkerId;
@@ -332,9 +385,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             // 删除对应feature
             gFirstFeatureLayer.removeFeatureById(feature.id);
 
-            if (props.type === 'DOUBLE_CIRCLE') {
+            if (['DOUBLE_CIRCLE'].includes(props.type)) {
               gFirstFeatureLayer.removeFeatureById(feature.id + 100);
-              gFirstFeatureLayer.removeFeatureById(feature.id - 100);
+            } else if (['AXIS'].includes(props.type)) {
+              gFirstFeatureLayer.removeFeatureById(feature.id + 100);
+              gFirstFeatureLayer.removeFeatureById(feature.id + 200);
             }
             setSelectedFeature(0);
           });
@@ -360,6 +415,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       });
       // 圆形/矩形 框选更新
       gMap.events.on('featureUpdated', (feature: any, shape: any) => {
+        console.log('-- featureUpdated', feature, shape);
         const { id, props, type } = feature;
         const data = shape;
         // 判断有没有画出图形之外
@@ -402,7 +458,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             message.warning('标注位置 不能超出图片范围！');
             return;
           }
-        };
+        }
         feature.updateShape(shape);
         if (type === 'RECT') {
           setFeatureList((prev: any) => {
@@ -467,6 +523,28 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           const shape2 = {
             ...shape,
             r: feature2?.shape?.r,
+          };
+          feature2?.updateShape(shape2);
+        }
+        if (props.type === 'AXIS') {
+          // 横轴
+          const line1 = {
+            start: { x: data.x, y: data.y + data.height / 2 },
+            end: { x: data.x + data.width, y: data.y + data.height / 2 }
+          }
+          // 纵轴
+          const line2 = {
+            start: { x: data.x + data.width / 2, y: data.y },
+            end: { x: data.x + data.width / 2, y: data.y + data.height }
+          }
+          const feature1 = gFirstFeatureLayer.getFeatureById(id + 100);
+          const shape1 = {
+            ...line1
+          };
+          feature1?.updateShape(shape1);
+          const feature2 = gFirstFeatureLayer.getFeatureById(id + 200);
+          const shape2 = {
+            ...line2
           };
           feature2?.updateShape(shape2);
         }
@@ -632,18 +710,21 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   // 添加feature公共方法
   const addFeature = (type: any, id: any, shape: any, props: any, style: any) => {
     if (type === "LINE") {
+      console.log(props)
       const gFirstFeatureLine = new AILabel.Feature.Line(
         id, shape, props, style
       );
       gFirstFeatureLayer.addFeature(gFirstFeatureLine);
-      const { start, end } = shape;
-      let position = { x: 0, y: 0 };
-      if (start.y <= end.y) {
-        position = { x: start.x, y: start.y - 2 };
-      } else {
-        position = { x: end.x, y: end.y - 2 };
+      if (props?.type !== 'AXIS') {
+        const { start, end } = shape;
+        let position = { x: 0, y: 0 };
+        if (start.y <= end.y) {
+          position = { x: start.x, y: start.y - 2 };
+        } else {
+          position = { x: end.x, y: end.y - 2 };
+        }
+        addFeatureText(position, props.textId, props.label);
       }
-      addFeatureText(position, props.textId, props.label);
     } else if (type === "POLYLINE") {
       const polylineFeature = new AILabel.Feature.Polyline(
         id, shape, props, style
@@ -654,30 +735,32 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         id, shape, props, style
       );
       gFirstFeatureLayer.addFeature(gFirstFeatureRect);
-      // 添加direction-icon
-      const gFirstMarker = new AILabel.Marker(
-        props.directionMarkerId, // id
-        {
-          src: style.direction === 90 ?
-            directionRightIcon
-            :
-            style.direction === 180 ?
-              directionBottomIcon
+      if (props?.type !== 'AXIS') {
+        // 添加direction-icon
+        const gFirstMarker = new AILabel.Marker(
+          props.directionMarkerId, // id
+          {
+            src: style.direction === 90 ?
+              directionRightIcon
               :
-              style.direction === 270 ?
-                directionLeftIcon
+              style.direction === 180 ?
+                directionBottomIcon
                 :
-                directionTopIcon,
-          position: { x: shape.x, y: shape.y },
-          offset: {
-            x: -20,
-            y: 0
-          }
-        }, // markerInfo
-        { name: 'direction-icon注记' } // props
-      );
-      gMap.markerLayer.addMarker(gFirstMarker);
-      addFeatureText(shape, props.textId, props.label);
+                style.direction === 270 ?
+                  directionLeftIcon
+                  :
+                  directionTopIcon,
+            position: { x: shape.x, y: shape.y },
+            offset: {
+              x: -20,
+              y: 0
+            }
+          }, // markerInfo
+          { name: 'direction-icon注记' } // props
+        );
+        gMap.markerLayer.addMarker(gFirstMarker);
+        addFeatureText(shape, props.textId, props.label);
+      }
     } else if (type === "POLYGON") {
       const gFirstFeaturePolygon = new AILabel.Feature.Polygon(
         id, shape, props, style
@@ -688,7 +771,9 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         id, shape, props, style
       );
       gFirstFeatureLayer.addFeature(gFirstFeatureCircle);
-      addFeatureText({ x: shape.cx - shape.r, y: shape.cy - shape.r }, props.textId, props.label);
+      if (props?.type !== 'DOUBLE_CIRCLE_CHILD') {
+        addFeatureText({ x: shape.cx - shape.r, y: shape.cy - shape.r }, props.textId, props.label);
+      }
     } else if (type === "POINT") {
       const polylineFeature = new AILabel.Feature.Point(
         id, shape, props, style
@@ -735,11 +820,13 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     setSelectedBtn(mode);
     if (mode === 'DOUBLE_CIRCLE') {
       gMap.setMode('CIRCLE');
+    } else if (mode === 'AXIS') {
+      gMap.setMode('RECT');
     } else {
       gMap.setMode(mode);
     }
     // 后续对应模式处理
-    switch (gMap.mode) {
+    switch (mode) {
       case 'PAN': {
         break;
       }
@@ -789,6 +876,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       }
       case 'CLEARMASK': {
         drawingStyle = { fillStyle: '#00f', lineWidth: 30 }
+        gMap.setDrawingStyle(drawingStyle);
+        break;
+      }
+      case 'AXIS': {
+        drawingStyle = { strokeStyle: '#F00', lineWidth: 2 }
         gMap.setDrawingStyle(drawingStyle);
         break;
       }
@@ -923,12 +1015,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     <div className="canvas-body flex-box-start">
       <div className="btn-box">
         <div className="top background-ubv">
-          <Popover placement="right" content={"拾色器"} >
-            <HighlightOutlined
-              onClick={() => { open() }}
-              className={`img-icon flex-box-center`}
-            />
-          </Popover>
           <StockOutlined
             onClick={() => { setMode('LINE') }}
             className={`img-icon flex-box-center ${selectedBtn === 'LINE' ? "selected" : ''}`}
@@ -953,8 +1039,18 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             className={`img-icon flex-box-center ${selectedBtn === 'POINT' ? "selected" : ''}`}
             onClick={() => setMode('POINT')}
           />
+          <BorderInnerOutlined
+            className={`img-icon flex-box-center ${selectedBtn === 'AXIS' ? "selected" : ''}`}
+            onClick={() => setMode('AXIS')}
+          />
         </div>
         <div className="center background-ubv">
+          <Popover placement="right" content={"拾色器"} >
+            <HighlightOutlined
+              onClick={() => { open() }}
+              className={`img-icon flex-box-center`}
+            />
+          </Popover>
           <Icon
             component={() => <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="983" width="200" height="200">
               <path d="M607.274667 612.992l88.661333 190.122667a21.333333 21.333333 0 0 1-10.325333 28.373333l-77.312 36.053333a21.333333 21.333333 0 0 1-28.373334-10.325333l-90.666666-194.474667-111.488 111.488A21.333333 21.333333 0 0 1 341.333333 759.168V218.88a21.333333 21.333333 0 0 1 35.669334-15.786667l397.056 360.96a21.333333 21.333333 0 0 1-12.714667 37.077334l-154.069333 11.861333z" fill="#000000" p-id="984">
