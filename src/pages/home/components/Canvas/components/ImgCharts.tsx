@@ -1,9 +1,9 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button, Image, message, Modal, Skeleton } from 'antd';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
-import { BlockOutlined, EyeOutlined, LeftCircleOutlined, RightCircleOutlined, SwapOutlined } from '@ant-design/icons';
+import { BlockOutlined, ExpandOutlined, EyeOutlined, LeftCircleOutlined, RightCircleOutlined, SwapOutlined, ZoomInOutlined } from '@ant-design/icons';
 
 interface Props {
     data: any,
@@ -28,6 +28,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     const [imgVisible, setImgVisible] = useState(false);
     const [visibleDirection, setVisibleDirection] = useState<any>('column');
     const [visible, setVisible] = useState(false);
+    const [magnifierVisible, setMagnifierVisible] = useState(false);
 
     const dom = useRef<any>();
     useLayoutEffect(() => {
@@ -58,7 +59,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         });
     }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight, comparison]);
     useEffect(() => {
-        if (!magnifier) {
+        if (!magnifier && !magnifierVisible) {
             return;
         }
         const size = magnifierSize || 4;
@@ -162,8 +163,9 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             }
         }
     }, [
-        magnifier, magnifierSize, dataValue, id, fontSize,
-        dom?.current?.clientWidth, dom?.current?.clientHeight
+        magnifierVisible,
+        // magnifier, magnifierSize, dataValue, id, fontSize,
+        // dom?.current?.clientWidth, dom?.current?.clientHeight
     ]);
 
     return (
@@ -175,33 +177,41 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         >
             {
                 (!!dataValue || !!defaultImg) ?
-                    (magnifier ?
-                        <div className="img-box">
-                            <Image
-                                src={dataValue || defaultImg}
-                                alt="logo"
-                                style={
-                                    fontSize > 1 ?
-                                        { width: '100%', height: 'auto' } :
-                                        { width: 'auto', height: '100%' }
-                                }
-                                preview={{ visible: false }}
-                                onClick={() => setVisible(true)}
+                    <Fragment>
+                        {
+                            (magnifier || magnifierVisible) ?
+                                <div className="img-box">
+                                    <Image
+                                        src={dataValue || defaultImg}
+                                        alt="logo"
+                                        style={
+                                            fontSize > 1 ?
+                                                { width: '100%', height: 'auto' } :
+                                                { width: 'auto', height: '100%' }
+                                        }
+                                    />
+                                    <div className="mask" />
+                                </div>
+                                :
+                                <Image
+                                    src={dataValue || defaultImg}
+                                    alt="logo"
+                                    style={
+                                        fontSize > 1 ?
+                                            { width: '100%', height: 'auto' } :
+                                            { width: 'auto', height: '100%' }
+                                    }
+                                    preview={false}
+                                />
+                        }
+                        <div className="flex-box img-box-btn-box">
+                            <ZoomInOutlined
+                                className={`img-box-btn-item ${magnifierVisible ? "img-box-btn-item-selected" : ""}`}
+                                onClick={() => setMagnifierVisible((prev: any) => !prev)}
                             />
-                            <div className="mask" />
+                            <ExpandOutlined className='img-box-btn-item' onClick={() => setVisible(true)} />
                         </div>
-                        :
-                        <Image
-                            src={dataValue || defaultImg}
-                            alt="logo"
-                            style={
-                                fontSize > 1 ?
-                                    { width: '100%', height: 'auto' } :
-                                    { width: 'auto', height: '100%' }
-                            }
-                            preview={{ visible: false }}
-                            onClick={() => setVisible(true)}
-                        />)
+                    </Fragment>
                     :
                     <Skeleton.Image
                         active={true}

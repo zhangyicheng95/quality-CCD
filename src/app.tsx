@@ -175,7 +175,7 @@ const iconDom = (
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = (props) => {
   const { initialState, setInitialState } = props;
-  return Object.assign({
+  return Object.assign(initialState?.settings, {
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: {
@@ -232,7 +232,6 @@ export const layout: RunTimeLayoutConfig = (props) => {
         </ErrorBoundary>
       );
     },
-    ...initialState?.settings,
     logo: iconDom,
     title: initialState?.title || 'UBVision',
   }, location.hash?.indexOf('inIframe') > -1 ? {

@@ -854,6 +854,7 @@
       }
 
       .ant-image-mask {
+        opacity: 0 !important;
         cursor: zoom-in;
         z-index: 1;
       }
@@ -881,6 +882,34 @@
       gap: 4px;
       font-size: 14px;
       cursor: pointer;
+    }
+
+    .img-box-btn-box {
+      display: none;
+      position: absolute;
+      right: 4px;
+      top: 4px;
+
+      .img-box-btn-item {
+        font-size: 14px;
+        color: inherit;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        z-index: 10;
+      }
+
+      .img-box-btn-item-selected {
+        background-color: rgba(144, 144, 144, .4)
+      }
+    }
+  }
+
+  &:hover {
+    :global {
+      .img-box-btn-box {
+        display: flex;
+      }
     }
   }
 }
