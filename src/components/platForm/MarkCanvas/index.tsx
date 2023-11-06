@@ -15,6 +15,10 @@ import directionTopIcon from '@/assets/imgs/direction-top.png';
 import directionRightIcon from '@/assets/imgs/direction-right.png';
 import directionBottomIcon from '@/assets/imgs/direction-bottom.png';
 import directionLeftIcon from '@/assets/imgs/direction-left.png';
+import arrowTopIcon from '@/assets/imgs/arrow-top.png';
+import arrowRightIcon from '@/assets/imgs/arrow-right.png';
+import arrowBottomIcon from '@/assets/imgs/arrow-bottom.png';
+import arrowLeftIcon from '@/assets/imgs/arrow-left.png';
 import { BASE_IP } from "@/services/api";
 import { FormatWidgetToDom } from "@/pages/control";
 import { downFileFun, guid, } from "@/utils/utils";
@@ -38,6 +42,14 @@ let gFirstFeatureLayer: any | null = null;
 let gFirstMaskLayer: any | null = null;
 let gFirstImageLayer: any | null = null;
 let drawingStyle: any = { strokeStyle: '#F00' }; // 绘制过程中样式
+const arrowStyle = {
+  fillStyle: 'transparent',
+  strokeStyle: 'transparent',
+  background: true,
+  globalAlpha: 1,
+  fontWeight: 10,
+  fontColor: '#0f0'
+};
 
 const MarkCanvas: React.FC<Props> = (props: any) => {
   const [form] = Form.useForm();
@@ -82,7 +94,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       });
       // 不同的标记功能
       gMap.events.on('drawDone', (type: any, data: any) => {
-        console.log('--type, data--', type, data, gMap.zoom);
+        console.log('-- type, data --', type, data, gMap.zoom);
         let btn = '';
         setSelectedBtn((prev: string) => {
           btn = prev;
@@ -221,16 +233,18 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           const id = +new Date();
           if (btn === 'AXIS') {
             // 坐标系
-            console.log(btn);
             const rectFeature = new AILabel.Feature.Rect(
               id, // id
-              data, // shape
+              { ...data, rotation: 30 }, // shape
               {
-                name: '矩形矢量图形', textId: relatedTextId,
+                name: '矩形矢量图形',
+                textXId: relatedTextId + 'x',
+                textYId: relatedTextId + 'y',
                 deleteMarkerId: relatedDeleteMarkerId,
-                directionMarkerId: directionMarkerId,
+                arrowXMarkerId: directionMarkerId + 'x',
+                arrowYMarkerId: directionMarkerId + 'y',
                 label: 'label',
-                type: 'AXIS'
+                type: 'AXIS',
               }, // props
               { ...drawingStyle, strokeStyle: 'transparent' } // style
             );
@@ -249,26 +263,46 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             const width = drawingStyle.lineWidth / scale;
             const lineFeature1 = new AILabel.Feature.Line(
               id + 100, // id
-              { ...line1, width }, // shape
-              { name: '线段矢量图层', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, type: 'AXIS' }, // props
+              { ...line1, width, rotation: 30 }, // shape
+              { name: '线段矢量图层', deleteMarkerId: relatedDeleteMarkerId, type: 'AXIS_CHILD' }, // props
               drawingStyle // style
             );
             gFirstFeatureLayer.addFeature(lineFeature1);
             const lineFeature2 = new AILabel.Feature.Line(
               id + 200, // id
               { ...line2, width }, // shape
-              { name: '线段矢量图层', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, type: 'AXIS' }, // props
-              drawingStyle // style
+              { name: '线段矢量图层', deleteMarkerId: relatedDeleteMarkerId, type: 'AXIS_CHILD' }, // props
+              { ...drawingStyle, angel: 30 } // style
             );
             gFirstFeatureLayer.addFeature(lineFeature2);
-            // const { start, end } = data;
-            // let position = { x: 0, y: 0 };
-            // if (start.y <= end.y) {
-            //   position = { x: start.x, y: start.y - 2 };
-            // } else {
-            //   position = { x: end.x, y: end.y - 2 };
-            // }
-            // addFeatureText(position, relatedTextId, 'label');
+            const gFirstMarker1 = new AILabel.Marker(
+              directionMarkerId + 'x', // id
+              {
+                src: arrowRightIcon,
+                position: line1.end,
+                offset: {
+                  x: -13,
+                  y: 12.3
+                },
+              }, // markerInfo
+              { name: 'direction-icon注记' }, // props
+            );
+            gMap.markerLayer.addMarker(gFirstMarker1);
+            addFeatureText(line1.end, relatedTextId + 'x', 'x', arrowStyle);
+            const gFirstMarker2 = new AILabel.Marker(
+              directionMarkerId + 'y', // id
+              {
+                src: arrowTopIcon,
+                position: line2.start,
+                offset: {
+                  x: -12.3,
+                  y: 12.7
+                }
+              }, // markerInfo
+              { name: 'direction-icon注记' }, // props
+            );
+            gMap.markerLayer.addMarker(gFirstMarker2);
+            addFeatureText(line2.start, relatedTextId + 'y', 'y', arrowStyle);
           } else {
             const rectFeature = new AILabel.Feature.Rect(
               id, // id
@@ -293,7 +327,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                   y: 0
                 }
               }, // markerInfo
-              { name: 'direction-icon注记' } // props
+              { name: 'direction-icon注记' }, // props
             );
             gMap.markerLayer.addMarker(gFirstMarker);
             addFeatureText(data, relatedTextId, 'label');
@@ -348,7 +382,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             return prev;
           }
           const { id, type, shape, props } = feature;
-          console.log('--- featureSelected', feature);
+          console.log('-- featureSelected', feature);
           gMap.setActiveFeature(feature);
           const markerId = feature.props.deleteMarkerId;
           const directionMarkerId = feature.props.directionMarkerId;
@@ -390,6 +424,10 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             } else if (['AXIS'].includes(props.type)) {
               gFirstFeatureLayer.removeFeatureById(feature.id + 100);
               gFirstFeatureLayer.removeFeatureById(feature.id + 200);
+              gMap.markerLayer.removeMarkerById(props.arrowXMarkerId);
+              gMap.markerLayer.removeMarkerById(props.arrowYMarkerId);
+              gFirstTextLayer.removeTextById(props.textXId);
+              gFirstTextLayer.removeTextById(props.textYId);
             }
             setSelectedFeature(0);
           });
@@ -542,12 +580,22 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             ...line1
           };
           feature1?.updateShape(shape1);
+          const arrowXMarker = gMap.markerLayer.getMarkerById(props.arrowXMarkerId);
+          arrowXMarker?.updatePosition?.(shape1.end);
+          const targetXText = gFirstTextLayer.getTextById(props.textXId);
+          targetXText?.updatePosition(shape1.end);
+
           const feature2 = gFirstFeatureLayer.getFeatureById(id + 200);
           const shape2 = {
             ...line2
           };
           feature2?.updateShape(shape2);
+          const arrowYMarker = gMap.markerLayer.getMarkerById(props.arrowYMarkerId);
+          arrowYMarker?.updatePosition?.(shape2.start);
+          const targetYText = gFirstTextLayer.getTextById(props.textYId);
+          targetYText?.updatePosition(shape2.start);
         }
+
         const markerId = feature.props.deleteMarkerId;
         const directionId = feature.props.directionMarkerId;
         const textId = feature.props.textId;
@@ -689,14 +737,14 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     }
   }, [localPath, platFormValue]);
   // 添加text公共方法
-  const addFeatureText = (data: any, relatedTextId: string, text: string) => {
+  const addFeatureText = (data: any, relatedTextId: string, text: string, style?: any) => {
     // 添加feature标签名
     const { x: ltx, y: lty, } = data;
     const gFirstText = new AILabel.Text(
       relatedTextId, // id
       { text: text || 'label', position: { x: ltx, y: lty }, offset: { x: 0, y: 0 } }, // shape, 左上角
       { name: '文本对象' }, // props
-      {
+      !!style ? style : {
         fillStyle: 'rgba(1,1,1,.9)',
         strokeStyle: '#D2691E',
         background: true,
@@ -710,12 +758,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   // 添加feature公共方法
   const addFeature = (type: any, id: any, shape: any, props: any, style: any) => {
     if (type === "LINE") {
-      console.log(props)
       const gFirstFeatureLine = new AILabel.Feature.Line(
         id, shape, props, style
       );
       gFirstFeatureLayer.addFeature(gFirstFeatureLine);
-      if (props?.type !== 'AXIS') {
+      if (props?.type !== 'AXIS_CHILD') {
         const { start, end } = shape;
         let position = { x: 0, y: 0 };
         if (start.y <= end.y) {
@@ -735,7 +782,91 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         id, shape, props, style
       );
       gFirstFeatureLayer.addFeature(gFirstFeatureRect);
-      if (props?.type !== 'AXIS') {
+      if (props?.type === 'AXIS') {
+        let line1: any = {},
+          line2: any = {};
+        const range = style.direction || 0;
+        const center = {
+          x: shape.x + shape.width / 2,
+          y: shape.y + shape.height / 2,
+          xLength: shape.width,
+          yLength: shape.height,
+        }
+        // 横轴
+        line1 = {
+          start: { x: center.x - center.xLength / 2, y: center.y },
+          end: { x: center.x + center.xLength / 2, y: center.y }
+        }
+        // 纵轴
+        line2 = {
+          start: { x: center.x, y: center.y - center.yLength / 2 },
+          end: { x: center.x, y: center.y + center.yLength / 2 }
+        }
+        const position1 = range === 0 ?
+          line1.end :
+          range === 90 ?
+            line2.end :
+            range === 180 ?
+              line1.start :
+              range === 270 ?
+                line2.start :
+                line1.end;
+        const position2 = range === 0 ?
+          line2.start :
+          range === 90 ?
+            line1.end :
+            range === 180 ?
+              line2.end :
+              range === 270 ?
+                line1.start :
+                line2.start;
+        const gFirstMarker1 = new AILabel.Marker(
+          props.arrowXMarkerId, // id
+          {
+            src: style.direction === 90 ?
+              arrowBottomIcon
+              :
+              style.direction === 180 ?
+                arrowLeftIcon
+                :
+                style.direction === 270 ?
+                  arrowTopIcon
+                  :
+                  arrowRightIcon,
+            position: position1,
+            offset: {
+              x: -13,
+              y: 12.3
+            },
+          }, // markerInfo
+          { name: 'direction-icon注记' }, // props
+        );
+        gMap.markerLayer.addMarker(gFirstMarker1);
+        addFeatureText(position1, props.textXId, 'x', arrowStyle);
+        const gFirstMarker2 = new AILabel.Marker(
+          props.arrowYMarkerId, // id
+          {
+            src: style.direction === 90 ?
+              arrowRightIcon
+              :
+              style.direction === 180 ?
+                arrowBottomIcon
+                :
+                style.direction === 270 ?
+                  arrowLeftIcon
+                  :
+                  arrowTopIcon,
+            position: position2,
+            offset: {
+              x: -12.3,
+              y: 12.7
+            }
+          }, // markerInfo
+          { name: 'direction-icon注记' }, // props
+        );
+        gMap.markerLayer.addMarker(gFirstMarker2);
+        addFeatureText(position2, props.textYId, 'y', arrowStyle);
+      } else {
         // 添加direction-icon
         const gFirstMarker = new AILabel.Marker(
           props.directionMarkerId, // id
@@ -1094,90 +1225,253 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           !!selectedFeature ?
             <Fragment>
               <div className="condif-body">
-                <Form
-                  form={form}
-                  scrollToFirstError
-                >
-                  <Form.Item
-                    name={`option_type`}
-                    label="参数类型"
-                    initialValue={featureList?.[selectedFeature] ? featureList?.[selectedFeature]?.['option_type']?.value : undefined}
-                    rules={[{ required: false, message: "参数类型" }]}
-                  >
-                    <Select
-                      style={{ width: '100%' }}
-                      options={_.isObject(options) ? Object.entries(options)?.map((res: any) => {
-                        return { key: res[0], label: res[0], value: res[0], };
-                      }) : []}
-                      placeholder="参数类型"
-                      onChange={(val, option: any) => {
-                        setSelectedOptionType({ roi: feature?.shape, ..._.cloneDeep(options)[val] });
-                      }}
-                    />
-                  </Form.Item>
-                  {
-                    !['POINT', 'LINE'].includes(feature?.type) ?
+                {
+                  feature?.props?.type === 'AXIS' ?
+                    <Form
+                      form={form}
+                      scrollToFirstError
+                    >
                       <Form.Item
-                        name={`找线方向`}
-                        label="找线方向"
-                        style={['POINT', 'LINE'].includes(feature?.type) ? { display: 'none' } : {}}
-                        initialValue={featureList?.[selectedFeature]?.['找线方向']?.value || 0}
-                        rules={[{ required: true, message: "找线方向" }]}
+                        name={`roi`}
+                        label={"位置信息"}
+                        initialValue={{
+                          'x': { alias: '原点x', value: feature?.shape?.x + feature?.shape?.width / 2 },
+                          'y': { alias: '原点y', value: feature?.shape?.y + feature?.shape?.height / 2 },
+                          'xLength': { alias: 'x轴长度', value: feature?.shape?.width },
+                          'yLength': { alias: 'y轴长度', value: feature?.shape?.height }
+                        }}
+                        rules={[{ required: true, message: "位置信息" }]}
+                      >
+                        <Measurement />
+                      </Form.Item>
+                      <Form.Item
+                        name={`rotation`}
+                        label="旋转角度"
+                        initialValue={featureList?.[selectedFeature]?.rotation?.value || 0}
+                        rules={[{ required: true, message: "rotation" }]}
                       >
                         <Select
                           style={{ width: '100%' }}
                           options={[
-                            { label: '下到上', value: 0 },
-                            { label: '左到右', value: 90 },
-                            { label: '上到下', value: 180 },
-                            { label: '右到左', value: 270 },
+                            { label: '0', value: 0 },
+                            { label: '90', value: 90 },
+                            { label: '180', value: 180 },
+                            { label: '270', value: 270 },
                             // { label: '', value: 360 }
                           ].map((res: any) => {
                             const { label, value } = res;
                             return { key: value, label: label, value: value, };
                           })}
-                          placeholder="找线方向"
+                          placeholder="旋转角度"
                         />
                       </Form.Item>
-                      :
-                      null
-                  }
-                  {
-                    _.isEmpty(selectedOptionType) ?
-                      (
-                        !!featureList[selectedFeature] ?
-                          Object.entries(featureList[selectedFeature])?.map((item: any) => {
+                    </Form>
+                    :
+                    <Form
+                      form={form}
+                      scrollToFirstError
+                    >
+                      <Form.Item
+                        name={`option_type`}
+                        label="参数类型"
+                        initialValue={featureList?.[selectedFeature] ? featureList?.[selectedFeature]?.['option_type']?.value : undefined}
+                        rules={[{ required: false, message: "参数类型" }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={_.isObject(options) ? Object.entries(options)?.map((res: any) => {
+                            return { key: res[0], label: res[0], value: res[0], };
+                          }) : []}
+                          placeholder="参数类型"
+                          onChange={(val, option: any) => {
+                            setSelectedOptionType({ roi: feature?.shape, ..._.cloneDeep(options)[val] });
+                          }}
+                        />
+                      </Form.Item>
+                      {
+                        !['POINT', 'LINE'].includes(feature?.type) ?
+                          <Form.Item
+                            name={`找线方向`}
+                            label="找线方向"
+                            style={['POINT', 'LINE'].includes(feature?.type) ? { display: 'none' } : {}}
+                            initialValue={featureList?.[selectedFeature]?.['找线方向']?.value || 0}
+                            rules={[{ required: true, message: "找线方向" }]}
+                          >
+                            <Select
+                              style={{ width: '100%' }}
+                              options={[
+                                { label: '下到上', value: 0 },
+                                { label: '左到右', value: 90 },
+                                { label: '上到下', value: 180 },
+                                { label: '右到左', value: 270 },
+                                // { label: '', value: 360 }
+                              ].map((res: any) => {
+                                const { label, value } = res;
+                                return { key: value, label: label, value: value, };
+                              })}
+                              placeholder="找线方向"
+                            />
+                          </Form.Item>
+                          :
+                          null
+                      }
+                      {
+                        _.isEmpty(selectedOptionType) ?
+                          (
+                            !!featureList[selectedFeature] ?
+                              Object.entries(featureList[selectedFeature])?.map((item: any) => {
+                                if (item[0] === 'roi') {
+                                  let value = {};
+                                  if (_.isObject(item[1]?.realValue) && !_.isEmpty(item[1].realValue)) {
+                                    if (!!item[1]?.realValue?.x && !!item[1]?.realValue?.width) {
+                                      // 矩形
+                                      value = {
+                                        ...item[1].realValue,
+                                        x: {
+                                          alias: "cx",
+                                          value: item[1].realValue?.x?.value
+                                        },
+                                        y: {
+                                          alias: "cy",
+                                          value: item[1].realValue?.y?.value
+                                        }
+                                      }
+                                    } else if (!!item[1]?.realValue?.x2) {
+                                      // 线
+                                      value = {
+                                        "x1": { alias: "起点x", value: item[1]?.realValue?.x1?.value },
+                                        "y1": { alias: "起点y", value: item[1]?.realValue?.y1?.value },
+                                        "x2": { alias: "终点x", value: item[1]?.realValue?.x2?.value },
+                                        "y2": { alias: "终点y", value: item[1]?.realValue?.y2?.value }
+                                      };
+                                    } else if (!!item[1]?.realValue?.cx && !!item[1]?.realValue?.r) {
+                                      // 圆
+                                      value = {
+                                        ...item[1].realValue
+                                      };
+                                      // 圆环
+                                      if (feature?.props?.type === "DOUBLE_CIRCLE") {
+                                        const feature2 = gFirstFeatureLayer.getFeatureById(feature?.id + 100) || gFirstFeatureLayer.getFeatureById(feature?.id - 100);
+                                        value = {
+                                          ...value,
+                                          "r2": {
+                                            alias: "r2",
+                                            value: feature2?.shape?.r
+                                          }
+                                        }
+                                      }
+                                    } else if (!!item[1]?.realValue?.sr) {
+                                      // 点
+                                      value = {
+                                        "x": { alias: "x", value: item[1]?.realValue?.x?.value },
+                                        "y": { alias: "y", value: item[1]?.realValue?.y?.value },
+                                        "sr": { alias: "sr", value: item[1]?.realValue?.sr?.value }
+                                      };
+                                    } else {
+                                      value = Object.entries(_.omit(item[1], "value")).reduce((pre: any, cen: any) => {
+                                        return Object.assign({}, pre, {
+                                          [cen[0]]: {
+                                            alias: cen[0],
+                                            value: cen[1]
+                                          }
+                                        });
+                                      }, {});
+                                    }
+                                  }
+
+                                  return <Form.Item
+                                    key={`${item[0]}$$${guid()}`}
+                                    name={`${item[0]}$$${guid()}`}
+                                    label={"位置信息"}
+                                    initialValue={value || {
+                                      num_0: { alias: 'num_0', value: undefined },
+                                      num_1: { alias: 'num_1', value: undefined },
+                                      num_2: { alias: 'num_2', value: undefined },
+                                      num_3: { alias: 'num_3', value: undefined },
+                                    }}
+                                    rules={[{ required: true, message: "位置信息" }]}
+                                  >
+                                    <Measurement />
+                                  </Form.Item>
+                                }
+                                return <FormatWidgetToDom
+                                  key={item[0]}
+                                  id={item[0]}
+                                  label={item?.[1]?.alias || item[0]}
+                                  config={item}
+                                  form={form}
+                                  disabled={false}
+                                  display={['POINT', 'LINE'].includes(feature?.type)}
+                                />
+                              })
+                              :
+                              null
+                            // <Form.Item
+                            //   name={`roi$$${guid()}`}
+                            //   label={"位置信息"}
+                            //   initialValue={Object.assign({},
+                            //     Object.entries(feature?.shape || {}).reduce((pre: any, cen: any) => {
+                            //       return Object.assign({}, pre, {
+                            //         [cen[0]]: {
+                            //           alias: cen[0],
+                            //           value: cen[1]
+                            //         }
+                            //       });
+                            //     }, {}),
+                            //     feature?.props?.type === "DOUBLE_CIRCLE" ? {
+                            //       "r2": {
+                            //         alias: "r2",
+                            //         value: gFirstFeatureLayer?.getFeatureById?.(feature?.id + 100)?.shape?.r || gFirstFeatureLayer?.getFeatureById?.(feature?.id - 100)?.shape?.r
+                            //       }
+                            //     } : {}
+                            //   )}
+                            //   rules={[{ required: true, message: "位置信息" }]}
+                            // >
+                            //   <Measurement />
+                            // </Form.Item>
+                          )
+                          :
+                          Object.entries(selectedOptionType)?.map((item: any) => {
                             if (item[0] === 'roi') {
                               let value = {};
-                              if (_.isObject(item[1]?.realValue) && !_.isEmpty(item[1].realValue)) {
-                                if (!!item[1]?.realValue?.x && !!item[1]?.realValue?.width) {
+                              if (!_.isEmpty(item[1])) {
+                                if (!!item[1]?.x && !!item[1]?.width) {
                                   // 矩形
                                   value = {
-                                    ...item[1].realValue,
                                     x: {
                                       alias: "cx",
-                                      value: item[1].realValue?.x?.value
+                                      value: item[1]?.x + item[1]?.width / 2
                                     },
                                     y: {
                                       alias: "cy",
-                                      value: item[1].realValue?.y?.value
+                                      value: item[1]?.y + item[1]?.height / 2
+                                    },
+                                    width: {
+                                      alias: "width",
+                                      value: item[1]?.width
+                                    },
+                                    height: {
+                                      alias: "height",
+                                      value: item[1]?.height
                                     }
                                   }
-                                } else if (!!item[1]?.realValue?.x2) {
+                                } else if (!!item[1]?.start) {
                                   // 线
                                   value = {
-                                    "x1": { alias: "起点x", value: item[1]?.realValue?.x1?.value },
-                                    "y1": { alias: "起点y", value: item[1]?.realValue?.y1?.value },
-                                    "x2": { alias: "终点x", value: item[1]?.realValue?.x2?.value },
-                                    "y2": { alias: "终点y", value: item[1]?.realValue?.y2?.value }
+                                    "x1": { alias: "起点x", value: item[1]?.start?.x },
+                                    "y1": { alias: "起点y", value: item[1]?.start?.y },
+                                    "x2": { alias: "终点x", value: item[1]?.end?.x },
+                                    "y2": { alias: "终点y", value: item[1]?.end?.y }
                                   };
-                                } else if (!!item[1]?.realValue?.cx && !!item[1]?.realValue?.r) {
+                                } else if (!!item[1]?.cx && !!item[1]?.r) {
                                   // 圆
                                   value = {
-                                    ...item[1].realValue
+                                    "cx": { alias: "cx", value: item[1].cx },
+                                    "cy": { alias: "cy", value: item[1].cy },
+                                    "r": { alias: "r", value: item[1].r },
                                   };
-                                  // 圆环
                                   if (feature?.props?.type === "DOUBLE_CIRCLE") {
+                                    // 同心圆
                                     const feature2 = gFirstFeatureLayer.getFeatureById(feature?.id + 100) || gFirstFeatureLayer.getFeatureById(feature?.id - 100);
                                     value = {
                                       ...value,
@@ -1187,13 +1481,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                       }
                                     }
                                   }
-                                } else if (!!item[1]?.realValue?.sr) {
-                                  // 点
-                                  value = {
-                                    "x": { alias: "x", value: item[1]?.realValue?.x?.value },
-                                    "y": { alias: "y", value: item[1]?.realValue?.y?.value },
-                                    "sr": { alias: "sr", value: item[1]?.realValue?.sr?.value }
-                                  };
                                 } else {
                                   value = Object.entries(_.omit(item[1], "value")).reduce((pre: any, cen: any) => {
                                     return Object.assign({}, pre, {
@@ -1205,7 +1492,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                   }, {});
                                 }
                               }
-
                               return <Form.Item
                                 key={`${item[0]}$$${guid()}`}
                                 name={`${item[0]}$$${guid()}`}
@@ -1231,122 +1517,9 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                               display={['POINT', 'LINE'].includes(feature?.type)}
                             />
                           })
-                          :
-                          null
-                        // <Form.Item
-                        //   name={`roi$$${guid()}`}
-                        //   label={"位置信息"}
-                        //   initialValue={Object.assign({},
-                        //     Object.entries(feature?.shape || {}).reduce((pre: any, cen: any) => {
-                        //       return Object.assign({}, pre, {
-                        //         [cen[0]]: {
-                        //           alias: cen[0],
-                        //           value: cen[1]
-                        //         }
-                        //       });
-                        //     }, {}),
-                        //     feature?.props?.type === "DOUBLE_CIRCLE" ? {
-                        //       "r2": {
-                        //         alias: "r2",
-                        //         value: gFirstFeatureLayer?.getFeatureById?.(feature?.id + 100)?.shape?.r || gFirstFeatureLayer?.getFeatureById?.(feature?.id - 100)?.shape?.r
-                        //       }
-                        //     } : {}
-                        //   )}
-                        //   rules={[{ required: true, message: "位置信息" }]}
-                        // >
-                        //   <Measurement />
-                        // </Form.Item>
-                      )
-                      :
-                      Object.entries(selectedOptionType)?.map((item: any) => {
-                        if (item[0] === 'roi') {
-                          let value = {};
-                          if (!_.isEmpty(item[1])) {
-                            if (!!item[1]?.x && !!item[1]?.width) {
-                              // 矩形
-                              value = {
-                                x: {
-                                  alias: "cx",
-                                  value: item[1]?.x + item[1]?.width / 2
-                                },
-                                y: {
-                                  alias: "cy",
-                                  value: item[1]?.y + item[1]?.height / 2
-                                },
-                                width: {
-                                  alias: "width",
-                                  value: item[1]?.width
-                                },
-                                height: {
-                                  alias: "height",
-                                  value: item[1]?.height
-                                }
-                              }
-                            } else if (!!item[1]?.start) {
-                              // 线
-                              value = {
-                                "x1": { alias: "起点x", value: item[1]?.start?.x },
-                                "y1": { alias: "起点y", value: item[1]?.start?.y },
-                                "x2": { alias: "终点x", value: item[1]?.end?.x },
-                                "y2": { alias: "终点y", value: item[1]?.end?.y }
-                              };
-                            } else if (!!item[1]?.cx && !!item[1]?.r) {
-                              // 圆
-                              value = {
-                                "cx": { alias: "cx", value: item[1].cx },
-                                "cy": { alias: "cy", value: item[1].cy },
-                                "r": { alias: "r", value: item[1].r },
-                              };
-                              if (feature?.props?.type === "DOUBLE_CIRCLE") {
-                                // 同心圆
-                                const feature2 = gFirstFeatureLayer.getFeatureById(feature?.id + 100) || gFirstFeatureLayer.getFeatureById(feature?.id - 100);
-                                value = {
-                                  ...value,
-                                  "r2": {
-                                    alias: "r2",
-                                    value: feature2?.shape?.r
-                                  }
-                                }
-                              }
-                            } else {
-                              value = Object.entries(_.omit(item[1], "value")).reduce((pre: any, cen: any) => {
-                                return Object.assign({}, pre, {
-                                  [cen[0]]: {
-                                    alias: cen[0],
-                                    value: cen[1]
-                                  }
-                                });
-                              }, {});
-                            }
-                          }
-                          return <Form.Item
-                            key={`${item[0]}$$${guid()}`}
-                            name={`${item[0]}$$${guid()}`}
-                            label={"位置信息"}
-                            initialValue={value || {
-                              num_0: { alias: 'num_0', value: undefined },
-                              num_1: { alias: 'num_1', value: undefined },
-                              num_2: { alias: 'num_2', value: undefined },
-                              num_3: { alias: 'num_3', value: undefined },
-                            }}
-                            rules={[{ required: true, message: "位置信息" }]}
-                          >
-                            <Measurement />
-                          </Form.Item>
-                        }
-                        return <FormatWidgetToDom
-                          key={item[0]}
-                          id={item[0]}
-                          label={item?.[1]?.alias || item[0]}
-                          config={item}
-                          form={form}
-                          disabled={false}
-                          display={['POINT', 'LINE'].includes(feature?.type)}
-                        />
-                      })
-                  }
-                </Form>
-
+                      }
+                    </Form>
+                }
               </div>
               <div className="flex-box-center config-footer">
                 <Button onClick={() => {
@@ -1364,187 +1537,379 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           [key[0]]: item
                         })
                       }, {});
-                      if (value?.['option_type']?.value) {
-                        // 更新text
-                        const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
-                        if (targetText) {
-                          targetText?.updateText(value?.['option_type']?.value);
-                        } else {
-                          const { id, shape, props, style, type } = feature;
-                          gFirstFeatureLayer.removeFeatureById(id);
-                          gFirstTextLayer.removeTextById(props?.textId);
-                          addFeature(type, id, shape, { ...props, label: value?.['option_type']?.value }, style);
+                      // 坐标系
+                      if (feature?.props?.type === 'AXIS') {
+                        const center = Object.entries(value?.['roi']?.value)?.reduce((pre: any, cen: any) => {
+                          return Object.assign({}, pre, {
+                            [cen[0]]: cen[1]?.value
+                          });
+                        }, {}) || {
+                          x: feature?.shape?.x + feature?.shape?.width / 2,
+                          y: feature?.shape?.y + feature?.shape?.height / 2,
+                          xLength: feature?.shape?.width,
+                          yLength: feature?.shape?.height
                         };
-                      }
-                      const range = value?.['找线方向']?.value || 0;
-                      if (value?.['roi']?.value?.cx && value?.['roi']?.value?.r) {
-                        const val = value?.['roi']?.value;
-                        // 圆
-                        const shape1 = {
-                          cx: val?.cx?.value,
-                          cy: val?.cy?.value,
-                          r: val?.r?.value,
-                        };
-                        feature.updateShape(shape1);
-                        if (val.r2) {
-                          // 圆环
-                          const feature2 = gFirstFeatureLayer.getFeatureById(selectedFeature + 100) || gFirstFeatureLayer.getFeatureById(selectedFeature - 100);
-                          const shape2 = {
-                            cx: val?.cx?.value,
-                            cy: val?.cy?.value,
-                            r: val?.r2?.value,
+                        let line1: any = {},
+                          line2: any = {};
+                        const range = value?.['rotation']?.value || 0;
+                        if (range !== feature?.style.direction) {
+                          if (Math.abs(range - feature?.style.direction) === 0) {
+                            // 横轴
+                            line1 = {
+                              start: { x: center.x - center.xLength / 2, y: center.y },
+                              end: { x: center.x + center.xLength / 2, y: center.y }
+                            }
+                            // 纵轴
+                            line2 = {
+                              start: { x: center.x, y: center.y - center.yLength / 2 },
+                              end: { x: center.x, y: center.y + center.yLength / 2 }
+                            }
+                          } else if (Math.abs(range - feature?.style.direction) === 90) {
+                            // 横轴
+                            line1 = {
+                              start: { x: center.x - center.yLength / 2, y: center.y },
+                              end: { x: center.x + center.yLength / 2, y: center.y }
+                            }
+                            // 纵轴
+                            line2 = {
+                              start: { x: center.x, y: center.y - center.xLength / 2 },
+                              end: { x: center.x, y: center.y + center.xLength / 2 }
+                            }
+                          } else if (Math.abs(range - feature?.style.direction) === 180) {
+                            // 横轴
+                            line1 = {
+                              start: { x: center.x - center.xLength / 2, y: center.y },
+                              end: { x: center.x + center.xLength / 2, y: center.y }
+                            }
+                            // 纵轴
+                            line2 = {
+                              start: { x: center.x, y: center.y - center.yLength / 2 },
+                              end: { x: center.x, y: center.y + center.yLength / 2 }
+                            }
+                          } else if (Math.abs(range - feature?.style.direction) === 270) {
+                            // 横轴
+                            line1 = {
+                              start: { x: center.x - center.yLength / 2, y: center.y },
+                              end: { x: center.x + center.yLength / 2, y: center.y }
+                            }
+                            // 纵轴
+                            line2 = {
+                              start: { x: center.x, y: center.y - center.xLength / 2 },
+                              end: { x: center.x, y: center.y + center.xLength / 2 }
+                            }
                           };
-                          feature2?.updateShape(shape2);
+                        } else {
+                          // 横轴
+                          line1 = {
+                            start: { x: center.x - center.xLength / 2, y: center.y },
+                            end: { x: center.x + center.xLength / 2, y: center.y }
+                          }
+                          // 纵轴
+                          line2 = {
+                            start: { x: center.x, y: center.y - center.yLength / 2 },
+                            end: { x: center.x, y: center.y + center.yLength / 2 }
+                          }
                         }
-                      };
-                      const result = {
-                        ...featureList,
-                        [selectedFeature]: (!_.isEmpty(selectedOptionType) || !_.isEmpty(featureList[selectedFeature])) ?
-                          Object.entries(!_.isEmpty(selectedOptionType) ? selectedOptionType : featureList[selectedFeature])
-                            ?.reduce((pre: any, cen: any) => {
-                              if (cen[0] === 'roi') {
-                                const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
-                                const { type } = feature;
-                                let { value: val, } = value[cen[0]];
-                                // realValue：没旋转的 中心点x,y
-                                let realValue = val;
-                                if (type === 'RECT') {
-                                  // 矩形
-                                  val = {
-                                    ...val,
-                                    x: { ...val?.x, value: val?.x?.value - val?.width?.value / 2 },
-                                    y: { ...val?.y, value: val?.y?.value - val?.height?.value / 2 }
-                                  }
-                                  if ([90, 270].includes(range)) {
-                                    // 有旋转
-                                    val = {
-                                      x: { ...val?.x, value: val?.x?.value + val?.width?.value / 2 - val?.height?.value / 2 },
-                                      y: { ...val?.y, value: val?.y?.value - val?.width?.value / 2 + val?.height?.value / 2 },
-                                      width: { ...val?.width, value: val?.height?.value },
-                                      height: { ...val?.height, value: val?.width?.value }
-                                    };
-                                  };
-                                  /****************通过roi更新图层******************/
-                                  const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
-                                  const shape = Object.entries(val).reduce((pre: any, cen: any) => {
-                                    return Object.assign({}, pre, {
-                                      [cen[0]]: cen[1]?.value
-                                    });
-                                  }, {});
-                                  if (
-                                    Math.min(shape?.x, shape?.y) < 0 ||
-                                    (shape?.x + shape?.width) > img?.width ||
-                                    (shape?.y + shape?.height) > img?.height
-                                  ) {
-                                    message.warning('标注位置 不能超出图片范围！');
-                                  } else {
-                                    feature.style['direction'] = range;
-                                    feature.updateShape(shape);
-                                    const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
-                                    targetText?.updatePosition({ x: shape.x, y: shape.y });
-                                    // 删除delete-icon
-                                    gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
-                                    // 先删除direction-icon
-                                    gMap.markerLayer.removeMarkerById(feature.props.directionMarkerId);
-                                    // 后添加direction-icon
-                                    const gFirstMarker = new AILabel.Marker(
-                                      feature?.props?.directionMarkerId, // id
-                                      {
-                                        src: range === 90 ?
-                                          directionRightIcon
-                                          :
-                                          range === 180 ?
-                                            directionBottomIcon
-                                            :
-                                            range === 270 ?
-                                              directionLeftIcon
-                                              :
-                                              directionTopIcon,
-                                        position: { x: shape.x, y: shape.y },
-                                        offset: {
-                                          x: -20,
-                                          y: 0
-                                        }
-                                      }, // markerInfo
-                                      { name: 'direction-icon注记' } // props
-                                    );
-                                    gMap.markerLayer.addMarker(gFirstMarker);
-                                  }
-                                  /****************通过roi更新图层******************/
-                                } else if (type === 'LINE') {
-                                  // 线
-                                  /****************通过roi更新图层******************/
-                                  const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
-                                  const shape = {
-                                    ...feature?.shape,
-                                    start: {
-                                      x: value?.['roi']?.value?.x1?.value,
-                                      y: value?.['roi']?.value?.y1?.value
-                                    },
-                                    end: {
-                                      x: value?.['roi']?.value?.x2?.value,
-                                      y: value?.['roi']?.value?.y2?.value
-                                    }
-                                  };
-                                  feature.updateShape(shape);
-                                  const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
-                                  targetText?.updatePosition({ ...shape?.start });
-                                  // 删除delete-icon
-                                  gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
-                                  /****************通过roi更新图层******************/
-                                } else if (type === 'POINT') {
-                                  // 点
-                                  /****************通过roi更新图层******************/
-                                  const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
-                                  const shape = {
-                                    ...feature?.shape,
-                                    x: value?.['roi']?.value?.x?.value,
-                                    y: value?.['roi']?.value?.y?.value,
-                                    sr: value?.['roi']?.value?.sr?.value
-                                  };
-                                  feature.updateShape(shape);
-                                  const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
-                                  targetText?.updatePosition({ ...shape?.start });
-                                  // 删除delete-icon
-                                  gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
-                                  /****************通过roi更新图层******************/
-                                }
+                        /****************通过roi更新图层******************/
+                        const shape = {
+                          x: line1.start.x,
+                          y: line2.start.y,
+                          width: line1.end.x - line1.start.x,
+                          height: line2.end.y - line2.start.y
+                        };
+                        if (
+                          Math.min(shape?.x, shape?.y) < 0 ||
+                          (shape?.x + shape?.width) > img?.width ||
+                          (shape?.y + shape?.height) > img?.height
+                        ) {
+                          message.warning('标注位置 不能超出图片范围！');
+                        } else {
+                          feature.style['direction'] = range;
+                          feature.updateShape(shape);
+                          // 删除delete-icon
+                          gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
+                          const feature1 = gFirstFeatureLayer.getFeatureById(feature.id + 100);
+                          feature1?.updateShape?.(line1);
+                          const feature2 = gFirstFeatureLayer.getFeatureById(feature.id + 200);
+                          feature2?.updateShape?.(line2);
 
-                                return Object.assign({}, pre, {
-                                  [cen[0]]: {
-                                    // ...cen[1],
-                                    value: val,
-                                    realValue: realValue
-                                  }
-                                });
-                              };
-                              return Object.assign({}, pre, {
-                                [cen[0]]: {
-                                  ...cen[1],
-                                  value: value[cen[0]]?.value
-                                }
-                              })
-                            }, {
-                              option_type: { value: value?.['option_type']?.value },
-                              "找线方向": { value: range },
-                              localPath: { value: localPath }
-                            })
-                          :
-                          {
+                          const position1 = range === 0 ?
+                            line1.end :
+                            range === 90 ?
+                              line2.end :
+                              range === 180 ?
+                                line1.start :
+                                range === 270 ?
+                                  line2.start :
+                                  line1.end;
+                          const position2 = range === 0 ?
+                            line2.start :
+                            range === 90 ?
+                              line1.end :
+                              range === 180 ?
+                                line2.end :
+                                range === 270 ?
+                                  line1.start :
+                                  line2.start;
+                          const targetXText = gFirstTextLayer.getTextById(feature?.props?.textXId);
+                          targetXText?.updatePosition?.(position1);
+                          const targetYText = gFirstTextLayer.getTextById(feature?.props?.textYId);
+                          targetYText?.updatePosition?.(position2);
+
+                          // 先删除direction-icon
+                          gMap.markerLayer.removeMarkerById(feature.props.arrowXMarkerId);
+                          gMap.markerLayer.removeMarkerById(feature.props.arrowYMarkerId);
+                          // 后添加direction-icon
+                          const gFirstMarker1 = new AILabel.Marker(
+                            feature.props.arrowXMarkerId, // id
+                            {
+                              src: range === 0 ?
+                                arrowRightIcon :
+                                range === 90 ?
+                                  arrowBottomIcon :
+                                  range === 180 ?
+                                    arrowLeftIcon :
+                                    range === 270 ?
+                                      arrowTopIcon :
+                                      arrowRightIcon,
+                              position: position1,
+                              offset: {
+                                x: -13,
+                                y: 12.3
+                              },
+                            }, // markerInfo
+                            { name: 'direction-icon注记' }, // props
+                          );
+                          gMap.markerLayer.addMarker(gFirstMarker1);
+                          const gFirstMarker2 = new AILabel.Marker(
+                            feature.props.arrowXMarkerId, // id
+                            {
+                              src: range === 0 ?
+                                arrowTopIcon :
+                                range === 90 ?
+                                  arrowRightIcon :
+                                  range === 180 ?
+                                    arrowBottomIcon :
+                                    range === 270 ?
+                                      arrowLeftIcon :
+                                      arrowTopIcon,
+                              position: position2,
+                              offset: {
+                                x: -13,
+                                y: 12.3
+                              },
+                            }, // markerInfo
+                            { name: 'direction-icon注记' }, // props
+                          );
+                          gMap.markerLayer.addMarker(gFirstMarker2);
+
+                          const arrowXMarker = gMap.markerLayer.getMarkerById(feature?.props.arrowXMarkerId);
+                          arrowXMarker?.updatePosition?.(position1);
+                          const arrowYMarker = gMap.markerLayer.getMarkerById(feature?.props.arrowYMarkerId);
+                          arrowYMarker?.updatePosition?.(position2);
+                        }
+                        /****************通过roi更新图层******************/
+                        const result = {
+                          ...featureList,
+                          [selectedFeature]: {
                             roi: {
                               value: value?.['roi']?.value,
                               realValue: value?.['roi']?.value
                             },
-                            localPath: { value: localPath }
+                            localPath: { value: localPath },
+                            ..._.omit(value, 'roi')
                           }
-                      };
-                      setGetDataFun((prev: any) => ({
-                        ...prev,
-                        zoom: gMap.zoom,
-                        value: { ...prev?.value, ...result }
-                      }));
-                      setFeatureList(result);
-                      onCancel();
+                        };
+                        setGetDataFun((prev: any) => ({
+                          ...prev,
+                          zoom: gMap.zoom,
+                          value: { ...prev?.value, ...result }
+                        }));
+                        setFeatureList(result);
+                        onCancel();
+                      } else {
+                        if (value?.['option_type']?.value) {
+                          // 更新text
+                          const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
+                          if (targetText) {
+                            targetText?.updateText(value?.['option_type']?.value);
+                          } else {
+                            const { id, shape, props, style, type } = feature;
+                            gFirstFeatureLayer.removeFeatureById(id);
+                            gFirstTextLayer.removeTextById(props?.textId);
+                            addFeature(type, id, shape, { ...props, label: value?.['option_type']?.value }, style);
+                          };
+                        }
+                        const range = value?.['找线方向']?.value || 0;
+                        if (value?.['roi']?.value?.cx && value?.['roi']?.value?.r) {
+                          const val = value?.['roi']?.value;
+                          // 圆
+                          const shape1 = {
+                            cx: val?.cx?.value,
+                            cy: val?.cy?.value,
+                            r: val?.r?.value,
+                          };
+                          feature.updateShape(shape1);
+                          if (val.r2) {
+                            // 圆环
+                            const feature2 = gFirstFeatureLayer.getFeatureById(selectedFeature + 100) || gFirstFeatureLayer.getFeatureById(selectedFeature - 100);
+                            const shape2 = {
+                              cx: val?.cx?.value,
+                              cy: val?.cy?.value,
+                              r: val?.r2?.value,
+                            };
+                            feature2?.updateShape(shape2);
+                          }
+                        };
+                        const result = {
+                          ...featureList,
+                          [selectedFeature]: (!_.isEmpty(selectedOptionType) || !_.isEmpty(featureList[selectedFeature])) ?
+                            Object.entries(!_.isEmpty(selectedOptionType) ? selectedOptionType : featureList[selectedFeature])
+                              ?.reduce((pre: any, cen: any) => {
+                                if (cen[0] === 'roi') {
+                                  const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
+                                  const { type } = feature;
+                                  let { value: val, } = value?.[cen[0]] || {};
+                                  // realValue：没旋转的 中心点x,y
+                                  let realValue = val;
+                                  if (type === 'RECT') {
+                                    // 矩形
+                                    val = {
+                                      ...val,
+                                      x: { ...val?.x, value: val?.x?.value - val?.width?.value / 2 },
+                                      y: { ...val?.y, value: val?.y?.value - val?.height?.value / 2 }
+                                    }
+                                    if ([90, 270].includes(range)) {
+                                      // 有旋转
+                                      val = {
+                                        x: { ...val?.x, value: val?.x?.value + val?.width?.value / 2 - val?.height?.value / 2 },
+                                        y: { ...val?.y, value: val?.y?.value - val?.width?.value / 2 + val?.height?.value / 2 },
+                                        width: { ...val?.width, value: val?.height?.value },
+                                        height: { ...val?.height, value: val?.width?.value }
+                                      };
+                                    };
+                                    /****************通过roi更新图层******************/
+                                    const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
+                                    const shape = Object.entries(val).reduce((pre: any, cen: any) => {
+                                      return Object.assign({}, pre, {
+                                        [cen[0]]: cen[1]?.value
+                                      });
+                                    }, {});
+                                    if (
+                                      Math.min(shape?.x, shape?.y) < 0 ||
+                                      (shape?.x + shape?.width) > img?.width ||
+                                      (shape?.y + shape?.height) > img?.height
+                                    ) {
+                                      message.warning('标注位置 不能超出图片范围！');
+                                    } else {
+                                      feature.style['direction'] = range;
+                                      feature.updateShape(shape);
+                                      const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
+                                      targetText?.updatePosition({ x: shape.x, y: shape.y });
+                                      // 删除delete-icon
+                                      gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
+                                      // 先删除direction-icon
+                                      gMap.markerLayer.removeMarkerById(feature.props.directionMarkerId);
+                                      // 后添加direction-icon
+                                      const gFirstMarker = new AILabel.Marker(
+                                        feature?.props?.directionMarkerId, // id
+                                        {
+                                          src: range === 90 ?
+                                            directionRightIcon
+                                            :
+                                            range === 180 ?
+                                              directionBottomIcon
+                                              :
+                                              range === 270 ?
+                                                directionLeftIcon
+                                                :
+                                                directionTopIcon,
+                                          position: { x: shape.x, y: shape.y },
+                                          offset: {
+                                            x: -20,
+                                            y: 0
+                                          }
+                                        }, // markerInfo
+                                        { name: 'direction-icon注记' } // props
+                                      );
+                                      gMap.markerLayer.addMarker(gFirstMarker);
+                                    }
+                                    /****************通过roi更新图层******************/
+                                  } else if (type === 'LINE') {
+                                    // 线
+                                    /****************通过roi更新图层******************/
+                                    const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
+                                    const shape = {
+                                      ...feature?.shape,
+                                      start: {
+                                        x: value?.['roi']?.value?.x1?.value,
+                                        y: value?.['roi']?.value?.y1?.value
+                                      },
+                                      end: {
+                                        x: value?.['roi']?.value?.x2?.value,
+                                        y: value?.['roi']?.value?.y2?.value
+                                      }
+                                    };
+                                    feature.updateShape(shape);
+                                    const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
+                                    targetText?.updatePosition({ ...shape?.start });
+                                    // 删除delete-icon
+                                    gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
+                                    /****************通过roi更新图层******************/
+                                  } else if (type === 'POINT') {
+                                    // 点
+                                    /****************通过roi更新图层******************/
+                                    const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
+                                    const shape = {
+                                      ...feature?.shape,
+                                      x: value?.['roi']?.value?.x?.value,
+                                      y: value?.['roi']?.value?.y?.value,
+                                      sr: value?.['roi']?.value?.sr?.value
+                                    };
+                                    feature.updateShape(shape);
+                                    const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
+                                    targetText?.updatePosition({ ...shape?.start });
+                                    // 删除delete-icon
+                                    gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
+                                    /****************通过roi更新图层******************/
+                                  }
+
+                                  return Object.assign({}, pre, {
+                                    [cen[0]]: {
+                                      // ...cen[1],
+                                      value: val,
+                                      realValue: realValue
+                                    }
+                                  });
+                                };
+                                return Object.assign({}, pre, {
+                                  [cen[0]]: {
+                                    ...cen[1],
+                                    value: value[cen[0]]?.value
+                                  }
+                                })
+                              }, {
+                                option_type: { value: value?.['option_type']?.value },
+                                "找线方向": { value: range },
+                                localPath: { value: localPath }
+                              })
+                            :
+                            {
+                              roi: {
+                                value: value?.['roi']?.value,
+                                realValue: value?.['roi']?.value
+                              },
+                              localPath: { value: localPath }
+                            }
+                        };
+                        setGetDataFun((prev: any) => ({
+                          ...prev,
+                          zoom: gMap.zoom,
+                          value: { ...prev?.value, ...result }
+                        }));
+                        setFeatureList(result);
+                        onCancel();
+                      }
                     }).catch((err) => {
                       console.log(err)
                     });

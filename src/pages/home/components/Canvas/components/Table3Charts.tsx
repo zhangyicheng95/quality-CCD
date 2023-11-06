@@ -263,7 +263,7 @@ const Table3Charts: React.FC<Props> = (props: any) => {
                                             maxWidth: tableSizeSelf?.[index],
                                         }
                                         : {},
-                                    !!color ? (valueColor === 'value' ? { color } : { backgroundColor: color }) : {}
+                                    !!color ? (valueColor === 'value' ? { color } : { backgroundColor: color, color: '#fff' }) : {}
                                 )}
                             >
                                 {
@@ -279,7 +279,7 @@ const Table3Charts: React.FC<Props> = (props: any) => {
                                                     className={`charts-body-td-title`}
                                                     title={value?.length > 15 ? value : ''}
                                                     style={Object.assign(
-                                                        !!color ? (valueColor === 'value' ? { color } : { backgroundColor: color }) : {},
+                                                        !!color ? (valueColor === 'value' ? { color } : { backgroundColor: color, color: '#fff' }) : {},
                                                         des_bordered ? { borderWidth: '1px' } : {}
                                                     )}
                                                     placement={"top"}
@@ -303,7 +303,7 @@ const Table3Charts: React.FC<Props> = (props: any) => {
                                                 className={`charts-body-td-title`}
                                                 title={val?.length > 15 ? val : ''}
                                                 style={Object.assign(
-                                                    !!color ? (valueColor === 'value' ? { color } : { backgroundColor: color }) : {},
+                                                    !!color ? (valueColor === 'value' ? { color } : { backgroundColor: color, color: '#fff' }) : {},
                                                     des_bordered ? { borderWidth: '1px' } : {}
                                                 )}
                                                 placement={"top"}

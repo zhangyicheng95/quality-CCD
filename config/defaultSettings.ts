@@ -11,7 +11,7 @@ const Settings: LayoutSettings & {
   "fixedHeader": true,
   "fixSiderbar": true,
   "pwa": false,
-  "headerHeight": 80,
+  "headerHeight": 40,
   "splitMenus": false,
   "footerRender": false
 };

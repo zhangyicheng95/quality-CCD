@@ -175,9 +175,7 @@ const iconDom = (
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = (props) => {
   const { initialState, setInitialState } = props;
-  return {
-    // headerRender: () => null,
-    headerHeight: 40,
+  return Object.assign({
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: {
@@ -185,11 +183,7 @@ export const layout: RunTimeLayoutConfig = (props) => {
     },
     footerRender: () => null,
     onPageChange: () => {
-      // const { location } = history;
-      // 如果没有登录，重定向到 login
-      // if (!initialState?.currentUser && location.pathname !== loginPath) {
-      //   history.push(loginPath);
-      // }
+
     },
     links: isDev
       ? [
@@ -241,5 +235,8 @@ export const layout: RunTimeLayoutConfig = (props) => {
     ...initialState?.settings,
     logo: iconDom,
     title: initialState?.title || 'UBVision',
-  };
+  }, location.hash?.indexOf('inIframe') > -1 ? {
+    headerRender: () => null,
+    headerHeight: 0,
+  } : {});
 };

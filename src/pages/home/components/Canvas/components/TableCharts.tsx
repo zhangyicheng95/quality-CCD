@@ -86,7 +86,7 @@ const TableCharts: React.FC<Props> = (props: any) => {
                                         className="charts-body-td flex-box-center"
                                         title={text?.length > 10 ? text : ''}
                                         style={Object.assign(
-                                            !!color ? (valueColor === 'value' ? { color } : { backgroundColor: color }) : {},
+                                            !!color ? (valueColor === 'value' ? { color } : { backgroundColor: color, color: '#fff' }) : {},
                                             des_bordered ? { borderWidth: '1px' } : {}
                                         )}
                                     >
@@ -101,7 +101,7 @@ const TableCharts: React.FC<Props> = (props: any) => {
                                     className="charts-body-td flex-box-center"
                                     title={text.length > 10 ? text : ''}
                                     style={Object.assign(
-                                        !!color ? (valueColor === 'value' ? { color } : { backgroundColor: color }) : {},
+                                        !!color ? (valueColor === 'value' ? { color } : { backgroundColor: color, color: '#fff' }) : {},
                                         des_bordered ? { borderWidth: '1px' } : {}
                                     )}
                                 >

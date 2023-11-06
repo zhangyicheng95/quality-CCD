@@ -5,15 +5,15 @@ import * as _ from 'lodash';
 import styles from "./index.module.less";
 import { connect } from "umi";
 import { useHistory } from "react-router";
-import { cryptoEncryption, getLoginTime, getUserData } from "@/utils/utils";
+import { cryptoEncryption, getLoginTime } from "@/utils/utils";
 
 const HomeLayout: React.FC<any> = (props) => {
   const { children, initialState = {}, setInitialState, dispatch } = props;
   const { location: historyLocation } = useHistory();
   const { params = {} } = initialState;
-  const { quality_name, name, id } = params;
+  const { name, id } = params;
   const [form] = Form.useForm();
-  const { validateFields, setFieldsValue, resetFields } = form;
+  const { validateFields, resetFields } = form;
   const timerRef = useRef<any>();
   const [list, setList] = useState<any>([]);
   const [projectList, setProjectList] = useState([]);
@@ -187,7 +187,6 @@ const HomeLayout: React.FC<any> = (props) => {
   const handleOk = () => {
     validateFields()
       .then((values) => {
-        const userData = getUserData();
         const { password, ...rest } = values;
         login({
           ...rest,
@@ -202,7 +201,6 @@ const HomeLayout: React.FC<any> = (props) => {
             setCurrentLoginStatus(true);
           } else {
             message.error(res?.msg || res?.message || '接口异常');
-            console.log('输入的', cryptoEncryption(password), '正确的', userData)
           }
         });
       });
