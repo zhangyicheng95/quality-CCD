@@ -11,7 +11,7 @@ interface Props {
   onCancel: any;
 }
 
-const PlatFormModal: React.FC<Props> = (props) => {
+const PlatFormFabricModal: React.FC<Props> = (props) => {
   const {
     data,
     visible,
@@ -65,18 +65,10 @@ const PlatFormModal: React.FC<Props> = (props) => {
                           alias: "cy",
                           value: Number(cen[1]?.realValue?.y?.value?.toFixed(2))
                         },
-                      }, type === 'RECT' ? (
-                        props?.type === 'AXIS' ?
-                          {
-                            xLength: { alias: 'xLength', value: Number(cen[1]?.realValue?.xLength?.value?.toFixed(2)) },
-                            yLength: { alias: 'yLength', value: Number(cen[1]?.realValue?.yLength?.value?.toFixed(2)) }
-                          }
-                          :
-                          {
-                            width: { alias: 'width', value: Number(cen[1]?.realValue?.width?.value?.toFixed(2)) },
-                            height: { alias: 'height', value: Number(cen[1]?.realValue?.height?.value?.toFixed(2)) }
-                          }
-                      ) : {
+                      }, type === 'RECT' ? {
+                        width: { alias: 'width', value: Number(cen[1]?.realValue?.width?.value?.toFixed(2)) },
+                        height: { alias: 'height', value: Number(cen[1]?.realValue?.height?.value?.toFixed(2)) }
+                      } : {
                         ..._.omit(_.omit(cen[1]?.realValue, "x"), "y"),
                       })
                     }
@@ -139,4 +131,4 @@ const PlatFormModal: React.FC<Props> = (props) => {
   );
 };
 
-export default PlatFormModal;
+export default PlatFormFabricModal;

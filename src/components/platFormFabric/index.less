@@ -1,0 +1,24 @@
+.plat-form-modal {
+    :global {
+        .ant-modal {
+            height: calc(100vh - 48px);
+
+            .ant-modal-content {
+                height: 100%;
+
+                .ant-modal-header {
+                    height: 55px;
+                }
+
+                .ant-modal-body {
+                    height: calc(100% - 110px);
+                    padding: 0;
+                }
+
+                .ant-modal-footer {
+                    height: 55px;
+                }
+            }
+        }
+    }
+}

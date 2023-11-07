@@ -99,7 +99,7 @@ const Measurement: React.FC<Props> = (props: any) => {
               max={max}
               min={min}
               // onChange={(e) => { handleNumberChange(e, `num_${index}`, index) }}
-              onKeyUp={(e) => turnIpPOS(e, index)}
+              // onKeyUp={(e) => turnIpPOS(e, index)}
               onFocus={() => setFocus((prev: any) => Object.assign({}, prev, { [`refnum_${index}`]: true }))}
               onBlur={(e) => {
                 const val = precision === 0 ? Math.floor(Number(e?.target?.value)) : Number(e?.target?.value);

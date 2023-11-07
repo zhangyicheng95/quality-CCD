@@ -545,3 +545,31 @@ export function cryptoDecrypt(message: string) {
     var decodeStr = Base64.decode(message);
     return decodeStr;
 }
+// ptSrc: 圆上某点(初始点);
+// ptRotationCenter: 圆心点;
+// angle: 旋转角度°  -- [angle * M_PI / 180]:将角度换算为弧度
+// 【注意】angle 逆时针为正，顺时针为负
+export function rotatePoint(ptSrc: { x: number, y: number }, ptRotationCenter: { x: number, y: number }, angle: number) {
+    var a = ptRotationCenter.x
+    var b = ptRotationCenter.y
+    var x0 = ptSrc.x
+    var y0 = ptSrc.y
+    var rx = a + (x0 - a) * Math.cos(angle * Math.PI / 180) - (y0 - b) * Math.sin(angle * Math.PI / 180);
+    var ry = b + (x0 - a) * Math.sin(angle * Math.PI / 180) + (y0 - b) * Math.cos(angle * Math.PI / 180);
+    var json = { x: rx, y: ry }
+    return json;
+}
+// 计算两点之间的距离
+export function twoPointDistance(p1: { x: number, y: number }, p2: { x: number, y: number }) {
+    let dep = Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
+    return dep;
+}
+//参数（起点坐标，角度，斜边长（距离）） 这是一个基本的三角函数应用
+export function getNewPoint(pointB: { x: number, y: number }, angle: number, bevel: number) {
+    //在Flash中顺时针角度为正，逆时针角度为负
+    //换算过程中先将角度转为弧度
+    var radian: number = angle * Math.PI / 180;
+    var xMargin: number = Math.cos(radian) * bevel;
+    var yMargin: number = Math.sin(radian) * bevel;
+    return { x: pointB.x + xMargin, y: pointB.y + yMargin };
+}

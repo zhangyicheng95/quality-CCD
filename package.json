@@ -1,6 +1,6 @@
 {
   "name": "ant-design-pro",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "private": true,
   "description": "An out-of-box UI solution for enterprise applications",
   "scripts": {
@@ -69,6 +69,7 @@
     "bizcharts-plugin-slider": "^2.1.1-beta.1",
     "classnames": "^2.3.0",
     "echarts": "^5.4.0",
+    "fabric": "^5.3.0",
     "file-saver": "^2.0.5",
     "gg-editor": "^2.0.2",
     "html2canvas": "^1.4.1",

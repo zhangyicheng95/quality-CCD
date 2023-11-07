@@ -919,16 +919,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 processText.innerText = `自动截图上传中`;
 
                 var cameraList = [
-                    new THREE.Vector3(max * -scale, 0, 0),
-                    new THREE.Vector3(0, 0, max * scale),
-
-                    new THREE.Vector3(0, max * scale, 0),
-                    new THREE.Vector3(0, 0, max * scale),
-                    new THREE.Vector3(0, max * -scale, 0),
-
-                    new THREE.Vector3(max * scale, 0, 0),
-                    new THREE.Vector3(0, 0, max * -scale),
-
+                    new THREE.Vector3(0, 0, max * scale), // 顶部
+                    new THREE.Vector3(max * -scale, 0, 0), // 右
+                    new THREE.Vector3(0, 0, max * -scale), // 底部
+                    new THREE.Vector3(max * scale, 0, 0), // 左
+                    new THREE.Vector3(0, max * scale, 0), // 后
+                    new THREE.Vector3(0, max * -scale, 0), // 正
                 ];
                 loopScreenshot(cameraList, 0, basicPosition, maskBox);
             }
@@ -1585,60 +1581,60 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         return { length, width, height, max, cameraScale };
     };
     // 点云截图
-    const captureScreenshot = (type?: any) => {
+    const captureScreenshot = (type?: any, index?: any) => {
         return new Promise((resolve, reject) => {
-
-            // requestAnimationFrame 确保截图在页面完全加载和渲染之后进行
-            requestAnimationFrame(function () {
-                const shareContent: any = dom?.current;
-                const maskBox: any = document?.querySelector(".three-mask");
-                const maskStatus = maskBox.style.display;
-                maskBox.style.display = 'none';
-                const width = shareContent?.offsetWidth;
-                const height = shareContent?.offsetHeight;
-                const scale = 2; // 也可以使用设备像素比
-                html2canvas(shareContent, {
-                    scale: scale,
-                    useCORS: true, // 是否尝试使⽤CORS从服务器加载图像
-                    allowTaint: false, // 是否允许跨域图像。会污染画布，导致⽆法使⽤canvas.toDataURL ⽅法
-                    width: width,
-                    height: height,
-                }).then((canvas: any) => {
-                    let imageDataURL = canvas.toDataURL('image/png', { quality: 1 });
+            if ([0, 1, 2, 3].includes(index)) {
+                // 将射线隐藏
+                (measurements || []).forEach((line: any) => {
+                    scene.current?.remove?.(line);
+                });
+                // requestAnimationFrame 确保截图在页面完全加载和渲染之后进行
+                requestAnimationFrame(function () {
+                    const box: any = renderer.current.domElement;
+                    var imageDataURL = box?.toDataURL('image/png');
                     if (type === 'download') {
                         var link = document.createElement('a');
                         link.href = imageDataURL;
                         link.download = `output_${uuid()}.png`;
                         link.click();
                     }
+                    // 将射线显示回来
+                    (measurements || []).forEach((line: any) => {
+                        scene.current?.add?.(line);
+                    });
                     imageDataURL = imageDataURL.split('data:image/png;base64,')[1];
                     resolve(imageDataURL);
-                    maskBox.style.display = maskStatus;
                 });
-            });
-
-
-            // 将射线隐藏
-            // (measurements || []).forEach((line: any) => {
-            //     scene.current?.remove?.(line);
-            // });
-            // requestAnimationFrame 确保截图在页面完全加载和渲染之后进行
-            // requestAnimationFrame(function () {
-            //     const box: any = renderer.current.domElement;
-            //     var imageDataURL = box?.toDataURL('image/png');
-            //     if (type === 'download') {
-            //         var link = document.createElement('a');
-            //         link.href = imageDataURL;
-            //         link.download = `output_${uuid()}.png`;
-            //         link.click();
-            //     }
-            //     // 将射线显示回来
-            //     (measurements || []).forEach((line: any) => {
-            //         scene.current?.add?.(line);
-            //     });
-            //     imageDataURL = imageDataURL.split('data:image/png;base64,')[1];
-            //     resolve(imageDataURL);
-            // });
+            } else {
+                // requestAnimationFrame 确保截图在页面完全加载和渲染之后进行
+                requestAnimationFrame(function () {
+                    const shareContent: any = dom?.current;
+                    const maskBox: any = document?.querySelector(".three-mask");
+                    const maskStatus = maskBox.style.display;
+                    maskBox.style.display = 'none';
+                    const width = shareContent?.offsetWidth;
+                    const height = shareContent?.offsetHeight;
+                    const scale = 2; // 也可以使用设备像素比
+                    html2canvas(shareContent, {
+                        scale: scale,
+                        useCORS: true, // 是否尝试使⽤CORS从服务器加载图像
+                        allowTaint: false, // 是否允许跨域图像。会污染画布，导致⽆法使⽤canvas.toDataURL ⽅法
+                        width: width,
+                        height: height,
+                    }).then((canvas: any) => {
+                        let imageDataURL = canvas.toDataURL('image/png', { quality: 1 });
+                        if (type === 'download') {
+                            var link = document.createElement('a');
+                            link.href = imageDataURL;
+                            link.download = `output_${uuid()}.png`;
+                            link.click();
+                        }
+                        imageDataURL = imageDataURL.split('data:image/png;base64,')[1];
+                        resolve(imageDataURL);
+                        maskBox.style.display = maskStatus;
+                    });
+                });
+            }
         });
     };
     // 旋转视角-自动截图
@@ -1649,7 +1645,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             return;
         }
         animateCamera(list[index], 500);
-        captureScreenshot().then((base64: any) => {
+        captureScreenshot('', index).then((base64: any) => {
             // 首先走保存
             if (!!fetchType && !!xName) {
                 btnFetch(fetchType, xName, { image: encodeURIComponent(base64) }, { headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then((res: any) => {
