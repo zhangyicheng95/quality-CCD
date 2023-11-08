@@ -1294,6 +1294,27 @@
   }
 }
 
+.treeCharts {
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  position: relative;
+
+  :global {
+    .ant-tree {
+      height: 100%;
+      width: 100%;
+      overflow: auto;
+
+      .ant-tree-switcher {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+}
+
 .descriptionCharts {
   width: 100%;
   height: 100%;

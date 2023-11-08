@@ -426,6 +426,34 @@ export function stringToNum(letter: any) {
 }
 
 /**
+ * 从树形组件中深度便利获取某个字段
+ * @param data 要进行便利的list数组
+ * @param key 要拿出的key
+ * @param searchKey 深度便利的key
+ * @returns 
+ */
+export function getKeyFromTree(data: any, key = 'key', searchKey = 'children') {
+    let ids: any = [];
+    const fetchIds = (list: any, index: number) => {
+        if (!list[index]) {
+            return;
+        }
+        ids.push(list[index]?.[key]);
+        if (!!list[index]?.[searchKey] && list[index]?.[searchKey]?.length) {
+            for (let i = 0; i < list[index]?.[searchKey].length; i++) {
+                fetchIds(list[index]?.[searchKey], i);
+            }
+        } else {
+            fetchIds(list, index + 1);
+        }
+    };
+    for (let i = 0; i < data.length; i++) {
+        fetchIds(data, i);
+    }
+    return Array.from(new Set(ids));
+}
+
+/**
  * 公共导出方法，支持ie10
  * @param data
  * @param name

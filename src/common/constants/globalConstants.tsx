@@ -7,6 +7,8 @@ import barIcon from '@/assets/dashboard-imgs/bar.png';
 import pieIcon from '@/assets/dashboard-imgs/pie.png';
 import tableIcon from '@/assets/dashboard-imgs/table.png';
 import table2Icon from '@/assets/dashboard-imgs/table2.png';
+import table3Icon from '@/assets/dashboard-imgs/table3.png';
+import treeIcon from '@/assets/dashboard-imgs/tree.png';
 import threeIcon from '@/assets/dashboard-imgs/three.png';
 import alertIcon from '@/assets/dashboard-imgs/alert.png';
 import buttonIcon from '@/assets/dashboard-imgs/button.png';
@@ -79,7 +81,12 @@ export const windowTypeList: any = [
   {
     value: 'table3',
     label: '多分组表格窗口',
-    icon: table2Icon,
+    icon: table3Icon,
+  },
+  {
+    value: 'tree',
+    label: '树形窗口',
+    icon: treeIcon,
   },
   {
     value: 'three',

@@ -32,32 +32,30 @@ const DescriptionCharts: React.FC<Props> = (props: any) => {
             id={`echart-${id}`}
             className={`${styles.descriptionCharts} flex-box-center`}
         >
-            {
-                <Descriptions
-                    bordered={des_bordered || false}
-                    column={des_column || 2}
-                    layout={des_layout || 'horizontal'}
-                    size={des_size || 'default'}
-                    style={{ height: '100%', width: '100%', overflowY: 'auto' }}
-                >
-                    {
-                        basicInfoData.concat(dataValue).map((item: any, index: number) => {
-                            const { id = guid(), name, value, color } = item;
-                            if (!_.isObject(value?.[0])) {
-                                return <Descriptions.Item label={name} key={id} style={Object.assign({ fontSize }, !!color ? { color } : {})}>
-                                    {value}
-                                </Descriptions.Item>
-                            } else {
-                                // @ts-ignore
-                                const { value, color } = item?.value[0];
-                                return <Descriptions.Item label={name} key={id} style={Object.assign({ fontSize }, !!color ? { color } : {})}>
-                                    {value}
-                                </Descriptions.Item>
-                            }
-                        })
-                    }
-                </Descriptions>
-            }
+            <Descriptions
+                bordered={des_bordered || false}
+                column={des_column || 2}
+                layout={des_layout || 'horizontal'}
+                size={des_size || 'default'}
+                style={{ height: '100%', width: '100%', overflowY: 'auto' }}
+            >
+                {
+                    basicInfoData.concat(dataValue).map((item: any, index: number) => {
+                        const { id = guid(), name, value, color } = item;
+                        if (!_.isObject(value?.[0])) {
+                            return <Descriptions.Item label={name} key={id} style={Object.assign({ fontSize }, !!color ? { color } : {})}>
+                                {value}
+                            </Descriptions.Item>
+                        } else {
+                            // @ts-ignore
+                            const { value, color } = item?.value[0];
+                            return <Descriptions.Item label={name} key={id} style={Object.assign({ fontSize }, !!color ? { color } : {})}>
+                                {value}
+                            </Descriptions.Item>
+                        }
+                    })
+                }
+            </Descriptions>
         </div>
     );
 
