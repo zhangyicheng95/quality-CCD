@@ -415,6 +415,16 @@ export function formatJson(jsonObj: any, callback?: any) {
     return formatted.trim();
 }
 
+// 数字转字母
+export function numToString(num: number) {
+    return String.fromCharCode(64 + num);
+}
+
+// 字母转数字
+export function stringToNum(letter: any) {
+    return letter.toUpperCase().charCodeAt() - 64;
+}
+
 /**
  * 公共导出方法，支持ie10
  * @param data

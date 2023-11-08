@@ -906,7 +906,8 @@ const Home: React.FC<any> = (props: any) => {
           dataZoom, fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
           password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
           basicInfoData = [{ id: guid(), name: '', value: '' }], ifNeedClear, operationLock,
-          ifUpdateProject, magnifierSize, listType, valueColor,
+          ifUpdateProject, magnifierSize, listType, valueColor, markNumber,
+          markNumberLeft, markNumberTop,
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1127,7 +1128,7 @@ const Home: React.FC<any> = (props: any) => {
                                                         id={key}
                                                         data={{
                                                           defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                          dataValue, windowControl,
+                                                          dataValue, windowControl, markNumber, markNumberLeft, markNumberTop,
                                                           setContentList, magnifier, comparison, magnifierSize
                                                         }}
                                                       />
@@ -1461,7 +1462,7 @@ const Home: React.FC<any> = (props: any) => {
       fontColor, interlacing = false, modelRotate = false, modelScale = false, modelRotateScreenshot = false,
       password = '', passwordHelp = '', ifShowHeader = false, ifShowColorList = false,
       headerBackgroundColor = 'default', ifNeedClear, operationLock, ifUpdateProject,
-      magnifierSize, logSize, listType, valueColor,
+      magnifierSize, logSize, listType, valueColor, markNumber = false, markNumberLeft, markNumberTop
     } = values;
     if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
       try {
@@ -1492,7 +1493,7 @@ const Home: React.FC<any> = (props: any) => {
         fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
         password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
         ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
-        valueColor,
+        valueColor, markNumber, markNumberLeft, markNumberTop
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1511,7 +1512,7 @@ const Home: React.FC<any> = (props: any) => {
             fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
             password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
             ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
-            valueColor,
+            valueColor, markNumber, markNumberLeft, markNumberTop
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -1541,7 +1542,7 @@ const Home: React.FC<any> = (props: any) => {
       fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false, modelRotateScreenshot: false,
       password: undefined, passwordHelp: undefined, ifShowHeader: false, ifShowColorList: false,
       headerBackgroundColor: 'default', ifNeedClear: false, operationLock: false, ifUpdateProject: false,
-      magnifierSize: 1, logSize: 50, listType: 'line',
+      magnifierSize: 1, logSize: 50, listType: 'line', markNumber: false, markNumberLeft: 1, markNumberTop: 1
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -2126,6 +2127,39 @@ const Home: React.FC<any> = (props: any) => {
                       >
                         <Switch />
                       </Form.Item>
+                      <Form.Item
+                        name="markNumber"
+                        label="显示图示"
+                        valuePropName="checked"
+                      >
+                        <Switch />
+                      </Form.Item>
+                      {
+                        !!form.getFieldValue('markNumber') ?
+                          <Fragment>
+                            <Form.Item
+                              name="markNumberTop"
+                              label="顶部图示长度"
+                              rules={[{ required: true, message: '顶部图示长度' }]}
+                            >
+                              <InputNumber
+                                min={1}
+                                placeholder="顶部图示长度"
+                              />
+                            </Form.Item>
+                            <Form.Item
+                              name="markNumberLeft"
+                              label="左侧图示长度"
+                              rules={[{ required: true, message: '左侧图示长度' }]}
+                            >
+                              <InputNumber
+                                min={1}
+                                placeholder="左侧图示长度"
+                              />
+                            </Form.Item>
+                          </Fragment>
+                          : null
+                      }
                     </Fragment>
                     : null
                 }

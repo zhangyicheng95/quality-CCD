@@ -3,7 +3,12 @@ import { Button, Image, message, Modal, Skeleton } from 'antd';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
-import { BlockOutlined, ExpandOutlined, EyeOutlined, LeftCircleOutlined, RightCircleOutlined, SwapOutlined, ZoomInOutlined } from '@ant-design/icons';
+import {
+    BlockOutlined, ExpandOutlined, EyeOutlined, LeftCircleOutlined,
+    RightCircleOutlined, SwapOutlined, ZoomInOutlined
+} from '@ant-design/icons';
+import img1 from './1.png';
+import { numToString } from '@/utils/utils';
 
 interface Props {
     data: any,
@@ -15,7 +20,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id } = props;
     let {
         defaultImg, dataValue = '', windowControl, setContentList, magnifier = false,
-        comparison, magnifierSize = 4,
+        comparison, magnifierSize = 4, markNumber, markNumberLeft = 6, markNumberTop = 24,
     } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
@@ -171,16 +176,55 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     return (
         <div
             id={`echart-${id}`}
-            className={`${styles.imgCharts} flex-box-center`}
+            className={`${styles.imgCharts}`}
             // @ts-ignore
             ref={dom}
         >
             {
-                (!!dataValue || !!defaultImg) ?
-                    <Fragment>
+                markNumber ?
+                    <div className="flex-box img-box-mark-top">
                         {
-                            (magnifier || magnifierVisible) ?
-                                <div className="img-box">
+                            Array.from({ length: markNumberTop || 24 }).map((item: any, index: number) => {
+                                return <div className="flex-box-center img-box-mark-item" key={index}>
+                                    {index + 1}
+                                </div>
+                            })
+                        }
+                    </div>
+                    : null
+            }
+            <div className="flex-box img-box-mark-body">
+                {
+                    markNumber ?
+                        <div className="flex-box img-box-mark-left">
+                            {
+                                Array.from({ length: markNumberLeft || 6 }).map((item: any, index: number) => {
+                                    return <div className="flex-box-center img-box-mark-item" key={index}>
+                                        {numToString(index + 1)}
+                                    </div>
+                                })
+                            }
+                        </div>
+                        : null
+                }
+                {
+                    (!!dataValue || !!defaultImg) ?
+                        <Fragment>
+                            {
+                                (magnifier || magnifierVisible) ?
+                                    <div className="img-box">
+                                        <Image
+                                            src={dataValue || defaultImg}
+                                            alt="logo"
+                                            style={
+                                                fontSize > 1 ?
+                                                    { width: '100%', height: 'auto' } :
+                                                    { width: 'auto', height: '100%' }
+                                            }
+                                        />
+                                        <div className="mask" />
+                                    </div>
+                                    :
                                     <Image
                                         src={dataValue || defaultImg}
                                         alt="logo"
@@ -189,48 +233,37 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                                 { width: '100%', height: 'auto' } :
                                                 { width: 'auto', height: '100%' }
                                         }
+                                        preview={false}
                                     />
-                                    <div className="mask" />
-                                </div>
-                                :
-                                <Image
-                                    src={dataValue || defaultImg}
-                                    alt="logo"
-                                    style={
-                                        fontSize > 1 ?
-                                            { width: '100%', height: 'auto' } :
-                                            { width: 'auto', height: '100%' }
-                                    }
-                                    preview={false}
+                            }
+                            <div className="flex-box img-box-btn-box">
+                                <ZoomInOutlined
+                                    className={`img-box-btn-item ${magnifierVisible ? "img-box-btn-item-selected" : ""}`}
+                                    onClick={() => setMagnifierVisible((prev: any) => !prev)}
                                 />
+                                <ExpandOutlined className='img-box-btn-item' onClick={() => setVisible(true)} />
+                            </div>
+                        </Fragment>
+                        :
+                        <Skeleton.Image
+                            active={true}
+                        />
+                }
+                <div style={{ display: 'none' }}>
+                    <Image.PreviewGroup
+                        preview={{
+                            visible,
+                            current: urlList.length - 1,
+                            onVisibleChange: vis => setVisible(vis)
+                        }}
+                    >
+                        {
+                            (urlList || []).map((url: string) => {
+                                return <Image src={url} alt={url} key={url} />
+                            })
                         }
-                        <div className="flex-box img-box-btn-box">
-                            <ZoomInOutlined
-                                className={`img-box-btn-item ${magnifierVisible ? "img-box-btn-item-selected" : ""}`}
-                                onClick={() => setMagnifierVisible((prev: any) => !prev)}
-                            />
-                            <ExpandOutlined className='img-box-btn-item' onClick={() => setVisible(true)} />
-                        </div>
-                    </Fragment>
-                    :
-                    <Skeleton.Image
-                        active={true}
-                    />
-            }
-            <div style={{ display: 'none' }}>
-                <Image.PreviewGroup
-                    preview={{
-                        visible,
-                        current: urlList.length - 1,
-                        onVisibleChange: vis => setVisible(vis)
-                    }}
-                >
-                    {
-                        (urlList || []).map((url: string) => {
-                            return <Image src={url} alt={url} key={url} />
-                        })
-                    }
-                </Image.PreviewGroup>
+                    </Image.PreviewGroup>
+                </div>
             </div>
             {
                 !!windowControl ?
