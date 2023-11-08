@@ -35,15 +35,35 @@ const PlatFormModal: React.FC<Props> = (props) => {
           return false;
         }
         const { feat, pen, zoom, value, } = getDataFun;
-        const data1 = ((feat && feat().map((item: any) => _.omit(item, 'layer'))) || []).map((item: any) => {
-          return Object.assign({}, item, {
-            props: Object.assign({}, item?.props, {
-              initParams: value?.[item.id],
-            }, !!value?.[item.id]?.option_type ? {
-              label: value?.[item.id]?.option_type?.value
-            } : {})
-          })
-        });
+        const data1 = ((feat && feat().map((item: any) => _.omit(item, 'layer'))) || [])
+          .map((item: any) => {
+            const { id, props, type, shape } = item;
+            if (type === 'LINE') {
+              if (!shape?.start?.x || !shape?.end?.x) {
+                return null;
+              }
+            } else if (type === 'RECT') {
+              if (!shape?.x || !shape?.width) {
+                return null;
+              }
+            } else if (type === 'CIRCLE') {
+              if (!shape?.x || !shape?.y) {
+                return null;
+              }
+            } else if (type === 'POINT') {
+              if (!shape?.cx || !shape?.cy) {
+                return null;
+              }
+            }
+            return Object.assign({}, item, {
+              props: Object.assign({}, props, {
+                initParams: value?.[id],
+              }, !!value?.[id]?.option_type ? {
+                label: value?.[id]?.option_type?.value
+              } : {})
+            });
+          }).filter(Boolean);
+        console.log(data1);
         const data2 = (pen && pen()) || [];
         const params = Object.assign({}, data,
           {
