@@ -7,7 +7,6 @@ import {
     BlockOutlined, ExpandOutlined, EyeOutlined, LeftCircleOutlined,
     RightCircleOutlined, SwapOutlined, ZoomInOutlined
 } from '@ant-design/icons';
-import img1 from './1.png';
 import { numToString } from '@/utils/utils';
 
 interface Props {
