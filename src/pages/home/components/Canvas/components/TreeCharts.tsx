@@ -18,47 +18,47 @@ const TreeCharts: React.FC<Props> = (props: any) => {
     if (process.env.NODE_ENV === 'development') {
         dataValue = [
             {
-                title: 'parent 1',
+                name: 'parent 1',
                 key: '0-0',
                 children: [
                     {
-                        title: 'parent 1-0',
+                        name: 'parent 1-0',
                         key: '0-0-0',
                         children: [
                             {
-                                title: 'leaf',
+                                name: 'leaf',
                                 key: '0-0-0-0',
                             },
                             {
-                                title: 'leaf',
+                                name: 'leaf',
                                 key: '0-0-0-1',
                             },
                             {
-                                title: 'leaf',
+                                name: 'leaf',
                                 key: '0-0-0-2',
                             },
                         ],
                     },
                     {
-                        title: 'parent 1-1',
+                        name: 'parent 1-1',
                         key: '0-0-1',
                         children: [
                             {
-                                title: 'leaf',
+                                name: 'leaf',
                                 key: '0-0-1-0',
                             },
                         ],
                     },
                     {
-                        title: 'parent 1-2',
+                        name: 'parent 1-2',
                         key: '0-0-2',
                         children: [
                             {
-                                title: 'leaf',
+                                name: 'leaf',
                                 key: '0-0-2-0',
                             },
                             {
-                                title: 'leaf',
+                                name: 'leaf',
                                 key: '0-0-2-1',
                             },
                         ],
@@ -66,15 +66,15 @@ const TreeCharts: React.FC<Props> = (props: any) => {
                 ],
             },
             {
-                title: 'parent 2',
+                name: 'parent 2',
                 key: '1-0',
                 children: [
                     {
-                        title: 'leafleafleafleaf',
+                        name: 'leafleafleafleaf',
                         key: '1-0-0',
                     },
                     {
-                        title: 'leaf',
+                        name: 'leaf',
                         key: '1-0-1',
                     },
                 ],
@@ -102,6 +102,7 @@ const TreeCharts: React.FC<Props> = (props: any) => {
                 showLine
                 defaultExpandAll
                 switcherIcon={<DownOutlined />}
+                fieldNames={{ title: "name" }}
                 // defaultExpandedKeys={treeData}
                 treeData={dataValue}
             />

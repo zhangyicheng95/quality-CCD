@@ -1222,6 +1222,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           <Form.Item
                             name={`找线方向`}
                             label="找线方向"
+                            tooltip="遵守左手法制，大拇指方向为找线方向"
                             style={['POINT', 'LINE'].includes(feature?.type) ? { display: 'none' } : {}}
                             initialValue={featureList?.[selectedFeature]?.['找线方向']?.value || 0}
                             rules={[{ required: true, message: "找线方向" }]}
