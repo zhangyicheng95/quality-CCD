@@ -86,8 +86,8 @@ const TreeCharts: React.FC<Props> = (props: any) => {
 
     useEffect(() => {
         if (!_.isArray(dataValue)) {
-            message.error('描述组件数据格式不正确，请检查');
-            console.log('DescriptionCharts:', dataValue);
+            message.error('树形组件数据格式不正确，请检查');
+            console.log('TreeCharts:', dataValue);
             return;
         }
     }, [dataValue]);

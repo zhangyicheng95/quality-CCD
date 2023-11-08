@@ -437,20 +437,18 @@ export function getKeyFromTree(data: any, key = 'key', searchKey = 'children') {
     const fetchIds = (list: any, index: number) => {
         if (!list[index]) {
             return;
-        }
+        };
         ids.push(list[index]?.[key]);
         if (!!list[index]?.[searchKey] && list[index]?.[searchKey]?.length) {
             for (let i = 0; i < list[index]?.[searchKey].length; i++) {
                 fetchIds(list[index]?.[searchKey], i);
-            }
-        } else {
-            fetchIds(list, index + 1);
-        }
+            };
+        };
     };
     for (let i = 0; i < data.length; i++) {
         fetchIds(data, i);
-    }
-    return Array.from(new Set(ids));
+    };
+    return ids;
 }
 
 /**
