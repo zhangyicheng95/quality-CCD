@@ -1,15 +1,14 @@
 import {
+  DesktopOutlined,
   LockOutlined,
-  MobileOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Alert, message } from 'antd';
+import { Alert, Button, Form, Input, message } from 'antd';
 import React, { useState } from 'react';
-import { ProFormCaptcha, ProFormText, LoginForm } from '@ant-design/pro-form';
+import { ProFormText, LoginForm } from '@ant-design/pro-form';
 import { history, FormattedMessage, SelectLang, useModel } from 'umi';
 import Footer from '@/components/Footer';
 import { login } from '@/services/api';
-import { getFakeCaptcha } from '@/services/ant-design-pro/login';
 
 import styles from './index.less';
 import { cryptoEncryption } from '@/utils/utils';
@@ -28,79 +27,71 @@ const LoginMessage: React.FC<{
 );
 
 const Login: React.FC = () => {
-  const { initialState, setInitialState } = useModel('@@initialState');
-  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
-  const [type, setType] = useState<string>('account');
+  // const { initialState, setInitialState } = useModel('@@initialState');
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
-  const fetchUserInfo = async () => {
-    const userInfo = await initialState?.fetchUserInfo?.();
-    if (userInfo) {
-      await setInitialState((s: any) => ({
-        ...s,
-        currentUser: userInfo,
-      }));
-    }
-  };
-
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = (values: any) => {
     try {
+      setLoading(true);
       // 登录
       const { password, ...rest } = values;
-      const res: any = await login({
+      login({
         password: cryptoEncryption(password),
         ...rest,
+      }).then((res: any) => {
+        if (res?.code === 'SUCCESS') {
+          message.success('登录成功！');
+          localStorage.setItem('userInfo', JSON.stringify(Object.assign({},
+            res?.data,
+            { loginTime: new Date().getTime() },
+          )));
+          /** 此方法会跳转到 redirect 参数所在的位置 */
+          if (!history) return;
+          // await setInitialState((s: any) => ({
+          //   ...s,
+          //   currentUser: {
+          //     name: 'admin',
+          //     avatar: '',
+          //     userid: '',
+          //     email: '',
+          //     signature: '',
+          //     title: '',
+          //     group: '',
+          //     tags: { key: '', label: '' },
+          //     notifyCount: 1,
+          //     unreadCount: 1,
+          //     country: '',
+          //     access: '',
+          //     geographic: {
+          //       province: { label: '', key: '' },
+          //       city: { label: '', key: '' },
+          //     },
+          //     address: '',
+          //     phone: '',
+          //     ...res?.data
+          //   },
+          // }));
+          const { query } = history.location;
+          const { redirect } = query as { redirect: string };
+          // history.push(redirect || '/home');s
+          location.href = location.href?.split('#/')?.[0] + '#/home';
+          window.location.reload();
+          return;
+          // }
+          // console.log(msg);
+          // 如果失败去设置用户错误信息
+          // setUserLoginState(msg);
+        } else {
+          message.error(res?.message || '接口异常');
+        };
+        setLoading(false);
       });
-      if (res?.code === 'SUCCESS') {
-        message.success('登录成功！');
-        localStorage.setItem('userInfo', JSON.stringify(Object.assign({},
-          res?.data,
-          { loginTime: new Date().getTime() },
-        )));
-        /** 此方法会跳转到 redirect 参数所在的位置 */
-        if (!history) return;
-        // await setInitialState((s: any) => ({
-        //   ...s,
-        //   currentUser: {
-        //     name: 'admin',
-        //     avatar: '',
-        //     userid: '',
-        //     email: '',
-        //     signature: '',
-        //     title: '',
-        //     group: '',
-        //     tags: { key: '', label: '' },
-        //     notifyCount: 1,
-        //     unreadCount: 1,
-        //     country: '',
-        //     access: '',
-        //     geographic: {
-        //       province: { label: '', key: '' },
-        //       city: { label: '', key: '' },
-        //     },
-        //     address: '',
-        //     phone: '',
-        //     ...res?.data
-        //   },
-        // }));
-        const { query } = history.location;
-        const { redirect } = query as { redirect: string };
-        // history.push(redirect || '/home');s
-        location.href = location.href?.split('#/')?.[0] + '#/home';
-        window.location.reload();
-        return;
-        // }
-        // console.log(msg);
-        // 如果失败去设置用户错误信息
-        // setUserLoginState(msg);
-      } else {
-        message.error(res?.message || '接口异常');
-      }
     } catch (error) {
       const defaultLoginFailureMessage = '登录失败，请重试！';
       message.error(defaultLoginFailureMessage);
     }
   };
-  const { status, type: loginType } = userLoginState;
 
   return (
     <div className={styles.container}>
@@ -111,117 +102,49 @@ const Login: React.FC = () => {
           }}
         />}
       </div>
-      <div className={"content"}>
-        <LoginForm
-          logo={<img alt="logo" src="/favicon.ico" />}
-          title="通用型视觉大屏"
-          subTitle={" "}
-          initialValues={{
-            autoLogin: false,
-          }}
-          onFinish={async (values) => {
-            await handleSubmit(values as API.LoginParams);
-          }}
+      <div className="flex-box-center content">
+        <div className="flex-box-center login-title">
+          <img alt="logo" src="/favicon.ico" />
+          <h1>通用型视觉大屏</h1>
+        </div>
+        <Form
+          name="basic"
+          form={form}
+          // labelCol={{ span: 6 }}
+          // wrapperCol={{ span: 16 }}
+          onFinish={handleSubmit}
+          autoComplete="off"
+          layout="vertical"
         >
-          {status === 'error' && loginType === 'account' && (
-            <LoginMessage
-              content={'账户或密码错误'}
-            />
-          )}
-          {type === 'account' && (
-            <>
-              <ProFormText
-                name="userName"
-                fieldProps={{
-                  size: 'large',
-                  prefix: <UserOutlined className={"prefixIcon"} />,
-                }}
-                placeholder={'用户名'}
-                rules={[
-                  {
-                    required: true,
-                    message: "请输入用户名!",
-                  },
-                ]}
-              />
-              <ProFormText.Password
-                name="password"
-                fieldProps={{
-                  size: 'large',
-                  prefix: <LockOutlined className={"prefixIcon"} />,
-                }}
-                placeholder={'密码'}
-                rules={[
-                  {
-                    required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.password.required"
-                        defaultMessage="请输入密码！"
-                      />
-                    ),
-                  },
-                ]}
-              />
-            </>
-          )}
+          <Form.Item
+            label=""
+            name="userName"
+            rules={[{ required: true, message: '请输入用户名!' }]}
+          >
+            <Input prefix={<UserOutlined />} size="large" />
+          </Form.Item>
 
-          {status === 'error' && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
-          {type === 'mobile' && (
-            <>
-              <ProFormText
-                fieldProps={{
-                  size: 'large',
-                  prefix: <MobileOutlined className={"prefixIcon"} />,
-                }}
-                name="mobile"
-                placeholder={'手机号'}
-                rules={[
-                  {
-                    required: true,
-                    message: "请输入手机号！",
-                  },
-                  {
-                    pattern: /^1\d{10}$/,
-                    message: "手机号格式错误！",
-                  },
-                ]}
-              />
-              <ProFormCaptcha
-                fieldProps={{
-                  size: 'large',
-                  prefix: <LockOutlined className={"prefixIcon"} />,
-                }}
-                captchaProps={{
-                  size: 'large',
-                }}
-                placeholder={'请输入验证码'}
-                captchaTextRender={(timing, count) => {
-                  if (timing) {
-                    return `${count} 获取验证码`;
-                  }
-                  return '获取验证码';
-                }}
-                name="captcha"
-                rules={[
-                  {
-                    required: true,
-                    message: "请输入验证码！",
-                  },
-                ]}
-                onGetCaptcha={async (phone) => {
-                  const result = await getFakeCaptcha({
-                    phone,
-                  });
-                  if (result === false) {
-                    return;
-                  }
-                  message.success('获取验证码成功！验证码为：1234');
-                }}
-              />
-            </>
-          )}
-        </LoginForm>
+          <Form.Item
+            label=""
+            name="password"
+            rules={[{ required: true, message: '请输入正确的密码!' }]}
+          >
+            <Input.Password prefix={<LockOutlined />} size="large" />
+          </Form.Item>
+          <div className="flex-box login-footer">
+            <Form.Item style={{ flex: 1 }}>
+              <Button type="primary" htmlType="submit" loading={loading} size="large">
+                登录
+              </Button>
+            </Form.Item>
+            <Form.Item style={{ flex: 1 }}>
+              <Button loading={loading} size="large" onClick={() => {
+                location.href = location.href?.split('#/')?.[0] + '#/home';
+                window.location.reload();
+              }} >访客</Button>
+            </Form.Item>
+          </div>
+        </Form>
       </div>
       <Footer />
     </div>

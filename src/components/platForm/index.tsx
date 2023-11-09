@@ -47,11 +47,11 @@ const PlatFormModal: React.FC<Props> = (props) => {
                 return null;
               }
             } else if (type === 'CIRCLE') {
-              if (!shape?.x || !shape?.y) {
+              if (!shape?.cx || !shape?.cy) {
                 return null;
               }
             } else if (type === 'POINT') {
-              if (!shape?.cx || !shape?.cy) {
+              if (!shape?.x || !shape?.y || !shape?.sr) {
                 return null;
               }
             }
@@ -63,7 +63,6 @@ const PlatFormModal: React.FC<Props> = (props) => {
               } : {})
             });
           }).filter(Boolean);
-        console.log(data1);
         const data2 = (pen && pen()) || [];
         const params = Object.assign({}, data,
           {
@@ -85,17 +84,17 @@ const PlatFormModal: React.FC<Props> = (props) => {
                           alias: "cy",
                           value: Number(cen[1]?.realValue?.y?.value?.toFixed(2))
                         },
-                      }, type === 'RECT' ? (
+                      }, type === 'RECT' ? Object.assign(
+                        {
+                          width: { alias: 'width', value: Number(cen[1]?.realValue?.width?.value?.toFixed(2)) },
+                          height: { alias: 'height', value: Number(cen[1]?.realValue?.height?.value?.toFixed(2)) }
+                        },
                         props?.type === 'AXIS' ?
                           {
                             xLength: { alias: 'xLength', value: Number(cen[1]?.realValue?.xLength?.value?.toFixed(2)) },
-                            yLength: { alias: 'yLength', value: Number(cen[1]?.realValue?.yLength?.value?.toFixed(2)) }
+                            yLength: { alias: 'yLength', value: Number(cen[1]?.realValue?.yLength?.value?.toFixed(2)) },
                           }
-                          :
-                          {
-                            width: { alias: 'width', value: Number(cen[1]?.realValue?.width?.value?.toFixed(2)) },
-                            height: { alias: 'height', value: Number(cen[1]?.realValue?.height?.value?.toFixed(2)) }
-                          }
+                          : {}
                       ) : {
                         ..._.omit(_.omit(cen[1]?.realValue, "x"), "y"),
                       })
@@ -107,7 +106,7 @@ const PlatFormModal: React.FC<Props> = (props) => {
               if (type === 'RECT') {
                 return {
                   // id,
-                  type: "RECT",
+                  type: props.type || "RECT",
                   roi: {
                     cx: { alias: "cx", value: shape.x + shape.width / 2 },
                     cy: { alias: "cy", value: shape.y + shape.height / 2 },

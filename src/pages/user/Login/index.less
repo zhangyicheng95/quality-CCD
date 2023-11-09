@@ -21,8 +21,38 @@
     }
 
     .content {
+      flex-direction: column;
+      width: 500px;
+      margin: 0 auto;
       flex: 1;
       padding: 32px 0;
+
+      .login-title {
+        margin-bottom: 24px;
+        gap: 12px;
+
+        img {
+          width: 60px;
+        }
+
+        h1 {
+          margin: 0;
+          font-size: 36px;
+        }
+      }
+
+      .ant-form {
+        width: 100%;
+      }
+
+      .login-footer {
+        width: 100%;
+        gap: 8px;
+
+        .ant-btn {
+          width: 100%;
+        }
+      }
 
       .ant-pro-form-login-container {
         justify-content: center;

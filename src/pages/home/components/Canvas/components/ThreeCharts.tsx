@@ -905,7 +905,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             scene.current.add(mesh);
             // 开启相机巡航
             setCameraSwitch(modelRotate);
-            if (modelRotateScreenshot && action === 'push') {
+            if ((modelRotateScreenshot && action === 'push') || process.env.NODE_ENV === 'development') {
                 // 开启循环自动截图
                 if (!maskBox) return;
                 const processBox = maskBox?.querySelector('.process');
@@ -919,12 +919,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 processText.innerText = `自动截图上传中`;
 
                 var cameraList = [
+                    new THREE.Vector3(0, max * -scale, 0), // 正
                     new THREE.Vector3(0, 0, max * scale), // 顶部
                     new THREE.Vector3(max * -scale, 0, 0), // 右
                     new THREE.Vector3(0, 0, max * -scale), // 底部
-                    new THREE.Vector3(max * scale, 0, 0), // 左
                     new THREE.Vector3(0, max * scale, 0), // 后
-                    new THREE.Vector3(0, max * -scale, 0), // 正
+                    new THREE.Vector3(max * scale, 0, 0), // 左
                 ];
                 loopScreenshot(cameraList, 0, basicPosition, maskBox);
             }
@@ -1356,7 +1356,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
 
                         // 渲染信息卡片
                         const measurementDiv = document.createElement("div");
-                        measurementDiv.className = "label";
+                        measurementDiv.className = `label ${type}`;
                         measurementDiv.innerHTML = `
                         <div>
                             <div class="item">${name}</div>
@@ -1373,8 +1373,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             y: (position[0].y + position[1].y) / 2,
                             z: (position[0].z + position[1].z) / 2,
                         });
-                        measurementLabels[line.name] = measurementLabel;
-                        scene.current.add(measurementLabels[line.name]);
+                        measurementLabels[`${line.name}_${type}`] = measurementLabel;
+                        scene.current.add(measurementLabels[`${line.name}_${type}`]);
                         lineId = line.name;
                         indexCount += 1;
                         // const closeDom = measurementDiv.querySelector('.close');
@@ -1582,59 +1582,86 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     };
     // 点云截图
     const captureScreenshot = (type?: any, index?: any) => {
+        const directionObj = {
+            0: '',
+            1: 'top',
+            2: 'right',
+            3: 'bottom',
+            4: '',
+            5: 'left'
+        };
         return new Promise((resolve, reject) => {
-            if ([0, 1, 2, 3].includes(index)) {
-                // 将射线隐藏
-                (measurements || []).forEach((line: any) => {
-                    scene.current?.remove?.(line);
-                });
-                // requestAnimationFrame 确保截图在页面完全加载和渲染之后进行
-                requestAnimationFrame(function () {
-                    const box: any = renderer.current.domElement;
-                    var imageDataURL = box?.toDataURL('image/png');
+            // requestAnimationFrame 确保截图在页面完全加载和渲染之后进行
+            requestAnimationFrame(function () {
+                const shareContent: any = dom?.current;
+                const maskBox: any = document?.querySelector(".three-mask");
+                const maskStatus = maskBox.style.display;
+                maskBox.style.display = 'none';
+                // 截图时，隐藏部分卡片
+                if ([1, 3].includes(index)) {
+                    Object.entries(measurementLabels).forEach((label: any) => {
+                        if (label[0].indexOf(directionObj[index]) > -1 && !!label[1]?.element?.firstElementChild) {
+                            label[1].element.firstElementChild.style.display = "none";
+                        }
+                    });
+                } else if ([2, 5].includes(index)) {
+                    Object.entries(measurementLabels).forEach((label: any) => {
+                        if (label[0].indexOf(directionObj[index]) > -1 && !!label[1]?.element?.firstElementChild) {
+                            label[1].element.firstElementChild.style.display = "none";
+                        }
+                    });
+                }
+
+                const width = shareContent?.offsetWidth;
+                const height = shareContent?.offsetHeight;
+                const scale = 2; // 也可以使用设备像素比
+                html2canvas(shareContent, {
+                    scale: scale,
+                    useCORS: true, // 是否尝试使⽤CORS从服务器加载图像
+                    allowTaint: false, // 是否允许跨域图像。会污染画布，导致⽆法使⽤canvas.toDataURL ⽅法
+                    width: width,
+                    height: height,
+                }).then((canvas: any) => {
+                    let imageDataURL = canvas.toDataURL('image/png', { quality: 1 });
                     if (type === 'download') {
                         var link = document.createElement('a');
                         link.href = imageDataURL;
                         link.download = `output_${uuid()}.png`;
                         link.click();
                     }
-                    // 将射线显示回来
-                    (measurements || []).forEach((line: any) => {
-                        scene.current?.add?.(line);
-                    });
                     imageDataURL = imageDataURL.split('data:image/png;base64,')[1];
                     resolve(imageDataURL);
-                });
-            } else {
-                // requestAnimationFrame 确保截图在页面完全加载和渲染之后进行
-                requestAnimationFrame(function () {
-                    const shareContent: any = dom?.current;
-                    const maskBox: any = document?.querySelector(".three-mask");
-                    const maskStatus = maskBox.style.display;
-                    maskBox.style.display = 'none';
-                    const width = shareContent?.offsetWidth;
-                    const height = shareContent?.offsetHeight;
-                    const scale = 2; // 也可以使用设备像素比
-                    html2canvas(shareContent, {
-                        scale: scale,
-                        useCORS: true, // 是否尝试使⽤CORS从服务器加载图像
-                        allowTaint: false, // 是否允许跨域图像。会污染画布，导致⽆法使⽤canvas.toDataURL ⽅法
-                        width: width,
-                        height: height,
-                    }).then((canvas: any) => {
-                        let imageDataURL = canvas.toDataURL('image/png', { quality: 1 });
-                        if (type === 'download') {
-                            var link = document.createElement('a');
-                            link.href = imageDataURL;
-                            link.download = `output_${uuid()}.png`;
-                            link.click();
+                    maskBox.style.display = maskStatus;
+                    // 显示所有的卡片
+                    Object.entries(measurementLabels).forEach((label: any) => {
+                        if (!!label[1]?.element?.firstElementChild) {
+                            label[1].element.firstElementChild.style.display = "block";
                         }
-                        imageDataURL = imageDataURL.split('data:image/png;base64,')[1];
-                        resolve(imageDataURL);
-                        maskBox.style.display = maskStatus;
                     });
                 });
-            }
+            });
+
+            // // 将射线隐藏
+            // (measurements || []).forEach((line: any) => {
+            //     scene.current?.remove?.(line);
+            // });
+            // // requestAnimationFrame 确保截图在页面完全加载和渲染之后进行
+            // requestAnimationFrame(function () {
+            //     const box: any = renderer.current.domElement;
+            //     var imageDataURL = box?.toDataURL('image/png');
+            //     if (type === 'download') {
+            //         var link = document.createElement('a');
+            //         link.href = imageDataURL;
+            //         link.download = `output_${uuid()}.png`;
+            //         link.click();
+            //     }
+            //     // 将射线显示回来
+            //     (measurements || []).forEach((line: any) => {
+            //         scene.current?.add?.(line);
+            //     });
+            //     imageDataURL = imageDataURL.split('data:image/png;base64,')[1];
+            //     resolve(imageDataURL);
+            // });
         });
     };
     // 旋转视角-自动截图
@@ -1648,18 +1675,24 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         captureScreenshot('', index).then((base64: any) => {
             // 首先走保存
             if (!!fetchType && !!xName) {
-                btnFetch(fetchType, xName, { image: encodeURIComponent(base64) }, { headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then((res: any) => {
-                    if (res && res.code === 'SUCCESS') {
-                        // 然后走循环
-                        setTimeout(() => {
-                            loopScreenshot(list, index + 1, basicPosition, processText);
-                        }, cameraSwitchTime * 1000);
-                    } else {
-                        message.error("截图上传时，接口报错", 5);
-                        animateCamera(basicPosition);
-                        processText.style.display = 'none';
-                    }
-                });
+                if (process.env.NODE_ENV === 'development') {
+                    setTimeout(() => {
+                        loopScreenshot(list, index + 1, basicPosition, processText);
+                    }, cameraSwitchTime * 1000);
+                } else {
+                    btnFetch(fetchType, xName, { image: encodeURIComponent(base64) }, { headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then((res: any) => {
+                        if (res && res.code === 'SUCCESS') {
+                            // 然后走循环
+                            setTimeout(() => {
+                                loopScreenshot(list, index + 1, basicPosition, processText);
+                            }, cameraSwitchTime * 1000);
+                        } else {
+                            message.error("截图上传时，接口报错", 5);
+                            animateCamera(basicPosition);
+                            processText.style.display = 'none';
+                        }
+                    });
+                }
             }
         });
     };

@@ -5,11 +5,13 @@ import * as _ from 'lodash';
 import styles from "./index.module.less";
 import { connect } from "umi";
 import { useHistory } from "react-router";
-import { cryptoEncryption, getLoginTime } from "@/utils/utils";
+import { cryptoEncryption, getLoginTime, getUserData } from "@/utils/utils";
+import { useReloadAfterStationary } from "@/hooks/useReloadAfterStationary";
 
 const HomeLayout: React.FC<any> = (props) => {
   const { children, initialState = {}, setInitialState, dispatch } = props;
   const { location: historyLocation } = useHistory();
+  const userData = getUserData();
   const { params = {} } = initialState;
   const { name, id } = params;
   const [form] = Form.useForm();
@@ -25,24 +27,20 @@ const HomeLayout: React.FC<any> = (props) => {
     // @ts-ignore
     return window?.QUALITY_CCD_CONFIG?.type === 'vision';
   }, []);
-  useEffect(() => {
-    const time = getLoginTime();
-    const current = new Date().getTime();
-    if (current - time >= 5 * 60 * 1000) {
-      setCurrentLoginStatus(false);
-      setVisiable(true);
-    } else {
-      setCurrentLoginStatus(true);
-      setVisiable(false);
-    }
-  }, [historyLocation?.pathname]);
+  // useEffect(() => {
+  //   const time = getLoginTime();
+  //   const current = new Date().getTime();
+  //   if (current - time >= 5 * 60 * 1000) {
+  //     setCurrentLoginStatus(false);
+  //     setVisiable(true);
+  //   } else {
+  //     setCurrentLoginStatus(true);
+  //     setVisiable(false);
+  //   }
+  // }, [historyLocation?.pathname]);
   // 获取方案列表
   useEffect(() => {
     if (isVision) return;
-    if (!localStorage.getItem('userInfo') || !JSON.parse(localStorage.getItem('userInfo') || "{}")?.userName) {
-      location.href = location.href?.split('#/')?.[0] + '#/user/login';
-    }
-
     setHasInit(true);
     try {
       const list = JSON.parse(localStorage.getItem("ipUrlList") || JSON.stringify([{ name: '本地服务', value: 'localhost:8866' }]));
@@ -209,17 +207,26 @@ const HomeLayout: React.FC<any> = (props) => {
     setVisiable(false);
     resetFields();
   };
+  if (!!userData?.loginTime) {
+    // 5分钟无操作，自动注销
+    useReloadAfterStationary({}, () => {
+      setInitialState((s: any) => ({ ...s, currentUser: undefined }));
+      localStorage.removeItem('userInfo');
+      location.href = location.href?.split('#/')?.[0] + '#/home';
+      window.location.reload();
+    });
+  }
 
   return (
     <div className={styles.reportWrap}>
       <div className="box flex-box">
         <div className="content-box">
-          {
+          {/* {
             (["/control", "/setting"].includes(historyLocation?.pathname)) ?
               (
-                (!!currentLoginStatus) ?
-                  children
-                  :
+                (!!currentLoginStatus) ? */}
+          {children}
+          {/* :
                   <div className="mask-body">
                     <Modal
                       title="权限校验"
@@ -253,7 +260,7 @@ const HomeLayout: React.FC<any> = (props) => {
                   </div>
               )
               : children
-          }
+          } */}
         </div>
       </div>
     </div>

@@ -175,7 +175,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     return (
         <div
             id={`echart-${id}`}
-            className={`${styles.imgCharts}`}
+            className={`flex-box ${styles.imgCharts}`}
             // @ts-ignore
             ref={dom}
         >
@@ -206,12 +206,25 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                         </div>
                         : null
                 }
-                {
-                    (!!dataValue || !!defaultImg) ?
-                        <Fragment>
-                            {
-                                (magnifier || magnifierVisible) ?
-                                    <div className="img-box">
+                <div className="flex-box-center img-box-mark-right">
+                    {
+                        (!!dataValue || !!defaultImg) ?
+                            <Fragment>
+                                {
+                                    (magnifier || magnifierVisible) ?
+                                        <div className="img-box">
+                                            <Image
+                                                src={dataValue || defaultImg}
+                                                alt="logo"
+                                                style={
+                                                    fontSize > 1 ?
+                                                        { width: '100%', height: 'auto' } :
+                                                        { width: 'auto', height: '100%' }
+                                                }
+                                            />
+                                            <div className="mask" />
+                                        </div>
+                                        :
                                         <Image
                                             src={dataValue || defaultImg}
                                             alt="logo"
@@ -220,34 +233,23 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                                     { width: '100%', height: 'auto' } :
                                                     { width: 'auto', height: '100%' }
                                             }
+                                            preview={false}
                                         />
-                                        <div className="mask" />
-                                    </div>
-                                    :
-                                    <Image
-                                        src={dataValue || defaultImg}
-                                        alt="logo"
-                                        style={
-                                            fontSize > 1 ?
-                                                { width: '100%', height: 'auto' } :
-                                                { width: 'auto', height: '100%' }
-                                        }
-                                        preview={false}
+                                }
+                                <div className="flex-box img-box-btn-box">
+                                    <ZoomInOutlined
+                                        className={`img-box-btn-item ${magnifierVisible ? "img-box-btn-item-selected" : ""}`}
+                                        onClick={() => setMagnifierVisible((prev: any) => !prev)}
                                     />
-                            }
-                            <div className="flex-box img-box-btn-box">
-                                <ZoomInOutlined
-                                    className={`img-box-btn-item ${magnifierVisible ? "img-box-btn-item-selected" : ""}`}
-                                    onClick={() => setMagnifierVisible((prev: any) => !prev)}
-                                />
-                                <ExpandOutlined className='img-box-btn-item' onClick={() => setVisible(true)} />
-                            </div>
-                        </Fragment>
-                        :
-                        <Skeleton.Image
-                            active={true}
-                        />
-                }
+                                    <ExpandOutlined className='img-box-btn-item' onClick={() => setVisible(true)} />
+                                </div>
+                            </Fragment>
+                            :
+                            <Skeleton.Image
+                                active={true}
+                            />
+                    }
+                </div>
                 <div style={{ display: 'none' }}>
                     <Image.PreviewGroup
                         preview={{

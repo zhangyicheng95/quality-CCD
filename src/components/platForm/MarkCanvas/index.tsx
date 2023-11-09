@@ -15,10 +15,6 @@ import directionTopIcon from '@/assets/imgs/direction-top.png';
 import directionRightIcon from '@/assets/imgs/direction-right.png';
 import directionBottomIcon from '@/assets/imgs/direction-bottom.png';
 import directionLeftIcon from '@/assets/imgs/direction-left.png';
-import arrowTopIcon from '@/assets/imgs/arrow-top.png';
-import arrowRightIcon from '@/assets/imgs/arrow-right.png';
-import arrowBottomIcon from '@/assets/imgs/arrow-bottom.png';
-import arrowLeftIcon from '@/assets/imgs/arrow-left.png';
 import { BASE_IP } from "@/services/api";
 import { FormatWidgetToDom } from "@/pages/control";
 import { downFileFun, getNewPoint, guid, rotatePoint, twoPointDistance, } from "@/utils/utils";
@@ -247,18 +243,18 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                 type: 'AXIS',
                 initShape: data
               }, // props
-              { ...drawingStyle, lineWidth: 1, lineType: 'dashed' } // style
+              { ...drawingStyle, strokeStyle: '#0F0', lineWidth: 1 } // style
             );
             gFirstFeatureLayer.addFeature(rectFeature);
             // 横轴
             const line1 = {
-              start: { x: data.x, y: data.y + data.height / 2 },
-              end: { x: data.x + data.width, y: data.y + data.height / 2 }
+              start: { x: data.x + data.width * 3 / 8, y: data.y + data.height / 2 },
+              end: { x: data.x + data.width - data.width * 3 / 8, y: data.y + data.height / 2 }
             }
             // 纵轴
             const line2 = {
-              start: { x: data.x + data.width / 2, y: data.y },
-              end: { x: data.x + data.width / 2, y: data.y + data.height }
+              start: { x: data.x + data.width / 2, y: data.y + data.height * 3 / 8 },
+              end: { x: data.x + data.width / 2, y: data.y + data.height - data.height * 3 / 8 }
             }
             const scale = gMap.getScale();
             const width = drawingStyle.lineWidth / scale;
@@ -272,7 +268,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                 arrowXMarkerId: directionMarkerId + 'x',
                 type: 'AXIS_CHILD'
               }, // props
-              drawingStyle // style
+              { ...drawingStyle, lineWidth: 1 } // style
             );
             gFirstFeatureLayer.addFeature(lineFeature1);
             const lineFeature2 = new AILabel.Feature.Line(
@@ -285,7 +281,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                 arrowYMarkerId: directionMarkerId + 'y',
                 type: 'AXIS_CHILD'
               }, // props
-              { ...drawingStyle } // style
+              { ...drawingStyle, lineWidth: 1 } // style
             );
             gFirstFeatureLayer.addFeature(lineFeature2);
             addFeatureText(line1.end, relatedTextId + 'x', 'x', arrowStyle);
@@ -440,7 +436,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       gMap.events.on('featureUpdated', (feature: any, shape: any) => {
         console.log('-- featureUpdated', feature, shape);
         const { id, props, style, type } = feature;
-        const data = shape;
+        const data = Object.assign({}, shape);
         // 判断有没有画出图形之外
         if (type === 'RECT') {
           if (
@@ -551,20 +547,22 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         }
         if (props.type === 'AXIS') {
           {
+            /********** 先还原到旋转角度为0 *********/
             const feature1 = gFirstFeatureLayer.getFeatureById(feature.id + 100);
             const feature2 = gFirstFeatureLayer.getFeatureById(feature.id + 200);
             // 横轴
             const initLine1 = {
-              start: { x: data.x, y: data.y + data.height / 2 },
-              end: { x: data.x + data.width, y: data.y + data.height / 2 }
+              start: { x: data.x + data.width * 3 / 8, y: data.y + data.height / 2 },
+              end: { x: data.x + data.width - data.width * 3 / 8, y: data.y + data.height / 2 }
             };
             // 纵轴
             const initLine2 = {
-              start: { x: data.x + data.width / 2, y: data.y },
-              end: { x: data.x + data.width / 2, y: data.y + data.height }
+              start: { x: data.x + data.width / 2, y: data.y + data.height * 3 / 8 },
+              end: { x: data.x + data.width / 2, y: data.y + data.height - data.height * 3 / 8 }
             };
             feature1?.updateShape(initLine1);
             feature2?.updateShape(initLine2);
+            /********** 先还原到旋转角度为0 *********/
           }
           const feature1 = gFirstFeatureLayer.getFeatureById(feature.id + 100);
           const feature2 = gFirstFeatureLayer.getFeatureById(feature.id + 200);
@@ -685,7 +683,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           const { type, id, shape, props, style } = plat;
           obj = Object.assign({}, obj, {
             [id]: {
-              ...(props?.initParams),
               roi: {
                 realValue: type === 'RECT' ? {
                   x: { alias: "cx", value: shape.x + shape.width / 2 },
@@ -708,6 +705,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                   r: { alias: "r", value: shape.r },
                 } : props?.initParams?.roi?.value,
               },
+              ...(props?.initParams),
             },
           });
           if (!style.direction) {
@@ -1251,9 +1249,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                             !!featureList[selectedFeature] ?
                               Object.entries(featureList[selectedFeature])?.map((item: any) => {
                                 if (item[0] === 'roi') {
+                                  const feature = gFirstFeatureLayer.getFeatureById(selectedFeature);
+                                  const { type } = feature;
                                   let value = {};
                                   if (_.isObject(item[1]?.realValue) && !_.isEmpty(item[1].realValue)) {
-                                    if (!!item[1]?.realValue?.x && !!item[1]?.realValue?.width) {
+                                    if (type === 'RECT') {
                                       // 矩形
                                       value = {
                                         ...item[1].realValue,
@@ -1266,15 +1266,15 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                           value: item[1].realValue?.y?.value
                                         }
                                       }
-                                    } else if (!!item[1]?.realValue?.x2) {
+                                    } else if (type === 'LINE') {
                                       // 线
                                       value = {
-                                        "x1": { alias: "起点x", value: item[1]?.realValue?.x1?.value },
-                                        "y1": { alias: "起点y", value: item[1]?.realValue?.y1?.value },
-                                        "x2": { alias: "终点x", value: item[1]?.realValue?.x2?.value },
-                                        "y2": { alias: "终点y", value: item[1]?.realValue?.y2?.value }
+                                        "x1": { alias: "起点x", value: item[1]?.realValue?.x1?.value || item[1]?.realValue?.start?.value?.x },
+                                        "y1": { alias: "起点y", value: item[1]?.realValue?.y1?.value || item[1]?.realValue?.start?.value?.y },
+                                        "x2": { alias: "终点x", value: item[1]?.realValue?.x2?.value || item[1]?.realValue?.end?.value?.x },
+                                        "y2": { alias: "终点y", value: item[1]?.realValue?.y2?.value || item[1]?.realValue?.end?.value?.y }
                                       };
-                                    } else if (!!item[1]?.realValue?.cx && !!item[1]?.realValue?.r) {
+                                    } else if (type === 'CIRCLE') {
                                       // 圆
                                       value = {
                                         ...item[1].realValue
@@ -1290,7 +1290,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                           }
                                         }
                                       }
-                                    } else if (!!item[1]?.realValue?.sr) {
+                                    } else if (type === 'POINT') {
                                       // 点
                                       value = {
                                         "x": { alias: "x", value: item[1]?.realValue?.x?.value },
@@ -1469,6 +1469,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       }, {});
                       // 坐标系
                       if (feature?.props?.type === 'AXIS') {
+                        console.log(feature?.shape)
                         const feature1 = gFirstFeatureLayer.getFeatureById(feature.id + 100);
                         const feature2 = gFirstFeatureLayer.getFeatureById(feature.id + 200);
                         const targetXText = gFirstTextLayer.getTextById(feature?.props?.textXId);
@@ -1476,8 +1477,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         const center = {
                           x: value?.['roi']?.value?.x?.value || feature?.shape?.x + feature?.shape?.width / 2,
                           y: value?.['roi']?.value?.y?.value || feature?.shape?.y + feature?.shape?.height / 2,
-                          xLength: value?.['roi']?.value?.xLength?.value || feature?.shape?.width,
-                          yLength: value?.['roi']?.value?.yLength?.value || feature?.shape?.height
+                          xLength: value?.['roi']?.value?.xLength?.value || feature?.shape?.width / 2,
+                          yLength: value?.['roi']?.value?.yLength?.value || feature?.shape?.height / 2
                         };
                         const range = value?.['rotation']?.value || 0;
                         let line1: any = {},
@@ -1526,7 +1527,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           message.warning('标注位置 不能超出图片范围！');
                         } else {
                           feature.style['direction'] = range;
-                          feature.updateShape(shape);
+                          // feature.updateShape(shape);
                           // 删除delete-icon
                           gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
                           feature1.style['direction'] = range;
@@ -1549,16 +1550,16 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                 y: { alias: 'y', value: center.y },
                                 xLength: { alias: 'xLength', value: twoPointDistance(line1.start, line1.end) },
                                 yLength: { alias: 'yLength', value: twoPointDistance(line2.start, line2.end) },
-                                width: { alias: 'width', value: center.xLength },
-                                height: { alias: 'height', value: center.yLength }
+                                width: { alias: "width", value: feature?.shape?.width },
+                                height: { alias: "height", value: feature?.shape?.height }
                               },
                               realValue: {
                                 x: { alias: 'x', value: center.x },
                                 y: { alias: 'y', value: center.y },
                                 xLength: { alias: 'xLength', value: twoPointDistance(line1.start, line1.end) },
                                 yLength: { alias: 'yLength', value: twoPointDistance(line2.start, line2.end) },
-                                width: { alias: 'width', value: center.xLength },
-                                height: { alias: 'height', value: center.yLength }
+                                width: { alias: "width", value: feature?.shape?.width },
+                                height: { alias: "height", value: feature?.shape?.height }
                               }
                             },
                             localPath: { value: localPath },
@@ -1641,9 +1642,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                       });
                                     }, {});
                                     if (
-                                      Math.min(shape?.x, shape?.y) < 0 ||
-                                      (shape?.x + shape?.width) > img?.width ||
-                                      (shape?.y + shape?.height) > img?.height
+                                      (Math.min(shape?.x, shape?.y) < 0 ||
+                                        (shape?.x + shape?.width) > img?.width ||
+                                        (shape?.y + shape?.height) > img?.height)
+                                      &&
+                                      process.env.NODE_ENV !== 'development'
                                     ) {
                                       message.warning('标注位置 不能超出图片范围！');
                                     } else {

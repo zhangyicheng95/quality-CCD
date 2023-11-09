@@ -25,8 +25,6 @@ import { downFileFun, getNewPoint, guid, rotatePoint, twoPointDistance, } from "
 import Measurement from "@/components/Measurement";
 import useEyeDropper from "@/hooks/useEyeDropper";
 
-
-
 interface Props {
   data?: any;
   setGetDataFun?: any;
@@ -34,7 +32,7 @@ interface Props {
   selectedFeature: any;
   setSelectedFeature: any;
 }
-const AILabel = require("fabric").fabric;
+const AILabel = require('ailabel');
 const CONTAINER_ID = 'mark-canvas';
 // let timer: NodeJS.Timeout | null = null;
 let img: any = null;
@@ -249,7 +247,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                 type: 'AXIS',
                 initShape: data
               }, // props
-              { ...drawingStyle, strokeStyle: 'transparent' } // style
+              { ...drawingStyle, lineWidth: 1, lineType: 'dashed' } // style
             );
             gFirstFeatureLayer.addFeature(rectFeature);
             // 横轴
@@ -587,7 +585,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             start: getNewPoint(center, (range - 90), center.yLength / 2),
             end: getNewPoint(center, (range - 90) - 180, center.yLength / 2)
           };
-          console.log(line1, line2);
           feature1?.updateShape?.(line1);
           feature2?.updateShape?.(line2);
 
@@ -1161,7 +1158,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       form={form}
                       scrollToFirstError
                     >
-                      <Form.Item
+                      {/* <Form.Item
                         name={`roi`}
                         label={"位置信息"}
                         initialValue={{
@@ -1174,7 +1171,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         rules={[{ required: true, message: "位置信息" }]}
                       >
                         <Measurement />
-                      </Form.Item>
+                      </Form.Item> */}
                       <Form.Item
                         name={`rotation`}
                         label="旋转角度"
@@ -1225,6 +1222,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           <Form.Item
                             name={`找线方向`}
                             label="找线方向"
+                            tooltip="遵守左手法制，大拇指方向为找线方向"
                             style={['POINT', 'LINE'].includes(feature?.type) ? { display: 'none' } : {}}
                             initialValue={featureList?.[selectedFeature]?.['找线方向']?.value || 0}
                             rules={[{ required: true, message: "找线方向" }]}
@@ -1473,6 +1471,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       if (feature?.props?.type === 'AXIS') {
                         const feature1 = gFirstFeatureLayer.getFeatureById(feature.id + 100);
                         const feature2 = gFirstFeatureLayer.getFeatureById(feature.id + 200);
+                        const targetXText = gFirstTextLayer.getTextById(feature?.props?.textXId);
+                        const targetYText = gFirstTextLayer.getTextById(feature?.props?.textYId);
                         const center = {
                           x: value?.['roi']?.value?.x?.value || feature?.shape?.x + feature?.shape?.width / 2,
                           y: value?.['roi']?.value?.y?.value || feature?.shape?.y + feature?.shape?.height / 2,
@@ -1483,6 +1483,22 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         let line1: any = {},
                           line2: any = {};
                         if (range !== feature?.style?.direction) {
+                          /********** 先还原到旋转角度为0 *********/
+                          if (!!feature?.style?.direction) {
+                            line1 = {
+                              start: rotatePoint(feature1?.shape?.start, center, -feature?.style?.direction),
+                              end: rotatePoint(feature1?.shape?.end, center, -feature?.style?.direction)
+                            };
+                            line2 = {
+                              start: rotatePoint(feature2?.shape?.start, center, -feature?.style?.direction),
+                              end: rotatePoint(feature2?.shape?.end, center, -feature?.style?.direction)
+                            };
+                            feature1?.updateShape?.(line1);
+                            feature2?.updateShape?.(line2);
+                            targetXText?.updatePosition?.(line1.end);
+                            targetYText?.updatePosition?.(line2.start);
+                          }
+                          /********** 先还原到旋转角度为0 *********/
                           line1 = {
                             start: rotatePoint(feature1?.shape?.start, center, range),
                             end: rotatePoint(feature1?.shape?.end, center, range)
@@ -1520,9 +1536,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
 
                           const position1 = line1.end;
                           const position2 = line2.start;
-                          const targetXText = gFirstTextLayer.getTextById(feature?.props?.textXId);
                           targetXText?.updatePosition?.(position1);
-                          const targetYText = gFirstTextLayer.getTextById(feature?.props?.textYId);
                           targetYText?.updatePosition?.(position2);
                         }
                         /****************通过roi更新图层******************/
@@ -1530,8 +1544,22 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           ...featureList,
                           [selectedFeature]: {
                             roi: {
-                              value: value?.['roi']?.value,
-                              realValue: value?.['roi']?.value
+                              value: {
+                                x: { alias: 'x', value: center.x },
+                                y: { alias: 'y', value: center.y },
+                                xLength: { alias: 'xLength', value: twoPointDistance(line1.start, line1.end) },
+                                yLength: { alias: 'yLength', value: twoPointDistance(line2.start, line2.end) },
+                                width: { alias: 'width', value: center.xLength },
+                                height: { alias: 'height', value: center.yLength }
+                              },
+                              realValue: {
+                                x: { alias: 'x', value: center.x },
+                                y: { alias: 'y', value: center.y },
+                                xLength: { alias: 'xLength', value: twoPointDistance(line1.start, line1.end) },
+                                yLength: { alias: 'yLength', value: twoPointDistance(line2.start, line2.end) },
+                                width: { alias: 'width', value: center.xLength },
+                                height: { alias: 'height', value: center.yLength }
+                              }
                             },
                             localPath: { value: localPath },
                             ..._.omit(value, 'roi')
