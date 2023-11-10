@@ -4,10 +4,11 @@ import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
 import {
-    BlockOutlined, ExpandOutlined, EyeOutlined, LeftCircleOutlined,
+    BlockOutlined, DownloadOutlined, ExpandOutlined, EyeOutlined, LeftCircleOutlined,
     RightCircleOutlined, SwapOutlined, ZoomInOutlined
 } from '@ant-design/icons';
-import { numToString } from '@/utils/utils';
+import { downFileFun, numToString } from '@/utils/utils';
+import html2canvas from 'html2canvas';
 
 interface Props {
     data: any,
@@ -192,7 +193,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                     </div>
                     : null
             }
-            <div className="flex-box img-box-mark-body">
+            <div className="flex-box img-box-mark-body" style={markNumber ? { height: 'calc(100% - 20px)' } : { height: '100%' }}>
                 {
                     markNumber ?
                         <div className="flex-box img-box-mark-left">
@@ -206,7 +207,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                         </div>
                         : null
                 }
-                <div className="flex-box-center img-box-mark-right">
+                <div className="flex-box-center img-box-mark-right" style={markNumber ? { width: 'calc(100% - 20px)' } : { width: '100%' }}>
                     {
                         (!!dataValue || !!defaultImg) ?
                             <Fragment>
@@ -237,6 +238,20 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                         />
                                 }
                                 <div className="flex-box img-box-btn-box">
+                                    <DownloadOutlined className='img-box-btn-item' onClick={() => {
+                                        const imgBox = dom.current?.querySelector('.ant-image-img');
+                                        html2canvas(imgBox, {
+                                            scale: 1,
+                                            useCORS: true, // 是否尝试使⽤CORS从服务器加载图像
+                                            allowTaint: false, // 是否允许跨域图像。会污染画布，导致⽆法使⽤canvas.toDataURL ⽅法
+                                        }).then((canvas: any) => {
+                                            let imageDataURL = canvas.toDataURL('image/png', { quality: 1 });
+                                            var link = document.createElement('a');
+                                            link.href = imageDataURL;
+                                            link.download = `output.png`;
+                                            link.click();
+                                        });
+                                    }} />
                                     <ZoomInOutlined
                                         className={`img-box-btn-item ${magnifierVisible ? "img-box-btn-item-selected" : ""}`}
                                         onClick={() => setMagnifierVisible((prev: any) => !prev)}

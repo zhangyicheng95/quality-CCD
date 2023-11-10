@@ -1563,7 +1563,7 @@ const Home: React.FC<any> = (props: any) => {
       fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false, modelRotateScreenshot: false,
       password: undefined, passwordHelp: undefined, ifShowHeader: false, ifShowColorList: false,
       headerBackgroundColor: 'default', ifNeedClear: false, operationLock: false, ifUpdateProject: false,
-      magnifierSize: 1, logSize: 50, listType: 'line', markNumber: false, markNumberLeft: 1, markNumberTop: 1
+      magnifierSize: 4, logSize: 50, listType: 'line', markNumber: false, markNumberLeft: 1, markNumberTop: 1
     });
     setWindowType('img');
     setAddWindowVisible('');

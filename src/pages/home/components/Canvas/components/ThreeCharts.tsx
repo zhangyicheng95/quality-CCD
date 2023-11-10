@@ -294,27 +294,27 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             }
             return;
         };
-        if (process.env.NODE_ENV === 'development') {
-            setTimeout(() => {
-                let pointList = [];
-                for (let i = 0; i < 100; i++) {
-                    if (i < 50) {
-                        pointList.push({
-                            "x": i * 10 * 5,
-                            "y": -385.39,
-                            "z": 101.47
-                        });
-                    } else {
-                        pointList.push({
-                            "x": (i - 50) * 10 * 5,
-                            "y": -385.39,
-                            "z": -101.47
-                        });
-                    }
-                };
-                loadModel('', pointList, 'add');
-            }, 5000);
-        };
+        // if (process.env.NODE_ENV === 'development') {
+        //     setTimeout(() => {
+        //         let pointList = [];
+        //         for (let i = 0; i < 100; i++) {
+        //             if (i < 50) {
+        //                 pointList.push({
+        //                     "x": i * 10 * 5,
+        //                     "y": -385.39,
+        //                     "z": 101.47
+        //                 });
+        //             } else {
+        //                 pointList.push({
+        //                     "x": (i - 50) * 10 * 5,
+        //                     "y": -385.39,
+        //                     "z": -101.47
+        //                 });
+        //             }
+        //         };
+        //         loadModel('', pointList, 'add');
+        //     }, 5000);
+        // };
         // addType为add时，代表增量渲染，不清除其他数据
         if (!!scene.current && addType === 'add') {
             loadModel(name, value, addType);
@@ -921,10 +921,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 var cameraList = [
                     new THREE.Vector3(0, max * -scale, 0), // 正
                     new THREE.Vector3(0, 0, max * scale), // 顶部
-                    new THREE.Vector3(max * -scale, 0, 0), // 右
+                    new THREE.Vector3(max * -scale, 0, 0), // 左
                     new THREE.Vector3(0, 0, max * -scale), // 底部
                     new THREE.Vector3(0, max * scale, 0), // 后
-                    new THREE.Vector3(max * scale, 0, 0), // 左
+                    new THREE.Vector3(max * scale, 0, 0), // 右
                 ];
                 loopScreenshot(cameraList, 0, basicPosition, maskBox);
             }
@@ -1585,10 +1585,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         const directionObj = {
             0: '',
             1: 'top',
-            2: 'right',
+            2: 'left',
             3: 'bottom',
             4: '',
-            5: 'left'
+            5: 'right'
         };
         return new Promise((resolve, reject) => {
             // requestAnimationFrame 确保截图在页面完全加载和渲染之后进行
@@ -1600,13 +1600,13 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 // 截图时，隐藏部分卡片
                 if ([1, 3].includes(index)) {
                     Object.entries(measurementLabels).forEach((label: any) => {
-                        if (label[0].indexOf(directionObj[index]) > -1 && !!label[1]?.element?.firstElementChild) {
+                        if ((label[0].indexOf('top') > -1 || label[0].indexOf('bottom') > -1) && !!label[1]?.element?.firstElementChild) {
                             label[1].element.firstElementChild.style.display = "none";
                         }
                     });
                 } else if ([2, 5].includes(index)) {
                     Object.entries(measurementLabels).forEach((label: any) => {
-                        if (label[0].indexOf(directionObj[index]) > -1 && !!label[1]?.element?.firstElementChild) {
+                        if ((label[0].indexOf('left') > -1 || label[0].indexOf('right') > -1) && !!label[1]?.element?.firstElementChild) {
                             label[1].element.firstElementChild.style.display = "none";
                         }
                     });
@@ -1678,7 +1678,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 if (process.env.NODE_ENV === 'development') {
                     setTimeout(() => {
                         loopScreenshot(list, index + 1, basicPosition, processText);
-                    }, cameraSwitchTime * 1000);
+                    }, cameraSwitchTime * 5000);
                 } else {
                     btnFetch(fetchType, xName, { image: encodeURIComponent(base64) }, { headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then((res: any) => {
                         if (res && res.code === 'SUCCESS') {
