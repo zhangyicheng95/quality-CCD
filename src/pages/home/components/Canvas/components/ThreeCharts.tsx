@@ -919,12 +919,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 processText.innerText = `自动截图上传中`;
 
                 var cameraList = [
-                    new THREE.Vector3(0, max * -scale, 0), // 正
-                    new THREE.Vector3(0, 0, max * scale), // 顶部
-                    new THREE.Vector3(max * -scale, 0, 0), // 左
-                    new THREE.Vector3(0, 0, max * -scale), // 底部
-                    new THREE.Vector3(0, max * scale, 0), // 后
-                    new THREE.Vector3(max * scale, 0, 0), // 右
+                    new THREE.Vector3(0, -scale * max, 0), // 正
+                    new THREE.Vector3(0, 0, scale * max), // 顶部
+                    new THREE.Vector3(-scale * max, 0, 0), // 左
+                    new THREE.Vector3(0, 0, -scale * max), // 底部
+                    new THREE.Vector3(0, scale * max, 0), // 后
+                    new THREE.Vector3(scale * max, 0, 0), // 右
                 ];
                 loopScreenshot(cameraList, 0, basicPosition, maskBox);
             }
@@ -1671,29 +1671,30 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             processText.style.display = 'none';
             return;
         }
-        animateCamera(list[index], 500);
-        captureScreenshot('', index).then((base64: any) => {
-            // 首先走保存
-            if (!!fetchType && !!xName) {
-                if (process.env.NODE_ENV === 'development') {
-                    setTimeout(() => {
-                        loopScreenshot(list, index + 1, basicPosition, processText);
-                    }, cameraSwitchTime * 5000);
-                } else {
-                    btnFetch(fetchType, xName, { image: encodeURIComponent(base64) }, { headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then((res: any) => {
-                        if (res && res.code === 'SUCCESS') {
-                            // 然后走循环
-                            setTimeout(() => {
-                                loopScreenshot(list, index + 1, basicPosition, processText);
-                            }, cameraSwitchTime * 1000);
-                        } else {
-                            message.error("截图上传时，接口报错", 5);
-                            animateCamera(basicPosition);
-                            processText.style.display = 'none';
-                        }
-                    });
+        animateCamera(list[index], 500).then(res => {
+            captureScreenshot('', index).then((base64: any) => {
+                // 首先走保存
+                if (!!fetchType && !!xName) {
+                    if (process.env.NODE_ENV === 'development') {
+                        setTimeout(() => {
+                            loopScreenshot(list, index + 1, basicPosition, processText);
+                        }, cameraSwitchTime * 1000);
+                    } else {
+                        btnFetch(fetchType, xName, { image: encodeURIComponent(base64) }, { headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then((res: any) => {
+                            if (res && res.code === 'SUCCESS') {
+                                // 然后走循环
+                                setTimeout(() => {
+                                    loopScreenshot(list, index + 1, basicPosition, processText);
+                                }, cameraSwitchTime * 1000);
+                            } else {
+                                message.error("截图上传时，接口报错", 5);
+                                animateCamera(basicPosition);
+                                processText.style.display = 'none';
+                            }
+                        });
+                    }
                 }
-            }
+            });
         });
     };
     // 不同视角点击函数
@@ -1705,17 +1706,22 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     };
     // 动态旋转视角
     const animateCamera = (targetPos: any, timehost = 1000) => {
-        if (!!camera?.current && camera?.current?.position) {
-            var currentPos = camera.current.position;
-            var tween = new TWEEN.Tween(currentPos)
-                .to(targetPos, timehost)
-                .easing(TWEEN.Easing.Quadratic.Out)
-                .onUpdate(function () {
-                    camera?.current?.position?.copy?.(currentPos);
-                    camera?.current?.lookAt?.(0, 0, 0);
-                });
-            tween.start();
-        }
+        return new Promise((resolve, reject) => {
+            if (!!camera?.current && camera?.current?.position) {
+                var currentPos = camera.current.position;
+                var tween = new TWEEN.Tween(currentPos)
+                    .to(targetPos, timehost)
+                    .easing(TWEEN.Easing.Quadratic.Out)
+                    .onUpdate(function () {
+                        camera?.current?.position?.copy?.(currentPos);
+                        camera?.current?.lookAt?.(0, 0, 0);
+                    });
+                tween.start();
+                setTimeout(() => {
+                    resolve(true);
+                }, timehost)
+            }
+        });
     };
     // 自动旋转函数
     const cameraRotate = (list: any, index: number) => {

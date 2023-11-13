@@ -833,15 +833,15 @@ const Home: React.FC<any> = (props: any) => {
       });
     };
 
-    if (selfStart) {
-      // 开机自启动-延时15秒启动
-      if (updateTimer.current) {
-        clearTimeout(updateTimer.current);
-      }
-      updateTimer.current = setTimeout(() => {
-        start();
-      }, 15000);
-    }
+    // if (selfStart) {
+    //   // 开机自启动-延时15秒启动
+    //   if (updateTimer.current) {
+    //     clearTimeout(updateTimer.current);
+    //   }
+    //   updateTimer.current = setTimeout(() => {
+    //     start();
+    //   }, 15000);
+    // }
 
     return () => {
       setAddContentList([]);
@@ -859,26 +859,26 @@ const Home: React.FC<any> = (props: any) => {
   }, [paramsData]);
 
   // 检测错误信息，如果有数据，代表有异常，自动重启
-  useEffect(() => {
-    const { errorSelfStart = false } = paramsData;
-    if (!!started && !!errorSelfStart && !!errorData && !!errorData.length) {
-      console.log('异常重启');
-      message.warning('异常报错，自动重启');
-      // dispatch({
-      //   type: 'home/set',
-      //   payload: {
-      //     errorData: []
-      //   },
-      // });
-      // 异常自重启-延时10秒启动
-      if (updateTimer.current) {
-        clearTimeout(updateTimer.current);
-      };
-      updateTimer.current = setTimeout(() => {
-        reStart();
-      }, 10000);
-    }
-  }, [started, errorData]);
+  // useEffect(() => {
+  //   const { errorSelfStart = false } = paramsData;
+  //   if (!!started && !!errorSelfStart && !!errorData && !!errorData.length) {
+  //     console.log('异常重启');
+  //     message.warning('异常报错，自动重启');
+  //     // dispatch({
+  //     //   type: 'home/set',
+  //     //   payload: {
+  //     //     errorData: []
+  //     //   },
+  //     // });
+  //     // 异常自重启-延时10秒启动
+  //     if (updateTimer.current) {
+  //       clearTimeout(updateTimer.current);
+  //     };
+  //     updateTimer.current = setTimeout(() => {
+  //       reStart();
+  //     }, 10000);
+  //   }
+  // }, [started, errorData]);
   // 轮训获取运行状态
   useEffect(() => {
     if (!ipString || ifCanEdit || isVision) return;

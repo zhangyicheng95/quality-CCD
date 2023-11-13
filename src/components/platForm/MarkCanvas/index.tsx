@@ -484,7 +484,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             return Object.entries(prev).reduce((pre: any, cen: any) => {
               const range = cen[1]?.['找线方向']?.value;
               return Object.assign({}, pre, {
-                [cen[0]]: Object.assign({}, cen[1], cen[0] === id ? {
+                [cen[0]]: Object.assign({}, cen[1], cen[0] + '' === id + '' ? {
                   roi: {
                     realValue: [90, 270].includes(range) ? {
                       // 矩形，有旋转
