@@ -922,9 +922,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     new THREE.Vector3(0, -scale * max, 0), // 正
                     new THREE.Vector3(0, 0, scale * max), // 顶部
                     new THREE.Vector3(-scale * max, 0, 0), // 左
-                    new THREE.Vector3(0, 0, -scale * max), // 底部
-                    new THREE.Vector3(0, scale * max, 0), // 后
-                    new THREE.Vector3(scale * max, 0, 0), // 右
+                    // new THREE.Vector3(0, 0, -scale * max), // 底部
+                    // new THREE.Vector3(0, scale * max, 0), // 后
+                    // new THREE.Vector3(scale * max, 0, 0), // 右
                 ];
                 loopScreenshot(cameraList, 0, basicPosition, maskBox);
             }
