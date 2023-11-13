@@ -63,6 +63,23 @@ const PlatFormModal: React.FC<Props> = (props) => {
               } : {})
             });
           }).filter(Boolean);
+        let ifCangoOn = true;
+        try {
+          data1.forEach((item: any) => {
+            const { id, props, type, shape } = item;
+            const { initParams = {} } = props;
+            if ((!props?.type || props?.type?.indexOf('AXIS') < 0) && !initParams?.option_type) {
+              ifCangoOn = false;
+              throw new Error();
+            }
+          });
+        } catch (err) {
+
+        }
+        if (!ifCangoOn) {
+          message.error('画框未进行标注，请返回标注');
+          return;
+        }
         const data2 = (pen && pen()) || [];
         const params = Object.assign({}, data,
           {
