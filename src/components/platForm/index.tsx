@@ -54,10 +54,10 @@ const PlatFormModal: React.FC<Props> = (props) => {
               if (!shape?.x || !shape?.y || !shape?.sr) {
                 return null;
               }
-            }
+            };
             return Object.assign({}, item, {
               props: Object.assign({}, props, {
-                initParams: value?.[id],
+                initParams: _.omit(value?.[id], '旋转角度'),
               }, !!value?.[id]?.option_type ? {
                 label: value?.[id]?.option_type?.value
               } : {})

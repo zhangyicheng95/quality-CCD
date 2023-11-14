@@ -1,45 +1,19 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import styles from './index.module.less';
 import {
-  Button,
-  message,
-  Modal,
-  Badge,
-  Cascader,
-  Form,
-  Tooltip,
-  Popconfirm,
-  Select,
-  Input,
-  Tree,
-  InputNumber,
-  Switch,
-  Col,
-  Row,
-  Image,
+  Button, message, Modal, Badge, Cascader, Form, Tooltip, Popconfirm,
+  Select, Input, Tree, InputNumber, Switch, Image,
 } from 'antd';
 import * as _ from 'lodash';
 import {
-  BASE_IP,
-  btnFetch,
-  startFlowService,
-  stopFlowService,
-  updateParams,
+  BASE_IP, btnFetch, startFlowService,
+  stopFlowService, updateParams,
 } from '@/services/api';
 import GridLayout from '@/components/GridLayout';
 import {
-  AndroidOutlined,
-  CloseOutlined,
-  CompressOutlined,
-  DeleteOutlined,
-  LoadingOutlined,
-  MinusOutlined,
-  PlayCircleOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-  SaveOutlined,
-  SettingOutlined,
-  SwapOutlined,
+  AndroidOutlined, CloseOutlined, CompressOutlined, DeleteOutlined,
+  LoadingOutlined, MinusOutlined, PlayCircleOutlined, PlusOutlined, ReloadOutlined,
+  SaveOutlined, SettingOutlined, SwapOutlined,
 } from '@ant-design/icons';
 import { connect, useHistory, useModel } from 'umi';
 import { ChromePicker, } from 'react-color';
@@ -48,7 +22,6 @@ import socketLogListen from '@/services/socketLog';
 import socketDataListen from '@/services/socketData';
 import socketStateListen from '@/services/socketState';
 import TooltipDiv from '@/components/TooltipDiv';
-
 import LineCharts from '@/pages/home/components/Canvas/components/LineCharts';
 import PointCharts from '@/pages/home/components/Canvas/components/PointCharts';
 import BarCharts from '@/pages/home/components/Canvas/components/BarCharts';
@@ -66,10 +39,8 @@ import OperationCharts from '@/pages/home/components/Canvas/components/Operation
 import StatisticCharts from '@/pages/home/components/Canvas/components/StatisticCharts';
 import Operation2Charts from '@/pages/home/components/Canvas/components/Operation2Charts';
 import ButtonPWCharts from '@/pages/home/components/Canvas/components/ButtonPWCharts';
-
 import ChartPreviewModal from '@/pages/home/components/Canvas/components/ChartPreviewModal';
 import LogPreviewModal from '@/pages/home/components/Canvas/components/LogPreviewModal';
-
 import { useThrottleAndMerge } from "@/utils/useThrottleAndMerge";
 import FileManager from '@/components/FileManager';
 import {
@@ -87,8 +58,6 @@ import DragSortableItem from "@/components/DragComponents/DragSortableItem";
 import Table3Charts from './components/Table3Charts';
 import TreeCharts from './components/TreeCharts';
 import Table4Charts from './components/Table4Charts';
-
-var clickTime = 0;
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -632,13 +601,18 @@ const Home: React.FC<any> = (props: any) => {
 
     data?.forEach((item: any) => {
       if (['slider-1', 'slider-2', 'slider-3', 'slider-4', 'content', 'footer-1', 'footer-2'].includes(item.i)) {
-        home = home.concat({
-          ...item,
-          minW: 1,
-          minH: 2,
+        home = home.concat(Object.assign({}, item, {
           maxW: 100,
           maxH: 100
-        });
+        },
+          item.w > 0 ? {
+            minW: 1,
+            minH: 2,
+          } : {
+            minW: 0,
+            minH: 0,
+          })
+        );
       } else {
         const preContent = _.isArray(paramData?.contentData?.content) ?
           paramData?.contentData?.content?.filter((i: any) => i.id === item.i)[0]

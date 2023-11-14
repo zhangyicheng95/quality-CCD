@@ -96,11 +96,55 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 "averageValue": 940.33
             },
             {
-                "name": "成品短轴",
+                "name": "凹凸短轴",
                 "infoName": "TQ_XQDZWJ",
                 "position": [
                     {
                         "x": -439.65,
+                        "y": 24.62,
+                        "z": -715.63
+                    },
+                    {
+                        "x": -439.65,
+                        "y": 24.62,
+                        "z": -715.63
+                    },
+                ],
+                "standardValue": 886,
+                "offsetValue": 3,
+                "type": "bottom",
+                "maxValue": 889.55,
+                "minValue": 888.46,
+                "averageValue": 889
+            },
+            {
+                "name": "止口凸台",
+                "infoName": "TQ_XQDZWJ",
+                "position": [
+                    {
+                        "x": 0,
+                        "y": 24.62,
+                        "z": -715.63
+                    },
+                    {
+                        "x": 0,
+                        "y": 24.62,
+                        "z": -715.63
+                    }
+                ],
+                "standardValue": 886,
+                "offsetValue": 3,
+                "type": "bottom",
+                "maxValue": 889.55,
+                "minValue": 888.46,
+                "averageValue": 889
+            },
+            {
+                "name": "凹凸长轴",
+                "infoName": "TQ_XQDZWJ",
+                "position": [
+                    {
+                        "x": 448.86,
                         "y": 24.62,
                         "z": -715.63
                     },
@@ -832,6 +876,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             let y1 = box.min.y + mdhei / 2; // 模型中心点坐标Y
             let z1 = box.min.z + mdwid / 2; // 模型中心点坐标Z
             const max = Math.max(mdlen, mdhei, mdwid);
+            const min = Math.min(mdlen, mdhei, mdwid);
             let scale = 1.3 * mdwid / dom.current.clientHeight;
             if (scale >= 2) {
                 scale = mdwid / (dom.current.clientHeight - 50);
@@ -921,10 +966,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 var cameraList = [
                     new THREE.Vector3(0, -scale * max, 0), // 正
                     new THREE.Vector3(0, 0, scale * max), // 顶部
-                    new THREE.Vector3(-scale * max, 0, 0), // 左
+                    new THREE.Vector3(scale * max / 8, -scale * max, 0), // 右
                     // new THREE.Vector3(0, 0, -scale * max), // 底部
                     // new THREE.Vector3(0, scale * max, 0), // 后
-                    // new THREE.Vector3(scale * max, 0, 0), // 右
+                    // new THREE.Vector3(-scale * max, 0, 0), // 左
                 ];
                 loopScreenshot(cameraList, 0, basicPosition, maskBox);
             }
@@ -1356,10 +1401,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
 
                         // 渲染信息卡片
                         const measurementDiv = document.createElement("div");
-                        measurementDiv.className = `label ${type}`;
+                        measurementDiv.className = `label ${type}-${index}`;
                         measurementDiv.innerHTML = `
                         <div>
-                            <div class="item">${name}</div>
+                            <div class="item-title item">${name}</div>
                             <div class="flex-box item" style="display:${_.isNumber(standardValue) ? '' : 'none'}"><div class="key">标准值</div><div class="value">${standardValue}</div></div>
                             <div class="flex-box item" style="display:${_.isNumber(maxValue) ? '' : 'none'}"><div class="key">最大值</div><div class="value">${maxValue}</div></div>
                             <div class="flex-box item" style="display:${_.isNumber(minValue) ? '' : 'none'}"><div class="key">最小值</div><div class="value">${minValue}</div></div>
@@ -1585,33 +1630,51 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         const directionObj = {
             0: '',
             1: 'top',
-            2: 'left',
+            2: 'right',
             3: 'bottom',
             4: '',
-            5: 'right'
+            5: 'left'
         };
         return new Promise((resolve, reject) => {
+            let hideLines: any = [];
+            // 截图时，隐藏部分卡片
+            if ([1, 3].includes(index)) {
+                Object.entries(measurementLabels).forEach((label: any, index: number) => {
+                    if ((label[0].indexOf('bottom') > -1 || label[0].indexOf('right') > -1) && !!label[1]?.element?.firstElementChild) {
+                        label[1].element.firstElementChild.style.display = "none";
+                        // 将射线隐藏
+                        (measurements || []).forEach((line: any) => {
+                            if (label[0].indexOf?.(line.name) > -1) {
+                                scene.current?.remove?.(line);
+                                hideLines.push(line);
+                            }
+                        });
+                    };
+                });
+            } else if ([2, 5].includes(index)) {
+                Object.entries(measurementLabels).forEach((label: any) => {
+                    if (
+                        (label[0].indexOf('top') > -1 || label[0].indexOf('left') > -1 || label[1].element.firstElementChild.querySelector('.item-title')?.innerText?.indexOf('止口凸台') > -1)
+                        &&
+                        !!label[1]?.element?.firstElementChild
+                    ) {
+                        label[1].element.firstElementChild.style.display = "none";
+                        // 将射线隐藏
+                        (measurements || []).forEach((line: any) => {
+                            if (label[0].indexOf?.(line.name) > -1) {
+                                scene.current?.remove?.(line);
+                                hideLines.push(line);
+                            }
+                        });
+                    }
+                });
+            };
             // requestAnimationFrame 确保截图在页面完全加载和渲染之后进行
             requestAnimationFrame(function () {
                 const shareContent: any = dom?.current;
                 const maskBox: any = document?.querySelector(".three-mask");
                 const maskStatus = maskBox.style.display;
                 maskBox.style.display = 'none';
-                // 截图时，隐藏部分卡片
-                if ([1, 3].includes(index)) {
-                    Object.entries(measurementLabels).forEach((label: any) => {
-                        if ((label[0].indexOf('top') > -1 || label[0].indexOf('bottom') > -1) && !!label[1]?.element?.firstElementChild) {
-                            label[1].element.firstElementChild.style.display = "none";
-                        }
-                    });
-                } else if ([2, 5].includes(index)) {
-                    Object.entries(measurementLabels).forEach((label: any) => {
-                        if ((label[0].indexOf('left') > -1 || label[0].indexOf('right') > -1) && !!label[1]?.element?.firstElementChild) {
-                            label[1].element.firstElementChild.style.display = "none";
-                        }
-                    });
-                }
-
                 const width = shareContent?.offsetWidth;
                 const height = shareContent?.offsetHeight;
                 const scale = 2; // 也可以使用设备像素比
@@ -1629,8 +1692,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         link.download = `output_${uuid()}.png`;
                         link.click();
                     }
-                    imageDataURL = imageDataURL.split('data:image/png;base64,')[1];
-                    resolve(imageDataURL);
                     maskBox.style.display = maskStatus;
                     // 显示所有的卡片
                     Object.entries(measurementLabels).forEach((label: any) => {
@@ -1638,6 +1699,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             label[1].element.firstElementChild.style.display = "block";
                         }
                     });
+                    // 将射线显示回来
+                    (hideLines || []).forEach((line: any) => {
+                        scene.current?.add?.(line);
+                    });
+                    imageDataURL = imageDataURL.split('data:image/png;base64,')[1];
+                    resolve(imageDataURL);
                 });
             });
 
@@ -1678,14 +1745,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     if (process.env.NODE_ENV === 'development') {
                         setTimeout(() => {
                             loopScreenshot(list, index + 1, basicPosition, processText);
-                        }, cameraSwitchTime * 1000);
+                        }, cameraSwitchTime * 2000);
                     } else {
                         btnFetch(fetchType, xName, { image: encodeURIComponent(base64) }, { headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then((res: any) => {
                             if (res && res.code === 'SUCCESS') {
                                 // 然后走循环
                                 setTimeout(() => {
                                     loopScreenshot(list, index + 1, basicPosition, processText);
-                                }, cameraSwitchTime * 1000);
+                                }, cameraSwitchTime * 2000);
                             } else {
                                 message.error("截图上传时，接口报错", 5);
                                 animateCamera(basicPosition);
@@ -1719,7 +1786,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 tween.start();
                 setTimeout(() => {
                     resolve(true);
-                }, timehost)
+                }, timehost + 1000);
             }
         });
     };
@@ -1916,6 +1983,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                     }
                                 })
                                 console.log(result);
+                                console.log(camera?.current?.position)
                             }}>
                                 打印轨迹
                             </Button>

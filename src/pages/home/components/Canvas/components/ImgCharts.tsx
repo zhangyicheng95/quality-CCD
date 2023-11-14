@@ -7,7 +7,7 @@ import {
     BlockOutlined, DownloadOutlined, ExpandOutlined, EyeOutlined, LeftCircleOutlined,
     RightCircleOutlined, SwapOutlined, ZoomInOutlined
 } from '@ant-design/icons';
-import { downFileFun, numToString } from '@/utils/utils';
+import { numToString } from '@/utils/utils';
 import html2canvas from 'html2canvas';
 
 interface Props {
