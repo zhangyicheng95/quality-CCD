@@ -929,6 +929,7 @@
       position: absolute;
       right: 4px;
       top: 4px;
+      gap: 4px;
 
       .img-box-btn-item {
         font-size: 16px;
@@ -937,10 +938,18 @@
         padding: 4px;
         border-radius: 4px;
         z-index: 10;
+        // color: @primary-color;
+        // background-color: rgba(154, 154, 154, 0.35);
+
+        &:hover {
+          color: @primary-color;
+          background-color: rgba(154, 154, 154, 0.35);
+        }
       }
 
       .img-box-btn-item-selected {
-        background-color: rgba(144, 144, 144, .4)
+        background-color: @primary-color;
+        color: #fff;
       }
     }
   }

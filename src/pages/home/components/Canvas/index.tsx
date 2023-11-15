@@ -903,7 +903,7 @@ const Home: React.FC<any> = (props: any) => {
           >
             {
               ifShowHeader ?
-                <div className="common-card-title-box flex-box ">
+                <div className="common-card-title-box flex-box">
                   <TooltipDiv className="flex-box common-card-title">
                     {`${CCDName || alias || name || '无效的节点'}`}
                     <span className='title-span'>{`- ${SecLabel?.label?.alias || value[1] || ''}`}</span>
@@ -1124,7 +1124,7 @@ const Home: React.FC<any> = (props: any) => {
                                                             data={{
                                                               defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
                                                               dataValue, windowControl, markNumber, markNumberLeft, markNumberTop,
-                                                              setContentList, magnifier, comparison, magnifierSize
+                                                              setContentList, magnifier, comparison, magnifierSize, ifShowHeader
                                                             }}
                                                           />
                 }
@@ -1845,13 +1845,13 @@ const Home: React.FC<any> = (props: any) => {
                           style={Object.assign({},
                             !!paramData?.contentData?.contentBackground ?
                               { backgroundImage: `url(${paramData?.contentData?.contentBackground})` } : {},
-                            (!_.isBoolean(paramData?.contentData?.autoSize) && paramData?.contentData?.contentSize?.width) ?
+                            (!paramData?.contentData?.autoSize && paramData?.contentData?.contentSize?.width) ?
                               {
                                 width: `${paramData?.contentData?.contentSize?.width}px`,
                                 minWidth: `${paramData?.contentData?.contentSize?.width}px`,
                                 maxWidth: `${paramData?.contentData?.contentSize?.width}px`,
                               } : {},
-                            paramData?.contentData?.contentSize?.height ?
+                            (!paramData?.contentData?.autoSize && paramData?.contentData?.contentSize?.height) ?
                               {
                                 height: `${paramData?.contentData?.contentSize?.height - 75}px`,
                                 minHeight: `${paramData?.contentData?.contentSize?.height - 75}px`,
@@ -1862,7 +1862,7 @@ const Home: React.FC<any> = (props: any) => {
                                 backgroundColor: `rgba(${paramData?.contentData?.overallBackgroundColor.rgb.r},${paramData?.contentData?.overallBackgroundColor.rgb.g},${paramData?.contentData?.overallBackgroundColor.rgb.b},${paramData?.contentData?.overallBackgroundColor.rgb.a})`
                               } : {},
                             (!!paramData?.contentData?.autoSize || !_.isBoolean(paramData?.contentData?.autoSize)) ?
-                              { width: '100%', } : {}
+                              { width: '100%', maxWidth: '100%', height: '100%', maxHeight: '100%' } : {}
                           )}
                         >
                           <div className="right-canvas-body-grid">

@@ -21,6 +21,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     let {
         defaultImg, dataValue = '', windowControl, setContentList, magnifier = false,
         comparison, magnifierSize = 4, markNumber, markNumberLeft = 6, markNumberTop = 24,
+        ifShowHeader,
     } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
@@ -237,7 +238,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                             preview={false}
                                         />
                                 }
-                                <div className="flex-box img-box-btn-box">
+                                <div className="flex-box img-box-btn-box" style={!!ifShowHeader ? { display: 'flex', top: '-26px' } : {}}>
                                     <DownloadOutlined className='img-box-btn-item' onClick={() => {
                                         const imgBox = dom.current?.querySelector('.ant-image-img');
                                         html2canvas(imgBox, {

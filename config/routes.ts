@@ -86,6 +86,13 @@
     access: 'canLog',
     component: './log',
   },
+  {
+    name: '操作文档',
+    icon: 'fileText',
+    path: '/log',
+    access: 'canLog',
+    component: './log',
+  },
 
   // {
   //   path: '/dashboard',

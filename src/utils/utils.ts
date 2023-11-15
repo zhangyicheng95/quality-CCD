@@ -1,6 +1,5 @@
 import { message } from "antd";
 import * as _ from "lodash";
-// import Base64 from 'base-64';
 const Base64 = require('base-64');
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
