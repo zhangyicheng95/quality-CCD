@@ -7,6 +7,7 @@ export default {
   'menu.settingAlgorithm': '算法参数',
   'menu.setting': '设置',
   'menu.log': '日志',
+  'menu.fileText': '操作文档',
   'menu.mark': '数据标注',
   'menu.login': '登錄',
   'menu.admin': '管理页',

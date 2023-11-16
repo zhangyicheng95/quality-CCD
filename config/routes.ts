@@ -87,11 +87,11 @@
     component: './log',
   },
   {
-    name: '操作文档',
+    name: 'fileText',
     icon: 'fileText',
-    path: '/log',
-    access: 'canLog',
-    component: './log',
+    path: '/file',
+    access: 'canFileText',
+    component: './file',
   },
 
   // {

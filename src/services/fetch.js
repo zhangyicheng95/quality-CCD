@@ -82,7 +82,11 @@ axiosInstance.interceptors.response.use(
           source.cancel();
           // 清空本地缓存，然后退出
           localStorage.removeItem('userInfo');
-          location.href = location.href?.split('#/')?.[0] + '#/login';
+          let hash = '';
+          if (location.href?.indexOf('?') > -1) {
+            hash = location.href.split('?')[1];
+          }
+          location.href = location.href?.split('#/')?.[0] + '#/user/login' + '?' + hash;
           throw error;
           break;
         case 403:

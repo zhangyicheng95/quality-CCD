@@ -25,17 +25,21 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const onMenuClick = useCallback(
     (event: MenuInfo) => {
       const { key } = event;
+      let hash = '';
+      if (location.href?.indexOf('?') > -1) {
+        hash = location.href.split('?')[1];
+      }
       if (key === 'logout') {
         setInitialState((s: any) => ({ ...s, currentUser: undefined }));
         loginOut();
-        location.href = location.href?.split('#/')?.[0] + '#/home';
+        location.href = location.href?.split('#/')?.[0] + '#/home' + '?' + hash;
         window.location.reload();
         return;
       }
       if (key === 'toLogin') {
         setInitialState((s: any) => ({ ...s, currentUser: undefined }));
         loginOut();
-        location.href = location.href?.split('#/')?.[0] + '#/user/login';
+        location.href = location.href?.split('#/')?.[0] + '#/user/login' + '?' + hash;
         window.location.reload();
         return;
       }

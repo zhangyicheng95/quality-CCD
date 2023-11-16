@@ -212,7 +212,11 @@ const HomeLayout: React.FC<any> = (props) => {
     useReloadAfterStationary({}, () => {
       setInitialState((s: any) => ({ ...s, currentUser: undefined }));
       localStorage.removeItem('userInfo');
-      location.href = location.href?.split('#/')?.[0] + '#/home';
+      let hash = '';
+      if (location.href?.indexOf('?') > -1) {
+        hash = location.href.split('?')[1];
+      }
+      location.href = location.href?.split('#/')?.[0] + '#/home' + '?' + hash;
       window.location.reload();
     });
   }

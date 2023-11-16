@@ -74,8 +74,12 @@ const Login: React.FC = () => {
           // }));
           const { query } = history.location;
           const { redirect } = query as { redirect: string };
-          // history.push(redirect || '/home');s
-          location.href = location.href?.split('#/')?.[0] + '#/home';
+          // history.push(redirect || '/home');
+          let hash = '';
+          if (location.href?.indexOf('?') > -1) {
+            hash = location.href.split('?')[1];
+          }
+          location.href = location.href?.split('#/')?.[0] + '#/home' + '?' + hash;
           window.location.reload();
           return;
           // }

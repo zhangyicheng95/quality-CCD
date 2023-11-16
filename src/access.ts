@@ -13,5 +13,6 @@ export default function access(initialState: any) {
     canControl: userAuthList?.includes('control'),
     canSetting: userAuthList?.includes('setting'),
     canLog: userAuthList?.includes('log'),
+    canFileText: process.env.NODE_ENV === 'development'
   };
 }
