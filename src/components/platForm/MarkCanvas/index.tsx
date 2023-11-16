@@ -68,7 +68,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     if (process.env.NODE_ENV === 'development') {
       img.src = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
     } else {
-      img.src = localPath?.indexOf('http') === 0 ? localPath : `${BASE_IP}file${(localPath?.indexOf('\\') === 0 || localPath?.indexOf('/') === 0) ? '' : '\\'}${localPath}`;
+      img.src = `${localPath?.indexOf('http') === 0 ? localPath : `${BASE_IP}file${(localPath?.indexOf('\\') === 0 || localPath?.indexOf('/') === 0) ? '' : '\\'}${localPath}`}?__timestamp=${+new Date()}`;
     }
     img.title = 'img.png';
     img.onload = (res: any) => {
@@ -229,17 +229,19 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           const id = +new Date();
           if (btn === 'AXIS') {
             // 坐标系
+            const label = `x: ${(data.x + data.width / 2).toFixed(2)}\ny: ${(data.y + data.height / 2).toFixed(2)}\nwidth: ${(data.width).toFixed(2)}\nheight: ${(data.height).toFixed(2)}\nrange: 0`;
             const rectFeature = new AILabel.Feature.Rect(
               id, // id
               data, // shape
               {
                 name: '矩形矢量图形',
+                textId: relatedTextId,
                 textXId: relatedTextId + 'x',
                 textYId: relatedTextId + 'y',
                 deleteMarkerId: relatedDeleteMarkerId,
                 arrowXMarkerId: directionMarkerId + 'x',
                 arrowYMarkerId: directionMarkerId + 'y',
-                label: 'label',
+                label: label || 'label',
                 type: 'AXIS',
                 initShape: data
               }, // props
@@ -286,6 +288,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             gFirstFeatureLayer.addFeature(lineFeature2);
             addFeatureText(line1.end, relatedTextId + 'x', 'x', arrowStyle);
             addFeatureText(line2.start, relatedTextId + 'y', 'y', arrowStyle);
+            addFeatureText({ x: data.x, y: data.y }, relatedTextId, label);
           } else {
             const rectFeature = new AILabel.Feature.Rect(
               id, // id
@@ -592,6 +595,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           targetXText?.updatePosition?.(position1);
           const targetYText = gFirstTextLayer.getTextById(props?.textYId);
           targetYText?.updatePosition?.(position2);
+          const targetText = gFirstTextLayer.getTextById(props?.textId);
+          targetText?.updatePosition?.({
+            x: shape?.x,
+            y: shape?.y
+          });
+          targetText.updateText(`x: ${(data.x + data.width / 2).toFixed(2)}\ny: ${(data.y + data.height / 2).toFixed(2)}\nwidth: ${(data.width).toFixed(2)}\nheight: ${(data.height).toFixed(2)}\nrange: ${range || 0}`);
         }
 
         const markerId = feature.props.deleteMarkerId;
@@ -740,7 +749,14 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     const { x: ltx, y: lty, } = data;
     const gFirstText = new AILabel.Text(
       relatedTextId, // id
-      { text: text || 'label', position: { x: ltx, y: lty }, offset: { x: 0, y: 0 } }, // shape, 左上角
+      {
+        text: text || 'label',
+        position: { x: ltx, y: lty },
+        offset: { x: 0, y: 0 },
+        width: 100,
+        maxWidth: 100,
+        wrap: true
+      }, // shape, 左上角
       { name: '文本对象' }, // props
       !!style ? style : {
         fillStyle: 'rgba(1,1,1,.9)',
@@ -748,7 +764,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         background: true,
         globalAlpha: 1,
         fontWeight: 3,
-        fontColor: '#0f0'
+        fontColor: '#0f0',
       } // style
     );
     gFirstTextLayer.addText(gFirstText);
@@ -790,7 +806,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       );
       gFirstFeatureLayer.addFeature(gFirstFeatureRect);
       if (props?.type === 'AXIS') {
-
+        addFeatureText(shape, props.textId, `x: ${(shape.x + shape.width / 2).toFixed(2)}\ny: ${(shape.y + shape.height / 2).toFixed(2)}\nwidth: ${(shape.width).toFixed(2)}\nheight: ${(shape.height).toFixed(2)}\nrange: ${props?.initParams?.rotation?.value || 0}`);
       } else {
         // 添加direction-icon
         const gFirstMarker = new AILabel.Marker(
@@ -1469,11 +1485,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       }, {});
                       // 坐标系
                       if (feature?.props?.type === 'AXIS') {
-                        console.log(feature?.shape)
                         const feature1 = gFirstFeatureLayer.getFeatureById(feature.id + 100);
                         const feature2 = gFirstFeatureLayer.getFeatureById(feature.id + 200);
                         const targetXText = gFirstTextLayer.getTextById(feature?.props?.textXId);
                         const targetYText = gFirstTextLayer.getTextById(feature?.props?.textYId);
+                        const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
                         const center = {
                           x: value?.['roi']?.value?.x?.value || feature?.shape?.x + feature?.shape?.width / 2,
                           y: value?.['roi']?.value?.y?.value || feature?.shape?.y + feature?.shape?.height / 2,
@@ -1539,6 +1555,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           const position2 = line2.start;
                           targetXText?.updatePosition?.(position1);
                           targetYText?.updatePosition?.(position2);
+                          targetText?.updatePosition?.({
+                            x: feature?.shape?.x,
+                            y: feature?.shape?.y
+                          });
+                          targetText.updateText(`x: ${(feature?.shape.x + feature?.shape.width / 2).toFixed(2)}\ny: ${(feature?.shape.y + feature?.shape.height / 2).toFixed(2)}\nwidth: ${(feature?.shape.width).toFixed(2)}\nheight: ${(feature?.shape.height).toFixed(2)}\nrange: ${range}`);
                         }
                         /****************通过roi更新图层******************/
                         const result = {
