@@ -49,7 +49,7 @@ const arrowStyle = {
 
 const MarkCanvas: React.FC<Props> = (props: any) => {
   const [form] = Form.useForm();
-  const { validateFields, resetFields } = form;
+  const { validateFields, setFieldsValue, resetFields } = form;
   const { data, setGetDataFun, getDataFun, selectedFeature, setSelectedFeature } = props;
   const { platFormValue, localPath, zoom, widget } = data;
   const { options } = widget;
@@ -229,7 +229,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           const id = +new Date();
           if (btn === 'AXIS') {
             // 坐标系
-            const label = `x: ${(data.x + data.width / 2).toFixed(2)}\ny: ${(data.y + data.height / 2).toFixed(2)}\nwidth: ${(data.width).toFixed(2)}\nheight: ${(data.height).toFixed(2)}\nrange: 0`;
             const rectFeature = new AILabel.Feature.Rect(
               id, // id
               data, // shape
@@ -241,7 +240,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                 deleteMarkerId: relatedDeleteMarkerId,
                 arrowXMarkerId: directionMarkerId + 'x',
                 arrowYMarkerId: directionMarkerId + 'y',
-                label: label || 'label',
+                label: 'label',
                 type: 'AXIS',
                 initShape: data
               }, // props
@@ -288,7 +287,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             gFirstFeatureLayer.addFeature(lineFeature2);
             addFeatureText(line1.end, relatedTextId + 'x', 'x', arrowStyle);
             addFeatureText(line2.start, relatedTextId + 'y', 'y', arrowStyle);
-            addFeatureText({ x: data.x, y: data.y }, relatedTextId, label);
           } else {
             const rectFeature = new AILabel.Feature.Rect(
               id, // id
@@ -588,19 +586,22 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           };
           feature1?.updateShape?.(line1);
           feature2?.updateShape?.(line2);
-
+          // 把位置信息更新到form
+          setFieldsValue({
+            roi: {
+              'x': { alias: '原点x', value: center.x },
+              'y': { alias: '原点y', value: center.y },
+              // ...feature?.props?.initParams?.roi?.realValue,
+              'xLength': { alias: 'x轴长度', value: shape?.width },
+              'yLength': { alias: 'y轴长度', value: shape?.height }
+            }
+          });
           const position1 = line1.end;
           const position2 = line2.start;
           const targetXText = gFirstTextLayer.getTextById(props?.textXId);
           targetXText?.updatePosition?.(position1);
           const targetYText = gFirstTextLayer.getTextById(props?.textYId);
           targetYText?.updatePosition?.(position2);
-          const targetText = gFirstTextLayer.getTextById(props?.textId);
-          targetText?.updatePosition?.({
-            x: shape?.x,
-            y: shape?.y
-          });
-          targetText.updateText(`x: ${(data.x + data.width / 2).toFixed(2)}\ny: ${(data.y + data.height / 2).toFixed(2)}\nwidth: ${(data.width).toFixed(2)}\nheight: ${(data.height).toFixed(2)}\nrange: ${range || 0}`);
         }
 
         const markerId = feature.props.deleteMarkerId;
@@ -806,7 +807,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       );
       gFirstFeatureLayer.addFeature(gFirstFeatureRect);
       if (props?.type === 'AXIS') {
-        addFeatureText(shape, props.textId, `x: ${(shape.x + shape.width / 2).toFixed(2)}\ny: ${(shape.y + shape.height / 2).toFixed(2)}\nwidth: ${(shape.width).toFixed(2)}\nheight: ${(shape.height).toFixed(2)}\nrange: ${props?.initParams?.rotation?.value || 0}`);
+
       } else {
         // 添加direction-icon
         const gFirstMarker = new AILabel.Marker(
@@ -1172,7 +1173,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       form={form}
                       scrollToFirstError
                     >
-                      {/* <Form.Item
+                      <Form.Item
                         name={`roi`}
                         label={"位置信息"}
                         initialValue={{
@@ -1185,7 +1186,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         rules={[{ required: true, message: "位置信息" }]}
                       >
                         <Measurement />
-                      </Form.Item> */}
+                      </Form.Item>
                       <Form.Item
                         name={`rotation`}
                         label="旋转角度"
@@ -1193,20 +1194,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         rules={[{ required: true, message: "rotation" }]}
                       >
                         <InputNumber />
-                        {/* <Select
-                          style={{ width: '100%' }}
-                          options={[
-                            { label: '0', value: 0 },
-                            { label: '90', value: 90 },
-                            { label: '180', value: 180 },
-                            { label: '270', value: 270 },
-                            // { label: '', value: 360 }
-                          ].map((res: any) => {
-                            const { label, value } = res;
-                            return { key: value, label: label, value: value, };
-                          })}
-                          placeholder="旋转角度"
-                        /> */}
                       </Form.Item>
                     </Form>
                     :
@@ -1352,29 +1339,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                               })
                               :
                               null
-                            // <Form.Item
-                            //   name={`roi$$${guid()}`}
-                            //   label={"位置信息"}
-                            //   initialValue={Object.assign({},
-                            //     Object.entries(feature?.shape || {}).reduce((pre: any, cen: any) => {
-                            //       return Object.assign({}, pre, {
-                            //         [cen[0]]: {
-                            //           alias: cen[0],
-                            //           value: cen[1]
-                            //         }
-                            //       });
-                            //     }, {}),
-                            //     feature?.props?.type === "DOUBLE_CIRCLE" ? {
-                            //       "r2": {
-                            //         alias: "r2",
-                            //         value: gFirstFeatureLayer?.getFeatureById?.(feature?.id + 100)?.shape?.r || gFirstFeatureLayer?.getFeatureById?.(feature?.id - 100)?.shape?.r
-                            //       }
-                            //     } : {}
-                            //   )}
-                            //   rules={[{ required: true, message: "位置信息" }]}
-                            // >
-                            //   <Measurement />
-                            // </Form.Item>
                           )
                           :
                           Object.entries(selectedOptionType)?.map((item: any) => {
@@ -1489,7 +1453,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         const feature2 = gFirstFeatureLayer.getFeatureById(feature.id + 200);
                         const targetXText = gFirstTextLayer.getTextById(feature?.props?.textXId);
                         const targetYText = gFirstTextLayer.getTextById(feature?.props?.textYId);
-                        const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
                         const center = {
                           x: value?.['roi']?.value?.x?.value || feature?.shape?.x + feature?.shape?.width / 2,
                           y: value?.['roi']?.value?.y?.value || feature?.shape?.y + feature?.shape?.height / 2,
@@ -1497,43 +1460,29 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           yLength: value?.['roi']?.value?.yLength?.value || feature?.shape?.height / 2
                         };
                         const range = value?.['rotation']?.value || 0;
-                        let line1: any = {},
-                          line2: any = {};
-                        if (range !== feature?.style?.direction) {
-                          /********** 先还原到旋转角度为0 *********/
-                          if (!!feature?.style?.direction) {
-                            line1 = {
-                              start: rotatePoint(feature1?.shape?.start, center, -feature?.style?.direction),
-                              end: rotatePoint(feature1?.shape?.end, center, -feature?.style?.direction)
-                            };
-                            line2 = {
-                              start: rotatePoint(feature2?.shape?.start, center, -feature?.style?.direction),
-                              end: rotatePoint(feature2?.shape?.end, center, -feature?.style?.direction)
-                            };
-                            feature1?.updateShape?.(line1);
-                            feature2?.updateShape?.(line2);
-                            targetXText?.updatePosition?.(line1.end);
-                            targetYText?.updatePosition?.(line2.start);
-                          }
-                          /********** 先还原到旋转角度为0 *********/
-                          line1 = {
-                            start: rotatePoint(feature1?.shape?.start, center, range),
-                            end: rotatePoint(feature1?.shape?.end, center, range)
-                          };
-                          line2 = {
-                            start: rotatePoint(feature2?.shape?.start, center, range),
-                            end: rotatePoint(feature2?.shape?.end, center, range)
-                          };
-                        } else {
-                          line1 = feature1?.shape;
-                          line2 = feature2?.shape;
-                        }
                         /****************通过roi更新图层******************/
                         const shape = {
-                          x: center.x - Math.max(Math.abs(line1.end.x - line1.start.x), Math.abs(line2.end.x - line2.start.x)) / 2,
-                          y: center.y - Math.max(Math.abs(line1.end.y - line1.start.y), Math.abs(line2.end.y - line2.start.y)) / 2,
-                          width: Math.max(Math.abs(line1.end.x - line1.start.x), Math.abs(line2.end.x - line2.start.x)),
-                          height: Math.max(Math.abs(line1.end.y - line1.start.y), Math.abs(line2.end.y - line2.start.y))
+                          x: value?.['roi']?.value?.x?.value - value?.['roi']?.value?.xLength?.value / 2,
+                          y: value?.['roi']?.value?.y?.value - value?.['roi']?.value?.yLength?.value / 2,
+                          width: value?.['roi']?.value?.xLength?.value,
+                          height: value?.['roi']?.value?.yLength?.value
+                        };
+                        let line1: any = {
+                          start: { x: shape.x + shape.width * 3 / 8, y: shape.y + shape.height / 2 },
+                          end: { x: shape.x + shape.width * 5 / 8, y: shape.y + shape.height / 2 }
+                        },
+                          line2: any = {
+                            start: { x: shape.x + shape.width / 2, y: shape.y + shape.height * 3 / 8 },
+                            end: { x: shape.x + shape.width / 2, y: shape.y + shape.height * 5 / 8 },
+                          };
+
+                        line1 = {
+                          start: rotatePoint(line1?.start, center, range),
+                          end: rotatePoint(line1?.end, center, range)
+                        };
+                        line2 = {
+                          start: rotatePoint(line2?.start, center, range),
+                          end: rotatePoint(line2?.end, center, range)
                         };
                         if (
                           Math.min(shape?.x, shape?.y) < 0 ||
@@ -1543,7 +1492,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           message.warning('标注位置 不能超出图片范围！');
                         } else {
                           feature.style['direction'] = range;
-                          // feature.updateShape(shape);
+                          // 更新矩形框位置
+                          feature.updateShape(shape);
                           // 删除delete-icon
                           gMap.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
                           feature1.style['direction'] = range;
@@ -1555,11 +1505,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           const position2 = line2.start;
                           targetXText?.updatePosition?.(position1);
                           targetYText?.updatePosition?.(position2);
-                          targetText?.updatePosition?.({
-                            x: feature?.shape?.x,
-                            y: feature?.shape?.y
-                          });
-                          targetText.updateText(`x: ${(feature?.shape.x + feature?.shape.width / 2).toFixed(2)}\ny: ${(feature?.shape.y + feature?.shape.height / 2).toFixed(2)}\nwidth: ${(feature?.shape.width).toFixed(2)}\nheight: ${(feature?.shape.height).toFixed(2)}\nrange: ${range}`);
                         }
                         /****************通过roi更新图层******************/
                         const result = {
