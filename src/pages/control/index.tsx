@@ -44,7 +44,7 @@ const Control: React.FC<any> = (props: any) => {
 
   useEffect(() => {
     if (!_.isEmpty(paramsData) && !_.isEmpty(paramsData?.flowData)) {
-      const { flowData, configList, selectedConfig } = paramsData;
+      const { flowData, configList, selectedConfig, listType = 'line' } = paramsData;
       const { nodes, edges } = flowData;
       let configOption: any = {},
         TagRadioList: any = [];
@@ -77,6 +77,7 @@ const Control: React.FC<any> = (props: any) => {
       setNodeList(list);
       setSelectedOption(configOption);
       setTagRadioIds(TagRadioList);
+      setListType(listType);
       if (!!configList?.length) {
         setConfigList(configList.map((config: any) => {
           if (config.value === 'default') {
@@ -91,8 +92,7 @@ const Control: React.FC<any> = (props: any) => {
           return !!config?.edges ? config : { ...config, edges };
         }));
         if (!!selectedConfig) {
-          const { data, value, listType = 'line' } = configList?.filter((i: any) => i.value === selectedConfig)[0] || {};
-          setListType(listType);
+          const { data, value, } = configList?.filter((i: any) => i.value === selectedConfig)[0] || {};
           setFieldsValue({ 'config-value': _.isObject(selectedConfig) ? selectedConfig : { value: selectedConfig } });
           if (!!data?.length && _.isArray(data)) {
             setNodeList((value === 'default' ? ((data?.length >= nodes?.length) ? data : nodes) : data)
@@ -106,7 +106,7 @@ const Control: React.FC<any> = (props: any) => {
           }
         }
       } else {
-        setConfigList([{ label: '默认配置', value: 'default', data: nodes, edges: edges, listType: 'line' }]);
+        setConfigList([{ label: '默认配置', value: 'default', data: nodes, edges: edges, }]);
       }
     }
   }, [paramsData]);
@@ -203,16 +203,6 @@ const Control: React.FC<any> = (props: any) => {
   // 切换排列方式
   const onChangeView = (type: string) => {
     setListType(type);
-    setConfigList((prev: any) => {
-      return prev.map((item: any) => {
-        if (item.value === getFieldValue('config-value')) {
-          return Object.assign({}, item, {
-            listType: type,
-          })
-        };
-        return item;
-      });
-    });
   };
   // 另存为配置
   const onAddNewConfig = () => {
@@ -227,8 +217,7 @@ const Control: React.FC<any> = (props: any) => {
           data: nodeList,
           edges: (edges || []).filter((edge: any) => {
             return (nodes || []).filter((node: any) => node.id === edge?.source?.cell || node.id === edge?.target?.cell).length;
-          }),
-          listType: 'line'
+          })
         };
         setConfigList(configList.concat(result));
         setFieldsValue({ 'config-value': id });
@@ -277,6 +266,7 @@ const Control: React.FC<any> = (props: any) => {
               return item;
             }),
             selectedConfig: values['config-value']?.value,
+            listType: listType || 'line'
           })
         };
         setInitialState({ ...initialState, params: params.data });

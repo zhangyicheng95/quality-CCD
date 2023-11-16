@@ -274,8 +274,20 @@ ol {
 .ant-modal {
   font-size: inherit !important;
 
+  .ant-modal-header,
+  .ant-modal-footer {
+    height: 55px;
+  }
+
   .ant-modal-content {
     font-size: inherit !important;
+    height: 100%;
+
+    .ant-modal-body {
+      height: calc(100% - 110px);
+      padding: 12px;
+      overflow: auto;
+    }
 
     .ant-modal-title {
       font-size: inherit !important;

@@ -1853,9 +1853,9 @@ const Home: React.FC<any> = (props: any) => {
                               } : {},
                             (!paramData?.contentData?.autoSize && paramData?.contentData?.contentSize?.height) ?
                               {
-                                height: `${paramData?.contentData?.contentSize?.height - 75}px`,
-                                minHeight: `${paramData?.contentData?.contentSize?.height - 75}px`,
-                                maxHeight: `${paramData?.contentData?.contentSize?.height - 75}px`
+                                height: `${paramData?.contentData?.contentSize?.height - 93}px`,
+                                minHeight: `${paramData?.contentData?.contentSize?.height - 93}px`,
+                                maxHeight: `${paramData?.contentData?.contentSize?.height - 93}px`
                               } : {},
                             (paramData?.contentData?.overallBackgroundColor && paramData?.contentData?.overallBackgroundColor?.rgb) ?
                               {
