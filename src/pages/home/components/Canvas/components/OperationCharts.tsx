@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { connect, useModel } from 'umi';
@@ -26,7 +26,6 @@ const OperationCharts: React.FC<Props> = (props: any) => {
     const { params } = initialState;
 
     const [configList, setConfigList] = useState<any>([]);
-    const [configValueList, setConfigValueList] = useState<any>({});
     const [editorVisible, setEditorVisible] = useState(false);
     const [editorValue, setEditorValue] = useState<any>({});
     const [platFormVisible, setPlatFormVisible] = useState(false);
@@ -45,47 +44,88 @@ const OperationCharts: React.FC<Props> = (props: any) => {
         if (!!node) {
             const { config = {} } = node;
             const { initParams = {} } = config;
-            let resConfig: any = [],
-                resValue: any = {};
+            let resConfig: any = [];
             operationList?.forEach((item: any) => {
                 if (initParams[item]) {
                     resConfig = resConfig.concat(initParams[item]);
-                    resValue[item] = initParams[item]?.value;
                 }
             });
             setConfigList(resConfig);
-            setConfigValueList(resValue)
         }
 
     }, [operationList, params]);
 
     const widgetChange = (key: any, value: any) => {
-        setConfigList((prev: any) => {
-            return (prev || [])?.map((item: any, index: number) => {
-                if (item.name === key) {
-                    return Object.assign({},
-                        item,
-                        { value },
-                        ((_.isObject(value) && !_.isArray(value)) && item?.widget?.type !== "Measurement") ? value : { value },
-                        item?.widget?.type === 'codeEditor'
-                            ? {
-                                value: value?.language === 'json' ?
-                                    (
-                                        _.isString(value?.value) ?
-                                            JSON.parse(value?.value) :
-                                            value?.value
-                                    )
-                                    :
-                                    value?.value,
-                            }
-                            : {}
+        validateFields()
+            .then((values) => {
+                setConfigList((prev: any) => {
+                    const result = (prev || [])?.map((item: any, index: number) => {
+                        if (item.name === key) {
+                            return Object.assign({},
+                                item,
+                                { value },
+                                ((_.isObject(value) && !_.isArray(value)) && item?.widget?.type !== "Measurement") ? value : { value },
+                                item?.widget?.type === 'codeEditor'
+                                    ? {
+                                        value: value?.language === 'json' ?
+                                            (
+                                                _.isString(value?.value) ?
+                                                    JSON.parse(value?.value) :
+                                                    value?.value
+                                            )
+                                            :
+                                            value?.value,
+                                    }
+                                    : {}
 
-                    );
-                }
-                return item;
-            })
-        });
-        setConfigValueList((prev: any) => ({ ...prev, [key]: value }));
+                            );
+                        }
+                        return item;
+                    });
+                    const { flowData, } = params;
+                    let { nodes } = flowData;
+                    nodes = nodes.map((node: any) => {
+                        const { config = {} } = node;
+                        if (node.id === id.split('$$')[0]) {
+                            const { initParams = {} } = config;
+                            let obj = Object.assign({}, initParams);
+                            result.forEach((item: any, index: number) => {
+                                obj[item?.id || item?.name] = item;
+                            });
+                            return Object.assign({}, node, {
+                                config: Object.assign({}, config, {
+                                    initParams: obj
+                                })
+                            });
+                        }
+                        return node
+                    });
+                    const requestParams = {
+                        id: params.id,
+                        data: Object.assign({}, params, {
+                            flowData: Object.assign({}, flowData, {
+                                nodes
+                            })
+                        })
+                    };
+                    // console.log(requestParams);
+                    setInitialState((preInitialState: any) => ({
+                        ...preInitialState,
+                        params: requestParams.data
+                    }));
+                    updateParams(requestParams).then((res: any) => {
+                        if (res && res.code === 'SUCCESS') {
+                            message.success('修改成功');
+                        } else {
+                            message.error(res?.msg || res?.message || '接口异常');
+                        }
+                    });
+
+                    return result;
+                });
+            }).catch((err) => {
+                console.log(err);
+            });
     };
 
     const onOk = () => {
@@ -135,7 +175,6 @@ const OperationCharts: React.FC<Props> = (props: any) => {
     };
     const onCancel = () => {
         resetFields();
-        setConfigValueList({});
     };
 
     return (
@@ -186,10 +225,10 @@ const OperationCharts: React.FC<Props> = (props: any) => {
                     }
                 </Form>
             </div>
-            <div className="operation-footer flex-box-center">
+            {/* <div className="operation-footer flex-box-center">
                 <Button type="primary" disabled={!!started} onClick={() => onOk()} >确认</Button>
                 <Button disabled={!!started} onClick={() => onCancel()}>重置</Button>
-            </div>
+            </div> */}
 
             {
                 editorVisible ? (
