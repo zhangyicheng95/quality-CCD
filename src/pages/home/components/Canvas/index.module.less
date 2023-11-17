@@ -835,6 +835,14 @@
   position: relative;
   flex-direction: column;
 
+  ::-webkit-scrollbar {
+    width: 0 !important;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    width: 0 !important;
+  }
+
   :global {
     .ant-image {
       display: flex;
@@ -859,6 +867,7 @@
 
       .img-box-mark-right {
         height: 100%;
+        overflow: auto;
       }
     }
 
