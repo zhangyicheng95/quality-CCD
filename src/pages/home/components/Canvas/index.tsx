@@ -1550,7 +1550,7 @@ const Home: React.FC<any> = (props: any) => {
     return document.getElementById('dashboardContent');
   }, [document.getElementById('dashboardContent')]);
   const homePageIcon = useMemo(() => {
-    const length = Math.ceil((homeDom?.scrollHeight || 0) / (homeDom?.clientHeight || 1));
+    const length = Math.ceil((homeDom?.scrollHeight || 0) / (document.querySelector('.home-body')?.clientHeight || 1));
     let arr: any = [];
     for (let i = 0; i < length; i++) {
       arr = arr.concat(i + 1)
@@ -1581,8 +1581,8 @@ const Home: React.FC<any> = (props: any) => {
             top = y3 - 108;
             left = x3 + (homePageIcon.length * 40 + 16) / 2 - 4;
           }
-          bottom = homeDom?.clientHeight - top;
-          right = homeDom?.clientWidth - left;
+          bottom = (document.querySelector('.home-body')?.clientHeight || 1440) - top - 34;
+          right = (document.querySelector('.home-body')?.clientWidth || 1920) - left;
           pBox.style.bottom = bottom + "px";
           pBox.style.right = right + "px"
         }
@@ -3054,7 +3054,7 @@ const Home: React.FC<any> = (props: any) => {
               return <div className="flex-box-center home-page-affix" key={`page-icon-${index}`}
                 onClick={(e) => {
                   if (ifCanEdit) return;
-                  homeDom?.scrollTo({ top: (homeDom?.clientHeight || 1) * index });
+                  document.querySelector('.home-body')?.scrollTo({ top: (document.querySelector('.home-body')?.clientHeight || 1) * index });
                 }}
               >
                 {index + 1}
