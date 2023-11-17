@@ -227,16 +227,18 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                             <div className="mask" />
                                         </div>
                                         :
-                                        <Image
-                                            src={dataValue || defaultImg}
-                                            alt="logo"
-                                            style={
-                                                fontSize > 1 ?
-                                                    { width: '100%', height: 'auto' } :
-                                                    { width: 'auto', height: '100%' }
-                                            }
-                                            preview={false}
-                                        />
+                                        <div className="img-box">
+                                            <Image
+                                                src={dataValue || defaultImg}
+                                                alt="logo"
+                                                style={
+                                                    fontSize > 1 ?
+                                                        { width: '100%', height: 'auto' } :
+                                                        { width: 'auto', height: '100%' }
+                                                }
+                                                preview={false}
+                                            />
+                                        </div>
                                 }
                                 <div className="flex-box img-box-btn-box" style={!!ifShowHeader ? { display: 'flex', top: '-26px' } : {}}>
                                     <DownloadOutlined className='img-box-btn-item' onClick={() => {
