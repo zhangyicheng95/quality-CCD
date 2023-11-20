@@ -360,7 +360,7 @@ const Control: React.FC<any> = (props: any) => {
               name="config-value"
               label="配置文件"
               initialValue={{ value: "default" }}
-              rules={[{ required: false, message: "历史记录服务端地址" }]}
+              rules={[{ required: false, message: "配置文件" }]}
             >
               <Select
                 style={{ width: '100%' }}
@@ -876,14 +876,14 @@ export const FormatWidgetToDom: any = (props: any) => {
             </Select>
           </FormItem>
           {
-            (selectedOption?.[value] || []).map((item: any, index: number) => {
+            (selectedOption?.[aliasDefault] || []).map((item: any, index: number) => {
               if (!item || !item.widget) {
                 return null;
               }
               return <div style={{ marginTop: 24 }} key={item.id}>
                 <FormatWidgetToDom
                   key={item.name || guid()}
-                  id={node?.id ? `${node.id}@$@${item?.name}` : item?.name}
+                  id={node?.id ? `${node.id}@$@${item?.name}@@@${guid()}` : item?.name}
                   config={[item.name, item]}
                   label={item?.alias || item?.name}
                   parent={name}
