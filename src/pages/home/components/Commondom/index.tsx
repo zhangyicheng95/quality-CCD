@@ -20,8 +20,8 @@ const Common: React.FC<any> = (props: any) => {
   const [layout, setLayout] = useState([]);
 
   const ifCanEdit = useMemo(() => {
-    return window.location.hash.indexOf('edit') > -1;
-  }, [window.location.hash]);
+    return location.hash.indexOf('edit') > -1;
+  }, [location.hash]);
 
   useEffect(() => {
     if (!_.isEmpty(gridContentList)) {

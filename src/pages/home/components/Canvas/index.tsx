@@ -133,8 +133,8 @@ const Home: React.FC<any> = (props: any) => {
   ]);
 
   const ifCanEdit = useMemo(() => {
-    return window.location.hash.indexOf('edit') > -1;
-  }, [window.location.hash, paramData]);
+    return location.hash.indexOf('edit') > -1;
+  }, [location.hash, paramData]);
 
   const isVision = useMemo(() => {
     // @ts-ignore
@@ -1132,65 +1132,69 @@ const Home: React.FC<any> = (props: any) => {
             </div>
             {
               ifCanEdit ?
-                <div className="flex-box-center drag-item-content-mask common-card-title" onDoubleClick={() => {
-                  // 双击事件触发的操作
-                  if (!!addWindowVisible || !!homeSettingVisible) {
-                    setAddWindowVisible("");
-                    setHomeSettingVisible("");
-                  }
-                  !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
-                  setBasicInfoData(basicInfoData);
-                  setEditWindowData(item);
-                  setFieldsValue(Object.assign(
-                    {},
-                    item,
-                    !fontSize ? { fontSize: 12 } : {},
-                    (!!backgroundColor && !!backgroundColor?.rgb) ? { backgroundColor: backgroundColor } : {}
-                  ));
+                <div
+                  style={type === 'table2' ? { height: 'calc(100% - 38px)', marginTop: 38 } : {}}
+                  className="flex-box-center drag-item-content-mask common-card-title"
+                  onDoubleClick={() => {
+                    // 双击事件触发的操作
+                    if (!!addWindowVisible || !!homeSettingVisible) {
+                      setAddWindowVisible("");
+                      setHomeSettingVisible("");
+                    }
+                    !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
+                    setBasicInfoData(basicInfoData);
+                    setEditWindowData(item);
+                    setFieldsValue(Object.assign(
+                      {},
+                      item,
+                      !fontSize ? { fontSize: 12 } : {},
+                      (!!backgroundColor && !!backgroundColor?.rgb) ? { backgroundColor: backgroundColor } : {}
+                    ));
 
-                  setColorSelector((prev: any) => ({
-                    ...prev,
-                    ...((!!fontColor && !!fontColor?.rgb) ? { fontColor: fontColor.rgb } : {}),
-                    ...((!!backgroundColor && !!backgroundColor?.rgb) ? { backgroundColor: backgroundColor?.rgb } : {})
-                  }));
+                    setColorSelector((prev: any) => ({
+                      ...prev,
+                      ...((!!fontColor && !!fontColor?.rgb) ? { fontColor: fontColor.rgb } : {}),
+                      ...((!!backgroundColor && !!backgroundColor?.rgb) ? { backgroundColor: backgroundColor?.rgb } : {})
+                    }));
 
-                  setWindowType(type);
-                  if (type === 'operation') {
-                    const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
-                    if (!!res) {
-                      const { config = {} } = res;
-                      if (!!config?.initParams && _.isObject(config?.initParams)) {
-                        setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
-                          return {
-                            label: item[1]?.alias,
-                            value: item[0],
-                          }
-                        }));
+                    setWindowType(type);
+                    if (type === 'operation') {
+                      const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
+                      if (!!res) {
+                        const { config = {} } = res;
+                        if (!!config?.initParams && _.isObject(config?.initParams)) {
+                          setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
+                            return {
+                              label: item[1]?.alias,
+                              value: item[0],
+                            }
+                          }));
+                        }
+                      }
+                    } else if (type === 'operation2') {
+                      const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
+                      if (!!res) {
+                        const { config = {} } = res;
+                        if (!!config?.execParams && _.isObject(config?.execParams)) {
+                          setSelectedNodeConfig(() => Object.entries(config.execParams)?.map((item: any) => {
+                            return {
+                              label: item[1]?.alias,
+                              value: item[0],
+                            }
+                          }));
+                        } else if (!!config?.initParams && _.isObject(config?.initParams)) {
+                          setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
+                            return {
+                              label: item[1]?.alias,
+                              value: item[0],
+                            }
+                          }));
+                        }
                       }
                     }
-                  } else if (type === 'operation2') {
-                    const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
-                    if (!!res) {
-                      const { config = {} } = res;
-                      if (!!config?.execParams && _.isObject(config?.execParams)) {
-                        setSelectedNodeConfig(() => Object.entries(config.execParams)?.map((item: any) => {
-                          return {
-                            label: item[1]?.alias,
-                            value: item[0],
-                          }
-                        }));
-                      } else if (!!config?.initParams && _.isObject(config?.initParams)) {
-                        setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
-                          return {
-                            label: item[1]?.alias,
-                            value: item[0],
-                          }
-                        }));
-                      }
-                    }
-                  }
-                  setAddWindowVisible(key);
-                }}>
+                    setAddWindowVisible(key);
+                  }}
+                >
                   {/* <DragOutlined className='drag-item-content-mask-icon' /> */}
                   {
                     (addWindowVisible === key) ?

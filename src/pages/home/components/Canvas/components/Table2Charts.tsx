@@ -163,6 +163,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
             },
         ];
     }
+    const ifCanEdit = useMemo(() => {
+        return location.hash.indexOf('edit') > -1;
+    }, [location.hash]);
     const { initialState, setInitialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const domRef = useRef<any>(null);
@@ -289,8 +292,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                     <div
                                         id={`charts-header-item-move-${index}`}
                                         className="charts-header-item-border"
+                                        style={ifCanEdit ? { width: 10 } : {}}
                                         onMouseDown={(e: any) => {
-                                            if (window.location.hash.indexOf('edit') > -1) {
+                                            if (location.hash.indexOf('edit') > -1) {
                                                 onMoveIconMouseDown(e, index);
                                             }
                                         }}

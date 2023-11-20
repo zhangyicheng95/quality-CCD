@@ -34,8 +34,8 @@ const GridLayout: React.FC<Props> = (props: any) => {
     const { dragName = '.custom-drag', margin = [8, 8], list = [], layout = [], onChange } = props;
 
     const ifCanEdit = useMemo(() => {
-        return window.location.hash.indexOf('edit') > -1;
-    }, [window.location.hash]);
+        return location.hash.indexOf('edit') > -1;
+    }, [location.hash]);
 
     //存储拖拽移动的位置到缓存
     const onLayoutChange = (data: any) => {
