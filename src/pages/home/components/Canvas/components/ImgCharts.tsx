@@ -214,7 +214,11 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                             <Fragment>
                                 {
                                     (magnifier || magnifierVisible) ?
-                                        <div className="img-box">
+                                        <div className="img-box" style={
+                                            fontSize > 1 ?
+                                                { width: '100%', height: 'auto' } :
+                                                { width: 'auto', height: '100%' }
+                                        }>
                                             <Image
                                                 src={dataValue || defaultImg}
                                                 alt="logo"
@@ -227,7 +231,11 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                             <div className="mask" />
                                         </div>
                                         :
-                                        <div className="img-box">
+                                        <div className="img-box" style={
+                                            fontSize > 1 ?
+                                                { width: '100%', height: 'auto' } :
+                                                { width: 'auto', height: '100%' }
+                                        }>
                                             <Image
                                                 src={dataValue || defaultImg}
                                                 alt="logo"

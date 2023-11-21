@@ -35,11 +35,22 @@ const Measurement: React.FC<Props> = (props: any) => {
 
   useEffect(() => {
     if (!!value && !_.isEmpty(value)) {
-      setSelfValue(value);
+      setSelfValue(
+        _.isObject(Object.values(value)[0]) ?
+          value :
+          Object.entries(value).reduce((pre: any, cen: any, index: number) => {
+            return Object.assign({}, pre, {
+              [cen[0]]: {
+                alias: cen[0],
+                value: cen[1]
+              }
+            });
+          }, {})
+      );
       setFocus(() => {
         return Object.entries(value).reduce((pre: any, cen: any, index: number) => {
           return Object.assign({}, pre, {
-            [`refnum_${index}`]: !!cen[1]?.value || cen[1]?.value == 0,
+            [`refnum_${index}`]: !!cen[1]?.value || _.isNumber(cen[1]?.value) || _.isNumber(cen[1]),
           });
         }, {});
       })
@@ -88,12 +99,12 @@ const Measurement: React.FC<Props> = (props: any) => {
             <div
               className={`input-name ${focus[`refnum_${index}`] ? 'focus' : ''} ${titleColor ? 'bgColor' : ''}`}
               onClick={() => refList[index]?.current?.focus()}
-            >{alias}</div>
+            >{alias || item[0]}</div>
             <InputNumber
               disabled={disabled}
               className={`self_input ${className}`}
               ref={refList[index]}
-              value={value}
+              value={_.isNumber(value) ? value : JSON.stringify(item[1])}
               precision={precision}
               step={step}
               max={max}
