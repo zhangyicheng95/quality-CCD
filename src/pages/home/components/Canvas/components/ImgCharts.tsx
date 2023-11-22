@@ -44,6 +44,18 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         } catch (err) {
             console.log(err);
         }
+
+        function onKeyUp(e: any) {
+            if (e.keyCode === 27) {
+                // 27是esc
+                setMagnifierVisible(false);
+            }
+        };
+        window.addEventListener("keyup", onKeyUp);
+
+        return () => {
+            window?.removeEventListener?.("keyup", onKeyUp);
+        }
     }, []);
     useEffect(() => {
         if (!_.isString(dataValue)) {

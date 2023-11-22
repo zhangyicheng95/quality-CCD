@@ -28,7 +28,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     let { data = {}, id, started } = props;
     let {
         operationList = [], dataValue, xName = '', operationLock, fontSize,
-        ifUpdateProject, listType,
+        ifUpdateProject, listType, blockType, blockTypeLines = 2
     } = data;
     if (process.env.NODE_ENV === 'development') {
         started = true;
@@ -239,7 +239,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         // });
         // if (optionList?.filter((i: any) => i.name === name)?.length) return null;
         return <div
-            className={`${type === 'TagRadio' ? '' : 'flex-box'} param-item ${listType}`}
+            className={`${type === 'TagRadio' ? '' : 'flex-box'} param-item ${blockType === 'waterafall' ? '' : listType}`}
             key={`${id}@$@${name}`}
             style={show ? {} : { height: 0, padding: 0 }}
         >
@@ -282,7 +282,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             className={`${styles.operationCharts} flex-box`}
             style={{ fontSize }}
         >
-            <div className="operation-body">
+            <div className={`operation-body ${blockType}`} style={blockType === 'waterfall' ? { columnCount: blockTypeLines } : {}}>
                 <Form
                     form={form}
                     scrollToFirstError
@@ -296,7 +296,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                                 {
                                     configGroup?.map((group: any, index: number) => {
                                         const { name, id, children, show } = group;
-                                        return <div className={`param-item param-group-item ${listType}`} key={id}>
+                                        return <div className={`param-item param-group-item ${blockType === 'waterfall' ? '' : listType}`} key={id}>
                                             <div className="flex-box param-group-item-title" onClick={() => setConfigGroup((prev: any) => prev.map((item: any) => {
                                                 if (item.id === id) {
                                                     return {
@@ -326,7 +326,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                                     })
                                 }
                             </Fragment>
-                        }, [selectedOption, configList, configGroup, started, locked])
+                        }, [selectedOption, configList, configGroup, started, locked, listType, blockType])
                     }
                 </Form>
             </div>

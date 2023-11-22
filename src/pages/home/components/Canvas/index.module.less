@@ -1367,6 +1367,14 @@
   position: relative;
 
   :global {
+    .waterfall {
+      column-gap: 8px;
+
+      .param-item {
+        break-inside: avoid;
+      }
+    }
+
     .operation-body {
       width: 100%;
       // height: calc(100% - 41px);
@@ -1376,7 +1384,7 @@
 
       .param-item {
         flex: 1;
-        padding-bottom: 16px;
+        padding-bottom: 8px;
         overflow: hidden;
 
         &-underline {

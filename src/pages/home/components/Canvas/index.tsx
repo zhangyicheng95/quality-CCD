@@ -883,7 +883,7 @@ const Home: React.FC<any> = (props: any) => {
           password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
           basicInfoData = [{ id: guid(), name: '', value: '' }], ifNeedClear, operationLock,
           ifUpdateProject, magnifierSize, listType, valueColor, markNumber,
-          markNumberLeft, markNumberTop,
+          markNumberLeft, markNumberTop, blockType, blockTypeLines
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1106,7 +1106,7 @@ const Home: React.FC<any> = (props: any) => {
                                                             operationList, dataValue,
                                                             fontSize, xName,
                                                             operationLock, ifUpdateProject,
-                                                            listType,
+                                                            listType, blockType, blockTypeLines
                                                           }}
                                                         />
                                                         :
@@ -1461,7 +1461,8 @@ const Home: React.FC<any> = (props: any) => {
       fontColor, interlacing = false, modelRotate = false, modelScale = false, modelRotateScreenshot = false,
       password = '', passwordHelp = '', ifShowHeader = false, ifShowColorList = false,
       headerBackgroundColor = 'default', ifNeedClear, operationLock, ifUpdateProject,
-      magnifierSize, logSize, listType, valueColor, markNumber = false, markNumberLeft, markNumberTop
+      magnifierSize, logSize, listType, valueColor, markNumber = false, markNumberLeft, markNumberTop,
+      blockType, blockTypeLines
     } = values;
     if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
       try {
@@ -1492,7 +1493,7 @@ const Home: React.FC<any> = (props: any) => {
         fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
         password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
         ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
-        valueColor, markNumber, markNumberLeft, markNumberTop
+        valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1511,7 +1512,7 @@ const Home: React.FC<any> = (props: any) => {
             fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
             password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
             ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
-            valueColor, markNumber, markNumberLeft, markNumberTop
+            valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -1541,7 +1542,8 @@ const Home: React.FC<any> = (props: any) => {
       fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false, modelRotateScreenshot: false,
       password: undefined, passwordHelp: undefined, ifShowHeader: false, ifShowColorList: false,
       headerBackgroundColor: 'default', ifNeedClear: false, operationLock: false, ifUpdateProject: false,
-      magnifierSize: 4, logSize: 50, listType: 'line', markNumber: false, markNumberLeft: 1, markNumberTop: 1
+      magnifierSize: 4, logSize: 50, listType: 'line', markNumber: false, markNumberLeft: 1, markNumberTop: 1,
+      blockType: 'normal', blockTypeLines: 2
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -2803,6 +2805,45 @@ const Home: React.FC<any> = (props: any) => {
                                 ]}
                               />
                             </Form.Item>
+                            {
+                              getFieldValue('listType') === 'block' ?
+                                <Form.Item
+                                  name={`blockType`}
+                                  label={'块状布局'}
+                                  initialValue={'normal'}
+                                  rules={[{ required: true, message: '块状布局' }]}
+                                >
+                                  <Select
+                                    style={{ width: '100%' }}
+                                    options={[
+                                      {
+                                        value: 'normal',
+                                        label: '默认',
+                                      },
+                                      {
+                                        value: 'waterfall',
+                                        label: '瀑布流',
+                                      }
+                                    ]}
+                                  />
+                                </Form.Item>
+                                : null
+                            }
+                            {
+                              getFieldValue('blockType') === 'waterfall' ?
+                                <Form.Item
+                                  name={'blockTypeLines'}
+                                  label="瀑布流列数"
+                                  initialValue={2}
+                                  rules={[{ required: true, message: '瀑布流列数' }]}
+                                >
+                                  <InputNumber
+                                    min={2}
+                                    placeholder="瀑布流列数"
+                                  />
+                                </Form.Item>
+                                : null
+                            }
                             <Form.Item
                               name={`xName`}
                               label={"接口地址"}
