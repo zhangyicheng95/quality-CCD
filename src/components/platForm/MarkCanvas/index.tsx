@@ -1528,7 +1528,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                 height: { alias: "height", value: feature?.shape?.height }
                               }
                             },
-                            localPath: { value: localPath },
                             ..._.omit(value, 'roi')
                           }
                         };
@@ -1705,7 +1704,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                               }, {
                                 option_type: { value: value?.['option_type']?.value },
                                 "找线方向": { value: range },
-                                localPath: { value: localPath }
                               })
                             :
                             {
@@ -1713,9 +1711,9 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                 value: value?.['roi']?.value,
                                 realValue: value?.['roi']?.value
                               },
-                              localPath: { value: localPath }
                             }
                         };
+                        console.log(result)
                         setGetDataFun((prev: any) => ({
                           ...prev,
                           zoom: gMap.zoom,

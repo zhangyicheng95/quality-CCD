@@ -118,7 +118,7 @@ const PlatFormModal: React.FC<Props> = (props) => {
                     }
                     : {})
                   :
-                  { [cen[0]]: cen[1]?.value });
+                  { [cen[0]]: cen[1]?.value, localPath: data.localPath });
               }, {});
               if (type === 'RECT') {
                 return {

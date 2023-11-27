@@ -98,14 +98,6 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             }
         }
     }, [dataValue, params, locked]);
-    useEffect(() => {
-        // const children = (selectedOption || []).map((item: any) => ({
-        //     ...item,
-        //     addType: 'tagRadio'
-        // }));
-        // setConfigList((prev: any) => (prev || [])
-        //     .filter((i: any) => i.addType !== 'tagRadio').concat(children));
-    }, [selectedOption]);
     const widgetChange = (key: string, value: any) => {
         setConfigList((prev: any) => (prev || [])?.map((item: any) => {
             if (item.name === key) {

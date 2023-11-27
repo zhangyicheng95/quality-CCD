@@ -47,6 +47,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const {
         dataValue = {}, fontSize, fetchType, xName, ifShowColorList = false,
         modelRotate = false, modelScale = false, modelRotateScreenshot = false,
+        modelUpload,
     } = data;
     let { name, value = [], action = '', guid: uuid, addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
@@ -210,7 +211,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     }
 
     const [form] = Form.useForm();
-    const { validateFields, setFieldsValue, resetFields } = form;
+    const [form1] = Form.useForm();
+    const [form2] = Form.useForm();
+    const { validateFields, setFieldsValue } = form;
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const dom = useRef<any>();
@@ -219,9 +222,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const [cameraSwitchTime, setCameraSwitchTime] = useState(2);
     const [cameraSwitch, setCameraSwitch] = useState(false);
     const [meshHasColor, setMeshHasColor] = useState(false);
+    const [modelUploadVisible, setModelUploadVisible] = useState(false);
     const [selectPathVisible, setSelectPathVisible] = useState(false);
     const [selectedPath, setSelectedPath] = useState<any>("");
     const [selectedPoint, setSelectedPoint] = useState<any>(null);
+    const [selectedArea, setSelectedArea] = useState<any>(null);
+    const [cameraDirection, setCameraDirection] = useState<any>([]);
 
     const theme = useMemo(() => {
         return params?.contentData?.theme || 'realDark';
@@ -263,9 +269,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     // loader后能被标注的点云
     const pickableObjects = new Array();
     // loader后能被编辑的点云
-    const editableObjects = new Array();
-    // 框选的立方体
-    const rectObjects = useRef({});
+    const editableObjects = useRef<any>([]);
 
     if (!localStorage.getItem("scale")) {
         localStorage.setItem("scale", JSON.stringify({ value: "1", unit: "m" }));
@@ -341,71 +345,4431 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             }
             return;
         };
-        if (name?.indexOf('stl') > -1 && process.env.NODE_ENV === 'development') {
+        if ((name?.indexOf('stl') > -1 || selectedPath?.indexOf('stl') > -1) && process.env.NODE_ENV === 'development') {
             setTimeout(() => {
-                const res = {
-                    "rob1_tracks": [
-                        {
-                            "PreStP_num": 0, "PreEdP_num": 36, "Track": [
-                                { "Point_Normal": [239.6669921875, 163.3179473876953, -9.2142333984375, 0.20190684497356416, 0.9794048070907593, 0.0], "PntTpe": 1 },
-                                { "Point_Normal": [176.020751953125, 176.43878173828126, -9.2142333984375, 0.20190684497356416, 0.9794048070907593, 0.0], "PntTpe": 1 },
-                                { "Point_Normal": [140.90087890625, 183.49102783203126, -9.2142333984375, 0.15190117061138154, 0.988395631313324, -0.0], "PntTpe": 1 },
-                                { "Point_Normal": [128.9677734375, 184.76217651367188, -9.2142333984375, 0.05077299848198891, 0.9987102150917053, 0.0], "PntTpe": 1 },
-                                { "Point_Normal": [83.24560546875, 185.0, -9.2142333984375, 0.0, 1.0, -0.0], "PntTpe": 1 },
-                                { "Point_Normal": [20.480712890625, 185.0, -9.2142333984375, 0.0, 1.0, -0.0], "PntTpe": 1 },
-                                { "Point_Normal": [569.962646484375, 185.0, -9.2142333984375, 0.0, 1.0, -0.0], "PntTpe": 1 },
-                                { "Point_Normal": [718.10546875, 185.0, -9.2142333984375, 0.0, 1.0, 0.0], "PntTpe": 1 },
-                            ]
-                        },
-                        {
-                            "PreStP_num": 0, "PreEdP_num": 28, "Track": [
-                                { "Point_Normal": [269.9638671875, 157.0726776123047, -409.2142333984375, 0.20190288126468659, 0.9794055223464966, 0.0], "PntTpe": 1 },
-                                { "Point_Normal": [561.20703125, 185.0, -409.2142333984375, -0.0, 1.0, 0.0], "PntTpe": 1 },
-                                { "Point_Normal": [726.126220703125, 142.06178283691407, -409.2142333984375, 0.7373744249343872, 0.6754841804504395, -0.0], "PntTpe": 1 },
-                                { "Point_Normal": [744.2028198242188, 111.56607055664063, -409.2142333984375, 0.8937073349952698, 0.4486502707004547, 0.0], "PntTpe": 1 }]
-                        }
-                    ],
-                    "rob2_tracks": [
-                        {
-                            "PreStP_num": 0, "PreEdP_num": 39, "Track": [
-                                { "Point_Normal": [237.70654296875, 168.8273468017578, 590.7857666015625, 0.201906219124794, 0.9794048070907593, 0.0], "PntTpe": 1 },
-                                { "Point_Normal": [211.519775390625, 174.2257537841797, 590.7857666015625, 0.201906219124794, 0.9794048070907593, 0.0], "PntTpe": 1 },
-                                { "Point_Normal": [150.349853515625, 186.83607482910157, 590.7857666015625, 0.201906219124794, 0.9794048070907593, 0.0], "PntTpe": 1 },
-                            ]
-                        },
-                        {
-                            "PreStP_num": 0, "PreEdP_num": 23, "Track": [
-                                { "Point_Normal": [712.662109375, 156.75949096679688, 390.7857666015625, 0.7373744249343872, 0.6754841804504395, 0.0], "PntTpe": 1 }]
-                        },
-                        {
-                            "PreStP_num": 0, "PreEdP_num": 33, "Track": [
-                                { "Point_Normal": [237.43798828125, 168.8826446533203, 190.7857666015625, 0.201906219124794, 0.979404866695404, 0.0], "PntTpe": 1 },
-                                { "Point_Normal": [193.438720703125, 177.95318603515626, 190.7857666015625, 0.201906219124794, 0.979404866695404, 0.0], "PntTpe": 1 }
-                            ]
-                        }
-                    ]
-                };
-                let pointList: any = [];
-                (Object.entries(res) || []).forEach((cen: any) => {
-                    cen[1].forEach((item: any) => {
-                        const { Track } = item;
-                        const obj = (Track || []).map((tr: any) => {
-                            const { Point_Normal } = tr;
-                            return {
-                                area: cen[0],
-                                point: {
-                                    x: Point_Normal[0],
-                                    y: Point_Normal[1],
-                                    z: Point_Normal[2]
-                                },
-                                normVec: {
-                                    x: Point_Normal[3],
-                                    y: Point_Normal[4],
-                                    z: Point_Normal[5]
-                                }
+                const res = [
+                    {
+                        "rob1_tracks": [
+                            {
+                                "PreStP_num": 0,
+                                "PreEdP_num": 36,
+                                "Track": [
+                                    {
+                                        "Point_Normal": [
+                                            2239.6669921875,
+                                            163.3179473876953,
+                                            -9.2142333984375,
+                                            0.20190684497356416,
+                                            0.9794048070907593,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2176.020751953125,
+                                            176.43878173828126,
+                                            -9.2142333984375,
+                                            0.20190684497356416,
+                                            0.9794048070907593,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2140.90087890625,
+                                            183.49102783203126,
+                                            -9.2142333984375,
+                                            0.15190117061138154,
+                                            0.988395631313324,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2128.9677734375,
+                                            184.76217651367188,
+                                            -9.2142333984375,
+                                            0.05077299848198891,
+                                            0.9987102150917053,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2083.24560546875,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2020.480712890625,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1969.962646484375,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1718.10546875,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1690.192626953125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1656.34765625,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1601.817138671875,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1556.5286865234376,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1545.025634765625,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1500.833251953125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1452.0501708984376,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1399.4007568359376,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1390.845703125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1343.078125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1274.9453125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1253.6090087890626,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1232.36328125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1180.077392578125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1130.258544921875,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1118.0103759765626,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1079.3961181640626,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1020.7055053710938,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            971.75390625,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            963.90283203125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            911.9327392578125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            854.2257080078125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            800.3468017578125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            759.2618408203125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            700.6802368164063,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            652.0302734375,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            599.886474609375,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            538.5188598632813,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            486.954833984375,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "PreStP_num": 0,
+                                "PreEdP_num": 31,
+                                "Track": [
+                                    {
+                                        "Point_Normal": [
+                                            503.3935241699219,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            536.529541015625,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            536.529541015625,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            583.0659790039063,
+                                            190.00001525878907,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            663.7786865234375,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            692.6525268554688,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            791.0474853515625,
+                                            181.3206329345703,
+                                            -209.2142333984375,
+                                            0.0,
+                                            0.6427928805351257,
+                                            -0.766040027141571
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            744.1366577148438,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            870.37353515625,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            889.7614135742188,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1058.2347412109376,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1345.56494140625,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1410.763671875,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1454.8408203125,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1528.823486328125,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1600.588134765625,
+                                            185.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1600.588134765625,
+                                            185.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1670.72265625,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1717.67333984375,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1792.58740234375,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1809.810546875,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1859.9215087890626,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1897.259521484375,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1942.156494140625,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1984.17919921875,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2024.3201904296876,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2087.93603515625,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2123.67919921875,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2161.01611328125,
+                                            184.63720703125,
+                                            -209.2142333984375,
+                                            0.201906219124794,
+                                            0.979404866695404,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2161.01611328125,
+                                            184.63720703125,
+                                            -209.2142333984375,
+                                            0.201906219124794,
+                                            0.979404866695404,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2227.125244140625,
+                                            171.00865173339845,
+                                            -209.2142333984375,
+                                            0.201906219124794,
+                                            0.979404866695404,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2265.85009765625,
+                                            163.0254669189453,
+                                            -209.2142333984375,
+                                            0.201906219124794,
+                                            0.979404866695404,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "PreStP_num": 0,
+                                "PreEdP_num": 28,
+                                "Track": [
+                                    {
+                                        "Point_Normal": [
+                                            2269.9638671875,
+                                            157.0726776123047,
+                                            -409.2142333984375,
+                                            0.20190288126468659,
+                                            0.9794055223464966,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2228.423828125,
+                                            165.63612365722657,
+                                            -409.2142333984375,
+                                            0.20190288126468659,
+                                            0.9794055223464966,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2192.767578125,
+                                            172.98655700683595,
+                                            -409.2142333984375,
+                                            0.20190288126468659,
+                                            0.9794055223464966,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2172.64013671875,
+                                            177.13583374023438,
+                                            -409.2142333984375,
+                                            0.20190288126468659,
+                                            0.9794055223464966,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2113.192626953125,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2098.787353515625,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2045.346435546875,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1880.21923828125,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1879.2459716796876,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1856.102783203125,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1774.41162109375,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1754.633056640625,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1711.3485107421876,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1662.7918701171876,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1632.412353515625,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1611.4896240234376,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1545.76513671875,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1521.0823974609376,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1516.3795166015626,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1456.035400390625,
+                                            173.3463134765625,
+                                            -409.2142333984375,
+                                            -0.24248676002025605,
+                                            0.9701547026634216,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1439.951416015625,
+                                            159.09423828125,
+                                            -409.2142333984375,
+                                            -0.670353353023529,
+                                            0.7420420050621033,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1396.412353515625,
+                                            106.14869689941406,
+                                            -409.2142333984375,
+                                            -0.8303242921829224,
+                                            0.5572806596755981,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            663.62109375,
+                                            181.65142822265626,
+                                            -409.2142333984375,
+                                            0.27286794781684878,
+                                            0.9620514512062073,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            683.09716796875,
+                                            176.1273956298828,
+                                            -409.2142333984375,
+                                            0.27286794781684878,
+                                            0.9620514512062073,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            614.2715454101563,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            586.6231079101563,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            561.20703125,
+                                            185.0,
+                                            -409.2142333984375,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            726.126220703125,
+                                            142.06178283691407,
+                                            -409.2142333984375,
+                                            0.7373744249343872,
+                                            0.6754841804504395,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            744.2028198242188,
+                                            111.56607055664063,
+                                            -409.2142333984375,
+                                            0.8937073349952698,
+                                            0.4486502707004547,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    }
+                                ]
                             }
+                        ],
+                        "rob2_tracks": [
+                            {
+                                "PreStP_num": 0,
+                                "PreEdP_num": 39,
+                                "Track": [
+                                    {
+                                        "Point_Normal": [
+                                            2237.70654296875,
+                                            168.8273468017578,
+                                            590.7857666015625,
+                                            0.201906219124794,
+                                            0.9794048070907593,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2211.519775390625,
+                                            174.2257537841797,
+                                            590.7857666015625,
+                                            0.201906219124794,
+                                            0.9794048070907593,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2150.349853515625,
+                                            186.83607482910157,
+                                            590.7857666015625,
+                                            0.201906219124794,
+                                            0.9794048070907593,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2085.90771484375,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2084.009033203125,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2084.009033203125,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2008.975341796875,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1968.2271728515626,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1932.734619140625,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1869.99072265625,
+                                            189.99998474121095,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1784.33154296875,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1742.421630859375,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1731.99072265625,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1677.4559326171876,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1643.135986328125,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1595.80712890625,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1556.3927001953126,
+                                            182.7174530029297,
+                                            590.7857666015625,
+                                            -0.0,
+                                            0.6427928805351257,
+                                            0.766040027141571
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1492.9005126953126,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1470.002197265625,
+                                            170.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1411.1463623046876,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1360.4256591796876,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1310.23095703125,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1245.2733154296876,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1216.6617431640626,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1206.6573486328126,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1148.535400390625,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1116.315673828125,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1061.416748046875,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            985.4030151367188,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            955.4268798828125,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            920.9346313476563,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            861.7802734375,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            802.8179321289063,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            779.1060180664063,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            766.3590087890625,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            625.0870361328125,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            603.1702880859375,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            708.7584838867188,
+                                            170.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            543.3223876953125,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            520.0455322265625,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "PreStP_num": 0,
+                                "PreEdP_num": 23,
+                                "Track": [
+                                    {
+                                        "Point_Normal": [
+                                            712.662109375,
+                                            156.75949096679688,
+                                            390.7857666015625,
+                                            0.7373744249343872,
+                                            0.6754841804504395,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            494.8857421875,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            602.1659545898438,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            625.8035888671875,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            666.858154296875,
+                                            180.73329162597657,
+                                            390.7857666015625,
+                                            0.27286794781684878,
+                                            0.9620514512062073,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1407.13037109375,
+                                            122.11788177490235,
+                                            390.7857666015625,
+                                            -0.8303242921829224,
+                                            0.5572806596755981,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1447.6083984375,
+                                            166.01153564453126,
+                                            390.7857666015625,
+                                            -0.670353353023529,
+                                            0.7420420050621033,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1460.353759765625,
+                                            174.42572021484376,
+                                            390.7857666015625,
+                                            -0.24248676002025605,
+                                            0.9701547026634216,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1513.7447509765626,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1558.0570068359376,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1609.280029296875,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1665.839599609375,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1679.4110107421876,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1711.493408203125,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1762.8546142578126,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1810.636962890625,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1858.794677734375,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1892.89013671875,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1984.0445556640626,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2065.15380859375,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2111.919921875,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2133.580078125,
+                                            184.5277099609375,
+                                            390.7857666015625,
+                                            0.05077299848198891,
+                                            0.9987102746963501,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2169.2216796875,
+                                            177.8404541015625,
+                                            390.7857666015625,
+                                            0.20190684497356416,
+                                            0.9794047474861145,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2224.105224609375,
+                                            166.52606201171876,
+                                            390.7857666015625,
+                                            0.20190684497356416,
+                                            0.9794047474861145,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "PreStP_num": 0,
+                                "PreEdP_num": 33,
+                                "Track": [
+                                    {
+                                        "Point_Normal": [
+                                            2237.43798828125,
+                                            168.8826446533203,
+                                            190.7857666015625,
+                                            0.201906219124794,
+                                            0.979404866695404,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2193.438720703125,
+                                            177.95318603515626,
+                                            190.7857666015625,
+                                            0.201906219124794,
+                                            0.979404866695404,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2181.3310546875,
+                                            180.44923400878907,
+                                            190.7857666015625,
+                                            0.201906219124794,
+                                            0.979404866695404,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2109.185791015625,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2120.009521484375,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2062.99853515625,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2024.9580078125,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1990.64892578125,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1958.51318359375,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1934.5556640625,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1860.1661376953126,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1860.1661376953126,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1811.7696533203126,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1770.544677734375,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1747.234619140625,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1693.1832275390626,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1677.85693359375,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1636.555419921875,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1497.0445556640626,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1439.9908447265626,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1403.791259765625,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1312.89404296875,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1031.100830078125,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            894.0843505859375,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            835.7241821289063,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            781.0390625,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            793.9014892578125,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            696.6095581054688,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            715.3086547851563,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            623.3040771484375,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            656.451416015625,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            595.5552368164063,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            532.703857421875,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            512.111328125,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "rob1_tracks": [
+                            {
+                                "PreStP_num": 0,
+                                "PreEdP_num": 36,
+                                "Track": [
+                                    {
+                                        "Point_Normal": [
+                                            2239.6669921875,
+                                            163.3179473876953,
+                                            -9.2142333984375,
+                                            0.20190684497356416,
+                                            0.9794048070907593,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2176.020751953125,
+                                            176.43878173828126,
+                                            -9.2142333984375,
+                                            0.20190684497356416,
+                                            0.9794048070907593,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2140.90087890625,
+                                            183.49102783203126,
+                                            -9.2142333984375,
+                                            0.15190117061138154,
+                                            0.988395631313324,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2128.9677734375,
+                                            184.76217651367188,
+                                            -9.2142333984375,
+                                            0.05077299848198891,
+                                            0.9987102150917053,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2083.24560546875,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2020.480712890625,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1969.962646484375,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1718.10546875,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1690.192626953125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1656.34765625,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1601.817138671875,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1556.5286865234376,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1545.025634765625,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1500.833251953125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1452.0501708984376,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1399.4007568359376,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1390.845703125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1343.078125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1274.9453125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1253.6090087890626,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1232.36328125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1180.077392578125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1130.258544921875,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1118.0103759765626,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1079.3961181640626,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1020.7055053710938,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            971.75390625,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            963.90283203125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            911.9327392578125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            854.2257080078125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            800.3468017578125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            759.2618408203125,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            700.6802368164063,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            652.0302734375,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            599.886474609375,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            538.5188598632813,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            486.954833984375,
+                                            185.0,
+                                            -9.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "PreStP_num": 0,
+                                "PreEdP_num": 31,
+                                "Track": [
+                                    {
+                                        "Point_Normal": [
+                                            503.3935241699219,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            536.529541015625,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            536.529541015625,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            583.0659790039063,
+                                            190.00001525878907,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            663.7786865234375,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            692.6525268554688,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            791.0474853515625,
+                                            181.3206329345703,
+                                            -209.2142333984375,
+                                            0.0,
+                                            0.6427928805351257,
+                                            -0.766040027141571
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            744.1366577148438,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            870.37353515625,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            889.7614135742188,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1058.2347412109376,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1345.56494140625,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1410.763671875,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1454.8408203125,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1528.823486328125,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1600.588134765625,
+                                            185.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1600.588134765625,
+                                            185.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1670.72265625,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1717.67333984375,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1792.58740234375,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1809.810546875,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1859.9215087890626,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1897.259521484375,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1942.156494140625,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1984.17919921875,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2024.3201904296876,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2087.93603515625,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2123.67919921875,
+                                            190.0,
+                                            -209.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2161.01611328125,
+                                            184.63720703125,
+                                            -209.2142333984375,
+                                            0.201906219124794,
+                                            0.979404866695404,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2161.01611328125,
+                                            184.63720703125,
+                                            -209.2142333984375,
+                                            0.201906219124794,
+                                            0.979404866695404,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2227.125244140625,
+                                            171.00865173339845,
+                                            -209.2142333984375,
+                                            0.201906219124794,
+                                            0.979404866695404,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2265.85009765625,
+                                            163.0254669189453,
+                                            -209.2142333984375,
+                                            0.201906219124794,
+                                            0.979404866695404,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "PreStP_num": 0,
+                                "PreEdP_num": 28,
+                                "Track": [
+                                    {
+                                        "Point_Normal": [
+                                            2269.9638671875,
+                                            157.0726776123047,
+                                            -409.2142333984375,
+                                            0.20190288126468659,
+                                            0.9794055223464966,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2228.423828125,
+                                            165.63612365722657,
+                                            -409.2142333984375,
+                                            0.20190288126468659,
+                                            0.9794055223464966,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2192.767578125,
+                                            172.98655700683595,
+                                            -409.2142333984375,
+                                            0.20190288126468659,
+                                            0.9794055223464966,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2172.64013671875,
+                                            177.13583374023438,
+                                            -409.2142333984375,
+                                            0.20190288126468659,
+                                            0.9794055223464966,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2113.192626953125,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2098.787353515625,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2045.346435546875,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1880.21923828125,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1879.2459716796876,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1856.102783203125,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1774.41162109375,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1754.633056640625,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1711.3485107421876,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1662.7918701171876,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1632.412353515625,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1611.4896240234376,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1545.76513671875,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1521.0823974609376,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1516.3795166015626,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1456.035400390625,
+                                            173.3463134765625,
+                                            -409.2142333984375,
+                                            -0.24248676002025605,
+                                            0.9701547026634216,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1439.951416015625,
+                                            159.09423828125,
+                                            -409.2142333984375,
+                                            -0.670353353023529,
+                                            0.7420420050621033,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1396.412353515625,
+                                            106.14869689941406,
+                                            -409.2142333984375,
+                                            -0.8303242921829224,
+                                            0.5572806596755981,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            663.62109375,
+                                            181.65142822265626,
+                                            -409.2142333984375,
+                                            0.27286794781684878,
+                                            0.9620514512062073,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            683.09716796875,
+                                            176.1273956298828,
+                                            -409.2142333984375,
+                                            0.27286794781684878,
+                                            0.9620514512062073,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            614.2715454101563,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            586.6231079101563,
+                                            185.0,
+                                            -409.2142333984375,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            561.20703125,
+                                            185.0,
+                                            -409.2142333984375,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            726.126220703125,
+                                            142.06178283691407,
+                                            -409.2142333984375,
+                                            0.7373744249343872,
+                                            0.6754841804504395,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            744.2028198242188,
+                                            111.56607055664063,
+                                            -409.2142333984375,
+                                            0.8937073349952698,
+                                            0.4486502707004547,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    }
+                                ]
+                            }
+                        ],
+                        "rob2_tracks": [
+                            {
+                                "PreStP_num": 0,
+                                "PreEdP_num": 39,
+                                "Track": [
+                                    {
+                                        "Point_Normal": [
+                                            2237.70654296875,
+                                            168.8273468017578,
+                                            590.7857666015625,
+                                            0.201906219124794,
+                                            0.9794048070907593,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2211.519775390625,
+                                            174.2257537841797,
+                                            590.7857666015625,
+                                            0.201906219124794,
+                                            0.9794048070907593,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2150.349853515625,
+                                            186.83607482910157,
+                                            590.7857666015625,
+                                            0.201906219124794,
+                                            0.9794048070907593,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2085.90771484375,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2084.009033203125,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2084.009033203125,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2008.975341796875,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1968.2271728515626,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1932.734619140625,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1869.99072265625,
+                                            189.99998474121095,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1784.33154296875,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1742.421630859375,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1731.99072265625,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1677.4559326171876,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1643.135986328125,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1595.80712890625,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1556.3927001953126,
+                                            182.7174530029297,
+                                            590.7857666015625,
+                                            -0.0,
+                                            0.6427928805351257,
+                                            0.766040027141571
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1492.9005126953126,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1470.002197265625,
+                                            170.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1411.1463623046876,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1360.4256591796876,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1310.23095703125,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1245.2733154296876,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1216.6617431640626,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1206.6573486328126,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1148.535400390625,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1116.315673828125,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1061.416748046875,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            985.4030151367188,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            955.4268798828125,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            920.9346313476563,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            861.7802734375,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            802.8179321289063,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            779.1060180664063,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            766.3590087890625,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            625.0870361328125,
+                                            190.0,
+                                            590.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            603.1702880859375,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            708.7584838867188,
+                                            170.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            543.3223876953125,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            520.0455322265625,
+                                            190.0,
+                                            590.7857666015625,
+                                            -0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "PreStP_num": 0,
+                                "PreEdP_num": 23,
+                                "Track": [
+                                    {
+                                        "Point_Normal": [
+                                            712.662109375,
+                                            156.75949096679688,
+                                            390.7857666015625,
+                                            0.7373744249343872,
+                                            0.6754841804504395,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            494.8857421875,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            602.1659545898438,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            625.8035888671875,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            666.858154296875,
+                                            180.73329162597657,
+                                            390.7857666015625,
+                                            0.27286794781684878,
+                                            0.9620514512062073,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1407.13037109375,
+                                            122.11788177490235,
+                                            390.7857666015625,
+                                            -0.8303242921829224,
+                                            0.5572806596755981,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1447.6083984375,
+                                            166.01153564453126,
+                                            390.7857666015625,
+                                            -0.670353353023529,
+                                            0.7420420050621033,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1460.353759765625,
+                                            174.42572021484376,
+                                            390.7857666015625,
+                                            -0.24248676002025605,
+                                            0.9701547026634216,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1513.7447509765626,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1558.0570068359376,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1609.280029296875,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1665.839599609375,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1679.4110107421876,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1711.493408203125,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1762.8546142578126,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1810.636962890625,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1858.794677734375,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1892.89013671875,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1984.0445556640626,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2065.15380859375,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2111.919921875,
+                                            185.0,
+                                            390.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2133.580078125,
+                                            184.5277099609375,
+                                            390.7857666015625,
+                                            0.05077299848198891,
+                                            0.9987102746963501,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2169.2216796875,
+                                            177.8404541015625,
+                                            390.7857666015625,
+                                            0.20190684497356416,
+                                            0.9794047474861145,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2224.105224609375,
+                                            166.52606201171876,
+                                            390.7857666015625,
+                                            0.20190684497356416,
+                                            0.9794047474861145,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "PreStP_num": 0,
+                                "PreEdP_num": 33,
+                                "Track": [
+                                    {
+                                        "Point_Normal": [
+                                            2237.43798828125,
+                                            168.8826446533203,
+                                            190.7857666015625,
+                                            0.201906219124794,
+                                            0.979404866695404,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2193.438720703125,
+                                            177.95318603515626,
+                                            190.7857666015625,
+                                            0.201906219124794,
+                                            0.979404866695404,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2181.3310546875,
+                                            180.44923400878907,
+                                            190.7857666015625,
+                                            0.201906219124794,
+                                            0.979404866695404,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2109.185791015625,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2120.009521484375,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2062.99853515625,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            2024.9580078125,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1990.64892578125,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1958.51318359375,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1934.5556640625,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1860.1661376953126,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1860.1661376953126,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1811.7696533203126,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1770.544677734375,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1747.234619140625,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1693.1832275390626,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1677.85693359375,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1636.555419921875,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1497.0445556640626,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1439.9908447265626,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1403.791259765625,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1312.89404296875,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            1031.100830078125,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            894.0843505859375,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            835.7241821289063,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            781.0390625,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            793.9014892578125,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            696.6095581054688,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            715.3086547851563,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            623.3040771484375,
+                                            190.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            -0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            656.451416015625,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            595.5552368164063,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            532.703857421875,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    },
+                                    {
+                                        "Point_Normal": [
+                                            512.111328125,
+                                            185.0,
+                                            190.7857666015625,
+                                            0.0,
+                                            1.0,
+                                            0.0
+                                        ],
+                                        "PntTpe": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ];
+                let pointList: any = [];
+                (res || []).forEach((item1: any, index: number) => {
+                    (Object.entries(item1) || []).forEach((cen: any, Index: number) => {
+                        cen[1].forEach((item: any) => {
+                            const { Track, ...rest } = item;
+                            const obj = (Track || []).map((tr: any) => {
+                                const { Point_Normal } = tr;
+                                return {
+                                    area: `area-${index}-robt-${Index}`,
+                                    name: cen[0],
+                                    point: {
+                                        x: Point_Normal[0],
+                                        y: Point_Normal[1],
+                                        z: Point_Normal[2]
+                                    },
+                                    normVec: {
+                                        x: Point_Normal[3],
+                                        y: Point_Normal[4],
+                                        z: Point_Normal[5]
+                                    },
+                                    ...rest
+                                }
+                            });
+                            pointList = pointList.concat(obj);
                         });
-                        pointList = pointList.concat(obj);
                     });
                 });
                 console.log(pointList)
@@ -455,20 +4819,15 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         labelRenderer.domElement.style['font-size'] = 'inherit';
         box.appendChild(labelRenderer.domElement);
         // @ts-ignore 左上角，内存占用显示 
-        stats.current = new Stats();
-        stats.current.dom.style.position = "absolute";
+        // stats.current = new Stats();
+        // stats.current.dom.style.position = "absolute";
         // stats.dom.style.top = "28px";
-        box.appendChild(stats.current.dom);
+        // box.appendChild(stats.current.dom);
         // 场景
         scene.current = new THREE.Scene();
         uiScene.current = new THREE.Scene();
         const background = theme === 'realDark' ? new THREE.Color(0x2b313b) : new THREE.Color(0xeeeeee);
         // scene.current.background = background;
-        // 坐标轴（右手定则，大拇指是x）
-        const axesHelper = new THREE.AxesHelper(1000);
-        axesHelper.name = "axis";
-        axesHelper.visible = false;
-        scene.current.add(axesHelper);
         // 光源
         {
             let light = null,
@@ -507,7 +4866,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         // 控制器 (旋转/缩放)
         controls.current = new OrbitControls(camera.current, renderer.current.domElement);
         controls.current.enableDamping = true;
-        controls.current.enableZoom = modelScale;
+        controls.current.enableZoom = modelUpload || modelScale;
+        // controls.current.enableRotate = !modelUpload;
         // 开始渲染,加载url
         loadModel(selectedPath || name, value);
         // 取消标注的公共方法
@@ -522,7 +4882,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 scene.current.remove(measurementLabels[lineId]);
                 drawingLine = false;
             }
-        }
+        };
         // 标注
         function bzBtnFun01() {
             if (!ctrlDown) {
@@ -642,6 +5002,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     }
                 }
             });
+            editableObjects.current = (editableObjects.current || []).filter((i: any) => i.name?.indexOf('editArea-') < 0);
+            setCameraDirection([]);
         };
         bzBtn05?.addEventListener("click", bzBtnFun05);
         // 缩放
@@ -714,41 +5076,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         positions[3] = intersects[0].point.x;
                         positions[4] = intersects[0].point.y;
                         positions[5] = intersects[0].point.z;
-                        // 模型尺寸
-                        const { height, width } = getSize();
-                        const name = `editArea-${guid()}`;
-                        // 把立方体坐标放到指定数组里
-                        rectObjects.current[name] = [
-                            positions[0], positions[3],
-                            -height / 2, height / 2,
-                            ...(
-                                width * 3 / 4 <= Math.abs(positions[5] - positions[2]) ?
-                                    [-width / 2, width / 2] :
-                                    [positions[2], positions[5]]
-                            )
-                        ];
-                        drawingLine = false;
-                        let sizeObj: any = [];
-                        sizeObj = [
-                            Math.abs(positions[3] - positions[0]),
-                            height, // Math.abs(positions[4] - positions[1]),
-                            width * 3 / 4 <= Math.abs(positions[5] - positions[2]) ? width : Math.abs(positions[5] - positions[2])
-                        ]
-                        const geometry = new THREE.BoxGeometry(...sizeObj);
-                        const material = new THREE.MeshBasicMaterial({ opacity: 0 });
-                        material.opacity = 0;
-                        material.transparent = true;
-                        const cube = new THREE.Mesh(geometry, material);
-                        cube.name = name;
-                        cube.position.x = positions[3] + (positions[0] - positions[3]) / 2;
-                        cube.position.y = 0; //positions[4] + (positions[1] - positions[4]) / 2;
-                        cube.position.z = width * 3 / 4 <= Math.abs(positions[5] - positions[2]) ? 0 : positions[5] + (positions[2] - positions[5]) / 2;
-                        var boxHelper = new THREE.BoxHelper(cube, 0xff0000);
-                        boxHelper.name = "measureBoxHelper";
-                        boxHelper.visible = true;
-                        cube.attach(boxHelper);
-                        scene.current.add(cube);
-                        editableObjects?.push?.(cube);
+                        addRectArea({ positions }).then(cube => {
+                            editableObjects.current?.push?.(cube);
+                        });
                     }
                 }
             } else {
@@ -836,25 +5166,42 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         // 双击交互
         function onMousedblclick(event: any) {
             raycaster.setFromCamera(mouse, camera.current);
-            const intersects: any = raycaster.intersectObjects(editableObjects, false); // 获取光线投射的对象
+            const intersects: any = raycaster.intersectObjects(editableObjects.current, false); // 获取光线投射的对象
             if (intersects.length > 0) {
                 const intersect: any = intersects[0];
-                console.log(intersect)
-                setSelectedPoint(intersect);
-                setFieldsValue({
-                    point: {
-                        x: { alias: 'x', value: intersect.object.position.x },
-                        y: { alias: 'y', value: intersect.object.position.y },
-                        z: { alias: 'z', value: intersect.object.position.z }
-                    },
-                    normVec: {
-                        x: { alias: 'x', value: intersect.object.normVec.x },
-                        y: { alias: 'y', value: intersect.object.normVec.y },
-                        z: { alias: 'z', value: intersect.object.normVec.z }
-                    }
-                });
+                console.log(intersect);
+                if (intersect?.object?.name?.indexOf('editPoint-') > -1) {
+                    // 编辑轨迹点
+                    intersect.object.color = new THREE.Color(0xff0000);
+                    setSelectedPoint(intersect);
+                    setFieldsValue({
+                        point: {
+                            x: { alias: 'x', value: intersect.object.position.x },
+                            y: { alias: 'y', value: intersect.object.position.y },
+                            z: { alias: 'z', value: intersect.object.position.z }
+                        },
+                        normVec: {
+                            x: { alias: 'nx', value: intersect.object?.normVec?.x },
+                            y: { alias: 'ny', value: intersect.object?.normVec?.y },
+                            z: { alias: 'nz', value: intersect.object?.normVec?.z }
+                        }
+                    });
+                } else if (intersect?.object?.name?.indexOf('editArea-') > -1) {
+                    // 编辑框选
+                    setSelectedArea(intersect);
+                    form1.setFieldsValue({
+                        position: {
+                            x1: { alias: 'x1', value: intersect.object.position.x - intersect.object?.geometry?.parameters?.width / 2 },
+                            y1: { alias: 'y1', value: intersect.object.position.y - intersect.object?.geometry?.parameters?.height / 2 },
+                            z1: { alias: 'z1', value: intersect.object.position.z - intersect.object.geometry?.parameters?.depth / 2 },
+                            x2: { alias: 'x2', value: intersect.object.position.x + intersect.object?.geometry?.parameters?.width / 2 },
+                            y2: { alias: 'y2', value: intersect.object.position.y + intersect.object?.geometry?.parameters?.height / 2 },
+                            z2: { alias: 'z2', value: intersect.object.position.z + intersect.object.geometry?.parameters?.depth / 2 }
+                        },
+                        ...intersect.object?.__props
+                    });
+                }
             }
-            render();
         };
         renderer.current.domElement.addEventListener("pointerdown", onMouseDown, false);
         renderer.current.domElement.addEventListener("pointerup", onMouseUp, false);
@@ -898,6 +5245,45 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             }
         };
     }, [name, uuid, selectedPath]);
+    // 添加框选区域立方体
+    const addRectArea = (props: any) => {
+        return new Promise((resolve, reject) => {
+            console.log(props);
+            const { positions, addType, cameraDirection, ...rest } = props;
+            // 模型尺寸
+            const { height, width, length } = getSize();
+            const name = `editArea-${guid()}`;
+            drawingLine = false;
+            let sizeObj: any = [];
+            sizeObj = addType === 'form' ?
+                [
+                    Math.abs(positions[3] - positions[0]),
+                    Math.abs(positions[4] - positions[1]),
+                    Math.abs(positions[5] - positions[2]),
+                ]
+                : [
+                    Math.abs(positions[3] - positions[0]),
+                    height / (15 / 9), // Math.abs(positions[4] - positions[1]),
+                    width //width * 3 / 4 <= Math.abs(positions[5] - positions[2]) ? width : Math.abs(positions[5] - positions[2])
+                ];
+            const geometry = new THREE.BoxGeometry(...sizeObj);
+            const material = new THREE.MeshBasicMaterial({});
+            material.opacity = 0;
+            material.transparent = true;
+            const cube = new THREE.Mesh(geometry, material);
+            cube.name = name;
+            cube['__props'] = _.omit(props, 'positions');
+            cube.position.x = positions[3] + (positions[0] - positions[3]) / 2;
+            cube.position.y = addType === 'form' ? 0 : ((positions[1] > 0 || positions[4] > 0) ? 1 : -1) * height / (cameraDirection === 'bottom' ? 15 / 7 : 6); //positions[4] + (positions[1] - positions[4]) / 2;
+            cube.position.z = addType === 'form' ? positions[5] + (positions[2] - positions[5]) / 2 : 0 //width * 3 / 4 <= Math.abs(positions[5] - positions[2]) ? 0 : positions[5] + (positions[2] - positions[5]) / 2;
+            var boxHelper = new THREE.BoxHelper(cube, 0xff0000);
+            boxHelper.name = "measureBoxHelper";
+            boxHelper.visible = true;
+            cube.attach(boxHelper);
+            scene.current.add(cube);
+            resolve(cube);
+        });
+    };
     // 获取场景中的全部模型对象
     function getAllModelsFromScene(scene: any, filterName?: string) {
         const models: any = [];
@@ -950,6 +5336,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             let z1 = box.min.z + mdwid / 2; // 模型中心点坐标Z
             const max = Math.max(mdlen, mdhei, mdwid);
             const min = Math.min(mdlen, mdhei, mdwid);
+            // 坐标轴（右手定则，大拇指是x）
+            const axesHelper = new THREE.AxesHelper(max * 4 / 3);
+            axesHelper.name = "axis";
+            axesHelper.visible = false;
+            scene.current.add(axesHelper);
+
             let scale = 1.3 * mdwid / dom.current.clientHeight;
             if (scale >= 2) {
                 scale = mdwid / (dom.current.clientHeight - 50);
@@ -1660,7 +6052,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     cube['normVec'] = normVec;
                     cube['area'] = area;
                     cube.name = `editPoint-${index}`;
-                    editableObjects?.push?.(cube);
+                    editableObjects.current?.push?.(cube);
                     scene.current?.add?.(cube);
                 }
             });
@@ -1842,10 +6234,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     };
     // 不同视角点击函数
     const animationClick = (targetPos: any) => {
-        // 先停止自动旋转
-        setCameraSwitch(false);
-        // 然后旋转视角
-        animateCamera(targetPos);
+        return new Promise((resolve, reject) => {
+            // 先停止自动旋转
+            setCameraSwitch(false);
+            // 然后旋转视角
+            animateCamera(targetPos).then(() => {
+                resolve(true);
+            });
+        });
     };
     // 动态旋转视角
     const animateCamera = (targetPos: any, timehost = 1000) => {
@@ -1937,9 +6333,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     <Tooltip title="比例尺">
                         <Popover
                             content={
-                                <div className='flex-box'>
+                                <div className='flex-box' style={{ height: 32 }}>
                                     <Input
-                                        style={{ maxWidth: 100 }}
+                                        style={{ maxWidth: 100, height: '100%' }}
                                         placeholder="比例尺"
                                         onBlur={(e) => {
                                             const res = JSON.parse(localStorage.getItem("scale") || "{}");
@@ -2031,24 +6427,32 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     </Tooltip>
                     <Tooltip title={!!selectedPath ? "清除上传的文件" : "上传本地点云文件"}>
                         {
-                            !!selectedPath ?
-                                <Button
-                                    icon={<DeleteOutlined />}
-                                    onClick={() => {
-                                        setSelectedPath("");
-                                    }}
-                                />
-                                :
+                            !!modelUpload ?
                                 <Button
                                     icon={<UploadOutlined />}
                                     onClick={() => {
-                                        setSelectPathVisible(true);
+                                        setModelUploadVisible(true);
                                     }}
                                 />
+                                :
+                                !!selectedPath ?
+                                    <Button
+                                        icon={<DeleteOutlined />}
+                                        onClick={() => {
+                                            setSelectedPath("");
+                                        }}
+                                    />
+                                    :
+                                    <Button
+                                        icon={<UploadOutlined />}
+                                        onClick={() => {
+                                            setSelectPathVisible(true);
+                                        }}
+                                    />
                         }
                     </Tooltip>
                     {
-                        process.env.NODE_ENV === 'development' ?
+                        modelUpload ?
                             <Button onClick={() => {
                                 const areas = getAllModelsFromScene(scene.current, 'editArea');
                                 const points = getAllModelsFromScene(scene.current, 'editPoint');
@@ -2059,11 +6463,37 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                         PntTpe: 1
                                     }
                                 });
-                                console.log(points);
-                                console.log(pointResult, rectObjects.current);
-                                console.log(camera?.current?.position);
+                                const params = {
+                                    action: 1,
+                                    list: areas.map((area: any) => {
+                                        const { addType, cameraDirection, ...rest } = area?.__props;
+                                        return {
+                                            ...rest,
+                                            cut_range: [
+                                                area.position.x - area?.geometry?.parameters?.width / 2,
+                                                area.position.x + area?.geometry?.parameters?.width / 2,
+                                                area.position.y - area?.geometry?.parameters?.height / 2,
+                                                area.position.y + area?.geometry?.parameters?.height / 2,
+                                                area.position.z - area.geometry?.parameters?.depth / 2,
+                                                area.position.z + area.geometry?.parameters?.depth / 2
+                                            ]
+                                        }
+                                    })
+                                }
+                                // console.log(areas);
+                                // console.log(camera?.current?.position);
+                                console.log(params);
+                                if (!!fetchType && !!xName) {
+                                    btnFetch(fetchType, xName, params).then((res: any) => {
+                                        if (res && res.code === 'SUCCESS') {
+
+                                        } else {
+                                            message.error(res?.msg || res?.message || "接口异常");
+                                        }
+                                    });
+                                }
                             }}>
-                                打印轨迹
+                                确认并上传分区
                             </Button>
                             : null
                     }
@@ -2085,7 +6515,76 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     </Tooltip>
                 </div>
             </div>
+            {
+                modelUpload ?
+                    <div className="flex-box camera-position">
+                        {
+                            [
+                                { key: 'bottom', label: '框选底面' },
+                                { key: 'right', label: '框选右侧' },
+                                { key: 'left', label: '框选左侧' },
+                            ].map((item: any, index: number) => {
+                                const { key, label } = item;
+                                return <div
+                                    className={`flex-box-center camera-position-item ${cameraDirection.includes(key) ? 'camera-position-item-selected' : ''}`}
+                                    key={`camera-position-item-${index}`}
+                                    onClick={() => {
+                                        setCameraDirection((prev: any) => {
+                                            if (!prev?.includes(key)) {
+                                                if (key === 'bottom') {
+                                                    const { max, cameraScale } = getSize();
+                                                    var targetPos = new THREE.Vector3(0, max * -cameraScale, 0);
+                                                    animationClick(targetPos).then(res => {
+                                                        const { height, width, length } = getSize();
+                                                        const positions: any = [
+                                                            length / 10 * -1, height / 2 * -1 - 50, width / 2 * -1 - 50,
+                                                            length, height / 2 * -1, width / 2 + 50,
+                                                        ];
+                                                        addRectArea({ positions, cameraDirection: 'bottom' }).then(cube => {
+                                                            editableObjects.current?.push?.(cube);
+                                                        });
+                                                    });
+                                                } else if (key === 'right') {
+                                                    const { max, cameraScale } = getSize();
+                                                    var targetPos = new THREE.Vector3(0, 0, max * cameraScale);
+                                                    animationClick(targetPos).then(res => {
+                                                        const { height, width, length } = getSize();
+                                                        const positions: any = [
+                                                            length / 10 * -1, height / 2 * -1 - 50, width / 2 - 50,
+                                                            length, height / 2 + 50, width / 2 + 50,
+                                                        ];
+                                                        addRectArea({ positions, addType: 'form', cameraDirection: 'right' }).then(cube => {
+                                                            editableObjects.current?.push?.(cube);
+                                                        });
+                                                    });
+                                                } else if (key === 'left') {
+                                                    const { max, cameraScale } = getSize();
+                                                    var targetPos = new THREE.Vector3(0, 0, -1 * max * cameraScale);
+                                                    animationClick(targetPos).then(res => {
+                                                        const { height, width, length } = getSize();
+                                                        const positions: any = [
+                                                            length / 10 * -1, height / 2 * -1 - 50, width / 2 * -1 + 50,
+                                                            length, height / 2 + 50, width / 2 * -1 - 50,
+                                                        ];
+                                                        addRectArea({ positions, addType: 'form', cameraDirection: 'left' }).then(cube => {
+                                                            editableObjects.current?.push?.(cube);
+                                                        });
+                                                    });
+                                                }
+                                                return prev.concat(key);
+                                            }
 
+                                            return prev;
+                                        });
+                                    }}
+                                >
+                                    {label}
+                                </div>
+                            })
+                        }
+                    </div>
+                    : null
+            }
             <div
                 className='render-dom'
                 // @ts-ignore
@@ -2203,14 +6702,106 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     <FileManager
                         onOk={(val: any) => {
                             const { value } = val;
-                            setSelectedPath(`http://localhost:5001/files/${value}`);
-                            setSelectPathVisible(false);
+                            const path = `http://localhost:5001/files/${value}`;
+                            if (modelUploadVisible) {
+                                form2.setFieldsValue({ modelfilename: value });
+                                setSelectPathVisible(false);
+                            } else {
+                                setSelectedPath(path);
+                                setSelectPathVisible(false);
+                            }
                         }}
                         onCancel={() => {
                             setSelectPathVisible(false);
                             setSelectedPath("");
                         }}
                     />
+                    : null
+            }
+            {
+                modelUploadVisible ?
+                    <Modal
+                        title="选取模型"
+                        open={modelUploadVisible}
+                        centered
+                        onOk={() => {
+                            form2.validateFields()
+                                .then((values) => {
+                                    console.log(values)
+                                    if (process.env.NODE_ENV === 'development') {
+                                        setModelUploadVisible(false);
+                                        setSelectedPath("models/output.stl");
+                                    }
+                                    if (!!fetchType && !!xName) {
+                                        btnFetch(fetchType, xName, {
+                                            action: 0,
+                                            ...values
+                                        }).then((res: any) => {
+                                            if (res && res.code === 'SUCCESS') {
+                                                setModelUploadVisible(false);
+                                                setSelectedPath(`http://localhost:5001/files/${values?.modelfilename}`);
+                                            } else {
+                                                message.error(res?.msg || res?.message || "接口异常");
+                                            }
+                                        });
+                                    } else {
+                                        setModelUploadVisible(false);
+                                    }
+                                    form2.resetFields();
+                                });
+                        }}
+                        onCancel={() => {
+                            form2.resetFields();
+                            setModelUploadVisible(false);
+                        }}
+                        destroyOnClose
+                        maskClosable={false}
+                    >
+                        <Form
+                            form={form2}
+                            scrollToFirstError
+                        >
+                            <Form.Item
+                                name="modelfilename"
+                                label="上传模型"
+                                rules={[{ required: true, message: "上传模型" }]}
+                            >
+                                {form2.getFieldValue('modelfilename')}
+                                <Button
+                                    style={{ marginLeft: 8 }}
+                                    icon={<UploadOutlined />}
+                                    onClick={() => {
+                                        setSelectPathVisible(true);
+                                    }}
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                name="fill_directions"
+                                label="需要填补空洞的面"
+                                rules={[{ required: true, message: "需要填补空洞的面" }]}
+                            >
+                                <Select
+                                    placeholder="需要填补空洞的面"
+                                    mode="multiple"
+                                    options={[
+                                        { label: 'x+', value: 'x+' },
+                                        { label: 'x-', value: 'x-' },
+                                        { label: 'y+', value: 'y+' },
+                                        { label: 'y-', value: 'y-' },
+                                        { label: 'z+', value: 'z+' },
+                                        { label: 'z-', value: 'z-' },
+                                    ]}
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                name="pointNum"
+                                label="采样点数"
+                                rules={[{ required: true, message: "采样点数" }]}
+                            >
+                                <InputNumber min={1} />
+                            </Form.Item>
+                        </Form>
+                    </Modal>
                     : null
             }
             {
@@ -2231,9 +6822,13 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                         z: normVec.z.value
                                     }
                                     setSelectedPoint(null);
+                                    form.resetFields();
                                 });
                         }}
-                        onCancel={() => setSelectedPoint(null)}
+                        onCancel={() => {
+                            form.resetFields();
+                            setSelectedPoint(null);
+                        }}
                         destroyOnClose
                         maskClosable={false}
                     >
@@ -2254,6 +6849,128 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 rules={[{ required: true, message: "法向量" }]}
                             >
                                 <Measurement />
+                            </Form.Item>
+                        </Form>
+                    </Modal>
+                    : null
+            }
+            {
+                (!!selectedArea && !_.isEmpty(selectedArea)) ?
+                    <Modal
+                        title="框选位置"
+                        open={(!!selectedArea && !_.isEmpty(selectedArea))}
+                        centered
+                        onCancel={() => {
+                            form1.resetFields();
+                            setSelectedArea(null);
+                        }}
+                        footer={<div className='flex-box-justify-end' style={{ gap: 8 }}>
+                            <Button onClick={() => {
+                                editableObjects.current = (editableObjects.current || []).filter((i: any) => i.name !== selectedArea.object.name);
+                                scene.current?.remove?.(selectedArea.object);
+                                // 释放物体占用的内存资源
+                                if (selectedArea.object.geometry) selectedArea.object?.geometry?.dispose?.();
+                                if (selectedArea.object.material) {
+                                    if (!!selectedArea.object?.material?.materials?.length) {
+                                        selectedArea.object.material.materials.forEach(function (mat: any) {
+                                            mat?.dispose?.();
+                                        });
+                                    } else {
+                                        selectedArea.object?.material?.dispose?.();
+                                    }
+                                };
+                                setCameraDirection((prev: any) => _.pull(prev, selectedArea.object?.__props?.cameraDirection));
+                                setSelectedArea(null);
+                                form1.resetFields();
+                            }}>删除此框选</Button>
+                            <Button type="primary" onClick={() => {
+                                form1.validateFields()
+                                    .then((values) => {
+                                        console.log(values)
+                                        const { position, ...rest } = values;
+                                        const positions = [
+                                            position.x1.value, position.y1.value, position.z1.value,
+                                            position.x2.value, position.y2.value, position.z2.value
+                                        ];
+                                        editableObjects.current = (editableObjects.current || []).filter((i: any) => i.name !== selectedArea.object.name);
+                                        scene.current?.remove?.(selectedArea.object);
+                                        // 释放物体占用的内存资源
+                                        if (selectedArea.object.geometry) selectedArea.object?.geometry?.dispose?.();
+                                        if (selectedArea.object.material) {
+                                            if (!!selectedArea.object?.material?.materials?.length) {
+                                                selectedArea.object.material.materials.forEach(function (mat: any) {
+                                                    mat?.dispose?.();
+                                                });
+                                            } else {
+                                                selectedArea.object?.material?.dispose?.();
+                                            }
+                                        };
+
+                                        addRectArea({
+                                            positions,
+                                            ...rest,
+                                            addType: selectedArea.object?.__props?.addType,
+                                            cameraDirection: selectedArea.object?.__props?.cameraDirection
+                                        }).then(cube => {
+                                            editableObjects.current?.push?.(cube);
+                                        });
+                                        setSelectedArea(null);
+                                        form1.resetFields();
+                                    });
+                            }}>修改</Button>
+                        </div>}
+                        destroyOnClose
+                        maskClosable={false}
+                    >
+                        <Form
+                            form={form1}
+                            scrollToFirstError
+                        >
+                            <Form.Item
+                                name="position"
+                                label="坐标"
+                                rules={[{ required: true, message: "坐标" }]}
+                            >
+                                <Measurement lineNum={3} />
+                            </Form.Item>
+                            <Form.Item
+                                name="cut_direction"
+                                label="切割方向"
+                                rules={[{ required: true, message: "切割方向" }]}
+                            >
+                                <Select
+                                    placeholder="切割方向"
+                                    options={[
+                                        { label: 'x+', value: '[1,0,0]' },
+                                        { label: 'x-', value: '[-1,0,0]' },
+                                        { label: 'y+', value: '[0,1,0]' },
+                                        { label: 'y-', value: '[0,-1,0]' },
+                                        { label: 'z+', value: '[0,0,1]' },
+                                        { label: 'z-', value: '[0,0,-1]' },
+                                    ]}
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                name="cut_step"
+                                label="轨迹间距"
+                                rules={[{ required: true, message: "轨迹间距" }]}
+                            >
+                                <InputNumber min={1} />
+                            </Form.Item>
+                            <Form.Item
+                                name="robotTracksSplitDir"
+                                label="轨迹切分方向"
+                                rules={[{ required: true, message: "轨迹切分方向" }]}
+                            >
+                                <Select
+                                    placeholder="轨迹切分方向"
+                                    options={[
+                                        { label: '不切分', value: -1 },
+                                        { label: 'x方向对半切分', value: 0 },
+                                        { label: 'y方向对半切分', value: 1 },
+                                        { label: 'z方向对半切分', value: 2 }
+                                    ]}
+                                />
                             </Form.Item>
                         </Form>
                     </Modal>

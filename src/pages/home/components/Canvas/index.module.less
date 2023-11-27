@@ -1166,6 +1166,33 @@
       }
     }
 
+    .camera-position {
+      flex-wrap: wrap;
+      position: absolute;
+      top: 16px;
+      left: 24px;
+      // width: 64px;
+      gap: 8px;
+      z-index: 10;
+
+      &-item {
+        // width: 24px;
+        padding: 0 4px;
+        height: 24px;
+        border-radius: 4px;
+        border: 1px solid rgba(144, 144, 144, .5);
+
+        &:hover {
+          border-color: @primary-color;
+        }
+      }
+
+      &-item-selected {
+        background-color: @primary-color;
+        color: #fff;
+      }
+    }
+
     .render-dom {
       flex: 1;
       width: 100%;

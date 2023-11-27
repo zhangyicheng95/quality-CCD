@@ -883,7 +883,7 @@ const Home: React.FC<any> = (props: any) => {
           password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
           basicInfoData = [{ id: guid(), name: '', value: '' }], ifNeedClear, operationLock,
           ifUpdateProject, magnifierSize, listType, valueColor, markNumber,
-          markNumberLeft, markNumberTop, blockType, blockTypeLines
+          markNumberLeft, markNumberTop, blockType, blockTypeLines, modelUpload
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1013,6 +1013,7 @@ const Home: React.FC<any> = (props: any) => {
                                           dataValue: dataValue || { name: "", value: [] },
                                           modelRotate, modelScale, modelRotateScreenshot,
                                           fontSize, fetchType, xName, ifShowColorList,
+                                          modelUpload,
                                         }}
                                       />
                                       :
@@ -1462,7 +1463,7 @@ const Home: React.FC<any> = (props: any) => {
       password = '', passwordHelp = '', ifShowHeader = false, ifShowColorList = false,
       headerBackgroundColor = 'default', ifNeedClear, operationLock, ifUpdateProject,
       magnifierSize, logSize, listType, valueColor, markNumber = false, markNumberLeft, markNumberTop,
-      blockType, blockTypeLines
+      blockType, blockTypeLines, modelUpload
     } = values;
     if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
       try {
@@ -1493,7 +1494,8 @@ const Home: React.FC<any> = (props: any) => {
         fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
         password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
         ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
-        valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines
+        valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
+        modelUpload
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1512,7 +1514,8 @@ const Home: React.FC<any> = (props: any) => {
             fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
             password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
             ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
-            valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines
+            valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
+            modelUpload
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -1543,7 +1546,7 @@ const Home: React.FC<any> = (props: any) => {
       password: undefined, passwordHelp: undefined, ifShowHeader: false, ifShowColorList: false,
       headerBackgroundColor: 'default', ifNeedClear: false, operationLock: false, ifUpdateProject: false,
       magnifierSize: 4, logSize: 50, listType: 'line', markNumber: false, markNumberLeft: 1, markNumberTop: 1,
-      blockType: 'normal', blockTypeLines: 2
+      blockType: 'normal', blockTypeLines: 2, modelUpload: false
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -2742,8 +2745,16 @@ const Home: React.FC<any> = (props: any) => {
                       >
                         <Switch />
                       </Form.Item>
+                      <Form.Item
+                        name="modelUpload"
+                        label="手动上传模型"
+                        initialValue={false}
+                        valuePropName="checked"
+                      >
+                        <Switch />
+                      </Form.Item>
                       {
-                        !!form.getFieldValue('modelRotateScreenshot') ?
+                        (!!form.getFieldValue('modelRotateScreenshot') || !!form.getFieldValue('modelUpload')) ?
                           <Fragment>
                             <Form.Item
                               name={`fetchType`}

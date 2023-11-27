@@ -13,12 +13,13 @@ interface Props {
   step?: number;
   max?: number;
   min?: number;
+  lineNum?: number;
 };
 
 const Measurement: React.FC<Props> = (props: any) => {
   const {
     onChange = null, value = '', disabled, className = '', titleColor,
-    precision = 2, step = 0.01, max = 100000, min = -100000
+    precision = 2, step = 0.01, max = 100000, min = -100000, lineNum = 4
   } = props;
   const refnum_0 = useRef();
   const refnum_1 = useRef();
@@ -95,7 +96,7 @@ const Measurement: React.FC<Props> = (props: any) => {
         Object.entries(selfValue).map((item: any, index: number) => {
           if (!item[1]) return null;
           const { alias, value, } = item[1];
-          return <div key={index} className="flex-box-center item-input-box">
+          return <div key={index} className="flex-box-center item-input-box" style={{ minWidth: `calc(${100 / lineNum}% - 8px)` }}>
             <div
               className={`input-name ${focus[`refnum_${index}`] ? 'focus' : ''} ${titleColor ? 'bgColor' : ''}`}
               onClick={() => refList[index]?.current?.focus()}
