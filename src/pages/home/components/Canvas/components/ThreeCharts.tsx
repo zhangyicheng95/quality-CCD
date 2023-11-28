@@ -11,7 +11,6 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader.js";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
-import Stats from "three/examples/jsm/libs/stats.module.js";
 import TWEEN from '@tweenjs/tween.js';
 import {
     CSS2DRenderer,
@@ -29,7 +28,7 @@ import rectTopIcon from '@/assets/imgs/rect-top.svg';
 import rectBottomIcon from '@/assets/imgs/rect-bottom.svg';
 import rectFrontIcon from '@/assets/imgs/rect-front.svg';
 import rectBackIcon from '@/assets/imgs/rect-back.svg';
-import { equalsObj, guid, uuid } from '@/utils/utils';
+import { equalsObj, guid } from '@/utils/utils';
 import { btnFetch } from '@/services/api';
 import FileManager from '@/components/FileManager';
 import html2canvas from 'html2canvas';
@@ -4818,11 +4817,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         labelRenderer.domElement.style.pointerEvents = "none";
         labelRenderer.domElement.style['font-size'] = 'inherit';
         box.appendChild(labelRenderer.domElement);
-        // @ts-ignore 左上角，内存占用显示 
-        // stats.current = new Stats();
-        // stats.current.dom.style.position = "absolute";
-        // stats.dom.style.top = "28px";
-        // box.appendChild(stats.current.dom);
         // 场景
         scene.current = new THREE.Scene();
         uiScene.current = new THREE.Scene();
@@ -5188,6 +5182,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     });
                 } else if (intersect?.object?.name?.indexOf('editArea-') > -1) {
                     // 编辑框选
+                    intersect.object.children[0].material.color = new THREE.Color(0, 1, 0);
                     setSelectedArea(intersect);
                     form1.setFieldsValue({
                         position: {
@@ -6326,10 +6321,75 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             style={{ fontSize }}
         >
             <div id="instructions" className="flex-box-justify-between">
-                <div className="flex-box">
+                <div className={`flex-box ${modelUpload ? 'camera-position' : ''}`}>
+                    {
+                        modelUpload ?
+                            [
+                                { key: 'bottom', label: '框选底面' },
+                                { key: 'right', label: '框选右侧' },
+                                { key: 'left', label: '框选左侧' },
+                            ].map((item: any, index: number) => {
+                                const { key, label } = item;
+                                return <Button
+                                    key={`camera-position-item-${index}`}
+                                    type={cameraDirection.includes(key) ? 'primary' : 'default'}
+                                    onClick={() => {
+                                        setCameraDirection((prev: any) => {
+                                            if (!prev?.includes(key)) {
+                                                if (key === 'bottom') {
+                                                    const { max, cameraScale } = getSize();
+                                                    var targetPos = new THREE.Vector3(0, max * -cameraScale, 0);
+                                                    animationClick(targetPos).then(res => {
+                                                        const { height, width, length } = getSize();
+                                                        const positions: any = [
+                                                            length / 10 * -1, height / 2 * -1 - 50, width / 2 * -1 - 50,
+                                                            length, height / 2 * -1, width / 2 + 50,
+                                                        ];
+                                                        addRectArea({ positions, cameraDirection: 'bottom' }).then(cube => {
+                                                            editableObjects.current?.push?.(cube);
+                                                        });
+                                                    });
+                                                } else if (key === 'right') {
+                                                    const { max, cameraScale } = getSize();
+                                                    var targetPos = new THREE.Vector3(0, 0, max * cameraScale);
+                                                    animationClick(targetPos).then(res => {
+                                                        const { height, width, length } = getSize();
+                                                        const positions: any = [
+                                                            length / 10 * -1, height / 2 * -1 - 50, width / 2 - 50,
+                                                            length, height / 2 + 50, width / 2 + 50,
+                                                        ];
+                                                        addRectArea({ positions, addType: 'form', cameraDirection: 'right' }).then(cube => {
+                                                            editableObjects.current?.push?.(cube);
+                                                        });
+                                                    });
+                                                } else if (key === 'left') {
+                                                    const { max, cameraScale } = getSize();
+                                                    var targetPos = new THREE.Vector3(0, 0, -1 * max * cameraScale);
+                                                    animationClick(targetPos).then(res => {
+                                                        const { height, width, length } = getSize();
+                                                        const positions: any = [
+                                                            length / 10 * -1, height / 2 * -1 - 50, width / 2 * -1 + 50,
+                                                            length, height / 2 + 50, width / 2 * -1 - 50,
+                                                        ];
+                                                        addRectArea({ positions, addType: 'form', cameraDirection: 'left' }).then(cube => {
+                                                            editableObjects.current?.push?.(cube);
+                                                        });
+                                                    });
+                                                }
+                                                return prev.concat(key);
+                                            }
 
+                                            return prev;
+                                        });
+                                    }}
+                                >
+                                    {label}
+                                </Button>
+                            })
+                            : null
+                    }
                 </div>
-                <div className="flex-box" style={{ flex: 1 }}>
+                <div className="flex-box">
                     <Tooltip title="比例尺">
                         <Popover
                             content={
@@ -6515,76 +6575,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     </Tooltip>
                 </div>
             </div>
-            {
-                modelUpload ?
-                    <div className="flex-box camera-position">
-                        {
-                            [
-                                { key: 'bottom', label: '框选底面' },
-                                { key: 'right', label: '框选右侧' },
-                                { key: 'left', label: '框选左侧' },
-                            ].map((item: any, index: number) => {
-                                const { key, label } = item;
-                                return <div
-                                    className={`flex-box-center camera-position-item ${cameraDirection.includes(key) ? 'camera-position-item-selected' : ''}`}
-                                    key={`camera-position-item-${index}`}
-                                    onClick={() => {
-                                        setCameraDirection((prev: any) => {
-                                            if (!prev?.includes(key)) {
-                                                if (key === 'bottom') {
-                                                    const { max, cameraScale } = getSize();
-                                                    var targetPos = new THREE.Vector3(0, max * -cameraScale, 0);
-                                                    animationClick(targetPos).then(res => {
-                                                        const { height, width, length } = getSize();
-                                                        const positions: any = [
-                                                            length / 10 * -1, height / 2 * -1 - 50, width / 2 * -1 - 50,
-                                                            length, height / 2 * -1, width / 2 + 50,
-                                                        ];
-                                                        addRectArea({ positions, cameraDirection: 'bottom' }).then(cube => {
-                                                            editableObjects.current?.push?.(cube);
-                                                        });
-                                                    });
-                                                } else if (key === 'right') {
-                                                    const { max, cameraScale } = getSize();
-                                                    var targetPos = new THREE.Vector3(0, 0, max * cameraScale);
-                                                    animationClick(targetPos).then(res => {
-                                                        const { height, width, length } = getSize();
-                                                        const positions: any = [
-                                                            length / 10 * -1, height / 2 * -1 - 50, width / 2 - 50,
-                                                            length, height / 2 + 50, width / 2 + 50,
-                                                        ];
-                                                        addRectArea({ positions, addType: 'form', cameraDirection: 'right' }).then(cube => {
-                                                            editableObjects.current?.push?.(cube);
-                                                        });
-                                                    });
-                                                } else if (key === 'left') {
-                                                    const { max, cameraScale } = getSize();
-                                                    var targetPos = new THREE.Vector3(0, 0, -1 * max * cameraScale);
-                                                    animationClick(targetPos).then(res => {
-                                                        const { height, width, length } = getSize();
-                                                        const positions: any = [
-                                                            length / 10 * -1, height / 2 * -1 - 50, width / 2 * -1 + 50,
-                                                            length, height / 2 + 50, width / 2 * -1 - 50,
-                                                        ];
-                                                        addRectArea({ positions, addType: 'form', cameraDirection: 'left' }).then(cube => {
-                                                            editableObjects.current?.push?.(cube);
-                                                        });
-                                                    });
-                                                }
-                                                return prev.concat(key);
-                                            }
-
-                                            return prev;
-                                        });
-                                    }}
-                                >
-                                    {label}
-                                </div>
-                            })
-                        }
-                    </div>
-                    : null
-            }
             <div
                 className='render-dom'
                 // @ts-ignore
@@ -6862,6 +6852,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         centered
                         onCancel={() => {
                             form1.resetFields();
+                            selectedArea.object.children[0].material.color = new THREE.Color(1, 0, 0);
                             setSelectedArea(null);
                         }}
                         footer={<div className='flex-box-justify-end' style={{ gap: 8 }}>
@@ -6881,6 +6872,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 };
                                 setCameraDirection((prev: any) => _.pull(prev, selectedArea.object?.__props?.cameraDirection));
                                 setSelectedArea(null);
+                                selectedArea.object.children[0].material.color = new THREE.Color(1, 0, 0);
                                 form1.resetFields();
                             }}>删除此框选</Button>
                             <Button type="primary" onClick={() => {
@@ -6915,6 +6907,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                             editableObjects.current?.push?.(cube);
                                         });
                                         setSelectedArea(null);
+                                        selectedArea.object.children[0].material.color = new THREE.Color(1, 0, 0);
                                         form1.resetFields();
                                     });
                             }}>修改</Button>
