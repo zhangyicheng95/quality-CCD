@@ -1,10 +1,8 @@
 import React, { Fragment, useCallback } from 'react';
-import { LogoutOutlined, SettingOutlined, UserOutlined, UserSwitchOutlined } from '@ant-design/icons';
+import { LogoutOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
 import { history, useModel } from 'umi';
-import { stringify } from 'querystring';
 import HeaderDropdown from '../HeaderDropdown';
-import { outLogin } from '@/services/api';
 import type { MenuInfo } from 'rc-menu/lib/interface';
 import { getUserData } from '@/utils/utils';
 
@@ -22,31 +20,28 @@ const loginOut = async () => {
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const { initialState, setInitialState } = useModel('@@initialState');
   const userData = getUserData();
-  const onMenuClick = useCallback(
-    (event: MenuInfo) => {
-      const { key } = event;
-      let hash = '';
-      if (location.href?.indexOf('?') > -1) {
-        hash = location.href.split('?')[1];
-      }
-      if (key === 'logout') {
-        setInitialState((s: any) => ({ ...s, currentUser: undefined }));
-        loginOut();
-        location.href = location.href?.split('#/')?.[0] + '#/home' + '?' + hash;
-        window.location.reload();
-        return;
-      }
-      if (key === 'toLogin') {
-        setInitialState((s: any) => ({ ...s, currentUser: undefined }));
-        loginOut();
-        location.href = location.href?.split('#/')?.[0] + '#/user/login' + '?' + hash;
-        window.location.reload();
-        return;
-      }
-      history.push(`/account/${key}`);
-    },
-    [setInitialState],
-  );
+  const onMenuClick = useCallback((event: MenuInfo) => {
+    const { key } = event;
+    let hash = '';
+    if (location.href?.indexOf('?') > -1) {
+      hash = location.href.split('?')[1];
+    }
+    if (key === 'logout') {
+      setInitialState((s: any) => ({ ...s, currentUser: undefined }));
+      loginOut();
+      location.href = `${location.href?.split('#/')?.[0]}#/home${!!hash ? `?${hash}` : ''}`;
+      window.location.reload();
+      return;
+    }
+    if (key === 'toLogin') {
+      setInitialState((s: any) => ({ ...s, currentUser: undefined }));
+      loginOut();
+      location.href = `${location.href?.split('#/')?.[0]}#/user/login${!!hash ? `?${hash}` : ''}`;
+      window.location.reload();
+      return;
+    }
+    history.push(`/account/${key}`);
+  }, [setInitialState]);
 
   const loading = (
     <span className={`action account`}>

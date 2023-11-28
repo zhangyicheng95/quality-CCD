@@ -125,8 +125,7 @@
   // },
   {
     path: '/',
-    redirect: '/setting',
-    access: 'canSetting'
+    redirect: '/home',
   },
   {
     component: './404',

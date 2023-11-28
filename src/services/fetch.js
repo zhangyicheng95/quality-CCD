@@ -86,7 +86,9 @@ axiosInstance.interceptors.response.use(
           if (location.href?.indexOf('?') > -1) {
             hash = location.href.split('?')[1];
           }
-          location.href = location.href?.split('#/')?.[0] + '#/user/login' + '?' + hash;
+          location.href = `${location.href?.split('#/')?.[0]}#/user/login${
+            !!hash ? `?${hash}` : ''
+          }`;
           throw error;
           break;
         case 403:

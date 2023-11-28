@@ -79,7 +79,7 @@ const Login: React.FC = () => {
           if (location.href?.indexOf('?') > -1) {
             hash = location.href.split('?')[1];
           }
-          location.href = location.href?.split('#/')?.[0] + '#/home' + '?' + hash;
+          location.href = `${location.href?.split('#/')?.[0]}#/home${!!hash ? `?${hash}` : ''}`;
           window.location.reload();
           return;
           // }

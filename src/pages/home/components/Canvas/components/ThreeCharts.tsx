@@ -5243,7 +5243,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     // 添加框选区域立方体
     const addRectArea = (props: any) => {
         return new Promise((resolve, reject) => {
-            console.log(props);
             const { positions, addType, cameraDirection, ...rest } = props;
             // 模型尺寸
             const { height, width, length } = getSize();
