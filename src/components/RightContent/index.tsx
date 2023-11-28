@@ -8,7 +8,7 @@ import Avatar from './AvatarDropdown';
 
 const { version } = require('../../../package.json');
 export type SiderTheme = 'light' | 'dark';
-
+let hash = '';
 const GlobalHeaderRight: React.FC = () => {
   const [full, setFull] = useState(false);
   const { initialState } = useModel<any>('@@initialState');
@@ -35,6 +35,14 @@ const GlobalHeaderRight: React.FC = () => {
       window.removeEventListener("resize", onEscCancelFull, false);
     }
   }, []);
+  useEffect(() => {
+    let href = location.href || '';
+    if (location.href?.indexOf('?') > -1) {
+      href = location.href.split('?')[0];
+      hash = location.href.split('?')[1];
+    }
+    location.href = `${href}${!!hash ? `?${hash}` : ''}`;
+  }, [location.href]);
 
   return (
     <Space className={className}>
