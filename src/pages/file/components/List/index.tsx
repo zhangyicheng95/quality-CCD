@@ -11,7 +11,6 @@ const LogList: React.FC<any> = (props: any) => {
   const { initialState } = useModel<any>('@@initialState');
   const { params: paramsData } = initialState;
 
-
   return (
     <div className={`${styles.fileList} page-size background-ubv`}>
       <PrimaryTitle title={'操作文档'} />

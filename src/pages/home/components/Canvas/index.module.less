@@ -809,6 +809,45 @@
 
 }
 
+.tableEditCharts {
+  width: 100%;
+  height: 100%;
+  font-size: 18px;
+  user-select: text;
+
+  :global {
+    .edit-charts-body {
+      height: calc(100% - 40px);
+
+      .ant-table {
+        height: 100%;
+
+        &-tbody {
+
+          .ant-table-cell {
+            padding: 4px 2px;
+
+            &:first-child {
+              padding: 4px 8px;
+            }
+
+            .ant-input-number {
+              .ant-input-number-handler-wrap {
+                display: none;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .edit-table-footer {
+      height: 40px;
+      gap: 8px;
+    }
+  }
+}
+
 .alertCharts {
   width: 100%;
   height: 100%;

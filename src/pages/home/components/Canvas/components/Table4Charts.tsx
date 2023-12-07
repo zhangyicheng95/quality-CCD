@@ -13,10 +13,9 @@ interface Props {
 const Table4Charts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
     let {
-        dataValue = [], fontSize, reverse,
+        dataValue = [], fontSize,
     } = data;
     if (process.env.NODE_ENV === 'development') {
-        reverse = true;
         dataValue = [
             {
                 key: 1,

@@ -9,6 +9,7 @@ import tableIcon from '@/assets/dashboard-imgs/table.png';
 import table2Icon from '@/assets/dashboard-imgs/table2.png';
 import table3Icon from '@/assets/dashboard-imgs/table3.png';
 import table4Icon from '@/assets/dashboard-imgs/table4.png';
+import table5Icon from '@/assets/dashboard-imgs/table4.png';
 import treeIcon from '@/assets/dashboard-imgs/tree.png';
 import threeIcon from '@/assets/dashboard-imgs/three.png';
 import alertIcon from '@/assets/dashboard-imgs/alert.png';
@@ -88,6 +89,11 @@ export const windowTypeList: any = [
     value: 'table4',
     label: '树形表格窗口',
     icon: table4Icon,
+  },
+  {
+    value: 'table5',
+    label: '可编辑表格窗口',
+    icon: table5Icon,
   },
   {
     value: 'tree',

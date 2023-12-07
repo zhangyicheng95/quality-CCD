@@ -58,6 +58,7 @@ import DragSortableItem from "@/components/DragComponents/DragSortableItem";
 import Table3Charts from './components/Table3Charts';
 import TreeCharts from './components/TreeCharts';
 import Table4Charts from './components/Table4Charts';
+import TableEditCharts from './components/TableEditCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -883,7 +884,8 @@ const Home: React.FC<any> = (props: any) => {
           password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
           basicInfoData = [{ id: guid(), name: '', value: '' }], ifNeedClear, operationLock,
           ifUpdateProject, magnifierSize, listType, valueColor, markNumber,
-          markNumberLeft, markNumberTop, blockType, blockTypeLines, modelUpload
+          markNumberLeft, markNumberTop, blockType, blockTypeLines, modelUpload,
+          xColumns, yColumns
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -997,137 +999,146 @@ const Home: React.FC<any> = (props: any) => {
                                     }}
                                   />
                                   :
-                                  type === 'tree' ?
-                                    <TreeCharts
+                                  type === 'table5' ?
+                                    <TableEditCharts
                                       id={key}
                                       data={{
                                         dataValue: dataValue || [],
-                                        fontSize,
+                                        fontSize, xColumns, yColumns, yName, des_bordered,
                                       }}
                                     />
                                     :
-                                    type === 'three' ?
-                                      <ThreeCharts
+                                    type === 'tree' ?
+                                      <TreeCharts
                                         id={key}
                                         data={{
-                                          dataValue: dataValue || { name: "", value: [] },
-                                          modelRotate, modelScale, modelRotateScreenshot,
-                                          fontSize, fetchType, xName, ifShowColorList,
-                                          modelUpload,
+                                          dataValue: dataValue || [],
+                                          fontSize,
                                         }}
                                       />
                                       :
-                                      type === 'alert' ?
-                                        <AlertCharts
+                                      type === 'three' ?
+                                        <ThreeCharts
                                           id={key}
                                           data={{
-                                            dataValue: dataValue || [],
-                                            fontSize
+                                            dataValue: dataValue || { name: "", value: [] },
+                                            modelRotate, modelScale, modelRotateScreenshot,
+                                            fontSize, fetchType, xName, ifShowColorList,
+                                            modelUpload,
                                           }}
                                         />
                                         :
-                                        type === 'imgs' ?
-                                          <ImgsCharts
+                                        type === 'alert' ?
+                                          <AlertCharts
                                             id={key}
                                             data={{
                                               dataValue: dataValue || [],
-                                              imgs_width, imgs_height
+                                              fontSize
                                             }}
                                           />
                                           :
-                                          type === 'progress' ?
-                                            <ProgressCharts
+                                          type === 'imgs' ?
+                                            <ImgsCharts
                                               id={key}
                                               data={{
-                                                dataValue: dataValue || 0, barColor, progressType, progressSize, progressSteps
+                                                dataValue: dataValue || [],
+                                                imgs_width, imgs_height
                                               }}
                                             />
                                             :
-                                            type === 'description' ?
-                                              <DescriptionCharts
+                                            type === 'progress' ?
+                                              <ProgressCharts
                                                 id={key}
                                                 data={{
-                                                  dataValue: dataValue || [],
-                                                  basicInfoData, fontSize,
-                                                  des_bordered, des_column, des_layout, des_size,
+                                                  dataValue: dataValue || 0, barColor, progressType, progressSize, progressSteps
                                                 }}
                                               />
                                               :
-                                              type === 'button' ?
-                                                <Button
-                                                  type={'primary'}
+                                              type === 'description' ?
+                                                <DescriptionCharts
                                                   id={key}
-                                                  onClick={() => {
-                                                    let params = '';
-                                                    if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {
-                                                      try {
-                                                        params = JSON.parse(value)
-                                                      } catch (e) {
-                                                        console.log('按钮传递参数格式不对:', e);
-                                                        params = '';
-                                                      }
-                                                    }
-                                                    btnFetch(fetchType, xName, params);
+                                                  data={{
+                                                    dataValue: dataValue || [],
+                                                    basicInfoData, fontSize,
+                                                    des_bordered, des_column, des_layout, des_size,
                                                   }}
-                                                >
-                                                  {yName}
-                                                </Button>
+                                                />
                                                 :
-                                                type === 'buttonInp' ?
-                                                  <ButtonCharts
+                                                type === 'button' ?
+                                                  <Button
+                                                    type={'primary'}
                                                     id={key}
-                                                    data={{
-                                                      yName, xName, fetchType, ifNeedClear
+                                                    onClick={() => {
+                                                      let params = '';
+                                                      if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {
+                                                        try {
+                                                          params = JSON.parse(value)
+                                                        } catch (e) {
+                                                          console.log('按钮传递参数格式不对:', e);
+                                                          params = '';
+                                                        }
+                                                      }
+                                                      btnFetch(fetchType, xName, params);
                                                     }}
-                                                  />
+                                                  >
+                                                    {yName}
+                                                  </Button>
                                                   :
-                                                  type === 'buttonPassword' ?
-                                                    <ButtonPWCharts
+                                                  type === 'buttonInp' ?
+                                                    <ButtonCharts
                                                       id={key}
                                                       data={{
-                                                        yName, xName, fetchType, password, passwordHelp,
-                                                        fetchParams
+                                                        yName, xName, fetchType, ifNeedClear
                                                       }}
                                                     />
                                                     :
-                                                    type === 'operation' ?
-                                                      <OperationCharts
+                                                    type === 'buttonPassword' ?
+                                                      <ButtonPWCharts
                                                         id={key}
                                                         data={{
-                                                          operationList,
-                                                          dataValue,
-                                                          fontSize
+                                                          yName, xName, fetchType, password, passwordHelp,
+                                                          fetchParams
                                                         }}
                                                       />
                                                       :
-                                                      type === 'operation2' ?
-                                                        <Operation2Charts
+                                                      type === 'operation' ?
+                                                        <OperationCharts
                                                           id={key}
                                                           data={{
-                                                            operationList, dataValue,
-                                                            fontSize, xName,
-                                                            operationLock, ifUpdateProject,
-                                                            listType, blockType, blockTypeLines
+                                                            operationList,
+                                                            dataValue,
+                                                            fontSize
                                                           }}
                                                         />
                                                         :
-                                                        type === 'statistic' ?
-                                                          <StatisticCharts
+                                                        type === 'operation2' ?
+                                                          <Operation2Charts
                                                             id={key}
                                                             data={{
-                                                              dataValue, fontSize,
-                                                              yName, fontColor, direction
+                                                              operationList, dataValue,
+                                                              fontSize, xName,
+                                                              operationLock, ifUpdateProject,
+                                                              listType, blockType, blockTypeLines
                                                             }}
                                                           />
                                                           :
-                                                          <ImgCharts
-                                                            id={key}
-                                                            data={{
-                                                              defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                              dataValue, windowControl, markNumber, markNumberLeft, markNumberTop,
-                                                              setContentList, magnifier, comparison, magnifierSize, ifShowHeader
-                                                            }}
-                                                          />
+                                                          type === 'statistic' ?
+                                                            <StatisticCharts
+                                                              id={key}
+                                                              data={{
+                                                                dataValue, fontSize,
+                                                                yName, fontColor, direction
+                                                              }}
+                                                            />
+                                                            :
+                                                            <ImgCharts
+                                                              id={key}
+                                                              data={{
+                                                                defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                                dataValue, windowControl, markNumber, markNumberLeft, markNumberTop,
+                                                                setContentList, magnifier, comparison, magnifierSize, ifShowHeader
+                                                              }}
+                                                            />
                 }
               </div>
             </div>
@@ -1137,6 +1148,7 @@ const Home: React.FC<any> = (props: any) => {
                   style={type === 'table2' ? { height: 'calc(100% - 38px)', marginTop: 38 } : {}}
                   className="flex-box-center drag-item-content-mask common-card-title"
                   onDoubleClick={() => {
+                    console.log(item);
                     // 双击事件触发的操作
                     if (!!addWindowVisible || !!homeSettingVisible) {
                       setAddWindowVisible("");
@@ -1144,7 +1156,20 @@ const Home: React.FC<any> = (props: any) => {
                     }
                     !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
                     setBasicInfoData(basicInfoData);
-                    setEditWindowData(item);
+                    setEditWindowData(Object.assign({}, item,
+                      !!item?.xColumns?.length ? {} : {
+                        xColumns: [
+                          { id: '28dj46vh', xName: '模组,参数名称,Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,Q10,Q11,Q12,Q13,Q14,Q15,Q16,Q17,Q18,Q19,Q20' },
+                          { id: 'sjci46d8', xName: ",,电阻(0.7-1.2),电阻(1.2-1.7),电阻(0.3-0.7),电阻(1.7-2.1),崩边,脏污,色差,孔洞,B线痕,BTTV,翘曲,B厚薄,C线痕,CTTV,电阻率,尺寸不良,隐裂" },
+                        ]
+                      },
+                      !!item?.yColumns?.length ? {} : {
+                        yColumns: [
+                          { id: 's9d8c7v6', yName: "尺寸,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,3D,,,,,,,,,,,,侧边,,,,,,隐裂,,,,,,脏污,,,,,,电阻率,,,," },
+                          { "id": "a74eda0c", "yName": "边长(水平竖直中边长)", "type": "range", "xName": "edge_length" }, { "id": "6d9265db", "yName": "倒角长度", "type": "range", "xName": "chamfer_length" }, { "id": "ec099de0", "yName": "倒角投影", "type": "range", "xName": "chamfer_projection" }, { "id": "46f94883", "yName": "倒角对角线", "type": "range", "xName": "chamfer_diagonal" }, { "id": "1e463929", "yName": "缺角最大长度", "type": "range", "xName": "notch_max_length" }, { "id": "95fd2d22", "yName": "缺角最大深度", "type": "range", "xName": "notch_max_depth" }, { "id": "6f1c9952", "yName": "缺角个数", "type": "range", "xName": "notch_num" }, { "id": "738ab362", "yName": "最小垂直度", "type": "range", "xName": "perpendicularity_min" }, { "id": "157ab87a", "yName": "最大垂直度", "type": "range", "xName": "perpendicularity_max" }, { "id": "5715f99b", "yName": "边长（最大最小边长）", "type": "range", "xName": "edge_length_max_min" }, { "id": "75a80b1d", "yName": "平均厚度", "type": "range", "xName": "thickness_average" }, { "id": "4d33c94f", "yName": "厚度偏差", "type": "range", "xName": "ttv" }, { "id": "71e07ccd", "yName": "线痕最大值", "type": "range", "xName": "line_mark" }, { "id": "93edb8c9", "yName": "翘曲度", "type": "range", "xName": "warp" }, { "id": "bdb41a29", "yName": "崩边个数", "type": "range", "xName": "chip_num" }, { "id": "128d6a86", "yName": "硅落个数", "type": "range", "xName": "silicon_drop_num" }, { "id": "7142b5ef", "yName": "有无隐裂", "type": "bool", "xName": "hidden_crack" }, { "id": "e4650f5f", "yName": "有无硬质点", "type": "bool", "xName": "hard_point" }, { "id": "661eee10", "yName": "有无孔洞_隐裂", "type": "bool", "xName": "hidden_crack_hole" }, { "id": "8cbbea83", "yName": "有无脏污", "type": "bool", "xName": "dirty" }, { "id": "152502b5", "yName": "有无色差", "type": "bool", "xName": "color_diff" }, { "id": "7453d1de", "yName": "有无硅落", "type": "bool", "xName": "silicon_drop" }, { "id": "6f686c2c", "yName": "电阻率平均值", "type": "range", "xName": "resistivity" }, { "id": "9d764a6b", "yName": "PN型", "type": "bool", "xName": "PN" }
+                        ]
+                      }
+                    ));
                     setFieldsValue(Object.assign(
                       {},
                       item,
@@ -1159,20 +1184,7 @@ const Home: React.FC<any> = (props: any) => {
                     }));
 
                     setWindowType(type);
-                    if (type === 'operation') {
-                      const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
-                      if (!!res) {
-                        const { config = {} } = res;
-                        if (!!config?.initParams && _.isObject(config?.initParams)) {
-                          setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
-                            return {
-                              label: item[1]?.alias,
-                              value: item[0],
-                            }
-                          }));
-                        }
-                      }
-                    } else if (type === 'operation2') {
+                    if (type === 'operation2') {
                       const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
                       if (!!res) {
                         const { config = {} } = res;
@@ -1184,6 +1196,19 @@ const Home: React.FC<any> = (props: any) => {
                             }
                           }));
                         } else if (!!config?.initParams && _.isObject(config?.initParams)) {
+                          setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
+                            return {
+                              label: item[1]?.alias,
+                              value: item[0],
+                            }
+                          }));
+                        }
+                      }
+                    } else {
+                      const res = paramsData?.flowData?.nodes.filter((i: any) => i.id === value[0])?.[0];
+                      if (!!res) {
+                        const { config = {} } = res;
+                        if (!!config?.initParams && _.isObject(config?.initParams)) {
                           setSelectedNodeConfig(() => Object.entries(config.initParams)?.map((item: any) => {
                             return {
                               label: item[1]?.alias,
@@ -1463,7 +1488,7 @@ const Home: React.FC<any> = (props: any) => {
       password = '', passwordHelp = '', ifShowHeader = false, ifShowColorList = false,
       headerBackgroundColor = 'default', ifNeedClear, operationLock, ifUpdateProject,
       magnifierSize, logSize, listType, valueColor, markNumber = false, markNumberLeft, markNumberTop,
-      blockType, blockTypeLines, modelUpload
+      blockType, blockTypeLines, modelUpload, xColumns, yColumns
     } = values;
     if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
       try {
@@ -1495,7 +1520,7 @@ const Home: React.FC<any> = (props: any) => {
         password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
         ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
         valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
-        modelUpload
+        modelUpload, xColumns, yColumns
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1515,7 +1540,7 @@ const Home: React.FC<any> = (props: any) => {
             password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
             ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
             valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
-            modelUpload
+            modelUpload, xColumns, yColumns
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -1546,7 +1571,7 @@ const Home: React.FC<any> = (props: any) => {
       password: undefined, passwordHelp: undefined, ifShowHeader: false, ifShowColorList: false,
       headerBackgroundColor: 'default', ifNeedClear: false, operationLock: false, ifUpdateProject: false,
       magnifierSize: 4, logSize: 50, listType: 'line', markNumber: false, markNumberLeft: 1, markNumberTop: 1,
-      blockType: 'normal', blockTypeLines: 2, modelUpload: false
+      blockType: 'normal', blockTypeLines: 2, modelUpload: false, xColumns: undefined, yColumns: undefined
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -1610,6 +1635,12 @@ const Home: React.FC<any> = (props: any) => {
       }
     };
   }, [ifCanEdit, homeDom, pageIconPosition.direction, paramData?.contentData?.contentSize?.width])
+  useEffect(() => {
+    setFieldsValue({
+      xColumns: editWindowData.xColumns,
+      yColumns: editWindowData.yColumns
+    })
+  }, [editWindowData.xColumns, editWindowData.yColumns]);
 
   return (
     <div className={`${styles.home}`}>
@@ -1985,6 +2016,7 @@ const Home: React.FC<any> = (props: any) => {
                   rules={[{ required: true, message: '窗口类型' }]}
                 >
                   <Select
+                    disabled
                     style={{ width: '100%' }}
                     options={windowTypeList}
                     onChange={val => {
@@ -2460,6 +2492,228 @@ const Home: React.FC<any> = (props: any) => {
                             }
                           ]}
                         />
+                      </Form.Item>
+                    </Fragment>
+                    : null
+                }
+                {
+                  ['table5'].includes(windowType) ?
+                    <Fragment>
+                      <Form.Item
+                        name={`yName`}
+                        label={"绑定参数"}
+                        rules={[{ required: true, message: '绑定参数' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={selectedNodeConfig}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="行标题"
+                        name="xColumns"
+                      >
+                        {
+                          (editWindowData.xColumns || []).map((item: any, index: number) => {
+                            if (!item || _.isEmpty(item)) return null;
+
+                            const { id, xName } = item;
+                            return <div
+                              key={`xColumns-${id || index}`}
+                              className="flex-box"
+                              style={{ marginBottom: 8, height: '27px', gap: 8 }}
+                            >
+                              <div style={{ flex: 1 }}>
+                                <Input
+                                  placeholder='key'
+                                  value={xName}
+                                  onChange={e => {
+                                    const val = e?.target?.value;
+                                    setEditWindowData((prev: any) => {
+                                      return {
+                                        ...prev,
+                                        xColumns: (prev.xColumns || []).map((i: any) => {
+                                          if (i.id === id) {
+                                            return {
+                                              ...i,
+                                              xName: val || '',
+                                            };
+                                          };
+                                          return i;
+                                        })
+                                      }
+                                    });
+                                  }}
+                                />
+                              </div>
+                              {
+                                index > 1 ?
+                                  <div style={{ height: '100%' }}>
+                                    <Button
+                                      style={{ height: '100%' }}
+                                      icon={<MinusOutlined />}
+                                      onClick={() => {
+                                        setEditWindowData((prev: any) => {
+                                          return {
+                                            ...prev,
+                                            xColumns: (prev.xColumns || []).filter((i: any) => i.id !== id)?.length ?
+                                              (prev.xColumns || []).filter((i: any) => i.id !== id) :
+                                              [{ id: guid(), xName: '', }]
+                                          }
+                                        });
+                                      }}
+                                    />
+                                  </div>
+                                  : null
+                              }
+                            </div>
+                          })
+                        }
+                        {
+                          editWindowData.xColumns?.length < 2 ?
+                            <Button
+                              icon={<PlusOutlined />}
+                              onClick={() => {
+                                setEditWindowData((prev: any) => {
+                                  return {
+                                    ...prev,
+                                    xColumns: (prev.xColumns || []).concat({ id: guid(), xName: '', })
+                                  }
+                                });
+                              }}
+                            />
+                            : null
+                        }
+                      </Form.Item>
+                      <Form.Item
+                        label="列标题"
+                        name="yColumns"
+                      >
+                        {
+                          (editWindowData.yColumns || []).map((item: any, index: number) => {
+                            if (!item || _.isEmpty(item)) return null;
+
+                            const { id, xName, yName, type } = item;
+                            return <div
+                              key={`yColumns-${id || index}`}
+                              className="flex-box"
+                              style={{ marginBottom: 8, height: '27px', gap: 8 }}
+                            >
+                              <div style={{ flex: 1 }}>
+                                <Input
+                                  placeholder='label'
+                                  value={yName}
+                                  onChange={e => {
+                                    const val = e?.target?.value;
+                                    setEditWindowData((prev: any) => {
+                                      return {
+                                        ...prev,
+                                        yColumns: (prev.yColumns || []).map((i: any) => {
+                                          if (i.id === id) {
+                                            return {
+                                              ...i,
+                                              yName: val || '',
+                                            };
+                                          };
+                                          return i;
+                                        })
+                                      }
+                                    });
+                                  }}
+                                />
+                              </div>
+                              {
+                                index > 0 ?
+                                  <Fragment>
+                                    <div style={{ flex: 1 }}>
+                                      <Input
+                                        placeholder='name'
+                                        value={xName}
+                                        onChange={e => {
+                                          const val = e?.target?.value;
+                                          setEditWindowData((prev: any) => {
+                                            return {
+                                              ...prev,
+                                              yColumns: (prev.yColumns || []).map((i: any) => {
+                                                if (i.id === id) {
+                                                  return {
+                                                    ...i,
+                                                    xName: val || '',
+                                                  };
+                                                };
+                                                return i;
+                                              })
+                                            }
+                                          });
+                                        }}
+                                      />
+                                    </div>
+                                    <div style={{ width: 100 }}>
+                                      <Select
+                                        placeholder='value'
+                                        value={type}
+                                        options={[
+                                          { key: 'range', value: 'range', label: '范围' },
+                                          { key: 'bool', value: 'bool', label: '匹配' }
+                                        ]}
+                                        onChange={val => {
+                                          setEditWindowData((prev: any) => {
+                                            return {
+                                              ...prev,
+                                              yColumns: (prev.yColumns || []).map((i: any) => {
+                                                if (i.id === id) {
+                                                  return {
+                                                    ...i,
+                                                    type: val,
+                                                  };
+                                                };
+                                                return i;
+                                              })
+                                            }
+                                          });
+                                        }}
+                                      />
+                                    </div>
+                                    <div style={{ height: '100%' }}>
+                                      <Button
+                                        style={{ height: '100%' }}
+                                        icon={<MinusOutlined />}
+                                        onClick={() => {
+                                          setEditWindowData((prev: any) => {
+                                            return {
+                                              ...prev,
+                                              yColumns: (prev.yColumns || []).filter((i: any) => i.id !== id)?.length ?
+                                                (prev.yColumns || []).filter((i: any) => i.id !== id) :
+                                                [{ id: guid(), yName: '', xName: '', type: 'range' }]
+                                            }
+                                          });
+                                        }}
+                                      />
+                                    </div>
+                                  </Fragment>
+                                  : null
+                              }
+                            </div>
+                          })
+                        }
+                        <Button
+                          icon={<PlusOutlined />}
+                          onClick={() => {
+                            setEditWindowData((prev: any) => {
+                              return {
+                                ...prev,
+                                yColumns: (prev.yColumns || []).concat({ id: guid(), yName: '', xName: '', type: 'range' })
+                              }
+                            });
+                          }}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="des_bordered"
+                        label="是否展示边框"
+                        valuePropName="checked"
+                      >
+                        <Switch />
                       </Form.Item>
                     </Fragment>
                     : null
