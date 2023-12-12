@@ -248,7 +248,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const [selectedArea, setSelectedArea] = useState<any>(null);
     const [cameraDirection, setCameraDirection] = useState<any>([]);
     const pointRef = useMemo(() => {
-        return value;
+        return Object.keys(value);
     }, [value]);
 
     const theme = useMemo(() => {
@@ -375,31 +375,23 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         } else if (!!scene.current && addType === 'rxptPoint') {
             let pointList: any = [],
                 areaIndex = 0;
-            (value || []).forEach((item1: any, index: number) => {
-                (Object.entries(item1) || []).forEach((cen: any, Index: number) => {
-                    cen[1].forEach((item: any) => {
-                        const { Track, ...rest } = item;
-                        const obj = (Track || []).map((tr: any) => {
-                            const { Point_Normal } = tr;
-                            return {
+            (Object.entries(value) || []).forEach((item1: any, index: number) => {
+                item1[1]?.forEach((item2: any, index2: number) => {
+                    (item2.list || []).forEach((item3: any) => {
+                        const { Track, track, ...rest } = item3;
+                        const list: any = [];
+                        (Track || track || []).forEach((item4: any) => {
+                            list.push({
                                 ...rest,
-                                area: `area-${index}-robt-${Index}`,
-                                name: cen[0],
+                                ...item4,
+                                area: `area-${index}-robt-${index2}`,
+                                name: item1[0],
                                 areaIndex,
-                                point: {
-                                    x: Point_Normal[0],
-                                    y: Point_Normal[1],
-                                    z: Point_Normal[2]
-                                },
-                                normVec: {
-                                    x: Point_Normal[3],
-                                    y: Point_Normal[4],
-                                    z: Point_Normal[5]
-                                },
-                            }
+                                surfaceType: item2.surfaceType
+                            });
                         });
-                        pointList = pointList.concat(obj);
                         areaIndex += 1;
+                        pointList = pointList.concat(list);
                     });
                 });
             });
@@ -804,6 +796,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             z: { alias: 'nz', value: intersect.object?.normVec?.z }
                         },
                         areaSort: intersect.object?.areaSort,
+                        robID: intersect.object?.robID,
+                        surfaceType: intersect.object?.surfaceType,
                     });
                     intersect.object.material.color = new THREE.Color(1, 1, 1);
                 } else if (intersect?.object?.name?.indexOf('editArea-') > -1) {
@@ -893,32 +887,23 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             /***************清理框选区域********************/
             let pointList: any = [],
                 areaIndex = 0;
-            (value || []).forEach((item1: any, index: number) => {
-                (Object.entries(item1) || []).forEach((cen: any, Index: number) => {
-                    cen[1].forEach((item: any) => {
-                        const { Track, areaSort, ...rest } = item;
-                        const obj = (Track || []).map((tr: any) => {
-                            const { Point_Normal } = tr;
-                            return {
+            (Object.entries(value) || []).forEach((item1: any, index: number) => {
+                item1[1]?.forEach((item2: any, index2: number) => {
+                    (item2.list || []).forEach((item3: any) => {
+                        const { Track, track, ...rest } = item3;
+                        const list: any = [];
+                        (Track || track || []).forEach((item4: any) => {
+                            list.push({
                                 ...rest,
-                                area: `area-${index}-robt-${Index}`,
-                                name: cen[0],
+                                ...item4,
+                                area: `area-${index}-robt-${index2}`,
+                                name: item1[0],
                                 areaIndex,
-                                point: {
-                                    x: Point_Normal[0],
-                                    y: Point_Normal[1],
-                                    z: Point_Normal[2]
-                                },
-                                normVec: {
-                                    x: Point_Normal[3],
-                                    y: Point_Normal[4],
-                                    z: Point_Normal[5]
-                                },
-                                areaSort: areaSort || 1,
-                            }
+                                surfaceType: item2.surfaceType
+                            });
                         });
-                        pointList = pointList.concat(obj);
                         areaIndex += 1;
+                        pointList = pointList.concat(list);
                     });
                 });
             });
@@ -1721,7 +1706,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 }
             });
             (value || []).forEach((item: any, index: number) => {
-                const { point, normVec, areaIndex, areaSort, ...rest } = item;
+                const { point, normVec, areaIndex, areaSort, robID, surfaceType, ...rest } = item;
                 const scale = camera?.current?.zoom || 1.5;
                 const geometry = new THREE.SphereGeometry(scale * 10, 32, 32);
                 const material = new THREE.MeshBasicMaterial({ color: colorTran[areaIndex] });
@@ -1732,7 +1717,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     cube.position.z = point.z;
                     cube['normVec'] = normVec;
                     cube['areaIndex'] = areaIndex;
-                    cube['areaSort'] = areaSort || 1;
+                    cube['areaSort'] = areaSort;
+                    cube['robID'] = robID;
+                    cube['surfaceType'] = surfaceType;
                     cube['__props'] = rest;
                     cube.name = `editPoint-${index}`;
                     editableObjects.current?.push?.(cube);
@@ -2209,41 +2196,66 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                     const points = getAllModelsFromScene(scene.current, 'editPoint');
                                     let obj = {};
                                     points.forEach((point: any) => {
-                                        const { position, normVec, areaSort, __props = {} } = point;
-                                        const { name, ...rest } = __props;
+                                        const { position, normVec, areaSort = 0, robID, surfaceType, __props = {} } = point;
+                                        const { name, area, ...rest } = __props;
+                                        const options = {
+                                            point: position,
+                                            normVec, areaSort, robID, surfaceType,
+                                        };
                                         if (!!obj[name]) {
                                             if (!!obj[name][areaSort]) {
                                                 obj[name][areaSort].push({
                                                     ...rest,
-                                                    Point: position,
-                                                    NormVec: normVec,
-                                                    areaSort,
-                                                    PntTpe: 1
+                                                    ...options
                                                 });
                                             } else {
                                                 obj[name][areaSort] = [{
                                                     ...rest,
-                                                    Point: position,
-                                                    NormVec: normVec,
-                                                    areaSort,
-                                                    PntTpe: 1
+                                                    ...options
                                                 }];
                                             }
                                         } else {
                                             obj[name] = [];
                                             obj[name][areaSort] = [{
                                                 ...rest,
-                                                Point: position,
-                                                NormVec: normVec,
-                                                areaSort,
-                                                PntTpe: 1
+                                                ...options
                                             }]
                                         };
                                     });
                                     const params = Object.entries(obj).reduce((pre: any, cen: any) => {
+                                        let obj1 = {};
+                                        (cen[1].filter(Boolean) || [])?.forEach((item: any) => {
+                                            if (obj1[item[0]?.surfaceType]) {
+                                                obj1[item[0]?.surfaceType].push({
+                                                    surfaceType: item[0]?.surfaceType,
+                                                    robID: item[0]?.robID,
+                                                    areaSort: item[0]?.areaSort,
+                                                    list: item,
+                                                });
+                                            } else {
+                                                obj1[item[0]?.surfaceType] = [{
+                                                    surfaceType: item[0]?.surfaceType,
+                                                    robID: item[0]?.robID,
+                                                    areaSort: item[0]?.areaSort,
+                                                    list: item,
+                                                }];
+                                            }
+                                        });
                                         return {
                                             ...pre,
-                                            [cen[0]]: cen[1].filter(Boolean)
+                                            [cen[0]]: (Object.entries(obj1) || [])?.map((res: any) => {
+                                                const item = res[1];
+                                                return {
+                                                    surfaceType: res[0],
+                                                    list: item.map((i: any) => {
+                                                        return {
+                                                            preEdp_num: i?.list?.[0]?.preEdp_num,
+                                                            preStp_num: i?.list?.[0]?.preStp_num,
+                                                            track: i?.list
+                                                        }
+                                                    }),
+                                                }
+                                            })
                                         };
                                     }, {});
                                     console.log(params);
@@ -2551,7 +2563,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         onOk={() => {
                             validateFields()
                                 .then((values) => {
-                                    const { point, normVec, areaSort } = values;
+                                    const { point, normVec, areaSort, robID, surfaceType } = values;
                                     selectedPoint.object.position.set(point.x.value, point.y.value, point.z.value);
                                     selectedPoint.object.normVec = {
                                         x: normVec.x.value,
@@ -2563,6 +2575,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                     (points || []).forEach((point: any) => {
                                         if (point.areaIndex === selectedPoint.object.areaIndex) {
                                             point['areaSort'] = areaSort;
+                                            point['robID'] = robID;
+                                            point['surfaceType'] = surfaceType;
                                         }
                                     });
                                     setSelectedPoint(null);
@@ -2601,6 +2615,30 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 rules={[{ required: true, message: "排序" }]}
                             >
                                 <InputNumber min={1} />
+                            </Form.Item>
+                            <Form.Item
+                                name="robID"
+                                label="机器人ID"
+                                rules={[{ required: true, message: "机器人ID" }]}
+                            >
+                                <Select
+                                    placeholder="机器人ID"
+                                    options={[1, 2, 3, 4].map((item: any) => {
+                                        return { label: item, value: item };
+                                    })}
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                name="surfaceType"
+                                label="喷涂面类型"
+                                rules={[{ required: true, message: "喷涂面类型" }]}
+                            >
+                                <Select
+                                    placeholder="喷涂面类型"
+                                    options={['Up', 'Down', 'Left', 'Right', 'Front', 'Back'].map((item: any) => {
+                                        return { label: item, value: item };
+                                    })}
+                                />
                             </Form.Item>
                         </Form>
                     </Modal>

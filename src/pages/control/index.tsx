@@ -26,6 +26,7 @@ const { confirm } = Modal;
 const Control: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
   const { params: paramsData } = initialState;
+  const [form1] = Form.useForm();
   const [form] = Form.useForm();
   const { validateFields, setFieldsValue, getFieldValue } = form;
   const [paramData, setParamData] = useState<any>({});
@@ -37,6 +38,7 @@ const Control: React.FC<any> = (props: any) => {
   const [platFormVisible, setPlatFormVisible] = useState(false);
   const [platFormValue, setPlatFormValue] = useState<any>({});
   const [selectPathVisible, setSelectPathVisible] = useState(false);
+  const [selectImageLabelField, setSelectImageLabelField] = useState<any>(null);
   const [selectedPath, setSelectedPath] = useState<any>({});
   const [listType, setListType] = useState('line');
   const [configList, setConfigList] = useState<any>([]);
@@ -493,6 +495,7 @@ const Control: React.FC<any> = (props: any) => {
                                       node={node}
                                       config={item}
                                       form={form}
+                                      form1={form1}
                                       disabled={false}
                                       selectedOption={selectedOption}
                                       setSelectedOption={setSelectedOption}
@@ -502,6 +505,7 @@ const Control: React.FC<any> = (props: any) => {
                                       setPlatFormVisible={setPlatFormVisible}
                                       setPlatFormValue={setPlatFormValue}
                                       setSelectPathVisible={setSelectPathVisible}
+                                      setSelectImageLabelField={setSelectImageLabelField}
                                       setSelectedPath={setSelectedPath}
                                     />
                                   </div>
@@ -589,6 +593,7 @@ const Control: React.FC<any> = (props: any) => {
                                               node={node}
                                               config={[child, item]}
                                               form={form}
+                                              form1={form1}
                                               disabled={false}
                                               selectedOption={selectedOption}
                                               setSelectedOption={setSelectedOption}
@@ -598,6 +603,7 @@ const Control: React.FC<any> = (props: any) => {
                                               setPlatFormVisible={setPlatFormVisible}
                                               setPlatFormValue={setPlatFormValue}
                                               setSelectPathVisible={setSelectPathVisible}
+                                              setSelectImageLabelField={setSelectImageLabelField}
                                               setSelectedPath={setSelectedPath}
                                             />
                                           </div>
@@ -709,6 +715,64 @@ const Control: React.FC<any> = (props: any) => {
           </Modal>
           : null
       }
+      {
+        (!!selectImageLabelField && !!Object.keys(selectImageLabelField)) ?
+          <Modal
+            title={'设置实时接口'}
+            open={!!selectImageLabelField}
+            centered
+            onOk={() => {
+              form1.validateFields()
+                .then((values) => {
+                  widgetChange?.(selectImageLabelField?.id, values, selectImageLabelField?.parent)
+                  setSelectImageLabelField(null);
+                  form1.resetFields();
+                })
+                .catch((err) => {
+                  const { errorFields } = err;
+                  errorFields?.length && message.error(`${errorFields[0]?.errors[0]} 是必填项`);
+                });
+            }}
+            onCancel={() => {
+              setSelectImageLabelField(null);
+              form1.resetFields();
+            }}
+            destroyOnClose
+            maskClosable={false}
+          >
+            <Form
+              form={form1}
+              scrollToFirstError
+            >
+              <Form.Item
+                name={`fetchType`}
+                label={"http类型"}
+                rules={[{ required: false, message: 'http类型' }]}
+              >
+                <Select
+                  style={{ width: '100%' }}
+                  placeholder="http类型"
+                  options={['get', 'post', 'put', 'delete'].map((item: any) => ({ value: item, label: _.toUpper(item) }))}
+                />
+              </Form.Item>
+              <Form.Item
+                name={`xName`}
+                label={"接口地址"}
+                rules={[{ required: false, message: '接口地址' }]}
+              >
+                <Input placeholder="接口地址" size='large' />
+              </Form.Item>
+              <Form.Item
+                name="ifFetch"
+                label="是否实时反馈"
+                valuePropName="checked"
+              >
+                <Switch />
+              </Form.Item>
+            </Form>
+          </Modal>
+          : null
+      }
     </div >
   );
 };
@@ -719,12 +783,13 @@ export default connect(({ home, themeStore }) => ({
 
 export const FormatWidgetToDom: any = (props: any) => {
   const {
-    form, id, label = '', node, config = [],
+    form, form1, id, label = '', node, config = [],
     parent = undefined, disabled, display, widgetChange,
     selectedOption, setSelectedOption,
     setEditorVisible, setEditorValue,
     setPlatFormVisible, setPlatFormValue,
     setSelectPathVisible, setSelectedPath,
+    setSelectImageLabelField,
   } = props;
   // const { getFieldDecorator, setFieldsValue, getFieldValue } = form;
   const {
@@ -1158,6 +1223,21 @@ export const FormatWidgetToDom: any = (props: any) => {
             </TooltipDiv>
           </FormItem>
           <div className='flex-box'>
+            <Button
+              onClick={() => {
+                const param = { id, config: config[1], parent };
+                form1.setFieldsValue({
+                  fetchType: config[1]?.fetchType,
+                  xName: config[1]?.xName,
+                  ifFetch: config[1]?.ifFetch || false
+                });
+                setSelectImageLabelField(param);
+              }}
+              disabled={disabled}
+              style={{ marginRight: 8 }}
+            >
+              设置接口
+            </Button>
             <Button
               onClick={() => {
                 setSelectedPath(Object.assign(_.omit(config[1], 'value'), { id: name, fileType: 'file' }));

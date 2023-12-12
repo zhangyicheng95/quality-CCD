@@ -105,7 +105,7 @@ const Measurement: React.FC<Props> = (props: any) => {
               disabled={disabled}
               className={`self_input ${className}`}
               ref={refList[index]}
-              value={_.isNumber(value) ? value : JSON.stringify(item[1])}
+              value={(!!value || _.isNumber(value)) ? value : JSON.stringify(item[1])}
               precision={precision}
               step={step}
               max={max}

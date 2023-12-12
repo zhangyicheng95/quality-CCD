@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { connect, useModel } from 'umi';
 import BasicTable from '@/components/BasicTable';
-import TooltipDiv from '@/components/TooltipDiv';
-import { Button, Form, Input, InputNumber, message, Switch, Upload } from 'antd';
+import { Button, Form, InputNumber, message, Switch, Upload } from 'antd';
 import _ from 'lodash';
 import * as XLSX from 'xlsx';
 import styles from '../index.module.less';
@@ -17,11 +16,8 @@ interface Props {
 const TableEditCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, started } = props;
     let {
-        dataValue = [], fontSize, xColumns = [], yColumns = [], yName = '', des_bordered,
+        fontSize, xColumns = [], yColumns = [], yName = '', des_bordered,
     } = data;
-    if (process.env.NODE_ENV === 'development') {
-        dataValue = [];
-    };
     const [form] = Form.useForm();
     const domRef = useRef<any>(null);
     const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -46,7 +42,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
                 key: item,
                 dataIndex: item,
                 editable: index > 1,
-                width: index === 1 ? '250px' : '100px'
+                width: index === 1 ? '250px' : '100px',
             }, index < 2 ? { fixed: 'left', } : {
                 render: (text: any, record: any) => {
                     if (_.isString(text) || _.isUndefined(text)) {
@@ -73,6 +69,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
             });
         });
     }, [xColumns]);
+
     useEffect(() => {
         if (!xColumns?.length || !yColumns?.length) {
             return;
@@ -258,7 +255,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
                 });
                 const subColumns = xColumns[1]?.xName?.split(',')?.slice(2) || [];
                 const parm1 = obj1.map((item: any) => {
-                    const { association, xName, yName } = item;
+                    const { association, yName } = item;
                     const result = obj2.filter((i: any) => i.association === association && i.yName === yName) || [];
                     return {
                         ...item,

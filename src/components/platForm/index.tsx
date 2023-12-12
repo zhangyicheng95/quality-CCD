@@ -157,7 +157,7 @@ const PlatFormModal: React.FC<Props> = (props) => {
             }).filter(Boolean)
           }
         );
-        console.log(params)
+        console.log(params);
         onOk(params);
       }}
       onCancel={() => {
