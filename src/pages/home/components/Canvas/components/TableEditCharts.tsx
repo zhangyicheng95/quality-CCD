@@ -24,6 +24,9 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
     const { params } = initialState;
     const [dataSource, setDataSource] = useState<any>([]);
 
+    const ifCanEdit = useMemo(() => {
+        return location.hash.indexOf('edit') > -1;
+    }, [location.hash]);
     useEffect(() => {
         if (!_.isArray(xColumns) || !_.isArray(yColumns)) {
             message.error('可编辑表格组件数据格式不正确，请检查');
@@ -355,16 +358,21 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
                     />
                 </Form>
             </div>
-            <div className="flex-box-center edit-table-footer">
-                <Upload {...onUploadExcel}>
-                    <Button type="default" disabled={started}>
-                        上传 Excel
-                    </Button>
-                </Upload>
-                <Button type="primary" disabled={started} onClick={() => onSubmit()}>
-                    保存
-                </Button>
-            </div>
+            {
+                ifCanEdit ?
+                    null
+                    :
+                    <div className="flex-box-center edit-table-footer">
+                        <Upload {...onUploadExcel}>
+                            <Button type="default" disabled={started}>
+                                上传 Excel
+                            </Button>
+                        </Upload>
+                        <Button type="primary" disabled={started} onClick={() => onSubmit()}>
+                            保存
+                        </Button>
+                    </div>
+            }
         </div>
     );
 };

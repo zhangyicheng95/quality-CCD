@@ -47,7 +47,10 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   const [form] = Form.useForm();
   const { validateFields, setFieldsValue, resetFields } = form;
   const { data, setGetDataFun, getDataFun, selectedFeature, setSelectedFeature } = props;
-  const { platFormValue, localPath, zoom, widget, ifFetch, fetchType, xName } = data;
+  const {
+    platFormValue, localPath, zoom, widget, ifFetch, fetchType, xName, fontSize,
+    inHome
+  } = data;
 
   const { options } = widget;
   const [{ color }, open] = useEyeDropper();
@@ -701,7 +704,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     return () => {
       destroy();
     }
-  }, [localPath]);
+  }, []);
   useEffect(() => {
     if (!!gMap.current) {
       let obj = {};
@@ -876,6 +879,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       // gFirstMaskLayer.addAction(drawMaskAction);
     }
   };
+  useEffect(() => {
+    if (inHome && !!gMap.current && !!localPath) {
+      img.current.src = `${localPath?.indexOf('http') === 0 ? localPath : `${BASE_IP}file${(localPath?.indexOf('\\') === 0 || localPath?.indexOf('/') === 0) ? '' : '\\'}${localPath}`}?__timestamp=${+new Date()}`;
+    }
+  }, [localPath]);
   const updateToService = () => {
     if (!!gFirstImageLayer?.current) {
       const feat = getFeatures;
@@ -1008,8 +1016,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       if (ifFetch) {
         btnFetch(fetchType, xName, params.value).then((res: any) => {
           console.log(res);
-          if (res && res.code === 'SUCCESS') {
-            img.current.src = res?.data?.img || 'https://img.zcool.cn/community/01a24d55efd0006ac7251df84f100f.jpg@3000w_1l_2o_100sh.jpg';
+          if (!!res && res.code === 'SUCCESS' && !!res?.data?.img) {
+            img.current.src = res?.data?.img;
           } else {
             message.error(res?.msg || res?.message || "接口异常");
           }
@@ -1320,7 +1328,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           <div className="canvas-box" id={CONTAINER_ID} />
         </div>
       </Spin>
-      <div className="config-box background-ubv">
+      <div className="config-box background-ubv" style={!!fontSize ? { fontSize } : {}}>
         {
           !!selectedFeature ?
             <Fragment>
@@ -1893,10 +1901,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     </div>
     <div className="canvas-footer flex-box-center">
       {
-        ifFetch ?
+        (ifFetch && !inHome) ?
           <div className="img-box" onClick={() => {
             btnFetch(fetchType, xName, {}).then((res: any) => {
-              if (res && res.code === 'SUCCESS') {
+              console.log(res);
+              if (!!res && res.code === 'SUCCESS' && !!res?.data?.img) {
                 img.current.src = res?.data?.img;
               } else {
                 message.error(res?.msg || res?.message || "接口异常");

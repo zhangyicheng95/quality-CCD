@@ -375,19 +375,25 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         } else if (!!scene.current && addType === 'rxptPoint') {
             let pointList: any = [],
                 areaIndex = 0;
-            (Object.entries(value) || []).forEach((item1: any, index: number) => {
-                item1[1]?.forEach((item2: any, index2: number) => {
-                    (item2.list || []).forEach((item3: any) => {
-                        const { Track, track, ...rest } = item3;
+            (value || []).forEach((item1: any, index: number) => {
+                Object.entries(item1)?.forEach((item2: any, index2: number) => {
+                    if (!_.isArray(item2[1])) {
+                        return;
+                    };
+                    (item2[1] || []).forEach((item3: any) => {
+                        const { Track, ...rest } = item3;
                         const list: any = [];
-                        (Track || track || []).forEach((item4: any) => {
+                        (Track || []).forEach((item4: any) => {
+                            const { Point_Normal, ...restItem4 } = item4;
                             list.push({
                                 ...rest,
-                                ...item4,
+                                ...restItem4,
+                                point: Point_Normal?.slice(0, 3),
+                                normVec: Point_Normal?.slice(3),
                                 area: `area-${index}-robt-${index2}`,
-                                name: item1[0],
+                                name: item2[0],
                                 areaIndex,
-                                surfaceType: item2.surfaceType
+                                surfaceType: item1.surfaceType
                             });
                         });
                         areaIndex += 1;
@@ -395,11 +401,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     });
                 });
             });
-            console.log(pointList)
             loadModel('', pointList, 'add');
             return;
         };
-        console.log('three160行: 点云路径', selectedPath || name);
+        console.log('点云路径：', selectedPath || name);
         console.log('卡片数据：', value);
         // 外层盒子
         const box: any = dom?.current;
@@ -708,7 +713,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     });
                 });
                 // 显示坐标轴
-                axis.visible = true;
+                if (!!axis) {
+                    axis.visible = true;
+                }
             }
         };
         function onDocumentMouseMove(event: any) {
@@ -795,7 +802,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             y: { alias: 'ny', value: intersect.object?.normVec?.y },
                             z: { alias: 'nz', value: intersect.object?.normVec?.z }
                         },
-                        areaSort: intersect.object?.areaSort,
+                        regionID: intersect.object?.regionID,
                         robID: intersect.object?.robID,
                         surfaceType: intersect.object?.surfaceType,
                     });
@@ -887,19 +894,27 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             /***************清理框选区域********************/
             let pointList: any = [],
                 areaIndex = 0;
-            (Object.entries(value) || []).forEach((item1: any, index: number) => {
-                item1[1]?.forEach((item2: any, index2: number) => {
-                    (item2.list || []).forEach((item3: any) => {
-                        const { Track, track, ...rest } = item3;
+            (value || []).forEach((item1: any, index: number) => {
+                Object.entries(item1)?.forEach((item2: any, index2: number) => {
+                    if (!_.isArray(item2[1])) {
+                        return;
+                    };
+                    (item2[1] || []).forEach((item3: any) => {
+                        const { Track, ...rest } = item3;
                         const list: any = [];
-                        (Track || track || []).forEach((item4: any) => {
+                        (Track || []).forEach((item4: any) => {
+                            const { Point_Normal, point, normVec, ...restItem4 } = item4;
+                            const po = Point_Normal?.slice(0, 3),
+                                no = Point_Normal?.slice(3);
                             list.push({
                                 ...rest,
-                                ...item4,
+                                ...restItem4,
+                                point: !!point ? point : { x: po?.[0], y: po?.[1], z: po?.[2] },
+                                normVec: !!normVec ? normVec : { x: no?.[0], y: no?.[1], z: no?.[2] },
                                 area: `area-${index}-robt-${index2}`,
-                                name: item1[0],
+                                name: item2[0],
                                 areaIndex,
-                                surfaceType: item2.surfaceType
+                                surfaceType: item1.surfaceType
                             });
                         });
                         areaIndex += 1;
@@ -907,7 +922,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     });
                 });
             });
-            console.log(pointList)
             loadModel('', pointList, 'add');
             return;
         };
@@ -1705,19 +1719,20 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     scene.current?.remove?.(mesh);
                 }
             });
+            console.log(value);
             (value || []).forEach((item: any, index: number) => {
-                const { point, normVec, areaIndex, areaSort, robID, surfaceType, ...rest } = item;
+                const { point, normVec, areaIndex, regionID, robID, surfaceType, ...rest } = item;
                 const scale = camera?.current?.zoom || 1.5;
                 const geometry = new THREE.SphereGeometry(scale * 10, 32, 32);
                 const material = new THREE.MeshBasicMaterial({ color: colorTran[areaIndex] });
                 const cube = new THREE.Mesh(geometry, material);
                 if (!!cube) {
-                    cube.position.x = point.x;
-                    cube.position.y = point.y;
-                    cube.position.z = point.z;
+                    cube.position.x = point?.x;
+                    cube.position.y = point?.y;
+                    cube.position.z = point?.z;
                     cube['normVec'] = normVec;
                     cube['areaIndex'] = areaIndex;
-                    cube['areaSort'] = areaSort;
+                    cube['regionID'] = regionID;
                     cube['robID'] = robID;
                     cube['surfaceType'] = surfaceType;
                     cube['__props'] = rest;
@@ -2160,7 +2175,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             className='btn'
                         />
                     </Tooltip>
-                    <Tooltip title={!!selectedPath ? "清除上传的文件" : "上传本地点云文件"}>
+                    <Tooltip title={!!selectedPath ? "上传模型" : "上传本地点云文件"}>
                         {
                             // !!modelUpload ?
                             //     <Button
@@ -2194,70 +2209,73 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             !!pointRef?.length ?
                                 <Button onClick={() => {
                                     const points = getAllModelsFromScene(scene.current, 'editPoint');
-                                    let obj = {};
+                                    let obj: any = [];
                                     points.forEach((point: any) => {
-                                        const { position, normVec, areaSort = 0, robID, surfaceType, __props = {} } = point;
-                                        const { name, area, ...rest } = __props;
+                                        const { position, normVec, regionID = 0, robID, surfaceType, __props = {} } = point;
                                         const options = {
                                             point: position,
-                                            normVec, areaSort, robID, surfaceType,
+                                            normVec, regionID, robID, surfaceType,
                                         };
-                                        if (!!obj[name]) {
-                                            if (!!obj[name][areaSort]) {
-                                                obj[name][areaSort].push({
-                                                    ...rest,
-                                                    ...options
-                                                });
-                                            } else {
-                                                obj[name][areaSort] = [{
-                                                    ...rest,
-                                                    ...options
-                                                }];
-                                            }
-                                        } else {
-                                            obj[name] = [];
-                                            obj[name][areaSort] = [{
-                                                ...rest,
+                                        if (!!obj[regionID]) {
+                                            obj[regionID].push({
+                                                ...__props,
                                                 ...options
-                                            }]
-                                        };
+                                            });
+                                        } else {
+                                            obj[regionID] = [];
+                                            obj[regionID] = [{
+                                                ...__props,
+                                                ...options
+                                            }];
+                                        }
                                     });
-                                    const params = Object.entries(obj).reduce((pre: any, cen: any) => {
+                                    const params = obj.reduce((pre: any, cen: any) => {
                                         let obj1 = {};
-                                        (cen[1].filter(Boolean) || [])?.forEach((item: any) => {
-                                            if (obj1[item[0]?.surfaceType]) {
-                                                obj1[item[0]?.surfaceType].push({
-                                                    surfaceType: item[0]?.surfaceType,
-                                                    robID: item[0]?.robID,
-                                                    areaSort: item[0]?.areaSort,
-                                                    list: item,
-                                                });
+                                        (cen.filter(Boolean) || [])?.forEach((item: any) => {
+                                            if (obj1[item?.surfaceType]) {
+                                                obj1[item?.surfaceType].push(item);
                                             } else {
-                                                obj1[item[0]?.surfaceType] = [{
-                                                    surfaceType: item[0]?.surfaceType,
-                                                    robID: item[0]?.robID,
-                                                    areaSort: item[0]?.areaSort,
-                                                    list: item,
-                                                }];
+                                                obj1[item?.surfaceType] = [item];
                                             }
                                         });
-                                        return {
-                                            ...pre,
-                                            [cen[0]]: (Object.entries(obj1) || [])?.map((res: any) => {
-                                                const item = res[1];
-                                                return {
-                                                    surfaceType: res[0],
-                                                    list: item.map((i: any) => {
-                                                        return {
-                                                            preEdp_num: i?.list?.[0]?.preEdp_num,
-                                                            preStp_num: i?.list?.[0]?.preStp_num,
-                                                            track: i?.list
+                                        let obj2 = {};
+                                        Object.entries(obj1).forEach((item1: any) => {
+                                            (item1[1] || []).forEach((item2: any) => {
+                                                const { name, PreEdP_num, PreStP_num } = item2;
+                                                if (!!obj2[item1[0]]) {
+                                                    if (!!obj2[item1[0]][`${PreEdP_num}-${PreStP_num}`]) {
+                                                        if (!!obj2[item1[0]][`${PreEdP_num}-${PreStP_num}`][name]) {
+                                                            obj2[item1[0]][`${PreEdP_num}-${PreStP_num}`][name].push(item2);
+                                                        } else {
+                                                            obj2[item1[0]][`${PreEdP_num}-${PreStP_num}`][name] = [].concat(item2);
                                                         }
-                                                    }),
+                                                    } else {
+                                                        obj2[item1[0]][`${PreEdP_num}-${PreStP_num}`] = {};
+                                                        obj2[item1[0]][`${PreEdP_num}-${PreStP_num}`][name] = [].concat(item2);
+                                                    }
+                                                } else {
+                                                    obj2[item1[0]] = {};
+                                                    obj2[item1[0]][`${PreEdP_num}-${PreStP_num}`] = {};
+                                                    obj2[item1[0]][`${PreEdP_num}-${PreStP_num}`][name] = [].concat(item2);
                                                 }
-                                            })
-                                        };
-                                    }, {});
+                                            });
+                                        });
+                                        return pre.concat(Object.entries(obj2).reduce((p: any, c: any) => {
+                                            return p.concat(Object.entries(c[1]).map((item3: any) => {
+                                                const list = Object.entries(item3[1]).map((item4: any) => {
+                                                    const name = item3[0].split('-');
+                                                    return {
+                                                        [item4[0]]: [{
+                                                            PreEdP_num: Number(name[0] || "0"),
+                                                            PreStP_num: Number(name[1] || "0"),
+                                                            Track: item4[1]
+                                                        }]
+                                                    }
+                                                });
+                                                return Object.assign({ surfaceType: c[0] }, ...list);
+                                            }))
+                                        }, []))
+                                    }, []);
                                     console.log(params);
                                     if (!!fetchType && !!xName) {
                                         btnFetch(fetchType, xName, params).then((res: any) => {
@@ -2563,7 +2581,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         onOk={() => {
                             validateFields()
                                 .then((values) => {
-                                    const { point, normVec, areaSort, robID, surfaceType } = values;
+                                    const { point, normVec, regionID, robID, surfaceType } = values;
                                     selectedPoint.object.position.set(point.x.value, point.y.value, point.z.value);
                                     selectedPoint.object.normVec = {
                                         x: normVec.x.value,
@@ -2574,7 +2592,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                     const points = getAllModelsFromScene(scene.current, 'editPoint');
                                     (points || []).forEach((point: any) => {
                                         if (point.areaIndex === selectedPoint.object.areaIndex) {
-                                            point['areaSort'] = areaSort;
+                                            point['regionID'] = regionID;
                                             point['robID'] = robID;
                                             point['surfaceType'] = surfaceType;
                                         }
@@ -2610,7 +2628,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 <Measurement />
                             </Form.Item>
                             <Form.Item
-                                name="areaSort"
+                                name="regionID"
                                 label="排序"
                                 rules={[{ required: true, message: "排序" }]}
                             >
@@ -2770,7 +2788,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     </Modal>
                     : null
             }
-        </div>
+        </div >
     );
 
 };

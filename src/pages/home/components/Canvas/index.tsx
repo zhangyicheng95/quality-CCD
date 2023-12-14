@@ -59,6 +59,7 @@ import Table3Charts from './components/Table3Charts';
 import TreeCharts from './components/TreeCharts';
 import Table4Charts from './components/Table4Charts';
 import TableEditCharts from './components/TableEditCharts';
+import PlatFormCharts from './components/PlatFormCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -875,7 +876,7 @@ const Home: React.FC<any> = (props: any) => {
       addContentList?.forEach((item: any, index: number) => {
         const {
           id: key, size, value = [], type, yName, xName, defaultImg, fontSize,
-          reverse, direction, symbol, fetchType, fetchParams, align,
+          reverse, direction, symbol, fetchType, ifFetch, fetchParams, align,
           backgroundColor = 'default', barColor = 'default', progressType = 'line',
           progressSize = 8, progressSteps = 5, windowControl,
           des_bordered, des_column, des_layout, des_size, ifLocalStorage,
@@ -1131,14 +1132,23 @@ const Home: React.FC<any> = (props: any) => {
                                                               }}
                                                             />
                                                             :
-                                                            <ImgCharts
-                                                              id={key}
-                                                              data={{
-                                                                defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                                dataValue, windowControl, markNumber, markNumberLeft, markNumberTop,
-                                                                setContentList, magnifier, comparison, magnifierSize, ifShowHeader
-                                                              }}
-                                                            />
+                                                            type === 'platForm' ?
+                                                              <PlatFormCharts
+                                                                id={key}
+                                                                data={{
+                                                                  dataValue, fontSize, yName, fetchType, xName,
+                                                                  ifFetch
+                                                                }}
+                                                              />
+                                                              :
+                                                              <ImgCharts
+                                                                id={key}
+                                                                data={{
+                                                                  defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                                  dataValue, windowControl, markNumber, markNumberLeft, markNumberTop,
+                                                                  setContentList, magnifier, comparison, magnifierSize, ifShowHeader
+                                                                }}
+                                                              />
                 }
               </div>
             </div>
@@ -1480,7 +1490,7 @@ const Home: React.FC<any> = (props: any) => {
   const addWindow = (values?: any) => {
     const {
       value, type, size, yName, xName, fontSize, defaultImg, reverse, direction, symbol,
-      fetchType, fetchParams, align, backgroundColor, barColor,
+      fetchType, ifFetch, fetchParams, align, backgroundColor, barColor,
       progressType, progressSize, progressSteps, windowControl,
       des_bordered, des_column, des_layout, des_size, ifLocalStorage,
       CCDName, imgs_width, imgs_height, magnifier, comparison = false, operationList, dataZoom,
@@ -1512,7 +1522,7 @@ const Home: React.FC<any> = (props: any) => {
         type,
         tab: activeTab,
         yName, xName, defaultImg, fontSize, reverse, direction, symbol,
-        fetchType, fetchParams, align, backgroundColor, barColor,
+        fetchType, ifFetch, fetchParams, align, backgroundColor, barColor,
         progressType, progressSize, progressSteps, windowControl,
         des_bordered, des_column, des_layout, des_size, ifLocalStorage,
         CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
@@ -1532,7 +1542,7 @@ const Home: React.FC<any> = (props: any) => {
             type,
             tab: activeTab,
             yName, xName, defaultImg, fontSize, reverse, direction, symbol,
-            fetchType, fetchParams, align, backgroundColor, barColor,
+            fetchType, ifFetch, fetchParams, align, backgroundColor, barColor,
             progressType, progressSize, progressSteps, windowControl,
             des_bordered, des_column, des_layout, des_size, ifLocalStorage,
             CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
@@ -1563,7 +1573,7 @@ const Home: React.FC<any> = (props: any) => {
     setSelectedPath({ fileType: 'file', value: '' });
     setFieldsValue({
       value: [], type: 'img', yName: undefined, xName: undefined, fontSize: undefined, reverse: false,
-      direction: 'column', symbol: 'rect', fetchType: undefined, fetchParams: undefined,
+      direction: 'column', symbol: 'rect', fetchType: undefined, ifFetch: false, fetchParams: undefined,
       align: 'left', backgroundColor: 'default', barColor: 'default', progressType: 'line',
       progressSize: 8, progressSteps: 5, windowControl: undefined, ifLocalStorage: undefined,
       CCDName: undefined, magnifier: false, comparison: false, operationList: [], dataZoom: 0,
@@ -3189,6 +3199,47 @@ const Home: React.FC<any> = (props: any) => {
                             });
                           }}
                         />
+                      </Form.Item>
+                    </Fragment>
+                    : null
+                }
+                {
+                  ['platForm'].includes(windowType) ?
+                    <Fragment>
+                      <Form.Item
+                        name={`yName`}
+                        label={"绑定参数"}
+                        rules={[{ required: true, message: '绑定参数' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={selectedNodeConfig}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`fetchType`}
+                        label={"http类型"}
+                        rules={[{ required: false, message: 'http类型' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          placeholder="http类型"
+                          options={['get', 'post', 'put', 'delete'].map((item: any) => ({ value: item, label: _.toUpper(item) }))}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`xName`}
+                        label={"接口地址"}
+                        rules={[{ required: false, message: '接口地址' }]}
+                      >
+                        <Input placeholder="接口地址" size='large' />
+                      </Form.Item>
+                      <Form.Item
+                        name="ifFetch"
+                        label="是否实时反馈"
+                        valuePropName="checked"
+                      >
+                        <Switch />
                       </Form.Item>
                     </Fragment>
                     : null

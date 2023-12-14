@@ -163,6 +163,7 @@ const PlatFormModal: React.FC<Props> = (props) => {
       onCancel={() => {
         onCancel();
       }}
+      getContainer={false}
     >
       <MarkCanvas
         data={data}

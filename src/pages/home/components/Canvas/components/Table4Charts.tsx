@@ -112,6 +112,7 @@ const Table4Charts: React.FC<Props> = (props: any) => {
             <BasicTable
                 columns={columns}
                 dataSource={dataValue}
+                defaultExpandAllRows={true}
                 pagination={null}
             />
         </div>
