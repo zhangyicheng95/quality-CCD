@@ -257,13 +257,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const ifCanEdit = useMemo(() => {
         return location.hash.indexOf('edit') > -1;
     }, [location.hash]);
-    useEffect(() => {
-        if (!_.isString(name)) {
-            message.error('3D组件数据格式不正确，请检查');
-            console.log('ThreeCharts', dataValue);
-            return;
-        }
-    }, [name]);
 
     let renderer = useRef<any>();
     const labelRenderer = new CSS2DRenderer();
@@ -2211,7 +2204,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                     const points = getAllModelsFromScene(scene.current, 'editPoint');
                                     let obj: any = [];
                                     points.forEach((point: any) => {
-                                        const { position, normVec, regionID = 0, robID, surfaceType, __props = {} } = point;
+                                        const { position, normVec, regionID = 0, robID = 1, surfaceType, __props = {} } = point;
                                         const options = {
                                             point: position,
                                             normVec, regionID, robID, surfaceType,

@@ -194,10 +194,6 @@ const OperationCharts: React.FC<Props> = (props: any) => {
                                 const { name, alias, widget = {} } = item;
                                 const { type } = widget;
                                 return <div className="flex-box param-item" key={`${id}@$@${name}`}>
-                                    <div className="icon-box flex-box">
-                                        {_.toUpper(type.slice(0, 1))}
-                                        {/* <BlockOutlined className="item-icon" /> */}
-                                    </div>
                                     <div className="title-box">
                                         <TooltipDiv className="first" title={alias || name}>{alias || name}</TooltipDiv>
                                         <TooltipDiv className="second">{name}</TooltipDiv>

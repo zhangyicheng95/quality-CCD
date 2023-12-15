@@ -190,7 +190,6 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         <div
             id={`echart-${id}`}
             className={`flex-box ${styles.imgCharts}`}
-            // @ts-ignore
             ref={dom}
         >
             {

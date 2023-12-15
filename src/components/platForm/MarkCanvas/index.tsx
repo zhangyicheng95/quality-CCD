@@ -40,9 +40,6 @@ const arrowStyle = {
   fontColor: '#0f0'
 };
 
-let gFirstTextLayer: any | null = null;
-let gFirstMaskLayer: any | null = null;
-
 const MarkCanvas: React.FC<Props> = (props: any) => {
   const [form] = Form.useForm();
   const { validateFields, setFieldsValue, resetFields } = form;
@@ -54,11 +51,14 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
 
   const { options } = widget;
   const [{ color }, open] = useEyeDropper();
+  const dom = useRef<any>();
   let img = useRef<any>(null);
   let gMap = useRef<any>(null);
   let gFirstFeatureLayer = useRef<any>(null);
   let gFirstImageLayer = useRef<any>(null);
-  let drawingStyle: any = { strokeStyle: '#F00' }; // 绘制过程中样式
+  let gFirstTextLayer = useRef<any>(null);
+  let gFirstMaskLayer = useRef<any>(null);
+  let drawingStyle = useRef<any>({ strokeStyle: '#F00' }); // 绘制过程中样式
 
   const markRef = useRef<any>();
   const featureListRef = useRef<any>({});
@@ -81,6 +81,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     img.current.title = 'img.png';
     img.current.onload = (res: any) => {
       const { width = 1, height = 1 } = img.current;
+      const scale = !!zoom ? zoom : ((dom?.current?.clientWidth / dom?.current?.clientHeight) > (width / height)) ?
+        height * (dom?.current?.clientWidth / dom?.current?.clientHeight)
+        :
+        Math.max(width, height);
+
       // img.current.width = width;
       // img.current.height = height;
       gMap.current && gMap.current.destroy();
@@ -88,10 +93,9 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       gMap.current = new AILabel.Map(CONTAINER_ID, {
         // size: { width: dom?.clientWidth, height: dom?.clientHeight },
         center: { x: width / 2, y: height / 2 },
-        zoom: zoom ? zoom : height * 3.5,
+        zoom: scale,
         mode: 'RECT', // 绘制线段
         refreshDelayWhenZooming: true, // 缩放时是否允许刷新延时，性能更优
-
         zoomWhenDrawing: true,
         zoomWheelRatio: 8, // 控制滑轮缩放缩率[0, 10), 值越小，则缩放越快，反之越慢
         withHotKeys: true // 关闭快捷键
@@ -173,19 +177,19 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           const pointFeature = new AILabel.Feature.Point(
             `${+new Date()}`, // id
             { ...data, sr: 3 }, // shape
-            { name: '点状矢量图层', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: 'label' }, // props
-            drawingStyle // style
+            { name: '点状矢量图层', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: inHome ? '' : 'label' }, // props
+            drawingStyle.current // style
           );
           gFirstFeatureLayer.current.addFeature(pointFeature);
-          addFeatureText({ x: data.x + 3, y: data.y - 3 }, relatedTextId, 'label');
+          addFeatureText({ x: data.x, y: data.y }, relatedTextId, inHome ? '' : 'label');
         } else if (type === 'LINE') {
           const scale = gMap.current.getScale();
-          const width = drawingStyle.lineWidth / scale;
+          const width = drawingStyle.current.lineWidth / scale;
           const lineFeature = new AILabel.Feature.Line(
             `${+new Date()}`, // id
             { ...data, width }, // shape
             { name: '线段矢量图层', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId }, // props
-            drawingStyle // style
+            drawingStyle.current // style
           );
           gFirstFeatureLayer.current.addFeature(lineFeature);
           const { start, end } = data;
@@ -195,15 +199,15 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           } else {
             position = { x: end.x, y: end.y - 2 };
           }
-          addFeatureText(position, relatedTextId, 'label');
+          addFeatureText(position, relatedTextId, inHome ? '' : 'label');
         } else if (type === 'POLYLINE') {
           const scale = gMap.current.getScale();
-          const width = drawingStyle.lineWidth / scale;
+          const width = drawingStyle.current.lineWidth / scale;
           const polylineFeature = new AILabel.Feature.Polyline(
             `${+new Date()}`, // id
             { points: data, width }, // shape
             { name: '多线段矢量图层', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId }, // props
-            drawingStyle // style
+            drawingStyle.current // style
           );
           gFirstFeatureLayer.current.addFeature(polylineFeature);
         } else if (type === 'CIRCLE') {
@@ -215,12 +219,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             Object.assign({}, {
               name: '圆形矢量图层',
               textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId,
-              label: 'label',
+              label: inHome ? '' : 'label',
             }, btn === 'DOUBLE_CIRCLE' ? { type: btn, child: id + 100 } : {}), // props 
-            drawingStyle // style
+            drawingStyle.current // style
           );
           gFirstFeatureLayer.current.addFeature(circleFeature);
-          addFeatureText({ x: data.cx - data.r, y: data.cy - data.r }, relatedTextId, 'label');
+          addFeatureText({ x: data.cx - data.r, y: data.cy - data.r }, relatedTextId, inHome ? '' : 'label');
 
           // 是圆环，手动添加内环
           if (btn === 'DOUBLE_CIRCLE') {
@@ -228,7 +232,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
               id + 100, // id
               { ...data, r: data.r / 2 }, // data1代表屏幕坐标 shape
               { name: '圆形矢量图层', deleteMarkerId: relatedDeleteMarkerId, type: 'DOUBLE_CIRCLE_CHILD', parent: id }, // props 
-              drawingStyle // style
+              drawingStyle.current // style
             );
             gFirstFeatureLayer.current.addFeature(circleFeature);
           }
@@ -247,11 +251,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                 deleteMarkerId: relatedDeleteMarkerId,
                 arrowXMarkerId: directionMarkerId + 'x',
                 arrowYMarkerId: directionMarkerId + 'y',
-                label: 'label',
+                label: inHome ? '' : 'label',
                 type: 'AXIS',
                 initShape: data
               }, // props
-              { ...drawingStyle, strokeStyle: '#0F0', lineWidth: 1 } // style
+              { ...drawingStyle.current, strokeStyle: '#0F0', lineWidth: 1 } // style
             );
             gFirstFeatureLayer.current.addFeature(rectFeature);
             // 横轴
@@ -265,7 +269,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
               end: { x: data.x + data.width / 2, y: data.y + data.height - data.height * 3 / 8 }
             }
             const scale = gMap.current.getScale();
-            const width = drawingStyle.lineWidth / scale;
+            const width = drawingStyle.current.lineWidth / scale;
             const lineFeature1 = new AILabel.Feature.Line(
               id + 100, // id
               { ...line1, width }, // shape
@@ -276,7 +280,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                 arrowXMarkerId: directionMarkerId + 'x',
                 type: 'AXIS_CHILD'
               }, // props
-              { ...drawingStyle, lineWidth: 1 } // style
+              { ...drawingStyle.current, lineWidth: 1 } // style
             );
             gFirstFeatureLayer.current.addFeature(lineFeature1);
             const lineFeature2 = new AILabel.Feature.Line(
@@ -289,7 +293,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                 arrowYMarkerId: directionMarkerId + 'y',
                 type: 'AXIS_CHILD'
               }, // props
-              { ...drawingStyle, lineWidth: 1 } // style
+              { ...drawingStyle.current, lineWidth: 1 } // style
             );
             gFirstFeatureLayer.current.addFeature(lineFeature2);
             addFeatureText(line1.end, relatedTextId + 'x', 'x', arrowStyle);
@@ -302,9 +306,9 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                 name: '矩形矢量图形', textId: relatedTextId,
                 deleteMarkerId: relatedDeleteMarkerId,
                 directionMarkerId: directionMarkerId,
-                label: 'label'
+                label: inHome ? '' : 'label'
               }, // props
-              drawingStyle // style
+              drawingStyle.current // style
             );
             gFirstFeatureLayer.current.addFeature(rectFeature);
             // 添加direction-icon
@@ -315,13 +319,13 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                 position: { x: data.x, y: data.y },
                 offset: {
                   x: -20,
-                  y: 0
+                  y: -4
                 }
               }, // markerInfo
               { name: 'direction-icon注记' }, // props
             );
             gMap.current.markerLayer.addMarker(gFirstMarker);
-            addFeatureText(data, relatedTextId, 'label');
+            addFeatureText(data, relatedTextId, inHome ? '' : 'label');
           }
         } else if (type === 'POLYGON') {
           let xList: any = [],
@@ -333,32 +337,32 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           const polygonFeature = new AILabel.Feature.Polygon(
             `${+new Date()}`, // id
             { points: data, location: { x: _.min(xList), y: _.min(yList) } }, // shape
-            { name: '多边形矢量图形', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: 'label' }, // props
-            drawingStyle // style
+            { name: '多边形矢量图形', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: inHome ? '' : 'label' }, // props
+            drawingStyle.current // style
           );
           gFirstFeatureLayer.current.addFeature(polygonFeature);
           addFeatureText({ x: _.min(xList), y: _.min(yList) }, relatedTextId, '多边形');
         } else if (type === 'DRAWMASK') {
           const scale = gMap.current.getScale();
-          const width = drawingStyle.lineWidth / scale;
+          const width = drawingStyle.current.lineWidth / scale;
           const drawMaskAction = new AILabel.Mask.Draw(
             `${+new Date()}`, // id
             '铅笔',
             { points: data, width }, // shape
             { name: '铅笔' }, // props
-            drawingStyle, // style
+            drawingStyle.current, // style
           );
-          gFirstMaskLayer.addAction(drawMaskAction);
+          gFirstMaskLayer.current.addAction(drawMaskAction);
         } else if (type === 'CLEARMASK') {
           const scale = gMap.current.getScale();
-          const width = drawingStyle.lineWidth / scale;
+          const width = drawingStyle.current.lineWidth / scale;
           const clearMaskAction = new AILabel.Mask.Clear(
             `${+new Date()}`, // id
             { points: data, width }, // shape
             { name: '橡皮擦' },
-            drawingStyle
+            drawingStyle.current
           );
-          gFirstMaskLayer.addAction(clearMaskAction);
+          gFirstMaskLayer.current.addAction(clearMaskAction);
         }
       });
       // 背景图拖动/缩放
@@ -405,7 +409,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             gMap.current.markerLayer.removeMarkerById(marker.id);
             gMap.current.markerLayer.removeMarkerById(directionMarkerId);
             // 删除对应text
-            gFirstTextLayer.removeTextById(textId);
+            gFirstTextLayer.current.removeTextById(textId);
             // 删除对应feature
             gFirstFeatureLayer.current.removeFeatureById(feature.id);
 
@@ -414,8 +418,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             } else if (['AXIS'].includes(props.type)) {
               gFirstFeatureLayer.current.removeFeatureById(feature.id + 100);
               gFirstFeatureLayer.current.removeFeatureById(feature.id + 200);
-              gFirstTextLayer.removeTextById(props.textXId);
-              gFirstTextLayer.removeTextById(props.textYId);
+              gFirstTextLayer.current.removeTextById(props.textXId);
+              gFirstTextLayer.current.removeTextById(props.textYId);
             }
             setSelectedFeature(0);
           });
@@ -434,7 +438,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
               type === 'LINE' ? shape.start :
                 type === 'POLYLINE' ? shape.points[0] :
                   type === 'POINT' ? shape : {};
-        const targetText = gFirstTextLayer.getTextById(props?.textId);
+        const targetText = gFirstTextLayer.current.getTextById(props?.textId);
         targetText?.updatePosition(textPosition);
         gMap.current.markerLayer.removeMarkerById(props.deleteMarkerId);
         onCancel();
@@ -604,9 +608,9 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           });
           const position1 = line1.end;
           const position2 = line2.start;
-          const targetXText = gFirstTextLayer.getTextById(props?.textXId);
+          const targetXText = gFirstTextLayer.current.getTextById(props?.textXId);
           targetXText?.updatePosition?.(position1);
-          const targetYText = gFirstTextLayer.getTextById(props?.textYId);
+          const targetYText = gFirstTextLayer.current.getTextById(props?.textYId);
           targetYText?.updatePosition?.(position2);
         }
 
@@ -630,17 +634,15 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
               type === 'LINE' ? shape.start :
                 type === 'POLYLINE' ? shape.points[0] :
                   type === 'POINT' ? shape : {};
-        const targetText = gFirstTextLayer.getTextById(textId);
+        const targetText = gFirstTextLayer.current.getTextById(textId);
         targetText?.updatePosition(textPosition);
         directionMarker?.updatePosition?.(textPosition);
-        debugger
         updateToService();
         onCancel();
       });
       gMap.current.events.on('featureDeleted', (feature: any) => {
         const { id: featureId } = feature;
         gFirstFeatureLayer.current.removeFeatureById(featureId);
-        debugger
         updateToService();
         onCancel();
       });
@@ -685,19 +687,19 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       );
       gMap.current.addLayer(gFirstFeatureLayer.current);
       // 用于添加铅笔涂层
-      gFirstMaskLayer = new AILabel.Layer.Mask(
+      gFirstMaskLayer.current = new AILabel.Layer.Mask(
         'first-layer-mask', // id
         { name: '涂抹图层' }, // props
         { zIndex: 11, opacity: .5 } // style
       );
-      gMap.current.addLayer(gFirstMaskLayer);
+      gMap.current.addLayer(gFirstMaskLayer.current);
       // 用于添加text层
-      gFirstTextLayer = new AILabel.Layer.Text(
+      gFirstTextLayer.current = new AILabel.Layer.Text(
         'first-layer-text', // id
         { name: '文本图层' }, // props
         { zIndex: 12, opacity: 1 } // style
       );
-      gMap.current.addLayer(gFirstTextLayer);
+      gMap.current.addLayer(gFirstTextLayer.current);
 
       window.addEventListener('resize', () => gMap.current && gMap.current.resize());
     }
@@ -767,7 +769,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     const gFirstText = new AILabel.Text(
       relatedTextId, // id
       {
-        text: text || 'label',
+        text: text || (inHome ? '' : 'label'),
         position: { x: ltx, y: lty },
         offset: { x: 0, y: 0 },
         width: 100,
@@ -784,7 +786,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         fontColor: '#0f0',
       } // style
     );
-    gFirstTextLayer.addText(gFirstText);
+    gFirstTextLayer.current.addText(gFirstText);
   };
   // 添加feature公共方法
   const addFeature = (type: any, id: any, shape: any, props: any, style: any) => {
@@ -871,12 +873,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       addFeatureText(shape, props.textId, props.label);
     } else {
       // const scale = gMap.current.getScale();
-      // const width = drawingStyle.lineWidth / scale;
+      // const width = drawingStyle.current.lineWidth / scale;
       // const drawMaskAction = new AILabel.Mask.Draw(
       //   `${+new Date()}`, // id
       //   { ...rest },
       // );
-      // gFirstMaskLayer.addAction(drawMaskAction);
+      // gFirstMaskLayer.current.addAction(drawMaskAction);
     }
   };
   useEffect(() => {
@@ -888,6 +890,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     if (!!gFirstImageLayer?.current) {
       const feat = getFeatures;
       const pen = getRle;
+      console.log(feat());
       const zoom = gMap.current.zoom;
       const value = featureListRef.current || {};
       const data1 = ((feat && feat().map((item: any) => _.omit(item, 'layer'))) || [])
@@ -914,7 +917,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             props: Object.assign({}, props, {
               initParams: _.omit(value?.[id], '旋转角度'),
             }, !!value?.[id]?.option_type ? {
-              label: value?.[id]?.option_type?.value
+              label: inHome ? "" : value?.[id]?.option_type?.value
             } : {})
           });
         }).filter(Boolean);
@@ -1015,9 +1018,10 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       setFeatures(params?.platFormValue);
       if (ifFetch) {
         btnFetch(fetchType, xName, params.value).then((res: any) => {
-          console.log(res);
-          if (!!res && res.code === 'SUCCESS' && !!res?.data?.img) {
-            img.current.src = res?.data?.img;
+          if (!!res && res.code === 'SUCCESS') {
+            if (!!res?.data?.img) {
+              img.current.src = res?.data?.img;
+            }
           } else {
             message.error(res?.msg || res?.message || "接口异常");
           }
@@ -1053,7 +1057,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     }));
   }
   function getRle() {
-    const rleData = gFirstMaskLayer.getRleData({ x: 0, y: 0, width: 500, height: 354 });
+    const rleData = gFirstMaskLayer.current.getRleData({ x: 0, y: 0, width: 500, height: 354 });
     return rleData;
   }
   function setMode(mode: any) {
@@ -1075,53 +1079,53 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         break;
       }
       case 'POINT': {
-        drawingStyle = { fillStyle: '#9370DB' };
-        gMap.current.setDrawingStyle(drawingStyle);
+        drawingStyle.current = { fillStyle: '#F00' };//'#9370DB'
+        gMap.current.setDrawingStyle(drawingStyle.current);
         break;
       }
       case 'DOUBLE_CIRCLE': {
-        drawingStyle = { fillStyle: '#9370DB', strokeStyle: '#F00', lineWidth: 2 };
-        gMap.current.setDrawingStyle(drawingStyle);
+        drawingStyle.current = { fillStyle: '#9370DB', strokeStyle: '#F00', lineWidth: 2 };
+        gMap.current.setDrawingStyle(drawingStyle.current);
         break;
       }
       case 'CIRCLE': {
-        drawingStyle = { fillStyle: '#9370DB', strokeStyle: '#F00', lineWidth: 2 };
-        gMap.current.setDrawingStyle(drawingStyle);
+        drawingStyle.current = { fillStyle: '#9370DB', strokeStyle: '#F00', lineWidth: 2 };
+        gMap.current.setDrawingStyle(drawingStyle.current);
         break;
       }
       case 'LINE': {
-        drawingStyle = { strokeStyle: '#F00', lineJoin: 'round', lineCap: 'round', lineWidth: 1, arrow: false };
-        gMap.current.setDrawingStyle(drawingStyle);
+        drawingStyle.current = { strokeStyle: '#F00', lineJoin: 'round', lineCap: 'round', lineWidth: 1, arrow: false };
+        gMap.current.setDrawingStyle(drawingStyle.current);
         break;
       }
       case 'POLYLINE': {
-        drawingStyle = { strokeStyle: '#F00', lineJoin: 'round', lineCap: 'round', lineWidth: 10 }
-        gMap.current.setDrawingStyle(drawingStyle);
+        drawingStyle.current = { strokeStyle: '#F00', lineJoin: 'round', lineCap: 'round', lineWidth: 10 }
+        gMap.current.setDrawingStyle(drawingStyle.current);
         break;
       }
       case 'RECT': {
-        drawingStyle = { strokeStyle: '#F00', lineWidth: 1 }
-        gMap.current.setDrawingStyle(drawingStyle);
+        drawingStyle.current = { strokeStyle: '#F00', lineWidth: 1 }
+        gMap.current.setDrawingStyle(drawingStyle.current);
         break;
       }
       case 'POLYGON': {
-        drawingStyle = { strokeStyle: '#F00', fillStyle: '#0f0', globalAlpha: .3, lineWidth: 1, fill: true, stroke: true }
-        gMap.current.setDrawingStyle(drawingStyle);
+        drawingStyle.current = { strokeStyle: '#F00', fillStyle: '#0f0', globalAlpha: .3, lineWidth: 1, fill: true, stroke: true }
+        gMap.current.setDrawingStyle(drawingStyle.current);
         break;
       }
       case 'DRAWMASK': {
-        drawingStyle = { strokeStyle: 'rgba(255, 0, 0, .5)', fillStyle: '#00f', lineWidth: 20 }
-        gMap.current.setDrawingStyle(drawingStyle);
+        drawingStyle.current = { strokeStyle: 'rgba(255, 0, 0, .5)', fillStyle: '#00f', lineWidth: 20 }
+        gMap.current.setDrawingStyle(drawingStyle.current);
         break;
       }
       case 'CLEARMASK': {
-        drawingStyle = { fillStyle: '#00f', lineWidth: 30 }
-        gMap.current.setDrawingStyle(drawingStyle);
+        drawingStyle.current = { fillStyle: '#00f', lineWidth: 30 }
+        gMap.current.setDrawingStyle(drawingStyle.current);
         break;
       }
       case 'AXIS': {
-        drawingStyle = { strokeStyle: '#F00', lineWidth: 2 }
-        gMap.current.setDrawingStyle(drawingStyle);
+        drawingStyle.current = { strokeStyle: '#F00', lineWidth: 2 }
+        gMap.current.setDrawingStyle(drawingStyle.current);
         break;
       }
       default:
@@ -1139,7 +1143,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         props: Object.assign({}, item?.props, {
           initParams: getDataFun?.value?.[item.id]
         }, !!getDataFun?.value?.[item.id]?.option_type ? {
-          label: getDataFun?.value?.[item.id]?.option_type?.value
+          label: inHome ? "" : getDataFun?.value?.[item.id]?.option_type?.value
         } : {})
       })
     });
@@ -1325,7 +1329,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         <div className="rule-box background-ubv">
           <div className="rule rule1" />
           <div className="rule rule4" />
-          <div className="canvas-box" id={CONTAINER_ID} />
+          <div
+            className="canvas-box"
+            id={CONTAINER_ID}
+            ref={dom}
+          />
         </div>
       </Spin>
       <div className="config-box background-ubv" style={!!fontSize ? { fontSize } : {}}>
@@ -1617,8 +1625,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       if (feature?.props?.type === 'AXIS') {
                         const feature1 = gFirstFeatureLayer.current.getFeatureById(feature.id + 100);
                         const feature2 = gFirstFeatureLayer.current.getFeatureById(feature.id + 200);
-                        const targetXText = gFirstTextLayer.getTextById(feature?.props?.textXId);
-                        const targetYText = gFirstTextLayer.getTextById(feature?.props?.textYId);
+                        const targetXText = gFirstTextLayer.current.getTextById(feature?.props?.textXId);
+                        const targetYText = gFirstTextLayer.current.getTextById(feature?.props?.textYId);
                         const center = {
                           x: value?.['roi']?.value?.x?.value || feature?.shape?.x + feature?.shape?.width / 2,
                           y: value?.['roi']?.value?.y?.value || feature?.shape?.y + feature?.shape?.height / 2,
@@ -1703,18 +1711,19 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           value: { ...prev?.value, ...result }
                         }));
                         setFeatureList(result);
+                        updateToService();
                         onCancel();
                       } else {
                         if (value?.['option_type']?.value) {
                           // 更新text
-                          const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
-                          if (targetText) {
+                          const targetText = gFirstTextLayer.current.getTextById(feature?.props?.textId);
+                          if (targetText && !inHome) {
                             targetText?.updateText(value?.['option_type']?.value);
                           } else {
                             const { id, shape, props, style, type } = feature;
                             gFirstFeatureLayer.current.removeFeatureById(id);
-                            gFirstTextLayer.removeTextById(props?.textId);
-                            addFeature(type, id, shape, { ...props, label: value?.['option_type']?.value }, style);
+                            gFirstTextLayer.current.removeTextById(props?.textId);
+                            addFeature(type, id, shape, { ...props, label: inHome ? "" : value?.['option_type']?.value }, style);
                           };
                         }
                         const range = value?.['找线方向']?.value || 0;
@@ -1783,7 +1792,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                     } else {
                                       feature.style['direction'] = range;
                                       feature.updateShape(shape);
-                                      const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
+                                      const targetText = gFirstTextLayer.current.getTextById(feature?.props?.textId);
                                       targetText?.updatePosition({ x: shape.x, y: shape.y });
                                       // 删除delete-icon
                                       gMap.current.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
@@ -1830,7 +1839,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                       }
                                     };
                                     feature.updateShape(shape);
-                                    const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
+                                    const targetText = gFirstTextLayer.current.getTextById(feature?.props?.textId);
                                     targetText?.updatePosition({ ...shape?.start });
                                     // 删除delete-icon
                                     gMap.current.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
@@ -1846,7 +1855,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                       sr: value?.['roi']?.value?.sr?.value
                                     };
                                     feature.updateShape(shape);
-                                    const targetText = gFirstTextLayer.getTextById(feature?.props?.textId);
+                                    const targetText = gFirstTextLayer.current.getTextById(feature?.props?.textId);
                                     targetText?.updatePosition({ ...shape?.start });
                                     // 删除delete-icon
                                     gMap.current.markerLayer.removeMarkerById(feature.props.deleteMarkerId);
@@ -1885,7 +1894,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           value: { ...prev?.value, ...result }
                         }));
                         setFeatureList(result);
-                        debugger
                         updateToService();
                         onCancel();
                       }
@@ -1904,9 +1912,10 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         (ifFetch && !inHome) ?
           <div className="img-box" onClick={() => {
             btnFetch(fetchType, xName, {}).then((res: any) => {
-              console.log(res);
-              if (!!res && res.code === 'SUCCESS' && !!res?.data?.img) {
-                img.current.src = res?.data?.img;
+              if (!!res && res.code === 'SUCCESS') {
+                if (!!res?.data?.img) {
+                  img.current.src = res?.data?.img;
+                }
               } else {
                 message.error(res?.msg || res?.message || "接口异常");
               }

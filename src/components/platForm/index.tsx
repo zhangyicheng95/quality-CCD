@@ -7,8 +7,8 @@ import MarkCanvas from './MarkCanvas';
 interface Props {
   data?: any;
   visible: any;
-  onOk: any;
-  onCancel: any;
+  onOk?: any;
+  onCancel?: any;
 }
 
 const PlatFormModal: React.FC<Props> = (props) => {
@@ -18,14 +18,15 @@ const PlatFormModal: React.FC<Props> = (props) => {
     onOk,
     onCancel,
   } = props;
+  const { inHome } = data;
   const [getDataFun, setGetDataFun] = useState<any>({ feat: null, pen: null });
   const [selectedFeature, setSelectedFeature] = useState(0);
 
   return (
     <Modal
       title='数据标注'
-      width="calc(100vw - 48px)"
-      wrapClassName={styles["plat-form-modal"]}
+      width={inHome ? "100%" : "calc(100vw - 48px)"}
+      wrapClassName={inHome ? styles["plat-form-modal1"] : styles["plat-form-modal"]}
       centered
       open={visible}
       maskClosable={false}
@@ -158,12 +159,12 @@ const PlatFormModal: React.FC<Props> = (props) => {
           }
         );
         console.log(params);
-        onOk(params);
+        onOk?.(params);
       }}
       onCancel={() => {
-        onCancel();
+        onCancel?.();
       }}
-      getContainer={false}
+      getContainer={inHome ? false : document.body}
     >
       <MarkCanvas
         data={data}
