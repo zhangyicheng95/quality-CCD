@@ -702,11 +702,44 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       gMap.current.addLayer(gFirstTextLayer.current);
 
       window.addEventListener('resize', () => gMap.current && gMap.current.resize());
+      window.addEventListener('keydown', onKeyDown);
     }
     return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('resize', () => gMap.current && gMap.current.resize());
       destroy();
     }
   }, []);
+  // 监听键盘按下
+  const onKeyDown = (event: any) => {
+    const { key } = event;
+    if (key === 'Backspace') {
+      setSelectedFeature((prev: any) => {
+        const feature = gFirstFeatureLayer.current?.getFeatureById?.(prev);
+        if (!!feature) {
+          const { props } = feature;
+          gMap.current.markerLayer.removeMarkerById(props.deleteMarkerId);
+          gMap.current.markerLayer.removeMarkerById(props.directionMarkerId);
+          // 删除对应text
+          gFirstTextLayer.current.removeTextById(props.textId);
+          // 删除对应feature
+          gFirstFeatureLayer.current.removeFeatureById(feature.id);
+
+          if (['DOUBLE_CIRCLE'].includes(props.type)) {
+            gFirstFeatureLayer.current.removeFeatureById(feature.id + 100);
+          } else if (['AXIS'].includes(props.type)) {
+            gFirstFeatureLayer.current.removeFeatureById(feature.id + 100);
+            gFirstFeatureLayer.current.removeFeatureById(feature.id + 200);
+            gFirstTextLayer.current.removeTextById(props.textXId);
+            gFirstTextLayer.current.removeTextById(props.textYId);
+          }
+          return 0;
+        };
+
+        return prev;
+      });
+    }
+  };
   useEffect(() => {
     if (!!gMap.current) {
       let obj = {};
