@@ -1,10 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { useModel } from 'umi';
-import MarkCanvas from '@/components/platForm/MarkCanvas';
-import PlatFormModal from '@/components/platForm';
-import { Button, Form, Input, message, Modal } from 'antd';
+import { Form, Input, message, Modal } from 'antd';
 import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { btnFetch } from '@/services/api';
 import { useForm } from 'antd/es/form/Form';
@@ -18,7 +15,7 @@ interface Props {
 
 const ModalCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    let { dataValue = {}, fontSize, fetchType, xName, ifFetch, } = data;
+    let { dataValue = {}, fontSize, fetchType, xName, ifFetch, ifFetchParams, } = data;
     if (process.env.NODE_ENV === 'development') {
         // dataValue = { type: 'success', title: '我是标题', content: '内容啊啊啊啊啊啊' }
     };
@@ -67,18 +64,34 @@ const ModalCharts: React.FC<Props> = (props: any) => {
                         maskClosable={false}
                         width="30vw"
                         open={open}
-                        okText="发送数据"
+                        okText="确认"
                         cancelText="取消"
                         onOk={() => {
-                            form.validateFields()
-                                .then((values) => {
-                                    const { fetchParams } = values;
-                                    if (!!fetchParams) {
-                                        let params = '';
-                                        try {
-                                            params = JSON.parse(fetchParams);
+                            if (ifFetch) {
+                                form.validateFields()
+                                    .then((values) => {
+                                        const { fetchParams } = values;
+                                        if (!!fetchParams) {
+                                            let params = '';
+                                            try {
+                                                params = JSON.parse(fetchParams);
+                                                if (!!fetchType && !!xName) {
+                                                    btnFetch(fetchType, xName, params || {}).then((res: any) => {
+                                                        if (res && res.code === 'SUCCESS') {
+                                                            message.success('上传成功');
+                                                        } else {
+                                                            message.error(res?.msg || res?.message || "接口异常");
+                                                        };
+                                                        setOpen(false)
+                                                    });
+                                                }
+                                            } catch (e) {
+                                                console.log('参数按钮传递参数格式不对:', e);
+                                                message.error('传递参数 格式不正确');
+                                            };
+                                        } else {
                                             if (!!fetchType && !!xName) {
-                                                btnFetch(fetchType, xName, params || {}).then((res: any) => {
+                                                btnFetch(fetchType, xName, '').then((res: any) => {
                                                     if (res && res.code === 'SUCCESS') {
                                                         message.success('上传成功');
                                                     } else {
@@ -87,26 +100,13 @@ const ModalCharts: React.FC<Props> = (props: any) => {
                                                     setOpen(false)
                                                 });
                                             }
-                                        } catch (e) {
-                                            console.log('参数按钮传递参数格式不对:', e);
-                                            message.error('传递参数 格式不正确');
-                                            params = '';
-                                        };
-                                    } else {
-                                        if (!!fetchType && !!xName) {
-                                            btnFetch(fetchType, xName, '').then((res: any) => {
-                                                if (res && res.code === 'SUCCESS') {
-                                                    message.success('上传成功');
-                                                } else {
-                                                    message.error(res?.msg || res?.message || "接口异常");
-                                                };
-                                                setOpen(false)
-                                            });
                                         }
-                                    }
-                                }).catch((err) => {
-                                    console.log(err);
-                                });
+                                    }).catch((err) => {
+                                        console.log(err);
+                                    });
+                            } else {
+                                setOpen(false);
+                            }
                         }}
                         onCancel={() => setOpen(false)}
                         destroyOnClose={true}
@@ -115,7 +115,7 @@ const ModalCharts: React.FC<Props> = (props: any) => {
                             {content}
                         </div>
                         {
-                            ifFetch ?
+                            ifFetchParams ?
                                 <div style={{ width: "60%" }}>
                                     <Form form={form} scrollToFirstError>
                                         <Form.Item

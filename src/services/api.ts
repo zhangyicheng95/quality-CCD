@@ -62,7 +62,7 @@ export async function stopFlowService(id: string, url?: string) {
 
 // 自助触发推送
 export async function touchFlowService() {
-  return fetchPost(`${BASE_IP}trigger/2006?msg=ONCE`);
+  return fetchPost(`${BASE_IP}trigger/2000?msg=ONCE`);
 }
 
 // 选择文件路径

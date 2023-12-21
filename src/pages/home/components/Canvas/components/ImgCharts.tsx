@@ -230,6 +230,14 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                                 { width: '100%', height: 'auto' } :
                                                 { width: 'auto', height: '100%' }
                                         }>
+                                            <div
+                                                className="ant-image-mask"
+                                                style={
+                                                    fontSize > 1 ?
+                                                        { width: '100%', height: 'auto' } :
+                                                        { width: 'auto', height: '100%' }
+                                                }
+                                            />
                                             <Image
                                                 src={dataValue || defaultImg}
                                                 alt="logo"
@@ -238,6 +246,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                                         { width: '100%', height: 'auto' } :
                                                         { width: 'auto', height: '100%' }
                                                 }
+                                                preview={false}
                                             />
                                             <div className="mask" />
                                         </div>

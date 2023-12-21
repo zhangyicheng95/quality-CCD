@@ -7,7 +7,7 @@ import {
 import * as _ from 'lodash';
 import {
   BASE_IP, btnFetch, startFlowService,
-  stopFlowService, updateParams,
+  stopFlowService, touchFlowService, updateParams,
 } from '@/services/api';
 import GridLayout from '@/components/GridLayout';
 import {
@@ -255,17 +255,17 @@ const Home: React.FC<any> = (props: any) => {
                 icon={<AndroidOutlined className="btn-icon" />}
                 type="link"
                 onClick={() => {
-                  dispatch({
-                    type: 'home/set',
-                    payload: {
-                      gridContentList: [
-                        { "id": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "value": ["96c525f8-fada-4512-8b44-7e8995278e63", "filepath"], "filepath": { "name": "models/output.ply", "value": [{}, {}] }, "size": { "i": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "x": 7, "y": 3, "w": 36, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "three", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "comparison": false, "interlacing": false, "modelRotate": false, "modelScale": false },
-                        { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "frame"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "x": 43, "y": 3, "w": 30, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "img", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "magnifier": false },
-                        { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "cam_name"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "x": 73, "y": 3, "w": 23, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "pie", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true }
-                      ],
-                    },
-                  });
-                  // touchFlowService()
+                  // dispatch({
+                  //   type: 'home/set',
+                  //   payload: {
+                  //     gridContentList: [
+                  //       { "id": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "value": ["96c525f8-fada-4512-8b44-7e8995278e63", "filepath"], "filepath": { "name": "models/output.ply", "value": [{}, {}] }, "size": { "i": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "x": 7, "y": 3, "w": 36, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "three", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "comparison": false, "interlacing": false, "modelRotate": false, "modelScale": false },
+                  //       { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "frame"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "x": 43, "y": 3, "w": 30, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "img", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "magnifier": false },
+                  //       { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "cam_name"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "x": 73, "y": 3, "w": 23, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "pie", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true }
+                  //     ],
+                  //   },
+                  // });
+                  touchFlowService()
                 }}
                 disabled={!started && process.env.NODE_ENV !== 'development' || ifCanEdit}
                 loading={started && loading}
@@ -889,7 +889,7 @@ const Home: React.FC<any> = (props: any) => {
           basicInfoData = [{ id: guid(), name: '', value: '' }], ifNeedClear, operationLock,
           ifUpdateProject, magnifierSize, listType, valueColor, markNumber,
           markNumberLeft, markNumberTop, blockType, blockTypeLines, modelUpload,
-          xColumns, yColumns, platFormOptions
+          xColumns, yColumns, platFormOptions, ifFetchParams
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1148,7 +1148,8 @@ const Home: React.FC<any> = (props: any) => {
                                                                 <ModalCharts
                                                                   id={key}
                                                                   data={{
-                                                                    dataValue: { type: 'success', title: '我是标题', content: '内容啊啊啊啊啊啊内容啊啊啊啊啊啊内容啊啊啊啊啊啊内容啊啊啊啊啊啊内容啊啊啊啊啊啊内容啊啊啊啊啊啊内容啊啊啊啊啊啊内容啊啊啊啊啊啊' }, fontSize, yName, fetchType, xName, ifFetch,
+                                                                    dataValue, fontSize, yName, fetchType, xName, ifFetch,
+                                                                    ifFetchParams,
                                                                   }}
                                                                 />
                                                                 :
@@ -1513,7 +1514,7 @@ const Home: React.FC<any> = (props: any) => {
       password = '', passwordHelp = '', ifShowHeader = false, ifShowColorList = false,
       headerBackgroundColor = 'default', ifNeedClear, operationLock, ifUpdateProject,
       magnifierSize, logSize, listType, valueColor, markNumber = false, markNumberLeft, markNumberTop,
-      blockType, blockTypeLines, modelUpload, xColumns, yColumns, platFormOptions
+      blockType, blockTypeLines, modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams
     } = values;
     if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
       try {
@@ -1545,7 +1546,7 @@ const Home: React.FC<any> = (props: any) => {
         password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
         ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
         valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
-        modelUpload, xColumns, yColumns, platFormOptions
+        modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1565,7 +1566,7 @@ const Home: React.FC<any> = (props: any) => {
             password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
             ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
             valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
-            modelUpload, xColumns, yColumns, platFormOptions
+            modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -1597,7 +1598,7 @@ const Home: React.FC<any> = (props: any) => {
       headerBackgroundColor: 'default', ifNeedClear: false, operationLock: false, ifUpdateProject: false,
       magnifierSize: 4, logSize: 50, listType: 'line', markNumber: false, markNumberLeft: 1, markNumberTop: 1,
       blockType: 'normal', blockTypeLines: 2, modelUpload: false, xColumns: undefined, yColumns: undefined,
-      platFormOptions: undefined
+      platFormOptions: undefined, ifFetchParams: false
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -3293,6 +3294,13 @@ const Home: React.FC<any> = (props: any) => {
                   ['modal'].includes(windowType) ?
                     <Fragment>
                       <Form.Item
+                        name="ifFetch"
+                        label="是否实时反馈"
+                        valuePropName="checked"
+                      >
+                        <Switch />
+                      </Form.Item>
+                      <Form.Item
                         name={`fetchType`}
                         label={"http类型"}
                         rules={[{ required: false, message: 'http类型' }]}
@@ -3311,8 +3319,8 @@ const Home: React.FC<any> = (props: any) => {
                         <Input placeholder="接口地址" size='large' />
                       </Form.Item>
                       <Form.Item
-                        name="ifFetch"
-                        label="开启反馈参数"
+                        name="ifFetchParams"
+                        label="反馈参数"
                         valuePropName="checked"
                       >
                         <Switch />
