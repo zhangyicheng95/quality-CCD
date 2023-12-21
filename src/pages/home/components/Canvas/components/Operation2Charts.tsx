@@ -318,7 +318,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                                     })
                                 }
                             </Fragment>
-                        }, [selectedOption, configList, configGroup, started, locked, listType, blockType])
+                        }, [selectedOption, configList, configGroup, started, locked, listType, blockType, fontSize])
                     }
                 </Form>
             </div>

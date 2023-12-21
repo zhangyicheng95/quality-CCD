@@ -25,7 +25,8 @@ import slider4Icon from '@/assets/dashboard-imgs/slider4.png';
 import footer1Icon from '@/assets/dashboard-imgs/slider1.png';
 import footer2Icon from '@/assets/dashboard-imgs/slider1.png';
 import gunyaIcon from '@/assets/dashboard-imgs/gunya_background.png';
-import platFormIcon from '@/assets/dashboard-imgs/three.png';
+import platFormIcon from '@/assets/dashboard-imgs/platForm.png';
+import modalIcon from '@/assets/dashboard-imgs/modal.png';
 
 export const layoutTransform = {
   0: { i: '0', x: 0, y: 0, w: 5, h: 20, minW: 2, maxW: 10, minH: 4, maxH: 32 },
@@ -155,6 +156,11 @@ export const windowTypeList: any = [
     value: 'platForm',
     label: '图片标注窗口',
     icon: platFormIcon,
+  },
+  {
+    value: 'modal',
+    label: '弹窗组件窗口',
+    icon: modalIcon,
   }
 ];
 // 默认基础组件

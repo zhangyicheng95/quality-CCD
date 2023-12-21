@@ -417,7 +417,49 @@
           &-grid {
             width: 100%;
             height: 100%;
-            overflow-y: auto;
+            overflow: hidden;
+
+            &-tab {
+              height: 45px;
+              border-bottom: 1px solid @body-background;
+              padding-top: 3px;
+              overflow: hidden;
+              font-size: 18px;
+
+              &-item {
+                height: 41px;
+                line-height: 40px;
+                margin-left: 8px;
+                padding: 0 8px;
+                cursor: pointer;
+                user-select: none;
+                white-space: nowrap;
+                border-top-left-radius: 6px;
+                border-top-right-radius: 6px;
+                box-sizing: border-box;
+                background-color: rgba(193, 193, 193, 0.6);
+                // transition: all .5s;
+                margin-right: 4px;
+
+                &:hover {
+                  background-color: rgba(144, 144, 144, .4);
+                }
+
+                &:active {
+                  transform: translate(0, 4px);
+                }
+              }
+
+              &-selected {
+                transform: translate(0, 4px);
+                background-color: rgba(144, 144, 144, .4);
+              }
+            }
+
+            &-body {
+              height: 100%;
+              overflow-y: auto;
+            }
           }
         }
 
@@ -1076,6 +1118,22 @@
       }
     }
   }
+
+  .modal-charts-confirm {
+
+    .ant-modal-header {
+      .modal-charts-confirm-title-box {
+        gap: 4px;
+        font-size: 16px;
+      }
+    }
+
+    .ant-modal-body {
+      height: 100% !important;
+      max-height: 500px;
+      padding: 32px 24px 0 !important;
+    }
+  }
 }
 
 .imgsCharts {
@@ -1430,6 +1488,10 @@
       padding: 12px;
       overflow-y: auto;
 
+      .ant-radio-wrapper {
+        align-items: self-end;
+      }
+
       .param-item {
         flex: 1;
         padding-bottom: 8px;
@@ -1599,5 +1661,16 @@
 
   :global {
     //  
+  }
+}
+
+.modalCharts {
+  width: 100%;
+  height: 100%;
+
+  :global {
+    .modal-charts-title {
+      flex-direction: column;
+    }
   }
 }

@@ -62,6 +62,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
 
   const markRef = useRef<any>();
   const featureListRef = useRef<any>({});
+  const ctrlDown = useRef(false);
   const [loading, setLoading] = useState(false);
   const [selectedBtn, setSelectedBtn] = useState('RECT');
   const [featureList, setFeatureList] = useState({});
@@ -220,14 +221,14 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
               name: '圆形矢量图层',
               textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId,
               label: inHome ? '' : 'label',
-            }, btn === 'DOUBLE_CIRCLE' ? { type: btn, child: id + 100 } : {}), // props 
+            }, ['DOUBLE_CIRCLE', 'double_circle'].includes(btn) ? { type: 'DOUBLE_CIRCLE', child: id + 100 } : {}), // props 
             drawingStyle.current // style
           );
           gFirstFeatureLayer.current.addFeature(circleFeature);
           addFeatureText({ x: data.cx - data.r, y: data.cy - data.r }, relatedTextId, inHome ? '' : 'label');
 
           // 是圆环，手动添加内环
-          if (btn === 'DOUBLE_CIRCLE') {
+          if (['DOUBLE_CIRCLE', 'double_circle'].includes(btn)) {
             const circleFeature = new AILabel.Feature.Circle(
               id + 100, // id
               { ...data, r: data.r / 2 }, // data1代表屏幕坐标 shape
@@ -238,7 +239,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           }
         } else if (type === 'RECT') {
           const id = +new Date();
-          if (btn === 'AXIS') {
+          if (['AXIS', 'axis'].includes(btn)) {
             // 坐标系
             const rectFeature = new AILabel.Feature.Rect(
               id, // id
@@ -363,6 +364,9 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             drawingStyle.current
           );
           gFirstMaskLayer.current.addAction(clearMaskAction);
+        }
+        if (!ctrlDown.current && ['LINE', 'DOUBLE_CIRCLE', 'CIRCLE', 'RECT', 'POINT', 'AXIS'].includes(btn)) {
+          setMode('');
         }
       });
       // 背景图拖动/缩放
@@ -703,16 +707,18 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
 
       window.addEventListener('resize', () => gMap.current && gMap.current.resize());
       window.addEventListener('keydown', onKeyDown);
+      window.addEventListener('keyup', onKeyup);
     }
     return () => {
       window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyup);
       window.removeEventListener('resize', () => gMap.current && gMap.current.resize());
       destroy();
     }
   }, []);
   // 监听键盘按下
   const onKeyDown = (event: any) => {
-    const { key } = event;
+    const { key, keyCode } = event;
     if (key === 'Backspace') {
       setSelectedFeature((prev: any) => {
         const feature = gFirstFeatureLayer.current?.getFeatureById?.(prev);
@@ -738,7 +744,13 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
 
         return prev;
       });
+    } else if (keyCode === 17 || keyCode === 18) {
+      ctrlDown.current = true;
     }
+  };
+  // 键盘抬起时，取消所有标记
+  const onKeyup = (event: any) => {
+    ctrlDown.current = false;
   };
   useEffect(() => {
     if (!!gMap.current) {
@@ -1095,12 +1107,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   }
   function setMode(mode: any) {
     setSelectedBtn(mode);
-    if (mode === 'DOUBLE_CIRCLE') {
+    if (['DOUBLE_CIRCLE', 'double_circle'].includes(mode)) {
       gMap.current.setMode('CIRCLE');
-    } else if (mode === 'AXIS') {
+    } else if (['AXIS', 'axis'].includes(mode)) {
       gMap.current.setMode('RECT');
     } else {
-      gMap.current.setMode(mode);
+      gMap.current.setMode(_.toUpper(mode));
     }
     // 后续对应模式处理
     switch (mode) {
@@ -1116,7 +1128,17 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         gMap.current.setDrawingStyle(drawingStyle.current);
         break;
       }
+      case 'point': {
+        drawingStyle.current = { fillStyle: '#F00' };//'#9370DB'
+        gMap.current.setDrawingStyle(drawingStyle.current);
+        break;
+      }
       case 'DOUBLE_CIRCLE': {
+        drawingStyle.current = { fillStyle: '#9370DB', strokeStyle: '#F00', lineWidth: 2 };
+        gMap.current.setDrawingStyle(drawingStyle.current);
+        break;
+      }
+      case 'double_circle': {
         drawingStyle.current = { fillStyle: '#9370DB', strokeStyle: '#F00', lineWidth: 2 };
         gMap.current.setDrawingStyle(drawingStyle.current);
         break;
@@ -1126,7 +1148,17 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         gMap.current.setDrawingStyle(drawingStyle.current);
         break;
       }
+      case 'circle': {
+        drawingStyle.current = { fillStyle: '#9370DB', strokeStyle: '#F00', lineWidth: 2 };
+        gMap.current.setDrawingStyle(drawingStyle.current);
+        break;
+      }
       case 'LINE': {
+        drawingStyle.current = { strokeStyle: '#F00', lineJoin: 'round', lineCap: 'round', lineWidth: 1, arrow: false };
+        gMap.current.setDrawingStyle(drawingStyle.current);
+        break;
+      }
+      case 'line': {
         drawingStyle.current = { strokeStyle: '#F00', lineJoin: 'round', lineCap: 'round', lineWidth: 1, arrow: false };
         gMap.current.setDrawingStyle(drawingStyle.current);
         break;
@@ -1137,6 +1169,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         break;
       }
       case 'RECT': {
+        drawingStyle.current = { strokeStyle: '#F00', lineWidth: 1 }
+        gMap.current.setDrawingStyle(drawingStyle.current);
+        break;
+      }
+      case 'rect': {
         drawingStyle.current = { strokeStyle: '#F00', lineWidth: 1 }
         gMap.current.setDrawingStyle(drawingStyle.current);
         break;
@@ -1157,6 +1194,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         break;
       }
       case 'AXIS': {
+        drawingStyle.current = { strokeStyle: '#F00', lineWidth: 2 }
+        gMap.current.setDrawingStyle(drawingStyle.current);
+        break;
+      }
+      case 'axis': {
         drawingStyle.current = { strokeStyle: '#F00', lineWidth: 2 }
         gMap.current.setDrawingStyle(drawingStyle.current);
         break;
@@ -1292,32 +1334,40 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       <div className="btn-box">
         <div className="top background-ubv">
           <StockOutlined
-            onClick={() => { setMode('LINE') }}
-            className={`img-icon flex-box-center ${selectedBtn === 'LINE' ? "selected" : ''}`}
+            onClick={() => setMode('LINE')}
+            onDoubleClick={() => setMode('line')}
+            className={`img-icon flex-box-center ${['LINE', 'line'].includes(selectedBtn) ? "selected" : ''}`}
           />
-          <div className={`img-icon flex-box-center ${selectedBtn === 'DOUBLE_CIRCLE' ? "selected" : ''}`}
+          <div
+            className={`img-icon flex-box-center ${['DOUBLE_CIRCLE', 'double_circle'].includes(selectedBtn) ? "selected" : ''}`}
             onClick={() => { setMode('DOUBLE_CIRCLE') }}
+            onDoubleClick={() => setMode('double_circle')}
           >
             <div className="img-icon-circle flex-box-center" >
               <div className="img-icon-circle-inhert" />
             </div>
           </div>
-          <div className={`img-icon flex-box-center ${selectedBtn === 'CIRCLE' ? "selected" : ''}`}
+          <div
+            className={`img-icon flex-box-center ${['CIRCLE', 'circle'].includes(selectedBtn) ? "selected" : ''}`}
             onClick={() => { setMode('CIRCLE') }}
+            onDoubleClick={() => setMode('circle')}
           >
             <div className="img-icon-circle" />
           </div>
           <BorderOutlined
-            className={`img-icon flex-box-center ${selectedBtn === 'RECT' ? "selected" : ''}`}
+            className={`img-icon flex-box-center ${['RECT', 'rect'].includes(selectedBtn) ? "selected" : ''}`}
             onClick={() => setMode('RECT')}
+            onDoubleClick={() => setMode('rect')}
           />
           <AimOutlined
-            className={`img-icon flex-box-center ${selectedBtn === 'POINT' ? "selected" : ''}`}
+            className={`img-icon flex-box-center ${['POINT', 'point'].includes(selectedBtn) ? "selected" : ''}`}
             onClick={() => setMode('POINT')}
+            onDoubleClick={() => setMode('point')}
           />
           <BorderInnerOutlined
-            className={`img-icon flex-box-center ${selectedBtn === 'AXIS' ? "selected" : ''}`}
+            className={`img-icon flex-box-center ${['AXIS', 'axis'].includes(selectedBtn) ? "selected" : ''}`}
             onClick={() => setMode('AXIS')}
+            onDoubleClick={() => setMode('axis')}
           />
         </div>
         <div className="center background-ubv">

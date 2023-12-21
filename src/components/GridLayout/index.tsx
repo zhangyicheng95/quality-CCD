@@ -12,6 +12,7 @@ interface Props {
     margin?: any;
     list: any;
     layout: any;
+    tabLength?: any;
     onChange?: any;
 };
 
@@ -31,7 +32,7 @@ const CustomResizeHandle = React.forwardRef((props: any, ref) => {
 });
 
 const GridLayout: React.FC<Props> = (props: any) => {
-    const { dragName = '.custom-drag', margin = [8, 8], list = [], layout = [], onChange } = props;
+    const { dragName = '.custom-drag', margin = [8, 8], tabLength, list = [], layout = [], onChange } = props;
 
     const ifCanEdit = useMemo(() => {
         return location.hash.indexOf('edit') > -1;
@@ -61,7 +62,7 @@ const GridLayout: React.FC<Props> = (props: any) => {
                         // }}
                         rowHeight={14}
                         layout={layout.filter(Boolean)}
-                        cols={96}
+                        cols={96 * (tabLength || 1)}
                         // breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                         // cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                         isResizable={ifCanEdit}

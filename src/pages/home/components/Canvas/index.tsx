@@ -60,6 +60,7 @@ import TreeCharts from './components/TreeCharts';
 import Table4Charts from './components/Table4Charts';
 import TableEditCharts from './components/TableEditCharts';
 import PlatFormCharts from './components/PlatFormCharts';
+import ModalCharts from './components/ModalCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -133,6 +134,7 @@ const Home: React.FC<any> = (props: any) => {
     //   children: simulatedCoatingList
     // }
   ]);
+  const [tabNum, setTabNum] = useState(0);
 
   const ifCanEdit = useMemo(() => {
     return location.hash.indexOf('edit') > -1;
@@ -245,31 +247,32 @@ const Home: React.FC<any> = (props: any) => {
           >
             重启
           </Button>
-          {process.env.NODE_ENV === 'development' ?
-            <Button
-              className="flex-box btn"
-              style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
-              icon={<AndroidOutlined className="btn-icon" />}
-              type="link"
-              onClick={() => {
-                dispatch({
-                  type: 'home/set',
-                  payload: {
-                    gridContentList: [
-                      { "id": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "value": ["96c525f8-fada-4512-8b44-7e8995278e63", "filepath"], "filepath": { "name": "models/output.ply", "value": [{}, {}] }, "size": { "i": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "x": 7, "y": 3, "w": 36, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "three", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "comparison": false, "interlacing": false, "modelRotate": false, "modelScale": false },
-                      { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "frame"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "x": 43, "y": 3, "w": 30, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "img", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "magnifier": false },
-                      { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "cam_name"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "x": 73, "y": 3, "w": 23, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "pie", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true }
-                    ],
-                  },
-                });
-                // touchFlowService()
-              }}
-              disabled={!started && process.env.NODE_ENV !== 'development' || ifCanEdit}
-              loading={started && loading}
-            >
-              自助
-            </Button>
-            : null
+          {
+            process.env.NODE_ENV === 'development' ?
+              <Button
+                className="flex-box btn"
+                style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
+                icon={<AndroidOutlined className="btn-icon" />}
+                type="link"
+                onClick={() => {
+                  dispatch({
+                    type: 'home/set',
+                    payload: {
+                      gridContentList: [
+                        { "id": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "value": ["96c525f8-fada-4512-8b44-7e8995278e63", "filepath"], "filepath": { "name": "models/output.ply", "value": [{}, {}] }, "size": { "i": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "x": 7, "y": 3, "w": 36, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "three", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "comparison": false, "interlacing": false, "modelRotate": false, "modelScale": false },
+                        { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "frame"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "x": 43, "y": 3, "w": 30, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "img", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "magnifier": false },
+                        { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "cam_name"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "x": 73, "y": 3, "w": 23, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "pie", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true }
+                      ],
+                    },
+                  });
+                  // touchFlowService()
+                }}
+                disabled={!started && process.env.NODE_ENV !== 'development' || ifCanEdit}
+                loading={started && loading}
+              >
+                自助
+              </Button>
+              : null
           }
         </div>
         {
@@ -679,12 +682,12 @@ const Home: React.FC<any> = (props: any) => {
     const { flowData = {}, contentData = {}, selfStart = false, } = paramsData;
     const {
       home = [
-        { "i": "slider-1", "x": 0, "y": 0, "w": 7, "h": 8, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
+        { "i": "slider-1", "x": 0, "y": 0, "w": 9, "h": 8, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
         { "i": "slider-2", "x": 0, "y": 8, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
         { "i": "slider-3", "x": 0, "y": 0, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
         { "i": "slider-4", "x": 7, "y": 0, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
-        { "i": "footer-1", "x": 7, "y": 8, "w": 89, "h": 20, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 },
-        { "i": "footer-2", "x": 7, "y": 0, "w": 89, "h": 8, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }
+        { "i": "footer-1", "x": 7, "y": 8, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 },
+        { "i": "footer-2", "x": 7, "y": 0, "w": 0, "h": 0, "minW": 0, "maxW": 100, "minH": 0, "maxH": 100 }
       ],
       content = {}, footerSelectList, contentHeader = {}, pageIconPosition, contentSize,
       homeSetting = {
@@ -1136,19 +1139,27 @@ const Home: React.FC<any> = (props: any) => {
                                                               <PlatFormCharts
                                                                 id={key}
                                                                 data={{
-                                                                  dataValue, fontSize, yName, fetchType, xName,
+                                                                  dataValue, fontSize, fetchType, xName,
                                                                   ifFetch, platFormOptions
                                                                 }}
                                                               />
                                                               :
-                                                              <ImgCharts
-                                                                id={key}
-                                                                data={{
-                                                                  defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                                  dataValue, windowControl, markNumber, markNumberLeft, markNumberTop,
-                                                                  setContentList, magnifier, comparison, magnifierSize, ifShowHeader
-                                                                }}
-                                                              />
+                                                              type === 'modal' ?
+                                                                <ModalCharts
+                                                                  id={key}
+                                                                  data={{
+                                                                    dataValue: { type: 'success', title: '我是标题', content: '内容啊啊啊啊啊啊内容啊啊啊啊啊啊内容啊啊啊啊啊啊内容啊啊啊啊啊啊内容啊啊啊啊啊啊内容啊啊啊啊啊啊内容啊啊啊啊啊啊内容啊啊啊啊啊啊' }, fontSize, yName, fetchType, xName, ifFetch,
+                                                                  }}
+                                                                />
+                                                                :
+                                                                <ImgCharts
+                                                                  id={key}
+                                                                  data={{
+                                                                    defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                                    dataValue, windowControl, markNumber, markNumberLeft, markNumberTop,
+                                                                    setContentList, magnifier, comparison, magnifierSize, ifShowHeader
+                                                                  }}
+                                                                />
                 }
               </div>
             </div>
@@ -1186,7 +1197,7 @@ const Home: React.FC<any> = (props: any) => {
                       !fontSize ? { fontSize: 12 } : {},
                       (!!backgroundColor && !!backgroundColor?.rgb) ? { backgroundColor: backgroundColor } : {},
                       type === 'platForm' ? {
-                        platFormOptions: JSON.stringify({
+                        platFormOptions: !!platFormOptions ? platFormOptions : JSON.stringify({
                           "左上水平隔膜": {
                             "灰度差": { "name": "灰度差", "alias": "灰度差", "require": true, "default": 15, "value": 15, "type": "int", "description": "边界变化的灰度差", "widget": { "type": "InputNumber", "max": 255, "min": 0, "step": 1 } }, "灰度合并像素": { "name": "灰度合并像素", "alias": "灰度合并像素", "require": true, "default": 2, "value": 2, "type": "int", "description": "边界变化的灰度合并像素", "widget": { "type": "InputNumber", "max": 5, "min": 1, "step": 1 } }, "亮度变化方向": { "name": "亮度变化方向", "alias": "亮度变化方向", "require": true, "default": 2, "value": 2, "type": "List[string]", "description": "边界找线亮度变化方向, 1为亮到暗, 2为暗到亮", "widget": { "type": "Select", "options": [{ "label": "1-亮到暗", "value": 1 }, { "label": "2-暗到亮", "value": 2 }] } }, "直线度": { "name": "直线度", "alias": "直线度", "require": true, "default": 3, "value": 3, "type": "int", "description": "直线度要求，值越小，线越直", "widget": { "type": "InputNumber", "max": 100, "min": 1, "step": 1 } }, "降噪滤波核": { "name": "降噪滤波核", "alias": "降噪滤波核", "require": true, "default": 5, "value": 5, "type": "int", "description": "去噪滤波核大小", "widget": { "type": "InputNumber", "max": 21, "min": 1, "step": 1 } }, "找线方向下采样倍数": { "name": "找线方向下采样倍数", "alias": "找线方向下采样倍数", "require": true, "default": 8, "value": 8, "type": "int", "description": "区域下采样倍数，提高计算速度", "widget": { "type": "InputNumber", "max": 16, "min": 2, "step": 2 } }, "垂直找线方向下采样倍数": { "name": "垂直找线方向下采样倍数", "alias": "垂直找线方向下采样倍数", "require": true, "default": 2, "value": 2, "type": "int", "description": "区域下采样倍数，提高计算速度", "widget": { "type": "InputNumber", "max": 16, "min": 2, "step": 2 } }, "搜索框个数": { "name": "搜索框个数", "alias": "搜索框个数", "require": true, "default": 15, "value": 15, "type": "int", "description": "搜索框个数", "widget": { "type": "InputNumber", "max": 1000, "min": 3, "step": 1 } }, "搜索框宽度": { "name": "搜索框宽度", "alias": "搜索框宽度", "require": true, "default": 6, "value": 6, "type": "int", "description": "搜索框宽度", "widget": { "type": "InputNumber", "max": 1000, "min": 3, "step": 1 } }, "找线方法": { "name": "找线方法", "alias": "找线方法", "require": true, "default": "卡尺找线", "value": "卡尺找线", "type": "List[string]", "description": "找线方法，1-卡尺找线，2-EDLines找线", "widget": { "type": "Select", "options": [{ "label": "卡尺找线", "value": "卡尺找线" }, { "label": "EDLine找线", "value": "EDLine找线" }] } }
                           }
@@ -1271,8 +1282,9 @@ const Home: React.FC<any> = (props: any) => {
             }
           </div>,
         );
-        layoutData = layoutData.concat(size);
-        if (ifLocalStorage || !_.isBoolean(ifLocalStorage)) {
+        layoutData = layoutData.concat((type === 'modal' && !ifCanEdit) ? { ...size, w: 0, minW: 0, h: 0, minH: 0 } : size);
+
+        if (!!ifLocalStorage) {
           resultData = resultData.concat(
             !!dataValue ? {
               ...item,
@@ -1473,16 +1485,12 @@ const Home: React.FC<any> = (props: any) => {
   useEffect(() => {
     if ((started && ipString && dispatch && !ifCanEdit) || isVision) {
       // dispatch({ type: 'home/set', payload: {started: true} });
-      const logModal = gridHomeList?.filter((item: any) => item.i === 'footer-1')[0],
-        errorModal = gridHomeList?.filter((item: any) => item.i === 'footer-2')[0];
+      const logModal = gridHomeList?.filter((item: any) => item.i === 'footer-1')[0];
       // 没有日志窗口，就不开启日志的socket
       if (!!logModal && logModal?.w) {
         socketLogListen.listen(dispatch, logThrottleAndMerge);
       }
-      // 没有错误信息窗口，就不开启错误信息的socket
-      if (!!errorModal && errorModal?.w) {
-        socketErrorListen.listen(dispatch, errorThrottleAndMerge);
-      }
+      socketErrorListen.listen(dispatch, errorThrottleAndMerge);
       socketDataListen.listen(dispatch);
       socketStateListen.listen(dispatch);
     } else {
@@ -1610,50 +1618,6 @@ const Home: React.FC<any> = (props: any) => {
     return arr;
   }, [homeDom?.clientHeight, homeDom?.clientWidth]);
   useEffect(() => {
-    if (ifCanEdit) {
-      // 1.获取元素
-      var oBox: any = document.getElementById("home-affixs");
-      var pBox: any = document.getElementById("home-affix-box");
-      let top = 0,
-        left = 0,
-        bottom = 16,
-        right = 16;
-      // 2.鼠标按下事件
-      oBox.onmousedown = function (ev: any) {
-        // 获取鼠标相对于盒子的坐标
-        // 3.鼠标移动
-        document.onmousemove = function (ev: any) {
-          var ev = ev || window.event;
-          var x3 = ev.pageX - (window.innerWidth - paramData?.contentData?.contentSize?.width);
-          var y3 = ev.pageY;
-          if (pageIconPosition?.direction === 'column') {
-            top = y3;
-            left = x3 + 12;
-          } else {
-            top = y3 - 108;
-            left = x3 + (homePageIcon.length * 40 + 16) / 2 - 4;
-          }
-          bottom = (document.querySelector('.home-body')?.clientHeight || 1440) - top - 34;
-          right = (document.querySelector('.home-body')?.clientWidth || 1920) - left;
-          pBox.style.bottom = bottom + "px";
-          pBox.style.right = right + "px"
-        }
-      }
-      // 4.鼠标松开事件
-      oBox.onmouseup = function (ev: any) {
-        var ev = ev || window.event;
-        // 获取鼠标相对于盒子的坐标
-        var x2 = ev.offsetX;
-        var y2 = ev.offsetY;
-        if (x2 <= 0 || y2 <= 0) return;
-        setPageIconPosition((prev: any) => ({ ...prev, position: { bottom, right } }));
-        document.onmousemove = function () {
-          // 释放鼠标
-        }
-      }
-    };
-  }, [ifCanEdit, homeDom, pageIconPosition.direction, paramData?.contentData?.contentSize?.width])
-  useEffect(() => {
     setFieldsValue({
       xColumns: editWindowData.xColumns,
       yColumns: editWindowData.yColumns
@@ -1742,11 +1706,15 @@ const Home: React.FC<any> = (props: any) => {
                   message.error("请先设置画布尺寸");
                   return;
                 }
-                const { width, height } = paramData?.contentData?.contentSize;
+                let { width, height } = paramData?.contentData?.contentSize;
+                if (!!paramData?.contentData?.autoSize || !_.isBoolean(paramData?.contentData?.autoSize)) {
+                  width = window.screen.width;
+                  height = window.screen.height;
+                }
                 // 画布与实际屏幕的宽度差值
                 const diffWidth = (window.screen.width - width) / 2;
                 // 计算实际的x,y坐标
-                const x = (e.x - diffWidth) / width * 96;
+                const x = (e.x * 1.1 - diffWidth) / width * 96 * (tabNum + 1);
                 const y = e.y / height * (height / 300 * 12);
                 if (key === 'main') {
                   // 添加监控窗口
@@ -1878,6 +1846,7 @@ const Home: React.FC<any> = (props: any) => {
                                     overallBackgroundColor: paramData?.contentData?.overallBackgroundColor?.rgb || 'default'
                                   }
                                 });
+                                setBasicInfoData(paramData?.contentData?.tabList || [{ id: guid(), name: '' }]);
                                 form.setFieldsValue({
                                   overallBackgroundColor: paramData?.contentData?.overallBackgroundColor?.rgb || 'default',
                                   autoSize: _.isBoolean(paramData?.contentData?.autoSize) ? paramData?.contentData?.autoSize : true,
@@ -1920,28 +1889,67 @@ const Home: React.FC<any> = (props: any) => {
                                 backgroundColor: `rgba(${paramData?.contentData?.overallBackgroundColor.rgb.r},${paramData?.contentData?.overallBackgroundColor.rgb.g},${paramData?.contentData?.overallBackgroundColor.rgb.b},${paramData?.contentData?.overallBackgroundColor.rgb.a})`
                               } : {},
                             (!!paramData?.contentData?.autoSize || !_.isBoolean(paramData?.contentData?.autoSize)) ?
-                              { width: '100%', maxWidth: '100%', height: '100%', maxHeight: '100%' } : {}
+                              { width: '100%', maxWidth: '100%', height: '100%', maxHeight: '100%' } : {},
                           )}
                         >
                           <div className="right-canvas-body-grid">
                             {
-                              !_.isEmpty(gridHomeList) ?
-                                <GridLayout
-                                  dragName={ifCanEdit ? '.common-card-title' : ''}
-                                  list={gridList.concat(contentList)}
-                                  layout={gridHomeList.concat(contentLayout)}
-                                  onChange={(data: any) => {
-                                    saveGridFunc(data);
-                                  }}
-                                />
+                              paramData?.contentData?.tabList?.length > 1 ?
+                                <div className="flex-box right-canvas-body-grid-tab">
+                                  {
+                                    (paramData?.contentData?.tabList || []).map((tab: any, index: number) => {
+                                      const { name, id } = tab;
+                                      return <div
+                                        className={`right-canvas-body-grid-tab-item ${tabNum === index ? 'right-canvas-body-grid-tab-selected' : ''}`}
+                                        key={id}
+                                        onClick={() => {
+                                          setTabNum(index);
+                                        }}
+                                      >
+                                        {name}
+                                      </div>
+                                    })
+                                  }
+                                </div>
                                 : null
                             }
+                            <div className="right-canvas-body-grid-body" style={Object.assign({},
+                              paramData?.contentData?.tabList?.length > 1 ? { height: 'calc(100% - 50px)' } : {},
+                              (!paramData?.contentData?.autoSize && paramData?.contentData?.contentSize?.width) ?
+                                {
+                                  width: `${(paramData?.contentData?.tabList?.length || 1) * paramData?.contentData?.contentSize?.width}px`,
+                                  minWidth: `${(paramData?.contentData?.tabList?.length || 1) * paramData?.contentData?.contentSize?.width}px`,
+                                  maxWidth: `${(paramData?.contentData?.tabList?.length || 1) * paramData?.contentData?.contentSize?.width}px`,
+                                } : {},
+                              (!!paramData?.contentData?.autoSize || !_.isBoolean(paramData?.contentData?.autoSize)) ?
+                                {
+                                  width: `${(paramData?.contentData?.tabList?.length || 1) * 100}%`,
+                                  maxWidth: `${(paramData?.contentData?.tabList?.length || 1) * 100}%`,
+                                  height: '100%', maxHeight: '100%'
+                                } : {},
+                              { marginLeft: `${-1 * tabNum * 100}%` }
+                            )}>
+                              {
+                                !_.isEmpty(gridHomeList) ?
+                                  <GridLayout
+                                    dragName={ifCanEdit ? '.common-card-title' : ''}
+                                    list={gridList.concat(contentList)}
+                                    layout={gridHomeList.concat(contentLayout)}
+                                    tabLength={paramData?.contentData?.tabList?.length || 1}
+                                    onChange={(data: any) => {
+                                      saveGridFunc(data);
+                                    }}
+                                  />
+                                  : null
+                              }
+                            </div>
                           </div>
                         </div>
                     }, [
                       gridHomeList, contentLayout, gridList, contentList,
                       paramData?.contentData?.contentBackground,
-                      paramData?.contentData?.contentSize,
+                      paramData?.contentData?.contentSize, tabNum,
+                      paramData?.contentData?.tabList?.length,
                     ])
                   }
                   <div className="flex-box-center right-canvas-bottom-powerby">
@@ -1964,11 +1972,34 @@ const Home: React.FC<any> = (props: any) => {
                 } else if (!!homeSettingVisible) {
                   setHomeSettingData((prev: any) => ({ ...prev, [homeSettingVisible]: { ...prev?.[homeSettingVisible], ...values } }));
                 } else if (!!overallVisible) {
-                  console.log(values);
-                  setParamData((prev: any) => {
-                    return {
-                      ...prev,
-                      contentData: Object.assign({}, prev.contentData, values)
+                  const { canvasWidth = '', canvasHeight = '' } = values;
+                  updateParams({
+                    id: paramData.id,
+                    data: {
+                      ...paramData,
+                      contentData: {
+                        ...paramData?.contentData,
+                        ...values,
+                        tabList: basicInfoData,
+                        home: gridHomeList,
+                        pageIconPosition,
+                        homeSetting: homeSettingData,
+                        contentSize: Object.assign({}, paramData?.contentData?.contentSize, { width: Number(canvasWidth), height: Number(canvasHeight) })
+                      }
+                    },
+                  }).then((res: any) => {
+                    if (res && res.code === 'SUCCESS') {
+                      // setParamData((prev: any) => {
+                      //   return {
+                      //     ...prev,
+                      //     contentData: Object.assign({}, prev.contentData, values, {
+                      //       tabList: basicInfoData
+                      //     })
+                      //   }
+                      // });
+                      window.location.reload();
+                    } else {
+                      message.error(res?.msg || res?.message || '接口异常');
                     }
                   });
                 }
@@ -3258,6 +3289,37 @@ const Home: React.FC<any> = (props: any) => {
                     </Fragment>
                     : null
                 }
+                {
+                  ['modal'].includes(windowType) ?
+                    <Fragment>
+                      <Form.Item
+                        name={`fetchType`}
+                        label={"http类型"}
+                        rules={[{ required: false, message: 'http类型' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          placeholder="http类型"
+                          options={['get', 'post', 'put', 'delete'].map((item: any) => ({ value: item, label: _.toUpper(item) }))}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`xName`}
+                        label={"接口地址"}
+                        rules={[{ required: false, message: '接口地址' }]}
+                      >
+                        <Input placeholder="接口地址" size='large' />
+                      </Form.Item>
+                      <Form.Item
+                        name="ifFetch"
+                        label="开启反馈参数"
+                        valuePropName="checked"
+                      >
+                        <Switch />
+                      </Form.Item>
+                    </Fragment>
+                    : null
+                }
                 <Form.Item
                   name={'fontSize'}
                   label="字号"
@@ -3269,15 +3331,19 @@ const Home: React.FC<any> = (props: any) => {
                     placeholder="12"
                   />
                 </Form.Item>
-                <Form.Item
-                  name="ifLocalStorage"
-                  label="开启缓存"
-                  initialValue={true}
-                  valuePropName="checked"
-                  style={{ marginBottom: 0 }}
-                >
-                  <Switch />
-                </Form.Item>
+                {
+                  !['modal'].includes(windowType) ?
+                    <Form.Item
+                      name="ifLocalStorage"
+                      label="开启缓存"
+                      initialValue={!['modal'].includes(windowType)}
+                      valuePropName="checked"
+                      style={{ marginBottom: 0 }}
+                    >
+                      <Switch />
+                    </Form.Item>
+                    : null
+                }
               </Form>
               :
               !!homeSettingVisible ?
@@ -3359,9 +3425,64 @@ const Home: React.FC<any> = (props: any) => {
                       label={"自适应屏幕尺寸"}
                       valuePropName="checked"
                       rules={[{ required: false, message: '自适应尺寸' }]}
-                      style={{ marginBottom: 0 }}
                     >
                       <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      label="标签页"
+                    >
+                      {
+                        _.isArray(basicInfoData) ?
+                          basicInfoData.map((item: any, index: number) => {
+                            if (!item || _.isEmpty(item)) return null;
+
+                            const { id, name } = item;
+                            return <div
+                              key={`commonInfo-${id || index}`}
+                              className="flex-box"
+                              style={{ marginBottom: 8, height: '27px', gap: 8 }}
+                            >
+                              <div style={{ flex: 1 }}>
+                                <Input
+                                  placeholder='key'
+                                  value={name}
+                                  onChange={e => {
+                                    const val = e?.target?.value;
+                                    setBasicInfoData((prev: any) => {
+                                      return prev.map((info: any) => {
+                                        if (info.id === id) {
+                                          return { ...info, name: val }
+                                        }
+                                        return info;
+                                      })
+                                    });
+                                  }}
+                                />
+                              </div>
+                              <div style={{ height: '100%' }}>
+                                <Button
+                                  style={{ height: '100%' }}
+                                  icon={<MinusOutlined />}
+                                  onClick={() => {
+                                    setBasicInfoData((prev: any) => {
+                                      return prev.filter((i: any) => i.id !== id)?.length ?
+                                        prev.filter((i: any) => i.id !== id) :
+                                        [{ id: guid(), name: '' }]
+                                    })
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          })
+                          :
+                          null
+                      }
+                      <Button
+                        icon={<PlusOutlined />}
+                        onClick={() => {
+                          setBasicInfoData((prev: any) => prev.concat({ id: guid(), name: '' }))
+                        }}
+                      />
                     </Form.Item>
                   </Form>
                   : null
@@ -3400,43 +3521,6 @@ const Home: React.FC<any> = (props: any) => {
             })
           }, [started, footerData, footerSelectList])
         }
-      </div>
-      <div
-        className={`home-affix-box flex-box`}
-        id={`home-affix-box`}
-        style={{
-          flexDirection: pageIconPosition?.direction || 'column',
-          bottom: pageIconPosition?.position?.bottom > 0 ? pageIconPosition?.position?.bottom : 0,
-          right: pageIconPosition?.position?.right > 0 ? pageIconPosition?.position?.right : 0
-        }}
-      >
-        {
-          ifCanEdit ?
-            <SwapOutlined className='home-page-affix-direction' onClick={(e) => {
-              setPageIconPosition((prev: any) => ({ ...prev, direction: prev.direction === 'column' ? 'row' : 'column' }))
-            }} />
-            : null
-        }
-        <div
-          className={`flex-box`}
-          id={`home-affixs`}
-          style={{
-            flexDirection: pageIconPosition?.direction,
-          }}
-        >
-          {
-            homePageIcon.map((item: any, index: number) => {
-              return <div className="flex-box-center home-page-affix" key={`page-icon-${index}`}
-                onClick={(e) => {
-                  if (ifCanEdit) return;
-                  document.querySelector('.home-body')?.scrollTo({ top: (document.querySelector('.home-body')?.clientHeight || 1) * index });
-                }}
-              >
-                {index + 1}
-              </div>
-            })
-          }
-        </div>
       </div>
       {
         // footer节点显示选择
