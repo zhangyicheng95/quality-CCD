@@ -1544,11 +1544,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         <div>
                             <div class="item-title item">${name}</div>
                             <div class="flex-box item" style="display:${_.isNumber(standardValue) ? '' : 'none'}"><div class="key">标准值</div><div class="value">${standardValue}</div></div>
-                            <div class="flex-box item" style="display:${_.isNumber(maxValue) ? '' : 'none'}"><div class="key">最大值</div><div class="value">${maxValue}</div></div>
-                            <div class="flex-box item" style="display:${_.isNumber(minValue) ? '' : 'none'}"><div class="key">最小值</div><div class="value">${minValue}</div></div>
-                            <div class="flex-box item" style="display:${_.isNumber(averageValue) ? '' : 'none'}"><div class="key">平均值</div><div class="value">${averageValue}</div></div>
+                            <div class="flex-box item" style="color: ${maxValue?.color || 'inherit'}"><div class="key">最大值</div><div class="value">${(!!maxValue?.value || maxValue?.value == 0) ? maxValue?.value : JSON.stringify(maxValue)}</div></div>
+                            <div class="flex-box item" style="color: ${minValue?.color || 'inherit'}"><div class="key">最小值</div><div class="value">${(!!minValue?.value || minValue?.value == 0) ? minValue?.value : JSON.stringify(minValue)}</div></div>
+                            <div class="flex-box item" style="color: ${averageValue?.color || 'inherit'}"><div class="key">平均值</div><div class="value">${(!!averageValue?.value || averageValue?.value == 0) ? averageValue?.value : JSON.stringify(averageValue)}</div></div>
                         </div>
-                        <div style="display: none;">${standardValue}</div>
                     `;
                         const measurementLabel: any = new CSS2DObject(measurementDiv);
                         measurementLabel.position.copy({
