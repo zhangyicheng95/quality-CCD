@@ -12,7 +12,7 @@ interface Props {
 
 const ButtonCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { yName, xName = '', fetchType, ifNeedClear } = data;
+    const { yName = '按钮', xName = '', fetchType, ifNeedClear } = data;
     const [value, setValue] = useState('');
 
     const onChange = (e: any) => {

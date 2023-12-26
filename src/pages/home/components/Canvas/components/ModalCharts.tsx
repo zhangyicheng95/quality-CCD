@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { Form, Input, message, Modal } from 'antd';
@@ -15,7 +15,7 @@ interface Props {
 
 const ModalCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    let { dataValue = {}, fontSize, fetchType, xName, ifFetch, ifFetchParams, } = data;
+    let { dataValue = {}, fetchType, xName, ifFetch, ifFetchParams, } = data;
     if (process.env.NODE_ENV === 'development') {
         // dataValue = { type: 'success', title: '我是标题', content: '内容啊啊啊啊啊啊' }
     };
@@ -109,9 +109,9 @@ const ModalCharts: React.FC<Props> = (props: any) => {
                             if (!!fetchParams) {
                                 let params = '';
                                 try {
-                                    params = JSON.parse(fetchParams);
+                                    params = JSON.parse({ ...fetchParams, title });
                                     if (!!fetchType && !!xName) {
-                                        btnFetch(fetchType, xName, params || {}).then((res: any) => {
+                                        btnFetch(fetchType, xName, params || { title }).then((res: any) => {
                                             if (res && res.code === 'SUCCESS') {
                                                 message.success('上传成功');
                                             } else {
@@ -127,7 +127,7 @@ const ModalCharts: React.FC<Props> = (props: any) => {
                                 };
                             } else {
                                 if (!!fetchType && !!xName) {
-                                    btnFetch(fetchType, xName, '').then((res: any) => {
+                                    btnFetch(fetchType, xName, { title }).then((res: any) => {
                                         if (res && res.code === 'SUCCESS') {
                                             message.success('上传成功');
                                         } else {
@@ -146,6 +146,7 @@ const ModalCharts: React.FC<Props> = (props: any) => {
             }
         });
     };
+
     return (
         <div
             id={`echart-${id}`}

@@ -69,10 +69,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   const [selectedOptionType, setSelectedOptionType] = useState({});
   const [features, setFeatures] = useState([]);
 
-  useEffect(() => {
-    // const dom: any = document.getElementById(CONTAINER_ID);
-    // const width = dom?.clientWidth,
-    // height = dom?.clientHeight;
+  const initDom = () => {
     img.current = new Image();
     if (process.env.NODE_ENV === 'development') {
       img.current.src = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
@@ -709,6 +706,10 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       window.addEventListener('keydown', onKeyDown);
       window.addEventListener('keyup', onKeyup);
     }
+  }
+  useEffect(() => {
+    initDom();
+
     return () => {
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyup);
@@ -929,6 +930,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   useEffect(() => {
     if (inHome && !!gMap.current && !!localPath) {
       img.current.src = `${localPath?.indexOf('http') === 0 ? localPath : `${BASE_IP}file${(localPath?.indexOf('\\') === 0 || localPath?.indexOf('/') === 0) ? '' : '\\'}${localPath}`}?__timestamp=${+new Date()}`;
+    } else {
+      initDom();
     }
   }, [localPath]);
   const updateToService = () => {

@@ -12,7 +12,7 @@ interface Props {
 
 const ButtonPWCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { yName, xName = '', fetchType, fetchParams = undefined, password, passwordHelp } = data;
+    const { yName = '按钮', xName = '', fetchType, fetchParams = undefined, password, passwordHelp } = data;
     const [form] = Form.useForm();
     const { validateFields, } = form;
     const [passwordVisible, setPasswordVisible] = useState(false);

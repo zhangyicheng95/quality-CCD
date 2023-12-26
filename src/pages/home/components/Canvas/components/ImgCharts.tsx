@@ -19,7 +19,7 @@ interface Props {
 const ImgCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id } = props;
     let {
-        defaultImg, dataValue = '', windowControl, setContentList, magnifier = false,
+        defaultImg, dataValue = '', magnifier = false,
         comparison, magnifierSize = 4, markNumber, markNumberLeft = 6, markNumberTop = 24,
         ifShowHeader,
     } = data;
@@ -312,29 +312,6 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                     </Image.PreviewGroup>
                 </div>
             </div>
-            {
-                !!windowControl ?
-                    <div className="preview-box flex-box-center">
-                        <EyeOutlined
-                            className='preview-icon'
-                            style={{ fontSize: 18 }}
-                            onClick={() => {
-                                setContentList((prev: any) => {
-                                    let arr = _.cloneDeep(prev);
-                                    let sourceIndex = 0;
-                                    arr.forEach((i: any, index: number) => {
-                                        if (i.key === windowControl) {
-                                            sourceIndex = index;
-                                        }
-                                    });
-                                    const source = _.pullAt(arr, sourceIndex);
-                                    arr = arr.concat(source);
-                                    return arr;
-                                })
-                            }} />
-                    </div>
-                    : null
-            }
             {
                 (_.isBoolean(comparison) ? comparison : true) ?
                     <div className="contrast-box flex-box" onClick={() => setImgVisible(true)}>

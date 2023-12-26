@@ -1,10 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { useModel } from 'umi';
-import MarkCanvas from '@/components/platForm/MarkCanvas';
 import PlatFormModal from '@/components/platForm';
-import { Button } from 'antd';
 
 interface Props {
     data: any,
@@ -22,7 +19,6 @@ const PlatFormCharts: React.FC<Props> = (props: any) => {
     const ifCanEdit = useMemo(() => {
         return location.hash.indexOf('edit') > -1;
     }, [location.hash]);
-    const [platFormVisible, setPlatFormVisible] = useState(true);
 
     return (
         <div

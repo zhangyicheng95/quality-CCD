@@ -61,6 +61,7 @@ import Table4Charts from './components/Table4Charts';
 import TableEditCharts from './components/TableEditCharts';
 import PlatFormCharts from './components/PlatFormCharts';
 import ModalCharts from './components/ModalCharts';
+import ImgButtonCharts from './components/ImgButtonCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -1085,7 +1086,7 @@ const Home: React.FC<any> = (props: any) => {
                                                       btnFetch(fetchType, xName, params);
                                                     }}
                                                   >
-                                                    {yName}
+                                                    {yName || '按钮'}
                                                   </Button>
                                                   :
                                                   type === 'buttonInp' ?
@@ -1153,14 +1154,23 @@ const Home: React.FC<any> = (props: any) => {
                                                                   }}
                                                                 />
                                                                 :
-                                                                <ImgCharts
-                                                                  id={key}
-                                                                  data={{
-                                                                    defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                                    dataValue, windowControl, markNumber, markNumberLeft, markNumberTop,
-                                                                    setContentList, magnifier, comparison, magnifierSize, ifShowHeader
-                                                                  }}
-                                                                />
+                                                                type === 'imgButton' ?
+                                                                  <ImgButtonCharts
+                                                                    id={key}
+                                                                    data={{
+                                                                      dataValue, fontSize, windowControl,
+                                                                      addContentList, xColumns, fetchType, xName,
+                                                                    }}
+                                                                  />
+                                                                  :
+                                                                  <ImgCharts
+                                                                    id={key}
+                                                                    data={{
+                                                                      defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                                      dataValue, markNumber, markNumberLeft, markNumberTop,
+                                                                      magnifier, comparison, magnifierSize, ifShowHeader
+                                                                    }}
+                                                                  />
                 }
               </div>
             </div>
@@ -1179,18 +1189,18 @@ const Home: React.FC<any> = (props: any) => {
                     !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
                     setBasicInfoData(basicInfoData);
                     setEditWindowData(Object.assign({}, item,
-                      !!item?.xColumns?.length ? {} : {
+                      !!item?.xColumns?.length ? {} : type === 'table5' ? {
                         xColumns: [
                           { id: '28dj46vh', xName: '模组,参数名称,Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,Q10,Q11,Q12,Q13,Q14,Q15,Q16,Q17,Q18,Q19,Q20' },
                           { id: 'sjci46d8', xName: ",,电阻(0.7-1.2),电阻(1.2-1.7),电阻(0.3-0.7),电阻(1.7-2.1),崩边,脏污,色差,孔洞,B线痕,BTTV,翘曲,B厚薄,C线痕,CTTV,电阻率,尺寸不良,隐裂" },
                         ]
-                      },
-                      !!item?.yColumns?.length ? {} : {
+                      } : {},
+                      !!item?.yColumns?.length ? {} : type === 'table5' ? {
                         yColumns: [
                           { id: 's9d8c7v6', yName: "尺寸,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,3D,,,,,,,,,,,,侧边,,,,,,隐裂,,,,,,脏污,,,,,,电阻率,,,," },
                           { "id": "a74eda0c", "yName": "边长(水平竖直中边长)", "type": "range", "xName": "edge_length" }, { "id": "6d9265db", "yName": "倒角长度", "type": "range", "xName": "chamfer_length" }, { "id": "ec099de0", "yName": "倒角投影", "type": "range", "xName": "chamfer_projection" }, { "id": "46f94883", "yName": "倒角对角线", "type": "range", "xName": "chamfer_diagonal" }, { "id": "1e463929", "yName": "缺角最大长度", "type": "range", "xName": "notch_max_length" }, { "id": "95fd2d22", "yName": "缺角最大深度", "type": "range", "xName": "notch_max_depth" }, { "id": "6f1c9952", "yName": "缺角个数", "type": "range", "xName": "notch_num" }, { "id": "738ab362", "yName": "最小垂直度", "type": "range", "xName": "perpendicularity_min" }, { "id": "157ab87a", "yName": "最大垂直度", "type": "range", "xName": "perpendicularity_max" }, { "id": "5715f99b", "yName": "边长（最大最小边长）", "type": "range", "xName": "edge_length_max_min" }, { "id": "75a80b1d", "yName": "平均厚度", "type": "range", "xName": "thickness_average" }, { "id": "4d33c94f", "yName": "厚度偏差", "type": "range", "xName": "ttv" }, { "id": "71e07ccd", "yName": "线痕最大值", "type": "range", "xName": "line_mark" }, { "id": "93edb8c9", "yName": "翘曲度", "type": "range", "xName": "warp" }, { "id": "bdb41a29", "yName": "崩边个数", "type": "range", "xName": "chip_num" }, { "id": "128d6a86", "yName": "硅落个数", "type": "range", "xName": "silicon_drop_num" }, { "id": "7142b5ef", "yName": "有无隐裂", "type": "bool", "xName": "hidden_crack" }, { "id": "e4650f5f", "yName": "有无硬质点", "type": "bool", "xName": "hard_point" }, { "id": "661eee10", "yName": "有无孔洞_隐裂", "type": "bool", "xName": "hidden_crack_hole" }, { "id": "8cbbea83", "yName": "有无脏污", "type": "bool", "xName": "dirty" }, { "id": "152502b5", "yName": "有无色差", "type": "bool", "xName": "color_diff" }, { "id": "7453d1de", "yName": "有无硅落", "type": "bool", "xName": "silicon_drop" }, { "id": "6f686c2c", "yName": "电阻率平均值", "type": "range", "xName": "resistivity" }, { "id": "9d764a6b", "yName": "PN型", "type": "bool", "xName": "PN" }
                         ]
-                      }
+                      } : {}
                     ));
                     setFieldsValue(Object.assign(
                       {},
@@ -2031,6 +2041,7 @@ const Home: React.FC<any> = (props: any) => {
                   <Cascader
                     style={{ width: '100%' }}
                     options={nodeList}
+                    showSearch
                     onChange={(val) => {
                       if (!val[0]) {
                         message.error('该节点缺少节点ID，请联系管理员');
@@ -2137,28 +2148,6 @@ const Home: React.FC<any> = (props: any) => {
                 {
                   (['img'].includes(windowType) && !isVision) ?
                     <Fragment>
-                      <Form.Item
-                        name={`windowControl`}
-                        label={'窗口控制'}
-                        tooltip={"控制其他窗口的显示与隐藏"}
-                        rules={[{ required: false, message: '窗口控制' }]}
-                      >
-                        <Select
-                          style={{ width: '100%' }}
-                          allowClear
-                          options={contentList.map((dom: any) => {
-                            const { key, props } = dom;
-                            const { children } = props;
-                            const keySp = key?.split("$$");
-                            const name = `${children?.[0]?.props?.children?.[0]?.props?.children?.[0]} - ${windowTypeList?.filter((i: any) => i.value === keySp?.[2])?.[0]?.label}`
-                            return {
-                              value: key,
-                              label: name,
-                              disabled: key === editWindowData?.id
-                            }
-                          })}
-                        />
-                      </Form.Item>
                       <Form.Item
                         name={'defaultImg'}
                         label="默认图片"
@@ -2796,6 +2785,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name={`yName`}
                         label={"按钮名称"}
+                        initialValue='按钮'
                         rules={[{ required: true, message: '按钮名称' }]}
                       >
                         <Input size='large' />
@@ -3303,6 +3293,152 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name={`fetchType`}
                         label={"http类型"}
+                        rules={[{ required: true, message: 'http类型' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          placeholder="http类型"
+                          options={['get', 'post', 'put', 'delete'].map((item: any) => ({ value: item, label: _.toUpper(item) }))}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`xName`}
+                        label={"接口地址"}
+                        rules={[{ required: true, message: '接口地址' }]}
+                      >
+                        <Input placeholder="接口地址" size='large' />
+                      </Form.Item>
+                      <Form.Item
+                        name="ifFetchParams"
+                        label="反馈参数"
+                        valuePropName="checked"
+                      >
+                        <Switch />
+                      </Form.Item>
+                    </Fragment>
+                    : null
+                }
+                {
+                  (['imgButton'].includes(windowType) && !isVision) ?
+                    <Fragment>
+                      <Form.Item
+                        name={`windowControl`}
+                        label={'窗口控制'}
+                        tooltip={"控制某个图片窗口的缺陷详情"}
+                        rules={[{ required: true, message: '窗口控制' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          allowClear
+                          // @ts-ignore
+                          options={contentList.map((dom: any) => {
+                            const { key } = dom;
+                            const keySp = key?.split("$$");
+                            if (keySp[2] === 'img' || keySp[3] === 'img') {
+                              const name = `${nodeList?.filter((i: any) => i.key === keySp[0])?.[0]?.label} - ${windowTypeList?.filter((i: any) => i.value === keySp?.[2])?.[0]?.label}`
+                              return {
+                                value: key,
+                                label: name,
+                                disabled: key === editWindowData?.id
+                              }
+                            }
+                          }).filter(Boolean)}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="缺陷类型"
+                        name="xColumns"
+                      >
+                        {
+                          (editWindowData.xColumns || []).map((item: any, index: number) => {
+                            if (!item || _.isEmpty(item)) return null;
+
+                            const { id, value, label } = item;
+                            return <div
+                              key={`xColumns-${id || index}`}
+                              className="flex-box"
+                              style={{ marginBottom: 8, height: '27px', gap: 8 }}
+                            >
+                              <div style={{ flex: 1 }}>
+                                <Input
+                                  placeholder='label'
+                                  value={label}
+                                  onChange={e => {
+                                    const val = e?.target?.value;
+                                    setEditWindowData((prev: any) => {
+                                      return {
+                                        ...prev,
+                                        xColumns: (prev.xColumns || []).map((i: any) => {
+                                          if (i.id === id) {
+                                            return {
+                                              ...i,
+                                              label: val || '',
+                                            };
+                                          };
+                                          return i;
+                                        })
+                                      }
+                                    });
+                                  }}
+                                />
+                              </div>
+                              <div style={{ flex: 1 }}>
+                                <Input
+                                  placeholder='value'
+                                  value={value}
+                                  onChange={e => {
+                                    const val = e?.target?.value;
+                                    setEditWindowData((prev: any) => {
+                                      return {
+                                        ...prev,
+                                        xColumns: (prev.xColumns || []).map((i: any) => {
+                                          if (i.id === id) {
+                                            return {
+                                              ...i,
+                                              value: val || '',
+                                            };
+                                          };
+                                          return i;
+                                        })
+                                      }
+                                    });
+                                  }}
+                                />
+                              </div>
+                              <div style={{ height: '100%' }}>
+                                <Button
+                                  style={{ height: '100%' }}
+                                  icon={<MinusOutlined />}
+                                  onClick={() => {
+                                    setEditWindowData((prev: any) => {
+                                      return {
+                                        ...prev,
+                                        xColumns: (prev.xColumns || []).filter((i: any) => i.id !== id)?.length ?
+                                          (prev.xColumns || []).filter((i: any) => i.id !== id) :
+                                          [{ id: guid(), label: '', value: '' }]
+                                      }
+                                    });
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          })
+                        }
+                        <Button
+                          icon={<PlusOutlined />}
+                          onClick={() => {
+                            setEditWindowData((prev: any) => {
+                              return {
+                                ...prev,
+                                xColumns: (prev.xColumns || []).concat({ id: guid(), label: '', value: '' })
+                              }
+                            });
+                          }}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`fetchType`}
+                        label={"http类型"}
                         rules={[{ required: false, message: 'http类型' }]}
                       >
                         <Select
@@ -3317,13 +3453,6 @@ const Home: React.FC<any> = (props: any) => {
                         rules={[{ required: false, message: '接口地址' }]}
                       >
                         <Input placeholder="接口地址" size='large' />
-                      </Form.Item>
-                      <Form.Item
-                        name="ifFetchParams"
-                        label="反馈参数"
-                        valuePropName="checked"
-                      >
-                        <Switch />
                       </Form.Item>
                     </Fragment>
                     : null
