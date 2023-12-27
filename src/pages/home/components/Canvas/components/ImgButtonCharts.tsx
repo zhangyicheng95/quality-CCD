@@ -1,8 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { Button, Input, message, Modal } from 'antd';
-import { useModel } from 'umi';
+import { message, Modal } from 'antd';
 import { numToString } from '@/utils/utils';
 import { btnFetch } from '@/services/api';
 
@@ -39,7 +38,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
                         setVisible(true);
                     }}>
                         {label}
-                        <div>12</div>
+                        <div>{dataValue?.[value] || index + 5}</div>
                     </div>
                 })
             }
@@ -89,10 +88,10 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
                         <div className="img-button-charts-body">
                             {
                                 !!controlNode?.markNumberLeft ?
-                                    Array.from({ length: controlNode?.markNumberLeft }).map((left: any, lIndex: number) => {
+                                    Array.from({ length: controlNode?.markNumberLeft || 0 }).map((left: any, lIndex: number) => {
                                         return <div className="flex-box img-button-item-line" key={`left-${lIndex}`}>
                                             {
-                                                Array.from({ length: controlNode?.markNumberTop }).map((top: any, tIndex: number) => {
+                                                Array.from({ length: controlNode?.markNumberTop || 0 }).map((top: any, tIndex: number) => {
                                                     const title = `${numToString(lIndex + 1)} - ${tIndex + 1}`;
                                                     return <div
                                                         className={`img-button-item-box ${defectSelect?.includes(title) ? 'img-button-item-box-selected' : ''}`}

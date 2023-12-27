@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { Button, Input, message } from 'antd';
@@ -34,7 +34,7 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
             id={`echart-${id}`}
             className={`${styles.buttonCharts} flex-box`}
         >
-            <Input placeholder='传递参数' onChange={(e) => onChange(e)} />
+            <Input placeholder='' onChange={(e) => onChange(e)} />
             <Button type="primary" onClick={() => {
                 let params: any = null;
                 if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {

@@ -13,7 +13,7 @@ import GridLayout from '@/components/GridLayout';
 import {
   AndroidOutlined, CloseOutlined, CompressOutlined, DeleteOutlined,
   LoadingOutlined, MinusOutlined, PlayCircleOutlined, PlusOutlined, ReloadOutlined,
-  SaveOutlined, SettingOutlined, SwapOutlined,
+  SaveOutlined, SettingOutlined,
 } from '@ant-design/icons';
 import { connect, useHistory, useModel } from 'umi';
 import { ChromePicker, } from 'react-color';
