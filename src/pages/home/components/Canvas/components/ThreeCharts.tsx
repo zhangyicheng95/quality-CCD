@@ -257,7 +257,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const ifCanEdit = useMemo(() => {
         return location.hash.indexOf('edit') > -1;
     }, [location.hash]);
-
+    const valueCardRef = useRef(value);
     let renderer = useRef<any>();
     const labelRenderer = new CSS2DRenderer();
     let scene = useRef<any>(),
@@ -291,7 +291,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     };
     const clearCanvas = (value: any) => {
         console.log("清理缓存");
-        console.log(value);
+        console.log('数据卡片:', valueCardRef?.current);
         cancelAnimationFrame(animateId);
         stats?.current?.dom && dom?.current?.removeChild(stats?.current?.dom);
         scene?.current?.traverse((child: any) => {
@@ -335,7 +335,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         camera.current = null;
         controls.current = null;
         setSelectedBtn([]);
-        // if (!!name && !value.length) {
+        // if (!!name && !valueCardRef?.current?.length) {
         //     window.location.reload();
         // }
     };
@@ -360,7 +360,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             }
             return;
         };
-
+        valueCardRef.current = [].concat(value);
         // addType为add时，代表增量渲染，不清除其他数据
         if (!!scene.current && addType === 'add') {
             loadModel(name, value, addType);
@@ -1155,7 +1155,17 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 };
                 let indexCount = 0;
                 (value || []).forEach((item: any, index: number) => {
-                    let { type, } = item;
+                    let { type, position } = item;
+                    const newPosition: any = [].concat(position);
+                    if (
+                        position?.[0]?.y === position?.[1]?.y &&
+                        position?.[0]?.z === position?.[1]?.z &&
+                        position?.[0]?.x > position?.[1]?.x
+                    ) {
+                        newPosition[0] = position[1];
+                        newPosition[1] = position[0];
+                    }
+                    item.position = newPosition;
                     if ((type === "left")) {
                         counter.left.push(item);
                     } else if ((type === "right")) {
@@ -1546,7 +1556,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             <div class="flex-box item" style="display:${_.isNumber(standardValue) ? '' : 'none'}"><div class="key">标准值</div><div class="value">${standardValue}</div></div>
                             <div class="flex-box item" style="color: ${maxValue?.color || 'inherit'}"><div class="key">最大值</div><div class="value">${(!!maxValue?.value || maxValue?.value == 0) ? maxValue?.value : JSON.stringify(maxValue)}</div></div>
                             <div class="flex-box item" style="color: ${minValue?.color || 'inherit'}"><div class="key">最小值</div><div class="value">${(!!minValue?.value || minValue?.value == 0) ? minValue?.value : JSON.stringify(minValue)}</div></div>
-                            <div class="flex-box item" style="color: ${averageValue?.color || 'inherit'}"><div class="key">平均值</div><div class="value">${(!!averageValue?.value || averageValue?.value == 0) ? averageValue?.value : JSON.stringify(averageValue)}</div></div>
+                            <div class="flex-box item" style="display:none; color: ${averageValue?.color || 'inherit'}"><div class="key">平均值</div><div class="value">${(!!averageValue?.value || averageValue?.value == 0) ? averageValue?.value : JSON.stringify(averageValue)}</div></div>
                         </div>
                     `;
                         const measurementLabel: any = new CSS2DObject(measurementDiv);

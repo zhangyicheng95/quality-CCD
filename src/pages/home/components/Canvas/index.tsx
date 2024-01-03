@@ -62,6 +62,7 @@ import TableEditCharts from './components/TableEditCharts';
 import PlatFormCharts from './components/PlatFormCharts';
 import ModalCharts from './components/ModalCharts';
 import ImgButtonCharts from './components/ImgButtonCharts';
+import ButtonImagesCharts from './components/ButtonImagesCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -737,6 +738,10 @@ const Home: React.FC<any> = (props: any) => {
     //     })
     //   });
     // }
+    // 记录tab切换组件的页数
+    if (!!localStorage.getItem(`localGridContent-tab-${newParams.id}`)) {
+      setTabNum(Number(localStorage.getItem(`localGridContent-tab-${newParams.id}`)));
+    };
     if (!_.isObject(contentHeader) || _.isEmpty(contentHeader)) {
       const header = {};
       // 默认显示/隐藏header
@@ -1071,8 +1076,9 @@ const Home: React.FC<any> = (props: any) => {
                                                 :
                                                 type === 'button' ?
                                                   <Button
-                                                    type={'primary'}
+                                                    type={valueColor || 'primary'}
                                                     id={key}
+                                                    style={{ height: '100%', width: '100%' }}
                                                     onClick={() => {
                                                       let params = '';
                                                       if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {
@@ -1082,8 +1088,14 @@ const Home: React.FC<any> = (props: any) => {
                                                           console.log('按钮传递参数格式不对:', e);
                                                           params = '';
                                                         }
-                                                      }
-                                                      btnFetch(fetchType, xName, params);
+                                                      };
+                                                      btnFetch(fetchType, xName, params).then((res: any) => {
+                                                        if (!!res && res.code === 'SUCCESS') {
+                                                          message.success('success');
+                                                        } else {
+                                                          message.error(res?.message || '接口异常');
+                                                        }
+                                                      });
                                                     }}
                                                   >
                                                     {yName || '按钮'}
@@ -1154,23 +1166,31 @@ const Home: React.FC<any> = (props: any) => {
                                                                   }}
                                                                 />
                                                                 :
-                                                                type === 'imgButton' ?
-                                                                  <ImgButtonCharts
+                                                                type === 'buttonImages' ?
+                                                                  <ButtonImagesCharts
                                                                     id={key}
                                                                     data={{
-                                                                      dataValue, fontSize, windowControl,
-                                                                      addContentList, xColumns, fetchType, xName,
+                                                                      dataValue, fontSize,
                                                                     }}
                                                                   />
                                                                   :
-                                                                  <ImgCharts
-                                                                    id={key}
-                                                                    data={{
-                                                                      defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                                      dataValue, markNumber, markNumberLeft, markNumberTop,
-                                                                      magnifier, comparison, magnifierSize, ifShowHeader
-                                                                    }}
-                                                                  />
+                                                                  type === 'imgButton' ?
+                                                                    <ImgButtonCharts
+                                                                      id={key}
+                                                                      data={{
+                                                                        dataValue, fontSize, windowControl,
+                                                                        addContentList, xColumns, fetchType, xName,
+                                                                      }}
+                                                                    />
+                                                                    :
+                                                                    <ImgCharts
+                                                                      id={key}
+                                                                      data={{
+                                                                        defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                                        dataValue, markNumber, markNumberLeft, markNumberTop,
+                                                                        magnifier, comparison, magnifierSize, ifShowHeader
+                                                                      }}
+                                                                    />
                 }
               </div>
             </div>
@@ -1911,9 +1931,10 @@ const Home: React.FC<any> = (props: any) => {
                                     (paramData?.contentData?.tabList || []).map((tab: any, index: number) => {
                                       const { name, id } = tab;
                                       return <div
-                                        className={`right-canvas-body-grid-tab-item ${tabNum === index ? 'right-canvas-body-grid-tab-selected' : ''}`}
+                                        className={`right-canvas-body-grid-tab-item ${tabNum == index ? 'right-canvas-body-grid-tab-selected' : ''}`}
                                         key={id}
                                         onClick={() => {
+                                          localStorage.setItem(`localGridContent-tab-${paramData.id}`, index + '');
                                           setTabNum(index);
                                         }}
                                       >
@@ -1925,7 +1946,6 @@ const Home: React.FC<any> = (props: any) => {
                                 : null
                             }
                             <div className="right-canvas-body-grid-body" style={Object.assign({},
-                              paramData?.contentData?.tabList?.length > 1 ? { height: 'calc(100% - 50px)' } : {},
                               (!paramData?.contentData?.autoSize && paramData?.contentData?.contentSize?.width) ?
                                 {
                                   width: `${(paramData?.contentData?.tabList?.length || 1) * paramData?.contentData?.contentSize?.width}px`,
@@ -1936,8 +1956,9 @@ const Home: React.FC<any> = (props: any) => {
                                 {
                                   width: `${(paramData?.contentData?.tabList?.length || 1) * 100}%`,
                                   maxWidth: `${(paramData?.contentData?.tabList?.length || 1) * 100}%`,
-                                  height: '100%', maxHeight: '100%'
+                                  height: '100%',
                                 } : {},
+                              paramData?.contentData?.tabList?.length > 1 ? { height: 'calc(100% - 28px)' } : {},
                               { marginLeft: `${-1 * tabNum * 100}%` }
                             )}>
                               {
@@ -2816,16 +2837,54 @@ const Home: React.FC<any> = (props: any) => {
                       </Form.Item>
                       {
                         ['button'].includes(windowType) ?
-                          <Form.Item
-                            name={`fetchParams`}
-                            label={"传递参数"}
-                            rules={[{ required: false, message: '传递参数' }]}
-                          >
-                            <Input.TextArea
-                              size='large'
-                              autoSize={{ minRows: 1, maxRows: 5 }}
-                            />
-                          </Form.Item>
+                          <Fragment>
+                            <Form.Item
+                              name={`valueColor`}
+                              label={'按钮颜色'}
+                              initialValue={"primary"}
+                              rules={[{ required: false, message: '按钮颜色' }]}
+                            >
+                              <Select
+                                style={{ width: '100%' }}
+                                options={[
+                                  {
+                                    value: 'default',
+                                    label: '默认',
+                                  },
+                                  {
+                                    value: 'primary',
+                                    label: '主按钮',
+                                  },
+                                  {
+                                    value: 'ghost',
+                                    label: '透明按钮',
+                                  },
+                                  {
+                                    value: 'dashed',
+                                    label: '虚线按钮',
+                                  },
+                                  {
+                                    value: 'link',
+                                    label: '链接按钮',
+                                  },
+                                  {
+                                    value: 'text',
+                                    label: '文本按钮',
+                                  }
+                                ]}
+                              />
+                            </Form.Item>
+                            <Form.Item
+                              name={`fetchParams`}
+                              label={"传递参数"}
+                              rules={[{ required: false, message: '传递参数' }]}
+                            >
+                              <Input.TextArea
+                                size='large'
+                                autoSize={{ minRows: 1, maxRows: 5 }}
+                              />
+                            </Form.Item>
+                          </Fragment>
                           : null
                       }
                     </Fragment>
@@ -3405,6 +3464,50 @@ const Home: React.FC<any> = (props: any) => {
                                   }}
                                 />
                               </div>
+                              <div style={{ flex: 1 }}>
+                                <Select
+                                  style={{ width: '100%' }}
+                                  allowClear
+                                  options={[
+                                    {
+                                      value: '#ff6b68',
+                                      label: '红色',
+                                    },
+                                    {
+                                      value: '#f5a031',
+                                      label: '黄色',
+                                    },
+                                    {
+                                      value: '#52c41a',
+                                      label: '绿色',
+                                    },
+                                    {
+                                      value: '#70c8ff',
+                                      label: '蓝色',
+                                    },
+                                    {
+                                      value: '',
+                                      label: '默认',
+                                    }
+                                  ]}
+                                  onChange={(val: any) => {
+                                    setEditWindowData((prev: any) => {
+                                      return {
+                                        ...prev,
+                                        xColumns: (prev.xColumns || []).map((i: any) => {
+                                          if (i.id === id) {
+                                            return {
+                                              ...i,
+                                              color: val || '',
+                                            };
+                                          };
+                                          return i;
+                                        })
+                                      }
+                                    });
+                                  }}
+                                />
+                              </div>
                               <div style={{ height: '100%' }}>
                                 <Button
                                   style={{ height: '100%' }}
@@ -3415,7 +3518,7 @@ const Home: React.FC<any> = (props: any) => {
                                         ...prev,
                                         xColumns: (prev.xColumns || []).filter((i: any) => i.id !== id)?.length ?
                                           (prev.xColumns || []).filter((i: any) => i.id !== id) :
-                                          [{ id: guid(), label: '', value: '' }]
+                                          [{ id: guid(), label: '', value: '', color: '' }]
                                       }
                                     });
                                   }}
@@ -3430,7 +3533,7 @@ const Home: React.FC<any> = (props: any) => {
                             setEditWindowData((prev: any) => {
                               return {
                                 ...prev,
-                                xColumns: (prev.xColumns || []).concat({ id: guid(), label: '', value: '' })
+                                xColumns: (prev.xColumns || []).concat({ id: guid(), label: '', value: '', color: '' })
                               }
                             });
                           }}

@@ -46,7 +46,13 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
                         params = '';
                     }
                 }
-                btnFetch(fetchType, xName, params);
+                btnFetch(fetchType, xName, params).then((res: any) => {
+                    if (!!res && res.code === 'SUCCESS') {
+                        message.success('success');
+                    } else {
+                        message.error(res?.message || '接口异常');
+                    }
+                });
             }}>{yName}</Button>
             {
                 (!!value && ifNeedClear) ?

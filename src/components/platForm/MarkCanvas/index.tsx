@@ -943,7 +943,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       const value = featureListRef.current || {};
       const data1 = ((feat && feat().map((item: any) => _.omit(item, 'layer'))) || [])
         .map((item: any) => {
-          const { id, props, type, shape } = item;
+          const { id, props, type, shape, style } = item;
           if (type === 'LINE') {
             if (!shape?.start?.x || !shape?.end?.x) {
               return null;
@@ -963,7 +963,10 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           };
           return Object.assign({}, item, {
             props: Object.assign({}, props, {
-              initParams: _.omit(value?.[id], '旋转角度'),
+              initParams: {
+                ..._.omit(value?.[id], '旋转角度'),
+                ...(!!value?.[id]?.rotation ? {} : { rotation: { value: style?.direction || 0 } })
+              },
             }, !!value?.[id]?.option_type ? {
               label: inHome ? "" : value?.[id]?.option_type?.value
             } : {})
@@ -987,6 +990,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         return;
       }
       const data2 = (pen && pen()) || [];
+      console.log(data1, data2);
       const params = Object.assign({}, data,
         {
           zoom,
@@ -1479,7 +1483,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         />
                       </Form.Item>
                       {
-                        !['POINT', 'LINE'].includes(feature?.type) ?
+                        (!inHome && !['POINT', 'LINE'].includes(feature?.type)) ?
                           <Form.Item
                             name={`找线方向`}
                             label="找线方向"

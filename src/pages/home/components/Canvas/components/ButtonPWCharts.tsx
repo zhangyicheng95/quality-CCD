@@ -30,10 +30,16 @@ const ButtonPWCharts: React.FC<Props> = (props: any) => {
                 params = '';
             }
         }
-        btnFetch(fetchType, xName, params);
-        setPasswordVisible(false);
-        setPasswordvalidate({});
-        form.resetFields();
+        btnFetch(fetchType, xName, params).then((res: any) => {
+            if (!!res && res.code === 'SUCCESS') {
+                message.success('success');
+                setPasswordVisible(false);
+                setPasswordvalidate({});
+                form.resetFields();
+            } else {
+                message.error(res?.message || '接口异常');
+            }
+        });
     };
 
     return (

@@ -167,6 +167,11 @@ export const windowTypeList: any = [
     value: 'imgButton',
     label: '图片按钮组件',
     icon: imgButtonIcon,
+  },
+  {
+    value: 'buttonImages',
+    label: '缺陷按钮组件',
+    icon: imgButtonIcon,
   }
 ];
 // 默认基础组件

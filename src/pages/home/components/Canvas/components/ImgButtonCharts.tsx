@@ -32,11 +32,15 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
         >
             {
                 (xColumns || [])?.map((item: any, index: number) => {
-                    const { label, value } = item;
-                    return <div className="flex-box-center img-button-box-item" onClick={() => {
-                        setDefect(value);
-                        setVisible(true);
-                    }}>
+                    const { label, value, color } = item;
+                    return <div
+                        className="flex-box-center img-button-box-item"
+                        style={!!color ? { backgroundColor: color } : {}}
+                        onClick={() => {
+                            setDefect(value);
+                            setVisible(true);
+                        }}
+                    >
                         {label}
                         <div>{dataValue?.[value] || index + 5}</div>
                     </div>

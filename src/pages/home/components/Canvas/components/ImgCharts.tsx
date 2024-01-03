@@ -4,7 +4,7 @@ import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
 import {
-    BlockOutlined, DownloadOutlined, ExpandOutlined, EyeOutlined, LeftCircleOutlined,
+    BlockOutlined, DownloadOutlined, ExpandOutlined, LeftCircleOutlined,
     RightCircleOutlined, SwapOutlined, ZoomInOutlined
 } from '@ant-design/icons';
 import { numToString } from '@/utils/utils';
@@ -28,7 +28,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
-    const [fontSize, setFontSize] = useState(1);
+    const [chartSize, setChartSize] = useState(false);
     const [urlList, setUrlList] = useState<any>([]);
     const [selectedNum, setSelectedNum] = useState(0);
     const [imgVisible, setImgVisible] = useState(false);
@@ -63,12 +63,13 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             console.log('ImgCharts:', dataValue);
             return;
         }
-        const img = document.createElement('img');
+        let img: any = document.createElement('img');
         img.src = dataValue;
         img.title = 'img.png';
         img.onload = (res: any) => {
             const { width = 1, height = 1 } = img;
-            setFontSize(width / height);
+            setChartSize((width / height) > (dom?.current?.clientWidth / dom?.current?.clientHeight));
+            img = null;
         };
         setUrlList((pre: any) => {
             let list = Array.from(new Set(pre.concat(dataValue)));
@@ -109,12 +110,12 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             // 遮罩层
             mask.style['left'] = left + "px";
             mask.style['top'] = top + "px";
-            // if (fontSize > 1) {
+            // if (chartSize > 1) {
             //     // 图片比较宽
-            //     mask.style['height'] = 50 / size / fontSize + "%";
+            //     mask.style['height'] = 50 / size / chartSize + "%";
             // } else {
             //     // 图片比较高
-            //     mask.style['width'] = 50 / size * fontSize + "%";
+            //     mask.style['width'] = 50 / size * chartSize + "%";
             // }
             let bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
             let imgDom: any = document.getElementById(`img-charts-bigImg-${id}`);
@@ -182,7 +183,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         }
     }, [
         magnifierVisible,
-        // magnifier, magnifierSize, dataValue, id, fontSize,
+        // magnifier, magnifierSize, dataValue, id, chartSize,
         // dom?.current?.clientWidth, dom?.current?.clientHeight
     ]);
 
@@ -226,14 +227,14 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                 {
                                     (magnifier || magnifierVisible) ?
                                         <div className="img-box" style={
-                                            fontSize > 1 ?
+                                            chartSize ?
                                                 { width: '100%', height: 'auto' } :
                                                 { width: 'auto', height: '100%' }
                                         }>
                                             <div
                                                 className="ant-image-mask"
                                                 style={
-                                                    fontSize > 1 ?
+                                                    chartSize ?
                                                         { width: '100%', height: 'auto' } :
                                                         { width: 'auto', height: '100%' }
                                                 }
@@ -242,7 +243,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                                 src={dataValue || defaultImg}
                                                 alt="logo"
                                                 style={
-                                                    fontSize > 1 ?
+                                                    chartSize ?
                                                         { width: '100%', height: 'auto' } :
                                                         { width: 'auto', height: '100%' }
                                                 }
@@ -252,7 +253,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                         </div>
                                         :
                                         <div className="img-box" style={
-                                            fontSize > 1 ?
+                                            chartSize ?
                                                 { width: '100%', height: 'auto' } :
                                                 { width: 'auto', height: '100%' }
                                         }>
@@ -260,7 +261,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                                 src={dataValue || defaultImg}
                                                 alt="logo"
                                                 style={
-                                                    fontSize > 1 ?
+                                                    chartSize ?
                                                         { width: '100%', height: 'auto' } :
                                                         { width: 'auto', height: '100%' }
                                                 }
