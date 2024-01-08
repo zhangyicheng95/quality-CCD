@@ -12,6 +12,7 @@ import {
 import GridLayout from '@/components/GridLayout';
 import {
   AndroidOutlined, CloseOutlined, CompressOutlined, DeleteOutlined,
+  ExclamationCircleOutlined,
   LoadingOutlined, MinusOutlined, PlayCircleOutlined, PlusOutlined, ReloadOutlined,
   SaveOutlined, SettingOutlined,
 } from '@ant-design/icons';
@@ -470,7 +471,7 @@ const Home: React.FC<any> = (props: any) => {
             style={homeSettingData['footer-1']}
             dangerouslySetInnerHTML={{
               // 此处需要处理
-              __html: _.isString(logStr) ? logStr : logStr?.slice(homeSettingData['footer-1']?.logSize || 50).join('<br />'),
+              __html: _.isString(logStr) ? logStr : logStr?.slice(logStr?.length - (homeSettingData['footer-1']?.logSize || 50)).join('<br />'),
             }}
           />
           <div className="preview-box flex-box-center">
@@ -519,13 +520,15 @@ const Home: React.FC<any> = (props: any) => {
         }
         <div className="card-body-box">
           <div className="content-item-span">
-            {errorData?.slice(homeSettingData['footer-2']?.logSize || 50)?.map((log: any, index: number) => {
+            {errorData?.slice(errorData?.length - (homeSettingData['footer-2']?.logSize || 50))?.map((log: any, index: number) => {
               const { color, node_name, nid, message, time } = log;
               return (
                 <div className="log-item flex-box-start" key={index}>
                   <div className="log-item-content">
                     <div className="content-item" style={homeSettingData['error']}>
-                      <span>{time || moment().format('YYYY-MM-DD HH:mm:ss')}&nbsp;</span>
+                      <span
+                        style={{ fontSize: homeSettingData['footer-2']?.fontSize + 2 || 'inherit' }}
+                      >{time || moment().format('YYYY-MM-DD HH:mm:ss')}&nbsp;</span>
                       &nbsp;
                       <div
                         className="content-item-span"
@@ -895,7 +898,7 @@ const Home: React.FC<any> = (props: any) => {
           basicInfoData = [{ id: guid(), name: '', value: '' }], ifNeedClear, operationLock,
           ifUpdateProject, magnifierSize, listType, valueColor, markNumber,
           markNumberLeft, markNumberTop, blockType, blockTypeLines, modelUpload,
-          xColumns, yColumns, platFormOptions, ifFetchParams
+          xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -911,7 +914,6 @@ const Home: React.FC<any> = (props: any) => {
           <div
             key={key}
             className={`drag-item-content-box ${backgroundColor === 'default' ? "background-ubv" : ""}`}
-          // style={(!!backgroundColor && !!backgroundColor?.rgb) ? { backgroundColor: `rgba(${backgroundColor.rgb.r},${backgroundColor.rgb.g},${backgroundColor.rgb.b},${backgroundColor.rgb.a})` } : {}}
           >
             {
               ifShowHeader ?
@@ -925,9 +927,9 @@ const Home: React.FC<any> = (props: any) => {
                 null
             }
             <div className="card-body-box"
-              style={ifShowHeader ? { height: 'calc(100% - 28px)' } : { height: '100%' }}
+              style={ifShowHeader ? { height: 'calc(100% - 28px)' } : { height: '100%', }}
             >
-              <div className="flex-box-center" style={{ height: '100%' }}>
+              <div className='flex-box-center' style={{ height: '100%' }}>
                 {
                   type === 'line' ?
                     <LineCharts
@@ -1080,22 +1082,38 @@ const Home: React.FC<any> = (props: any) => {
                                                     id={key}
                                                     style={{ height: '100%', width: '100%' }}
                                                     onClick={() => {
-                                                      let params = '';
-                                                      if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {
-                                                        try {
-                                                          params = JSON.parse(value)
-                                                        } catch (e) {
-                                                          console.log('按钮传递参数格式不对:', e);
-                                                          params = '';
-                                                        }
+                                                      const func = () => {
+                                                        let params = '';
+                                                        if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {
+                                                          try {
+                                                            params = JSON.parse(value)
+                                                          } catch (e) {
+                                                            console.log('按钮传递参数格式不对:', e);
+                                                            params = '';
+                                                          }
+                                                        };
+                                                        btnFetch(fetchType, xName, params).then((res: any) => {
+                                                          if (!!res && res.code === 'SUCCESS') {
+                                                            message.success('success');
+                                                          } else {
+                                                            message.error(res?.message || '接口异常');
+                                                          }
+                                                        });
                                                       };
-                                                      btnFetch(fetchType, xName, params).then((res: any) => {
-                                                        if (!!res && res.code === 'SUCCESS') {
-                                                          message.success('success');
-                                                        } else {
-                                                          message.error(res?.message || '接口异常');
-                                                        }
-                                                      });
+                                                      if (ifNeedAllow) {
+                                                        Modal.confirm({
+                                                          title: '提示',
+                                                          icon: <ExclamationCircleOutlined />,
+                                                          content: '确认发送？',
+                                                          okText: '确认',
+                                                          cancelText: '取消',
+                                                          onOk: () => {
+                                                            func();
+                                                          }
+                                                        });
+                                                      } else {
+                                                        func();
+                                                      }
                                                     }}
                                                   >
                                                     {yName || '按钮'}
@@ -1134,7 +1152,7 @@ const Home: React.FC<any> = (props: any) => {
                                                             data={{
                                                               operationList, dataValue,
                                                               fontSize, xName,
-                                                              operationLock, ifUpdateProject,
+                                                              operationLock, ifUpdateProject, ifFetch,
                                                               listType, blockType, blockTypeLines
                                                             }}
                                                           />
@@ -1170,7 +1188,7 @@ const Home: React.FC<any> = (props: any) => {
                                                                   <ButtonImagesCharts
                                                                     id={key}
                                                                     data={{
-                                                                      dataValue, fontSize,
+                                                                      dataValue, fontSize, reverse,
                                                                     }}
                                                                   />
                                                                   :
@@ -1544,7 +1562,8 @@ const Home: React.FC<any> = (props: any) => {
       password = '', passwordHelp = '', ifShowHeader = false, ifShowColorList = false,
       headerBackgroundColor = 'default', ifNeedClear, operationLock, ifUpdateProject,
       magnifierSize, logSize, listType, valueColor, markNumber = false, markNumberLeft, markNumberTop,
-      blockType, blockTypeLines, modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams
+      blockType, blockTypeLines, modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams,
+      ifNeedAllow
     } = values;
     if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
       try {
@@ -1576,7 +1595,8 @@ const Home: React.FC<any> = (props: any) => {
         password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
         ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
         valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
-        modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams
+        modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
+
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1596,7 +1616,7 @@ const Home: React.FC<any> = (props: any) => {
             password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
             ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
             valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
-            modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams
+            modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -1628,7 +1648,7 @@ const Home: React.FC<any> = (props: any) => {
       headerBackgroundColor: 'default', ifNeedClear: false, operationLock: false, ifUpdateProject: false,
       magnifierSize: 4, logSize: 50, listType: 'line', markNumber: false, markNumberLeft: 1, markNumberTop: 1,
       blockType: 'normal', blockTypeLines: 2, modelUpload: false, xColumns: undefined, yColumns: undefined,
-      platFormOptions: undefined, ifFetchParams: false
+      platFormOptions: undefined, ifFetchParams: false, ifNeedAllow: false,
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -2828,13 +2848,6 @@ const Home: React.FC<any> = (props: any) => {
                       >
                         <Input size='large' />
                       </Form.Item>
-                      <Form.Item
-                        name="ifNeedClear"
-                        label="手动清空按钮"
-                        valuePropName="checked"
-                      >
-                        <Switch />
-                      </Form.Item>
                       {
                         ['button'].includes(windowType) ?
                           <Fragment>
@@ -2884,8 +2897,22 @@ const Home: React.FC<any> = (props: any) => {
                                 autoSize={{ minRows: 1, maxRows: 5 }}
                               />
                             </Form.Item>
+                            <Form.Item
+                              name="ifNeedAllow"
+                              label="二次确认"
+                              valuePropName="checked"
+                            >
+                              <Switch />
+                            </Form.Item>
                           </Fragment>
-                          : null
+                          :
+                          <Form.Item
+                            name="ifNeedClear"
+                            label="手动清空按钮"
+                            valuePropName="checked"
+                          >
+                            <Switch />
+                          </Form.Item>
                       }
                     </Fragment>
                     : null
@@ -3214,6 +3241,13 @@ const Home: React.FC<any> = (props: any) => {
                               rules={[{ required: true, message: '接口地址' }]}
                             >
                               <Input size='large' />
+                            </Form.Item>
+                            <Form.Item
+                              name="ifFetch"
+                              label="是否实时反馈"
+                              valuePropName="checked"
+                            >
+                              <Switch />
                             </Form.Item>
                             <Form.Item
                               name="ifUpdateProject"
@@ -3560,15 +3594,27 @@ const Home: React.FC<any> = (props: any) => {
                     </Fragment>
                     : null
                 }
+                {
+                  (['buttonImages'].includes(windowType) && !isVision) ?
+                    <Fragment>
+                      <Form.Item
+                        name={`reverse`}
+                        label={'槽位倒序'}
+                        valuePropName="checked"
+                      >
+                        <Switch />
+                      </Form.Item>
+                    </Fragment>
+                    : null
+                }
                 <Form.Item
                   name={'fontSize'}
                   label="字号"
-                  initialValue={24}
+                  initialValue={16}
                   rules={[{ required: true, message: '字号' }]}
                 >
                   <InputNumber
                     min={12}
-                    placeholder="12"
                   />
                 </Form.Item>
                 {

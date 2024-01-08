@@ -8,19 +8,19 @@ body,
   user-select: none;
 
   ::-webkit-scrollbar {
-    border-radius: 5px;
-    background-color: @background-color-base;
     width: 5px;
     height: 5px;
     padding: 2px;
+    background-color: @background-color-base;
+    border-radius: 5px;
   }
 
   ::-webkit-scrollbar-thumb {
     width: 5px;
     height: 5px;
-    background-color: rgba(144, 144, 144, .3);
-    border-radius: 5px;
     margin: 2px;
+    background-color: rgba(144, 144, 144, 0.3);
+    border-radius: 5px;
   }
 }
 
@@ -32,14 +32,14 @@ body,
   position: absolute;
   top: 8px;
   right: 80px;
-  background-color: transparent;
-  transform: translate(0, -130%);
   z-index: 999;
   width: auto;
+  background-color: transparent;
+  transform: translate(0, -130%);
 
   .anticon {
-    font-size: 14px !important;
     color: transparent !important;
+    font-size: 14px !important;
   }
 }
 
@@ -47,7 +47,6 @@ body,
   height: 100vh;
 
   .ant-layout-header {
-
     .ant-pro-global-header {
       padding-right: 8px;
     }
@@ -76,8 +75,8 @@ body,
   }
 
   .ant-layout-content {
-    padding: 0;
     margin: 0;
+    padding: 0;
   }
 }
 
@@ -87,7 +86,6 @@ body,
 
 .ant-drawer {
   .ant-drawer-content-wrapper {
-
     .ant-alert-warning,
     .ant-btn.ant-btn-block {
       display: none;
@@ -115,14 +113,13 @@ ol {
     width: 100%;
     overflow-x: auto;
 
-    &-thead>tr,
-    &-tbody>tr {
-
-      >th,
-      >td {
+    &-thead > tr,
+    &-tbody > tr {
+      > th,
+      > td {
         white-space: pre;
 
-        >span {
+        > span {
           display: block;
         }
       }
@@ -131,15 +128,14 @@ ol {
 }
 
 // Compatible with IE11
-@media screen and(-ms-high-contrast: active),
-(-ms-high-contrast: none) {
-  body .ant-design-pro>.ant-layout {
+@media screen and(-ms-high-contrast: active), (-ms-high-contrast: none) {
+  body .ant-design-pro > .ant-layout {
     min-height: 100vh;
   }
 }
 
 @media (prefers-color-scheme: light) {
-  //  
+  //
 }
 
 @media (prefers-color-scheme: dark) {
@@ -150,16 +146,16 @@ ol {
 
 .error,
 .NG {
-  background-color: @error-color;
+  background-color: @error-color !important;
 }
 
 .success,
 .OK {
-  background-color: @success-color;
+  background-color: @success-color !important;
 }
 
 .warning {
-  background-color: @warning-color;
+  background-color: @warning-color !important;
 }
 
 .success-font,
@@ -181,14 +177,14 @@ ol {
 }
 
 .common-btn {
-  cursor: pointer;
   z-index: 19;
-  font-size: 14px;
-  padding: 0 8px;
   height: 23px;
+  padding: 0 8px;
+  font-size: 14px;
   line-height: 21px;
   border: 1px solid @border-color-base;
   border-radius: 2px;
+  cursor: pointer;
 }
 
 .ant-form,
@@ -202,7 +198,7 @@ ol {
   .ant-form-item {
     font-size: inherit !important;
 
-    .ant-form-item-label>label {
+    .ant-form-item-label > label {
       font-size: inherit !important;
     }
   }
@@ -212,8 +208,8 @@ ol {
       font-size: inherit !important;
 
       .ant-tree-checkbox {
-        font-size: inherit !important;
         margin-top: 3px;
+        font-size: inherit !important;
 
         .ant-tree-checkbox-inner {
           width: 22px;
@@ -233,8 +229,8 @@ ol {
 
       .ant-tree-switcher {
         margin-right: 4px;
-        line-height: initial !important;
         font-size: inherit !important;
+        line-height: initial !important;
 
         .ant-tree-switcher-icon {
           font-size: inherit !important;
@@ -256,9 +252,9 @@ ol {
         &::after {
           width: 32px;
           height: 32px;
-          border-radius: 50%;
           margin-top: -16px;
           margin-left: -16px;
+          border-radius: 50%;
         }
       }
     }
@@ -287,9 +283,9 @@ ol {
   }
 
   .ant-modal-content {
-    font-size: inherit !important;
     height: 100%;
     max-height: 99vh;
+    font-size: inherit !important;
 
     .ant-modal-body {
       height: calc(100% - 110px);
@@ -329,8 +325,8 @@ ol {
 }
 
 .ant-switch {
-  transform: scale(1.2);
   margin-left: 4px !important;
+  transform: scale(1.2);
 }
 
 .ant-image-preview-root {
@@ -350,12 +346,12 @@ ol {
 }
 
 .ant-spin-nested-loading {
-  height: 100%;
   width: 100%;
+  height: 100%;
 
   .ant-spin-container {
-    height: 100%;
     width: 100%;
+    height: 100%;
   }
 }
 
@@ -399,18 +395,18 @@ ol {
 }
 
 .item-label-icon {
-  height: 10px;
   width: 10px;
-  border: 1px solid @body-background;
+  height: 10px;
   margin-right: 8px;
+  border: 1px solid @body-background;
 }
 
 .label-style {
-  line-height: 32px;
-  justify-content: flex-end;
   -webkit-justify-content: flex-end;
-  word-break: break-all;
+  justify-content: flex-end;
   padding-right: 8px;
+  line-height: 32px;
+  word-break: break-all;
 }
 
 .wrapper-style {
@@ -419,8 +415,8 @@ ol {
   .top-content {
     flex: 1;
     width: 100%;
-    line-height: 32px;
     margin-bottom: 8px;
+    line-height: 32px;
   }
 
   .plugin-style {
@@ -435,10 +431,10 @@ ol {
   }
 
   .text-style {
+    overflow: hidden;
     // word-break: break-all;
     white-space: nowrap;
     text-overflow: ellipsis;
-    overflow: hidden;
   }
 }
 
@@ -446,15 +442,15 @@ ol {
   position: absolute;
   top: 0;
   left: 0;
-  height: 100%;
   width: 100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.4);
 }
 
 .ant-slider {
-  height: 100% !important;
   display: flex;
   align-items: center;
+  height: 100% !important;
   margin: 0 !important;
 
   .ant-slider-handle {
@@ -482,8 +478,8 @@ ol {
     }
 
     .ant-popover-message-title {
-      padding: 0;
       margin: 0;
+      padding: 0;
     }
   }
 
@@ -497,8 +493,8 @@ ol {
 .page-size {
   width: calc(100% - 48px);
   max-width: 1200px;
-  margin: 0 auto 8px auto;
   height: calc(100% - 8px);
+  margin: 0 auto 8px auto;
   padding: 24px;
   box-shadow: @box-shadow-base;
 }
@@ -515,19 +511,18 @@ ol {
   align-items: center;
 }
 
-
 .flex-box-column {
   display: flex;
   display: -ms-flex;
-  flex-direction: column;
   -webkit-flex-direction: column;
+  flex-direction: column;
 }
 
 .flex-box-start {
   display: flex;
   display: -ms-flex;
-  align-items: flex-start;
   -webkit-align-items: flex-start;
+  align-items: flex-start;
 }
 
 .flex-box-align-end {
@@ -548,9 +543,9 @@ ol {
   display: flex;
   display: -ms-flex;
   align-items: center;
-  -webkit-box-align: center;
   -webkit-justify-content: space-between;
   justify-content: space-between;
+  -webkit-box-align: center;
 }
 
 .flex-box-center {
@@ -558,8 +553,8 @@ ol {
   display: -ms-flex;
   -webkit-align-items: center;
   align-items: center;
-  justify-content: center;
   -webkit-justify-content: center;
+  justify-content: center;
 }
 
 .tab-box {
@@ -570,15 +565,14 @@ ol {
   border-bottom: 1px solid @background-color-base;
 
   .tab-item {
-    height: 100%;
     flex: 1;
+    height: 100%;
     padding: 8px;
     text-align: center;
     cursor: pointer;
 
     &:first-child {
       border-right: 1px solid @background-color-base;
-
     }
 
     &:hover {
@@ -592,13 +586,13 @@ ol {
 }
 
 .common-card-title-box {
-  font-size: 20px;
-  padding: 0 8px;
   height: 28px;
+  padding: 0 8px;
+  font-size: 20px;
   line-height: 28px;
-  border-bottom: 1px solid @border-color-base;
   // border-left: 6px solid @primary-color;
   word-break: keep-all;
+  border-bottom: 1px solid @border-color-base;
 
   // &:hover {
   //   .common-card-title-icon {
@@ -620,8 +614,8 @@ ol {
 
 .operation-line {
   height: 100%;
-  color: #e9e9e9;
   margin: 0 5px;
+  color: #e9e9e9;
 }
 
 .monaco-editor-modal {
@@ -641,26 +635,26 @@ ol {
     }
 
     .monaco-editor {
-      height: 100% !important;
       width: 100% !important;
+      height: 100% !important;
 
       .overflow-guard {
-        height: 100% !important;
         width: 100% !important;
+        height: 100% !important;
 
         .margin,
         .monaco-scrollable-element {
-          height: 100% !important;
           width: 100% !important;
+          height: 100% !important;
 
           .view-overlays {
-            height: 100% !important;
             width: 100% !important;
+            height: 100% !important;
           }
 
           .view-lines {
-            height: 100% !important;
             width: 100% !important;
+            height: 100% !important;
           }
         }
       }
@@ -672,116 +666,114 @@ ol {
   }
 }
 
-
 @keyframes k-loadingK {
   0% {
     left: 0;
-    transform: scale(1.1)
+    transform: scale(1.1);
   }
 
   50% {
     left: 100%;
-    transform: scale(1)
+    transform: scale(1);
   }
 
   100% {
     left: 0;
-    transform: scale(1.1)
+    transform: scale(1.1);
   }
 }
 
 @keyframes k-loadingM {
   0% {
-    z-index: 0
+    z-index: 0;
   }
 
   50% {
-    z-index: 1
+    z-index: 1;
   }
 
   100% {
-    z-index: 0
+    z-index: 0;
   }
 }
 
 @keyframes k-loadingL {
   0% {
     left: 100%;
-    transform: scale(1.1)
+    transform: scale(1.1);
   }
 
   50% {
     left: 0;
-    transform: scale(1)
+    transform: scale(1);
   }
 
   100% {
     left: 100%;
-    transform: scale(1.1)
+    transform: scale(1.1);
   }
 }
 
 @keyframes k-loadingN {
   0% {
-    z-index: 1
+    z-index: 1;
   }
 
   50% {
-    z-index: 0
+    z-index: 0;
   }
 
   100% {
-    z-index: 1
+    z-index: 1;
   }
 }
 
 .k-loader {
-  display: inline-block;
-  font-size: 16px;
-  margin: 0 8px;
   position: relative;
-  height: 8px;
+  display: inline-block;
   width: 12px;
+  height: 8px;
+  margin: 0 8px;
+  font-size: 16px;
 }
 
 .k-loader::before,
 .k-loader::after {
-  content: "";
-  display: block;
-  height: 8px;
   position: absolute;
+  display: block;
   width: 8px;
+  height: 8px;
   border-radius: 50%;
+  content: '';
 }
 
 .k-loader::before {
-  animation: k-loadingK 1s ease-in-out infinite, k-loadingM .33s ease-in-out infinite;
-  background: #008BEE;
+  background: #008bee;
+  animation: k-loadingK 1s ease-in-out infinite, k-loadingM 0.33s ease-in-out infinite;
 }
 
 .k-loader::after {
-  animation: k-loadingL 1s ease-in-out infinite, k-loadingN .33s ease-in-out infinite;
-  background: #6DD400;
+  background: #6dd400;
+  animation: k-loadingL 1s ease-in-out infinite, k-loadingN 0.33s ease-in-out infinite;
 }
 
 .img-charts-big {
-  width: 300px;
-  height: 300px;
   position: absolute;
   top: 0;
   left: 50%;
-  border: 1px solid rgb(212, 11, 11);
-  overflow: hidden;
   z-index: 998;
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
   background: white;
+  border: 1px solid rgb(212, 11, 11);
 
   img {
     position: absolute;
-    left: 0;
     top: 0;
+    left: 0;
   }
 }
-
 
 // div.item {
 //   background:
@@ -805,7 +797,7 @@ ol {
 
 @keyframes opacityChange {
   50% {
-    opacity: .5;
+    opacity: 0.5;
   }
 
   100% {

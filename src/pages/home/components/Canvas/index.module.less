@@ -1,15 +1,15 @@
 @import '~antd/es/style/themes/default.less';
 
 .home {
-  height: 100%;
-  width: 100%;
   position: relative;
+  width: 100%;
+  height: 100%;
 
   :global {
     .status-icon {
       .ant-badge-status-dot {
-        height: 15px;
         width: 15px;
+        height: 15px;
       }
 
       .ant-badge-status-processing {
@@ -24,15 +24,15 @@
     .btn-box {
       width: 100%;
       height: 100%;
-      box-shadow: @box-shadow-base;
       overflow: hidden;
+      box-shadow: @box-shadow-base;
 
       .btn {
         // width: 100%;
         height: 56px;
         // justify-content: space-between;
         padding: 12px;
-        border-bottom: .5px solid rgba(229, 224, 216, 0.65);
+        border-bottom: 0.5px solid rgba(229, 224, 216, 0.65);
       }
 
       .btn-icon {
@@ -40,17 +40,17 @@
       }
 
       .btn-self-icon {
-        height: 30px;
         width: 30px;
         min-width: 30px;
         max-width: 30px;
-        border-radius: 50%;
-        border: 2px solid;
+        height: 30px;
         margin-right: 8px;
+        border: 2px solid;
+        border-radius: 50%;
 
         .btn-self-icon-rect {
-          height: 11px;
           width: 11px;
+          height: 11px;
           background-color: inherit;
         }
 
@@ -64,10 +64,10 @@
       }
 
       .btn-box-bottom {
+        flex-wrap: wrap;
         width: 100%;
         height: calc(100% - 28px);
         overflow-y: auto;
-        flex-wrap: wrap;
 
         .btn {
           float: left;
@@ -82,10 +82,10 @@
       box-shadow: @box-shadow-base;
 
       .info-box-content {
-        font-size: 20px;
-        line-height: 1.1;
         flex: 1;
         overflow-y: auto;
+        font-size: 20px;
+        line-height: 1.1;
         word-break: break-all;
       }
 
@@ -94,18 +94,18 @@
         // text-align: center;
 
         div {
-          color: @text-color-secondary;
           margin-bottom: 8px;
+          color: @text-color-secondary;
         }
       }
     }
 
     .message-box {
       .message-item {
-        text-align: center;
         padding: 12px;
-        cursor: pointer;
+        text-align: center;
         border-bottom: 1px solid @border-color-base;
+        cursor: pointer;
 
         &:hover {
           background-color: @btn-text-hover-bg;
@@ -118,11 +118,11 @@
     }
 
     .footer-scroll {
+      gap: 8px;
       width: 100%;
       height: calc(100% - 40px);
-      overflow-x: auto;
-      gap: 8px;
       padding: 12px;
+      overflow-x: auto;
       font-size: 12px;
 
       .footer-item-box {
@@ -147,8 +147,8 @@
       position: relative;
 
       .home-content {
-        height: 100%;
         width: 100%;
+        height: 100%;
         overflow: hidden;
       }
 
@@ -162,18 +162,18 @@
     }
 
     .log-content {
-      height: 100%;
       flex: 1;
+      height: 100%;
       overflow: hidden;
       user-select: text;
 
       .content-item-span {
+        flex: 1;
         height: calc(100% - 28px);
+        padding: 12px;
+        overflow-y: auto;
         font-size: 20px;
         line-height: 1.1;
-        padding: 12px;
-        flex: 1;
-        overflow-y: auto;
         word-break: break-all;
       }
     }
@@ -186,8 +186,8 @@
           font-size: inherit !important;
 
           .ant-tree-checkbox {
-            font-size: inherit !important;
             margin-top: 3px;
+            font-size: inherit !important;
 
             .ant-tree-checkbox-inner {
               width: 22px;
@@ -207,8 +207,8 @@
 
           .ant-tree-switcher {
             margin-right: 4px;
-            line-height: initial !important;
             font-size: 24px !important;
+            line-height: initial !important;
 
             .ant-tree-switcher-icon {
               font-size: inherit !important;
@@ -233,12 +233,12 @@
     }
 
     .drag-item-content-box {
+      position: relative;
       // justify-content: center;
       display: flex;
       flex-direction: column;
-      height: 100%;
       width: 100%;
-      position: relative;
+      height: 100%;
 
       .drag-item-content-mask {
         position: absolute;
@@ -246,36 +246,35 @@
         right: 0;
         bottom: 0;
         left: 0;
+        z-index: 100;
         // background-color: rgba(144, 144, 144, .3);
         font-size: 24px;
-        z-index: 100;
 
         &-icon {
           font-size: 40px;
         }
       }
-
     }
 
     .home-body {
+      position: relative;
+      align-items: flex-start;
       width: 100%;
       height: calc(100% - 35px);
-      align-items: flex-start;
-      position: relative;
-      overflow-y: auto;
       overflow-x: hidden;
+      overflow-y: auto;
 
       .left-panel {
         position: fixed;
         top: 0;
-        left: 0;
         bottom: 0;
+        left: 0;
+        z-index: 10;
         width: 260px;
         height: calc(100% - 34px);
         background-color: @background-color-base;
         border-right: 1px solid rgb(240, 242, 245);
         transition: all 0.5s;
-        z-index: 10;
 
         .left-panel-switch-button {
           position: absolute;
@@ -284,9 +283,9 @@
           z-index: 99999;
           width: 30px;
           height: 30px;
-          border-radius: 50%;
-          border: 0.5px solid rgb(240, 242, 245);
           background: @background-color-base;
+          border: 0.5px solid rgb(240, 242, 245);
+          border-radius: 50%;
           cursor: pointer;
           opacity: 1;
         }
@@ -296,24 +295,24 @@
           padding-top: 40px;
 
           .left-panel-search {
-            line-height: 48px;
-            font-size: 14px;
-            font-weight: 600;
             padding: 8px 20px 2px;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 48px;
             white-space: nowrap;
           }
 
           .left-panel-list {
             height: calc(100% - 65px);
-            overflow-y: auto;
-            overflow-x: hidden;
             padding: 0 4px 80px 8px;
+            overflow-x: hidden;
+            overflow-y: auto;
             font-size: 16px;
 
             .left-panel-list-title {
-              padding-left: 12px;
               gap: 2px;
               margin: 12px 0;
+              padding-left: 12px;
 
               .arrow {
                 transform: rotate(-90deg);
@@ -321,31 +320,31 @@
             }
 
             .left-panel-item {
-              cursor: move;
-              user-select: none;
-              font-size: 14px;
+              gap: 8px;
               margin-bottom: 4px;
               padding-left: 40px;
+              font-size: 14px;
               line-height: 40px;
               border-radius: 4px;
-              gap: 8px;
+              cursor: move;
+              user-select: none;
 
               &:hover {
-                background: @body-background;
                 font-weight: bolder;
+                background: @body-background;
               }
 
               .left-panel-item-icon {
-                height: 40px;
-                width: 40px;
-                min-width: 40px;
-                text-align: center;
-                line-height: 40px;
-                background: @body-background;
-                border-radius: 2px;
                 display: flex;
                 align-items: center;
                 justify-content: space-around;
+                width: 40px;
+                min-width: 40px;
+                height: 40px;
+                line-height: 40px;
+                text-align: center;
+                background: @body-background;
+                border-radius: 2px;
 
                 img {
                   width: 100%;
@@ -355,7 +354,6 @@
               .left-panel-item-title {
                 flex: 1;
               }
-
             }
           }
         }
@@ -367,17 +365,17 @@
         height: 100%;
 
         &-toolbar {
+          gap: 16px;
           width: 100%;
+          padding: 4px 16px;
           background-color: @background-color-base;
           border-bottom: 1px solid rgb(240, 242, 245);
           box-shadow: 2px 3px 6px -4px rgba(0, 0, 0, 0.12);
-          padding: 4px 16px;
-          gap: 16px;
 
           .ant-btn-icon-only {
             min-width: 32px;
-            min-height: 32px;
             max-width: 32px;
+            min-height: 32px;
             max-height: 32px;
           }
 
@@ -392,12 +390,12 @@
           }
 
           &-center {
+            gap: 6px;
             width: 40%;
             min-width: 240px;
             max-width: 450px;
-            white-space: nowrap;
             font-size: 14px;
-            gap: 6px;
+            white-space: nowrap;
 
             &-input {
               .ant-input-number-handler-wrap {
@@ -421,23 +419,23 @@
 
             &-tab {
               height: 28px;
-              border-bottom: 1px solid @body-background;
               padding-top: 3px;
               overflow: hidden;
               font-size: 14px;
+              border-bottom: 1px solid @body-background;
 
               &-item {
+                box-sizing: border-box;
                 height: 24px;
-                line-height: 23px;
                 margin-left: 8px;
                 padding: 0 8px;
-                cursor: pointer;
-                user-select: none;
+                line-height: 23px;
                 white-space: nowrap;
+                background-color: rgba(202, 202, 202, 0.8);
                 border-top-left-radius: 6px;
                 border-top-right-radius: 6px;
-                box-sizing: border-box;
-                background-color: rgba(202, 202, 202, .8);
+                cursor: pointer;
+                user-select: none;
 
                 &:hover {
                   background-color: rgba(196, 196, 196, 1);
@@ -449,8 +447,8 @@
               }
 
               &-selected {
+                background-color: rgba(144, 144, 144, 0.6);
                 transform: translate(0, 3px);
-                background-color: rgba(144, 144, 144, .6);
               }
             }
 
@@ -462,8 +460,8 @@
         }
 
         &-bottom-powerby {
-          line-height: 18px;
           font-size: 12px;
+          line-height: 18px;
           opacity: 0.7;
         }
 
@@ -484,9 +482,9 @@
         }
 
         .card-body-box {
-          height: 100%;
-          width: 100%;
           position: relative;
+          width: 100%;
+          height: 100%;
 
           .preview-box {
             position: absolute;
@@ -503,9 +501,9 @@
 
         .tabs-box {
           .tabs-box-item-box {
-            cursor: pointer;
-            padding: 4px 8px;
             gap: 8px;
+            padding: 4px 8px;
+            cursor: pointer;
 
             &:hover {
               .tabs-box-item-close {
@@ -527,17 +525,16 @@
             color: @primary-color;
           }
         }
-
       }
     }
 
     .home-footer {
+      gap: 8px;
       width: 100%;
       height: 34px;
+      padding: 0 8px;
       overflow-x: auto;
       font-size: 14px;
-      gap: 8px;
-      padding: 0 8px;
       border-top: 1px solid rgb(240, 242, 245);
 
       .home-footer-item-box {
@@ -553,19 +550,19 @@
 
     .home-affix-box {
       position: fixed;
-      bottom: 16px;
       right: 16px;
+      bottom: 16px;
       z-index: 99;
 
       .home-page-affix {
-        height: 40px;
         width: 40px;
+        height: 40px;
         margin: 4px;
-        border-radius: 50%;
-        background-color: rgba(144, 144, 144, 1);
         color: #fff;
-        opacity: .3;
+        background-color: rgba(144, 144, 144, 1);
+        border-radius: 50%;
         cursor: pointer;
+        opacity: 0.3;
 
         &:hover {
           opacity: 1;
@@ -573,9 +570,9 @@
       }
 
       .home-page-affix-direction {
+        margin: 4px;
         font-size: 16px;
         cursor: pointer;
-        margin: 4px;
         opacity: 0;
       }
 
@@ -595,24 +592,23 @@
   font-size: 18px;
   user-select: text;
 
-
   :global {
     .charts-header-box {
       position: fixed;
-      left: 0;
       right: 0;
+      left: 0;
       width: calc(100% - 6px);
       background-color: @background-color-base;
       border-left: 1px solid @border-color-base;
 
       .charts-header-item {
-        padding: 2px 8px;
         flex: 1;
         height: 38px;
-        line-height: 38px;
-        border-right: 1px solid @body-background;
+        padding: 2px 8px;
         overflow: hidden;
+        line-height: 38px;
         text-align: center;
+        border-right: 1px solid @body-background;
 
         &:last-child {
           border-right: 0;
@@ -621,27 +617,27 @@
     }
 
     .charts-body-box {
-      overflow-y: auto;
       margin-top: 38px;
+      overflow-y: auto;
       border-right: 0 solid @border-color-base;
       border-bottom: 0 solid @border-color-base;
 
       .charts-body-tr {
         .charts-body-td {
-          padding: 2px 8px;
           flex: 1;
           height: 38px;
-          line-height: 34px;
+          padding: 2px 8px;
           overflow: hidden;
           font-weight: 300;
-          border-right: 5px solid transparent;
+          line-height: 34px;
           border-top: 0 solid @border-color-base;
+          border-right: 5px solid transparent;
           border-left: 0 solid @border-color-base;
         }
       }
 
       .charts-body-tr-interlacing:nth-child(even) {
-        background-color: rgba(144, 144, 144, .6);
+        background-color: rgba(144, 144, 144, 0.6);
       }
     }
   }
@@ -657,27 +653,26 @@
   :global {
     .charts-header-box {
       position: fixed;
-      left: 0;
       right: 0;
+      left: 0;
       width: calc(100% - 6px);
       background-color: @background-color-base;
       border-left: 1px solid @border-color-base;
 
       .charts-header-item {
         width: 100%;
-        overflow: hidden;
         height: 38px;
-
+        overflow: hidden;
 
         .charts-header-item-title {
-          padding: 0 8px;
           width: 100%;
+          padding: 0 8px;
           text-align: center;
         }
 
         .charts-header-item-border {
-          height: 100%;
           width: 1px;
+          height: 100%;
           background-color: @body-background;
           cursor: ew-resize;
         }
@@ -685,12 +680,12 @@
     }
 
     .charts-body-box {
+      align-items: normal;
       width: 100%; //calc(100% - 8px);
       margin-top: 38px;
-      align-items: normal;
-      border-left: 0 solid @border-color-base;
       border-right: 0 solid @border-color-base;
       border-bottom: 0 solid @border-color-base;
+      border-left: 0 solid @border-color-base;
 
       .charts-body-tr {
         width: 100%;
@@ -698,25 +693,25 @@
 
         .charts-body-td {
           .charts-body-td-title {
-            padding: 2px 8px;
             width: 100%;
             height: 38px;
-            line-height: 34px;
-            text-align: center;
+            padding: 2px 8px;
             overflow: hidden;
             font-weight: 300;
+            line-height: 34px;
+            text-align: center;
             border-top: 0 solid @border-color-base;
           }
 
           .charts-body-item-border {
-            height: 38px;
             width: 1px;
+            height: 38px;
             background-color: @border-color-base;
           }
         }
 
         .charts-body-td-interlacing:nth-child(even) {
-          background-color: rgba(144, 144, 144, .6);
+          background-color: rgba(144, 144, 144, 0.6);
         }
       }
     }
@@ -733,64 +728,62 @@
   :global {
     .charts-tab-box {
       width: 100%;
-      border: 1px solid @border-color-base;
       padding: 4px 0 0 4px;
       // padding-left: 2px;
       overflow-x: auto;
       overflow-y: hidden;
+      border: 1px solid @border-color-base;
 
       .charts-tab-item {
-        padding: 4px 8px;
-        border-right: 1px solid @border-color-base;
-        cursor: pointer;
-        user-select: none;
-        white-space: nowrap;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
         box-sizing: border-box;
-        background-color: @border-color-base;
         // transition: all .5s;
         margin-right: 4px;
+        padding: 4px 8px;
+        white-space: nowrap;
+        background-color: @border-color-base;
+        border-right: 1px solid @border-color-base;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        cursor: pointer;
+        user-select: none;
 
         &:hover {
-          background-color: rgba(144, 144, 144, .6);
+          background-color: rgba(144, 144, 144, 0.6);
         }
 
         &:active {
           transform: translate(0, 4px);
         }
-
       }
 
       .charts-tab-item-selected {
+        background-color: rgba(144, 144, 144, 0.6);
         transform: translate(0, 4px);
-        background-color: rgba(144, 144, 144, .6);
       }
     }
 
     .charts-header-box {
       position: fixed;
-      left: 0;
       right: 0;
+      left: 0;
       width: calc(100% - 6px);
       background-color: @background-color-base;
       border-left: 1px solid @border-color-base;
 
       .charts-header-item {
         width: 100%;
-        overflow: hidden;
         height: 38px;
-
+        overflow: hidden;
 
         .charts-header-item-title {
-          padding: 0 8px;
           width: 100%;
+          padding: 0 8px;
           text-align: center;
         }
 
         .charts-header-item-border {
-          height: 100%;
           width: 1px;
+          height: 100%;
           background-color: @body-background;
           cursor: ew-resize;
         }
@@ -798,12 +791,12 @@
     }
 
     .charts-body-box {
+      align-items: normal;
       width: 100%; //calc(100% - 8px);
       margin-top: 38px;
-      align-items: normal;
-      border-left: 0 solid @border-color-base;
       border-right: 0 solid @border-color-base;
       border-bottom: 0 solid @border-color-base;
+      border-left: 0 solid @border-color-base;
 
       .charts-body-tr {
         width: 100%;
@@ -811,25 +804,25 @@
 
         .charts-body-td {
           .charts-body-td-title {
-            padding: 2px 8px;
             width: 100%;
             height: 38px;
-            line-height: 34px;
-            text-align: center;
+            padding: 2px 8px;
             overflow: hidden;
             font-weight: 300;
+            line-height: 34px;
+            text-align: center;
             border-top: 0 solid @border-color-base;
           }
 
           .charts-body-item-border {
-            height: 38px;
             width: 1px;
+            height: 38px;
             background-color: @border-color-base;
           }
         }
 
         .charts-body-td-interlacing:nth-child(even) {
-          background-color: rgba(144, 144, 144, .6);
+          background-color: rgba(144, 144, 144, 0.6);
         }
       }
     }
@@ -844,9 +837,8 @@
   user-select: text;
 
   :global {
-    // 
+    //
   }
-
 }
 
 .tableEditCharts {
@@ -863,7 +855,6 @@
         height: 100%;
 
         &-tbody {
-
           .ant-table-cell {
             padding: 4px 2px;
 
@@ -882,37 +873,37 @@
     }
 
     .edit-table-footer {
-      height: 40px;
       gap: 8px;
+      height: 40px;
     }
   }
 }
 
 .alertCharts {
+  flex-wrap: wrap;
+  align-items: normal;
   width: 100%;
   height: 100%;
   padding: 8px;
-  align-items: normal;
-  flex-wrap: wrap;
   overflow: auto;
 
   :global {
     .alert-item {
+      position: relative;
       flex: 1;
+      gap: 8px;
       min-width: 100px;
       padding: 16px;
       border: 1px solid #fff;
-      position: relative;
-      gap: 8px;
     }
   }
 }
 
 .imgCharts {
-  width: 100%;
-  height: 100%;
   position: relative;
   flex-direction: column;
+  width: 100%;
+  height: 100%;
 
   ::-webkit-scrollbar {
     width: 0 !important;
@@ -925,8 +916,8 @@
   :global {
     .ant-image {
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
     }
 
     .img-box-mark-top {
@@ -939,9 +930,9 @@
       width: 100%;
 
       .img-box-mark-left {
-        height: 100%;
-        width: 20px;
         flex-direction: column;
+        width: 20px;
+        height: 100%;
       }
 
       .img-box-mark-right {
@@ -952,8 +943,8 @@
 
     .img-box-mark-item {
       flex: 1;
-      font-size: 16px;
       width: 100%;
+      font-size: 16px;
     }
 
     .img-box {
@@ -962,33 +953,32 @@
       position: relative;
 
       .img-charts-event1 {
-        width: 100%;
-        height: 100%;
         position: absolute;
         top: 0;
         left: 0;
         z-index: 10;
+        width: 100%;
+        height: 100%;
       }
 
       .mask {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 0;
+        display: none;
         width: 12.5%;
         height: 12.5%;
         background-color: rgba(0, 255, 0, 0.3);
-        position: absolute;
-        left: 0;
-        top: 0;
-        z-index: 0;
-        display: none;
       }
 
       .ant-image-mask {
-        opacity: 0 !important;
-        cursor: zoom-in;
         z-index: 1;
+        cursor: zoom-in;
+        opacity: 0 !important;
       }
 
       &:hover {
-
         .mask {
           display: block;
         }
@@ -1013,19 +1003,19 @@
     }
 
     .img-box-btn-box {
-      display: none;
       position: absolute;
-      right: 4px;
       top: 4px;
+      right: 4px;
+      display: none;
       gap: 4px;
 
       .img-box-btn-item {
-        font-size: 16px;
-        color: inherit;
-        cursor: pointer;
-        padding: 4px;
-        border-radius: 4px;
         z-index: 10;
+        padding: 4px;
+        color: inherit;
+        font-size: 16px;
+        border-radius: 4px;
+        cursor: pointer;
         // color: @primary-color;
         // background-color: rgba(154, 154, 154, 0.35);
 
@@ -1036,8 +1026,8 @@
       }
 
       .img-box-btn-item-selected {
-        background-color: @primary-color;
         color: #fff;
+        background-color: @primary-color;
       }
     }
   }
@@ -1057,8 +1047,8 @@
       height: 90vh;
 
       .ant-modal-content {
-        height: 100%;
         width: 100%;
+        height: 100%;
 
         .ant-modal-header {
           height: 55px;
@@ -1067,7 +1057,7 @@
             gap: 16px;
 
             .image-contrast-modal-title-btn {
-              // 
+              //
             }
           }
         }
@@ -1083,8 +1073,8 @@
 
             .image-contrast-modal-body-top,
             .image-contrast-modal-body-bottom {
-              width: 100%;
               position: relative;
+              width: 100%;
 
               .prev-btn,
               .next-btn {
@@ -1118,7 +1108,6 @@
   }
 
   .modal-charts-confirm {
-
     .ant-modal-header {
       .modal-charts-confirm-title-box {
         gap: 4px;
@@ -1141,30 +1130,30 @@
 
   .defect-modal {
     .ant-modal-body {
-      overflow: hidden !important;
       padding: 0 !important;
+      overflow: hidden !important;
 
       .header-img-button-box {
+        gap: 8px;
         height: 50px;
         padding: 8px 12px 0;
-        gap: 8px;
         overflow: hidden;
         border-bottom: 1px solid rgba(193, 193, 193, 0.6);
 
         &-item {
+          box-sizing: border-box;
           height: 41px;
-          line-height: 40px;
           padding: 0 8px;
-          cursor: pointer;
-          user-select: none;
+          line-height: 40px;
           white-space: nowrap;
+          background-color: rgba(234, 234, 234, 0.8);
           border-top-left-radius: 6px;
           border-top-right-radius: 6px;
-          box-sizing: border-box;
-          background-color: rgba(234, 234, 234, 0.8);
+          cursor: pointer;
+          user-select: none;
 
           &:hover {
-            background-color: rgba(144, 144, 144, .6);
+            background-color: rgba(144, 144, 144, 0.6);
           }
 
           &:active {
@@ -1173,8 +1162,8 @@
         }
 
         &-selected {
+          background-color: rgba(144, 144, 144, 0.6);
           transform: translate(0, 4px);
-          background-color: rgba(144, 144, 144, .6);
         }
       }
 
@@ -1184,29 +1173,29 @@
         overflow: auto;
 
         .img-button-item-line {
-          margin-bottom: 12px;
           gap: 12px;
+          margin-bottom: 12px;
 
           .img-button-item-box {
-            // box-shadow: 0 1px 2px 0 rgb(64 2 189 / 6%);
-            border-radius: 4px;
-            background-color: rgba(255, 255, 255, 0.4);
-            padding: 8px 0;
             width: 75px;
             min-width: 75px;
             max-width: 75px;
-            text-align: center;
+            padding: 8px 0;
             font-size: 16px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.4);
+            // box-shadow: 0 1px 2px 0 rgb(64 2 189 / 6%);
+            border-radius: 4px;
             box-shadow: @box-shadow-base;
             cursor: pointer;
 
             &:hover {
-              background-color: rgba(144, 144, 144, .6);
+              background-color: rgba(144, 144, 144, 0.6);
             }
           }
 
           .img-button-item-box-selected {
-            background-color: rgba(144, 144, 144, .6);
+            background-color: rgba(144, 144, 144, 0.6);
           }
         }
       }
@@ -1215,8 +1204,8 @@
 
   .view-defect-modal {
     .ant-modal-body {
-      overflow: hidden !important;
       padding: 0 !important;
+      overflow: hidden !important;
 
       .img-button-charts-body {
         height: calc(60vh - 50px);
@@ -1240,44 +1229,44 @@
     .img-item {
       flex: 1;
       align-items: flex-start;
-      margin: 4px;
       float: left;
+      margin: 4px;
 
       .img-item-left {
-        height: calc(100% - 24px);
-        font-size: 16px;
         width: 24px;
+        height: calc(100% - 24px);
         padding: 4px;
-        word-break: break-all;
+        font-size: 16px;
         line-height: 1;
+        word-break: break-all;
         background-color: @background-color-base;
       }
 
       .img-item-right {
+        flex: 1;
         width: 100%;
         height: 100%;
-        flex: 1;
 
         .ant-image {
           display: flex;
-          justify-content: center;
           align-items: center;
+          justify-content: center;
         }
 
         .img-item-right-top {
-          // padding: 4px;
-          border: 1px solid #fff;
           height: calc(100% - 24px);
           overflow: hidden;
+          // padding: 4px;
+          border: 1px solid #fff;
         }
 
         .img-item-right-bottom {
-          font-size: 16px;
-          padding: 4px;
           height: 24px;
+          padding: 4px;
+          font-size: 16px;
           line-height: 1;
-          background-color: @background-color-base;
           text-align: center;
+          background-color: @background-color-base;
         }
       }
     }
@@ -1309,8 +1298,8 @@
         height: inherit;
 
         .ant-progress-steps-item {
-          height: inherit !important;
           flex: 1;
+          height: inherit !important;
           margin-right: 8px;
         }
 
@@ -1327,19 +1316,19 @@
 }
 
 .threeCharts {
+  position: relative;
+  flex-direction: column;
   width: 100%;
   height: 100%;
-  flex-direction: column;
-  position: relative;
 
   :global {
     #instructions {
-      width: 100%;
       // color: white;
       position: absolute;
       top: 10px;
-      font-family: monospace;
       z-index: 8;
+      width: 100%;
+      font-family: monospace;
 
       .ant-btn {
         height: auto;
@@ -1359,30 +1348,30 @@
     }
 
     .camera-position {
+      z-index: 10;
       flex-wrap: wrap;
       // width: 64px;
       gap: 8px;
-      z-index: 10;
-      padding-left: 12px;
       width: auto !important;
+      padding-left: 12px;
     }
 
     .render-dom {
+      position: relative;
       flex: 1;
       width: 100%;
       height: 100%;
-      position: relative;
 
       .measurementLabel {
-        font-family: monospace;
-        background-color: black;
         color: white;
         font-size: 12px;
+        font-family: monospace;
+        background-color: black;
       }
 
       #demoBox {
-        height: 100%;
         width: 100%;
+        height: 100%;
       }
 
       .three-mask {
@@ -1392,10 +1381,10 @@
         bottom: 0;
         left: 0;
         z-index: 99;
+        gap: 8px;
         // color: #fff;
         justify-content: center;
-        gap: 8px;
-        background-color: rgba(196, 196, 196, .4);
+        background-color: rgba(196, 196, 196, 0.4);
 
         .process-text {
           z-index: 99;
@@ -1403,29 +1392,29 @@
       }
 
       .label {
-        background-color: #fff;
-        border: 1px solid #ccc;
+        position: relative;
         color: #000;
         font-size: inherit;
+        background-color: #fff;
+        border: 1px solid #ccc;
         transform: scale(4);
-        position: relative;
 
         .item {
-          border-bottom: 1px solid #ccc;
           padding: 0 4px;
+          overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
-          overflow: hidden;
+          border-bottom: 1px solid #ccc;
 
           .key {
-            border-right: 1px solid #ccc;
             padding: 2px 4px 2px 0;
+            border-right: 1px solid #ccc;
           }
 
           .value {
             flex: 1;
-            text-align: right;
             padding: 2px 0 2px 4px;
+            text-align: right;
           }
         }
       }
@@ -1435,13 +1424,13 @@
       position: absolute;
       top: 50%;
       right: 24px;
-      transform: translateY(-50%);
       gap: 4px;
+      transform: translateY(-50%);
 
       .number-box {
+        flex-direction: column;
         height: 300px;
         max-height: 80%;
-        flex-direction: column;
         font-size: 12px;
       }
 
@@ -1449,21 +1438,21 @@
         width: 80px;
         height: 300px;
         max-height: 80%;
-        pointer-events: all;
         background: linear-gradient(to bottom, red, yellow, rgb(0, 255, 0), rgb(0, 225, 255), blue);
+        pointer-events: all;
       }
     }
 
     .camera-box {
       position: absolute;
-      left: 16px;
       bottom: 16px;
+      left: 16px;
       color: #fff;
       font-size: 14px;
 
       .cameraIcon {
-        height: 20px !important;
         width: 20px !important;
+        height: 20px !important;
         cursor: pointer;
         pointer-events: auto;
       }
@@ -1475,7 +1464,7 @@
       .camera-box-pointer {
         display: none;
         padding: 12px;
-        background-color: rgba(0, 0, 0, .6);
+        background-color: rgba(0, 0, 0, 0.6);
 
         .camera-box-pointer-head,
         .camera-box-pointer-top,
@@ -1495,7 +1484,7 @@
             .ant-input-number-group-addon {
               color: #fff;
               background-color: transparent;
-              border-color: rgba(200, 200, 200, .6);
+              border-color: rgba(200, 200, 200, 0.6);
             }
 
             .ant-input-number-handler-wrap {
@@ -1515,10 +1504,10 @@
       }
 
       .camera-box-cursor {
-        width: 68px;
-        background-color: rgba(0, 0, 0, .6);
         gap: 4px;
+        width: 68px;
         padding: 4px 8px;
+        background-color: rgba(0, 0, 0, 0.6);
         cursor: pointer;
       }
 
@@ -1532,15 +1521,15 @@
 }
 
 .treeCharts {
+  position: relative;
+  flex-direction: column;
   width: 100%;
   height: 100%;
-  flex-direction: column;
-  position: relative;
 
   :global {
     .ant-tree {
-      height: 100%;
       width: 100%;
+      height: 100%;
       overflow: auto;
 
       .ant-tree-switcher {
@@ -1557,15 +1546,15 @@
   height: 100%;
 
   :global {
-    // 
+    //
   }
 }
 
 .operationCharts {
+  position: relative;
+  flex-direction: column;
   width: 100%;
   height: 100%;
-  flex-direction: column;
-  position: relative;
 
   :global {
     .waterfall {
@@ -1577,9 +1566,9 @@
     }
 
     .operation-body {
-      width: 100%;
       // height: calc(100% - 41px);
       flex: 1;
+      width: 100%;
       padding: 12px;
       overflow-y: auto;
 
@@ -1597,13 +1586,13 @@
         }
 
         .icon-box {
-          height: 35px;
+          justify-content: center;
           width: 35px;
           min-width: 35px;
-          border-radius: 50%;
-          justify-content: center;
-          background-color: @border-color-base;
+          height: 35px;
           margin-right: 12px;
+          background-color: @border-color-base;
+          border-radius: 50%;
 
           .item-icon {
             font-size: 20px;
@@ -1616,26 +1605,26 @@
           text-align: right;
 
           .first {
-            font-size: 20px;
             margin-bottom: -6px;
+            font-size: 20px;
           }
 
           .second {
-            font-size: 12px;
+            overflow: hidden;
             color: @text-color-secondary;
+            font-size: 12px;
             white-space: nowrap;
             text-overflow: ellipsis;
-            overflow: hidden;
           }
         }
 
         .value-box {
           flex: 1;
           width: calc(100% - 259px);
-          font-weight: 250;
-          word-break: break-all;
           margin-left: 16px;
           padding-top: 6px;
+          font-weight: 250;
+          word-break: break-all;
 
           p {
             margin-bottom: 0;
@@ -1674,7 +1663,6 @@
             }
           }
         }
-
       }
 
       .block {
@@ -1690,17 +1678,16 @@
         .param-group-item-title {
           padding: 2px 4px;
           background-color: @background-color-base;
+          border-bottom: 1px solid rgba(144, 144, 144, 0.6);
           cursor: pointer;
-          border-bottom: 1px solid rgba(144, 144, 144, .6);
         }
 
         .param-group-item-body {
           padding: 4px;
-          background-color: @background-color-base;
           overflow: hidden;
+          background-color: @background-color-base;
 
           .param-group-item-body-box {
-
             .param-line-row {
               padding: 0 4px;
               padding-bottom: 16px;
@@ -1713,29 +1700,29 @@
     .operation2-mask-body {
       position: absolute;
       top: 0;
+      right: 0;
       bottom: 41px;
       left: 0;
-      right: 0;
       z-index: 99;
-      background-color: rgba(144, 144, 144, .5);
+      background-color: rgba(144, 144, 144, 0.5);
     }
 
     .operation-footer {
+      gap: 24px;
       width: 100%;
       height: 41px;
       padding: 4px 12px;
-      gap: 24px;
       border-top: 1px solid #fff;
     }
   }
 }
 
 .statisticCharts {
+  flex-direction: column;
+  justify-content: center;
   width: 100%;
   height: 100%;
   padding: 12px;
-  flex-direction: column;
-  justify-content: center;
 
   :global {
     .statistic-title {
@@ -1745,7 +1732,8 @@
 
     .statistic-value {
       color: #000000d9;
-      font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, apple color emoji, segoe ui emoji, Segoe UI Symbol, noto color emoji;
+      font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,
+        Noto Sans, sans-serif, apple color emoji, segoe ui emoji, Segoe UI Symbol, noto color emoji;
     }
   }
 }
@@ -1755,7 +1743,7 @@
   height: 100%;
 
   :global {
-    //  
+    //
   }
 }
 
@@ -1771,19 +1759,19 @@
 }
 
 .imgButtonCharts {
+  gap: 1px;
   width: 100%;
   height: 100%;
   padding: 8px;
-  gap: 1px;
 
   :global {
     .img-button-box-item {
       flex-direction: column;
-      background-color: #fff;
       padding: 4px 12px;
       line-height: 24px;
-      cursor: pointer;
       white-space: nowrap;
+      background-color: #fff;
+      cursor: pointer;
 
       &:hover {
         background-color: rgba(234, 234, 234, 0.8);
@@ -1793,39 +1781,85 @@
 }
 
 .buttonImagesCharts {
+  flex-direction: column;
   width: 100%;
   height: 100%;
+  overflow: auto;
 
   :global {
+    .img-box-mark-top {
+      gap: 2px;
+      width: 100%;
+      height: 30px;
+      margin-bottom: 2px;
+
+      &-icon {
+        width: 45px;
+        min-width: 45px;
+        height: 100%;
+        padding: 0 4px;
+        font-size: 16px;
+        background: #fff;
+        border: 1px solid #d9d9d9;
+        cursor: pointer;
+      }
+
+      &-item {
+        flex: 1;
+        height: 100%;
+        padding: 0 4px;
+        background: #fff;
+        border: 1px solid #d9d9d9;
+      }
+    }
+
     .img-button-charts-body {
       width: 100%;
-      height: 100%;
-      padding: 8px;
-      overflow: auto;
+      height: calc(100% - 34px);
 
-      .img-button-item-line {
-        margin-bottom: 12px;
-        gap: 12px;
+      .img-box-mark-right {
+        flex: 1;
+        flex-direction: column;
+        height: 100%;
 
-        .img-button-item-box {
-          // box-shadow: 0 1px 2px 0 rgb(64 2 189 / 6%);
-          border-radius: 4px;
-          background-color: rgba(255, 255, 255, 0.4);
-          padding: 8px 0;
-          width: 75px;
-          min-width: 75px;
-          max-width: 75px;
-          text-align: center;
-          box-shadow: @box-shadow-base;
-          cursor: pointer;
+        .img-button-item-line {
+          gap: 2px;
+          width: 100%;
+          margin-bottom: 2px;
 
-          &:hover {
-            background-color: rgba(144, 144, 144, .6);
+          &-icon {
+            width: 45px;
+            min-width: 45px;
+            height: 100%;
+            padding: 0 4px;
+            background: #fff;
+            border: 1px solid #d9d9d9;
           }
-        }
 
-        .img-button-item-box-selected {
-          background-color: rgba(144, 144, 144, .6);
+          .img-button-item-box {
+            flex: 1;
+
+            &-item {
+              padding: 0.5px 8px 0.5px 8px;
+              overflow: hidden;
+              line-height: 1;
+              white-space: nowrap;
+              text-align: center;
+              text-overflow: ellipsis;
+              background-color: rgba(255, 255, 255, 0.4);
+              border-radius: 4px;
+              box-shadow: @box-shadow-base;
+              cursor: pointer;
+
+              &:hover {
+                background-color: rgba(144, 144, 144, 0.6) !important;
+              }
+            }
+          }
+
+          .img-button-item-box-selected {
+            background-color: rgba(144, 144, 144, 0.6);
+          }
         }
       }
     }

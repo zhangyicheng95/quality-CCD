@@ -8,12 +8,10 @@ import PlatFormModal from '@/components/platForm';
 import FileManager from '@/components/FileManager';
 import TooltipDiv from '@/components/TooltipDiv';
 import { btnFetch, updateParams } from '@/services/api';
-import { init } from '@umijs/deps/compiled/webpack';
 import Measurement from '@/components/Measurement';
 import SliderGroup from '@/components/SliderGroup';
-import { formatJson, guid } from '@/utils/utils';
+import { formatJson } from '@/utils/utils';
 import IpInput from '@/components/IpInputGroup';
-import Item from 'antd/lib/list/Item';
 import moment from 'moment';
 
 const FormItem = Form.Item;
@@ -28,7 +26,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     let { data = {}, id, started } = props;
     let {
         operationList = [], dataValue, xName = '', operationLock, fontSize,
-        ifUpdateProject, listType, blockType, blockTypeLines = 2
+        ifUpdateProject, ifFetch, listType, blockType, blockTypeLines = 2
     } = data;
     if (process.env.NODE_ENV === 'development') {
         started = true;
@@ -372,9 +370,14 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                 platFormVisible ? (
                     <PlatFormModal
                         visible={platFormVisible}
-                        data={platFormValue}
+                        data={{ ...platFormValue, ifFetch: false }}
                         onOk={(val: any) => {
                             const { id, ...rest } = val;
+                            if (!!ifFetch) {
+                                btnFetch('post', xName, rest.value).then((res) => {
+                                    console.log(res);
+                                });
+                            }
                             widgetChange(id, rest);
                             setPlatFormValue({});
                             setPlatFormVisible(false);

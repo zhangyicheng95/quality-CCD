@@ -70,6 +70,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   const [features, setFeatures] = useState([]);
 
   const initDom = () => {
+    console.log(data);
+
     img.current = new Image();
     if (process.env.NODE_ENV === 'development') {
       img.current.src = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
@@ -708,7 +710,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     }
   }
   useEffect(() => {
-    initDom();
+    // initDom();
 
     return () => {
       window.removeEventListener('keydown', onKeyDown);
@@ -938,7 +940,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     if (!!gFirstImageLayer?.current) {
       const feat = getFeatures;
       const pen = getRle;
-      console.log(feat());
       const zoom = gMap.current.zoom;
       const value = featureListRef.current || {};
       const data1 = ((feat && feat().map((item: any) => _.omit(item, 'layer'))) || [])

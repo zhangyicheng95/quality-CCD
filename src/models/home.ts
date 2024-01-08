@@ -153,7 +153,7 @@ export default {
           ...state,
           snapshot: {
             ...state.snapshot,
-            logStr: state.logData.join('<br/>'),
+            logStr: state.logData,
             historyData: state.historyData,
             gridContentList: state.gridContentList,
             footerData: state.footerData,
