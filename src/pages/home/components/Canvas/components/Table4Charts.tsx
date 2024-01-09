@@ -1,7 +1,6 @@
 import React, { useMemo, useRef } from 'react';
 import * as _ from 'lodash';
 import styles from '../index.module.less';
-import { useModel } from 'umi';
 import BasicTable from '@/components/BasicTable';
 
 interface Props {
@@ -80,21 +79,21 @@ const Table4Charts: React.FC<Props> = (props: any) => {
                 address: 'Sidney No. 1 Lake Park',
             },
         ];
-    }
-    const { initialState = {} } = useModel<any>('@@initialState');
-    const { params } = initialState;
+    };
+
     const domRef = useRef<any>(null);
     const columns: any = useMemo(() => {
         let result: any = [];
         if (!!dataValue?.[0] && !!Object.keys(dataValue?.[0])?.length) {
             let obj = Object.keys(_.omit(_.omit(dataValue?.[0], 'key'), 'children'));
             // obj = _.omit(_.omit(obj, 'children'), 'key')
-            obj.forEach((item: string) => {
+            obj.forEach((item: string, index: number) => {
                 if (_.isString(item)) {
                     result.push({
                         title: item,
                         dataIndex: item,
                         key: item,
+                        width: index === 0 ? '40%' : "30%"
                     });
                 }
             });
@@ -102,6 +101,22 @@ const Table4Charts: React.FC<Props> = (props: any) => {
 
         return result;
     }, [dataValue]);
+    const expandedRowKeys = useMemo(() => {
+        let result: any = [];
+        function func(obj: any) {
+            result.push(obj.key);
+            if (!!obj?.children?.length) {
+                (obj?.children || []).forEach((i: any) => {
+                    func(i);
+                });
+            }
+        };
+        (dataValue || []).forEach((i: any) => {
+            func(i);
+        });
+        return result;
+    }, [dataValue]);
+
     return (
         <div
             id={`echart-${id}`}
@@ -113,6 +128,7 @@ const Table4Charts: React.FC<Props> = (props: any) => {
                 columns={columns}
                 dataSource={dataValue}
                 defaultExpandAllRows={true}
+                defaultExpandedRowKeys={expandedRowKeys}
                 pagination={null}
             />
         </div>
