@@ -17,7 +17,7 @@ const Table4Charts: React.FC<Props> = (props: any) => {
     } = data;
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' && !!dataValue?.length) {
         dataValue = [
             {
                 key: 1,

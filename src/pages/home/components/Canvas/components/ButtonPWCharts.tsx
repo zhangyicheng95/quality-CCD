@@ -45,9 +45,9 @@ const ButtonPWCharts: React.FC<Props> = (props: any) => {
     return (
         <div
             id={`echart-${id}`}
-            className={`${styles.buttonCharts} flex-box`}
+            className={`${styles.buttonPWCharts} flex-box`}
         >
-            <Button type="primary" onClick={() => setPasswordVisible(true)}>{yName}</Button>
+            <Button style={{ height: '100%', width: '100%' }} type="primary" onClick={() => setPasswordVisible(true)}>{yName}</Button>
 
             {
                 // 密码框
