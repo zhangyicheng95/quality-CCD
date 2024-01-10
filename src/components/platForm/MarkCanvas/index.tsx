@@ -70,8 +70,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   const [features, setFeatures] = useState([]);
 
   const initDom = () => {
-    console.log(data);
-
     img.current = new Image();
     if (process.env.NODE_ENV === 'development') {
       img.current.src = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';

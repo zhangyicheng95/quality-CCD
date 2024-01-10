@@ -35,7 +35,7 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
             setValue(!!val ? JSON.stringify({ msg: val }) : '');
         }
     };
-    console.log(valueList);
+
     return (
         <div
             id={`echart-${id}`}

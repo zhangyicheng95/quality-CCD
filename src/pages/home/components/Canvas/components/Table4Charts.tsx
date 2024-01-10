@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as _ from 'lodash';
 import styles from '../index.module.less';
 import BasicTable from '@/components/BasicTable';
@@ -82,6 +82,7 @@ const Table4Charts: React.FC<Props> = (props: any) => {
     };
 
     const domRef = useRef<any>(null);
+    const [expandedRowKeys, setExpandedRowKeys] = useState([]);
     const columns: any = useMemo(() => {
         let result: any = [];
         if (!!dataValue?.[0] && !!Object.keys(dataValue?.[0])?.length) {
@@ -101,7 +102,7 @@ const Table4Charts: React.FC<Props> = (props: any) => {
 
         return result;
     }, [dataValue]);
-    const expandedRowKeys = useMemo(() => {
+    useEffect(() => {
         let result: any = [];
         function func(obj: any) {
             result.push(obj.key);
@@ -114,7 +115,7 @@ const Table4Charts: React.FC<Props> = (props: any) => {
         (dataValue || []).forEach((i: any) => {
             func(i);
         });
-        return result;
+        setExpandedRowKeys(result);
     }, [dataValue]);
 
     return (
@@ -127,8 +128,10 @@ const Table4Charts: React.FC<Props> = (props: any) => {
             <BasicTable
                 columns={columns}
                 dataSource={dataValue}
-                defaultExpandAllRows={true}
-                defaultExpandedRowKeys={expandedRowKeys}
+                expandedRowKeys={expandedRowKeys}
+                onExpandedRowsChange={(e: any) => {
+                    setExpandedRowKeys(e);
+                }}
                 pagination={null}
             />
         </div>

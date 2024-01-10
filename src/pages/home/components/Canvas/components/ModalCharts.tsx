@@ -32,7 +32,6 @@ const ModalCharts: React.FC<Props> = (props: any) => {
     }, [location.hash]);
 
     useEffect(() => {
-        console.log(dataValue)
         if (Object?.keys(dataValue)?.length && !ifCanEdit) {
             if (modalListRef.current[title]) {
                 modalListRef.current[title].update({
