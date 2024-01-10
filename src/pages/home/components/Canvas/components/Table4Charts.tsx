@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as _ from 'lodash';
 import styles from '../index.module.less';
 import BasicTable from '@/components/BasicTable';
+import { useModel } from 'umi';
 
 interface Props {
     data: any,
@@ -14,6 +15,8 @@ const Table4Charts: React.FC<Props> = (props: any) => {
     let {
         dataValue = [], fontSize,
     } = data;
+    const { initialState } = useModel<any>('@@initialState');
+    const { params } = initialState;
     if (process.env.NODE_ENV === 'development') {
         dataValue = [
             {
