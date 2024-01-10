@@ -115,6 +115,7 @@ const Table4Charts: React.FC<Props> = (props: any) => {
         (dataValue || []).forEach((i: any) => {
             func(i);
         });
+
         setExpandedRowKeys(result);
     }, [dataValue]);
 
@@ -128,6 +129,8 @@ const Table4Charts: React.FC<Props> = (props: any) => {
             <BasicTable
                 columns={columns}
                 dataSource={dataValue}
+                defaultExpandAllRows={true}
+                defaultExpandedRowKeys={expandedRowKeys}
                 expandedRowKeys={expandedRowKeys}
                 onExpandedRowsChange={(e: any) => {
                     setExpandedRowKeys(e);

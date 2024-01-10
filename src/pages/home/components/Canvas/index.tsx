@@ -2834,7 +2834,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name={`fetchType`}
                         label={"http类型"}
-                        rules={[{ required: true, message: 'http类型' }]}
+                        rules={[{ required: false, message: 'http类型' }]}
                       >
                         <Select
                           style={{ width: '100%' }}
@@ -2844,7 +2844,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name={`xName`}
                         label={"接口地址"}
-                        rules={[{ required: true, message: '接口地址' }]}
+                        rules={[{ required: false, message: '接口地址' }]}
                       >
                         <Input size='large' />
                       </Form.Item>
@@ -2930,7 +2930,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name={`fetchType`}
                         label={"http类型"}
-                        rules={[{ required: true, message: 'http类型' }]}
+                        rules={[{ required: false, message: 'http类型' }]}
                       >
                         <Select
                           style={{ width: '100%' }}
@@ -2940,7 +2940,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name={`xName`}
                         label={"接口地址"}
-                        rules={[{ required: true, message: '接口地址' }]}
+                        rules={[{ required: false, message: '接口地址' }]}
                       >
                         <Input size='large' />
                       </Form.Item>
@@ -3139,7 +3139,7 @@ const Home: React.FC<any> = (props: any) => {
                             <Form.Item
                               name={`fetchType`}
                               label={"http类型"}
-                              rules={[{ required: true, message: 'http类型' }]}
+                              rules={[{ required: false, message: 'http类型' }]}
                             >
                               <Select
                                 style={{ width: '100%' }}
@@ -3149,7 +3149,7 @@ const Home: React.FC<any> = (props: any) => {
                             <Form.Item
                               name={`xName`}
                               label={"接口地址"}
-                              rules={[{ required: true, message: '接口地址' }]}
+                              rules={[{ required: false, message: '接口地址' }]}
                             >
                               <Input size='large' />
                             </Form.Item>
@@ -3238,7 +3238,7 @@ const Home: React.FC<any> = (props: any) => {
                             <Form.Item
                               name={`xName`}
                               label={"接口地址"}
-                              rules={[{ required: true, message: '接口地址' }]}
+                              rules={[{ required: false, message: '接口地址' }]}
                             >
                               <Input size='large' />
                             </Form.Item>
@@ -3386,7 +3386,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name={`fetchType`}
                         label={"http类型"}
-                        rules={[{ required: true, message: 'http类型' }]}
+                        rules={[{ required: false, message: 'http类型' }]}
                       >
                         <Select
                           style={{ width: '100%' }}
@@ -3397,7 +3397,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name={`xName`}
                         label={"接口地址"}
-                        rules={[{ required: true, message: '接口地址' }]}
+                        rules={[{ required: false, message: '接口地址' }]}
                       >
                         <Input placeholder="接口地址" size='large' />
                       </Form.Item>

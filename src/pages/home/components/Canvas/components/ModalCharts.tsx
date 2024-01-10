@@ -33,7 +33,7 @@ const ModalCharts: React.FC<Props> = (props: any) => {
 
     useEffect(() => {
         if (Object?.keys(dataValue)?.length && !ifCanEdit) {
-            if (modalListRef.current[title]) {
+            if (!!modalListRef.current[title]) {
                 modalListRef.current[title].update({
                     ...dataValue,
                     content: <div>
@@ -100,7 +100,10 @@ const ModalCharts: React.FC<Props> = (props: any) => {
             okText: '确认',
             cancelText: '取消',
             onOk: (close) => {
-                modalListRef.current = _.omit(modalListRef.current, title);
+                modalListRef.current = {
+                    ...modalListRef.current,
+                    [title]: null
+                };
                 if (ifFetch) {
                     form.validateFields()
                         .then((values) => {
@@ -142,6 +145,13 @@ const ModalCharts: React.FC<Props> = (props: any) => {
                 } else {
                     close();
                 }
+            },
+            onCancel: (close) => {
+                modalListRef.current = {
+                    ...modalListRef.current,
+                    [title]: null
+                };
+                close();
             }
         });
     };
