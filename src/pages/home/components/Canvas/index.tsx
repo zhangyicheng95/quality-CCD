@@ -290,19 +290,14 @@ const Home: React.FC<any> = (props: any) => {
               setFieldsValue({ des_column: homeSettingData?.['slider-1']?.des_column || 1 });
               setHomeSettingVisible('slider-1');
             }}>
-              {/* <DragOutlined className='drag-item-content-mask-icon' /> */}
-              {
-                !!homeSettingVisible ?
-                  <Popconfirm
-                    title="确认删除监控窗口吗?"
-                    onConfirm={() => deleteBasic('slider-1')}
-                    okText="确认"
-                    cancelText="取消"
-                  >
-                    <DeleteOutlined className='drag-item-content-mask-icon' />
-                  </Popconfirm>
-                  : null
-              }
+              <Popconfirm
+                title="确认删除监控窗口吗?"
+                onConfirm={() => deleteBasic('slider-1')}
+                okText="确认"
+                cancelText="取消"
+              >
+                <DeleteOutlined className='drag-item-content-mask-icon' />
+              </Popconfirm>
             </div>
             : null
         }
@@ -439,19 +434,14 @@ const Home: React.FC<any> = (props: any) => {
               setFieldsValue({ fontSize: homeSettingData?.['slider-4']?.fontSize || 20 });
               setHomeSettingVisible('slider-4');
             }}>
-              {/* <DragOutlined className='drag-item-content-mask-icon' /> */}
-              {
-                !!homeSettingVisible ?
-                  <Popconfirm
-                    title="确认删除监控窗口吗?"
-                    onConfirm={() => deleteBasic('slider-4')}
-                    okText="确认"
-                    cancelText="取消"
-                  >
-                    <DeleteOutlined className='drag-item-content-mask-icon' />
-                  </Popconfirm>
-                  : null
-              }
+              <Popconfirm
+                title="确认删除监控窗口吗?"
+                onConfirm={() => deleteBasic('slider-4')}
+                okText="确认"
+                cancelText="取消"
+              >
+                <DeleteOutlined className='drag-item-content-mask-icon' />
+              </Popconfirm>
             </div>
             : null
         }
@@ -492,19 +482,14 @@ const Home: React.FC<any> = (props: any) => {
               setFieldsValue({ fontSize: homeSettingData?.['footer-1']?.fontSize || 14 });
               setHomeSettingVisible('footer-1');
             }}>
-              {/* <DragOutlined className='drag-item-content-mask-icon' /> */}
-              {
-                !!homeSettingVisible ?
-                  <Popconfirm
-                    title="确认删除监控窗口吗?"
-                    onConfirm={() => deleteBasic('footer-1')}
-                    okText="确认"
-                    cancelText="取消"
-                  >
-                    <DeleteOutlined className='drag-item-content-mask-icon' />
-                  </Popconfirm>
-                  : null
-              }
+              <Popconfirm
+                title="确认删除监控窗口吗?"
+                onConfirm={() => deleteBasic('footer-1')}
+                okText="确认"
+                cancelText="取消"
+              >
+                <DeleteOutlined className='drag-item-content-mask-icon' />
+              </Popconfirm>
             </div>
             : null
         }
@@ -561,19 +546,14 @@ const Home: React.FC<any> = (props: any) => {
               setFieldsValue({ fontSize: homeSettingData?.['error']?.fontSize || 20 });
               setHomeSettingVisible('footer-2');
             }}>
-              {/* <DragOutlined className='drag-item-content-mask-icon' /> */}
-              {
-                !!homeSettingVisible ?
-                  <Popconfirm
-                    title="确认删除监控窗口吗?"
-                    onConfirm={() => deleteBasic('footer-2')}
-                    okText="确认"
-                    cancelText="取消"
-                  >
-                    <DeleteOutlined className='drag-item-content-mask-icon' />
-                  </Popconfirm>
-                  : null
-              }
+              <Popconfirm
+                title="确认删除监控窗口吗?"
+                onConfirm={() => deleteBasic('footer-2')}
+                okText="确认"
+                cancelText="取消"
+              >
+                <DeleteOutlined className='drag-item-content-mask-icon' />
+              </Popconfirm>
             </div>
             : null
         }
@@ -1299,34 +1279,29 @@ const Home: React.FC<any> = (props: any) => {
                     setAddWindowVisible(key);
                   }}
                 >
-                  {/* <DragOutlined className='drag-item-content-mask-icon' /> */}
-                  {
-                    (addWindowVisible === key) ?
-                      <Popconfirm
-                        title="确认删除监控窗口吗?"
-                        onConfirm={() => {
-                          const result = addContentList?.filter((item: any) => item.id !== key);
-                          setAddContentList(result);
-                          dispatch({
-                            type: 'home/set',
-                            payload: {
-                              gridContentList: result,
-                            },
-                          });
-                          dispatch({ type: 'home/snapshot' });
-                          setParamData((prev: any) => Object.assign({}, prev, {
-                            contentData: Object.assign({}, prev.contentData, { content: result }),
-                          }));
-                          setAddWindowVisible("");
-                          setHomeSettingVisible("");
-                        }}
-                        okText="确认"
-                        cancelText="取消"
-                      >
-                        <DeleteOutlined className='drag-item-content-mask-icon' />
-                      </Popconfirm>
-                      : null
-                  }
+                  <Popconfirm
+                    title="确认删除监控窗口吗?"
+                    onConfirm={() => {
+                      const result = addContentList?.filter((item: any) => item.id !== key);
+                      setAddContentList(result);
+                      dispatch({
+                        type: 'home/set',
+                        payload: {
+                          gridContentList: result,
+                        },
+                      });
+                      dispatch({ type: 'home/snapshot' });
+                      setParamData((prev: any) => Object.assign({}, prev, {
+                        contentData: Object.assign({}, prev.contentData, { content: result }),
+                      }));
+                      setAddWindowVisible("");
+                      setHomeSettingVisible("");
+                    }}
+                    okText="确认"
+                    cancelText="取消"
+                  >
+                    <DeleteOutlined className='drag-item-content-mask-icon' />
+                  </Popconfirm>
                 </div>
                 : null
             }
