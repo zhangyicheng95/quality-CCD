@@ -85,7 +85,7 @@ const Table4Charts: React.FC<Props> = (props: any) => {
     };
 
     const domRef = useRef<any>(null);
-    const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+    const [expandedRowKeys, setExpandedRowKeys] = useState<any>([]);
     const columns: any = useMemo(() => {
         let result: any = [];
         if (!!dataValue?.[0] && !!Object.keys(dataValue?.[0])?.length) {
@@ -97,7 +97,7 @@ const Table4Charts: React.FC<Props> = (props: any) => {
                         title: item,
                         dataIndex: item,
                         key: item,
-                        width: index === 0 ? '40%' : "30%"
+                        width: index === 0 ? '46%' : "27%"
                     });
                 }
             });
@@ -106,20 +106,24 @@ const Table4Charts: React.FC<Props> = (props: any) => {
         return result;
     }, [dataValue]);
     useEffect(() => {
-        let result: any = [];
-        function func(obj: any) {
-            result.push(obj.key);
-            if (!!obj?.children?.length) {
-                (obj?.children || []).forEach((i: any) => {
-                    func(i);
-                });
-            }
-        };
-        (dataValue || []).forEach((i: any) => {
-            func(i);
-        });
+        if (!!localStorage.getItem(`table4-${params.id}-${id}`)) {
+            setExpandedRowKeys(JSON.parse(localStorage.getItem(`table4-${params.id}-${id}`) || "[]"));
+        } else {
+            let result: any = [];
+            function func(obj: any) {
+                result.push(obj.key);
+                if (!!obj?.children?.length) {
+                    (obj?.children || []).forEach((i: any) => {
+                        func(i);
+                    });
+                }
+            };
+            (dataValue || []).forEach((i: any) => {
+                func(i);
+            });
 
-        setExpandedRowKeys(result);
+            setExpandedRowKeys(result);
+        }
     }, [dataValue]);
 
     return (
@@ -136,7 +140,9 @@ const Table4Charts: React.FC<Props> = (props: any) => {
                 defaultExpandedRowKeys={expandedRowKeys}
                 expandedRowKeys={expandedRowKeys}
                 onExpandedRowsChange={(e: any) => {
-                    setExpandedRowKeys(e);
+                    const value = Array.from(new Set(e));
+                    localStorage.setItem(`table4-${params.id}-${id}`, JSON.stringify(value));
+                    setExpandedRowKeys(value);
                 }}
                 pagination={null}
             />

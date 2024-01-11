@@ -80,6 +80,7 @@ const Home: React.FC<any> = (props: any) => {
   const { type } = window.QUALITY_CCD_CONFIG;
   const ipString: any = localStorage.getItem('ipString') || '';
   const updateTimer = useRef<any>();
+  const logReloadTimer = useRef<any>();
   const [loading, setLoading] = useState(false);
   const [colorSelector, setColorSelector] = useState<any>({
     fontColor: '#FFFFFF',
@@ -1536,12 +1537,28 @@ const Home: React.FC<any> = (props: any) => {
       // dispatch({ type: 'home/set', payload: {started: true} });
       const logModal = gridHomeList?.filter((item: any) => item.i === 'footer-1')[0];
       // 没有日志窗口，就不开启日志的socket
-      if (!!logModal && logModal?.w) {
+      if (!!logModal && logModal?.w && logModal?.h) {
         socketLogListen.listen(dispatch, logThrottleAndMerge);
       }
       socketErrorListen.listen(dispatch, errorThrottleAndMerge);
       socketDataListen.listen(dispatch);
       socketStateListen.listen(dispatch);
+
+      // 一个小时自动重连日志socket
+      if (logReloadTimer.current) {
+        clearInterval(logReloadTimer.current);
+      };
+      logReloadTimer.current = setInterval(() => {
+        socketErrorListen.close(dispatch);
+        socketLogListen.close(dispatch);
+        setTimeout(() => {
+          if (!!logModal && logModal?.w && logModal?.h) {
+            socketLogListen.listen(dispatch, logThrottleAndMerge);
+          }
+          socketErrorListen.listen(dispatch, errorThrottleAndMerge);
+        }, 1000);
+      }, 1000 * 60 * 60);
+
     } else {
       onclose();
     }
