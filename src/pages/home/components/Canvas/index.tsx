@@ -679,7 +679,8 @@ const Home: React.FC<any> = (props: any) => {
       homeSetting = {
         "footer-1": { fontSize: 14 },
         "footer-2": { fontSize: 20 },
-      }
+      },
+      gridMargin
     } = contentData;
     const { nodes = [] } = flowData;
     const list = nodes?.map((node: any) => {
@@ -714,7 +715,14 @@ const Home: React.FC<any> = (props: any) => {
           contentSize: { width: 1600, height: 900 },
         })
       });
-    }
+    };
+    if (!gridMargin) {
+      newParams = Object.assign({}, newParams, {
+        contentData: Object.assign({}, newParams?.contentData, {
+          gridMargin: 8,
+        })
+      });
+    };
     // if (!_.isBoolean(contentData?.autoSize)) {
     //   newParams = Object.assign({}, newParams, {
     //     contentData: Object.assign({}, newParams?.contentData, {
@@ -1893,6 +1901,7 @@ const Home: React.FC<any> = (props: any) => {
                                 form.setFieldsValue({
                                   overallBackgroundColor: paramData?.contentData?.overallBackgroundColor?.rgb || 'default',
                                   autoSize: _.isBoolean(paramData?.contentData?.autoSize) ? paramData?.contentData?.autoSize : true,
+                                  gridMargin: paramData?.contentData?.gridMargin || 8
                                 });
                                 setAddWindowVisible('');
                                 setHomeSettingVisible('');
@@ -1980,6 +1989,7 @@ const Home: React.FC<any> = (props: any) => {
                                     list={gridList.concat(contentList)}
                                     layout={gridHomeList.concat(contentLayout)}
                                     tabLength={paramData?.contentData?.tabList?.length || 1}
+                                    margin={!!paramData?.contentData?.gridMargin ? [paramData?.contentData?.gridMargin, paramData?.contentData?.gridMargin] : [8, 8]}
                                     onChange={(data: any) => {
                                       saveGridFunc(data);
                                     }}
@@ -1994,6 +2004,7 @@ const Home: React.FC<any> = (props: any) => {
                       paramData?.contentData?.contentBackground,
                       paramData?.contentData?.contentSize, tabNum,
                       paramData?.contentData?.tabList?.length,
+                      paramData?.contentData?.gridMargin
                     ])
                   }
                   <div className="flex-box-center right-canvas-bottom-powerby">
@@ -2016,7 +2027,7 @@ const Home: React.FC<any> = (props: any) => {
                 } else if (!!homeSettingVisible) {
                   setHomeSettingData((prev: any) => ({ ...prev, [homeSettingVisible]: { ...prev?.[homeSettingVisible], ...values } }));
                 } else if (!!overallVisible) {
-                  const { canvasWidth = '', canvasHeight = '' } = values;
+                  const { canvasWidth = '', canvasHeight = '', gridMargin = 8 } = values;
                   updateParams({
                     id: paramData.id,
                     data: {
@@ -2028,7 +2039,7 @@ const Home: React.FC<any> = (props: any) => {
                         home: gridHomeList,
                         pageIconPosition,
                         homeSetting: homeSettingData,
-                        contentSize: Object.assign({}, paramData?.contentData?.contentSize, { width: Number(canvasWidth), height: Number(canvasHeight) })
+                        contentSize: Object.assign({}, paramData?.contentData?.contentSize, { width: Number(canvasWidth), height: Number(canvasHeight) }),
                       }
                     },
                   }).then((res: any) => {
@@ -3705,6 +3716,12 @@ const Home: React.FC<any> = (props: any) => {
                       rules={[{ required: false, message: '自适应尺寸' }]}
                     >
                       <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name="gridMargin"
+                      label="边距"
+                    >
+                      <InputNumber />
                     </Form.Item>
                     <Form.Item
                       label="标签页"

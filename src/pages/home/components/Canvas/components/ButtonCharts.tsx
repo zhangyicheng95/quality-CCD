@@ -21,8 +21,6 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
     const [valueList, setValueList] = useState<any>([]);
 
     useEffect(() => {
-        console.log(params?.id, id);
-        console.log(localStorage.getItem(`inputButton-${params.id}-${id}`));
         setValueList(JSON.parse(localStorage.getItem(`inputButton-${params.id}-${id}`) || "[]"));
     }, [localStorage.getItem(`inputButton-${params.id}-${id}`)]);
     const onChange = (val: any) => {
@@ -45,7 +43,6 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
         >
             <AutoComplete
                 options={(valueList || []).map((item: any) => {
-                    console.log(item);
                     return {
                         label: <div className='flex-box-justify-between' style={{ paddingRight: 8 }} key={item}>
                             {item}
