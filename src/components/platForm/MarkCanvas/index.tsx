@@ -146,7 +146,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             return;
           }
         };
-        console.log(gMap.current.zoom, dom?.current?.clientHeight, height);
         setGetDataFun((prev: any) => ({ ...prev, zoom: gMap.current.zoom }));
         const relatedTextId = `label-text-id-${+new Date()}`;
         const relatedDeleteMarkerId = `label-marker-id-${+new Date()}`;

@@ -35,6 +35,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
                     const { label, value, color } = item;
                     return <div
                         className="flex-box-center img-button-box-item"
+                        key={value}
                         style={!!color ? { backgroundColor: color } : {}}
                         onClick={() => {
                             setDefect(value);
