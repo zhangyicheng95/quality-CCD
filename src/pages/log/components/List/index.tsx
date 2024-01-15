@@ -33,7 +33,6 @@ const LogList: React.FC<any> = (props: any) => {
       return;
     }
     getLogService(ipString, params).then((res: any) => {
-      console.log(res);
       if (res && res.code === 'SUCCESS') {
         if (!!res?.data && !!res?.data?.length) {
           setLogStr(res?.data);
@@ -61,7 +60,6 @@ const LogList: React.FC<any> = (props: any) => {
             className="page-log-order-query"
             initialValues={{}}
             onFinish={(values) => {
-              console.log(values);
               const { timeRange, ...rest } = values;
               const result = Object.assign({}, params, rest, !!timeRange ? {
                 startTime: new Date(timeRange[0]).getTime(),

@@ -92,6 +92,8 @@ const Table3Charts: React.FC<Props> = (props: any) => {
     }
     const { initialState = {}, setInitialState } = useModel<any>('@@initialState');
     const { params } = initialState;
+    const { flowData, } = params;
+    const { nodes } = flowData;
     const domRef = useRef<any>(null);
     const [tabSelected, setTabSelected] = useState(0);
     const [tableSizeSelf, setTableSizeSelf] = useState(tableSize);
@@ -99,8 +101,8 @@ const Table3Charts: React.FC<Props> = (props: any) => {
 
     useEffect(() => {
         if (!_.isArray(dataValue)) {
-            message.error('通用表格组件数据格式不正确，请检查');
-            console.log('Table2Charts:', dataValue);
+            message.error('tab切换表格组件数据格式不正确，请检查');
+            console.log('Table3Charts:', dataValue);
             return;
         }
 
@@ -249,7 +251,8 @@ const Table3Charts: React.FC<Props> = (props: any) => {
                         (dataValue[tabSelected]?.children || []).map((item: any, index: number) => {
                             const { value = [], color } = item;
                             if (!_.isArray(value)) {
-                                message.error('推送信息错误，请检查', 5);
+                                const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
+                                message.error(`${node.name}（${node.id}）推送信息错误，请检查`, 5);
                                 return null;
                             }
                             return <div

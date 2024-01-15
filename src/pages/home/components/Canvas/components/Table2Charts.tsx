@@ -168,6 +168,8 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     }, [location.hash]);
     const { initialState, setInitialState } = useModel<any>('@@initialState');
     const { params } = initialState;
+    const { flowData, } = params;
+    const { nodes } = flowData;
     const domRef = useRef<any>(null);
     const [tableSizeSelf, setTableSizeSelf] = useState(tableSize);
     const [tableScroll, setTableScroll] = useState(false);
@@ -312,7 +314,8 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                         (dataValue || []).map((item: any, index: number) => {
                             const { value = [], color } = item;
                             if (!_.isArray(value)) {
-                                message.error('推送信息错误，请检查', 5);
+                                const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
+                                message.error(`${node.name}（${node.id}）推送信息错误，请检查`, 5);
                                 return null;
                             }
                             return <div

@@ -21,6 +21,8 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
     const [valueList, setValueList] = useState<any>([]);
 
     useEffect(() => {
+        console.log(params?.id, id);
+        console.log(localStorage.getItem(`inputButton-${params.id}-${id}`));
         setValueList(JSON.parse(localStorage.getItem(`inputButton-${params.id}-${id}`) || "[]"));
     }, [localStorage.getItem(`inputButton-${params.id}-${id}`)]);
     const onChange = (val: any) => {
@@ -43,8 +45,9 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
         >
             <AutoComplete
                 options={(valueList || []).map((item: any) => {
+                    console.log(item);
                     return {
-                        label: <div className='flex-box-justify-between' style={{ paddingRight: 8 }}>
+                        label: <div className='flex-box-justify-between' style={{ paddingRight: 8 }} key={item}>
                             {item}
                             <TooltipDiv onClick={(e: any) => {
                                 // 防止鼠标击穿
@@ -65,22 +68,25 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
                 onChange={(value: string) => onChange(value)}
             />
             <Button type="primary" onClick={() => {
-                let params: any = null;
+                let param1: any = null;
                 if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {
                     try {
-                        params = JSON.parse(value);
+                        param1 = JSON.parse(value);
                         setValueList((prev: any) => {
-                            const result = Array.from(new Set(prev.concat(value)));
+                            const result = !!param1?.msg ?
+                                Array.from(new Set(prev.concat(param1?.msg)))
+                                :
+                                Array.from(new Set(prev.concat(value)));
                             localStorage.setItem(`inputButton-${params.id}-${id}`, JSON.stringify(result));
                             return result;
                         });
                     } catch (e) {
                         console.log('参数按钮传递参数格式不对:', e);
                         message.error('传递参数 格式不正确');
-                        params = '';
+                        param1 = '';
                     }
                 }
-                btnFetch(fetchType, xName, params).then((res: any) => {
+                btnFetch(fetchType, xName, param1).then((res: any) => {
                     if (!!res && res.code === 'SUCCESS') {
                         message.success('success');
                     } else {

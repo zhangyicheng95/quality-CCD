@@ -146,6 +146,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             return;
           }
         };
+        console.log(gMap.current.zoom, dom?.current?.clientHeight, height);
         setGetDataFun((prev: any) => ({ ...prev, zoom: gMap.current.zoom }));
         const relatedTextId = `label-text-id-${+new Date()}`;
         const relatedDeleteMarkerId = `label-marker-id-${+new Date()}`;
@@ -174,7 +175,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         } else if (type === 'POINT') {
           const pointFeature = new AILabel.Feature.Point(
             `${+new Date()}`, // id
-            { ...data, sr: 3 }, // shape
+            { ...data, sr: 5 }, // shape
             { name: '点状矢量图层', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: inHome ? '' : 'label' }, // props
             drawingStyle.current // style
           );
@@ -339,7 +340,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             drawingStyle.current // style
           );
           gFirstFeatureLayer.current.addFeature(polygonFeature);
-          addFeatureText({ x: _.min(xList), y: _.min(yList) }, relatedTextId, '多边形');
+          addFeatureText({ x: _.min(xList), y: _.min(yList) }, relatedTextId, inHome ? '' : '多边形');
         } else if (type === 'DRAWMASK') {
           const scale = gMap.current.getScale();
           const width = drawingStyle.current.lineWidth / scale;
@@ -382,7 +383,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           const markerId = feature.props.deleteMarkerId;
           const directionMarkerId = feature.props.directionMarkerId;
           const textId = feature.props.textId;
-
           const mappedMarker = gMap.current.markerLayer.getMarkerById(markerId);
           if (mappedMarker) {
             return;
@@ -703,8 +703,10 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       gMap.current.addLayer(gFirstTextLayer.current);
 
       window.addEventListener('resize', () => gMap.current && gMap.current.resize());
-      window.addEventListener('keydown', onKeyDown);
-      window.addEventListener('keyup', onKeyup);
+      if (inHome) {
+        window.addEventListener('keydown', onKeyDown);
+        window.addEventListener('keyup', onKeyup);
+      }
     }
   }
   useEffect(() => {
@@ -1170,7 +1172,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         break;
       }
       case 'POLYLINE': {
-        drawingStyle.current = { strokeStyle: '#F00', lineJoin: 'round', lineCap: 'round', lineWidth: 10 }
+        drawingStyle.current = { strokeStyle: '#F00', lineJoin: 'round', lineCap: 'round', lineWidth: 1 }
         gMap.current.setDrawingStyle(drawingStyle.current);
         break;
       }
@@ -1326,6 +1328,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   // 关闭
   const onCancel = () => {
     setSelectedFeature(0);
+    form.setFieldsValue({ option_type: undefined });
     setSelectedOptionType({});
     resetFields();
   };
@@ -1360,6 +1363,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           >
             <div className="img-icon-circle" />
           </div>
+          {/* <BorderOutlined
+            className={`img-icon flex-box-center ${['POLYLINE', 'polyline'].includes(selectedBtn) ? "selected" : ''}`}
+            onClick={() => setMode('POLYLINE')}
+            onDoubleClick={() => setMode('polyline')}
+          /> */}
           <BorderOutlined
             className={`img-icon flex-box-center ${['RECT', 'rect'].includes(selectedBtn) ? "selected" : ''}`}
             onClick={() => setMode('RECT')}
@@ -1514,6 +1522,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           (
                             !!featureList?.[selectedFeature] ?
                               Object.entries(featureList?.[selectedFeature])?.map((item: any) => {
+                                console.log(item)
                                 if (item[0] === 'roi') {
                                   const feature = gFirstFeatureLayer.current.getFeatureById(selectedFeature);
                                   const { type } = feature;
@@ -1597,7 +1606,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                   config={item}
                                   form={form}
                                   disabled={false}
-                                  display={['POINT', 'LINE'].includes(feature?.type)}
+                                // display={['POINT', 'LINE'].includes(feature?.type)}
                                 />
                               })
                               :
@@ -1605,6 +1614,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           )
                           :
                           Object.entries(selectedOptionType)?.map((item: any) => {
+                            console.log(item)
                             if (item[0] === 'roi') {
                               let value = {};
                               if (!_.isEmpty(item[1])) {
@@ -1687,7 +1697,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                               config={item}
                               form={form}
                               disabled={false}
-                              display={['POINT', 'LINE'].includes(feature?.type)}
+                            // display={['POINT', 'LINE'].includes(feature?.type)}
                             />
                           })
                       }

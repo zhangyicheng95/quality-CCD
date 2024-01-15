@@ -19,7 +19,7 @@ const ModalCharts: React.FC<Props> = (props: any) => {
     if (process.env.NODE_ENV === 'development') {
         // dataValue = { type: 'success', title: '我是标题', content: '内容啊啊啊啊啊啊' }
     };
-    const { type = '', title = '', content = '' } = dataValue;
+    const { type = '', title = '', content = '', action = '' } = dataValue;
     const modalListRef = useRef<any>({
         success: null,
         warning: null,
@@ -33,36 +33,46 @@ const ModalCharts: React.FC<Props> = (props: any) => {
 
     useEffect(() => {
         if (Object?.keys(dataValue)?.length && !ifCanEdit) {
-            if (!!modalListRef.current[title]) {
-                modalListRef.current[title].update({
-                    ...dataValue,
-                    content: <div>
-                        {content}
-                        {
-                            ifFetchParams ?
-                                <div style={{ width: "60%", marginTop: 24 }}>
-                                    <Form form={form} scrollToFirstError>
-                                        <Form.Item
-                                            name={`fetchParams`}
-                                            label={"传递参数"}
-                                            rules={[{ required: false, message: '传递参数' }]}
-                                        >
-                                            <Input.TextArea
-                                                size='large'
-                                                autoSize={{ minRows: 6, maxRows: 10 }}
-                                            />
-                                        </Form.Item>
-                                    </Form>
-                                </div>
-                                : null
-                        }
-                    </div>
-                });
+            if (action !== 'close') {
+                if (!!modalListRef.current[title]) {
+                    modalListRef.current[title].update({
+                        ...dataValue,
+                        content: <div>
+                            {content}
+                            {
+                                ifFetchParams ?
+                                    <div style={{ width: "60%", marginTop: 24 }}>
+                                        <Form form={form} scrollToFirstError>
+                                            <Form.Item
+                                                name={`fetchParams`}
+                                                label={"传递参数"}
+                                                rules={[{ required: false, message: '传递参数' }]}
+                                            >
+                                                <Input.TextArea
+                                                    size='large'
+                                                    autoSize={{ minRows: 6, maxRows: 10 }}
+                                                />
+                                            </Form.Item>
+                                        </Form>
+                                    </div>
+                                    : null
+                            }
+                        </div>
+                    });
+                } else {
+                    modalListRef.current = {
+                        ...modalListRef.current,
+                        [title]: confirm()
+                    };
+                }
             } else {
-                modalListRef.current = {
-                    ...modalListRef.current,
-                    [title]: confirm()
-                };
+                if (!!modalListRef.current[title]) {
+                    modalListRef.current[title]?.destroy?.();
+                    modalListRef.current = {
+                        ...modalListRef.current,
+                        [title]: null
+                    };
+                }
             }
         }
     }, [dataValue]);
