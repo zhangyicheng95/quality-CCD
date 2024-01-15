@@ -12,7 +12,10 @@ interface Props {
 
 const ButtonPWCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { yName = '按钮', xName = '', fetchType, fetchParams = undefined, password, passwordHelp } = data;
+    const {
+        yName = '按钮', xName = '', fetchType, fetchParams = undefined, password, passwordHelp,
+        valueColor = 'primary'
+    } = data;
     const [form] = Form.useForm();
     const { validateFields, } = form;
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -47,7 +50,14 @@ const ButtonPWCharts: React.FC<Props> = (props: any) => {
             id={`echart-${id}`}
             className={`${styles.buttonPWCharts} flex-box`}
         >
-            <Button style={{ height: '100%', width: '100%' }} type="primary" onClick={() => setPasswordVisible(true)}>{yName}</Button>
+            <Button
+                type={['primary', 'link', 'ghost'].includes(valueColor) ? valueColor : ''}
+                style={Object.assign({},
+                    { height: '100%', width: '100%' },
+                    !['primary', 'link', 'ghost'].includes(valueColor) ? { backgroundColor: valueColor } : {}
+                )}
+                onClick={() => setPasswordVisible(true)}
+            >{yName}</Button>
 
             {
                 // 密码框

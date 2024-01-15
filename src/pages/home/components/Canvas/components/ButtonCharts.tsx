@@ -14,7 +14,7 @@ interface Props {
 
 const ButtonCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { yName = '按钮', xName = '', fetchType, ifNeedClear } = data;
+    const { yName = '按钮', xName = '', fetchType, ifNeedClear, valueColor = 'primary' } = data;
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const [value, setValue] = useState('');
@@ -64,33 +64,38 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
                 showSearch
                 onChange={(value: string) => onChange(value)}
             />
-            <Button type="primary" onClick={() => {
-                let param1: any = null;
-                if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {
-                    try {
-                        param1 = JSON.parse(value);
-                        setValueList((prev: any) => {
-                            const result = !!param1?.msg ?
-                                Array.from(new Set(prev.concat(param1?.msg)))
-                                :
-                                Array.from(new Set(prev.concat(value)));
-                            localStorage.setItem(`inputButton-${params.id}-${id}`, JSON.stringify(result));
-                            return result;
-                        });
-                    } catch (e) {
-                        console.log('参数按钮传递参数格式不对:', e);
-                        message.error('传递参数 格式不正确');
-                        param1 = '';
+            <Button
+                type={['primary', 'link', 'ghost'].includes(valueColor) ? valueColor : ''}
+                style={Object.assign({},
+                    !['primary', 'link', 'ghost'].includes(valueColor) ? { backgroundColor: valueColor } : {}
+                )}
+                onClick={() => {
+                    let param1: any = null;
+                    if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {
+                        try {
+                            param1 = JSON.parse(value);
+                            setValueList((prev: any) => {
+                                const result = !!param1?.msg ?
+                                    Array.from(new Set(prev.concat(param1?.msg)))
+                                    :
+                                    Array.from(new Set(prev.concat(value)));
+                                localStorage.setItem(`inputButton-${params.id}-${id}`, JSON.stringify(result));
+                                return result;
+                            });
+                        } catch (e) {
+                            console.log('参数按钮传递参数格式不对:', e);
+                            message.error('传递参数 格式不正确');
+                            param1 = '';
+                        }
                     }
-                }
-                btnFetch(fetchType, xName, param1).then((res: any) => {
-                    if (!!res && res.code === 'SUCCESS') {
-                        message.success('success');
-                    } else {
-                        message.error(res?.message || '接口异常');
-                    }
-                });
-            }}>{yName}</Button>
+                    btnFetch(fetchType, xName, param1).then((res: any) => {
+                        if (!!res && res.code === 'SUCCESS') {
+                            message.success('success');
+                        } else {
+                            message.error(res?.message || '接口异常');
+                        }
+                    });
+                }}>{yName}</Button>
             {
                 (!!value && ifNeedClear) ?
                     <Button onClick={() => {

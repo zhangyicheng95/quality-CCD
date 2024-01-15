@@ -1522,7 +1522,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           (
                             !!featureList?.[selectedFeature] ?
                               Object.entries(featureList?.[selectedFeature])?.map((item: any) => {
-                                console.log(item)
                                 if (item[0] === 'roi') {
                                   const feature = gFirstFeatureLayer.current.getFeatureById(selectedFeature);
                                   const { type } = feature;
@@ -1614,7 +1613,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           )
                           :
                           Object.entries(selectedOptionType)?.map((item: any) => {
-                            console.log(item)
                             if (item[0] === 'roi') {
                               let value = {};
                               if (!_.isEmpty(item[1])) {

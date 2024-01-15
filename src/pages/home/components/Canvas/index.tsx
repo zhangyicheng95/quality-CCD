@@ -1067,9 +1067,12 @@ const Home: React.FC<any> = (props: any) => {
                                                 :
                                                 type === 'button' ?
                                                   <Button
-                                                    type={valueColor || 'primary'}
+                                                    type={['primary', 'link', 'ghost'].includes(valueColor) ? valueColor : ''}
                                                     id={key}
-                                                    style={{ height: '100%', width: '100%' }}
+                                                    style={Object.assign({},
+                                                      { height: '100%', width: '100%' },
+                                                      !['primary', 'link', 'ghost'].includes(valueColor) ? { backgroundColor: valueColor } : {}
+                                                    )}
                                                     onClick={() => {
                                                       const func = () => {
                                                         let params = '';
@@ -1112,7 +1115,7 @@ const Home: React.FC<any> = (props: any) => {
                                                     <ButtonCharts
                                                       id={key}
                                                       data={{
-                                                        yName, xName, fetchType, ifNeedClear
+                                                        yName, xName, fetchType, ifNeedClear, valueColor
                                                       }}
                                                     />
                                                     :
@@ -1121,7 +1124,7 @@ const Home: React.FC<any> = (props: any) => {
                                                         id={key}
                                                         data={{
                                                           yName, xName, fetchType, password, passwordHelp,
-                                                          fetchParams
+                                                          fetchParams, valueColor
                                                         }}
                                                       />
                                                       :
@@ -2855,42 +2858,6 @@ const Home: React.FC<any> = (props: any) => {
                         ['button'].includes(windowType) ?
                           <Fragment>
                             <Form.Item
-                              name={`valueColor`}
-                              label={'按钮颜色'}
-                              initialValue={"primary"}
-                              rules={[{ required: false, message: '按钮颜色' }]}
-                            >
-                              <Select
-                                style={{ width: '100%' }}
-                                options={[
-                                  {
-                                    value: 'default',
-                                    label: '默认',
-                                  },
-                                  {
-                                    value: 'primary',
-                                    label: '主按钮',
-                                  },
-                                  {
-                                    value: 'ghost',
-                                    label: '透明按钮',
-                                  },
-                                  {
-                                    value: 'dashed',
-                                    label: '虚线按钮',
-                                  },
-                                  {
-                                    value: 'link',
-                                    label: '链接按钮',
-                                  },
-                                  {
-                                    value: 'text',
-                                    label: '文本按钮',
-                                  }
-                                ]}
-                              />
-                            </Form.Item>
-                            <Form.Item
                               name={`fetchParams`}
                               label={"传递参数"}
                               rules={[{ required: false, message: '传递参数' }]}
@@ -2970,6 +2937,48 @@ const Home: React.FC<any> = (props: any) => {
                         rules={[{ required: false, message: '密码提示' }]}
                       >
                         <Input size='large' />
+                      </Form.Item>
+                    </Fragment>
+                    : null
+                }
+                {
+                  ['button', 'buttonPassword', 'buttonInp'].includes(windowType) ?
+                    <Fragment>
+                      <Form.Item
+                        name={`valueColor`}
+                        label={'按钮颜色'}
+                        initialValue={"primary"}
+                        rules={[{ required: false, message: '按钮颜色' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: 'primary',
+                              label: '默认',
+                            },
+                            {
+                              value: 'link',
+                              label: '链接按钮',
+                            },
+                            {
+                              value: 'ghost',
+                              label: '透明按钮',
+                            },
+                            {
+                              value: 'rgba(255,107,104,1)',
+                              label: '红色',
+                            },
+                            {
+                              value: '#52c41a',
+                              label: '绿色',
+                            },
+                            {
+                              value: 'rgba(245,160,49,1)',
+                              label: '黄色',
+                            }
+                          ]}
+                        />
                       </Form.Item>
                     </Fragment>
                     : null
