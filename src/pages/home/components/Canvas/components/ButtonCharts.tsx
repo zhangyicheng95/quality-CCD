@@ -67,7 +67,7 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
             <Button
                 type={['primary', 'link', 'ghost'].includes(valueColor) ? valueColor : ''}
                 style={Object.assign({},
-                    !['primary', 'link', 'ghost'].includes(valueColor) ? { backgroundColor: valueColor } : {}
+                    !['primary', 'link', 'ghost'].includes(valueColor) ? { backgroundColor: valueColor, color: '#fff' } : {}
                 )}
                 onClick={() => {
                     let param1: any = null;

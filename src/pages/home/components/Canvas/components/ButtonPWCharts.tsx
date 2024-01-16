@@ -54,7 +54,7 @@ const ButtonPWCharts: React.FC<Props> = (props: any) => {
                 type={['primary', 'link', 'ghost'].includes(valueColor) ? valueColor : ''}
                 style={Object.assign({},
                     { height: '100%', width: '100%' },
-                    !['primary', 'link', 'ghost'].includes(valueColor) ? { backgroundColor: valueColor } : {}
+                    !['primary', 'link', 'ghost'].includes(valueColor) ? { backgroundColor: valueColor, color: '#fff' } : {}
                 )}
                 onClick={() => setPasswordVisible(true)}
             >{yName}</Button>

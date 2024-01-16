@@ -888,6 +888,7 @@ const Home: React.FC<any> = (props: any) => {
           ifUpdateProject, magnifierSize, listType, valueColor, markNumber,
           markNumberLeft, markNumberTop, blockType, blockTypeLines, modelUpload,
           xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
+          ifImgList, lineNumber, columnNumber
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1071,7 +1072,7 @@ const Home: React.FC<any> = (props: any) => {
                                                     id={key}
                                                     style={Object.assign({},
                                                       { height: '100%', width: '100%' },
-                                                      !['primary', 'link', 'ghost'].includes(valueColor) ? { backgroundColor: valueColor } : {}
+                                                      !['primary', 'link', 'ghost'].includes(valueColor) ? { backgroundColor: valueColor, color: '#fff' } : {}
                                                     )}
                                                     onClick={() => {
                                                       const func = () => {
@@ -1180,7 +1181,8 @@ const Home: React.FC<any> = (props: any) => {
                                                                   <ButtonImagesCharts
                                                                     id={key}
                                                                     data={{
-                                                                      dataValue, fontSize, reverse,
+                                                                      dataValue, fontSize, reverse, modelRotateScreenshot,
+                                                                      fetchType, xName
                                                                     }}
                                                                   />
                                                                   :
@@ -1198,7 +1200,8 @@ const Home: React.FC<any> = (props: any) => {
                                                                       data={{
                                                                         defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
                                                                         dataValue, markNumber, markNumberLeft, markNumberTop,
-                                                                        magnifier, comparison, magnifierSize, ifShowHeader
+                                                                        magnifier, comparison, magnifierSize, ifShowHeader,
+                                                                        ifImgList, lineNumber, columnNumber
                                                                       }}
                                                                     />
                 }
@@ -1566,7 +1569,7 @@ const Home: React.FC<any> = (props: any) => {
       headerBackgroundColor = 'default', ifNeedClear, operationLock, ifUpdateProject,
       magnifierSize, logSize, listType, valueColor, markNumber = false, markNumberLeft, markNumberTop,
       blockType, blockTypeLines, modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams,
-      ifNeedAllow
+      ifNeedAllow, ifImgList, lineNumber, columnNumber
     } = values;
     if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
       try {
@@ -1599,7 +1602,7 @@ const Home: React.FC<any> = (props: any) => {
         ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
         valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
         modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
-
+        ifImgList, lineNumber, columnNumber
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1620,6 +1623,7 @@ const Home: React.FC<any> = (props: any) => {
             ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
             valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
             modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
+            ifImgList, lineNumber, columnNumber
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -1651,7 +1655,7 @@ const Home: React.FC<any> = (props: any) => {
       headerBackgroundColor: 'default', ifNeedClear: false, operationLock: false, ifUpdateProject: false,
       magnifierSize: 4, logSize: 50, listType: 'line', markNumber: false, markNumberLeft: 1, markNumberTop: 1,
       blockType: 'normal', blockTypeLines: 2, modelUpload: false, xColumns: undefined, yColumns: undefined,
-      platFormOptions: undefined, ifFetchParams: false, ifNeedAllow: false,
+      platFormOptions: undefined, ifFetchParams: false, ifNeedAllow: false, ifImgList: false, lineNumber: 1, columnNumber: 1
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -2277,6 +2281,39 @@ const Home: React.FC<any> = (props: any) => {
                               <InputNumber
                                 min={1}
                                 placeholder="左侧图示长度"
+                              />
+                            </Form.Item>
+                          </Fragment>
+                          : null
+                      }
+                      <Form.Item
+                        name="ifImgList"
+                        label="列表展示"
+                        valuePropName="checked"
+                      >
+                        <Switch />
+                      </Form.Item>
+                      {
+                        !!form.getFieldValue('ifImgList') ?
+                          <Fragment>
+                            <Form.Item
+                              name="lineNumber"
+                              label="行数"
+                              rules={[{ required: true, message: '行数' }]}
+                            >
+                              <InputNumber
+                                min={1}
+                                placeholder=""
+                              />
+                            </Form.Item>
+                            <Form.Item
+                              name="columnNumber"
+                              label="列数"
+                              rules={[{ required: true, message: '列数' }]}
+                            >
+                              <InputNumber
+                                min={1}
+                                placeholder=""
                               />
                             </Form.Item>
                           </Fragment>
@@ -3289,7 +3326,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name={`yName`}
                         label={"标题名称"}
-                        rules={[{ required: true, message: '标题名称' }]}
+                        rules={[{ required: false, message: '标题名称' }]}
                       >
                         <Input size='large' />
                       </Form.Item>
@@ -3616,6 +3653,39 @@ const Home: React.FC<any> = (props: any) => {
                       >
                         <Switch />
                       </Form.Item>
+                      <Form.Item
+                        name="modelRotateScreenshot"
+                        label="开启自动截图"
+                        initialValue={false}
+                        valuePropName="checked"
+                      >
+                        <Switch />
+                      </Form.Item>
+                      {
+                        (!!form.getFieldValue('modelRotateScreenshot') || !!form.getFieldValue('modelUpload')) ?
+                          <Fragment>
+                            <Form.Item
+                              name={`fetchType`}
+                              label={"http类型"}
+                              initialValue="post"
+                              rules={[{ required: false, message: 'http类型' }]}
+                            >
+                              <Select
+                                style={{ width: '100%' }}
+                                options={['get', 'post', 'put', 'delete'].map((item: any) => ({ value: item, label: _.toUpper(item) }))}
+                              />
+                            </Form.Item>
+                            <Form.Item
+                              name={`xName`}
+                              label={"接口地址"}
+                              initialValue={"http://127.0.0.1:8888/upload"}
+                              rules={[{ required: false, message: '接口地址' }]}
+                            >
+                              <Input size='large' />
+                            </Form.Item>
+                          </Fragment>
+                          : null
+                      }
                     </Fragment>
                     : null
                 }

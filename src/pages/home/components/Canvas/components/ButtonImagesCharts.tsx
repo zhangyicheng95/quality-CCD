@@ -6,6 +6,7 @@ import { Modal, Image, message } from 'antd';
 import TooltipDiv from '@/components/TooltipDiv';
 import { DownloadOutlined } from '@ant-design/icons';
 import html2canvas from 'html2canvas';
+import { btnFetch } from '@/services/api';
 
 interface Props {
     data: any;
@@ -15,7 +16,10 @@ interface Props {
 
 const ButtonImagesCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id } = props;
-    let { dataValue = [], fontSize = 12, reverse, transformSize } = data;
+    let {
+        dataValue = [], fontSize = 12, reverse, transformSize, modelRotateScreenshot,
+        fetchType, xName
+    } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = [
             [
@@ -2038,7 +2042,9 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
 
     useEffect(() => {
         if (!!dataValue?.ifOK) {
-            downLoad();
+            setTimeout(() => {
+                downLoad();
+            }, 500);
         }
     }, [dataValue?.ifOK]);
 
@@ -2055,6 +2061,16 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
             link.download = `output.png`;
             link.click();
             downDom.current.style['opacity'] = 1;
+            if (modelRotateScreenshot) {
+                const base64 = imageDataURL.split('data:image/png;base64,')[1];
+                btnFetch(fetchType, xName, { image: encodeURIComponent(base64) }, { headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then((res: any) => {
+                    if (res && res.code === 'SUCCESS') {
+                        message.success('success');
+                    } else {
+                        message.error("截图上传时，接口报错", 5);
+                    }
+                });
+            }
         });
     }
     return (

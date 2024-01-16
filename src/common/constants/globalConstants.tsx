@@ -150,7 +150,7 @@ export const windowTypeList: any = [
   },
   {
     value: 'statistic',
-    label: '统计数据窗口',
+    label: '文本展示窗口',
     icon: statisticIcon,
   },
   {

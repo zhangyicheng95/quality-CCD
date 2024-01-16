@@ -21,7 +21,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     let {
         defaultImg, dataValue = '', magnifier = false,
         comparison, magnifierSize = 4, markNumber, markNumberLeft = 6, markNumberTop = 24,
-        ifShowHeader,
+        ifShowHeader, ifImgList, lineNumber = 1, columnNumber = 1
     } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
@@ -220,17 +220,18 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                         </div>
                         : null
                 }
-                <div className="flex-box-center img-box-mark-right" style={markNumber ? { width: 'calc(100% - 20px)' } : { width: '100%' }}>
+                <div className={`${columnNumber > 1 ? 'flex-box-start' : 'flex-box-center'} img-box-mark-right`} style={markNumber ? { width: 'calc(100% - 20px)' } : { width: '100%' }}>
                     {
                         (!!dataValue || !!defaultImg) ?
                             <Fragment>
                                 {
                                     (magnifier || magnifierVisible) ?
-                                        <div className="img-box" style={
+                                        <div className="img-box" style={Object.assign({},
                                             chartSize ?
                                                 { width: '100%', height: 'auto' } :
-                                                { width: 'auto', height: '100%' }
-                                        }>
+                                                { width: 'auto', height: '100%' },
+                                            !!ifImgList ? { width: `${100 / columnNumber}%` } : {}
+                                        )}>
                                             <div
                                                 className="ant-image-mask"
                                                 style={
@@ -252,11 +253,12 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                             <div className="mask" />
                                         </div>
                                         :
-                                        <div className="img-box" style={
+                                        <div className="img-box" style={Object.assign({},
                                             chartSize ?
                                                 { width: '100%', height: 'auto' } :
-                                                { width: 'auto', height: '100%' }
-                                        }>
+                                                { width: 'auto', height: '100%' },
+                                            !!ifImgList ? { width: `${100 / columnNumber}%` } : {}
+                                        )}>
                                             <Image
                                                 src={dataValue || defaultImg}
                                                 alt="logo"
