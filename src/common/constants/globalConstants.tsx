@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import imgIcon from '@/assets/dashboard-imgs/img.png';
+import alertImgIcon from '@/assets/dashboard-imgs/alert-img.png';
 import imgsIcon from '@/assets/dashboard-imgs/imgs.png';
 import lineIcon from '@/assets/dashboard-imgs/line.png';
 import pointIcon from '@/assets/dashboard-imgs/point.png';
@@ -47,6 +48,11 @@ export const windowTypeList: any = [
     value: 'img',
     label: '图片窗口',
     icon: imgIcon,
+  },
+  {
+    value: 'alertImg',
+    label: '图片监视器窗口',
+    icon: alertImgIcon,
   },
   {
     value: 'imgs',

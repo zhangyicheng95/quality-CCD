@@ -21,15 +21,16 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     let {
         defaultImg, dataValue = '', magnifier = false,
         comparison, magnifierSize = 4, markNumber, markNumberLeft = 6, markNumberTop = 24,
-        ifShowHeader, ifImgList, lineNumber = 1, columnNumber = 1
+        ifShowHeader,
     } = data;
+
     if (process.env.NODE_ENV === 'development') {
-        dataValue = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
+        // dataValue = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
     }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
+    const urlList = useRef<any>([]);
     const [chartSize, setChartSize] = useState(false);
-    const [urlList, setUrlList] = useState<any>([]);
     const [selectedNum, setSelectedNum] = useState(0);
     const [imgVisible, setImgVisible] = useState(false);
     const [visibleDirection, setVisibleDirection] = useState<any>('column');
@@ -40,7 +41,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     useLayoutEffect(() => {
         try {
             const list = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || "[]");
-            setUrlList(list);
+            urlList.current = list;
         } catch (err) {
             console.log(err);
         }
@@ -63,23 +64,33 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             console.log('ImgCharts:', dataValue);
             return;
         }
+        const localhostList = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || "[]");
+        if (!dataValue) {
+            dataValue = localhostList?.[localhostList?.length - 1] || '';
+        }
+        let list = Array.from(new Set(urlList.current.concat(dataValue)));
+        localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
+        setSelectedNum(list?.length - 1);
+        urlList.current = list.slice(list.length - 100);
+
+    }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight, comparison]);
+    useEffect(() => {
         let img: any = document.createElement('img');
-        img.src = dataValue;
+        img.src = urlList.current?.[selectedNum];
         img.title = 'img.png';
         img.onload = (res: any) => {
             const { width = 1, height = 1 } = img;
             setChartSize((width / height) > (dom?.current?.clientWidth / dom?.current?.clientHeight));
             img = null;
         };
-        setUrlList((pre: any) => {
-            let list = Array.from(new Set(pre.concat(dataValue)));
-            localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
-            return list.slice(list.length - 99);
-        });
-    }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight, comparison]);
+    }, [selectedNum]);
     useEffect(() => {
         if (!magnifier && !magnifierVisible) {
             return;
+        }
+        if (!dataValue) {
+            const list = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || "[]");
+            dataValue = list?.[list?.length - 1] || '';
         }
         const size = magnifierSize || 4;
         const eventDom: any = dom.current.querySelector('.ant-image-mask');
@@ -125,10 +136,10 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                 document.body.appendChild(bigDom);
                 imgDom = document.createElement('img');
                 imgDom.id = `img-charts-bigImg-${id}`;
-                imgDom.src = dataValue;
+                imgDom.src = urlList.current?.[selectedNum] || dataValue || defaultImg;
                 bigDom.appendChild(imgDom);
             } else {
-                imgDom.src = dataValue;
+                imgDom.src = urlList.current?.[selectedNum] || dataValue || defaultImg;
                 bigDom.style.display = 'block';
             }
 
@@ -198,7 +209,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                     <div className="flex-box img-box-mark-top">
                         {
                             Array.from({ length: markNumberTop || 24 }).map((item: any, index: number) => {
-                                return <div className="flex-box-center img-box-mark-item" key={index}>
+                                return <div className="flex-box-center img-box-mark-item" key={`img-box-mark-top-${index}`}>
                                     {index + 1}
                                 </div>
                             })
@@ -212,7 +223,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                         <div className="flex-box img-box-mark-left">
                             {
                                 Array.from({ length: markNumberLeft || 6 }).map((item: any, index: number) => {
-                                    return <div className="flex-box-center img-box-mark-item" key={index}>
+                                    return <div className="flex-box-center img-box-mark-item" key={`img-box-mark-left-${index}`}>
                                         {numToString(index + 1)}
                                     </div>
                                 })
@@ -220,7 +231,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                         </div>
                         : null
                 }
-                <div className={`${columnNumber > 1 ? 'flex-box-start' : 'flex-box-center'} img-box-mark-right`} style={markNumber ? { width: 'calc(100% - 20px)' } : { width: '100%' }}>
+                <div className={`flex-box-center img-box-mark-right`} style={markNumber ? { width: 'calc(100% - 20px)' } : { width: '100%' }}>
                     {
                         (!!dataValue || !!defaultImg) ?
                             <Fragment>
@@ -230,7 +241,6 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                             chartSize ?
                                                 { width: '100%', height: 'auto' } :
                                                 { width: 'auto', height: '100%' },
-                                            !!ifImgList ? { width: `${100 / columnNumber}%` } : {}
                                         )}>
                                             <div
                                                 className="ant-image-mask"
@@ -241,7 +251,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                                 }
                                             />
                                             <Image
-                                                src={dataValue || defaultImg}
+                                                src={urlList.current?.[selectedNum] || dataValue || defaultImg}
                                                 alt="logo"
                                                 style={
                                                     chartSize ?
@@ -257,10 +267,9 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                             chartSize ?
                                                 { width: '100%', height: 'auto' } :
                                                 { width: 'auto', height: '100%' },
-                                            !!ifImgList ? { width: `${100 / columnNumber}%` } : {}
                                         )}>
                                             <Image
-                                                src={dataValue || defaultImg}
+                                                src={urlList.current?.[selectedNum] || dataValue || defaultImg}
                                                 alt="logo"
                                                 style={
                                                     chartSize ?
@@ -272,6 +281,29 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                         </div>
                                 }
                                 <div className="flex-box img-box-btn-box" style={!!ifShowHeader ? { display: 'flex', top: '-26px' } : {}}>
+                                    <div
+                                        className={`${(selectedNum === 0) ? 'greyColorStyle' : ''} prev-btn`}
+                                        onClick={() => setSelectedNum((pre: number) => {
+                                            if (pre - 1 >= 0) {
+                                                return pre - 1;
+                                            }
+                                            return pre;
+                                        })}
+                                    >
+                                        {'< '}
+                                    </div>
+                                    {`${selectedNum + 1}/${urlList.current?.length}`}
+                                    <div
+                                        className={`next-btn ${(selectedNum + 1 === urlList.current.length) ? 'greyColorStyle' : ''}`}
+                                        onClick={() => setSelectedNum((pre: number) => {
+                                            if (pre + 1 < urlList.current.length) {
+                                                return pre + 1;
+                                            }
+                                            return pre;
+                                        })}
+                                    >
+                                        {' >'}
+                                    </div>
                                     <DownloadOutlined className='img-box-btn-item' onClick={() => {
                                         const imgBox = dom.current?.querySelector('.ant-image-img');
                                         html2canvas(imgBox, {
@@ -303,12 +335,12 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                     <Image.PreviewGroup
                         preview={{
                             visible,
-                            current: urlList.length - 1,
+                            current: urlList.current.length - 1,
                             onVisibleChange: vis => setVisible(vis)
                         }}
                     >
                         {
-                            (urlList || []).map((url: string) => {
+                            (urlList.current || []).map((url: string) => {
                                 return <Image src={url} alt={url} key={url} />
                             })
                         }
@@ -353,7 +385,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                             </div>
                             <div className={`flex-box image-contrast-modal-body-bottom ${visibleDirection}`}>
                                 <Image
-                                    src={urlList[selectedNum] || ''}
+                                    src={urlList.current?.[selectedNum] || ''}
                                     alt="logo"
                                     className='image-contrast-modal-body-img'
                                 />
@@ -371,11 +403,11 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                 />
                                 <Button
                                     type="text"
-                                    disabled={selectedNum + 1 === urlList.length}
+                                    disabled={selectedNum + 1 === urlList.current.length}
                                     icon={<RightCircleOutlined className='btn-icon' />}
                                     className='next-btn'
                                     onClick={() => setSelectedNum((pre: number) => {
-                                        if (pre + 1 < urlList.length) {
+                                        if (pre + 1 < urlList.current.length) {
                                             return pre + 1;
                                         }
                                         return pre;

@@ -14,7 +14,7 @@ interface Props {
 
 const ButtonCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { yName = '按钮', xName = '', fetchType, ifNeedClear, valueColor = 'primary' } = data;
+    const { fontSize, yName = '按钮', xName = '', fetchType, ifNeedClear, valueColor = 'primary' } = data;
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const [value, setValue] = useState('');
@@ -66,7 +66,7 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
             />
             <Button
                 type={['primary', 'link', 'ghost'].includes(valueColor) ? valueColor : ''}
-                style={Object.assign({},
+                style={Object.assign({ fontSize },
                     !['primary', 'link', 'ghost'].includes(valueColor) ? { backgroundColor: valueColor, color: '#fff' } : {}
                 )}
                 onClick={() => {
@@ -98,7 +98,7 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
                 }}>{yName}</Button>
             {
                 (!!value && ifNeedClear) ?
-                    <Button onClick={() => {
+                    <Button style={{ fontSize }} onClick={() => {
                         setValue('');
                         window.location.reload();
                     }}>清空</Button>

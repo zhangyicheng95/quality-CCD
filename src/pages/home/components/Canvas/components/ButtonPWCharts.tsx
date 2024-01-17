@@ -13,8 +13,8 @@ interface Props {
 const ButtonPWCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
     const {
-        yName = '按钮', xName = '', fetchType, fetchParams = undefined, password, passwordHelp,
-        valueColor = 'primary'
+        fontSize, yName = '按钮', xName = '', fetchType, fetchParams = undefined,
+        password, passwordHelp, valueColor = 'primary'
     } = data;
     const [form] = Form.useForm();
     const { validateFields, } = form;
@@ -52,7 +52,7 @@ const ButtonPWCharts: React.FC<Props> = (props: any) => {
         >
             <Button
                 type={['primary', 'link', 'ghost'].includes(valueColor) ? valueColor : ''}
-                style={Object.assign({},
+                style={Object.assign({ fontSize },
                     { height: '100%', width: '100%' },
                     !['primary', 'link', 'ghost'].includes(valueColor) ? { backgroundColor: valueColor, color: '#fff' } : {}
                 )}

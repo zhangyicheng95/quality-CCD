@@ -2041,36 +2041,41 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
     }, [selectedItem.link, modalDom?.current?.clientWidth, modalDom?.current?.clientHeight]);
 
     useEffect(() => {
-        if (!!dataValue?.ifOK) {
+        if (!!modelRotateScreenshot && !!dataValue?.ifOK) {
             setTimeout(() => {
-                downLoad();
+                downLoad().then((base64: any) => {
+                    btnFetch(fetchType, xName, { image: encodeURIComponent(base64) }, { headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then((res: any) => {
+                        if (res && res.code === 'SUCCESS') {
+                            message.success('success');
+                        } else {
+                            message.error("截图上传时，接口报错", 5);
+                        }
+                    });
+                });
             }, 500);
         }
     }, [dataValue?.ifOK]);
 
-    const downLoad = () => {
-        downDom.current.style['opacity'] = 0;
-        html2canvas(dom.current, {
-            scale: 1,
-            useCORS: true, // 是否尝试使⽤CORS从服务器加载图像
-            allowTaint: false, // 是否允许跨域图像。会污染画布，导致⽆法使⽤canvas.toDataURL ⽅法
-        }).then((canvas: any) => {
-            let imageDataURL = canvas.toDataURL('image/png', { quality: 1 });
-            var link = document.createElement('a');
-            link.href = imageDataURL;
-            link.download = `output.png`;
-            link.click();
-            downDom.current.style['opacity'] = 1;
-            if (modelRotateScreenshot) {
-                const base64 = imageDataURL.split('data:image/png;base64,')[1];
-                btnFetch(fetchType, xName, { image: encodeURIComponent(base64) }, { headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then((res: any) => {
-                    if (res && res.code === 'SUCCESS') {
-                        message.success('success');
-                    } else {
-                        message.error("截图上传时，接口报错", 5);
-                    }
-                });
-            }
+    const downLoad = (type?: string) => {
+        return new Promise((resolve, reject) => {
+            downDom.current.style['opacity'] = 0;
+            html2canvas(dom.current, {
+                scale: 1,
+                useCORS: true, // 是否尝试使⽤CORS从服务器加载图像
+                allowTaint: false, // 是否允许跨域图像。会污染画布，导致⽆法使⽤canvas.toDataURL ⽅法
+            }).then((canvas: any) => {
+                let imageDataURL = canvas.toDataURL('image/png', { quality: 1 });
+                if (type === 'down') {
+                    var link = document.createElement('a');
+                    link.href = imageDataURL;
+                    link.download = `output.png`;
+                    link.click();
+                } else {
+                    const base64 = imageDataURL.split('data:image/png;base64,')[1];
+                    resolve(base64);
+                }
+                downDom.current.style['opacity'] = 1;
+            });
         });
     }
     return (
@@ -2087,7 +2092,7 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
                             <DownloadOutlined
                                 className="flex-box-center img-box-mark-top-icon"
                                 ref={downDom}
-                                onClick={() => downLoad()}
+                                onClick={() => downLoad('down')}
                             />
                             {
                                 Array.from({ length: dataValue[0]?.length / 2 || 24 }).map((item: any, index: number) => {

@@ -64,6 +64,7 @@ import PlatFormCharts from './components/PlatFormCharts';
 import ModalCharts from './components/ModalCharts';
 import ImgButtonCharts from './components/ImgButtonCharts';
 import ButtonImagesCharts from './components/ButtonImagesCharts';
+import AlertImgCharts from './components/AlertImgCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -1070,7 +1071,7 @@ const Home: React.FC<any> = (props: any) => {
                                                   <Button
                                                     type={['primary', 'link', 'ghost'].includes(valueColor) ? valueColor : ''}
                                                     id={key}
-                                                    style={Object.assign({},
+                                                    style={Object.assign({ fontSize },
                                                       { height: '100%', width: '100%' },
                                                       !['primary', 'link', 'ghost'].includes(valueColor) ? { backgroundColor: valueColor, color: '#fff' } : {}
                                                     )}
@@ -1116,7 +1117,7 @@ const Home: React.FC<any> = (props: any) => {
                                                     <ButtonCharts
                                                       id={key}
                                                       data={{
-                                                        yName, xName, fetchType, ifNeedClear, valueColor
+                                                        fontSize, yName, xName, fetchType, ifNeedClear, valueColor
                                                       }}
                                                     />
                                                     :
@@ -1124,7 +1125,7 @@ const Home: React.FC<any> = (props: any) => {
                                                       <ButtonPWCharts
                                                         id={key}
                                                         data={{
-                                                          yName, xName, fetchType, password, passwordHelp,
+                                                          fontSize, yName, xName, fetchType, password, passwordHelp,
                                                           fetchParams, valueColor
                                                         }}
                                                       />
@@ -1195,15 +1196,23 @@ const Home: React.FC<any> = (props: any) => {
                                                                       }}
                                                                     />
                                                                     :
-                                                                    <ImgCharts
-                                                                      id={key}
-                                                                      data={{
-                                                                        defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                                        dataValue, markNumber, markNumberLeft, markNumberTop,
-                                                                        magnifier, comparison, magnifierSize, ifShowHeader,
-                                                                        ifImgList, lineNumber, columnNumber
-                                                                      }}
-                                                                    />
+                                                                    type === 'alertImg' ?
+                                                                      <AlertImgCharts
+                                                                        id={key}
+                                                                        data={{
+                                                                          dataValue, fontSize, lineNumber, columnNumber,
+                                                                          magnifier, magnifierSize,
+                                                                        }}
+                                                                      />
+                                                                      :
+                                                                      <ImgCharts
+                                                                        id={key}
+                                                                        data={{
+                                                                          defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                                          dataValue, markNumber, markNumberLeft, markNumberTop,
+                                                                          magnifier, magnifierSize, comparison, ifShowHeader,
+                                                                        }}
+                                                                      />
                 }
               </div>
             </div>
@@ -1569,7 +1578,7 @@ const Home: React.FC<any> = (props: any) => {
       headerBackgroundColor = 'default', ifNeedClear, operationLock, ifUpdateProject,
       magnifierSize, logSize, listType, valueColor, markNumber = false, markNumberLeft, markNumberTop,
       blockType, blockTypeLines, modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams,
-      ifNeedAllow, ifImgList, lineNumber, columnNumber
+      ifNeedAllow, lineNumber, columnNumber
     } = values;
     if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
       try {
@@ -1602,7 +1611,7 @@ const Home: React.FC<any> = (props: any) => {
         ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
         valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
         modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
-        ifImgList, lineNumber, columnNumber
+        lineNumber, columnNumber
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1623,7 +1632,7 @@ const Home: React.FC<any> = (props: any) => {
             ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
             valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
             modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
-            ifImgList, lineNumber, columnNumber
+            lineNumber, columnNumber
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -1655,7 +1664,7 @@ const Home: React.FC<any> = (props: any) => {
       headerBackgroundColor: 'default', ifNeedClear: false, operationLock: false, ifUpdateProject: false,
       magnifierSize: 4, logSize: 50, listType: 'line', markNumber: false, markNumberLeft: 1, markNumberTop: 1,
       blockType: 'normal', blockTypeLines: 2, modelUpload: false, xColumns: undefined, yColumns: undefined,
-      platFormOptions: undefined, ifFetchParams: false, ifNeedAllow: false, ifImgList: false, lineNumber: 1, columnNumber: 1
+      platFormOptions: undefined, ifFetchParams: false, ifNeedAllow: false, lineNumber: 1, columnNumber: 1
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -2014,9 +2023,6 @@ const Home: React.FC<any> = (props: any) => {
                       paramData?.contentData?.gridMargin
                     ])
                   }
-                  <div className="flex-box-center right-canvas-bottom-powerby">
-                    &copy;技术支持: 三一重工股份有限公司-盛景智能科技（嘉兴）有限公司-UBVision团队
-                  </div>
                 </div>
               </DropSortableItem>
             }
@@ -2034,7 +2040,7 @@ const Home: React.FC<any> = (props: any) => {
                 } else if (!!homeSettingVisible) {
                   setHomeSettingData((prev: any) => ({ ...prev, [homeSettingVisible]: { ...prev?.[homeSettingVisible], ...values } }));
                 } else if (!!overallVisible) {
-                  const { canvasWidth = '', canvasHeight = '', gridMargin = 8 } = values;
+                  const { canvasWidth = '', canvasHeight = '' } = values;
                   updateParams({
                     id: paramData.id,
                     data: {
@@ -2286,39 +2292,48 @@ const Home: React.FC<any> = (props: any) => {
                           </Fragment>
                           : null
                       }
+                    </Fragment>
+                    : null
+                }
+                {
+                  ['alertImg'].includes(windowType) ?
+                    <Fragment>
                       <Form.Item
-                        name="ifImgList"
-                        label="列表展示"
+                        name="lineNumber"
+                        label="行数"
+                        rules={[{ required: true, message: '行数' }]}
+                      >
+                        <InputNumber
+                          min={1}
+                          placeholder=""
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="columnNumber"
+                        label="列数"
+                        rules={[{ required: true, message: '列数' }]}
+                      >
+                        <InputNumber
+                          min={1}
+                          placeholder=""
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="magnifier"
+                        label="开启放大镜"
                         valuePropName="checked"
                       >
                         <Switch />
                       </Form.Item>
-                      {
-                        !!form.getFieldValue('ifImgList') ?
-                          <Fragment>
-                            <Form.Item
-                              name="lineNumber"
-                              label="行数"
-                              rules={[{ required: true, message: '行数' }]}
-                            >
-                              <InputNumber
-                                min={1}
-                                placeholder=""
-                              />
-                            </Form.Item>
-                            <Form.Item
-                              name="columnNumber"
-                              label="列数"
-                              rules={[{ required: true, message: '列数' }]}
-                            >
-                              <InputNumber
-                                min={1}
-                                placeholder=""
-                              />
-                            </Form.Item>
-                          </Fragment>
-                          : null
-                      }
+                      <Form.Item
+                        name="magnifierSize"
+                        label="放大镜倍数"
+                      >
+                        <InputNumber
+                          min={1}
+                          placeholder="放大镜倍数"
+                        />
+                      </Form.Item>
                     </Fragment>
                     : null
                 }
@@ -3864,6 +3879,9 @@ const Home: React.FC<any> = (props: any) => {
         </NodeDetailWrapper>
       </div>
       <div className="flex-box home-footer">
+        <div className="home-footer-powerby">
+          &copy;技术支持: 三一重工股份有限公司-盛景智能科技（嘉兴）有限公司-UBVision团队
+        </div>
         {
           started ?
             <div className="home-footer-item-box success">

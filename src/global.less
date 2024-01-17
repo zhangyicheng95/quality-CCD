@@ -86,6 +86,7 @@ body,
 
 .ant-drawer {
   .ant-drawer-content-wrapper {
+
     .ant-alert-warning,
     .ant-btn.ant-btn-block {
       display: none;
@@ -113,13 +114,14 @@ ol {
     width: 100%;
     overflow-x: auto;
 
-    &-thead > tr,
-    &-tbody > tr {
-      > th,
-      > td {
+    &-thead>tr,
+    &-tbody>tr {
+
+      >th,
+      >td {
         white-space: pre;
 
-        > span {
+        >span {
           display: block;
         }
       }
@@ -128,8 +130,9 @@ ol {
 }
 
 // Compatible with IE11
-@media screen and(-ms-high-contrast: active), (-ms-high-contrast: none) {
-  body .ant-design-pro > .ant-layout {
+@media screen and(-ms-high-contrast: active),
+(-ms-high-contrast: none) {
+  body .ant-design-pro>.ant-layout {
     min-height: 100vh;
   }
 }
@@ -198,7 +201,7 @@ ol {
   .ant-form-item {
     font-size: inherit !important;
 
-    .ant-form-item-label > label {
+    .ant-form-item-label>label {
       font-size: inherit !important;
     }
   }
@@ -815,4 +818,9 @@ ol {
   .ant-row {
     align-items: flex-start;
   }
+}
+
+.greyColorStyle {
+  color: rgba(144, 144, 144, 0.4);
+  cursor: not-allowed !important;
 }
