@@ -24,8 +24,8 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         ifShowHeader,
     } = data;
 
-    if (process.env.NODE_ENV === 'development') {
-        // dataValue = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
+    if (process.env.NODE_ENV === 'development' && !dataValue) {
+        dataValue = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
     }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
@@ -67,7 +67,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         const localhostList = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || "[]");
         if (!dataValue) {
             dataValue = localhostList?.[localhostList?.length - 1] || '';
-        }
+        };
         let list = Array.from(new Set(urlList.current.concat(dataValue)));
         localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
         setSelectedNum(list?.length - 1);
@@ -76,7 +76,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight, comparison]);
     useEffect(() => {
         let img: any = document.createElement('img');
-        img.src = urlList.current?.[selectedNum];
+        img.src = urlList.current?.[selectedNum] || dataValue;
         img.title = 'img.png';
         img.onload = (res: any) => {
             const { width = 1, height = 1 } = img;
