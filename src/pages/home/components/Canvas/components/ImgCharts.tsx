@@ -21,7 +21,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     let {
         defaultImg, dataValue = '', magnifier = false,
         comparison, magnifierSize = 4, markNumber, markNumberLeft = 6, markNumberTop = 24,
-        ifShowHeader,
+        ifShowHeader, magnifierWidth, magnifierHeight
     } = data;
 
     if (process.env.NODE_ENV === 'development' && !dataValue) {
@@ -260,7 +260,10 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                                 }
                                                 preview={false}
                                             />
-                                            <div className="mask" />
+                                            <div className="mask" style={(!!magnifierWidth && !!magnifierHeight) ? {
+                                                width: magnifierWidth,
+                                                height: magnifierHeight,
+                                            } : {}} />
                                         </div>
                                         :
                                         <div className="img-box" style={Object.assign({},

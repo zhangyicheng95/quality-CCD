@@ -717,7 +717,7 @@ const Home: React.FC<any> = (props: any) => {
         })
       });
     };
-    if (!gridMargin) {
+    if (!_.isNumber(gridMargin)) {
       newParams = Object.assign({}, newParams, {
         contentData: Object.assign({}, newParams?.contentData, {
           gridMargin: 8,
@@ -889,7 +889,7 @@ const Home: React.FC<any> = (props: any) => {
           ifUpdateProject, magnifierSize, listType, valueColor, markNumber,
           markNumberLeft, markNumberTop, blockType, blockTypeLines, modelUpload,
           xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
-          ifImgList, lineNumber, columnNumber
+          ifImgList, lineNumber, columnNumber, magnifierWidth, magnifierHeight
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1211,6 +1211,7 @@ const Home: React.FC<any> = (props: any) => {
                                                                           defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
                                                                           dataValue, markNumber, markNumberLeft, markNumberTop,
                                                                           magnifier, magnifierSize, comparison, ifShowHeader,
+                                                                          magnifierWidth, magnifierHeight
                                                                         }}
                                                                       />
                 }
@@ -1578,7 +1579,7 @@ const Home: React.FC<any> = (props: any) => {
       headerBackgroundColor = 'default', ifNeedClear, operationLock, ifUpdateProject,
       magnifierSize, logSize, listType, valueColor, markNumber = false, markNumberLeft, markNumberTop,
       blockType, blockTypeLines, modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams,
-      ifNeedAllow, lineNumber, columnNumber
+      ifNeedAllow, lineNumber, columnNumber, magnifierWidth, magnifierHeight
     } = values;
     if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
       try {
@@ -1611,7 +1612,7 @@ const Home: React.FC<any> = (props: any) => {
         ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
         valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
         modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
-        lineNumber, columnNumber
+        lineNumber, columnNumber, magnifierWidth, magnifierHeight
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1632,7 +1633,7 @@ const Home: React.FC<any> = (props: any) => {
             ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
             valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
             modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
-            lineNumber, columnNumber
+            lineNumber, columnNumber, magnifierWidth, magnifierHeight
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -1664,7 +1665,8 @@ const Home: React.FC<any> = (props: any) => {
       headerBackgroundColor: 'default', ifNeedClear: false, operationLock: false, ifUpdateProject: false,
       magnifierSize: 4, logSize: 50, listType: 'line', markNumber: false, markNumberLeft: 1, markNumberTop: 1,
       blockType: 'normal', blockTypeLines: 2, modelUpload: false, xColumns: undefined, yColumns: undefined,
-      platFormOptions: undefined, ifFetchParams: false, ifNeedAllow: false, lineNumber: 1, columnNumber: 1
+      platFormOptions: undefined, ifFetchParams: false, ifNeedAllow: false, lineNumber: 1, columnNumber: 1,
+      magnifierWidth: undefined, magnifierHeight: undefined,
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -1917,7 +1919,7 @@ const Home: React.FC<any> = (props: any) => {
                                 form.setFieldsValue({
                                   overallBackgroundColor: paramData?.contentData?.overallBackgroundColor?.rgb || 'default',
                                   autoSize: _.isBoolean(paramData?.contentData?.autoSize) ? paramData?.contentData?.autoSize : true,
-                                  gridMargin: paramData?.contentData?.gridMargin || 8
+                                  gridMargin: _.isNumber(paramData?.contentData?.gridMargin) ? paramData?.contentData?.gridMargin : 8
                                 });
                                 setAddWindowVisible('');
                                 setHomeSettingVisible('');
@@ -2005,7 +2007,7 @@ const Home: React.FC<any> = (props: any) => {
                                     list={gridList.concat(contentList)}
                                     layout={gridHomeList.concat(contentLayout)}
                                     tabLength={paramData?.contentData?.tabList?.length || 1}
-                                    margin={!!paramData?.contentData?.gridMargin ? [paramData?.contentData?.gridMargin, paramData?.contentData?.gridMargin] : [8, 8]}
+                                    margin={_.isNumber(paramData?.contentData?.gridMargin) ? [paramData?.contentData?.gridMargin, paramData?.contentData?.gridMargin] : [8, 8]}
                                     onChange={(data: any) => {
                                       saveGridFunc(data);
                                     }}
@@ -2040,7 +2042,6 @@ const Home: React.FC<any> = (props: any) => {
                 } else if (!!homeSettingVisible) {
                   setHomeSettingData((prev: any) => ({ ...prev, [homeSettingVisible]: { ...prev?.[homeSettingVisible], ...values } }));
                 } else if (!!overallVisible) {
-                  const { canvasWidth = '', canvasHeight = '' } = values;
                   updateParams({
                     id: paramData.id,
                     data: {
@@ -2052,7 +2053,6 @@ const Home: React.FC<any> = (props: any) => {
                         home: gridHomeList,
                         pageIconPosition,
                         homeSetting: homeSettingData,
-                        contentSize: Object.assign({}, paramData?.contentData?.contentSize, { width: Number(canvasWidth), height: Number(canvasHeight) }),
                       }
                     },
                   }).then((res: any) => {
@@ -2243,15 +2243,39 @@ const Home: React.FC<any> = (props: any) => {
                       >
                         <Switch />
                       </Form.Item>
-                      <Form.Item
-                        name="magnifierSize"
-                        label="放大镜倍数"
-                      >
-                        <InputNumber
-                          min={1}
-                          placeholder="放大镜倍数"
-                        />
-                      </Form.Item>
+                      {
+                        !!form.getFieldValue('magnifier') ?
+                          <Fragment>
+                            <Form.Item
+                              name="magnifierSize"
+                              label="放大镜倍数"
+                            >
+                              <InputNumber
+                                min={1}
+                                placeholder="放大镜倍数"
+                              />
+                            </Form.Item>
+                            <Form.Item
+                              name="magnifierWidth"
+                              label="放大镜宽"
+                            >
+                              <InputNumber
+                                min={1}
+                                placeholder="放大镜倍数"
+                              />
+                            </Form.Item>
+                            <Form.Item
+                              name="magnifierHeight"
+                              label="放大镜高"
+                            >
+                              <InputNumber
+                                min={1}
+                                placeholder="放大镜倍数"
+                              />
+                            </Form.Item>
+                          </Fragment>
+                          : null
+                      }
                       <Form.Item
                         name="comparison"
                         label="开启对比图"
