@@ -17,11 +17,11 @@ interface Props {
 const ButtonImagesCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id } = props;
     let {
-        dataValue = [], fontSize = 12, reverse, transformSize, modelRotateScreenshot,
+        dataValue = {}, fontSize = 12, reverse, transformSize, modelRotateScreenshot,
         fetchType, xName
     } = data;
     if (process.env.NODE_ENV === 'development') {
-        dataValue = [
+        dataValue['list'] = [
             [
                 {
                     title: 'NG',
@@ -2011,7 +2011,7 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
                 },
             ]
         ];
-        dataValue = dataValue.map((item: any) => {
+        dataValue['list'] = dataValue['list'].map((item: any) => {
             return item.map((i: any, index: number) => {
                 return { ...i, title: `${i.title}-${index + 1}` }
             })
@@ -2031,17 +2031,13 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
         img.title = 'img.png';
         img.onload = (res: any) => {
             const { width = 1, height = 1 } = img;
-            console.log(width / height);
-            console.log(modalDom?.current?.clientWidth / modalDom?.current?.clientHeight);
-            console.log(width / height > modalDom?.current?.clientWidth / modalDom?.current?.clientHeight);
-
             setChartSize(width / height > modalDom?.current?.clientWidth / modalDom?.current?.clientHeight);
             img = null;
         };
     }, [selectedItem.link, modalDom?.current?.clientWidth, modalDom?.current?.clientHeight]);
 
     useEffect(() => {
-        if (!!modelRotateScreenshot && !!dataValue?.ifOK) {
+        if (!!modelRotateScreenshot && !!dataValue?.action) {
             setTimeout(() => {
                 downLoad().then((base64: any) => {
                     btnFetch(fetchType, xName, { image: encodeURIComponent(base64) }, { headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then((res: any) => {
@@ -2054,7 +2050,7 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
                 });
             }, 500);
         }
-    }, [dataValue?.ifOK]);
+    }, [dataValue?.action]);
 
     const downLoad = (type?: string) => {
         return new Promise((resolve, reject) => {
@@ -2086,7 +2082,7 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
             style={{ fontSize, }}
         >
             {
-                !!dataValue?.length ?
+                !!dataValue?.list?.length ?
                     <Fragment>
                         <div className="flex-box img-box-mark-top">
                             <DownloadOutlined
@@ -2095,11 +2091,11 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
                                 onClick={() => downLoad('down')}
                             />
                             {
-                                Array.from({ length: dataValue[0]?.length / 2 || 24 }).map((item: any, index: number) => {
+                                Array.from({ length: dataValue?.list[0]?.length / 2 || 24 }).map((item: any, index: number) => {
                                     index = index * 2;
                                     let ngStatus = false;
                                     try {
-                                        dataValue.forEach((i: any) => {
+                                        dataValue?.list.forEach((i: any) => {
                                             if (i[index]?.type == 0 || i[index + 1]?.type == 0) {
                                                 ngStatus = true;
                                                 throw new Error();
@@ -2117,7 +2113,7 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
                         <div className="flex-box img-button-charts-body">
                             <div className="flex-box img-box-mark-right">
                                 {
-                                    (!!reverse ? _.cloneDeep(dataValue).reverse() : dataValue).map((item: any, index: number) => {
+                                    (!!reverse ? _.cloneDeep(dataValue?.list).reverse() : dataValue?.list).map((item: any, index: number) => {
                                         let ngStatus = false;
                                         try {
                                             item.forEach((i: any) => {
@@ -2132,7 +2128,7 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
                                         return (
                                             <div className="flex-box img-button-item-line" key={`item-${index}`}>
                                                 <TooltipDiv className={`flex-box img-button-item-line-icon ${ngStatus ? 'error' : ''}`}>
-                                                    {`${!!reverse ? `${dataValue.length - index}` : `${index + 1}`}槽`}
+                                                    {`${!!reverse ? `${dataValue?.list.length - index}` : `${index + 1}`}槽`}
                                                 </TooltipDiv>
                                                 {Array.from({ length: item.length / 2 }).map((i: any, tIndex: number) => {
                                                     tIndex = tIndex * 2;

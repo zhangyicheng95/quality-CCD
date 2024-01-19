@@ -1337,7 +1337,7 @@ const Home: React.FC<any> = (props: any) => {
           resultData = resultData.concat(
             !!dataValue ? {
               ...item,
-              [value[1]]: type === 'three' ? _.omit(dataValue, 'action') : dataValue
+              [value[1]]: ['three', 'buttonImages'].includes(type) ? _.omit(dataValue, 'action') : dataValue
             } : item
           );
         }
