@@ -2236,46 +2236,42 @@ const Home: React.FC<any> = (props: any) => {
                           }
                         </div>
                       </Form.Item>
-                      <Form.Item
+                      {/* <Form.Item
                         name="magnifier"
                         label="开启放大镜"
                         valuePropName="checked"
                       >
                         <Switch />
-                      </Form.Item>
-                      {
-                        !!form.getFieldValue('magnifier') ?
-                          <Fragment>
-                            <Form.Item
-                              name="magnifierSize"
-                              label="放大镜倍数"
-                            >
-                              <InputNumber
-                                min={1}
-                                placeholder="放大镜倍数"
-                              />
-                            </Form.Item>
-                            <Form.Item
-                              name="magnifierWidth"
-                              label="放大镜宽"
-                            >
-                              <InputNumber
-                                min={1}
-                                placeholder="放大镜倍数"
-                              />
-                            </Form.Item>
-                            <Form.Item
-                              name="magnifierHeight"
-                              label="放大镜高"
-                            >
-                              <InputNumber
-                                min={1}
-                                placeholder="放大镜倍数"
-                              />
-                            </Form.Item>
-                          </Fragment>
-                          : null
-                      }
+                      </Form.Item> */}
+                      <Fragment>
+                        <Form.Item
+                          name="magnifierSize"
+                          label="放大镜倍数"
+                        >
+                          <InputNumber
+                            min={1}
+                            placeholder="放大镜倍数"
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          name="magnifierWidth"
+                          label="放大镜宽"
+                        >
+                          <InputNumber
+                            min={1}
+                            placeholder="放大镜倍数"
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          name="magnifierHeight"
+                          label="放大镜高"
+                        >
+                          <InputNumber
+                            min={1}
+                            placeholder="放大镜倍数"
+                          />
+                        </Form.Item>
+                      </Fragment>
                       <Form.Item
                         name="comparison"
                         label="开启对比图"
@@ -2342,13 +2338,13 @@ const Home: React.FC<any> = (props: any) => {
                           placeholder=""
                         />
                       </Form.Item>
-                      <Form.Item
+                      {/* <Form.Item
                         name="magnifier"
                         label="开启放大镜"
                         valuePropName="checked"
                       >
                         <Switch />
-                      </Form.Item>
+                      </Form.Item> */}
                       <Form.Item
                         name="magnifierSize"
                         label="放大镜倍数"

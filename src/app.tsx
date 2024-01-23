@@ -106,34 +106,7 @@ export async function getInitialState(): Promise<{
             })
           }
         };
-
         defaultSettings.navTheme = theme || 'realDark';
-      } else if (!!query?.id) {
-        const res = await getParams(query?.id || '');
-        if (res && res.code === 'SUCCESS') {
-          localStorage.setItem("ipString", query?.id);
-          params = res?.data || {};
-          title = res?.data?.quality_name || res?.data?.name;
-          const { contentData = {} } = params;
-          const { theme, ipList = [] } = contentData;
-          params = ['contentData']['ipList'] = {
-            ...params,
-            contentData: {
-              ...contentData,
-              ipList: (ipList || [])?.map((item: any) => {
-                if (item.key === res.data.id) {
-                  return {
-                    ...item,
-                    label: res?.data?.name
-                  };
-                };
-                return item;
-              })
-            }
-          };
-
-          defaultSettings.navTheme = theme || 'realDark';
-        }
       }
     }
   }

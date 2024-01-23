@@ -255,15 +255,36 @@ const Control: React.FC<any> = (props: any) => {
   const onFinish = () => {
     validateFields()
       .then((values) => {
+        const nodes = nodeList.map((node: any) => {
+          const initParams = Object.entries(node?.config?.initParams || {}).reduce((pre: any, cen: any) => {
+            if (cen[1]?.widget?.type === "ImageLabelField" && !_.isArray(cen[1]?.value)) {
+              return {
+                ...pre,
+                [cen[0]]: {
+                  ...cen[1],
+                  value: Object.entries(cen[1]?.value).map((i: any) => i[1])
+                }
+              }
+            }
+            return { ...pre, [cen[0]]: cen[1] }
+          }, {});
+          return {
+            ...node,
+            config: {
+              ...node.config,
+              initParams
+            }
+          }
+        })
         const params = {
           id: paramData.id,
           data: Object.assign({}, paramData, {
             flowData: Object.assign({}, paramData.flowData, {
-              nodes: nodeList
+              nodes: nodes
             }),
             configList: configList.map((item: any) => {
               if (item.value === paramData.selectedConfig) {
-                return Object.assign({}, item, { data: nodeList });
+                return Object.assign({}, item, { data: nodes });
               }
               return item;
             }),

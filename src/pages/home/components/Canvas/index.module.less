@@ -959,7 +959,7 @@
 
       .img-box-mark-right {
         height: 100%;
-        overflow: auto;
+        overflow: hidden;
         gap: 2px;
       }
     }
@@ -974,6 +974,7 @@
       // width: 100%;
       // height: 100%;
       position: relative;
+      overflow: hidden;
 
       .img-charts-event1 {
         position: absolute;
@@ -1001,11 +1002,11 @@
         opacity: 0 !important;
       }
 
-      &:hover {
-        .mask {
-          display: block;
-        }
-      }
+      // &:hover {
+      //   .mask {
+      //     display: block;
+      //   }
+      // }
 
       .ant-image {
         display: inline-block;

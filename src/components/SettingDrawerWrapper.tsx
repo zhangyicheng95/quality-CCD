@@ -63,7 +63,8 @@ const SettingDrawerWrapper: React.FC<any> = (props: any) => {
         const params = Object.assign({}, paramData, paramData.id ? {
           contentData: {
             ...paramData.contentData,
-            theme: navTheme
+            theme: navTheme,
+            inIframe: location.hash?.indexOf('inIframe') > -1
           }
         } : {});
         setInitialState((preInitialState: any) => ({

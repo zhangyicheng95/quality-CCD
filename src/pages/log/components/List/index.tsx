@@ -92,7 +92,7 @@ const LogList: React.FC<any> = (props: any) => {
             (logStr || [])?.map((item: any, index: number) => {
               const { createdAt, message } = item;
               return <div className="content-item-span" key={`keyword-${index}-${createdAt}`}>
-                {`${moment(createdAt).format("YYYY-MM-DD hh:mm:ss")} `}{` ${message}`}
+                {`${message}`}
               </div>
             })
           }

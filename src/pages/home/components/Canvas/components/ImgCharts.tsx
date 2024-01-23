@@ -20,7 +20,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id } = props;
     let {
         defaultImg, dataValue = '', magnifier = false,
-        comparison, magnifierSize = 4, markNumber, markNumberLeft = 6, markNumberTop = 24,
+        comparison, magnifierSize = 6, markNumber, markNumberLeft = 6, markNumberTop = 24,
         ifShowHeader, magnifierWidth, magnifierHeight
     } = data;
 
@@ -29,6 +29,9 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     }
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
+
+    const dom = useRef<any>();
+    const imgBoxRef = useRef<any>();
     const urlList = useRef<any>([]);
     const [chartSize, setChartSize] = useState(false);
     const [selectedNum, setSelectedNum] = useState(0);
@@ -37,7 +40,6 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     const [visible, setVisible] = useState(false);
     const [magnifierVisible, setMagnifierVisible] = useState(false);
 
-    const dom = useRef<any>();
     useLayoutEffect(() => {
         try {
             const list = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || "[]");
@@ -50,6 +52,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             if (e.keyCode === 27) {
                 // 27是esc
                 setMagnifierVisible(false);
+                magnifier = false;
             }
         };
         window.addEventListener("keyup", onKeyUp);
@@ -81,13 +84,75 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         img.onload = (res: any) => {
             const { width = 1, height = 1 } = img;
             setChartSize((width / height) > (dom?.current?.clientWidth / dom?.current?.clientHeight));
+
+            const ul = imgBoxRef.current;
+            if (!ul?.clientWidth) return;
+            // 变量
+            let result,
+                x = 0,
+                y = 0,
+                scale = 1,
+                ulWidth = 0,
+                ulHeight = 0,
+                minScale = 1,
+                maxScale = magnifierSize; // 用于计算diff
+            if ((width / height) > (dom?.current?.clientWidth / dom?.current?.clientHeight)) {
+                ulWidth = dom?.current?.clientWidth;
+                ulHeight = dom?.current?.clientWidth / width * height;
+            } else {
+                ulWidth = dom?.current?.clientHeight / height * width;
+                ulHeight = dom?.current?.clientHeight;
+            }
+            ul.style.width = ulWidth + 'px';
+            ul.style.height = ulHeight + 'px';
+            ul.style.transform = 'matrix(1, 0, 0, 1, 0, 0)';
+            // 滚轮缩放、放大逻辑
+            ul.addEventListener('wheel', function (e: any) {
+                e.preventDefault();
+                let ratio = 1.1;
+                // 缩小
+                if (e.deltaY > 0) {
+                    ratio = 1 / 1.1;
+                }
+                // 限制缩放倍数
+                const onscale = scale * ratio;
+                if (onscale > maxScale) {
+                    ratio = maxScale / scale;
+                    scale = maxScale;
+                } else if (onscale < minScale) {
+                    ratio = minScale / scale;
+                    scale = minScale;
+                } else {
+                    scale = onscale;
+                }
+                const origin = {
+                    x: (ratio - 1) * ulWidth * 0.5,
+                    y: (ratio - 1) * ulHeight * 0.5,
+                };
+                // 计算偏移量
+                const marginLeft = e.pageX - e.offsetX - (dom.current.clientWidth - ulWidth) * 0.5;
+                const kongbaichuX = (dom.current.clientWidth - ulWidth) * 0.5;
+                const marginTop = e.pageY - e.offsetY - (dom.current.clientHeight - ulHeight) * 0.5;
+                const kongbaichuY = (dom.current.clientHeight - ulHeight) * 0.5;
+                x -= (ratio - 1) * (e.clientX - x - marginLeft - kongbaichuX) - origin.x;
+                y -= (ratio - 1) * (e.clientY - y - marginTop - kongbaichuY) - origin.y;
+                let offsetX = Math.min(
+                    Math.max(x, ulWidth - (ulWidth * (scale + 1)) / 2),
+                    (ulWidth * (scale - 1)) / 2,
+                );
+                let offsetY = Math.min(
+                    Math.max(y, ulHeight - (ulHeight * (scale + 1)) / 2),
+                    (+ulHeight * (scale - 1)) / 2,
+                );
+                x = offsetX;
+                y = offsetY;
+                ul.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${offsetX}, ${offsetY})`;
+            });
+
             img = null;
         };
     }, [selectedNum]);
     useEffect(() => {
-        if (!magnifier && !magnifierVisible) {
-            return;
-        }
         if (!dataValue) {
             const list = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || "[]");
             dataValue = list?.[list?.length - 1] || '';
@@ -97,93 +162,115 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         const ImageDom: any = dom.current.querySelector('.ant-image-img');
         const mask: any = dom?.current?.querySelector('.mask');
         if (!eventDom) return;
-        eventDom.onmousemove = function (event: any) {
-            // offsetX：鼠标坐标到元素的左侧的距离
-            // offsetWidth 除了外边距(margin)以外，所有的宽度(高度)之和
-            const { pageX = 0, pageY = 0, offsetX = 0, offsetY = 0 } = event;
-            // let { clientWidth: bodyWidth, clientHeight: bodyHeight } = document.body;
-            let { clientWidth: boxWidth, clientHeight: boxHeight } = ImageDom;
 
-            let left = offsetX - mask?.offsetWidth / 2;
-            // offsetY：鼠标坐标到元素的顶部的距离
-            // offsetHeight:元素的像素高度 包含元素的垂直内边距和边框,水平滚动条的高度,且是一个整数
-            let top = offsetY - mask?.offsetHeight / 2;
-            // 约束范围,保证光标在div范围内，都是以父盒子div为参考对象的
-            // 超出图片左侧
-            if (!left || (left <= 0)) left = 0;
-            // 超出图片右侧
-            if ((left + mask?.offsetWidth) >= boxWidth) left = (boxWidth - mask?.offsetWidth);
-            // 超出图片上侧
-            if (!top || (top <= 0)) top = 0;
-            // 超出图片下侧
-            if ((top + mask?.offsetHeight) >= boxHeight) top = (boxHeight - mask?.offsetHeight);
-            // 修改元素的left|top属性值
-            // 遮罩层
-            mask.style['left'] = left + "px";
-            mask.style['top'] = top + "px";
-            // if (chartSize > 1) {
-            //     // 图片比较宽
-            //     mask.style['height'] = 50 / size / chartSize + "%";
-            // } else {
-            //     // 图片比较高
-            //     mask.style['width'] = 50 / size * chartSize + "%";
-            // }
-            let bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
-            let imgDom: any = document.getElementById(`img-charts-bigImg-${id}`);
-            if (!imgDom) {
-                bigDom = document.createElement('div');
-                bigDom.className = `img-charts-big img-charts-big-${id}`;
-                document.body.appendChild(bigDom);
-                imgDom = document.createElement('img');
-                imgDom.id = `img-charts-bigImg-${id}`;
-                imgDom.src = urlList.current?.[selectedNum] || dataValue || defaultImg;
-                bigDom.appendChild(imgDom);
-            } else {
-                imgDom.src = urlList.current?.[selectedNum] || dataValue || defaultImg;
-                bigDom.style.display = 'block';
-            }
-
-            // 放大镜大小
-            let bigWidth = mask.clientWidth * size,
-                bigHeight = mask.clientHeight * size;
-
-            bigDom.style['width'] = bigWidth + "px";
-            bigDom.style['height'] = bigHeight + "px";
-            // 放大镜中的图片位置，与css中width：200%，height：200%相对应，建议以后放大倍数为2n
-            imgDom.style['width'] = boxWidth * size + "px";
-            imgDom.style['height'] = boxHeight * size + "px";
-            imgDom.style['left'] = -1 * size * left + "px";
-            imgDom.style['top'] = -1 * size * top + "px";
-            // 放大镜的位置
-            const offset = 20;
-            if ((offsetX > boxWidth / 2) && (offsetY < boxHeight / 2)) {
-                // 右上
-                bigDom.style['left'] = pageX - offset - bigWidth + "px";
-                bigDom.style['top'] = pageY + offset + "px";
-            } else if ((offsetX > boxWidth / 2) && (offsetY > boxHeight / 2)) {
-                // 右下
-                bigDom.style['left'] = pageX - offset - bigWidth + "px";
-                bigDom.style['top'] = pageY - offset - bigHeight + "px";
-            } else if ((offsetX < boxWidth / 2) && (offsetY < boxHeight / 2)) {
-                // 左上
-                bigDom.style['left'] = pageX + offset + "px";
-                bigDom.style['top'] = pageY + offset + "px";
-            } else if ((offsetX < boxWidth / 2) && (offsetY > boxHeight / 2)) {
-                // 左下
-                bigDom.style['left'] = pageX + offset + "px";
-                bigDom.style['top'] = pageY - offset - bigHeight + "px";
-            }
-        }
-        // 4.鼠标离开事件
-        if (!!eventDom) {
-            eventDom.onmouseleave = function (ev: any) {
-                const bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
-                if (!!bigDom) {
-                    bigDom.style.display = 'none';
+        //申明全局变量
+        var timeStart: any = 0, timeEnd: any = 0, time: any = 0;
+        //获取此刻时间
+        function getTimeNow() {
+            var now = new Date();
+            return now.getTime();
+        };
+        eventDom.onmousedown = function () {
+            mask.style.display = "block";
+            //获取鼠标按下时的时间
+            timeStart = getTimeNow();
+            //setInterval会每100毫秒执行一次，也就是每100毫秒获取一次时间
+            time = setInterval(function () {
+                timeEnd = getTimeNow();
+                //如果此时检测到的时间与第一次获取的时间差有300毫秒
+                eventDom.onmousemove = function (event: any) {
+                    // offsetX：鼠标坐标到元素的左侧的距离
+                    // offsetWidth 除了外边距(margin)以外，所有的宽度(高度)之和
+                    const { pageX = 0, pageY = 0, offsetX = 0, offsetY = 0 } = event;
+                    // let { clientWidth: bodyWidth, clientHeight: bodyHeight } = document.body;
+                    let { clientWidth: boxWidth, clientHeight: boxHeight } = ImageDom;
+                    let left = offsetX - mask?.offsetWidth / 2;
+                    // offsetY：鼠标坐标到元素的顶部的距离
+                    // offsetHeight:元素的像素高度 包含元素的垂直内边距和边框,水平滚动条的高度,且是一个整数
+                    let top = offsetY - mask?.offsetHeight / 2;
+                    // 约束范围,保证光标在div范围内，都是以父盒子div为参考对象的
+                    // 超出图片左侧
+                    if (!left || (left <= 0)) left = 0;
+                    // 超出图片右侧
+                    if ((left + mask?.offsetWidth) >= boxWidth) left = (boxWidth - mask?.offsetWidth);
+                    // 超出图片上侧
+                    if (!top || (top <= 0)) top = 0;
+                    // 超出图片下侧
+                    if ((top + mask?.offsetHeight) >= boxHeight) top = (boxHeight - mask?.offsetHeight);
+                    // 修改元素的left|top属性值
+                    // 遮罩层
+                    mask.style['left'] = left + "px";
+                    mask.style['top'] = top + "px";
+                    let bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
+                    let imgDom: any = document.getElementById(`img-charts-bigImg-${id}`);
+                    if (!imgDom) {
+                        bigDom = document.createElement('div');
+                        bigDom.className = `img-charts-big img-charts-big-${id}`;
+                        document.body.appendChild(bigDom);
+                        imgDom = document.createElement('img');
+                        imgDom.id = `img-charts-bigImg-${id}`;
+                        imgDom.src = urlList.current?.[selectedNum] || dataValue || defaultImg;
+                        bigDom.appendChild(imgDom);
+                    } else {
+                        imgDom.src = urlList.current?.[selectedNum] || dataValue || defaultImg;
+                        bigDom.style.display = 'block';
+                    }
+                    // 放大镜大小
+                    let bigWidth = mask.clientWidth * size,
+                        bigHeight = mask.clientHeight * size;
+                    bigDom.style['width'] = bigWidth + "px";
+                    bigDom.style['height'] = bigHeight + "px";
+                    // 放大镜中的图片位置，与css中width：200%，height：200%相对应，建议以后放大倍数为2n
+                    imgDom.style['width'] = boxWidth * size + "px";
+                    imgDom.style['height'] = boxHeight * size + "px";
+                    imgDom.style['left'] = -1 * size * left + "px";
+                    imgDom.style['top'] = -1 * size * top + "px";
+                    // 放大镜的位置
+                    const offset = 20;
+                    if ((offsetX > boxWidth / 2) && (offsetY < boxHeight / 2)) {
+                        // 右上
+                        bigDom.style['left'] = pageX - offset - bigWidth + "px";
+                        bigDom.style['top'] = pageY + offset + "px";
+                    } else if ((offsetX > boxWidth / 2) && (offsetY > boxHeight / 2)) {
+                        // 右下
+                        bigDom.style['left'] = pageX - offset - bigWidth + "px";
+                        bigDom.style['top'] = pageY - offset - bigHeight + "px";
+                    } else if ((offsetX < boxWidth / 2) && (offsetY < boxHeight / 2)) {
+                        // 左上
+                        bigDom.style['left'] = pageX + offset + "px";
+                        bigDom.style['top'] = pageY + offset + "px";
+                    } else if ((offsetX < boxWidth / 2) && (offsetY > boxHeight / 2)) {
+                        // 左下
+                        bigDom.style['left'] = pageX + offset + "px";
+                        bigDom.style['top'] = pageY - offset - bigHeight + "px";
+                    }
+                };
+                // 4.鼠标离开事件
+                if (!!eventDom) {
+                    eventDom.onmouseleave = function (ev: any) {
+                        const bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
+                        if (!!bigDom) {
+                            bigDom.style.display = 'none';
+                        };
+                    }
+                };
+                if (timeEnd - timeStart > 300) {
+                    //便不再继续重复此函数 （clearInterval取消周期性执行）
+                    clearInterval(time);
                 }
-            }
-        }
-        const domBox = dom.current.querySelector('.img-box');
+            }, 100);
+        };
+        eventDom.onmouseup = function () {
+            mask.style.display = "none";
+            //如果按下时间不到300毫秒便弹起，
+            clearInterval(time);
+            const bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
+            if (!!bigDom) {
+                bigDom.style.display = 'none';
+            };
+            eventDom.onmousemove = null;
+        };
+        const domBox = imgBoxRef.current;
         if (!!domBox) {
             domBox.onmouseleave = function (ev: any) {
                 const bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
@@ -193,8 +280,8 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             }
         }
     }, [
-        magnifierVisible,
-        // magnifier, magnifierSize, dataValue, id, chartSize,
+        magnifierVisible, selectedNum, dataValue,
+        magnifier, magnifierSize, dataValue, id, chartSize,
         // dom?.current?.clientWidth, dom?.current?.clientHeight
     ]);
 
@@ -235,21 +322,34 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                     {
                         (!!dataValue || !!defaultImg) ?
                             <Fragment>
-                                {
-                                    (magnifier || magnifierVisible) ?
-                                        <div className="img-box" style={Object.assign({},
-                                            chartSize ?
-                                                { width: '100%', height: 'auto' } :
-                                                { width: 'auto', height: '100%' },
-                                        )}>
-                                            <div
-                                                className="ant-image-mask"
-                                                style={
-                                                    chartSize ?
-                                                        { width: '100%', height: 'auto' } :
-                                                        { width: 'auto', height: '100%' }
-                                                }
-                                            />
+                                <div className="img-box" ref={imgBoxRef}>
+                                    {/* {
+                                        (magnifier || magnifierVisible) ? */}
+                                    <Fragment>
+                                        <div
+                                            className="ant-image-mask"
+                                            style={
+                                                chartSize ?
+                                                    { width: '100%', height: 'auto' } :
+                                                    { width: 'auto', height: '100%' }
+                                            }
+                                        />
+                                        <Image
+                                            src={urlList.current?.[selectedNum] || dataValue || defaultImg}
+                                            alt="logo"
+                                            style={
+                                                chartSize ?
+                                                    { width: '100%', height: 'auto' } :
+                                                    { width: 'auto', height: '100%' }
+                                            }
+                                            preview={false}
+                                        />
+                                        <div className="mask" style={(!!magnifierWidth && !!magnifierHeight) ? {
+                                            width: magnifierWidth,
+                                            height: magnifierHeight,
+                                        } : {}} />
+                                    </Fragment>
+                                    {/* :
                                             <Image
                                                 src={urlList.current?.[selectedNum] || dataValue || defaultImg}
                                                 alt="logo"
@@ -260,29 +360,8 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                                 }
                                                 preview={false}
                                             />
-                                            <div className="mask" style={(!!magnifierWidth && !!magnifierHeight) ? {
-                                                width: magnifierWidth,
-                                                height: magnifierHeight,
-                                            } : {}} />
-                                        </div>
-                                        :
-                                        <div className="img-box" style={Object.assign({},
-                                            chartSize ?
-                                                { width: '100%', height: 'auto' } :
-                                                { width: 'auto', height: '100%' },
-                                        )}>
-                                            <Image
-                                                src={urlList.current?.[selectedNum] || dataValue || defaultImg}
-                                                alt="logo"
-                                                style={
-                                                    chartSize ?
-                                                        { width: '100%', height: 'auto' } :
-                                                        { width: 'auto', height: '100%' }
-                                                }
-                                                preview={false}
-                                            />
-                                        </div>
-                                }
+                                    } */}
+                                </div>
                                 <div className="flex-box img-box-btn-box" style={!!ifShowHeader ? { display: 'flex', top: '-26px' } : {}}>
                                     <div
                                         className={`${(selectedNum === 0) ? 'greyColorStyle' : ''} prev-btn`}
@@ -321,10 +400,10 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                             link.click();
                                         });
                                     }} />
-                                    <ZoomInOutlined
+                                    {/* <ZoomInOutlined
                                         className={`img-box-btn-item ${magnifierVisible ? "img-box-btn-item-selected" : ""}`}
                                         onClick={() => setMagnifierVisible((prev: any) => !prev)}
-                                    />
+                                    /> */}
                                     <ExpandOutlined className='img-box-btn-item' onClick={() => setVisible(true)} />
                                 </div>
                             </Fragment>
