@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Button, Image, message, Modal, Skeleton } from 'antd';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
@@ -26,7 +26,10 @@ const ImgCharts: React.FC<Props> = (props: any) => {
 
     if (process.env.NODE_ENV === 'development' && !dataValue) {
         dataValue = 'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
-    }
+    };
+    const ifCanEdit = useMemo(() => {
+        return location.hash.indexOf('edit') > -1;
+    }, [location.hash]);
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
 
@@ -84,7 +87,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         img.onload = (res: any) => {
             const { width = 1, height = 1 } = img;
             setChartSize((width / height) > (dom?.current?.clientWidth / dom?.current?.clientHeight));
-
+            if (ifCanEdit) return;
             const ul = imgBoxRef.current;
             if (!ul?.clientWidth) return;
             // 变量
@@ -151,7 +154,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
 
             img = null;
         };
-    }, [selectedNum]);
+    }, [selectedNum, dom?.current?.clientWidth, dom?.current?.clientHeight]);
     useEffect(() => {
         if (!dataValue) {
             const list = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || "[]");
@@ -281,7 +284,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         }
     }, [
         magnifierVisible, selectedNum, dataValue,
-        magnifier, magnifierSize, dataValue, id, chartSize,
+        // magnifier, magnifierSize, dataValue, id, chartSize,
         // dom?.current?.clientWidth, dom?.current?.clientHeight
     ]);
 

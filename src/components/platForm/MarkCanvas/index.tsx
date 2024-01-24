@@ -172,14 +172,20 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           marker.enableDragging();
           gMap.current.markerLayer.addMarker(marker);
         } else if (type === 'POINT') {
+          const id = +new Date();
           const pointFeature = new AILabel.Feature.Point(
-            `${+new Date()}`, // id
+            `${id}`, // id
             { ...data, sr: 5 }, // shape
             { name: '点状矢量图层', textId: relatedTextId, deleteMarkerId: relatedDeleteMarkerId, label: inHome ? '' : 'label' }, // props
             drawingStyle.current // style
           );
           gFirstFeatureLayer.current.addFeature(pointFeature);
           addFeatureText({ x: data.x, y: data.y }, relatedTextId, inHome ? '' : 'label');
+          const feature = gFirstFeatureLayer.current.getFeatureById(`${id}`);
+          setTimeout(() => {
+            gMap.current.setActiveFeature(feature);
+          }, 100);
+          setSelectedFeature(`${id}`);
         } else if (type === 'LINE') {
           const scale = gMap.current.getScale();
           const width = drawingStyle.current.lineWidth / scale;
@@ -990,7 +996,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         return;
       }
       const data2 = (pen && pen()) || [];
-      console.log(data1, data2);
       const params = Object.assign({}, data,
         {
           zoom,
@@ -1067,6 +1072,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           }).filter(Boolean)
         }
       );
+      console.log(params);
       setFeatures(params?.platFormValue);
       if (ifFetch) {
         btnFetch(fetchType, xName, params.value).then((res: any) => {
@@ -1327,6 +1333,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   // 关闭
   const onCancel = () => {
     setSelectedFeature(0);
+    gMap.current.setActiveFeature(0);
     form.setFieldsValue({ option_type: undefined });
     setSelectedOptionType({});
     resetFields();
@@ -1521,8 +1528,9 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                           (
                             !!featureList?.[selectedFeature] ?
                               Object.entries(featureList?.[selectedFeature])?.map((item: any) => {
-                                if (item[0] === 'roi') {
+                                if (item[0] === 'roi' && (!!item?.[1]?.value || !!item?.[1]?.realValue)) {
                                   const feature = gFirstFeatureLayer.current.getFeatureById(selectedFeature);
+                                  if (!feature) return;
                                   const { type } = feature;
                                   let value = {};
                                   if (_.isObject(item[1]?.realValue) && !_.isEmpty(item[1].realValue)) {
@@ -1810,6 +1818,9 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         updateToService();
                         onCancel();
                       } else {
+                        if (!value?.['option_type']?.value) {
+                          return message.warning("请先保存设置框");
+                        }
                         if (value?.['option_type']?.value) {
                           // 更新text
                           const targetText = gFirstTextLayer.current.getTextById(feature?.props?.textId);

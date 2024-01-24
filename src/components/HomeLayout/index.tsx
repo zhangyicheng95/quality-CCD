@@ -165,10 +165,6 @@ const HomeLayout: React.FC<any> = (props) => {
       }
     }
   }, []);
-  // 1个小时自动刷新，清理缓存
-  useReloadAfterStationary({ wait: 1000 * 60 * 60, interval: 1000 * 60 }, () => {
-    window.location.reload();
-  });
   if (!!userData?.loginTime) {
     // 5分钟无操作，自动注销
     useReloadAfterStationary({}, () => {
