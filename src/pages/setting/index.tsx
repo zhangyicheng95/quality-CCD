@@ -321,7 +321,11 @@ const Setting: React.FC<any> = (props) => {
                 icon={<FormOutlined />}
                 type="primary"
                 onClick={() => {
-                  history.push({ pathname: `/home/edit` });
+                  let hash = '';
+                  if (location.href?.indexOf('?') > -1) {
+                    hash = location.href.split('?')[1];
+                  }
+                  location.href = `${location.href?.split('#/')?.[0]}#/home/edit${!!hash ? `?${hash}` : ''}`;
                   window.location.reload();
                 }}
               >

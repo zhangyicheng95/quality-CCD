@@ -1843,7 +1843,11 @@ const Home: React.FC<any> = (props: any) => {
                                 },
                               }).then((res: any) => {
                                 if (res && res.code === 'SUCCESS') {
-                                  history.push({ pathname: `/home` });
+                                  let hash = '';
+                                  if (location.href?.indexOf('?') > -1) {
+                                    hash = location.href.split('?')[1];
+                                  }
+                                  location.href = `${location.href?.split('#/')?.[0]}#/home${!!hash ? `?${hash}` : ''}`;
                                   window.location.reload();
                                 } else {
                                   message.error(res?.msg || res?.message || '接口异常');

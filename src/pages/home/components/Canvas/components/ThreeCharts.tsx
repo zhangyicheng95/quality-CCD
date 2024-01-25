@@ -1891,6 +1891,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         if (index + 1 > list.length) {
             animateCamera(basicPosition);
             processText.style.display = 'none';
+            window.location.reload();
             return;
         }
         animateCamera(list[index], 500).then(res => {
