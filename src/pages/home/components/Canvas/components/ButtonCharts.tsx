@@ -14,7 +14,7 @@ interface Props {
 
 const ButtonCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    const { fontSize, yName = '按钮', xName = '', fetchType, ifNeedClear, valueColor = 'primary' } = data;
+    const { fontSize = 14, yName = '按钮', xName = '', fetchType, ifNeedClear, valueColor = 'primary' } = data;
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
     const [value, setValue] = useState('');
@@ -60,7 +60,7 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
                         value: item
                     }
                 })}
-                style={{ width: '100%' }}
+                style={{ width: '100%', fontSize }}
                 showSearch
                 onChange={(value: string) => onChange(value)}
             />

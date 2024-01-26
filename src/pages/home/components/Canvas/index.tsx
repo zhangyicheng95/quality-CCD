@@ -562,7 +562,7 @@ const Home: React.FC<any> = (props: any) => {
     </div>,
   ]), [
     isVision, started, taskDataConnect, loading, paramData, projectStatus,
-    logStr, footerData, errorData, pageIconPosition, homeSettingData, homeSettingVisible,
+    logStr, errorData, pageIconPosition, homeSettingData, homeSettingVisible,
   ]);
   // 删除基础组件
   const deleteBasic = (type: string) => {
@@ -3903,9 +3903,6 @@ const Home: React.FC<any> = (props: any) => {
         </NodeDetailWrapper>
       </div>
       <div className="flex-box home-footer">
-        <div className="home-footer-powerby">
-          &copy;技术支持: 三一重工股份有限公司-盛景智能科技（嘉兴）有限公司-UBVision团队
-        </div>
         {
           started ?
             <div className="home-footer-item-box success">
@@ -3918,21 +3915,26 @@ const Home: React.FC<any> = (props: any) => {
               未启动
             </div>
         }
+        <div className="home-footer-powerby">
+          &copy;技术支持: 三一重工股份有限公司-盛景智能科技（嘉兴）有限公司-UBVision团队
+        </div>
         {
           useMemo(() => {
-            return !!footerData && (Object.entries(footerData) || [])?.map((item: any, index: number) => {
-              const { Status } = item[1];
-              if (!footerSelectList.includes(item[0])) {
+            return !!footerSelectList?.length && footerSelectList?.map((id: any, index: number) => {
+              const item = footerData?.['state']?.[id] || footerData[id];
+              if (!item) {
                 return null;
-              }
+              };
+              const { Status, name } = item;
               return <div
-                key={item[0]}
-                className={`home-footer-item-box ${Status === 'running' ? 'success' : 'error'}`}
+                key={id}
+                className={`home-footer-item-box ${Status === 'running' ? 'success-font' : 'error-font'}`}
                 onClick={() => {
                   ifCanEdit && setFooterSelectVisible(true);
                 }}
               >
-                {`${nodeList?.filter((i: any) => i.value === item[0])[0]?.label}: ${Status === 'running' ? '正常' : '异常'}`}
+                {name?.split('|')?.[1] || nodeList?.filter((i: any) => i.value === id)[0]?.label}
+                {((index + 1) === footerSelectList?.length) ? null : <span className="operation-line">|</span>}
               </div>
             })
           }, [started, footerData, footerSelectList])
@@ -4091,8 +4093,6 @@ const Home: React.FC<any> = (props: any) => {
     </div >
   );
 };
-
-// export default Home;
 
 Home.displayName = 'Home';
 
