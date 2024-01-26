@@ -3920,23 +3920,49 @@ const Home: React.FC<any> = (props: any) => {
         </div>
         {
           useMemo(() => {
-            return !!footerSelectList?.length && footerSelectList?.map((id: any, index: number) => {
-              const item = footerData?.['state']?.[id] || footerData[id];
-              if (!item) {
-                return null;
-              };
-              const { Status, name } = item;
-              return <div
-                key={id}
-                className={`home-footer-item-box ${Status === 'running' ? 'success-font' : 'error-font'}`}
-                onClick={() => {
-                  ifCanEdit && setFooterSelectVisible(true);
-                }}
-              >
-                {name?.split('|')?.[1] || nodeList?.filter((i: any) => i.value === id)[0]?.label}
-                {((index + 1) === footerSelectList?.length) ? null : <span className="operation-line">|</span>}
-              </div>
-            })
+            return <Fragment>
+              {
+                // 节点状态
+                !!footerSelectList?.length && footerSelectList?.map((id: any, index: number) => {
+                  const item = footerData?.['state']?.[id] || footerData[id];
+                  if (!item) {
+                    return null;
+                  };
+                  const { Status, name } = item;
+                  return <div
+                    key={id}
+                    className={`home-footer-item-box ${Status === 'running' ? 'success-font' : 'error-font'}`}
+                    onClick={() => {
+                      ifCanEdit && setFooterSelectVisible(true);
+                    }}
+                  >
+                    {name?.split('|')?.[1] || nodeList?.filter((i: any) => i.value === id)[0]?.label}
+                    {((index + 1) === footerSelectList?.length) ? null : <span className="operation-line">|</span>}
+                  </div>
+                })
+              }
+              {
+                // 内存状态
+                !!footerData?.['ram'] ?
+                  Object.entries(footerData?.['ram']).map((item: any) => {
+                    const { current, total } = item;
+                    return <div
+                      key={item[0]}
+                      className={`home-footer-item-box`}
+                      onClick={() => {
+                        ifCanEdit && setFooterSelectVisible(true);
+                      }}
+                    >
+                      {`${item[0]} : ${current}/${total}`}
+                    </div>
+                  })
+                  : null
+              }
+              {
+                // 运行时间
+                !!footerData?.['time'] ? footerData?.['time'] : null
+              }
+            </Fragment>
           }, [started, footerData, footerSelectList])
         }
       </div>
