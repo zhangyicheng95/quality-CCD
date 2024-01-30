@@ -107,6 +107,10 @@ const HomeLayout: React.FC<any> = (props) => {
       } else {
         message.error(res?.message || '接口异常');
         setList(list);
+        dispatch({
+          type: 'themeStore/statusAction',
+          payload: list
+        });
       }
     });
   };

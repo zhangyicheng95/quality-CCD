@@ -11,6 +11,7 @@ import HomeLayout from '@/components/HomeLayout';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import RightContent from './components/RightContent';
 import { getParams } from './services/api';
+import { message } from 'antd';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -107,6 +108,12 @@ export async function getInitialState(): Promise<{
           }
         };
         defaultSettings.navTheme = theme || 'realDark';
+      } else {
+        console.log("appjs中方案信息报错: ", res);
+        message.error("获取方案信息接口报错，5秒钟后自动刷新");
+        setTimeout(() => {
+          window.location.reload();
+        }, 5000);
       }
     }
   }

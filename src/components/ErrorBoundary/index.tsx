@@ -17,6 +17,9 @@ export default class ErrorBoundary extends React.PureComponent {
 
   componentDidCatch(error: any, info: any) {
     console.error(error);
+    if (String(error).includes('Loading chunk')) {
+      window.location.reload();
+    }
   }
 
   render() {
