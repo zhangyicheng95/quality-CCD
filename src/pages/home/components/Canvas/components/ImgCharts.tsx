@@ -98,7 +98,6 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         img.title = 'img.png';
         img.onload = (res: any) => {
             const { width = 1, height = 1 } = img;
-            console.log(width, height);
             setChartSize((width / height) > (dom?.current?.clientWidth / dom?.current?.clientHeight));
             if (ifCanEdit) return;
             const ul = imgBoxRef.current;
