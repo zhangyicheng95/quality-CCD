@@ -1783,8 +1783,8 @@ const Home: React.FC<any> = (props: any) => {
                 // 画布与实际屏幕的宽度差值
                 const diffWidth = (window.screen.width - width) / 2;
                 // 计算实际的x,y坐标
-                const x = (e.x * 1.1 - diffWidth) / width * 96 * (tabNum + 1);
-                const y = e.y / height * (height / 300 * 12);
+                const x = ((e.x + tabNum * width) - diffWidth) / width * 96;
+                const y = e.y / height * (height / 300 * 14);
                 if (key === 'main') {
                   // 添加监控窗口
                   const uuid32 = nodeList?.[0]?.key || getuid();

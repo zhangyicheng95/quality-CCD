@@ -132,7 +132,7 @@ export const windowTypeList: any = [
   {
     value: 'buttonPassword',
     label: '密码按钮组件',
-    icon: buttonIpIcon,
+    icon: buttonIcon,
   },
   {
     value: 'progress',
