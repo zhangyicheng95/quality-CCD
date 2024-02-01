@@ -109,7 +109,7 @@ const Home: React.FC<any> = (props: any) => {
   const [homeSettingVisible, setHomeSettingVisible] = useState('');
   const [homeSettingData, setHomeSettingData] = useState({
     "slider-1": { des_column: 1, ifShowHeader: false },
-    "slider-4": { fontSize: 20, ifShowHeader: false, show_start_end: false },
+    "slider-4": { fontSize: 20, ifShowHeader: false, show_start_end: false, self_stop_other: false },
     "footer-1": { fontSize: 14, ifShowHeader: false, logSize: 50 },
     "footer-2": { fontSize: 20, ifShowHeader: false, logSize: 50 },
   });
@@ -363,9 +363,23 @@ const Home: React.FC<any> = (props: any) => {
               >
                 <div onClick={() => {
                   if (localStorage.getItem('ipString') !== key) {
-                    !!key && localStorage.setItem('ipString', key);
-                    !!statusItem?.realIp && localStorage.setItem('ipUrl-realtime', statusItem?.realIp);
-                    window.location.reload();
+                    if (!!started && !!homeSettingData?.['slider-4']?.self_stop_other) {
+                      setLoading(true);
+                      stopFlowService(ipString || '').then((res: any) => {
+                        if (res && res.code === 'SUCCESS') {
+                          !!key && localStorage.setItem('ipString', key);
+                          !!statusItem?.realIp && localStorage.setItem('ipUrl-realtime', statusItem?.realIp);
+                          window.location.reload();
+                        } else {
+                          message.error(res?.msg || res?.message || '接口异常');
+                        }
+                        setLoading(false);
+                      });
+                    } else {
+                      !!key && localStorage.setItem('ipString', key);
+                      !!statusItem?.realIp && localStorage.setItem('ipUrl-realtime', statusItem?.realIp);
+                      window.location.reload();
+                    }
                   }
                 }} className="tabs-box-item-title">
                   {
@@ -378,48 +392,6 @@ const Home: React.FC<any> = (props: any) => {
                       label
                   }
                 </div>
-                {
-                  (localStorage.getItem('ipString') === key || !ifCanEdit) ?
-                    null
-                    :
-                    <CloseOutlined onClick={() => {
-                      let newActiveKey: string = localStorage.getItem('ipString') || '';
-                      let lastIndex = -1;
-                      (paramData?.contentData?.ipList || [])?.forEach((item: any, i: any) => {
-                        if (item.key === key) {
-                          lastIndex = i - 1;
-                        }
-                      });
-                      const newPanes = (paramData?.contentData?.ipList || [])?.filter((item: any) => item.key !== key);
-                      if (newPanes.length && newActiveKey === key) {
-                        if (lastIndex >= 0) {
-                          newActiveKey = newPanes[lastIndex]?.key;
-                        } else {
-                          newActiveKey = newPanes[0].key;
-                        }
-                      }
-                      localStorage.setItem('ipString', newActiveKey);
-                      updateParams({
-                        id: paramData.id,
-                        data: {
-                          ...paramData,
-                          contentData: {
-                            ...paramData?.contentData,
-                            ipList: newPanes
-                          }
-                        },
-                      }).then((res: any) => {
-                        if (res && res.code === 'SUCCESS') {
-                          setInitialState((preInitialState: any) => ({
-                            ...preInitialState,
-                            params: res.data
-                          }));
-                        } else {
-                          message.error(res?.msg || res?.message || '接口异常');
-                        }
-                      });
-                    }} className="tabs-box-item-close" />
-                }
               </div>
             })
           }
@@ -885,11 +857,12 @@ const Home: React.FC<any> = (props: any) => {
           CCDName, imgs_width, imgs_height, tableSize, magnifier, comparison, operationList,
           dataZoom, fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
           password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
-          basicInfoData = [{ id: guid(), name: '', value: '' }], ifNeedClear, operationLock,
+          basicInfoData = [{ id: guid(), name: '', value: '' }], ifNeedClear,
           ifUpdateProject, magnifierSize, listType, valueColor, markNumber,
           markNumberLeft, markNumberTop, blockType, blockTypeLines, modelUpload,
           xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
-          ifImgList, lineNumber, columnNumber, magnifierWidth, magnifierHeight
+          ifImgList, lineNumber, columnNumber, magnifierWidth, magnifierHeight,
+          ifPopconfirm
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1146,8 +1119,9 @@ const Home: React.FC<any> = (props: any) => {
                                                             data={{
                                                               operationList, dataValue,
                                                               fontSize, xName,
-                                                              operationLock, ifUpdateProject, ifFetch,
-                                                              listType, blockType, blockTypeLines
+                                                              ifUpdateProject, ifFetch,
+                                                              listType, blockType, blockTypeLines,
+                                                              ifPopconfirm
                                                             }}
                                                           />
                                                           :
@@ -1576,10 +1550,10 @@ const Home: React.FC<any> = (props: any) => {
       CCDName, imgs_width, imgs_height, magnifier, comparison = false, operationList, dataZoom,
       fontColor, interlacing = false, modelRotate = false, modelScale = false, modelRotateScreenshot = false,
       password = '', passwordHelp = '', ifShowHeader = false, ifShowColorList = false,
-      headerBackgroundColor = 'default', ifNeedClear, operationLock, ifUpdateProject,
+      headerBackgroundColor = 'default', ifNeedClear, ifUpdateProject,
       magnifierSize, logSize, listType, valueColor, markNumber = false, markNumberLeft, markNumberTop,
       blockType, blockTypeLines, modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams,
-      ifNeedAllow, lineNumber, columnNumber, magnifierWidth, magnifierHeight
+      ifNeedAllow, lineNumber, columnNumber, magnifierWidth, magnifierHeight, ifPopconfirm
     } = values;
     if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
       try {
@@ -1609,10 +1583,10 @@ const Home: React.FC<any> = (props: any) => {
         CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
         fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
         password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
-        ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
+        ifNeedClear, ifUpdateProject, magnifierSize, logSize, listType,
         valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
         modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
-        lineNumber, columnNumber, magnifierWidth, magnifierHeight
+        lineNumber, columnNumber, magnifierWidth, magnifierHeight, ifPopconfirm
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1630,10 +1604,10 @@ const Home: React.FC<any> = (props: any) => {
             CCDName, imgs_width, imgs_height, magnifier, comparison, operationList, dataZoom,
             fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
             password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
-            ifNeedClear, operationLock, ifUpdateProject, magnifierSize, logSize, listType,
+            ifNeedClear, ifUpdateProject, magnifierSize, logSize, listType,
             valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
             modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
-            lineNumber, columnNumber, magnifierWidth, magnifierHeight
+            lineNumber, columnNumber, magnifierWidth, magnifierHeight, ifPopconfirm
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -1662,11 +1636,11 @@ const Home: React.FC<any> = (props: any) => {
       CCDName: undefined, magnifier: false, comparison: false, operationList: [], dataZoom: 0,
       fontColor: undefined, interlacing: false, modelRotate: false, modelScale: false, modelRotateScreenshot: false,
       password: undefined, passwordHelp: undefined, ifShowHeader: false, ifShowColorList: false,
-      headerBackgroundColor: 'default', ifNeedClear: false, operationLock: false, ifUpdateProject: false,
+      headerBackgroundColor: 'default', ifNeedClear: false, ifUpdateProject: false,
       magnifierSize: 4, logSize: 50, listType: 'line', markNumber: false, markNumberLeft: 1, markNumberTop: 1,
       blockType: 'normal', blockTypeLines: 2, modelUpload: false, xColumns: undefined, yColumns: undefined,
       platFormOptions: undefined, ifFetchParams: false, ifNeedAllow: false, lineNumber: 1, columnNumber: 1,
-      magnifierWidth: undefined, magnifierHeight: undefined,
+      magnifierWidth: undefined, magnifierHeight: undefined, ifPopconfirm: true
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -1780,6 +1754,7 @@ const Home: React.FC<any> = (props: any) => {
                   width = window.screen.width;
                   height = window.screen.height;
                 }
+                height = height - 77 - (paramData?.contentData?.tabList?.length > 1 ? 28 : 0);
                 // 画布与实际屏幕的宽度差值
                 const diffWidth = (window.screen.width - width) / 2;
                 // 计算实际的x,y坐标
@@ -3324,19 +3299,23 @@ const Home: React.FC<any> = (props: any) => {
                                 : null
                             }
                             <Form.Item
-                              name={`xName`}
-                              label={"接口地址"}
-                              rules={[{ required: false, message: '接口地址' }]}
-                            >
-                              <Input size='large' />
-                            </Form.Item>
-                            <Form.Item
                               name="ifFetch"
                               label="是否实时反馈"
                               valuePropName="checked"
                             >
                               <Switch />
                             </Form.Item>
+                            {
+                              !!getFieldValue('ifFetch') ?
+                                <Form.Item
+                                  name={`xName`}
+                                  label={"接口地址"}
+                                  rules={[{ required: false, message: '接口地址' }]}
+                                >
+                                  <Input size='large' />
+                                </Form.Item>
+                                : null
+                            }
                             <Form.Item
                               name="ifUpdateProject"
                               label="是否同步方案"
@@ -3346,9 +3325,9 @@ const Home: React.FC<any> = (props: any) => {
                               <Switch />
                             </Form.Item>
                             <Form.Item
-                              name="operationLock"
-                              label="开启状态锁"
-                              initialValue={false}
+                              name="ifPopconfirm"
+                              label="是否二次确认"
+                              initialValue={true}
                               valuePropName="checked"
                             >
                               <Switch />
@@ -3776,13 +3755,22 @@ const Home: React.FC<any> = (props: any) => {
                   }
                   {
                     homeSettingVisible === 'slider-4' ?
-                      <Form.Item
-                        name="show_start_end"
-                        label="应用一键启停"
-                        valuePropName="checked"
-                      >
-                        <Switch />
-                      </Form.Item>
+                      <Fragment>
+                        <Form.Item
+                          name="show_start_end"
+                          label="应用一键启停"
+                          valuePropName="checked"
+                        >
+                          <Switch />
+                        </Form.Item>
+                        <Form.Item
+                          name="self_stop_other"
+                          label="切换停止其他方案"
+                          valuePropName="checked"
+                        >
+                          <Switch />
+                        </Form.Item>
+                      </Fragment>
                       :
                       null
                   }

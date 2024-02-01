@@ -25,12 +25,13 @@ interface Props {
 const Operation2Charts: React.FC<Props> = (props: any) => {
     let { data = {}, id, started } = props;
     let {
-        operationList = [], dataValue, xName = '', operationLock, fontSize,
-        ifUpdateProject, ifFetch, listType, blockType, blockTypeLines = 2
+        operationList = [], dataValue, xName = '', fontSize,
+        ifUpdateProject, ifFetch, listType, blockType, blockTypeLines = 2,
+        ifPopconfirm
     } = data;
-    if (process.env.NODE_ENV === 'development') {
-        started = true;
-    }
+    // if (process.env.NODE_ENV === 'development') {
+    //     started = true;
+    // }
     const [form] = Form.useForm();
     const { validateFields, resetFields, setFieldsValue } = form;
     const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -145,7 +146,6 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                         setLocked(true);
                     });
                     if (ifUpdateProject) {
-                        console.log(result)
                         // 2.保存数据到节点中
                         const { flowData, } = params;
                         let { nodes } = flowData;
@@ -326,24 +326,25 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                     : null
             } */}
             <div className="operation-footer flex-box-center">
+                <Button type="primary" disabled={!started} onClick={() => {
+                    setLocked((prev) => !prev);
+                }}>{locked ? '解锁' : '锁定'}</Button>
                 {
-                    operationLock ?
-                        <Button type="primary" disabled={!started} onClick={() => {
-                            setLocked((prev) => !prev);
-                        }}>{locked ? '解锁' : '锁定'}</Button>
-                        : null
+                    ifPopconfirm ?
+                        <Popconfirm
+                            disabled={!started || locked}
+                            title="确认修改吗?"
+                            onConfirm={() => {
+                                onOk();
+                            }}
+                            okText="确认"
+                            cancelText="取消"
+                        >
+                            <Button type="primary" disabled={!started || locked}>修改</Button>
+                        </Popconfirm>
+                        :
+                        <Button type="primary" onClick={() => onOk()} disabled={!started || locked}>修改</Button>
                 }
-                <Popconfirm
-                    disabled={!started || locked}
-                    title="确认修改吗?"
-                    onConfirm={() => {
-                        onOk();
-                    }}
-                    okText="确认"
-                    cancelText="取消"
-                >
-                    <Button type="primary" disabled={!started || locked}>修改</Button>
-                </Popconfirm>
                 <Button disabled={!started || locked} onClick={() => onCancel()}>重置</Button>
             </div>
 
