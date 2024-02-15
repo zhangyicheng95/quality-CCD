@@ -313,9 +313,8 @@ const Home: React.FC<any> = (props: any) => {
             </div>
             : null
         }
-        <div className={`info-box-content tabs-box`} style={{
+        <div className={`flex-box info-box-content tabs-box`} style={{
           ...homeSettingData?.['slider-4'],
-          ...{ display: 'flex', alignItems: 'center', padding: '0 8px' }
         }}>
           {
             (!!paramData?.contentData?.ipList?.length && !!homeSettingData?.['slider-4']?.show_start_end) ?

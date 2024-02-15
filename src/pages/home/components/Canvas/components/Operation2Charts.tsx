@@ -107,9 +107,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                         ...value,
                     };
                 };
-                console.log(value)
                 if (!!value?.widget?.type || item?.widget?.type === "TagRadio") {
-                    console.log(value)
                     setFieldsValue({ [key]: value?.value });
                     return {
                         ...item,
