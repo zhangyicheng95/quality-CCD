@@ -869,7 +869,7 @@ const Home: React.FC<any> = (props: any) => {
         // socket有数据就渲染新的，没有就渲染localStorage缓存的
         const dataValue = gridValue?.[value[1]] || newGridValue?.[value[1]] || undefined;
         const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
-        const { alias, name, ports = {} } = parent[0] || {};
+        const { alias, name, ports = {} } = parent?.[0] || {};
         const { items = [] } = ports;
         const SecLabel = items?.filter((i: any) => i.group === 'bottom' && (i?.label?.name === value[1]))[0];
 
@@ -894,68 +894,61 @@ const Home: React.FC<any> = (props: any) => {
             >
               <div className='flex-box-center' style={{ height: '100%' }}>
                 {
-                  type === 'line' ?
-                    <LineCharts
-                      id={key}
-                      setMyChartVisible={setMyChartVisible}
-                      data={{
-                        dataValue: dataValue || [],
-                        yName, xName, dataZoom,
-                      }}
-                    />
+                  !parent?.[0] ?
+                    "无效的节点，请重新绑定"
                     :
-                    type === 'point' ?
-                      <PointCharts
+                    type === 'line' ?
+                      <LineCharts
                         id={key}
                         setMyChartVisible={setMyChartVisible}
                         data={{
                           dataValue: dataValue || [],
-                          yName, xName, direction, symbol, dataZoom
+                          yName, xName, dataZoom,
                         }}
                       />
                       :
-                      type === 'bar' ?
-                        <BarCharts
+                      type === 'point' ?
+                        <PointCharts
                           id={key}
                           setMyChartVisible={setMyChartVisible}
                           data={{
                             dataValue: dataValue || [],
-                            yName, xName, direction, align, barColor,
+                            yName, xName, direction, symbol, dataZoom
                           }}
                         />
                         :
-                        type === 'pie' ?
-                          <PieCharts
+                        type === 'bar' ?
+                          <BarCharts
                             id={key}
                             setMyChartVisible={setMyChartVisible}
                             data={{
                               dataValue: dataValue || [],
-                              fontSize
+                              yName, xName, direction, align, barColor,
                             }}
                           />
                           :
-                          type === 'table' ?
-                            <TableCharts
+                          type === 'pie' ?
+                            <PieCharts
                               id={key}
+                              setMyChartVisible={setMyChartVisible}
                               data={{
                                 dataValue: dataValue || [],
-                                yName, xName, fontSize, reverse, tableSize, interlacing,
-                                des_bordered, headerBackgroundColor, valueColor
+                                fontSize
                               }}
                             />
                             :
-                            type === 'table2' ?
-                              <Table2Charts
+                            type === 'table' ?
+                              <TableCharts
                                 id={key}
                                 data={{
                                   dataValue: dataValue || [],
-                                  fontSize, reverse, tableSize, interlacing, des_bordered,
-                                  headerBackgroundColor, valueColor
+                                  yName, xName, fontSize, reverse, tableSize, interlacing,
+                                  des_bordered, headerBackgroundColor, valueColor
                                 }}
                               />
                               :
-                              type === 'table3' ?
-                                <Table3Charts
+                              type === 'table2' ?
+                                <Table2Charts
                                   id={key}
                                   data={{
                                     dataValue: dataValue || [],
@@ -964,8 +957,8 @@ const Home: React.FC<any> = (props: any) => {
                                   }}
                                 />
                                 :
-                                type === 'table4' ?
-                                  <Table4Charts
+                                type === 'table3' ?
+                                  <Table3Charts
                                     id={key}
                                     data={{
                                       dataValue: dataValue || [],
@@ -974,219 +967,229 @@ const Home: React.FC<any> = (props: any) => {
                                     }}
                                   />
                                   :
-                                  type === 'table5' ?
-                                    <TableEditCharts
+                                  type === 'table4' ?
+                                    <Table4Charts
                                       id={key}
                                       data={{
                                         dataValue: dataValue || [],
-                                        fontSize, xColumns, yColumns, yName, des_bordered,
+                                        fontSize, reverse, tableSize, interlacing, des_bordered,
+                                        headerBackgroundColor, valueColor
                                       }}
                                     />
                                     :
-                                    type === 'tree' ?
-                                      <TreeCharts
+                                    type === 'table5' ?
+                                      <TableEditCharts
                                         id={key}
                                         data={{
                                           dataValue: dataValue || [],
-                                          fontSize,
+                                          fontSize, xColumns, yColumns, yName, des_bordered,
                                         }}
                                       />
                                       :
-                                      type === 'three' ?
-                                        <ThreeCharts
+                                      type === 'tree' ?
+                                        <TreeCharts
                                           id={key}
                                           data={{
-                                            dataValue: dataValue || { name: "", value: [] },
-                                            modelRotate, modelScale, modelRotateScreenshot,
-                                            fontSize, fetchType, xName, ifShowColorList,
-                                            modelUpload,
+                                            dataValue: dataValue || [],
+                                            fontSize,
                                           }}
                                         />
                                         :
-                                        type === 'alert' ?
-                                          <AlertCharts
+                                        type === 'three' ?
+                                          <ThreeCharts
                                             id={key}
                                             data={{
-                                              dataValue: dataValue || [],
-                                              fontSize
+                                              dataValue: dataValue || { name: "", value: [] },
+                                              modelRotate, modelScale, modelRotateScreenshot,
+                                              fontSize, fetchType, xName, ifShowColorList,
+                                              modelUpload,
                                             }}
                                           />
                                           :
-                                          type === 'imgs' ?
-                                            <ImgsCharts
+                                          type === 'alert' ?
+                                            <AlertCharts
                                               id={key}
                                               data={{
                                                 dataValue: dataValue || [],
-                                                imgs_width, imgs_height
+                                                fontSize
                                               }}
                                             />
                                             :
-                                            type === 'progress' ?
-                                              <ProgressCharts
+                                            type === 'imgs' ?
+                                              <ImgsCharts
                                                 id={key}
                                                 data={{
-                                                  dataValue: dataValue || 0, barColor, progressType, progressSize, progressSteps
+                                                  dataValue: dataValue || [],
+                                                  imgs_width, imgs_height
                                                 }}
                                               />
                                               :
-                                              type === 'description' ?
-                                                <DescriptionCharts
+                                              type === 'progress' ?
+                                                <ProgressCharts
                                                   id={key}
                                                   data={{
-                                                    dataValue: dataValue || [],
-                                                    basicInfoData, fontSize,
-                                                    des_bordered, des_column, des_layout, des_size,
+                                                    dataValue: dataValue || 0, barColor, progressType, progressSize, progressSteps
                                                   }}
                                                 />
                                                 :
-                                                type === 'button' ?
-                                                  <Button
-                                                    type={['primary', 'link', 'ghost'].includes(valueColor) ? valueColor : ''}
+                                                type === 'description' ?
+                                                  <DescriptionCharts
                                                     id={key}
-                                                    style={Object.assign({ fontSize },
-                                                      { height: '100%', width: '100%' },
-                                                      !['primary', 'link', 'ghost'].includes(valueColor) ? { backgroundColor: valueColor, color: '#fff' } : {}
-                                                    )}
-                                                    onClick={() => {
-                                                      const func = () => {
-                                                        let params = '';
-                                                        if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {
-                                                          try {
-                                                            params = JSON.parse(value)
-                                                          } catch (e) {
-                                                            console.log('按钮传递参数格式不对:', e);
-                                                            params = '';
-                                                          }
-                                                        };
-                                                        btnFetch(fetchType, xName, params).then((res: any) => {
-                                                          if (!!res && res.code === 'SUCCESS') {
-                                                            message.success('success');
-                                                          } else {
-                                                            message.error(res?.message || '接口异常');
-                                                          }
-                                                        });
-                                                      };
-                                                      if (ifNeedAllow) {
-                                                        Modal.confirm({
-                                                          title: '提示',
-                                                          icon: <ExclamationCircleOutlined />,
-                                                          content: '确认发送？',
-                                                          okText: '确认',
-                                                          cancelText: '取消',
-                                                          onOk: () => {
-                                                            func();
-                                                          }
-                                                        });
-                                                      } else {
-                                                        func();
-                                                      }
+                                                    data={{
+                                                      dataValue: dataValue || [],
+                                                      basicInfoData, fontSize,
+                                                      des_bordered, des_column, des_layout, des_size,
                                                     }}
-                                                  >
-                                                    {yName || '按钮'}
-                                                  </Button>
+                                                  />
                                                   :
-                                                  type === 'buttonInp' ?
-                                                    <ButtonCharts
+                                                  type === 'button' ?
+                                                    <Button
+                                                      type={['primary', 'link', 'ghost'].includes(valueColor) ? valueColor : ''}
                                                       id={key}
-                                                      data={{
-                                                        fontSize, yName, xName, fetchType, ifNeedClear, valueColor
+                                                      style={Object.assign({ fontSize },
+                                                        { height: '100%', width: '100%' },
+                                                        !['primary', 'link', 'ghost'].includes(valueColor) ? { backgroundColor: valueColor, color: '#fff' } : {}
+                                                      )}
+                                                      onClick={() => {
+                                                        const func = () => {
+                                                          let params = '';
+                                                          if (!_.isUndefined(value) && !_.isNull(value) && (_.isString(value) && !!value)) {
+                                                            try {
+                                                              params = JSON.parse(value)
+                                                            } catch (e) {
+                                                              console.log('按钮传递参数格式不对:', e);
+                                                              params = '';
+                                                            }
+                                                          };
+                                                          btnFetch(fetchType, xName, params).then((res: any) => {
+                                                            if (!!res && res.code === 'SUCCESS') {
+                                                              message.success('success');
+                                                            } else {
+                                                              message.error(res?.message || '接口异常');
+                                                            }
+                                                          });
+                                                        };
+                                                        if (ifNeedAllow) {
+                                                          Modal.confirm({
+                                                            title: '提示',
+                                                            icon: <ExclamationCircleOutlined />,
+                                                            content: '确认发送？',
+                                                            okText: '确认',
+                                                            cancelText: '取消',
+                                                            onOk: () => {
+                                                              func();
+                                                            }
+                                                          });
+                                                        } else {
+                                                          func();
+                                                        }
                                                       }}
-                                                    />
+                                                    >
+                                                      {yName || '按钮'}
+                                                    </Button>
                                                     :
-                                                    type === 'buttonPassword' ?
-                                                      <ButtonPWCharts
+                                                    type === 'buttonInp' ?
+                                                      <ButtonCharts
                                                         id={key}
                                                         data={{
-                                                          fontSize, yName, xName, fetchType, password, passwordHelp,
-                                                          fetchParams, valueColor
+                                                          fontSize, yName, xName, fetchType, ifNeedClear, valueColor
                                                         }}
                                                       />
                                                       :
-                                                      type === 'operation' ?
-                                                        <OperationCharts
+                                                      type === 'buttonPassword' ?
+                                                        <ButtonPWCharts
                                                           id={key}
                                                           data={{
-                                                            operationList,
-                                                            dataValue,
-                                                            fontSize
+                                                            fontSize, yName, xName, fetchType, password, passwordHelp,
+                                                            fetchParams, valueColor
                                                           }}
                                                         />
                                                         :
-                                                        type === 'operation2' ?
-                                                          <Operation2Charts
+                                                        type === 'operation' ?
+                                                          <OperationCharts
                                                             id={key}
                                                             data={{
-                                                              operationList, dataValue,
-                                                              fontSize, xName,
-                                                              ifUpdateProject, ifFetch,
-                                                              listType, blockType, blockTypeLines,
-                                                              ifPopconfirm
+                                                              operationList,
+                                                              dataValue,
+                                                              fontSize
                                                             }}
                                                           />
                                                           :
-                                                          type === 'statistic' ?
-                                                            <StatisticCharts
+                                                          type === 'operation2' ?
+                                                            <Operation2Charts
                                                               id={key}
                                                               data={{
-                                                                dataValue, fontSize,
-                                                                yName, fontColor, direction
+                                                                operationList, dataValue,
+                                                                fontSize, xName,
+                                                                ifUpdateProject, ifFetch,
+                                                                listType, blockType, blockTypeLines,
+                                                                ifPopconfirm
                                                               }}
                                                             />
                                                             :
-                                                            type === 'platForm' ?
-                                                              <PlatFormCharts
+                                                            type === 'statistic' ?
+                                                              <StatisticCharts
                                                                 id={key}
                                                                 data={{
-                                                                  dataValue, fontSize, fetchType, xName,
-                                                                  ifFetch, platFormOptions
+                                                                  dataValue, fontSize,
+                                                                  yName, fontColor, direction
                                                                 }}
                                                               />
                                                               :
-                                                              type === 'modal' ?
-                                                                <ModalCharts
+                                                              type === 'platForm' ?
+                                                                <PlatFormCharts
                                                                   id={key}
                                                                   data={{
-                                                                    dataValue, fontSize, yName, fetchType, xName, ifFetch,
-                                                                    ifFetchParams,
+                                                                    dataValue, fontSize, fetchType, xName,
+                                                                    ifFetch, platFormOptions
                                                                   }}
                                                                 />
                                                                 :
-                                                                type === 'buttonImages' ?
-                                                                  <ButtonImagesCharts
+                                                                type === 'modal' ?
+                                                                  <ModalCharts
                                                                     id={key}
                                                                     data={{
-                                                                      dataValue, fontSize, reverse, modelRotateScreenshot,
-                                                                      fetchType, xName
+                                                                      dataValue, fontSize, yName, fetchType, xName, ifFetch,
+                                                                      ifFetchParams,
                                                                     }}
                                                                   />
                                                                   :
-                                                                  type === 'imgButton' ?
-                                                                    <ImgButtonCharts
+                                                                  type === 'buttonImages' ?
+                                                                    <ButtonImagesCharts
                                                                       id={key}
                                                                       data={{
-                                                                        dataValue, fontSize, windowControl,
-                                                                        addContentList, xColumns, fetchType, xName,
+                                                                        dataValue, fontSize, reverse, modelRotateScreenshot,
+                                                                        fetchType, xName
                                                                       }}
                                                                     />
                                                                     :
-                                                                    type === 'alertImg' ?
-                                                                      <AlertImgCharts
+                                                                    type === 'imgButton' ?
+                                                                      <ImgButtonCharts
                                                                         id={key}
                                                                         data={{
-                                                                          dataValue, fontSize, lineNumber, columnNumber,
-                                                                          magnifier, magnifierSize,
+                                                                          dataValue, fontSize, windowControl,
+                                                                          addContentList, xColumns, fetchType, xName,
                                                                         }}
                                                                       />
                                                                       :
-                                                                      <ImgCharts
-                                                                        id={key}
-                                                                        data={{
-                                                                          defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                                          dataValue, markNumber, markNumberLeft, markNumberTop,
-                                                                          magnifier, magnifierSize, comparison, ifShowHeader,
-                                                                          magnifierWidth, magnifierHeight
-                                                                        }}
-                                                                      />
+                                                                      type === 'alertImg' ?
+                                                                        <AlertImgCharts
+                                                                          id={key}
+                                                                          data={{
+                                                                            dataValue, fontSize, lineNumber, columnNumber,
+                                                                            magnifier, magnifierSize,
+                                                                          }}
+                                                                        />
+                                                                        :
+                                                                        <ImgCharts
+                                                                          id={key}
+                                                                          data={{
+                                                                            defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                                            dataValue, markNumber, markNumberLeft, markNumberTop,
+                                                                            magnifier, magnifierSize, comparison, ifShowHeader,
+                                                                            magnifierWidth, magnifierHeight
+                                                                          }}
+                                                                        />
                 }
               </div>
             </div>
