@@ -120,7 +120,7 @@ const Table3Charts: React.FC<Props> = (props: any) => {
         const parent = target.parentNode;
         const { clientWidth } = parent;
         let width = 0;
-
+        if (!domRef.current) return;
         domRef.current.onmousemove = (e: any) => {
             width = Math.abs(clientWidth - (ev.pageX - e.pageX));
             parent.style.width = width + 'px';

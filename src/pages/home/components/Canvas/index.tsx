@@ -3906,7 +3906,7 @@ const Home: React.FC<any> = (props: any) => {
             </div>
         }
         <div className="home-footer-powerby">
-          &copy;技术支持: 三一重工股份有限公司-盛景智能科技（嘉兴）有限公司-UBVision团队
+          &copy;技术支持: 三一集团有限公司-盛景智能科技（嘉兴）有限公司-UBVision团队
         </div>
         {
           useMemo(() => {

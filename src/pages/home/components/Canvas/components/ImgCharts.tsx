@@ -185,7 +185,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             var now = new Date();
             return now.getTime();
         };
-        const ul = imgBoxRef.current;
+        const ul: any = imgBoxRef.current;
         eventDom.onmousedown = function (e: any) {
             if (scale === 1) {
                 mask.style.display = "block";
@@ -283,6 +283,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                 lastPointermove = { x: e.clientX, y: e.clientY };
             }
         };
+        if (!ul) return;
         // 绑定鼠标移动
         ul.onmousemove = function (e: any) {
             if (!ul?.clientWidth || scale === 1) return;
