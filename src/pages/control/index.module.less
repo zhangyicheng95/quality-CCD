@@ -44,7 +44,6 @@
 
       .control-item {
         margin-bottom: 24px;
-        padding: 0 24px;
         background-color: @background-color-base;
         box-shadow: @box-shadow-base;
         overflow: hidden;
@@ -53,14 +52,15 @@
           font-size: 26px;
           font-weight: 700;
           cursor: pointer;
-          padding: 12px 0 18px 0;
+          padding: 0 12px;
+          border-bottom: 1px solid @body-background;
           gap: 8px;
         }
 
         .param-item {
           flex: 1;
-          padding-bottom: 16px;
-          margin-left: 24px;
+          padding: 0 16px 24px;
+          margin-left: 8px;
 
           &-underline {
             text-decoration: underline;

@@ -3,7 +3,7 @@ import styles from "./index.module.less";
 import { Button, message, Form, Input, Radio, Select, Checkbox, InputNumber, Switch, Modal, Row, Col, DatePicker, } from "antd";
 import * as _ from "lodash";
 import { updateParams } from "@/services/api";
-import { AppstoreOutlined, CaretDownOutlined, CaretRightOutlined, DownOutlined, FolderOpenOutlined, FolderOutlined, MinusCircleOutlined, RightOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import { AppstoreOutlined, CaretDownOutlined, CaretRightOutlined, DownOutlined, FolderOpenOutlined, FolderOutlined, MinusCircleOutlined, PlusOutlined, RightOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import PrimaryTitle from "@/components/PrimaryTitle";
 import IpInput from "@/components/IpInputGroup";
 import SliderGroup from "@/components/SliderGroup";
@@ -19,7 +19,6 @@ import DragSortableItem from "@/components/DragComponents/DragSortableItem";
 import Measurement from "@/components/Measurement";
 import { formatJson, guid } from "@/utils/utils";
 import moment from "moment";
-import { rest } from "lodash";
 
 const FormItem = Form.Item;
 const { confirm } = Modal;
@@ -29,6 +28,8 @@ const Control: React.FC<any> = (props: any) => {
   const [form1] = Form.useForm();
   const [form] = Form.useForm();
   const { validateFields, setFieldsValue, getFieldValue } = form;
+  const saveRef = useRef<any>();
+  const saveNumRef = useRef<any>(0);
   const [paramData, setParamData] = useState<any>({});
   const [nodeList, setNodeList] = useState<any>([]);
   const [selectedOption, setSelectedOption] = useState<any>({});
@@ -148,6 +149,17 @@ const Control: React.FC<any> = (props: any) => {
                         }
                         : {}
                     ),
+                    initParams?.[key[1]]?.widget?.type === 'DataMap' ? {
+                      widget: {
+                        ...initParams?.[key[1]]?.widget,
+                        options: value,
+                      },
+                      value: (value || [])?.reduce((pre: any, cen: any) => {
+                        return Object.assign({}, pre, {
+                          [cen.label]: cen.value
+                        });
+                      }, {}),
+                    } : {}
                   )
                 } : {},
                 // 有parent代表是TagRadio
@@ -186,7 +198,6 @@ const Control: React.FC<any> = (props: any) => {
       })
     });
   };
-
   // 拖拽排序
   const sortCommonFun = (dragIndex: any, hoverIndex: any) => {
     const source = nodeList.filter((i: any) => i.sortId === dragIndex)[0];
@@ -265,8 +276,8 @@ const Control: React.FC<any> = (props: any) => {
                   value: Object.entries(cen[1]?.value).map((i: any) => i[1])
                 }
               }
-            }
-            return { ...pre, [cen[0]]: cen[1] }
+            };
+            return { ...pre, [cen[0]]: cen[1] };
           }, {});
           return {
             ...node,
@@ -274,8 +285,9 @@ const Control: React.FC<any> = (props: any) => {
               ...node.config,
               initParams
             }
-          }
-        })
+          };
+        });
+        console.log(nodes);
         const params = {
           id: paramData.id,
           data: Object.assign({}, paramData, {
@@ -465,18 +477,22 @@ const Control: React.FC<any> = (props: any) => {
                           {
                             // @ts-ignore
                             <DragSortableItem name={name} index={sortId} >
-                              <div className="item-title flex-box" onClick={() => {
-                                setNodeList((prev: any) => {
-                                  return prev.map((pre: any) => {
-                                    if (pre.id === id) {
-                                      return Object.assign({}, pre, {
-                                        hidden: !hidden,
-                                      });
-                                    }
-                                    return pre;
+                              <div
+                                className="item-title flex-box"
+                                style={hidden ? {} : { marginBottom: 8 }}
+                                onClick={() => {
+                                  setNodeList((prev: any) => {
+                                    return prev.map((pre: any) => {
+                                      if (pre.id === id) {
+                                        return Object.assign({}, pre, {
+                                          hidden: !hidden,
+                                        });
+                                      }
+                                      return pre;
+                                    })
                                   })
-                                })
-                              }}>
+                                }}
+                              >
                                 {hidden ? <CaretRightOutlined /> : <CaretDownOutlined />}
                                 {alias || name}
                               </div>
@@ -502,7 +518,7 @@ const Control: React.FC<any> = (props: any) => {
                                       {_.toUpper(type.slice(0, 1))}
                                       {/* <BlockOutlined className="item-icon" /> */}
                                     </div>
-                                    <div className="title-box">
+                                    <div className="title-box" style={listType === 'block' ? { width: 'auto' } : {}}>
                                       <TooltipDiv className="first" title={alias || name}>{alias || name}</TooltipDiv>
                                       <TooltipDiv className="second">{name}</TooltipDiv>
                                     </div>
@@ -540,7 +556,7 @@ const Control: React.FC<any> = (props: any) => {
                               }
                               const { name, id, open, children = [] } = grou;
                               return (
-                                <div key={`${name}_${id}`} style={{ marginLeft: 24 }}>
+                                <div key={`${name}_${id}`} style={{ margin: '0 16px' }}>
                                   <Row style={{ marginBottom: 8 }}>
                                     <Col className='label-style' style={{ flex: 1, cursor: 'pointer', paddingRight: 0 }} onClick={() => {
                                       setNodeList((prev: any) => {
@@ -600,7 +616,7 @@ const Control: React.FC<any> = (props: any) => {
                                               {_.toUpper(type.slice(0, 1))}
                                               {/* <BlockOutlined className="item-icon" /> */}
                                             </div>
-                                            <div className="title-box">
+                                            <div className="title-box" style={listType === 'block' ? { width: 'auto' } : {}}>
                                               <TooltipDiv className="first" title={alias || name}>{alias || name}</TooltipDiv>
                                               <TooltipDiv className="second">{name}</TooltipDiv>
                                             </div>
@@ -649,7 +665,15 @@ const Control: React.FC<any> = (props: any) => {
       </div>
       <div className="control-footer flex-box">
         <Button onClick={() => setAddConfigVisible(true)}>另存为新配置</Button>
-        <Button type="primary" onClick={() => onFinish()}>保存</Button>
+        <Button ref={saveRef} type="primary" onClick={() => {
+          if (saveNumRef.current === 1) {
+            saveNumRef.current = 0;
+            onFinish();
+          } else {
+            saveNumRef.current = 1;
+            setTimeout(() => saveRef.current.click(), 500);
+          }
+        }}>保存</Button>
       </div>
 
       {
@@ -1308,6 +1332,97 @@ export const FormatWidgetToDom: any = (props: any) => {
             min={min}
           />
         </Form.Item>
+      );
+    case 'DataMap':
+      return (
+        <>
+          <Form.Item
+            name={name}
+            label={label}
+            style={display ? { display: 'none' } : {}}
+            tooltip={description}
+          >
+            {
+              (options || []).map((item: any, index: number) => {
+                const { id, label, value } = item;
+                return (
+                  <div
+                    className="flex-box"
+                    key={id || index}
+                    style={{ marginBottom: (index + 1 !== options.length) ? 24 : 0 }}
+                  >
+                    <div style={{ paddingRight: 12, whiteSpace: 'nowrap' }}>原始值 :</div>
+                    <Input
+                      style={{ width: '50%' }}
+                      defaultValue={label}
+                      onBlur={(e) => {
+                        const { value } = e.target;
+                        !!updateTimer?.current && clearTimeout(updateTimer?.current);
+                        updateTimer.current = setTimeout(() => {
+                          const result = options.map((tag: any) => {
+                            if (tag.id === id) {
+                              return Object.assign({}, tag, {
+                                label: value
+                              });
+                            }
+                            return tag;
+                          });
+                          widgetChange?.(name, result, parent);
+                        }, 300);
+                      }}
+                    />
+                    <div style={{ padding: '0 12px', whiteSpace: 'nowrap' }}>映射值 :</div>
+                    <Input
+                      style={{ width: '50%' }}
+                      defaultValue={value}
+                      onBlur={(e) => {
+                        const { value } = e.target;
+                        !!updateTimer?.current && clearTimeout(updateTimer?.current);
+                        updateTimer.current = setTimeout(() => {
+                          const result = options.map((tag: any) => {
+                            if (tag.id === id) {
+                              return Object.assign({}, tag, {
+                                value: value
+                              });
+                            }
+                            return tag;
+                          });
+                          widgetChange?.(name, result, parent);
+                        }, 300);
+                      }}
+                    />
+                    <MinusCircleOutlined style={{ marginLeft: 8 }} onClick={() => {
+                      if (options.length > 1) {
+                        !!updateTimer?.current && clearTimeout(updateTimer?.current);
+                        updateTimer.current = setTimeout(() => {
+                          const result = options.filter((i: any) => i.id !== id);
+                          widgetChange?.(name, result, parent);
+                        }, 300);
+                      }
+                    }} />
+                  </div>
+                )
+              })
+            }
+
+            <Button
+              type="dashed"
+              style={{ marginTop: 24 }}
+              onClick={() => {
+                const result = (options || []).concat({
+                  id: guid(),
+                  label: '',
+                  value: '',
+                });
+                widgetChange?.(name, result, parent);
+              }}
+              block
+              icon={<PlusOutlined />}
+            >
+              添加可选项
+            </Button>
+          </Form.Item>
+        </>
       );
     default:
       return null;
