@@ -3905,9 +3905,14 @@ const Home: React.FC<any> = (props: any) => {
               未启动
             </div>
         }
-        <div className="home-footer-powerby">
-          &copy;技术支持: 三一集团有限公司-盛景智能科技（嘉兴）有限公司-UBVision团队
-        </div>
+        {
+          // @ts-ignore
+          window?.QUALITY_CCD_CONFIG?.showLogo ?
+            <div className="home-footer-powerby">
+              &copy;技术支持: UBVision团队
+            </div>
+            : null
+        }
         {
           useMemo(() => {
             return <Fragment>
@@ -3977,7 +3982,7 @@ const Home: React.FC<any> = (props: any) => {
             }}
             onCancel={() => onCancel()}
             getContainer={false}
-            destroyOnClose={true}
+            maskClosable={false}
           >
             <Tree
               checkable
@@ -4057,7 +4062,7 @@ const Home: React.FC<any> = (props: any) => {
               form.resetFields();
             }}
             getContainer={false}
-            destroyOnClose={true}
+            maskClosable={false}
           >
             <Form form={form} scrollToFirstError>
               <Form.Item

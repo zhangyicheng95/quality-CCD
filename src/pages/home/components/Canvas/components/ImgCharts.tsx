@@ -510,7 +510,8 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                         open={!!imgVisible}
                         footer={null}
                         onCancel={() => setImgVisible(false)}
-                        destroyOnClose={true}
+                        destroyOnClose
+                        maskClosable={false}
                     >
                         <div className="flex-box image-contrast-modal-body" style={{
                             flexDirection: visibleDirection

@@ -1,9 +1,9 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import styles from "./index.module.less";
-import { Button, message, Form, Input, Radio, Select, Checkbox, InputNumber, Switch, Modal, Row, Col, DatePicker, } from "antd";
+import { Button, message, Form, Input, Radio, Select, Checkbox, InputNumber, Switch, Modal, Row, Col, DatePicker, Tooltip, Cascader, } from "antd";
 import * as _ from "lodash";
 import { updateParams } from "@/services/api";
-import { AppstoreOutlined, CaretDownOutlined, CaretRightOutlined, DownOutlined, FolderOpenOutlined, FolderOutlined, MinusCircleOutlined, PlusOutlined, RightOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import { AppstoreOutlined, CaretDownOutlined, CaretRightOutlined, DownOutlined, FolderOpenOutlined, FolderOutlined, MinusCircleOutlined, PlusOutlined, RetweetOutlined, RightOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import PrimaryTitle from "@/components/PrimaryTitle";
 import IpInput from "@/components/IpInputGroup";
 import SliderGroup from "@/components/SliderGroup";
@@ -25,6 +25,7 @@ const { confirm } = Modal;
 const Control: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
   const { params: paramsData } = initialState;
+  const [form2] = Form.useForm();
   const [form1] = Form.useForm();
   const [form] = Form.useForm();
   const { validateFields, setFieldsValue, getFieldValue } = form;
@@ -44,16 +45,39 @@ const Control: React.FC<any> = (props: any) => {
   const [listType, setListType] = useState('line');
   const [configList, setConfigList] = useState<any>([]);
   const [addConfigVisible, setAddConfigVisible] = useState(false);
+  const [nodeConnectVisible, setNodeConnectVisible] = useState(false);
+  const [connectNodeList, setConnectNodeList] = useState<any>([]);
+  const [connectNodeItem, setConnectNodeItem] = useState<any>({});
 
   useEffect(() => {
     if (!_.isEmpty(paramsData) && !_.isEmpty(paramsData?.flowData)) {
       const { flowData, configList, selectedConfig, listType = 'line' } = paramsData;
       const { nodes, edges } = flowData;
       let configOption: any = {},
-        TagRadioList: any = [];
-      const list = (nodes || [])?.map((node: any, index: number) => {
-        const { config } = node;
+        TagRadioList: any = [],
+        list: any = [],
+        connectNode: any = [];
+      (nodes || [])?.map((node: any, index: number) => {
+        const { alias, name, id, config } = node;
         const { initParams } = config;
+        const childrenList = (Object.entries(initParams) || [])?.map((par: any) => {
+          const { alias, name, widget } = par[1];
+          // if (['TagRadio', 'File', 'Dir', 'codeEditor', 'ImageLabelField', 'DataMap'].includes(widget.type)) return null;
+          return {
+            label: alias || name,
+            value: name,
+            __type: widget?.type,
+            disabled: false
+          };
+        }).filter(Boolean);
+        if (!!initParams && Object.keys(initParams)?.length && childrenList?.length) {
+          connectNode.push({
+            label: alias || name,
+            value: id,
+            children: childrenList
+          });
+        };
+
         (Object.entries(initParams) || [])?.forEach((res: any) => {
           const item = res[1];
           if (item?.widget?.type === 'TagRadio') {
@@ -72,13 +96,14 @@ const Control: React.FC<any> = (props: any) => {
           };
         });
         if (!node.sortId || node.sortId !== 0) {
-          return { ...node, sortId: index };
+          list.push({ ...node, sortId: index });
         }
-        return node;
+        list.push(node);
       });
       setParamData(paramsData);
       setNodeList(list);
-      setSelectedOption(configOption);
+      setConnectNodeList(connectNode);
+      setSelectedOption?.(configOption);
       setTagRadioIds(TagRadioList);
       setListType(listType);
       if (!!configList?.length) {
@@ -375,6 +400,11 @@ const Control: React.FC<any> = (props: any) => {
     <div className={`${styles.control} flex-box page-size background-ubv`}>
       <PrimaryTitle title={"参数控制"} >
         <div className="flex-box title-btn-box">
+          <Tooltip title={"节点属性关联"} placement="bottom">
+            <RetweetOutlined
+              onClick={() => setNodeConnectVisible(true)}
+            />
+          </Tooltip>
           <UnorderedListOutlined
             className={listType === 'line' ? 'selected' : ''}
             onClick={() => onChangeView('line')}
@@ -408,7 +438,6 @@ const Control: React.FC<any> = (props: any) => {
                   return option?.option?.label?.indexOf(inputValue) > -1;
                 }}
                 onChange={(val, option: any) => {
-                  console.log(val, option);
                   const { value, propsKey } = option;
                   const item = JSON.parse(propsKey);
                   selectUpdate(val, item)
@@ -686,11 +715,11 @@ const Control: React.FC<any> = (props: any) => {
             onOk={(val: any) => {
               const { id, value, language } = val;
               widgetChange(id, { value, language });
-              setEditorValue({});
-              setEditorVisible(false);
+              setEditorValue?.({});
+              setEditorVisible?.(false);
             }}
             onCancel={() => {
-              setEditorVisible(false);
+              setEditorVisible?.(false);
             }}
           />
         ) : null
@@ -703,12 +732,12 @@ const Control: React.FC<any> = (props: any) => {
             onOk={(val: any) => {
               const { id, ...rest } = val;
               widgetChange(id, rest);
-              setPlatFormValue({});
-              setPlatFormVisible(false);
+              setPlatFormValue?.({});
+              setPlatFormVisible?.(false);
             }}
             onCancel={() => {
-              setPlatFormValue({});
-              setPlatFormVisible(false);
+              setPlatFormValue?.({});
+              setPlatFormVisible?.(false);
             }}
           />
         ) : null
@@ -722,12 +751,12 @@ const Control: React.FC<any> = (props: any) => {
               const { id, value, ...rest } = val;
               widgetChange(id, { value, ...rest, localPath: value });
               setFieldsValue({ [id]: value });
-              setSelectedPath({});
-              setSelectPathVisible(false);
+              setSelectedPath?.({});
+              setSelectPathVisible?.(false);
             }}
             onCancel={() => {
-              setSelectPathVisible(false);
-              setSelectedPath({});
+              setSelectPathVisible?.(false);
+              setSelectedPath?.({});
             }}
           />
           : null
@@ -767,11 +796,11 @@ const Control: React.FC<any> = (props: any) => {
             open={!!selectImageLabelField}
             centered
             onOk={() => {
-              form1.validateFields()
+              form1?.validateFields()
                 .then((values) => {
                   widgetChange?.(selectImageLabelField?.id, values, selectImageLabelField?.parent)
-                  setSelectImageLabelField(null);
-                  form1.resetFields();
+                  setSelectImageLabelField?.(null);
+                  form1?.resetFields();
                 })
                 .catch((err) => {
                   const { errorFields } = err;
@@ -779,10 +808,9 @@ const Control: React.FC<any> = (props: any) => {
                 });
             }}
             onCancel={() => {
-              setSelectImageLabelField(null);
-              form1.resetFields();
+              setSelectImageLabelField?.(null);
+              form1?.resetFields();
             }}
-            destroyOnClose
             maskClosable={false}
           >
             <Form
@@ -818,6 +846,132 @@ const Control: React.FC<any> = (props: any) => {
           </Modal>
           : null
       }
+      {
+        nodeConnectVisible ?
+          <Modal
+            title={'节点属性关联'}
+            open={nodeConnectVisible}
+            className="node-connect-modal"
+            centered
+            onOk={() => {
+              form2.validateFields()
+                .then((values) => {
+                  const { connectNode, value } = values;
+                  let obj = {};
+                  const newNodeList = (connectNode || []).reduce((pre: any, cen: any) => {
+                    const node = paramData.flowData.nodes?.filter((i: any) => i.id === cen[0])?.[0];
+                    obj = Object.assign({}, obj, {
+                      [cen.join('@$@')]: value
+                    });
+                    return Object.assign({}, pre, {
+                      [cen[0]]: {
+                        ...node,
+                        config: {
+                          ...node.config,
+                          initParams: {
+                            ...node.config.initParams,
+                            [cen[1]]: {
+                              ...node.config.initParams?.[cen[1]],
+                              value
+                            }
+                          }
+                        }
+                      }
+                    })
+                  }, {});
+                  form.setFieldsValue(obj);
+                  setNodeList((prev: any) => (prev || [])?.map((node: any) => {
+                    const { id } = node;
+                    if (newNodeList[id]) {
+                      return {
+                        ...node,
+                        config: {
+                          ...node.config,
+                          initParams: newNodeList[id].config.initParams,
+                        }
+                      }
+                    };
+                    return node;
+                  }));
+                  setNodeConnectVisible(false);
+                  // setConnectNodeItem({});
+                  // form2.resetFields();
+                })
+                .catch((err) => {
+                  const { errorFields } = err;
+                  errorFields?.length && message.error(`${errorFields[0]?.errors[0]} 是必填项`);
+                });
+            }}
+            onCancel={() => {
+              setNodeConnectVisible(false);
+              // setConnectNodeItem({});
+              // form2.resetFields();
+            }}
+            maskClosable={false}
+          >
+            <Form
+              form={form2}
+              scrollToFirstError
+            >
+              <Form.Item
+                name={`connectNode`}
+                label={"关联节点"}
+                style={{ marginBottom: 24 }}
+                rules={[{ required: false, message: '关联节点' }]}
+              >
+                <Cascader
+                  style={{ width: '100%' }}
+                  showSearch
+                  multiple
+                  options={connectNodeList}
+                  onChange={(e: any, selectOptions: any) => {
+                    if (e?.length) {
+                      if (e.length > 1) return;
+                      const item = paramData.flowData.nodes?.filter((i: any) => i.id === e?.[0]?.[0])?.[0];
+                      const widget = !!e?.[0]?.[1] ?
+                        item?.config?.initParams?.[e?.[0]?.[1]]
+                        :
+                        item?.config?.initParams?.[selectOptions[0]?.[0]?.children?.[0]?.value];
+                      setConnectNodeList((pre: any) => (pre || [])?.map((i: any) => ({
+                        ...i,
+                        children: (i.children || [])?.map((child: any) => ({
+                          ...child,
+                          disabled: child?.__type !== widget?.widget?.type
+                        }))
+                      })));
+                      setConnectNodeItem({
+                        node: item,
+                        widget: widget
+                      });
+                    } else {
+                      setConnectNodeList((pre: any) => (pre || [])?.map((i: any) => ({
+                        ...i,
+                        children: (i.children || [])?.map((child: any) => ({
+                          ...child,
+                          disabled: false
+                        }))
+                      })));
+                      setConnectNodeItem({});
+                    }
+                  }}
+                />
+              </Form.Item>
+              {
+                (!!connectNodeItem.node && !['TagRadio', 'File', 'Dir', 'codeEditor', 'ImageLabelField', 'DataMap'].includes(connectNodeItem?.widget.type)) ?
+                  <FormatWidgetToDom
+                    label={'关联属性值'}
+                    id={'value'}
+                    node={connectNodeItem?.node}
+                    config={[connectNodeItem?.widget?.name, connectNodeItem?.widget]}
+                    form={form2}
+                    disabled={false}
+                  />
+                  : null
+              }
+            </Form>
+          </Modal>
+          : null
+      }
     </div >
   );
 };
@@ -836,6 +990,7 @@ export const FormatWidgetToDom: any = (props: any) => {
     setSelectPathVisible, setSelectedPath,
     setSelectImageLabelField,
   } = props;
+
   // const { getFieldDecorator, setFieldsValue, getFieldValue } = form;
   const {
     name: aliasDefault,
@@ -861,7 +1016,7 @@ export const FormatWidgetToDom: any = (props: any) => {
   useEffect(() => {
     if (type1 === 'TagRadio') {
       const children = (options || []).filter((i: any) => i.name === value)[0]?.children;
-      setSelectedOption({ [aliasDefault]: children });
+      setSelectedOption?.({ [aliasDefault]: children });
     };
   }, [type1]);
 
@@ -970,7 +1125,7 @@ export const FormatWidgetToDom: any = (props: any) => {
               onChange={(e: any, option: any) => {
                 const { value, propsKey } = option;
                 const { children = [] } = JSON.parse(propsKey);
-                setSelectedOption({ [aliasDefault]: children });
+                setSelectedOption?.({ [aliasDefault]: children });
                 widgetChange?.(name, value, parent);
               }}
             >
@@ -1170,8 +1325,8 @@ export const FormatWidgetToDom: any = (props: any) => {
             </TooltipDiv>
             <Button
               onClick={() => {
-                setSelectedPath(Object.assign(config[1], { id: name, fileType: 'file' }));
-                setSelectPathVisible(true);
+                setSelectedPath?.(Object.assign(config[1], { id: name, fileType: 'file' }));
+                setSelectPathVisible?.(true);
               }}
               disabled={disabled}
             >
@@ -1204,8 +1359,8 @@ export const FormatWidgetToDom: any = (props: any) => {
             </TooltipDiv>
             <Button
               onClick={() => {
-                setSelectedPath(Object.assign(config[1], { id: name, fileType: 'dir' }));
-                setSelectPathVisible(true);
+                setSelectedPath?.(Object.assign(config[1], { id: name, fileType: 'dir' }));
+                setSelectPathVisible?.(true);
               }}
               disabled={disabled}
             >
@@ -1237,12 +1392,12 @@ export const FormatWidgetToDom: any = (props: any) => {
           }
           <Button
             onClick={() => {
-              setEditorValue({
+              setEditorValue?.({
                 id: name,
                 value: (language === 'json' && _.isObject(value)) ? formatJson(value) : value,
                 language: language || 'json',
               });
-              setEditorVisible(true);
+              setEditorVisible?.(true);
             }}
             disabled={disabled}
           >
@@ -1271,12 +1426,12 @@ export const FormatWidgetToDom: any = (props: any) => {
             <Button
               onClick={() => {
                 const param = { id, config: config[1], parent };
-                form1.setFieldsValue({
+                form1?.setFieldsValue({
                   fetchType: config[1]?.fetchType,
                   xName: config[1]?.xName,
                   ifFetch: config[1]?.ifFetch || false
                 });
-                setSelectImageLabelField(param);
+                setSelectImageLabelField?.(param);
               }}
               disabled={disabled}
               style={{ marginRight: 8 }}
@@ -1285,8 +1440,8 @@ export const FormatWidgetToDom: any = (props: any) => {
             </Button>
             <Button
               onClick={() => {
-                setSelectedPath(Object.assign(_.omit(config[1], 'value'), { id: name, fileType: 'file' }));
-                setSelectPathVisible(true);
+                setSelectedPath?.(Object.assign(_.omit(config[1], 'value'), { id: name, fileType: 'file' }));
+                setSelectPathVisible?.(true);
               }}
               disabled={disabled}
               style={{ marginRight: 8 }}
@@ -1296,8 +1451,8 @@ export const FormatWidgetToDom: any = (props: any) => {
             <Button
               type='primary'
               onClick={() => {
-                setPlatFormValue({ ...config[1], id: name, nodeName: node?.alias || node?.name });
-                setPlatFormVisible(true);
+                setPlatFormValue?.({ ...config[1], id: name, nodeName: node?.alias || node?.name });
+                setPlatFormVisible?.(true);
               }}
               disabled={!localPath || disabled}
             >

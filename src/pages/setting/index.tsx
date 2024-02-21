@@ -424,8 +424,8 @@ const Setting: React.FC<any> = (props) => {
             wrapClassName="button-password-modal"
             centered
             open={!!passwordVisible}
-            maskClosable={false}
             destroyOnClose
+            maskClosable={false}
             onOk={() => {
               form1.validateFields().then(values => {
                 const { prePassword, password } = values;
@@ -442,14 +442,18 @@ const Setting: React.FC<any> = (props) => {
                       window.location.reload();
                     } else {
                       message.error(res?.msg || res?.message || '接口异常');
-                    }
+                    };
+                    form1.resetFields();
                   });
                 } else {
                   message.error('原始密码错误', 5);
                 }
               });
             }}
-            onCancel={() => setPasswordVisible(false)}
+            onCancel={() => {
+              form1.resetFields();
+              setPasswordVisible(false);
+            }}
           >
             <Form form={form1} scrollToFirstError >
               {
