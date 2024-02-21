@@ -44,7 +44,7 @@ const FileManager: React.FC<Props> = (props) => {
       centered
       open={true}
       onOk={() => {
-        onOk(Object.assign({}, data, { value: select }));
+        onOk(Object.assign({}, data, { value: select.slice(0, 2) + select.slice(3) }));
       }}
       onCancel={() => {
         onCancel();

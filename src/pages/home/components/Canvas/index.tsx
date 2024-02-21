@@ -895,7 +895,7 @@ const Home: React.FC<any> = (props: any) => {
               <div className='flex-box-center' style={{ height: '100%' }}>
                 {
                   !parent?.[0] ?
-                    "无效的节点，请重新绑定"
+                    "请重新绑定数据节点"
                     :
                     type === 'line' ?
                       <LineCharts

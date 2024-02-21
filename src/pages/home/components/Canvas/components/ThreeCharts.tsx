@@ -70,7 +70,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     } = data;
     let { name, value = [], action = '', guid: uuid, addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
-        name = "models/output.stl"; // models/pressure.json  models/tx.stl
+        name = "models/sgz630_zbc_214.stl"; // models/pressure.json  models/tx.stl  output  sgz630_zbc_214
         // value = [
         //     {
         //         "name": "成品高度",
@@ -237,7 +237,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const { params } = initialState;
     const dom = useRef<any>();
     const cameraRef = useRef<any>();
-    const [selectedBtn, setSelectedBtn] = useState(['']);
+    const [selectedBtn, setSelectedBtn] = useState(modelUpload ? ['bzBtn03'] : []);
     const [cameraSwitchTime, setCameraSwitchTime] = useState(2);
     const [cameraSwitch, setCameraSwitch] = useState(false);
     const [meshHasColor, setMeshHasColor] = useState(false);
@@ -374,23 +374,25 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         return;
                     };
                     (item2[1] || []).forEach((item3: any) => {
-                        const { Track, ...rest } = item3;
-                        const list: any = [];
-                        (Track || []).forEach((item4: any) => {
-                            const { Point_Normal, ...restItem4 } = item4;
-                            list.push({
-                                ...rest,
-                                ...restItem4,
-                                point: Point_Normal?.slice(0, 3),
-                                normVec: Point_Normal?.slice(3),
-                                area: `area-${index}-robt-${index2}`,
-                                name: item2[0],
-                                areaIndex,
-                                surfaceType: item1.surfaceType
+                        if (!!item3 && !!item3?.Track && Object.keys(item3)?.length) {
+                            const { Track, ...rest } = item3;
+                            const list: any = [];
+                            (Track || []).forEach((item4: any) => {
+                                const { Point_Normal, ...restItem4 } = item4;
+                                list.push({
+                                    ...rest,
+                                    ...restItem4,
+                                    point: Point_Normal?.slice(0, 3),
+                                    normVec: Point_Normal?.slice(3),
+                                    area: `area-${index}-robt-${index2}`,
+                                    name: item2[0],
+                                    areaIndex,
+                                    surfaceType: item1.surfaceType
+                                });
                             });
-                        });
-                        areaIndex += 1;
-                        pointList = pointList.concat(list);
+                            areaIndex += 1;
+                            pointList = pointList.concat(list);
+                        }
                     });
                 });
             });
@@ -715,43 +717,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             event.preventDefault();
             mouse.x = (event.offsetX / renderer.current.domElement.offsetWidth) * 2 - 1;
             mouse.y = -(event.offsetY / renderer.current.domElement.offsetHeight) * 2 + 1;
-            // if (drawingLine) {
-            //     raycaster.setFromCamera(mouse, camera.current);
-            //     intersects = raycaster.intersectObjects(pickableObjects, false);
-            //     if (intersects.length > 0) {
-            //         const positions = line.geometry.attributes.position.array;
-            //         const v0 = new THREE.Vector3(
-            //             positions[0],
-            //             positions[1],
-            //             positions[2]
-            //         );
-            //         const v1 = new THREE.Vector3(
-            //             intersects[0].point.x,
-            //             intersects[0].point.y,
-            //             intersects[0].point.z
-            //         );
-            //         positions[3] = intersects[0].point.x;
-            //         positions[4] = intersects[0].point.y;
-            //         positions[5] = intersects[0].point.z;
-            //         line.geometry.attributes.position.needsUpdate = true;
-            //         const distance = v0.distanceTo(v1);
-            //         let scale = { value: 1, unit: "m" };
-            //         try {
-            //             scale = JSON.parse(localStorage.getItem("scale") || JSON.stringify({ value: 1, unit: "m" }));
-            //         } catch (err) {
-            //             console.log('localStorge中的scale格式不对', err);
-            //             localStorage.removeItem("scale");
-            //         }
-            //         const value = (distance * Number(scale?.value || "1")).toFixed(2) + (scale?.unit || "m");
-            //         measurementLabels[lineId].element.innerHTML = `
-            //         <div>
-            //             ${value}
-            //         </div>
-            //         <div style="display: none;">${value}</div>
-            //         `;
-            //         measurementLabels[lineId].position.lerpVectors(v0, v1, 0.5);
-            //     }
-            // }
         };
         function onMouseUp() {
             if (!renderer.current) return;
@@ -907,6 +872,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 area: `area-${index}-robt-${index2}`,
                                 name: item2[0],
                                 areaIndex,
+                                robID: item2[0]?.indexOf('rob1') > -1 ? 1 : item2[0]?.indexOf('rob2') > -1 ? 2 : undefined,
                                 surfaceType: item1.surfaceType
                             });
                         });
@@ -924,7 +890,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         return new Promise((resolve, reject) => {
             const { positions, addType, cameraDirection, ...rest } = props;
             // 模型尺寸
-            const { height, width, length } = getSize();
+            const { height: yLength, width: zLength, length: xLength } = getSize();
             const name = `editArea-${guid()}`;
             drawingLine = false;
             let sizeObj: any = [];
@@ -934,10 +900,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     Math.abs(positions[4] - positions[1]),
                     Math.abs(positions[5] - positions[2]),
                 ]
-                : [
-                    Math.abs(positions[3] - positions[0]),
-                    height / (15 / 11), // Math.abs(positions[4] - positions[1]),
-                    width //width * 3 / 4 <= Math.abs(positions[5] - positions[2]) ? width : Math.abs(positions[5] - positions[2])
+                :
+                [
+                    xLength,
+                    Math.abs(positions[4] - positions[1]),
+                    zLength,
                 ];
             const geometry = new THREE.BoxGeometry(...sizeObj);
             const material = new THREE.MeshBasicMaterial({});
@@ -946,9 +913,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             const cube = new THREE.Mesh(geometry, material);
             cube.name = name;
             cube['__props'] = _.omit(props, 'positions');
-            cube.position.x = positions[3] + (positions[0] - positions[3]) / 2;
-            cube.position.y = addType === 'form' ? 0 : ((positions[1] > 0 || positions[4] > 0) ? 1 : -1) * height / (cameraDirection === 'bottom' ? (15 / 7) : (9 / 2)); //positions[4] + (positions[1] - positions[4]) / 2;
-            cube.position.z = addType === 'form' ? positions[5] + (positions[2] - positions[5]) / 2 : 0 //width * 3 / 4 <= Math.abs(positions[5] - positions[2]) ? 0 : positions[5] + (positions[2] - positions[5]) / 2;
+            cube.position.x = Math.min(positions[0], positions[3]) + Math.abs(positions[0] - positions[3]) / 2;
+            cube.position.y = Math.min(positions[1], positions[4]) + Math.abs(positions[1] - positions[4]) / 2; //addType === 'form' ? 0 : ((positions[1] > 0 || positions[4] > 0) ? 1 : -1) * height / (cameraDirection === 'bottom' ? (15 / 7) : (9 / 2)); //positions[4] + (positions[1] - positions[4]) / 2;
+            cube.position.z = Math.min(positions[2], positions[5]) + Math.abs(positions[2] - positions[5]) / 2; //addType === 'form' ? positions[5] + (positions[2] - positions[5]) / 2 : 0 //width * 3 / 4 <= Math.abs(positions[5] - positions[2]) ? 0 : positions[5] + (positions[2] - positions[5]) / 2;
             var boxHelper = new THREE.BoxHelper(cube, 0xff0000);
             boxHelper.name = "measureBoxHelper";
             boxHelper.visible = true;
@@ -1012,7 +979,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             // 坐标轴（右手定则，大拇指是x）
             const axesHelper = new THREE.AxesHelper(max * 7 / 6);
             axesHelper.name = "axis";
-            axesHelper.visible = false;
+            axesHelper.visible = true;
             scene.current.add(axesHelper);
 
             let scale = 1.3 * mdwid / dom.current.clientHeight;
@@ -2018,6 +1985,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     {
                         modelUpload ?
                             [
+                                { key: 'top', label: '框选顶面' },
                                 { key: 'bottom', label: '框选底面' },
                                 { key: 'right', label: '框选右侧' },
                                 { key: 'left', label: '框选左侧' },
@@ -2027,53 +1995,104 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                     key={`camera-position-item-${index}`}
                                     type={cameraDirection.includes(key) ? 'primary' : 'default'}
                                     onClick={() => {
-                                        setCameraDirection((prev: any) => {
-                                            if (!prev?.includes(key)) {
-                                                if (key === 'bottom') {
-                                                    const { max, cameraScale } = getSize();
-                                                    var targetPos = new THREE.Vector3(0, max * -cameraScale, 0);
-                                                    animationClick(targetPos).then(res => {
-                                                        const { height, width, length } = getSize();
-                                                        const positions: any = [
-                                                            length / 10 * -1, height / 2 * -1 - 50, width / 2 * -1 - 50,
-                                                            length, height / 2 * -1, width / 2 + 50,
-                                                        ];
-                                                        addRectArea({ positions, cameraDirection: 'bottom' }).then(cube => {
-                                                            editableObjects.current?.push?.(cube);
-                                                        });
+                                        if (!cameraDirection.includes(key)) {
+                                            // 模型尺寸
+                                            const { length: xLength, height: yLength, width: zLength, max, cameraScale } = getSize();
+                                            if (key === 'top') {
+                                                var targetPos = new THREE.Vector3(0, max * cameraScale, 0);
+                                                animationClick(targetPos).then(res => {
+                                                    const positions: any = Math.max(xLength, yLength, zLength) === xLength ?
+                                                        [
+                                                            xLength / 10 * -1, yLength / 2 + 100, zLength / 2 * -1 - 100,
+                                                            xLength / 10 * 11, yLength / 6 * -1, zLength / 2 + 100,
+                                                        ]
+                                                        :
+                                                        Math.max(xLength, yLength, zLength) === yLength ?
+                                                            [
+                                                                xLength / 2 * -1 - 100, yLength / 10 * -1, zLength / 2 * -1 - 100,
+                                                                xLength / 2 * -1, yLength, zLength / 2 + 100,
+                                                            ]
+                                                            :
+                                                            [
+                                                                xLength / 2 * -1 - 100, yLength / 2 + 100, zLength * -1 - 100,
+                                                                xLength / 2 * 1 + 100, yLength / 6 * -1, zLength / 8,
+                                                            ];
+                                                    addRectArea({ positions, addType: 'form', cameraDirection: 'top' }).then(cube => {
+                                                        editableObjects.current?.push?.(cube);
                                                     });
-                                                } else if (key === 'right') {
-                                                    const { max, cameraScale } = getSize();
-                                                    var targetPos = new THREE.Vector3(0, 0, max * cameraScale);
-                                                    animationClick(targetPos).then(res => {
-                                                        const { height, width, length } = getSize();
-                                                        const positions: any = [
-                                                            length / 10 * -1, height / 2 * -1 - 50, width / 2.5,
-                                                            length, height / 2 + 50, width / 2 + 50,
-                                                        ];
-                                                        addRectArea({ positions, addType: 'form', cameraDirection: 'right' }).then(cube => {
-                                                            editableObjects.current?.push?.(cube);
-                                                        });
+                                                });
+                                            } else if (key === 'bottom') {
+                                                var targetPos = new THREE.Vector3(0, max * -cameraScale, 0);
+                                                animationClick(targetPos).then(res => {
+                                                    const positions: any = Math.max(xLength, yLength, zLength) === xLength ?
+                                                        [
+                                                            xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2 * -1 - 100,
+                                                            xLength / 10 * 11, yLength / 4 * -1, zLength / 2 + 100,
+                                                        ]
+                                                        :
+                                                        Math.max(xLength, yLength, zLength) === yLength ?
+                                                            [
+                                                                xLength / 2 * -1 - 100, yLength / 10 * -1, zLength / 2 * -1 - 100,
+                                                                xLength / 2 * -1, yLength, zLength / 2 + 100,
+                                                            ]
+                                                            :
+                                                            [
+                                                                xLength / 2 * -1 - 100, yLength / 2 * -1 - 100, zLength * -1 - 100,
+                                                                xLength / 2 * 1 + 100, yLength / 6 * -1, zLength / 8,
+                                                            ];
+                                                    addRectArea({ positions, addType: 'form', cameraDirection: 'bottom' }).then(cube => {
+                                                        editableObjects.current?.push?.(cube);
                                                     });
-                                                } else if (key === 'left') {
-                                                    const { max, cameraScale } = getSize();
-                                                    var targetPos = new THREE.Vector3(0, 0, -1 * max * cameraScale);
-                                                    animationClick(targetPos).then(res => {
-                                                        const { height, width, length } = getSize();
-                                                        const positions: any = [
-                                                            length / 10 * -1, height / 2 * -1 - 50, width / 2.5 * -1,
-                                                            length, height / 2 + 50, width / 2 * -1 - 50,
-                                                        ];
-                                                        addRectArea({ positions, addType: 'form', cameraDirection: 'left' }).then(cube => {
-                                                            editableObjects.current?.push?.(cube);
-                                                        });
+                                                });
+                                            } else if (key === 'right') {
+                                                var targetPos = new THREE.Vector3(0, 0, max * cameraScale);
+                                                animationClick(targetPos).then(res => {
+                                                    const positions: any = Math.max(xLength, yLength, zLength) === xLength ?
+                                                        [
+                                                            xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2.5,
+                                                            xLength, yLength / 2 + 100, zLength / 2 + 0,
+                                                        ]
+                                                        :
+                                                        Math.max(xLength, yLength, zLength) === yLength ?
+                                                            [
+                                                                xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2.5,
+                                                                xLength, yLength / 2 + 100, zLength / 2 + 100,
+                                                            ]
+                                                            :
+                                                            [
+                                                                xLength / 2 * -1 - 100, yLength / 2 * -1 - 100, zLength * -1 - 100,
+                                                                xLength / 6 * -1, yLength / 2 + 100, zLength / 8,
+                                                            ];
+                                                    addRectArea({ positions, addType: 'form', cameraDirection: 'right' }).then(cube => {
+                                                        editableObjects.current?.push?.(cube);
                                                     });
-                                                }
-                                                return prev.concat(key);
+                                                });
+                                            } else if (key === 'left') {
+                                                var targetPos = new THREE.Vector3(0, 0, -1 * max * cameraScale);
+                                                animationClick(targetPos).then(res => {
+                                                    const positions: any = Math.max(xLength, yLength, zLength) === xLength ?
+                                                        [
+                                                            xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2.5 * -1,
+                                                            xLength, yLength / 2 + 100, zLength / 2 * -1 - 100,
+                                                        ]
+                                                        :
+                                                        Math.max(xLength, yLength, zLength) === yLength ?
+                                                            [
+                                                                xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2.5 * -1,
+                                                                xLength, yLength / 2 + 100, zLength / 2 * -1 - 100,
+                                                            ]
+                                                            :
+                                                            [
+                                                                xLength / 2 + 100, yLength / 2 * -1 - 100, zLength * -1 - 100,
+                                                                xLength / 6, yLength / 2 + 100, zLength / 8,
+                                                            ];
+                                                    addRectArea({ positions, addType: 'form', cameraDirection: 'left' }).then(cube => {
+                                                        editableObjects.current?.push?.(cube);
+                                                    });
+                                                });
                                             }
-
-                                            return prev;
-                                        });
+                                            setCameraDirection((prev: any) => prev.concat(key));
+                                        }
                                     }}
                                 >
                                     {label}
@@ -2699,7 +2718,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             <Button type="primary" onClick={() => {
                                 form1.validateFields()
                                     .then((values) => {
-                                        console.log(values)
                                         const { position, cut_direction, ...rest } = values;
                                         const positions = [
                                             position.x1.value, position.y1.value, position.z1.value,
@@ -2718,7 +2736,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                                 selectedArea.object?.material?.dispose?.();
                                             }
                                         };
-
                                         addRectArea({
                                             ...rest,
                                             positions,

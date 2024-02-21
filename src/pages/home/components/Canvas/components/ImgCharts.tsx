@@ -435,7 +435,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                     <div
                                         className={`next-btn ${(selectedNum + 1 === urlList.current.length) ? 'greyColorStyle' : ''}`}
                                         onClick={() => setSelectedNum((pre: number) => {
-                                            if (pre + 1 < urlList.current.length) {
+                                            if (pre + 1 <= urlList.current.length) {
                                                 return pre + 1;
                                             }
                                             return pre;
