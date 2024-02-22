@@ -28,7 +28,7 @@ import rectTopIcon from '@/assets/imgs/rect-top.svg';
 import rectBottomIcon from '@/assets/imgs/rect-bottom.svg';
 import rectFrontIcon from '@/assets/imgs/rect-front.svg';
 import rectBackIcon from '@/assets/imgs/rect-back.svg';
-import { equalsObj, guid } from '@/utils/utils';
+import { equalsObj, getAllLocalStorageKeys, guid } from '@/utils/utils';
 import { btnFetch } from '@/services/api';
 import FileManager from '@/components/FileManager';
 import html2canvas from 'html2canvas';
@@ -70,7 +70,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     } = data;
     let { name, value = [], action = '', guid: uuid, addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
-        name = "models/sgz630_zbc_214.stl"; // models/pressure.json  models/tx.stl  output  sgz630_zbc_214
+        name = "models/output.stl"; // models/pressure.json  models/tx.stl  output  sgz630_zbc_214
         // value = [
         //     {
         //         "name": "成品高度",
@@ -2221,6 +2221,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 <Button
                                     icon={<UploadOutlined />}
                                     onClick={() => {
+                                        if (!!localStorage.getItem(`localGridContentList-${params.id}`)) {
+                                            const localStorageKeys = getAllLocalStorageKeys();
+                                            (localStorageKeys || []).forEach((key: any) => {
+                                                if (key?.indexOf(params.id) > -1) {
+                                                    localStorage.removeItem(key);
+                                                }
+                                            });
+                                        }
                                         setSelectPathVisible(true);
                                     }}
                                 />

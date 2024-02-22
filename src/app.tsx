@@ -110,6 +110,7 @@ export async function getInitialState(): Promise<{
         defaultSettings.navTheme = theme || 'realDark';
       } else {
         console.log("appjs中方案信息报错: ", res);
+        localStorage.setItem("ipString", query?.id);
         message.error("获取方案信息接口报错，5秒钟后自动刷新");
         setTimeout(() => {
           window.location.reload();
