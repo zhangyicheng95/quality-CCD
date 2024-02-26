@@ -5,9 +5,8 @@ import * as _ from 'lodash';
 import { useModel } from 'umi';
 import {
     BlockOutlined, DownloadOutlined, ExpandOutlined, LeftCircleOutlined,
-    RightCircleOutlined, SwapOutlined, ZoomInOutlined
+    RightCircleOutlined, SwapOutlined
 } from '@ant-design/icons';
-import { numToString } from '@/utils/utils';
 import html2canvas from 'html2canvas';
 
 interface Props {
@@ -19,8 +18,8 @@ interface Props {
 const ImgCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id } = props;
     let {
-        defaultImg, dataValue = '', magnifier = false,
-        comparison, magnifierSize = 6, markNumber, markNumberLeft = 6, markNumberTop = 24,
+        defaultImg, dataValue = '',
+        comparison, magnifierSize = 6, markNumber,
         ifShowHeader, magnifierWidth, magnifierHeight
     } = data;
 
@@ -66,7 +65,6 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             if (e.keyCode === 27) {
                 // 27是esc
                 setMagnifierVisible(false);
-                magnifier = false;
                 isDown = false;
             }
         };
@@ -88,8 +86,8 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         };
         let list = Array.from(new Set(urlList.current.concat(dataValue)));
         localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
-        setSelectedNum(list?.length - 1);
-        urlList.current = list.slice(list.length - 100);
+        setSelectedNum((list?.length - 1 >= 49) ? 49 : list?.length - 1);
+        urlList.current = list.slice(-50);
 
     }, [dataValue, comparison]);
     useEffect(() => {
@@ -330,46 +328,35 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         }
     }, [
         magnifierVisible, selectedNum, dataValue,
-        // magnifier, magnifierSize, dataValue, id, chartSize,
+        // magnifierSize, dataValue, id, chartSize,
         // dom?.current?.clientWidth, dom?.current?.clientHeight
     ]);
-
+    const onPrev = () => {
+        setSelectedNum((pre: number) => {
+            if (pre - 1 >= 0) {
+                return pre - 1;
+            }
+            return pre;
+        });
+    };
+    const onNext = () => {
+        setSelectedNum((pre: number) => {
+            if (pre + 1 < urlList.current.length) {
+                return pre + 1;
+            }
+            return pre;
+        });
+    };
     return (
         <div
             id={`echart-${id}`}
             className={`flex-box ${styles.imgCharts}`}
             ref={dom}
         >
-            {
-                markNumber ?
-                    <div className="flex-box img-box-mark-top">
-                        {
-                            Array.from({ length: markNumberTop || 24 }).map((item: any, index: number) => {
-                                return <div className="flex-box-center img-box-mark-item" key={`img-box-mark-top-${index}`}>
-                                    {index + 1}
-                                </div>
-                            })
-                        }
-                    </div>
-                    : null
-            }
             <div className="flex-box img-box-mark-body" style={markNumber ? { height: 'calc(100% - 20px)' } : { height: '100%' }}>
-                {
-                    markNumber ?
-                        <div className="flex-box img-box-mark-left">
-                            {
-                                Array.from({ length: markNumberLeft || 6 }).map((item: any, index: number) => {
-                                    return <div className="flex-box-center img-box-mark-item" key={`img-box-mark-left-${index}`}>
-                                        {numToString(index + 1)}
-                                    </div>
-                                })
-                            }
-                        </div>
-                        : null
-                }
                 <div className={`flex-box-center img-box-mark-right`} style={markNumber ? { width: 'calc(100% - 20px)' } : { width: '100%' }}>
                     {
-                        (!!dataValue || !!defaultImg) ?
+                        (!!urlList.current?.[selectedNum] || !!dataValue || !!defaultImg) ?
                             <Fragment>
                                 <div
                                     className="img-box"
@@ -380,66 +367,40 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                     }
                                     ref={imgBoxRef}
                                 >
-                                    {/* {
-                                        (magnifier || magnifierVisible) ? */}
-                                    <Fragment>
-                                        <div
-                                            className="ant-image-mask"
-                                            style={
-                                                chartSize ?
-                                                    { width: '100%', height: 'auto' } :
-                                                    { width: 'auto', height: '100%' }
-                                            }
-                                        />
-                                        <Image
-                                            src={urlList.current?.[selectedNum] || dataValue || defaultImg}
-                                            alt="logo"
-                                            style={
-                                                chartSize ?
-                                                    { width: '100%', height: 'auto' } :
-                                                    { width: 'auto', height: '100%' }
-                                            }
-                                            preview={false}
-                                        />
-                                        <div className="mask" style={(!!magnifierWidth && !!magnifierHeight) ? {
-                                            width: magnifierWidth,
-                                            height: magnifierHeight,
-                                        } : {}} />
-                                    </Fragment>
-                                    {/* :
-                                            <Image
-                                                src={urlList.current?.[selectedNum] || dataValue || defaultImg}
-                                                alt="logo"
-                                                style={
-                                                    chartSize ?
-                                                        { width: '100%', height: 'auto' } :
-                                                        { width: 'auto', height: '100%' }
-                                                }
-                                                preview={false}
-                                            />
-                                    } */}
+                                    <div
+                                        className="ant-image-mask"
+                                        style={
+                                            chartSize ?
+                                                { width: '100%', height: 'auto' } :
+                                                { width: 'auto', height: '100%' }
+                                        }
+                                    />
+                                    <Image
+                                        src={urlList.current?.[selectedNum] || dataValue || defaultImg}
+                                        alt="logo"
+                                        style={
+                                            chartSize ?
+                                                { width: '100%', height: 'auto' } :
+                                                { width: 'auto', height: '100%' }
+                                        }
+                                        preview={false}
+                                    />
+                                    <div className="mask" style={(!!magnifierWidth && !!magnifierHeight) ? {
+                                        width: magnifierWidth,
+                                        height: magnifierHeight,
+                                    } : {}} />
                                 </div>
                                 <div className="flex-box img-box-btn-box" style={!!ifShowHeader ? { display: 'flex', top: '-26px' } : {}}>
                                     <div
                                         className={`${(selectedNum === 0) ? 'greyColorStyle' : ''} prev-btn`}
-                                        onClick={() => setSelectedNum((pre: number) => {
-                                            if (pre - 1 >= 0) {
-                                                return pre - 1;
-                                            }
-                                            return pre;
-                                        })}
+                                        onClick={() => onPrev()}
                                     >
                                         {'< '}
                                     </div>
                                     {`${selectedNum + 1}/${urlList.current?.length}`}
                                     <div
                                         className={`next-btn ${(selectedNum + 1 === urlList.current.length) ? 'greyColorStyle' : ''}`}
-                                        onClick={() => setSelectedNum((pre: number) => {
-                                            if (pre + 1 <= urlList.current.length) {
-                                                return pre + 1;
-                                            }
-                                            return pre;
-                                        })}
+                                        onClick={() => onNext()}
                                     >
                                         {' >'}
                                     </div>
@@ -534,24 +495,14 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                                     disabled={selectedNum === 0}
                                     icon={<LeftCircleOutlined className='btn-icon' />}
                                     className='prev-btn'
-                                    onClick={() => setSelectedNum((pre: number) => {
-                                        if (pre - 1 >= 0) {
-                                            return pre - 1;
-                                        }
-                                        return pre;
-                                    })}
+                                    onClick={() => onPrev()}
                                 />
                                 <Button
                                     type="text"
                                     disabled={selectedNum + 1 === urlList.current.length}
                                     icon={<RightCircleOutlined className='btn-icon' />}
                                     className='next-btn'
-                                    onClick={() => setSelectedNum((pre: number) => {
-                                        if (pre + 1 < urlList.current.length) {
-                                            return pre + 1;
-                                        }
-                                        return pre;
-                                    })}
+                                    onClick={() => onNext()}
                                 />
                             </div>
                         </div>

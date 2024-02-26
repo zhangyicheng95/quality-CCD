@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { connect, useModel } from 'umi';
@@ -70,163 +70,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     } = data;
     let { name, value = [], action = '', guid: uuid, addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
-        name = "models/output.stl"; // models/pressure.json  models/tx.stl  output  sgz630_zbc_214
-        // value = [
-        //     {
-        //         "name": "成品高度",
-        //         "infoName": "jsdxqgd",
-        //         "position": [
-        //             {
-        //                 "x": 397.6,
-        //                 "y": -9.33,
-        //                 "z": -515.63
-        //             },
-        //             {
-        //                 "x": 397.6,
-        //                 "y": -9.33,
-        //                 "z": 364.58
-        //             }
-        //         ],
-        //         "standardValue": 1360,
-        //         "offsetValue": -0.45,
-        //         "type": "right",
-        //         "maxValue": 1360.33,
-        //         "minValue": 1358.43,
-        //         "averageValue": 1359.55
-        //     },
-        //     {
-        //         "name": "成品长轴",
-        //         "infoName": "TQ_XQDXHCZWJ",
-        //         "position": [
-        //             {
-        //                 "x": -439.65,
-        //                 "y": -454.95,
-        //                 "z": 0
-        //             },
-        //             {
-        //                 "x": -439.65,
-        //                 "y": 504.19,
-        //                 "z": 0
-        //             }
-        //         ],
-        //         "standardValue": 936,
-        //         "offsetValue": 4.33,
-        //         "type": "left",
-        //         "maxValue": 941.38,
-        //         "minValue": 938.17,
-        //         "averageValue": 940.33
-        //     },
-        //     {
-        //         "name": "凹凸短轴",
-        //         "infoName": "TQ_XQDZWJ",
-        //         "position": [
-        //             {
-        //                 "x": -439.65,
-        //                 "y": 24.62,
-        //                 "z": -715.63
-        //             },
-        //             {
-        //                 "x": -439.65,
-        //                 "y": 24.62,
-        //                 "z": -715.63
-        //             },
-        //         ],
-        //         "standardValue": 886,
-        //         "offsetValue": 3,
-        //         "type": "bottom",
-        //         "maxValue": 889.55,
-        //         "minValue": 888.46,
-        //         "averageValue": 889
-        //     },
-        //     {
-        //         "name": "止口凸台",
-        //         "infoName": "TQ_XQDZWJ",
-        //         "position": [
-        //             {
-        //                 "x": 0,
-        //                 "y": 24.62,
-        //                 "z": -715.63
-        //             },
-        //             {
-        //                 "x": 0,
-        //                 "y": 24.62,
-        //                 "z": -715.63
-        //             }
-        //         ],
-        //         "standardValue": 886,
-        //         "offsetValue": 3,
-        //         "type": "bottom",
-        //         "maxValue": 889.55,
-        //         "minValue": 888.46,
-        //         "averageValue": 889
-        //     },
-        //     {
-        //         "name": "凹凸长轴",
-        //         "infoName": "TQ_XQDZWJ",
-        //         "position": [
-        //             {
-        //                 "x": 448.86,
-        //                 "y": 24.62,
-        //                 "z": -715.63
-        //             },
-        //             {
-        //                 "x": 448.86,
-        //                 "y": 24.62,
-        //                 "z": -715.63
-        //             }
-        //         ],
-        //         "standardValue": 886,
-        //         "offsetValue": 3,
-        //         "type": "bottom",
-        //         "maxValue": 889.55,
-        //         "minValue": 888.46,
-        //         "averageValue": 889
-        //     },
-        //     // {
-        //     //     "name": "成品内径长轴",
-        //     //     "infoName": "TQ_XQDXHCZNJ",
-        //     //     "position": [
-        //     //         {
-        //     //             "x": 5.32,
-        //     //             "y": -384.34,
-        //     //             "z": 644.58
-        //     //         },
-        //     //         {
-        //     //             "x": 5.32,
-        //     //             "y": 363.09,
-        //     //             "z": 644.58
-        //     //         }
-        //     //     ],
-        //     //     "standardValue": 743,
-        //     //     "offsetValue": 4.44,
-        //     //     "type": "top",
-        //     //     "averageValue": 747.44,
-        //     //     "maxValue": 747.44,
-        //     //     "minValue": 747.44
-        //     // },
-        //     {
-        //         "name": "成品内径短轴",
-        //         "infoName": "TQ_XQDZNJ",
-        //         "position": [
-        //             {
-        //                 "x": -366.28,
-        //                 "y": -10.62,
-        //                 "z": 364.58
-        //             },
-        //             {
-        //                 "x": 376.92,
-        //                 "y": -10.62,
-        //                 "z": 364.58
-        //             }
-        //         ],
-        //         "standardValue": 743,
-        //         "offsetValue": 0.2,
-        //         "type": "top",
-        //         "averageValue": 743.2,
-        //         "maxValue": 743.2,
-        //         "minValue": 743.2
-        //     }
-        // ];
+        name = "models/sgz630_zbc_214.stl"; // models/pressure.json  models/tx.stl  output  sgz630_zbc_214
+        addType = "rxptPoint";
+        // value = [];
     };
 
     const [form] = Form.useForm();
@@ -361,6 +207,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             return;
         };
         valueCardRef.current = [].concat(value);
+        console.log('点云路径：', selectedPath || name);
+        console.log('卡片数据：', value);
         // addType为add时，代表增量渲染，不清除其他数据
         if (!!scene.current && addType === 'add') {
             loadModel(name, value, addType);
@@ -373,7 +221,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     if (!_.isArray(item2[1])) {
                         return;
                     };
-                    (item2[1] || []).forEach((item3: any) => {
+                    (item2[1] || []).forEach((item3: any, index3: number) => {
                         if (!!item3 && !!item3?.Track && Object.keys(item3)?.length) {
                             const { Track, ...rest } = item3;
                             const list: any = [];
@@ -384,9 +232,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                     ...restItem4,
                                     point: Point_Normal?.slice(0, 3),
                                     normVec: Point_Normal?.slice(3),
-                                    area: `area-${index}-robt-${index2}`,
+                                    area: { area: index, rob: index2 + 1, index: index3 },
                                     name: item2[0],
                                     areaIndex,
+                                    regionID: index + 1,
+                                    robID: item2[0]?.indexOf('rob1') > -1 ? 1 : item2[0]?.indexOf('rob2') > -1 ? 2 : undefined,
                                     surfaceType: item1.surfaceType
                                 });
                             });
@@ -399,10 +249,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             loadModel('', pointList, 'add');
             return;
         };
-        console.log('点云路径：', selectedPath || name);
-        console.log('卡片数据：', value);
         // 外层盒子
         const box: any = dom?.current;
+        if (!box) return;
         // 渲染场景盒子
         const canvas: any = document.querySelector("#demoBox");
         // 按钮-标注
@@ -852,35 +701,457 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             /***************清理框选区域********************/
             let pointList: any = [],
                 areaIndex = 0;
-            (value || []).forEach((item1: any, index: number) => {
-                Object.entries(item1)?.forEach((item2: any, index2: number) => {
-                    if (!_.isArray(item2[1])) {
-                        return;
-                    };
-                    (item2[1] || []).forEach((item3: any) => {
-                        const { Track, ...rest } = item3;
-                        const list: any = [];
-                        (Track || []).forEach((item4: any) => {
-                            const { Point_Normal, point, normVec, ...restItem4 } = item4;
-                            const po = Point_Normal?.slice(0, 3),
-                                no = Point_Normal?.slice(3);
-                            list.push({
-                                ...rest,
-                                ...restItem4,
-                                point: !!point ? point : { x: po?.[0], y: po?.[1], z: po?.[2] },
-                                normVec: !!normVec ? normVec : { x: no?.[0], y: no?.[1], z: no?.[2] },
-                                area: `area-${index}-robt-${index2}`,
-                                name: item2[0],
-                                areaIndex,
-                                robID: item2[0]?.indexOf('rob1') > -1 ? 1 : item2[0]?.indexOf('rob2') > -1 ? 2 : undefined,
-                                surfaceType: item1.surfaceType
+            (
+                // [
+                //     {
+                //         "surfaceType": "Up",
+                //         "rob1_tracks": [
+                //             {
+                //                 "PreStP_num": 0,
+                //                 "PreEdP_num": 3,
+                //                 "Track": [
+                //                     {
+                //                         "Point_Normal": [
+                //                             294.88275146484375,
+                //                             123,
+                //                             -833,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             225.20053100585938,
+                //                             107,
+                //                             -833,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             148.692138671875,
+                //                             16,
+                //                             -833,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             -152.32077026367188,
+                //                             16,
+                //                             -833,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     }
+                //                 ]
+                //             },
+                //             {
+                //                 "PreStP_num": 0,
+                //                 "PreEdP_num": 4,
+                //                 "Track": [
+                //                     {
+                //                         "Point_Normal": [
+                //                             -115.62741088867188,
+                //                             16,
+                //                             -1033,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             -144.7851104736328,
+                //                             16,
+                //                             -1033,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             225.53146362304688,
+                //                             107,
+                //                             -1033,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             219.2804412841797,
+                //                             16,
+                //                             -1033,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             -85.11199188232422,
+                //                             16,
+                //                             -1033,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     }
+                //                 ]
+                //             },
+                //             {
+                //                 "PreStP_num": 0,
+                //                 "PreEdP_num": 3,
+                //                 "Track": [
+                //                     {
+                //                         "Point_Normal": [
+                //                             290.06597900390625,
+                //                             123,
+                //                             -1233,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             226.36282348632812,
+                //                             107,
+                //                             -1233,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             180.6002197265625,
+                //                             16,
+                //                             -1233,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             -181.92457580566406,
+                //                             16,
+                //                             -1233,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     }
+                //                 ]
+                //             }
+                //         ],
+                //         "rob2_tracks": [
+                //             {
+                //                 "PreStP_num": 0,
+                //                 "PreEdP_num": 3,
+                //                 "Track": [
+                //                     {
+                //                         "Point_Normal": [
+                //                             290.36468505859375,
+                //                             123,
+                //                             -33,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             225.05929565429688,
+                //                             107,
+                //                             -33,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             185.28594970703125,
+                //                             16,
+                //                             -33,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             -139.76104736328125,
+                //                             16,
+                //                             -33,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     }
+                //                 ]
+                //             },
+                //             {
+                //                 "PreStP_num": 0,
+                //                 "PreEdP_num": 7,
+                //                 "Track": [
+                //                     {
+                //                         "Point_Normal": [
+                //                             267.3298645019531,
+                //                             107,
+                //                             -233,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             145.76925659179688,
+                //                             16,
+                //                             -233,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             225.2796630859375,
+                //                             107,
+                //                             -233,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             77.19525146484375,
+                //                             16,
+                //                             -233,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             218.71026611328125,
+                //                             16,
+                //                             -233,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             -62.89788818359375,
+                //                             16,
+                //                             -233,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             9.728561401367188,
+                //                             16,
+                //                             -233,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             -133.61636352539062,
+                //                             16,
+                //                             -233,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     }
+                //                 ]
+                //             },
+                //             {
+                //                 "PreStP_num": 0,
+                //                 "PreEdP_num": 3,
+                //                 "Track": [
+                //                     {
+                //                         "Point_Normal": [
+                //                             290.0918273925781,
+                //                             123,
+                //                             -433,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             225.7637481689453,
+                //                             107,
+                //                             -433,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             174.66629028320312,
+                //                             16,
+                //                             -433,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             -145.67567443847656,
+                //                             16,
+                //                             -433,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     }
+                //                 ]
+                //             },
+                //             {
+                //                 "PreStP_num": 0,
+                //                 "PreEdP_num": 3,
+                //                 "Track": [
+                //                     {
+                //                         "Point_Normal": [
+                //                             290,
+                //                             122.8204574584961,
+                //                             -633,
+                //                             -1,
+                //                             0,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             226.3599853515625,
+                //                             107,
+                //                             -633,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             200.65145874023438,
+                //                             16,
+                //                             -633,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     },
+                //                     {
+                //                         "Point_Normal": [
+                //                             -168.17965698242188,
+                //                             16,
+                //                             -633,
+                //                             0,
+                //                             1,
+                //                             0
+                //                         ],
+                //                         "PntTpe": 1
+                //                     }
+                //                 ]
+                //             }
+                //         ],
+                //         "position": [
+                //             null
+                //         ]
+                //     }
+                // ] ||
+                value || []
+            ).forEach((item1: any, index: number) => {
+                Object.entries(item1)
+                    ?.filter((i: any) => _.isArray(i[1]) && _.isObject(i[1][0]))
+                    ?.forEach((item2: any, index2: number) => {
+                        if (!_.isArray(item2[1])) return;
+                        (item2[1] || []).forEach((item3: any, index3: number) => {
+                            if (!item3 || !item3?.Track) return;
+                            const { Track, ...rest } = item3;
+                            const list: any = [];
+                            (Track || []).forEach((item4: any) => {
+                                const { Point_Normal, point, normVec, ...restItem4 } = item4;
+                                const po = Point_Normal?.slice(0, 3),
+                                    no = Point_Normal?.slice(3);
+                                list.push({
+                                    ...rest,
+                                    ...restItem4,
+                                    point: !!point ? point : { x: po?.[0], y: po?.[1], z: po?.[2] },
+                                    normVec: !!normVec ? normVec : { x: no?.[0], y: no?.[1], z: no?.[2] },
+                                    area: { area: index, rob: index2 + 1, index: index3 + 1 },
+                                    name: item2[0],
+                                    areaIndex,
+                                    regionID: index + 1,
+                                    robID: item2[0]?.indexOf('rob1') > -1 ? 1 : item2[0]?.indexOf('rob2') > -1 ? 2 : undefined,
+                                    surfaceType: item1.surfaceType
+                                });
                             });
+                            areaIndex += 1;
+                            pointList = pointList.concat(list);
                         });
-                        areaIndex += 1;
-                        pointList = pointList.concat(list);
                     });
-                });
             });
+            console.log('pointList', pointList);
             loadModel('', pointList, 'add');
             return;
         };
@@ -1688,7 +1959,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     scene.current?.remove?.(mesh);
                 }
             });
-            console.log(value);
+            console.log('点数据', value);
             (value || []).forEach((item: any, index: number) => {
                 const { point, normVec, areaIndex, regionID, robID, surfaceType, ...rest } = item;
                 const scale = camera?.current?.zoom || 1.5;
@@ -1927,8 +2198,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         }
         animateCamera(list[index]);
         cameraRef.current = setTimeout(() => {
-            console.log(index, cameraSwitchTime)
-            cameraRotate(list, ((index + 1 === list.length) ? 0 : index + 1))
+            cameraRotate(list, ((index + 1 === list.length) ? 0 : index + 1));
         }, cameraSwitchTime * 1000);
     };
     useEffect(() => {
@@ -1980,513 +2250,485 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             className={`${styles.threeCharts} flex-box`}
             style={{ fontSize }}
         >
-            <div id="instructions" className="flex-box-justify-between">
-                <div className={`flex-box ${modelUpload ? 'camera-position' : ''}`}>
-                    {
-                        modelUpload ?
-                            [
-                                { key: 'top', label: '框选顶面' },
-                                { key: 'bottom', label: '框选底面' },
-                                { key: 'right', label: '框选右侧' },
-                                { key: 'left', label: '框选左侧' },
-                            ].map((item: any, index: number) => {
-                                const { key, label } = item;
-                                return <Button
-                                    key={`camera-position-item-${index}`}
-                                    type={cameraDirection.includes(key) ? 'primary' : 'default'}
-                                    onClick={() => {
-                                        if (!cameraDirection.includes(key)) {
-                                            // 模型尺寸
-                                            const { length: xLength, height: yLength, width: zLength, max, cameraScale } = getSize();
-                                            if (key === 'top') {
-                                                var targetPos = new THREE.Vector3(0, max * cameraScale, 0);
-                                                animationClick(targetPos).then(res => {
-                                                    const positions: any = Math.max(xLength, yLength, zLength) === xLength ?
-                                                        [
-                                                            xLength / 10 * -1, yLength / 2 + 100, zLength / 2 * -1 - 100,
-                                                            xLength / 10 * 11, yLength / 6 * -1, zLength / 2 + 100,
-                                                        ]
-                                                        :
-                                                        Math.max(xLength, yLength, zLength) === yLength ?
-                                                            [
-                                                                xLength / 2 * -1 - 100, yLength / 10 * -1, zLength / 2 * -1 - 100,
-                                                                xLength / 2 * -1, yLength, zLength / 2 + 100,
-                                                            ]
-                                                            :
-                                                            [
-                                                                xLength / 2 * -1 - 100, yLength / 2 + 100, zLength * -1 - 100,
-                                                                xLength / 2 * 1 + 100, yLength / 6 * -1, zLength / 8,
-                                                            ];
-                                                    addRectArea({ positions, addType: 'form', cameraDirection: 'top' }).then(cube => {
-                                                        editableObjects.current?.push?.(cube);
-                                                    });
-                                                });
-                                            } else if (key === 'bottom') {
-                                                var targetPos = new THREE.Vector3(0, max * -cameraScale, 0);
-                                                animationClick(targetPos).then(res => {
-                                                    const positions: any = Math.max(xLength, yLength, zLength) === xLength ?
-                                                        [
-                                                            xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2 * -1 - 100,
-                                                            xLength / 10 * 11, yLength / 4 * -1, zLength / 2 + 100,
-                                                        ]
-                                                        :
-                                                        Math.max(xLength, yLength, zLength) === yLength ?
-                                                            [
-                                                                xLength / 2 * -1 - 100, yLength / 10 * -1, zLength / 2 * -1 - 100,
-                                                                xLength / 2 * -1, yLength, zLength / 2 + 100,
-                                                            ]
-                                                            :
-                                                            [
-                                                                xLength / 2 * -1 - 100, yLength / 2 * -1 - 100, zLength * -1 - 100,
-                                                                xLength / 2 * 1 + 100, yLength / 6 * -1, zLength / 8,
-                                                            ];
-                                                    addRectArea({ positions, addType: 'form', cameraDirection: 'bottom' }).then(cube => {
-                                                        editableObjects.current?.push?.(cube);
-                                                    });
-                                                });
-                                            } else if (key === 'right') {
-                                                var targetPos = new THREE.Vector3(0, 0, max * cameraScale);
-                                                animationClick(targetPos).then(res => {
-                                                    const positions: any = Math.max(xLength, yLength, zLength) === xLength ?
-                                                        [
-                                                            xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2.5,
-                                                            xLength, yLength / 2 + 100, zLength / 2 + 0,
-                                                        ]
-                                                        :
-                                                        Math.max(xLength, yLength, zLength) === yLength ?
-                                                            [
-                                                                xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2.5,
-                                                                xLength, yLength / 2 + 100, zLength / 2 + 100,
-                                                            ]
-                                                            :
-                                                            [
-                                                                xLength / 2 * -1 - 100, yLength / 2 * -1 - 100, zLength * -1 - 100,
-                                                                xLength / 6 * -1, yLength / 2 + 100, zLength / 8,
-                                                            ];
-                                                    addRectArea({ positions, addType: 'form', cameraDirection: 'right' }).then(cube => {
-                                                        editableObjects.current?.push?.(cube);
-                                                    });
-                                                });
-                                            } else if (key === 'left') {
-                                                var targetPos = new THREE.Vector3(0, 0, -1 * max * cameraScale);
-                                                animationClick(targetPos).then(res => {
-                                                    const positions: any = Math.max(xLength, yLength, zLength) === xLength ?
-                                                        [
-                                                            xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2.5 * -1,
-                                                            xLength, yLength / 2 + 100, zLength / 2 * -1 - 100,
-                                                        ]
-                                                        :
-                                                        Math.max(xLength, yLength, zLength) === yLength ?
-                                                            [
-                                                                xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2.5 * -1,
-                                                                xLength, yLength / 2 + 100, zLength / 2 * -1 - 100,
-                                                            ]
-                                                            :
-                                                            [
-                                                                xLength / 2 + 100, yLength / 2 * -1 - 100, zLength * -1 - 100,
-                                                                xLength / 6, yLength / 2 + 100, zLength / 8,
-                                                            ];
-                                                    addRectArea({ positions, addType: 'form', cameraDirection: 'left' }).then(cube => {
-                                                        editableObjects.current?.push?.(cube);
-                                                    });
-                                                });
-                                            }
-                                            setCameraDirection((prev: any) => prev.concat(key));
-                                        }
-                                    }}
-                                >
-                                    {label}
-                                </Button>
-                            })
-                            : null
-                    }
-                </div>
-                <div className="flex-box">
-                    <Tooltip title="比例尺">
-                        <Popover
-                            content={
-                                <div className='flex-box' style={{ height: 32 }}>
-                                    <Input
-                                        style={{ maxWidth: 100, height: '100%' }}
-                                        placeholder="比例尺"
-                                        onBlur={(e) => {
-                                            const res = JSON.parse(localStorage.getItem("scale") || "{}");
-                                            const val = e.target.value;
-                                            localStorage.setItem("scale", JSON.stringify({ ...res, value: val }));
-                                        }}
-                                        defaultValue={JSON.parse(localStorage.getItem("scale") || "{}")?.value || 1}
-                                    />
-                                    <Select
-                                        style={{ width: 125, minWidth: 125 }}
-                                        onChange={(val) => {
-                                            const res = JSON.parse(localStorage.getItem("scale") || "{}");
-                                            localStorage.setItem("scale", JSON.stringify({ ...res, unit: val }));
-                                        }}
-                                        defaultValue={JSON.parse(localStorage.getItem("scale") || "{}")?.unit || 'm'}
-                                        options={[
-                                            {
-                                                value: 'mm',
-                                                label: '毫米（mm）',
-                                            },
-                                            {
-                                                value: 'cm',
-                                                label: '厘米（cm）',
-                                            },
-                                            {
-                                                value: 'm',
-                                                label: '米（m）',
-                                            }
-                                        ]}
-                                    />
-                                </div>
-                            }
-                            title="设置比例尺"
-                            trigger="click"
-                        >
-                            <Button
-                                icon={<FontSizeOutlined />}
-                                className='btn'
-                            />
-                        </Popover>
-                    </Tooltip>
-                    <Tooltip title="标注">
-                        <Button
-                            icon={<AimOutlined />}
-                            type={selectedBtn.includes('bzBtn01') ? 'primary' : 'default'}
-                            id="bzBtn01"
-                            className='btn'
-                        />
-                    </Tooltip>
-                    <Tooltip title="显示边框">
-                        <Button
-                            icon={<BorderOuterOutlined />}
-                            type={selectedBtn.includes('bzBtn02') ? 'primary' : 'default'}
-                            id="bzBtn02"
-                            className='btn'
-                        />
-                    </Tooltip>
-                    <Tooltip title="显示坐标轴">
-                        <Button
-                            icon={<BorderlessTableOutlined />}
-                            type={selectedBtn.includes('bzBtn03') ? 'primary' : 'default'}
-                            id="bzBtn03"
-                            className='btn'
-                        />
-                    </Tooltip>
-                    <Tooltip title="开启透视">
-                        <Button
-                            icon={<EyeOutlined />}
-                            type={selectedBtn.includes('bzBtn04') ? 'primary' : 'default'}
-                            id="bzBtn04"
-                            className='btn'
-                        />
-                    </Tooltip>
-                    <Tooltip title="清理标注数据">
-                        <Button
-                            icon={<ClearOutlined />}
-                            type={'default'}
-                            id="bzBtn05"
-                            className='btn'
-                        />
-                    </Tooltip>
-                    <Tooltip title="截图">
-                        <Button
-                            icon={<ScissorOutlined />}
-                            type={'default'}
-                            id="bzBtn08"
-                            className='btn'
-                        />
-                    </Tooltip>
-                    <Tooltip title={!!selectedPath ? "上传模型" : "上传本地点云文件"}>
-                        {
-                            // !!modelUpload ?
-                            //     <Button
-                            //         icon={<UploadOutlined />}
-                            //         onClick={() => {
-                            //             setModelUploadVisible(true);
-                            //         }}
-                            //     />
-                            //     :
-                            !!selectedPath ?
-                                <Button
-                                    // icon={<DeleteOutlined />}
-                                    onClick={() => {
-                                        setModelUploadVisible(true);
-                                        form2.setFieldsValue({ modelfilename: selectedPath?.split('http://localhost:5001/files/')[1] });
-                                    }}
-                                >
-                                    上传模型
-                                </Button>
-                                :
-                                <Button
-                                    icon={<UploadOutlined />}
-                                    onClick={() => {
-                                        if (!!localStorage.getItem(`localGridContentList-${params.id}`)) {
-                                            const localStorageKeys = getAllLocalStorageKeys();
-                                            (localStorageKeys || []).forEach((key: any) => {
-                                                if (key?.indexOf(params.id) > -1) {
-                                                    localStorage.removeItem(key);
-                                                }
-                                            });
-                                        }
-                                        setSelectPathVisible(true);
-                                    }}
-                                />
-                        }
-                    </Tooltip>
-                    {
-                        modelUpload ?
-                            !!pointRef?.length ?
-                                <Button onClick={() => {
-                                    const points = getAllModelsFromScene(scene.current, 'editPoint');
-                                    let obj: any = [];
-                                    points.forEach((point: any) => {
-                                        const { position, normVec, regionID = 0, robID = 1, surfaceType, __props = {} } = point;
-                                        const options = {
-                                            point: position,
-                                            normVec, regionID, robID, surfaceType,
-                                        };
-                                        if (!!obj[regionID]) {
-                                            obj[regionID].push({
-                                                ...__props,
-                                                ...options
-                                            });
-                                        } else {
-                                            obj[regionID] = [];
-                                            obj[regionID] = [{
-                                                ...__props,
-                                                ...options
-                                            }];
-                                        }
-                                    });
-                                    const params = obj.reduce((pre: any, cen: any) => {
-                                        let obj1 = {};
-                                        (cen.filter(Boolean) || [])?.forEach((item: any) => {
-                                            if (obj1[item?.surfaceType]) {
-                                                obj1[item?.surfaceType].push(item);
-                                            } else {
-                                                obj1[item?.surfaceType] = [item];
-                                            }
-                                        });
-                                        let obj2 = {};
-                                        Object.entries(obj1).forEach((item1: any) => {
-                                            (item1[1] || []).forEach((item2: any) => {
-                                                const { name, PreEdP_num, PreStP_num } = item2;
-                                                if (!!obj2[item1[0]]) {
-                                                    if (!!obj2[item1[0]][`${PreEdP_num}-${PreStP_num}`]) {
-                                                        if (!!obj2[item1[0]][`${PreEdP_num}-${PreStP_num}`][name]) {
-                                                            obj2[item1[0]][`${PreEdP_num}-${PreStP_num}`][name].push(item2);
-                                                        } else {
-                                                            obj2[item1[0]][`${PreEdP_num}-${PreStP_num}`][name] = [].concat(item2);
-                                                        }
-                                                    } else {
-                                                        obj2[item1[0]][`${PreEdP_num}-${PreStP_num}`] = {};
-                                                        obj2[item1[0]][`${PreEdP_num}-${PreStP_num}`][name] = [].concat(item2);
-                                                    }
-                                                } else {
-                                                    obj2[item1[0]] = {};
-                                                    obj2[item1[0]][`${PreEdP_num}-${PreStP_num}`] = {};
-                                                    obj2[item1[0]][`${PreEdP_num}-${PreStP_num}`][name] = [].concat(item2);
-                                                }
-                                            });
-                                        });
-                                        return pre.concat(Object.entries(obj2).reduce((p: any, c: any) => {
-                                            return p.concat(Object.entries(c[1]).map((item3: any) => {
-                                                const list = Object.entries(item3[1]).map((item4: any) => {
-                                                    const name = item3[0].split('-');
-                                                    return {
-                                                        [item4[0]]: [{
-                                                            PreEdP_num: Number(name[0] || "0"),
-                                                            PreStP_num: Number(name[1] || "0"),
-                                                            Track: item4[1]
-                                                        }]
-                                                    }
-                                                });
-                                                return Object.assign({ surfaceType: c[0] }, ...list);
-                                            }))
-                                        }, []))
-                                    }, []);
-                                    console.log(params);
-                                    if (!!fetchType && !!xName) {
-                                        btnFetch(fetchType, xName, params).then((res: any) => {
-                                            if (res && res.code === 'SUCCESS') {
-                                                message.success('轨迹上传成功');
-                                            } else {
-                                                message.error(res?.msg || res?.message || "接口异常");
-                                            };
-                                        });
-                                    }
-                                }}>
-                                    确认并上传轨迹
-                                </Button>
-                                :
-                                <Button onClick={() => {
-                                    const areas = getAllModelsFromScene(scene.current, 'editArea');
-                                    const points = getAllModelsFromScene(scene.current, 'editPoint');
-                                    const pointResult = points.map((item: any) => {
-                                        return {
-                                            Point: item.position,
-                                            NormVec: item.normVec,
-                                            PntTpe: 1
-                                        }
-                                    });
-                                    const params = {
-                                        action: 1,
-                                        list: areas.map((area: any) => {
-                                            const { addType, cameraDirection, ...rest } = area?.__props;
-                                            return {
-                                                ...rest,
-                                                cut_range: [
-                                                    area.position.x - area?.geometry?.parameters?.width / 2,
-                                                    area.position.x + area?.geometry?.parameters?.width / 2,
-                                                    area.position.y - area?.geometry?.parameters?.height / 2,
-                                                    area.position.y + area?.geometry?.parameters?.height / 2,
-                                                    area.position.z - area.geometry?.parameters?.depth / 2,
-                                                    area.position.z + area.geometry?.parameters?.depth / 2
-                                                ]
-                                            };
-                                        })
-                                    };
-                                    // console.log(areas);
-                                    // console.log(camera?.current?.position);
-                                    console.log(params);
-                                    if (!!fetchType && !!xName) {
-                                        btnFetch(fetchType, xName, params).then((res: any) => {
-                                            if (res && res.code === 'SUCCESS') {
-                                                message.success('分区上传成功');
-                                            } else {
-                                                message.error(res?.msg || res?.message || "接口异常");
-                                            };
-                                        });
-                                    }
-                                }}>
-                                    确认并上传分区
-                                </Button>
-                            : null
-                    }
-                </div>
-                <div className="flex-box">
-                    <Tooltip title="缩小">
-                        <Button
-                            icon={<MinusOutlined />}
-                            id="bzBtn06"
-                            className='btn'
-                        />
-                    </Tooltip>
-                    <Tooltip title="放大">
-                        <Button
-                            icon={<PlusOutlined />}
-                            id="bzBtn07"
-                            className='btn'
-                        />
-                    </Tooltip>
-                </div>
-            </div>
-            <div
-                className='render-dom'
-                // @ts-ignore
-                ref={dom}
-            >
-                <div className="three-mask flex-box" style={{ display: "none" }}>
-                    <progress className="process" value="0" ></progress>
-                    <span className="process-text">0%</span>
-                </div>
-                <canvas id="demoBox"></canvas>
-            </div>
             {
-                useMemo(() => {
-                    return (ifShowColorList && meshHasColor) ?
-                        <div className="sprite-box flex-box">
-                            <div className="number-box flex-box-justify-between">
-                                {
-                                    [2, 1.5, 1, 0.5, '0.0', -0.5, -1, -1.5, -2].map((item: any, index: number) => {
-                                        return <div
-                                            className="number-item"
-                                            key={`number-${index}`}
-                                            style={(index === 0 || index === 8 || index === 4) ? { fontWeight: 600 } : { opacity: .7 }}
-                                            onClick={() => { console.log(item) }}
+                // (!!name || !!selectedPath) ?
+                <Fragment>
+                    <div id="instructions" className="flex-box-justify-between">
+                        <div className={`flex-box ${modelUpload ? 'camera-position' : ''}`}>
+                            {
+                                modelUpload ?
+                                    [
+                                        { key: 'top', label: '框选顶面' },
+                                        { key: 'bottom', label: '框选底面' },
+                                        { key: 'right', label: '框选右侧' },
+                                        { key: 'left', label: '框选左侧' },
+                                    ].map((item: any, index: number) => {
+                                        const { key, label } = item;
+                                        return <Button
+                                            key={`camera-position-item-${index}`}
+                                            type={cameraDirection.includes(key) ? 'primary' : 'default'}
+                                            onClick={() => {
+                                                if (!cameraDirection.includes(key)) {
+                                                    // 模型尺寸
+                                                    const { length: xLength, height: yLength, width: zLength, max, cameraScale } = getSize();
+                                                    if (key === 'top') {
+                                                        var targetPos = new THREE.Vector3(0, max * cameraScale, 0);
+                                                        animationClick(targetPos).then(res => {
+                                                            const positions: any = Math.max(xLength, yLength, zLength) === xLength ?
+                                                                [
+                                                                    xLength / 10 * -1, yLength / 2 + 100, zLength / 2 * -1 - 100,
+                                                                    xLength / 10 * 11, yLength / 6 * -1, zLength / 2 + 100,
+                                                                ]
+                                                                :
+                                                                Math.max(xLength, yLength, zLength) === yLength ?
+                                                                    [
+                                                                        xLength / 2 * -1 - 100, yLength / 10 * -1, zLength / 2 * -1 - 100,
+                                                                        xLength / 2 * -1, yLength, zLength / 2 + 100,
+                                                                    ]
+                                                                    :
+                                                                    [
+                                                                        xLength / 2 * -1 - 100, yLength / 2 + 100, zLength * -1 - 100,
+                                                                        xLength / 2 * 1 + 100, yLength / 6 * -1, zLength / 8,
+                                                                    ];
+                                                            addRectArea({ positions, addType: 'form', cameraDirection: 'top' }).then(cube => {
+                                                                editableObjects.current?.push?.(cube);
+                                                            });
+                                                        });
+                                                    } else if (key === 'bottom') {
+                                                        var targetPos = new THREE.Vector3(0, max * -cameraScale, 0);
+                                                        animationClick(targetPos).then(res => {
+                                                            const positions: any = Math.max(xLength, yLength, zLength) === xLength ?
+                                                                [
+                                                                    xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2 * -1 - 100,
+                                                                    xLength / 10 * 11, yLength / 4 * -1, zLength / 2 + 100,
+                                                                ]
+                                                                :
+                                                                Math.max(xLength, yLength, zLength) === yLength ?
+                                                                    [
+                                                                        xLength / 2 * -1 - 100, yLength / 10 * -1, zLength / 2 * -1 - 100,
+                                                                        xLength / 2 * -1, yLength, zLength / 2 + 100,
+                                                                    ]
+                                                                    :
+                                                                    [
+                                                                        xLength / 2 * -1 - 100, yLength / 2 * -1 - 100, zLength * -1 - 100,
+                                                                        xLength / 2 * 1 + 100, yLength / 6 * -1, zLength / 8,
+                                                                    ];
+                                                            addRectArea({ positions, addType: 'form', cameraDirection: 'bottom' }).then(cube => {
+                                                                editableObjects.current?.push?.(cube);
+                                                            });
+                                                        });
+                                                    } else if (key === 'right') {
+                                                        var targetPos = new THREE.Vector3(0, 0, max * cameraScale);
+                                                        animationClick(targetPos).then(res => {
+                                                            const positions: any = Math.max(xLength, yLength, zLength) === xLength ?
+                                                                [
+                                                                    xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2.5,
+                                                                    xLength, yLength / 2 + 100, zLength / 2 + 0,
+                                                                ]
+                                                                :
+                                                                Math.max(xLength, yLength, zLength) === yLength ?
+                                                                    [
+                                                                        xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2.5,
+                                                                        xLength, yLength / 2 + 100, zLength / 2 + 100,
+                                                                    ]
+                                                                    :
+                                                                    [
+                                                                        xLength / 2 * -1 - 100, yLength / 2 * -1 - 100, zLength * -1 - 100,
+                                                                        xLength / 6 * -1, yLength / 2 + 100, zLength / 8,
+                                                                    ];
+                                                            addRectArea({ positions, addType: 'form', cameraDirection: 'right' }).then(cube => {
+                                                                editableObjects.current?.push?.(cube);
+                                                            });
+                                                        });
+                                                    } else if (key === 'left') {
+                                                        var targetPos = new THREE.Vector3(0, 0, -1 * max * cameraScale);
+                                                        animationClick(targetPos).then(res => {
+                                                            const positions: any = Math.max(xLength, yLength, zLength) === xLength ?
+                                                                [
+                                                                    xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2.5 * -1,
+                                                                    xLength, yLength / 2 + 100, zLength / 2 * -1 - 100,
+                                                                ]
+                                                                :
+                                                                Math.max(xLength, yLength, zLength) === yLength ?
+                                                                    [
+                                                                        xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2.5 * -1,
+                                                                        xLength, yLength / 2 + 100, zLength / 2 * -1 - 100,
+                                                                    ]
+                                                                    :
+                                                                    [
+                                                                        xLength / 2 + 100, yLength / 2 * -1 - 100, zLength * -1 - 100,
+                                                                        xLength / 6, yLength / 2 + 100, zLength / 8,
+                                                                    ];
+                                                            addRectArea({ positions, addType: 'form', cameraDirection: 'left' }).then(cube => {
+                                                                editableObjects.current?.push?.(cube);
+                                                            });
+                                                        });
+                                                    }
+                                                    setCameraDirection((prev: any) => prev.concat(key));
+                                                }
+                                            }}
                                         >
-                                            {item}
-                                        </div>
+                                            {label}
+                                        </Button>
                                     })
-                                }
-                            </div>
-
-                            <div className="sprite-icon" />
+                                    : null
+                            }
                         </div>
-                        : null;
-                }, [meshHasColor, ifShowColorList])
-            }
-            <div className='camera-box'>
-                <div className="camera-box-pointer">
+                        <div className="flex-box">
+                            <Tooltip title="比例尺">
+                                <Popover
+                                    content={
+                                        <div className='flex-box' style={{ height: 32 }}>
+                                            <Input
+                                                style={{ maxWidth: 100, height: '100%' }}
+                                                placeholder="比例尺"
+                                                onBlur={(e) => {
+                                                    const res = JSON.parse(localStorage.getItem("scale") || "{}");
+                                                    const val = e.target.value;
+                                                    localStorage.setItem("scale", JSON.stringify({ ...res, value: val }));
+                                                }}
+                                                defaultValue={JSON.parse(localStorage.getItem("scale") || "{}")?.value || 1}
+                                            />
+                                            <Select
+                                                style={{ width: 125, minWidth: 125 }}
+                                                onChange={(val) => {
+                                                    const res = JSON.parse(localStorage.getItem("scale") || "{}");
+                                                    localStorage.setItem("scale", JSON.stringify({ ...res, unit: val }));
+                                                }}
+                                                defaultValue={JSON.parse(localStorage.getItem("scale") || "{}")?.unit || 'm'}
+                                                options={[
+                                                    {
+                                                        value: 'mm',
+                                                        label: '毫米（mm）',
+                                                    },
+                                                    {
+                                                        value: 'cm',
+                                                        label: '厘米（cm）',
+                                                    },
+                                                    {
+                                                        value: 'm',
+                                                        label: '米（m）',
+                                                    }
+                                                ]}
+                                            />
+                                        </div>
+                                    }
+                                    title="设置比例尺"
+                                    trigger="click"
+                                >
+                                    <Button
+                                        icon={<FontSizeOutlined />}
+                                        className='btn'
+                                    />
+                                </Popover>
+                            </Tooltip>
+                            <Tooltip title="标注">
+                                <Button
+                                    icon={<AimOutlined />}
+                                    type={selectedBtn.includes('bzBtn01') ? 'primary' : 'default'}
+                                    id="bzBtn01"
+                                    className='btn'
+                                />
+                            </Tooltip>
+                            <Tooltip title="显示边框">
+                                <Button
+                                    icon={<BorderOuterOutlined />}
+                                    type={selectedBtn.includes('bzBtn02') ? 'primary' : 'default'}
+                                    id="bzBtn02"
+                                    className='btn'
+                                />
+                            </Tooltip>
+                            <Tooltip title="显示坐标轴">
+                                <Button
+                                    icon={<BorderlessTableOutlined />}
+                                    type={selectedBtn.includes('bzBtn03') ? 'primary' : 'default'}
+                                    id="bzBtn03"
+                                    className='btn'
+                                />
+                            </Tooltip>
+                            <Tooltip title="开启透视">
+                                <Button
+                                    icon={<EyeOutlined />}
+                                    type={selectedBtn.includes('bzBtn04') ? 'primary' : 'default'}
+                                    id="bzBtn04"
+                                    className='btn'
+                                />
+                            </Tooltip>
+                            <Tooltip title="清理标注数据">
+                                <Button
+                                    icon={<ClearOutlined />}
+                                    type={'default'}
+                                    id="bzBtn05"
+                                    className='btn'
+                                />
+                            </Tooltip>
+                            <Tooltip title="截图">
+                                <Button
+                                    icon={<ScissorOutlined />}
+                                    type={'default'}
+                                    id="bzBtn08"
+                                    className='btn'
+                                />
+                            </Tooltip>
+                            <Tooltip title={!!selectedPath ? "上传模型" : "上传本地点云文件"}>
+                                {
+                                    // !!modelUpload ?
+                                    //     <Button
+                                    //         icon={<UploadOutlined />}
+                                    //         onClick={() => {
+                                    //             setModelUploadVisible(true);
+                                    //         }}
+                                    //     />
+                                    //     :
+                                    !!selectedPath ?
+                                        <Button
+                                            // icon={<DeleteOutlined />}
+                                            onClick={() => {
+                                                setModelUploadVisible(true);
+                                                form2.setFieldsValue({ modelfilename: selectedPath?.split('http://localhost:5001/files/')[1] });
+                                            }}
+                                        >
+                                            上传模型
+                                        </Button>
+                                        :
+                                        <Button
+                                            icon={<UploadOutlined />}
+                                            onClick={() => {
+                                                if (!!localStorage.getItem(`localGridContentList-${params.id}`)) {
+                                                    const localStorageKeys = getAllLocalStorageKeys();
+                                                    (localStorageKeys || []).forEach((key: any) => {
+                                                        if (key?.indexOf(params.id) > -1) {
+                                                            localStorage.removeItem(key);
+                                                        }
+                                                    });
+                                                }
+                                                setSelectPathVisible(true);
+                                            }}
+                                        />
+                                }
+                            </Tooltip>
+                            {
+                                modelUpload ?
+                                    pointRef?.length ?
+                                        <Button onClick={() => {
+                                            const points = getAllModelsFromScene(scene.current, 'editPoint');
+                                            let obj: any = [];
+                                            points.forEach((point: any) => {
+                                                const {
+                                                    position, normVec, regionID = 1, robID = 1, surfaceType, __props = {}
+                                                } = point;
+                                                const { area, rob, index } = __props?.area;
+                                                const options = {
+                                                    point: position,
+                                                    normVec, regionID, robID, surfaceType,
+                                                };
+                                                const objName = `Rob${rob}_${surfaceType}_Region${regionID}_Track${index}`;
+                                                if (!!obj[objName]) {
+                                                    obj[objName].push({
+                                                        ...__props,
+                                                        ...options
+                                                    });
+                                                } else {
+                                                    obj[objName] = [];
+                                                    obj[objName] = [{
+                                                        ...__props,
+                                                        ...options
+                                                    }];
+                                                }
+                                            });
+                                            const params = Object.entries(obj)?.reduce((pre: any, cen: any) => {
+                                                return pre.concat({
+                                                    [cen[0]]: cen[1]
+                                                })
+                                            }, []);
+                                            if (!!fetchType && !!xName) {
+                                                console.log(params);
+                                                btnFetch(fetchType, xName, params).then((res: any) => {
+                                                    if (res && res.code === 'SUCCESS') {
+                                                        message.success('轨迹上传成功');
+                                                    } else {
+                                                        message.error(res?.msg || res?.message || "接口异常");
+                                                    };
+                                                });
+                                            }
+                                        }}>
+                                            确认并上传轨迹
+                                        </Button>
+                                        :
+                                        <Button onClick={() => {
+                                            const areas = getAllModelsFromScene(scene.current, 'editArea');
+                                            const points = getAllModelsFromScene(scene.current, 'editPoint');
+                                            const pointResult = points.map((item: any) => {
+                                                return {
+                                                    Point: item.position,
+                                                    NormVec: item.normVec,
+                                                    PntTpe: 1
+                                                }
+                                            });
+                                            const params = {
+                                                action: 1,
+                                                list: areas.map((area: any) => {
+                                                    const { addType, cameraDirection, ...rest } = area?.__props;
+                                                    return {
+                                                        ...rest,
+                                                        cut_range: [
+                                                            area.position.x - area?.geometry?.parameters?.width / 2,
+                                                            area.position.x + area?.geometry?.parameters?.width / 2,
+                                                            area.position.y - area?.geometry?.parameters?.height / 2,
+                                                            area.position.y + area?.geometry?.parameters?.height / 2,
+                                                            area.position.z - area.geometry?.parameters?.depth / 2,
+                                                            area.position.z + area.geometry?.parameters?.depth / 2
+                                                        ]
+                                                    };
+                                                })
+                                            };
+                                            console.log(params);
+                                            if (!!fetchType && !!xName) {
+                                                btnFetch(fetchType, xName, params).then((res: any) => {
+                                                    if (res && res.code === 'SUCCESS') {
+                                                        message.success('分区上传成功');
+                                                    } else {
+                                                        message.error(res?.msg || res?.message || "接口异常");
+                                                    };
+                                                });
+                                            }
+                                        }}>
+                                            确认并上传分区
+                                        </Button>
+                                    : null
+                            }
+                        </div>
+                        <div className="flex-box">
+                            <Tooltip title="缩小">
+                                <Button
+                                    icon={<MinusOutlined />}
+                                    id="bzBtn06"
+                                    className='btn'
+                                />
+                            </Tooltip>
+                            <Tooltip title="放大">
+                                <Button
+                                    icon={<PlusOutlined />}
+                                    id="bzBtn07"
+                                    className='btn'
+                                />
+                            </Tooltip>
+                        </div>
+                    </div>
+                    <div
+                        className='render-dom'
+                        // @ts-ignore
+                        ref={dom}
+                    >
+                        <div className="three-mask flex-box" style={{ display: "none" }}>
+                            <progress className="process" value="0" ></progress>
+                            <span className="process-text">0%</span>
+                        </div>
+                        <canvas id="demoBox"></canvas>
+                    </div>
                     {
-                        modelRotate ?
-                            <div className="camera-box-pointer-head flex-box-justify-between">
-                                <InputNumber
-                                    size='small'
-                                    addonAfter="秒"
-                                    value={cameraSwitchTime}
-                                    max={100}
-                                    min={1}
-                                    onChange={(val: any) => {
-                                        setCameraSwitchTime(val);
-                                    }}
-                                />
-                                <Switch
-                                    className='cameraIcon-switch'
-                                    checked={cameraSwitch}
-                                    onChange={(e) => setCameraSwitch(e)}
-                                />
-                            </div>
-                            : null
+                        useMemo(() => {
+                            return (ifShowColorList && meshHasColor) ?
+                                <div className="sprite-box flex-box">
+                                    <div className="number-box flex-box-justify-between">
+                                        {
+                                            [2, 1.5, 1, 0.5, '0.0', -0.5, -1, -1.5, -2].map((item: any, index: number) => {
+                                                return <div
+                                                    className="number-item"
+                                                    key={`number-${index}`}
+                                                    style={(index === 0 || index === 8 || index === 4) ? { fontWeight: 600 } : { opacity: .7 }}
+                                                >
+                                                    {item}
+                                                </div>
+                                            })
+                                        }
+                                    </div>
+
+                                    <div className="sprite-icon" />
+                                </div>
+                                : null;
+                        }, [meshHasColor, ifShowColorList])
                     }
-                    <div className="camera-box-pointer-top flex-box-justify-between">
-                        <img src={rectTopIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { max, cameraScale } = getSize();
-                            var targetPos = new THREE.Vector3(0, max * cameraScale, 0);
-                            animationClick(targetPos);
-                        }} />
-                        <img src={rectAllIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { length, width, height } = getSize();
-                            var targetPos = new THREE.Vector3(width, height, length);
-                            animationClick(targetPos);
-                        }} />
+                    <div className='camera-box'>
+                        <div className="camera-box-pointer">
+                            {
+                                modelRotate ?
+                                    <div className="camera-box-pointer-head flex-box-justify-between">
+                                        <InputNumber
+                                            size='small'
+                                            addonAfter="秒"
+                                            value={cameraSwitchTime}
+                                            max={100}
+                                            min={1}
+                                            onChange={(val: any) => {
+                                                setCameraSwitchTime(val);
+                                            }}
+                                        />
+                                        <Switch
+                                            className='cameraIcon-switch'
+                                            checked={cameraSwitch}
+                                            onChange={(e) => setCameraSwitch(e)}
+                                        />
+                                    </div>
+                                    : null
+                            }
+                            <div className="camera-box-pointer-top flex-box-justify-between">
+                                <img src={rectTopIcon} alt="rect" className='cameraIcon' onClick={() => {
+                                    const { max, cameraScale } = getSize();
+                                    var targetPos = new THREE.Vector3(0, max * cameraScale, 0);
+                                    animationClick(targetPos);
+                                }} />
+                                <img src={rectAllIcon} alt="rect" className='cameraIcon' onClick={() => {
+                                    const { length, width, height } = getSize();
+                                    var targetPos = new THREE.Vector3(width, height, length);
+                                    animationClick(targetPos);
+                                }} />
+                            </div>
+                            <div className="camera-box-pointer-center flex-box-justify-between">
+                                <img src={rectLeftIcon} alt="rect" className='cameraIcon' onClick={() => {
+                                    const { max, cameraScale } = getSize();
+                                    var targetPos = new THREE.Vector3(max * -cameraScale, 0, 0);
+                                    animationClick(targetPos);
+                                }} />
+                                <img src={rectFrontIcon} alt="rect" className='cameraIcon' onClick={() => {
+                                    const { max, cameraScale } = getSize();
+                                    var targetPos = new THREE.Vector3(0, 0, max * cameraScale);
+                                    animationClick(targetPos);
+                                }} />
+                                <img src={rectRightIcon} alt="rect" className='cameraIcon' onClick={() => {
+                                    const { max, cameraScale } = getSize();
+                                    var targetPos = new THREE.Vector3(max * cameraScale, 0, 0);
+                                    animationClick(targetPos);
+                                }} />
+                                <img src={rectBackIcon} alt="rect" className='cameraIcon' onClick={() => {
+                                    const { max, cameraScale } = getSize();
+                                    var targetPos = new THREE.Vector3(0, 0, max * -cameraScale);
+                                    animationClick(targetPos);
+                                }} />
+                            </div>
+                            <div className="camera-box-pointer-bottom flex-box-justify-between">
+                                <img src={rectBottomIcon} alt="rect" className='cameraIcon' onClick={() => {
+                                    const { max, cameraScale } = getSize();
+                                    var targetPos = new THREE.Vector3(0, max * -cameraScale, 0);
+                                    animationClick(targetPos);
+                                }} />
+                            </div>
+                        </div>
+                        <div className="camera-box-cursor flex-box">
+                            <img src={rectIcon} alt="rect" className='cameraIcon' />
+                            视图
+                        </div>
                     </div>
-                    <div className="camera-box-pointer-center flex-box-justify-between">
-                        <img src={rectLeftIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { max, cameraScale } = getSize();
-                            var targetPos = new THREE.Vector3(max * -cameraScale, 0, 0);
-                            animationClick(targetPos);
-                        }} />
-                        <img src={rectFrontIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { max, cameraScale } = getSize();
-                            var targetPos = new THREE.Vector3(0, 0, max * cameraScale);
-                            animationClick(targetPos);
-                        }} />
-                        <img src={rectRightIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { max, cameraScale } = getSize();
-                            var targetPos = new THREE.Vector3(max * cameraScale, 0, 0);
-                            animationClick(targetPos);
-                        }} />
-                        <img src={rectBackIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { max, cameraScale } = getSize();
-                            var targetPos = new THREE.Vector3(0, 0, max * -cameraScale);
-                            animationClick(targetPos);
-                        }} />
-                    </div>
-                    <div className="camera-box-pointer-bottom flex-box-justify-between">
-                        <img src={rectBottomIcon} alt="rect" className='cameraIcon' onClick={() => {
-                            const { max, cameraScale } = getSize();
-                            var targetPos = new THREE.Vector3(0, max * -cameraScale, 0);
-                            animationClick(targetPos);
-                        }} />
-                    </div>
-                </div>
-                <div className="camera-box-cursor flex-box">
-                    <img src={rectIcon} alt="rect" className='cameraIcon' />
-                    视图
-                </div>
-            </div>
+                </Fragment>
+                // :
+                // <div className="flex-box-center" style={{ height: '100%' }}>
+                //     <Button onClick={() => {
+
+                //     }}>
+                //         上传
+                //     </Button>
+                // </div>
+            }
 
             {
                 selectPathVisible ?

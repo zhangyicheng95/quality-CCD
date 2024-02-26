@@ -2267,7 +2267,7 @@ const Home: React.FC<any> = (props: any) => {
                       >
                         <Switch />
                       </Form.Item>
-                      {
+                      {/* {
                         !!form.getFieldValue('markNumber') ?
                           <Fragment>
                             <Form.Item
@@ -2292,7 +2292,7 @@ const Home: React.FC<any> = (props: any) => {
                             </Form.Item>
                           </Fragment>
                           : null
-                      }
+                      } */}
                     </Fragment>
                     : null
                 }

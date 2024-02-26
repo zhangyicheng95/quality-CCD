@@ -2133,7 +2133,7 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
                                                 {Array.from({ length: item.length / 2 }).map((i: any, tIndex: number) => {
                                                     tIndex = tIndex * 2;
                                                     return (
-                                                        <div className={`img-button-item-box`} key={`i-${tIndex}`}>
+                                                        <div className={`img-button-item-box`} key={`i-${item[tIndex]?.link || tIndex}`}>
                                                             <div
                                                                 className="img-button-item-box-item"
                                                                 style={!!item[tIndex]?.color ? {
