@@ -85,9 +85,16 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             dataValue = localhostList?.[localhostList?.length - 1] || '';
         };
         let list = Array.from(new Set(urlList.current.concat(dataValue)));
-        localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
-        setSelectedNum((list?.length - 1 >= 49) ? 49 : list?.length - 1);
-        urlList.current = list.slice(-50);
+        if (list?.length >= 51) {
+            list = list.slice(10);
+            localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
+            setSelectedNum((list?.length - 1 >= 49) ? 49 : list?.length - 1);
+            urlList.current = list;
+        } else {
+            localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
+            setSelectedNum((list?.length - 1 >= 49) ? 49 : list?.length - 1);
+            urlList.current = list.slice(-50);
+        }
 
     }, [dataValue, comparison]);
     useEffect(() => {
