@@ -232,11 +232,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                     ...restItem4,
                                     point: Point_Normal?.slice(0, 3),
                                     normVec: Point_Normal?.slice(3),
-                                    area: { area: index, rob: index2 + 1, index: index3 },
+                                    area: { area: index, rob: Number(item2[0]?.replace(/[^\d]/g, "") || '1'), index: index3 },
                                     name: item2[0],
                                     areaIndex,
                                     regionID: index + 1,
-                                    robID: item2[0]?.indexOf('rob1') > -1 ? 1 : item2[0]?.indexOf('rob2') > -1 ? 2 : undefined,
+                                    robID: Number(item2[0]?.replace(/[^\d]/g, "") || '1'),
                                     surfaceType: item1.surfaceType
                                 });
                             });
@@ -1138,11 +1138,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                     ...restItem4,
                                     point: !!point ? point : { x: po?.[0], y: po?.[1], z: po?.[2] },
                                     normVec: !!normVec ? normVec : { x: no?.[0], y: no?.[1], z: no?.[2] },
-                                    area: { area: index, rob: index2 + 1, index: index3 + 1 },
+                                    area: { area: index, rob: Number(item2[0]?.replace(/[^\d]/g, "") || '1'), index: index3 + 1 },
                                     name: item2[0],
                                     areaIndex,
                                     regionID: index + 1,
-                                    robID: item2[0]?.indexOf('rob1') > -1 ? 1 : item2[0]?.indexOf('rob2') > -1 ? 2 : undefined,
+                                    robID: Number(item2[0]?.replace(/[^\d]/g, "") || '1'),
                                     surfaceType: item1.surfaceType
                                 });
                             });
@@ -2522,7 +2522,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                                     point: position,
                                                     normVec, regionID, robID, surfaceType,
                                                 };
-                                                const objName = `Rob${rob}_${surfaceType}_Region${regionID}_Track${index}`;
+                                                const objName = `Rob${robID}_${surfaceType}_Region${regionID}_Track${index}`;
                                                 if (!!obj[objName]) {
                                                     obj[objName].push({
                                                         ...__props,
