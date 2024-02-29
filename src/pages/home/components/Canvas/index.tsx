@@ -65,6 +65,7 @@ import ModalCharts from './components/ModalCharts';
 import ImgButtonCharts from './components/ImgButtonCharts';
 import ButtonImagesCharts from './components/ButtonImagesCharts';
 import AlertImgCharts from './components/AlertImgCharts';
+import ButtonUploadCharts from './components/ButtonUploadCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -1105,91 +1106,100 @@ const Home: React.FC<any> = (props: any) => {
                                                           }}
                                                         />
                                                         :
-                                                        type === 'operation' ?
-                                                          <OperationCharts
+                                                        type === 'buttonUpload' ?
+                                                          <ButtonUploadCharts
                                                             id={key}
                                                             data={{
-                                                              operationList,
-                                                              dataValue,
-                                                              fontSize
+                                                              fontSize, yName, xName, fetchType,
+                                                              fetchParams, valueColor
                                                             }}
                                                           />
                                                           :
-                                                          type === 'operation2' ?
-                                                            <Operation2Charts
+                                                          type === 'operation' ?
+                                                            <OperationCharts
                                                               id={key}
                                                               data={{
-                                                                operationList, dataValue,
-                                                                fontSize, xName,
-                                                                ifUpdateProject, ifFetch,
-                                                                listType, blockType, blockTypeLines,
-                                                                ifPopconfirm
+                                                                operationList,
+                                                                dataValue,
+                                                                fontSize
                                                               }}
                                                             />
                                                             :
-                                                            type === 'statistic' ?
-                                                              <StatisticCharts
+                                                            type === 'operation2' ?
+                                                              <Operation2Charts
                                                                 id={key}
                                                                 data={{
-                                                                  dataValue, fontSize,
-                                                                  yName, fontColor, direction
+                                                                  operationList, dataValue,
+                                                                  fontSize, xName,
+                                                                  ifUpdateProject, ifFetch,
+                                                                  listType, blockType, blockTypeLines,
+                                                                  ifPopconfirm
                                                                 }}
                                                               />
                                                               :
-                                                              type === 'platForm' ?
-                                                                <PlatFormCharts
+                                                              type === 'statistic' ?
+                                                                <StatisticCharts
                                                                   id={key}
                                                                   data={{
-                                                                    dataValue, fontSize, fetchType, xName,
-                                                                    ifFetch, platFormOptions
+                                                                    dataValue, fontSize,
+                                                                    yName, fontColor, direction
                                                                   }}
                                                                 />
                                                                 :
-                                                                type === 'modal' ?
-                                                                  <ModalCharts
+                                                                type === 'platForm' ?
+                                                                  <PlatFormCharts
                                                                     id={key}
                                                                     data={{
-                                                                      dataValue, fontSize, yName, fetchType, xName, ifFetch,
-                                                                      ifFetchParams,
+                                                                      dataValue, fontSize, fetchType, xName,
+                                                                      ifFetch, platFormOptions
                                                                     }}
                                                                   />
                                                                   :
-                                                                  type === 'buttonImages' ?
-                                                                    <ButtonImagesCharts
+                                                                  type === 'modal' ?
+                                                                    <ModalCharts
                                                                       id={key}
                                                                       data={{
-                                                                        dataValue, fontSize, reverse, modelRotateScreenshot,
-                                                                        fetchType, xName
+                                                                        dataValue, fontSize, yName, fetchType, xName, ifFetch,
+                                                                        ifFetchParams,
                                                                       }}
                                                                     />
                                                                     :
-                                                                    type === 'imgButton' ?
-                                                                      <ImgButtonCharts
+                                                                    type === 'buttonImages' ?
+                                                                      <ButtonImagesCharts
                                                                         id={key}
                                                                         data={{
-                                                                          dataValue, fontSize, windowControl,
-                                                                          addContentList, xColumns, fetchType, xName,
+                                                                          dataValue, fontSize, reverse, modelRotateScreenshot,
+                                                                          fetchType, xName
                                                                         }}
                                                                       />
                                                                       :
-                                                                      type === 'alertImg' ?
-                                                                        <AlertImgCharts
+                                                                      type === 'imgButton' ?
+                                                                        <ImgButtonCharts
                                                                           id={key}
                                                                           data={{
-                                                                            dataValue, fontSize, lineNumber, columnNumber,
-                                                                            magnifier, magnifierSize,
+                                                                            dataValue, fontSize, windowControl,
+                                                                            addContentList, xColumns, fetchType, xName,
                                                                           }}
                                                                         />
                                                                         :
-                                                                        <ImgCharts
-                                                                          id={key}
-                                                                          data={{
-                                                                            defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                                            dataValue, markNumber, markNumberLeft, markNumberTop,
-                                                                            magnifier, magnifierSize, comparison, ifShowHeader,
-                                                                            magnifierWidth, magnifierHeight
-                                                                          }}
-                                                                        />
+                                                                        type === 'alertImg' ?
+                                                                          <AlertImgCharts
+                                                                            id={key}
+                                                                            data={{
+                                                                              dataValue, fontSize, lineNumber, columnNumber,
+                                                                              magnifier, magnifierSize,
+                                                                            }}
+                                                                          />
+                                                                          :
+                                                                          <ImgCharts
+                                                                            id={key}
+                                                                            data={{
+                                                                              defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
+                                                                              dataValue, markNumber, markNumberLeft, markNumberTop,
+                                                                              magnifier, magnifierSize, comparison, ifShowHeader,
+                                                                              magnifierWidth, magnifierHeight
+                                                                            }}
+                                                                          />
                 }
               </div>
             </div>
@@ -1557,7 +1567,7 @@ const Home: React.FC<any> = (props: any) => {
       blockType, blockTypeLines, modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams,
       ifNeedAllow, lineNumber, columnNumber, magnifierWidth, magnifierHeight, ifPopconfirm
     } = values;
-    if (['button', 'buttonInp', 'buttonPassword'].includes(type) && !!fetchParams) {
+    if (['button', 'buttonInp', 'buttonPassword', 'buttonUpload'].includes(type) && !!fetchParams) {
       try {
         JSON.parse(fetchParams);
       } catch (e) {
@@ -2995,7 +3005,47 @@ const Home: React.FC<any> = (props: any) => {
                     : null
                 }
                 {
-                  ['button', 'buttonPassword', 'buttonInp'].includes(windowType) ?
+                  ['buttonUpload'].includes(windowType) ?
+                    <Fragment>
+                      <Form.Item
+                        name={`yName`}
+                        label={"按钮名称"}
+                        rules={[{ required: true, message: '按钮名称' }]}
+                      >
+                        <Input size='large' />
+                      </Form.Item>
+                      <Form.Item
+                        name={`fetchType`}
+                        label={"http类型"}
+                        rules={[{ required: false, message: 'http类型' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={['get', 'post', 'put', 'delete'].map((item: any) => ({ value: item, label: _.toUpper(item) }))}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`xName`}
+                        label={"接口地址"}
+                        rules={[{ required: false, message: '接口地址' }]}
+                      >
+                        <Input size='large' />
+                      </Form.Item>
+                      <Form.Item
+                        name={`fetchParams`}
+                        label={"传递参数"}
+                        rules={[{ required: false, message: '传递参数' }]}
+                      >
+                        <Input.TextArea
+                          size='large'
+                          autoSize={{ minRows: 1, maxRows: 5 }}
+                        />
+                      </Form.Item>
+                    </Fragment>
+                    : null
+                }
+                {
+                  ['button', 'buttonPassword', 'buttonInp', 'buttonUpload'].includes(windowType) ?
                     <Fragment>
                       <Form.Item
                         name={`valueColor`}

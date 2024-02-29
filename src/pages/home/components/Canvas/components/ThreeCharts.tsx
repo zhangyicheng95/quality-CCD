@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { connect, useModel } from 'umi';
-import { Button, Form, Input, InputNumber, message, Modal, Popover, Select, Switch, Tooltip } from 'antd';
+import { Button, Form, Input, InputNumber, message, Modal, Popover, Select, Switch, Tooltip, Upload } from 'antd';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Lut } from "three/examples/jsm/math/Lut.js";
@@ -18,7 +18,7 @@ import {
 } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 import {
     AimOutlined,
-    BorderlessTableOutlined, BorderOuterOutlined, ClearOutlined, DeleteOutlined, EyeOutlined, FontSizeOutlined, MinusOutlined, PlusOutlined, ScissorOutlined, UploadOutlined
+    BorderlessTableOutlined, BorderOuterOutlined, ClearOutlined, CloudDownloadOutlined, CloudUploadOutlined, DeleteOutlined, EyeOutlined, FontSizeOutlined, MinusOutlined, PlusOutlined, ScissorOutlined, UploadOutlined
 } from '@ant-design/icons';
 import rectIcon from '@/assets/imgs/rect.svg';
 import rectAllIcon from '@/assets/imgs/rect-all.svg';
@@ -28,7 +28,7 @@ import rectTopIcon from '@/assets/imgs/rect-top.svg';
 import rectBottomIcon from '@/assets/imgs/rect-bottom.svg';
 import rectFrontIcon from '@/assets/imgs/rect-front.svg';
 import rectBackIcon from '@/assets/imgs/rect-back.svg';
-import { equalsObj, getAllLocalStorageKeys, guid } from '@/utils/utils';
+import { downFileFun, equalsObj, getAllLocalStorageKeys, guid } from '@/utils/utils';
 import { btnFetch } from '@/services/api';
 import FileManager from '@/components/FileManager';
 import html2canvas from 'html2canvas';
@@ -70,7 +70,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     } = data;
     let { name, value = [], action = '', guid: uuid, addType } = dataValue;
     if (process.env.NODE_ENV === 'development') {
-        name = "models/sgz630_zbc_214.stl"; // models/pressure.json  models/tx.stl  output  sgz630_zbc_214
+        name = "models/output.stl"; // models/pressure.json  models/tx.stl  output  sgz630_zbc_214
         addType = "rxptPoint";
         // value = [];
     };
@@ -410,6 +410,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             };
             models.forEach((mesh: any) => {
                 if (!!mesh.material) {
+                    setSelectedBtn((prev: any) => {
+                        if (mesh?.name?.indexOf('editArea') > -1) {
+                            mesh.visible = !prev?.includes('bzBtn04');
+                        }
+                        return prev;
+                    });
                     // 有材质
                     const depth = mesh.material?.depthTest;
                     if (depth) {
@@ -1160,33 +1166,24 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const addRectArea = (props: any) => {
         return new Promise((resolve, reject) => {
             const { positions, addType, cameraDirection, ...rest } = props;
-            // 模型尺寸
-            const { height: yLength, width: zLength, length: xLength } = getSize();
             const name = `editArea-${guid()}`;
             drawingLine = false;
             let sizeObj: any = [];
-            sizeObj = addType === 'form' ?
-                [
-                    Math.abs(positions[3] - positions[0]),
-                    Math.abs(positions[4] - positions[1]),
-                    Math.abs(positions[5] - positions[2]),
-                ]
-                :
-                [
-                    xLength,
-                    Math.abs(positions[4] - positions[1]),
-                    zLength,
-                ];
+            sizeObj = [
+                Math.abs(positions[3] - positions[0]),
+                Math.abs(positions[4] - positions[1]),
+                Math.abs(positions[5] - positions[2]),
+            ];
             const geometry = new THREE.BoxGeometry(...sizeObj);
             const material = new THREE.MeshBasicMaterial({});
             material.opacity = 0;
             material.transparent = true;
             const cube = new THREE.Mesh(geometry, material);
             cube.name = name;
-            cube['__props'] = _.omit(props, 'positions');
+            cube['__props'] = props;
             cube.position.x = Math.min(positions[0], positions[3]) + Math.abs(positions[0] - positions[3]) / 2;
-            cube.position.y = Math.min(positions[1], positions[4]) + Math.abs(positions[1] - positions[4]) / 2; //addType === 'form' ? 0 : ((positions[1] > 0 || positions[4] > 0) ? 1 : -1) * height / (cameraDirection === 'bottom' ? (15 / 7) : (9 / 2)); //positions[4] + (positions[1] - positions[4]) / 2;
-            cube.position.z = Math.min(positions[2], positions[5]) + Math.abs(positions[2] - positions[5]) / 2; //addType === 'form' ? positions[5] + (positions[2] - positions[5]) / 2 : 0 //width * 3 / 4 <= Math.abs(positions[5] - positions[2]) ? 0 : positions[5] + (positions[2] - positions[5]) / 2;
+            cube.position.y = Math.min(positions[1], positions[4]) + Math.abs(positions[1] - positions[4]) / 2;
+            cube.position.z = Math.min(positions[2], positions[5]) + Math.abs(positions[2] - positions[5]) / 2;
             var boxHelper = new THREE.BoxHelper(cube, 0xff0000);
             boxHelper.name = "measureBoxHelper";
             boxHelper.visible = true;
@@ -2201,6 +2198,31 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             cameraRotate(list, ((index + 1 === list.length) ? 0 : index + 1));
         }, cameraSwitchTime * 1000);
     };
+    // 导入框选
+    const uploadAreaProps = {
+        accept: '.json',
+        showUploadList: false,
+        multiple: false,
+        beforeUpload(file: any) {
+            const reader = new FileReader(); // 创建文件对象
+            reader.readAsText(file); // 读取文件的内容/URL
+            reader.onload = (res: any) => {
+                const {
+                    target: { result },
+                } = res;
+                try {
+                    const positionList = JSON.parse(result);
+                    (positionList || [])?.forEach((positions: any) => {
+                        addRectArea({ positions, addType: 'form' }).then(cube => {
+                            editableObjects.current?.push?.(cube);
+                        });
+                    });
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+        }
+    };
     useEffect(() => {
         const mesh: any = scene?.current?.getObjectByName?.("tx-0");
         if (!scene.current || !mesh) {
@@ -2250,487 +2272,483 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             className={`${styles.threeCharts} flex-box`}
             style={{ fontSize }}
         >
-            {
-                // (!!name || !!selectedPath) ?
-                <Fragment>
-                    <div id="instructions" className="flex-box-justify-between">
-                        <div className={`flex-box ${modelUpload ? 'camera-position' : ''}`}>
-                            {
-                                modelUpload ?
-                                    [
-                                        { key: 'top', label: '框选顶面' },
-                                        { key: 'bottom', label: '框选底面' },
-                                        { key: 'right', label: '框选右侧' },
-                                        { key: 'left', label: '框选左侧' },
-                                    ].map((item: any, index: number) => {
-                                        const { key, label } = item;
-                                        return <Button
-                                            key={`camera-position-item-${index}`}
-                                            type={cameraDirection.includes(key) ? 'primary' : 'default'}
-                                            onClick={() => {
-                                                if (!cameraDirection.includes(key)) {
-                                                    // 模型尺寸
-                                                    const { length: xLength, height: yLength, width: zLength, max, cameraScale } = getSize();
-                                                    if (key === 'top') {
-                                                        var targetPos = new THREE.Vector3(0, max * cameraScale, 0);
-                                                        animationClick(targetPos).then(res => {
-                                                            const positions: any = Math.max(xLength, yLength, zLength) === xLength ?
-                                                                [
-                                                                    xLength / 10 * -1, yLength / 2 + 100, zLength / 2 * -1 - 100,
-                                                                    xLength / 10 * 11, yLength / 6 * -1, zLength / 2 + 100,
-                                                                ]
-                                                                :
-                                                                Math.max(xLength, yLength, zLength) === yLength ?
-                                                                    [
-                                                                        xLength / 2 * -1 - 100, yLength / 10 * -1, zLength / 2 * -1 - 100,
-                                                                        xLength / 2 * -1, yLength, zLength / 2 + 100,
-                                                                    ]
-                                                                    :
-                                                                    [
-                                                                        xLength / 2 * -1 - 100, yLength / 2 + 100, zLength * -1 - 100,
-                                                                        xLength / 2 * 1 + 100, yLength / 6 * -1, zLength / 8,
-                                                                    ];
-                                                            addRectArea({ positions, addType: 'form', cameraDirection: 'top' }).then(cube => {
-                                                                editableObjects.current?.push?.(cube);
-                                                            });
-                                                        });
-                                                    } else if (key === 'bottom') {
-                                                        var targetPos = new THREE.Vector3(0, max * -cameraScale, 0);
-                                                        animationClick(targetPos).then(res => {
-                                                            const positions: any = Math.max(xLength, yLength, zLength) === xLength ?
-                                                                [
-                                                                    xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2 * -1 - 100,
-                                                                    xLength / 10 * 11, yLength / 4 * -1, zLength / 2 + 100,
-                                                                ]
-                                                                :
-                                                                Math.max(xLength, yLength, zLength) === yLength ?
-                                                                    [
-                                                                        xLength / 2 * -1 - 100, yLength / 10 * -1, zLength / 2 * -1 - 100,
-                                                                        xLength / 2 * -1, yLength, zLength / 2 + 100,
-                                                                    ]
-                                                                    :
-                                                                    [
-                                                                        xLength / 2 * -1 - 100, yLength / 2 * -1 - 100, zLength * -1 - 100,
-                                                                        xLength / 2 * 1 + 100, yLength / 6 * -1, zLength / 8,
-                                                                    ];
-                                                            addRectArea({ positions, addType: 'form', cameraDirection: 'bottom' }).then(cube => {
-                                                                editableObjects.current?.push?.(cube);
-                                                            });
-                                                        });
-                                                    } else if (key === 'right') {
-                                                        var targetPos = new THREE.Vector3(0, 0, max * cameraScale);
-                                                        animationClick(targetPos).then(res => {
-                                                            const positions: any = Math.max(xLength, yLength, zLength) === xLength ?
-                                                                [
-                                                                    xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2.5,
-                                                                    xLength, yLength / 2 + 100, zLength / 2 + 0,
-                                                                ]
-                                                                :
-                                                                Math.max(xLength, yLength, zLength) === yLength ?
-                                                                    [
-                                                                        xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2.5,
-                                                                        xLength, yLength / 2 + 100, zLength / 2 + 100,
-                                                                    ]
-                                                                    :
-                                                                    [
-                                                                        xLength / 2 * -1 - 100, yLength / 2 * -1 - 100, zLength * -1 - 100,
-                                                                        xLength / 6 * -1, yLength / 2 + 100, zLength / 8,
-                                                                    ];
-                                                            addRectArea({ positions, addType: 'form', cameraDirection: 'right' }).then(cube => {
-                                                                editableObjects.current?.push?.(cube);
-                                                            });
-                                                        });
-                                                    } else if (key === 'left') {
-                                                        var targetPos = new THREE.Vector3(0, 0, -1 * max * cameraScale);
-                                                        animationClick(targetPos).then(res => {
-                                                            const positions: any = Math.max(xLength, yLength, zLength) === xLength ?
-                                                                [
-                                                                    xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2.5 * -1,
-                                                                    xLength, yLength / 2 + 100, zLength / 2 * -1 - 100,
-                                                                ]
-                                                                :
-                                                                Math.max(xLength, yLength, zLength) === yLength ?
-                                                                    [
-                                                                        xLength / 10 * -1, yLength / 2 * -1 - 100, zLength / 2.5 * -1,
-                                                                        xLength, yLength / 2 + 100, zLength / 2 * -1 - 100,
-                                                                    ]
-                                                                    :
-                                                                    [
-                                                                        xLength / 2 + 100, yLength / 2 * -1 - 100, zLength * -1 - 100,
-                                                                        xLength / 6, yLength / 2 + 100, zLength / 8,
-                                                                    ];
-                                                            addRectArea({ positions, addType: 'form', cameraDirection: 'left' }).then(cube => {
-                                                                editableObjects.current?.push?.(cube);
-                                                            });
-                                                        });
-                                                    }
-                                                    setCameraDirection((prev: any) => prev.concat(key));
-                                                }
-                                            }}
-                                        >
-                                            {label}
-                                        </Button>
-                                    })
-                                    : null
-                            }
-                        </div>
-                        <div className="flex-box">
-                            <Tooltip title="比例尺">
-                                <Popover
-                                    content={
-                                        <div className='flex-box' style={{ height: 32 }}>
-                                            <Input
-                                                style={{ maxWidth: 100, height: '100%' }}
-                                                placeholder="比例尺"
-                                                onBlur={(e) => {
-                                                    const res = JSON.parse(localStorage.getItem("scale") || "{}");
-                                                    const val = e.target.value;
-                                                    localStorage.setItem("scale", JSON.stringify({ ...res, value: val }));
-                                                }}
-                                                defaultValue={JSON.parse(localStorage.getItem("scale") || "{}")?.value || 1}
-                                            />
-                                            <Select
-                                                style={{ width: 125, minWidth: 125 }}
-                                                onChange={(val) => {
-                                                    const res = JSON.parse(localStorage.getItem("scale") || "{}");
-                                                    localStorage.setItem("scale", JSON.stringify({ ...res, unit: val }));
-                                                }}
-                                                defaultValue={JSON.parse(localStorage.getItem("scale") || "{}")?.unit || 'm'}
-                                                options={[
-                                                    {
-                                                        value: 'mm',
-                                                        label: '毫米（mm）',
-                                                    },
-                                                    {
-                                                        value: 'cm',
-                                                        label: '厘米（cm）',
-                                                    },
-                                                    {
-                                                        value: 'm',
-                                                        label: '米（m）',
-                                                    }
-                                                ]}
-                                            />
-                                        </div>
-                                    }
-                                    title="设置比例尺"
-                                    trigger="click"
-                                >
-                                    <Button
-                                        icon={<FontSizeOutlined />}
-                                        className='btn'
-                                    />
-                                </Popover>
-                            </Tooltip>
-                            <Tooltip title="标注">
-                                <Button
-                                    icon={<AimOutlined />}
-                                    type={selectedBtn.includes('bzBtn01') ? 'primary' : 'default'}
-                                    id="bzBtn01"
-                                    className='btn'
-                                />
-                            </Tooltip>
-                            <Tooltip title="显示边框">
-                                <Button
-                                    icon={<BorderOuterOutlined />}
-                                    type={selectedBtn.includes('bzBtn02') ? 'primary' : 'default'}
-                                    id="bzBtn02"
-                                    className='btn'
-                                />
-                            </Tooltip>
-                            <Tooltip title="显示坐标轴">
-                                <Button
-                                    icon={<BorderlessTableOutlined />}
-                                    type={selectedBtn.includes('bzBtn03') ? 'primary' : 'default'}
-                                    id="bzBtn03"
-                                    className='btn'
-                                />
-                            </Tooltip>
-                            <Tooltip title="开启透视">
-                                <Button
-                                    icon={<EyeOutlined />}
-                                    type={selectedBtn.includes('bzBtn04') ? 'primary' : 'default'}
-                                    id="bzBtn04"
-                                    className='btn'
-                                />
-                            </Tooltip>
-                            <Tooltip title="清理标注数据">
-                                <Button
-                                    icon={<ClearOutlined />}
-                                    type={'default'}
-                                    id="bzBtn05"
-                                    className='btn'
-                                />
-                            </Tooltip>
-                            <Tooltip title="截图">
-                                <Button
-                                    icon={<ScissorOutlined />}
-                                    type={'default'}
-                                    id="bzBtn08"
-                                    className='btn'
-                                />
-                            </Tooltip>
-                            <Tooltip title={!!selectedPath ? "上传模型" : "上传本地点云文件"}>
-                                {
-                                    // !!modelUpload ?
-                                    //     <Button
-                                    //         icon={<UploadOutlined />}
-                                    //         onClick={() => {
-                                    //             setModelUploadVisible(true);
-                                    //         }}
-                                    //     />
-                                    //     :
-                                    !!selectedPath ?
-                                        <Button
-                                            // icon={<DeleteOutlined />}
-                                            onClick={() => {
-                                                setModelUploadVisible(true);
-                                                form2.setFieldsValue({ modelfilename: selectedPath?.split('http://localhost:5001/files/')[1] });
-                                            }}
-                                        >
-                                            上传模型
-                                        </Button>
-                                        :
-                                        <Button
-                                            icon={<UploadOutlined />}
-                                            onClick={() => {
-                                                if (!!localStorage.getItem(`localGridContentList-${params.id}`)) {
-                                                    const localStorageKeys = getAllLocalStorageKeys();
-                                                    (localStorageKeys || []).forEach((key: any) => {
-                                                        if (key?.indexOf(params.id) > -1) {
-                                                            localStorage.removeItem(key);
-                                                        }
-                                                    });
-                                                }
-                                                setSelectPathVisible(true);
-                                            }}
-                                        />
-                                }
-                            </Tooltip>
-                            {
-                                modelUpload ?
-                                    pointRef?.length ?
-                                        <Button onClick={() => {
-                                            const points = getAllModelsFromScene(scene.current, 'editPoint');
-                                            let obj: any = [];
-                                            points.forEach((point: any) => {
-                                                const {
-                                                    position, normVec, regionID = 1, robID = 1, surfaceType, __props = {}
-                                                } = point;
-                                                const { area, rob, index } = __props?.area;
-                                                const options = {
-                                                    point: position,
-                                                    normVec, regionID, robID, surfaceType,
-                                                };
-                                                const objName = `Rob${robID}_${surfaceType}_Region${regionID}_Track${index}`;
-                                                if (!!obj[objName]) {
-                                                    obj[objName].push({
-                                                        ...__props,
-                                                        ...options
-                                                    });
-                                                } else {
-                                                    obj[objName] = [];
-                                                    obj[objName] = [{
-                                                        ...__props,
-                                                        ...options
-                                                    }];
-                                                }
-                                            });
-                                            const params = Object.entries(obj)?.reduce((pre: any, cen: any) => {
-                                                return pre.concat({
-                                                    [cen[0]]: cen[1]
-                                                })
-                                            }, []);
-                                            if (!!fetchType && !!xName) {
-                                                console.log(params);
-                                                btnFetch(fetchType, xName, params).then((res: any) => {
-                                                    if (res && res.code === 'SUCCESS') {
-                                                        message.success('轨迹上传成功');
-                                                    } else {
-                                                        message.error(res?.msg || res?.message || "接口异常");
-                                                    };
-                                                });
-                                            }
-                                        }}>
-                                            确认并上传轨迹
-                                        </Button>
-                                        :
-                                        <Button onClick={() => {
-                                            const areas = getAllModelsFromScene(scene.current, 'editArea');
-                                            const points = getAllModelsFromScene(scene.current, 'editPoint');
-                                            const pointResult = points.map((item: any) => {
-                                                return {
-                                                    Point: item.position,
-                                                    NormVec: item.normVec,
-                                                    PntTpe: 1
-                                                }
-                                            });
-                                            const params = {
-                                                action: 1,
-                                                list: areas.map((area: any) => {
-                                                    const { addType, cameraDirection, ...rest } = area?.__props;
-                                                    return {
-                                                        ...rest,
-                                                        cut_range: [
-                                                            area.position.x - area?.geometry?.parameters?.width / 2,
-                                                            area.position.x + area?.geometry?.parameters?.width / 2,
-                                                            area.position.y - area?.geometry?.parameters?.height / 2,
-                                                            area.position.y + area?.geometry?.parameters?.height / 2,
-                                                            area.position.z - area.geometry?.parameters?.depth / 2,
-                                                            area.position.z + area.geometry?.parameters?.depth / 2
-                                                        ]
-                                                    };
-                                                })
-                                            };
-                                            console.log(params);
-                                            if (!!fetchType && !!xName) {
-                                                btnFetch(fetchType, xName, params).then((res: any) => {
-                                                    if (res && res.code === 'SUCCESS') {
-                                                        message.success('分区上传成功');
-                                                    } else {
-                                                        message.error(res?.msg || res?.message || "接口异常");
-                                                    };
-                                                });
-                                            }
-                                        }}>
-                                            确认并上传分区
-                                        </Button>
-                                    : null
-                            }
-                        </div>
-                        <div className="flex-box">
-                            <Tooltip title="缩小">
-                                <Button
-                                    icon={<MinusOutlined />}
-                                    id="bzBtn06"
-                                    className='btn'
-                                />
-                            </Tooltip>
-                            <Tooltip title="放大">
-                                <Button
-                                    icon={<PlusOutlined />}
-                                    id="bzBtn07"
-                                    className='btn'
-                                />
-                            </Tooltip>
-                        </div>
-                    </div>
-                    <div
-                        className='render-dom'
-                        // @ts-ignore
-                        ref={dom}
-                    >
-                        <div className="three-mask flex-box" style={{ display: "none" }}>
-                            <progress className="process" value="0" ></progress>
-                            <span className="process-text">0%</span>
-                        </div>
-                        <canvas id="demoBox"></canvas>
-                    </div>
+            <div id="instructions" className="flex-box-justify-between">
+                <div className={`flex-box ${modelUpload ? 'camera-position' : ''}`}>
                     {
-                        useMemo(() => {
-                            return (ifShowColorList && meshHasColor) ?
-                                <div className="sprite-box flex-box">
-                                    <div className="number-box flex-box-justify-between">
-                                        {
-                                            [2, 1.5, 1, 0.5, '0.0', -0.5, -1, -1.5, -2].map((item: any, index: number) => {
-                                                return <div
-                                                    className="number-item"
-                                                    key={`number-${index}`}
-                                                    style={(index === 0 || index === 8 || index === 4) ? { fontWeight: 600 } : { opacity: .7 }}
-                                                >
-                                                    {item}
-                                                </div>
-                                            })
+                        modelUpload ?
+                            [
+                                { key: 'top1', label: '顶1' },
+                                { key: 'top2', label: '顶2' },
+                                { key: 'top3', label: '顶3' },
+                                { key: 'top', label: '顶' },
+                                { key: 'bottom', label: '底' },
+                                { key: 'right', label: '右' },
+                                { key: 'left', label: '左' },
+                                { key: 'front', label: '前' },
+                                { key: 'back', label: '后' }
+                            ].map((item: any, index: number) => {
+                                const { key, label } = item;
+                                return <Button
+                                    key={`camera-position-item-${index}`}
+                                    type={cameraDirection.includes(key) ? 'primary' : 'default'}
+                                    onClick={() => {
+                                        if (!cameraDirection.includes(key)) {
+                                            var modelCenter = new THREE.Vector3();
+                                            const mesh: any = scene?.current?.getObjectByName?.("tx-0");
+                                            const box = new THREE.Box3().setFromObject(mesh);
+                                            const meshCenter = box.getCenter(modelCenter);
+                                            // 模型尺寸
+                                            const { length: xLength, height: yLength, width: zLength, max, cameraScale } = getSize();
+                                            var targetPos = ['top', 'top1', 'top2', 'top3'].includes(key) ?
+                                                new THREE.Vector3(0, max * cameraScale, 0)
+                                                :
+                                                key === 'bottom' ?
+                                                    new THREE.Vector3(0, max * -cameraScale, 0)
+                                                    :
+                                                    key === 'left' ?
+                                                        new THREE.Vector3(-1 * max * cameraScale, 0, 0)
+                                                        :
+                                                        key === 'right' ?
+                                                            new THREE.Vector3(max * cameraScale, 0, 0)
+                                                            :
+                                                            key === 'front' ?
+                                                                new THREE.Vector3(0, 0, max * cameraScale)
+                                                                :
+                                                                new THREE.Vector3(0, 0, -1 * max * cameraScale);
+                                            animationClick(targetPos).then(res => {
+                                                const positions: any = key === 'top1' ?
+                                                    [
+                                                        meshCenter?.x - xLength / 2 - xLength / 20, yLength / 2 + 100, meshCenter?.z - zLength / 2 - zLength / 10,
+                                                        meshCenter?.x - xLength / 2 + xLength / 10, yLength / 6 * -1, meshCenter?.z + zLength / 2 + zLength / 10
+                                                    ]
+                                                    :
+                                                    key === 'top2' ?
+                                                        [
+                                                            meshCenter?.x - xLength / 2 + xLength / 9, yLength / 2 + 100, meshCenter?.z - zLength / 2 - zLength / 10,
+                                                            meshCenter?.x - xLength / 90, yLength / 6 * -1, meshCenter?.z + zLength / 2 + zLength / 10
+                                                        ]
+                                                        :
+                                                        key === 'top3' ?
+                                                            [
+                                                                meshCenter?.x, yLength / 2 + 100, meshCenter?.z - zLength / 2 - zLength / 10,
+                                                                meshCenter?.x + xLength / 2 + xLength / 20, yLength / 6 * -1, meshCenter?.z + zLength / 2 + zLength / 10
+                                                            ]
+                                                            :
+                                                            key === 'top' ?
+                                                                [
+                                                                    meshCenter?.x - xLength / 2 - xLength / 10, yLength / 2 + 100, meshCenter?.z - zLength / 2 - zLength / 10,
+                                                                    meshCenter?.x + xLength / 2 + xLength / 10, yLength / 6 * -1, meshCenter?.z + zLength / 2 + zLength / 10
+                                                                ]
+                                                                :
+                                                                key === 'bottom' ?
+                                                                    [
+                                                                        meshCenter?.x - xLength / 2 - xLength / 10, yLength / 2 * -1 - 100, meshCenter?.z - zLength / 2 - zLength / 10,
+                                                                        meshCenter?.x + xLength / 2 + xLength / 10, yLength / 4 * -1, meshCenter?.z + zLength / 2 + zLength / 10
+                                                                    ]
+                                                                    :
+                                                                    key === 'left' ?
+                                                                        [
+                                                                            meshCenter?.x - xLength / 2 - xLength / 10, meshCenter?.y - yLength / 2 - yLength / 10, meshCenter?.z - zLength / 2 - zLength / 10,
+                                                                            meshCenter?.x - xLength / 2 + xLength / 10, meshCenter?.y + yLength / 2 + yLength / 10, meshCenter?.z + zLength / 2 + zLength / 10
+                                                                        ]
+                                                                        :
+                                                                        key === 'right' ?
+                                                                            [
+                                                                                meshCenter?.x + xLength / 2 - xLength / 10, meshCenter?.y - yLength / 2 - yLength / 10, meshCenter?.z - zLength / 2 - zLength / 10,
+                                                                                meshCenter?.x + xLength / 2 + xLength / 10, meshCenter?.y + yLength / 2 + yLength / 10, meshCenter?.z + zLength / 2 + zLength / 10
+                                                                            ]
+                                                                            :
+                                                                            key === 'front' ?
+                                                                                [
+                                                                                    meshCenter?.x - xLength / 2 - xLength / 10, meshCenter?.y - yLength / 2 - yLength / 10, meshCenter?.z - zLength / 2 - zLength / 10,
+                                                                                    meshCenter?.x + xLength / 2 + xLength / 10, meshCenter?.y + yLength / 2 + yLength / 10, meshCenter?.z - zLength / 2 + zLength / 10
+                                                                                ]
+                                                                                :
+                                                                                [
+                                                                                    meshCenter?.x - xLength / 2 - xLength / 10, meshCenter?.y - yLength / 2 - yLength / 10, meshCenter?.z + zLength / 2 - zLength / 10,
+                                                                                    meshCenter?.x + xLength / 2 + xLength / 10, meshCenter?.y + yLength / 2 + yLength / 10, meshCenter?.z + zLength / 2 + zLength / 10
+                                                                                ]
+                                                    ;
+                                                addRectArea({ positions, addType: 'form', cameraDirection: key }).then(cube => {
+                                                    editableObjects.current?.push?.(cube);
+                                                });
+                                            });
+                                            setCameraDirection((prev: any) => prev.concat(key));
                                         }
-                                    </div>
-
-                                    <div className="sprite-icon" />
-                                </div>
-                                : null;
-                        }, [meshHasColor, ifShowColorList])
+                                    }
+                                    }
+                                >
+                                    {label}
+                                </Button>
+                            })
+                            : null
                     }
-                    <div className='camera-box'>
-                        <div className="camera-box-pointer">
-                            {
-                                modelRotate ?
-                                    <div className="camera-box-pointer-head flex-box-justify-between">
-                                        <InputNumber
-                                            size='small'
-                                            addonAfter="秒"
-                                            value={cameraSwitchTime}
-                                            max={100}
-                                            min={1}
-                                            onChange={(val: any) => {
-                                                setCameraSwitchTime(val);
-                                            }}
-                                        />
-                                        <Switch
-                                            className='cameraIcon-switch'
-                                            checked={cameraSwitch}
-                                            onChange={(e) => setCameraSwitch(e)}
-                                        />
-                                    </div>
-                                    : null
+                    <Tooltip title="导出框选">
+                        <Button
+                            icon={<CloudDownloadOutlined />}
+                            className="camera-position-load-icon"
+                            onClick={() => {
+                                const areas = getAllModelsFromScene(scene.current)?.filter((i: any) => i?.name?.indexOf('editArea') > -1);
+                                const params = (areas || [])?.map((item: any) => item?.__props?.positions);
+                                downFileFun(JSON.stringify(params), `框选.json`);
+                            }}
+                        />
+                    </Tooltip>
+                    <Upload {...uploadAreaProps}>
+                        <Button
+                            icon={<Tooltip title="导入框选"><CloudUploadOutlined /></Tooltip>}
+                            className="camera-position-load-icon"
+                        />
+                    </Upload>
+                </div>
+                <div className="flex-box">
+                    <Tooltip title="比例尺">
+                        <Popover
+                            content={
+                                <div className='flex-box' style={{ height: 32 }}>
+                                    <Input
+                                        style={{ maxWidth: 100, height: '100%' }}
+                                        placeholder="比例尺"
+                                        onBlur={(e) => {
+                                            const res = JSON.parse(localStorage.getItem("scale") || "{}");
+                                            const val = e.target.value;
+                                            localStorage.setItem("scale", JSON.stringify({ ...res, value: val }));
+                                        }}
+                                        defaultValue={JSON.parse(localStorage.getItem("scale") || "{}")?.value || 1}
+                                    />
+                                    <Select
+                                        style={{ width: 125, minWidth: 125 }}
+                                        onChange={(val) => {
+                                            const res = JSON.parse(localStorage.getItem("scale") || "{}");
+                                            localStorage.setItem("scale", JSON.stringify({ ...res, unit: val }));
+                                        }}
+                                        defaultValue={JSON.parse(localStorage.getItem("scale") || "{}")?.unit || 'm'}
+                                        options={[
+                                            {
+                                                value: 'mm',
+                                                label: '毫米（mm）',
+                                            },
+                                            {
+                                                value: 'cm',
+                                                label: '厘米（cm）',
+                                            },
+                                            {
+                                                value: 'm',
+                                                label: '米（m）',
+                                            }
+                                        ]}
+                                    />
+                                </div>
                             }
-                            <div className="camera-box-pointer-top flex-box-justify-between">
-                                <img src={rectTopIcon} alt="rect" className='cameraIcon' onClick={() => {
-                                    const { max, cameraScale } = getSize();
-                                    var targetPos = new THREE.Vector3(0, max * cameraScale, 0);
-                                    animationClick(targetPos);
-                                }} />
-                                <img src={rectAllIcon} alt="rect" className='cameraIcon' onClick={() => {
-                                    const { length, width, height } = getSize();
-                                    var targetPos = new THREE.Vector3(width, height, length);
-                                    animationClick(targetPos);
-                                }} />
+                            title="设置比例尺"
+                            trigger="click"
+                        >
+                            <Button
+                                icon={<FontSizeOutlined />}
+                                className='btn'
+                            />
+                        </Popover>
+                    </Tooltip>
+                    <Tooltip title="标注">
+                        <Button
+                            icon={<AimOutlined />}
+                            type={selectedBtn.includes('bzBtn01') ? 'primary' : 'default'}
+                            id="bzBtn01"
+                            className='btn'
+                        />
+                    </Tooltip>
+                    <Tooltip title="显示边框">
+                        <Button
+                            icon={<BorderOuterOutlined />}
+                            type={selectedBtn.includes('bzBtn02') ? 'primary' : 'default'}
+                            id="bzBtn02"
+                            className='btn'
+                        />
+                    </Tooltip>
+                    <Tooltip title="显示坐标轴">
+                        <Button
+                            icon={<BorderlessTableOutlined />}
+                            type={selectedBtn.includes('bzBtn03') ? 'primary' : 'default'}
+                            id="bzBtn03"
+                            className='btn'
+                        />
+                    </Tooltip>
+                    <Tooltip title="开启透视">
+                        <Button
+                            icon={<EyeOutlined />}
+                            type={selectedBtn.includes('bzBtn04') ? 'primary' : 'default'}
+                            id="bzBtn04"
+                            className='btn'
+                        />
+                    </Tooltip>
+                    <Tooltip title="清理标注数据">
+                        <Button
+                            icon={<ClearOutlined />}
+                            type={'default'}
+                            id="bzBtn05"
+                            className='btn'
+                        />
+                    </Tooltip>
+                    <Tooltip title="截图">
+                        <Button
+                            icon={<ScissorOutlined />}
+                            type={'default'}
+                            id="bzBtn08"
+                            className='btn'
+                        />
+                    </Tooltip>
+                    <Tooltip title={!!selectedPath ? "上传模型" : "上传本地点云文件"}>
+                        {
+                            // !!modelUpload ?
+                            //     <Button
+                            //         icon={<UploadOutlined />}
+                            //         onClick={() => {
+                            //             setModelUploadVisible(true);
+                            //         }}
+                            //     />
+                            //     :
+                            !!selectedPath ?
+                                <Button
+                                    // icon={<DeleteOutlined />}
+                                    onClick={() => {
+                                        setModelUploadVisible(true);
+                                        form2.setFieldsValue({ modelfilename: selectedPath?.split('http://localhost:5001/files/')[1] });
+                                    }}
+                                >
+                                    上传模型
+                                </Button>
+                                :
+                                <Button
+                                    icon={<UploadOutlined />}
+                                    onClick={() => {
+                                        if (!!localStorage.getItem(`localGridContentList-${params.id}`)) {
+                                            const localStorageKeys = getAllLocalStorageKeys();
+                                            (localStorageKeys || []).forEach((key: any) => {
+                                                if (key?.indexOf(params.id) > -1) {
+                                                    localStorage.removeItem(key);
+                                                }
+                                            });
+                                        }
+                                        setSelectPathVisible(true);
+                                    }}
+                                />
+                        }
+                    </Tooltip>
+                    {
+                        modelUpload ?
+                            pointRef?.length ?
+                                <Button onClick={() => {
+                                    const points = getAllModelsFromScene(scene.current, 'editPoint');
+                                    let obj: any = [];
+                                    points.forEach((point: any) => {
+                                        const {
+                                            position, normVec, regionID = 1, robID = 1, surfaceType, __props = {}
+                                        } = point;
+                                        const { area, rob, index } = __props?.area;
+                                        const options = {
+                                            point: position,
+                                            normVec, regionID, robID, surfaceType,
+                                        };
+                                        const objName = `Rob${robID}_${surfaceType}_Region${regionID}_Track${index}`;
+                                        if (!!obj[objName]) {
+                                            obj[objName].push({
+                                                ...__props,
+                                                ...options
+                                            });
+                                        } else {
+                                            obj[objName] = [];
+                                            obj[objName] = [{
+                                                ...__props,
+                                                ...options
+                                            }];
+                                        }
+                                    });
+                                    const params = Object.entries(obj)?.reduce((pre: any, cen: any) => {
+                                        return pre.concat({
+                                            [cen[0]]: cen[1]
+                                        })
+                                    }, []);
+                                    if (!!fetchType && !!xName) {
+                                        console.log(params);
+                                        btnFetch(fetchType, xName, { data: params }).then((res: any) => {
+                                            if (res && res.code === 'SUCCESS') {
+                                                message.success('轨迹上传成功');
+                                            } else {
+                                                message.error(res?.msg || res?.message || "接口异常");
+                                            };
+                                        });
+                                    }
+                                }}>
+                                    确认并上传轨迹
+                                </Button>
+                                :
+                                <Button onClick={() => {
+                                    const areas = getAllModelsFromScene(scene.current, 'editArea');
+                                    const points = getAllModelsFromScene(scene.current, 'editPoint');
+                                    const pointResult = points.map((item: any) => {
+                                        return {
+                                            Point: item.position,
+                                            NormVec: item.normVec,
+                                            PntTpe: 1
+                                        }
+                                    });
+                                    const params = {
+                                        action: 1,
+                                        list: areas.map((area: any) => {
+                                            const { addType, cameraDirection, ...rest } = area?.__props;
+                                            return {
+                                                ...rest,
+                                                cut_range: [
+                                                    area.position.x - area?.geometry?.parameters?.width / 2,
+                                                    area.position.x + area?.geometry?.parameters?.width / 2,
+                                                    area.position.y - area?.geometry?.parameters?.height / 2,
+                                                    area.position.y + area?.geometry?.parameters?.height / 2,
+                                                    area.position.z - area.geometry?.parameters?.depth / 2,
+                                                    area.position.z + area.geometry?.parameters?.depth / 2
+                                                ]
+                                            };
+                                        })
+                                    };
+                                    console.log(params);
+                                    if (!!fetchType && !!xName) {
+                                        btnFetch(fetchType, xName, params).then((res: any) => {
+                                            if (res && res.code === 'SUCCESS') {
+                                                message.success('分区上传成功');
+                                            } else {
+                                                message.error(res?.msg || res?.message || "接口异常");
+                                            };
+                                        });
+                                    }
+                                }}>
+                                    确认并上传分区
+                                </Button>
+                            : null
+                    }
+                </div>
+                <div className="flex-box">
+                    <Tooltip title="缩小">
+                        <Button
+                            icon={<MinusOutlined />}
+                            id="bzBtn06"
+                            className='btn'
+                        />
+                    </Tooltip>
+                    <Tooltip title="放大">
+                        <Button
+                            icon={<PlusOutlined />}
+                            id="bzBtn07"
+                            className='btn'
+                        />
+                    </Tooltip>
+                </div>
+            </div>
+            <div
+                className='render-dom'
+                // @ts-ignore
+                ref={dom}
+            >
+                <div className="three-mask flex-box" style={{ display: "none" }}>
+                    <progress className="process" value="0" ></progress>
+                    <span className="process-text">0%</span>
+                </div>
+                <canvas id="demoBox"></canvas>
+            </div>
+            {
+                useMemo(() => {
+                    return (ifShowColorList && meshHasColor) ?
+                        <div className="sprite-box flex-box">
+                            <div className="number-box flex-box-justify-between">
+                                {
+                                    [2, 1.5, 1, 0.5, '0.0', -0.5, -1, -1.5, -2].map((item: any, index: number) => {
+                                        return <div
+                                            className="number-item"
+                                            key={`number-${index}`}
+                                            style={(index === 0 || index === 8 || index === 4) ? { fontWeight: 600 } : { opacity: .7 }}
+                                        >
+                                            {item}
+                                        </div>
+                                    })
+                                }
                             </div>
-                            <div className="camera-box-pointer-center flex-box-justify-between">
-                                <img src={rectLeftIcon} alt="rect" className='cameraIcon' onClick={() => {
-                                    const { max, cameraScale } = getSize();
-                                    var targetPos = new THREE.Vector3(max * -cameraScale, 0, 0);
-                                    animationClick(targetPos);
-                                }} />
-                                <img src={rectFrontIcon} alt="rect" className='cameraIcon' onClick={() => {
-                                    const { max, cameraScale } = getSize();
-                                    var targetPos = new THREE.Vector3(0, 0, max * cameraScale);
-                                    animationClick(targetPos);
-                                }} />
-                                <img src={rectRightIcon} alt="rect" className='cameraIcon' onClick={() => {
-                                    const { max, cameraScale } = getSize();
-                                    var targetPos = new THREE.Vector3(max * cameraScale, 0, 0);
-                                    animationClick(targetPos);
-                                }} />
-                                <img src={rectBackIcon} alt="rect" className='cameraIcon' onClick={() => {
-                                    const { max, cameraScale } = getSize();
-                                    var targetPos = new THREE.Vector3(0, 0, max * -cameraScale);
-                                    animationClick(targetPos);
-                                }} />
-                            </div>
-                            <div className="camera-box-pointer-bottom flex-box-justify-between">
-                                <img src={rectBottomIcon} alt="rect" className='cameraIcon' onClick={() => {
-                                    const { max, cameraScale } = getSize();
-                                    var targetPos = new THREE.Vector3(0, max * -cameraScale, 0);
-                                    animationClick(targetPos);
-                                }} />
-                            </div>
-                        </div>
-                        <div className="camera-box-cursor flex-box">
-                            <img src={rectIcon} alt="rect" className='cameraIcon' />
-                            视图
-                        </div>
-                    </div>
-                </Fragment>
-                // :
-                // <div className="flex-box-center" style={{ height: '100%' }}>
-                //     <Button onClick={() => {
 
-                //     }}>
-                //         上传
-                //     </Button>
-                // </div>
+                            <div className="sprite-icon" />
+                        </div>
+                        : null;
+                }, [meshHasColor, ifShowColorList])
             }
+            <div className='camera-box'>
+                <div className="camera-box-pointer">
+                    {
+                        modelRotate ?
+                            <div className="camera-box-pointer-head flex-box-justify-between">
+                                <InputNumber
+                                    size='small'
+                                    addonAfter="秒"
+                                    value={cameraSwitchTime}
+                                    max={100}
+                                    min={1}
+                                    onChange={(val: any) => {
+                                        setCameraSwitchTime(val);
+                                    }}
+                                />
+                                <Switch
+                                    className='cameraIcon-switch'
+                                    checked={cameraSwitch}
+                                    onChange={(e) => setCameraSwitch(e)}
+                                />
+                            </div>
+                            : null
+                    }
+                    <div className="camera-box-pointer-top flex-box-justify-between">
+                        <img src={rectTopIcon} alt="rect" className='cameraIcon' onClick={() => {
+                            const { max, cameraScale } = getSize();
+                            var targetPos = new THREE.Vector3(0, max * cameraScale, 0);
+                            animationClick(targetPos);
+                        }} />
+                        <img src={rectAllIcon} alt="rect" className='cameraIcon' onClick={() => {
+                            const { length, width, height } = getSize();
+                            var targetPos = new THREE.Vector3(width, height, length);
+                            animationClick(targetPos);
+                        }} />
+                    </div>
+                    <div className="camera-box-pointer-center flex-box-justify-between">
+                        <img src={rectLeftIcon} alt="rect" className='cameraIcon' onClick={() => {
+                            const { max, cameraScale } = getSize();
+                            var targetPos = new THREE.Vector3(max * -cameraScale, 0, 0);
+                            animationClick(targetPos);
+                        }} />
+                        <img src={rectFrontIcon} alt="rect" className='cameraIcon' onClick={() => {
+                            const { max, cameraScale } = getSize();
+                            var targetPos = new THREE.Vector3(0, 0, max * cameraScale);
+                            animationClick(targetPos);
+                        }} />
+                        <img src={rectRightIcon} alt="rect" className='cameraIcon' onClick={() => {
+                            const { max, cameraScale } = getSize();
+                            var targetPos = new THREE.Vector3(max * cameraScale, 0, 0);
+                            animationClick(targetPos);
+                        }} />
+                        <img src={rectBackIcon} alt="rect" className='cameraIcon' onClick={() => {
+                            const { max, cameraScale } = getSize();
+                            var targetPos = new THREE.Vector3(0, 0, max * -cameraScale);
+                            animationClick(targetPos);
+                        }} />
+                    </div>
+                    <div className="camera-box-pointer-bottom flex-box-justify-between">
+                        <img src={rectBottomIcon} alt="rect" className='cameraIcon' onClick={() => {
+                            const { max, cameraScale } = getSize();
+                            var targetPos = new THREE.Vector3(0, max * -cameraScale, 0);
+                            animationClick(targetPos);
+                        }} />
+                    </div>
+                </div>
+                <div className="camera-box-cursor flex-box">
+                    <img src={rectIcon} alt="rect" className='cameraIcon' />
+                    视图
+                </div>
+            </div>
 
             {
+                // 选择上传模型
                 selectPathVisible ?
                     <FileManager
                         onOk={(val: any) => {
@@ -2990,7 +3008,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                             ...rest,
                                             positions,
                                             cut_direction: !!cut_direction ? JSON.parse(cut_direction) : [],
-                                            addType: selectedArea.object?.__props?.addType,
+                                            addType: 'form', //selectedArea.object?.__props?.addType,
                                             cameraDirection: selectedArea.object?.__props?.cameraDirection
                                         }).then(cube => {
                                             editableObjects.current?.push?.(cube);

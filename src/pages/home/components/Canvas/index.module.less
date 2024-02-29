@@ -1370,6 +1370,18 @@
   height: 100%;
 }
 
+.buttonUploadCharts {
+  width: 100%;
+  height: 100%;
+
+  :global {
+    .ant-btn {
+      height: 100%;
+      width: 100%;
+    }
+  }
+}
+
 .progressCharts {
   // height: 100% !important;
   width: 100%;
@@ -1417,6 +1429,7 @@
       z-index: 8;
       width: 100%;
       font-family: monospace;
+      align-items: flex-start;
 
       .ant-btn {
         height: auto;
@@ -1440,8 +1453,17 @@
       flex-wrap: wrap;
       // width: 64px;
       gap: 8px;
-      width: auto !important;
+      width: 180px !important;
       padding-left: 12px;
+
+      .ant-btn {
+        padding: 4px 6px;
+      }
+
+      &-load-icon {
+        width: 26px;
+        padding: 2px 5px !important;
+      }
     }
 
     .render-dom {

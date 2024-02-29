@@ -135,6 +135,11 @@ export const windowTypeList: any = [
     icon: buttonIcon,
   },
   {
+    value: 'buttonUpload',
+    label: '文件按钮组件',
+    icon: buttonIcon,
+  },
+  {
     value: 'progress',
     label: '进度条组件',
     icon: processIcon,
