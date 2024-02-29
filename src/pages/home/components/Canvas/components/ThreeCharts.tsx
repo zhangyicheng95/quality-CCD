@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { connect, useModel } from 'umi';
@@ -18,7 +18,7 @@ import {
 } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 import {
     AimOutlined,
-    BorderlessTableOutlined, BorderOuterOutlined, ClearOutlined, CloudDownloadOutlined, CloudUploadOutlined, DeleteOutlined, EyeOutlined, FontSizeOutlined, MinusOutlined, PlusOutlined, ScissorOutlined, UploadOutlined
+    BorderlessTableOutlined, BorderOuterOutlined, ClearOutlined, CloudDownloadOutlined, CloudUploadOutlined, EyeOutlined, FontSizeOutlined, MinusOutlined, PlusOutlined, ScissorOutlined, UploadOutlined
 } from '@ant-design/icons';
 import rectIcon from '@/assets/imgs/rect.svg';
 import rectAllIcon from '@/assets/imgs/rect-all.svg';
@@ -2544,7 +2544,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                         const {
                                             position, normVec, regionID = 1, robID = 1, surfaceType, __props = {}
                                         } = point;
-                                        const { area, rob, index } = __props?.area;
+                                        const { index } = __props?.area;
                                         const options = {
                                             point: position,
                                             normVec, regionID, robID, surfaceType,
@@ -2584,14 +2584,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                 :
                                 <Button onClick={() => {
                                     const areas = getAllModelsFromScene(scene.current, 'editArea');
-                                    const points = getAllModelsFromScene(scene.current, 'editPoint');
-                                    const pointResult = points.map((item: any) => {
-                                        return {
-                                            Point: item.position,
-                                            NormVec: item.normVec,
-                                            PntTpe: 1
-                                        }
-                                    });
                                     const params = {
                                         action: 1,
                                         list: areas.map((area: any) => {
