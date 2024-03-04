@@ -858,11 +858,10 @@ const Home: React.FC<any> = (props: any) => {
           dataZoom, fontColor, interlacing, modelRotate, modelScale, modelRotateScreenshot,
           password, passwordHelp, ifShowHeader, ifShowColorList, headerBackgroundColor,
           basicInfoData = [{ id: guid(), name: '', value: '' }], ifNeedClear,
-          ifUpdateProject, magnifierSize, listType, valueColor, markNumber,
-          markNumberLeft, markNumberTop, blockType, blockTypeLines, modelUpload,
-          xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
-          ifImgList, lineNumber, columnNumber, magnifierWidth, magnifierHeight,
-          ifPopconfirm
+          ifUpdateProject, magnifierSize, listType, valueColor, blockType, blockTypeLines,
+          modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
+          lineNumber, columnNumber, magnifierWidth, magnifierHeight,
+          ifPopconfirm, showImgList
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1195,7 +1194,7 @@ const Home: React.FC<any> = (props: any) => {
                                                                             id={key}
                                                                             data={{
                                                                               defaultImg: !!defaultImg ? `${BASE_IP}file${(defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0) ? '' : '\\'}${defaultImg}` : '',
-                                                                              dataValue, markNumber, markNumberLeft, markNumberTop,
+                                                                              dataValue, showImgList,
                                                                               magnifier, magnifierSize, comparison, ifShowHeader,
                                                                               magnifierWidth, magnifierHeight
                                                                             }}
@@ -1321,7 +1320,7 @@ const Home: React.FC<any> = (props: any) => {
 
         if (!!ifLocalStorage) {
           resultData = resultData.concat(
-            !!dataValue ? {
+            (!!dataValue && !['operation2'].includes(type)) ? {
               ...item,
               [value[1]]: ['three', 'buttonImages'].includes(type) ? _.omit(dataValue, 'action') : dataValue
             } : item
@@ -1565,7 +1564,8 @@ const Home: React.FC<any> = (props: any) => {
       headerBackgroundColor = 'default', ifNeedClear, ifUpdateProject,
       magnifierSize, logSize, listType, valueColor, markNumber = false, markNumberLeft, markNumberTop,
       blockType, blockTypeLines, modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams,
-      ifNeedAllow, lineNumber, columnNumber, magnifierWidth, magnifierHeight, ifPopconfirm
+      ifNeedAllow, lineNumber, columnNumber, magnifierWidth, magnifierHeight, ifPopconfirm,
+      showImgList
     } = values;
     if (['button', 'buttonInp', 'buttonPassword', 'buttonUpload'].includes(type) && !!fetchParams) {
       try {
@@ -1598,7 +1598,8 @@ const Home: React.FC<any> = (props: any) => {
         ifNeedClear, ifUpdateProject, magnifierSize, logSize, listType,
         valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
         modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
-        lineNumber, columnNumber, magnifierWidth, magnifierHeight, ifPopconfirm
+        lineNumber, columnNumber, magnifierWidth, magnifierHeight, ifPopconfirm,
+        showImgList
       }, ['description'].includes(windowType) ? { basicInfoData } : {}));
     } else {
       result = (addContentList || [])?.map((item: any) => {
@@ -1619,7 +1620,8 @@ const Home: React.FC<any> = (props: any) => {
             ifNeedClear, ifUpdateProject, magnifierSize, logSize, listType,
             valueColor, markNumber, markNumberLeft, markNumberTop, blockType, blockTypeLines,
             modelUpload, xColumns, yColumns, platFormOptions, ifFetchParams, ifNeedAllow,
-            lineNumber, columnNumber, magnifierWidth, magnifierHeight, ifPopconfirm
+            lineNumber, columnNumber, magnifierWidth, magnifierHeight, ifPopconfirm,
+            showImgList
           }, ['description'].includes(windowType) ? { basicInfoData } : {});
         };
         return item;
@@ -1652,7 +1654,7 @@ const Home: React.FC<any> = (props: any) => {
       magnifierSize: 4, logSize: 50, listType: 'line', markNumber: false, markNumberLeft: 1, markNumberTop: 1,
       blockType: 'normal', blockTypeLines: 2, modelUpload: false, xColumns: undefined, yColumns: undefined,
       platFormOptions: undefined, ifFetchParams: false, ifNeedAllow: false, lineNumber: 1, columnNumber: 1,
-      magnifierWidth: undefined, magnifierHeight: undefined, ifPopconfirm: true
+      magnifierWidth: undefined, magnifierHeight: undefined, ifPopconfirm: true, showImgList: false
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -2227,42 +2229,33 @@ const Home: React.FC<any> = (props: any) => {
                           }
                         </div>
                       </Form.Item>
-                      {/* <Form.Item
-                        name="magnifier"
-                        label="开启放大镜"
-                        valuePropName="checked"
+                      <Form.Item
+                        name="magnifierSize"
+                        label="放大镜倍数"
                       >
-                        <Switch />
-                      </Form.Item> */}
-                      <Fragment>
-                        <Form.Item
-                          name="magnifierSize"
-                          label="放大镜倍数"
-                        >
-                          <InputNumber
-                            min={1}
-                            placeholder="放大镜倍数"
-                          />
-                        </Form.Item>
-                        <Form.Item
-                          name="magnifierWidth"
-                          label="放大镜宽"
-                        >
-                          <InputNumber
-                            min={1}
-                            placeholder="放大镜倍数"
-                          />
-                        </Form.Item>
-                        <Form.Item
-                          name="magnifierHeight"
-                          label="放大镜高"
-                        >
-                          <InputNumber
-                            min={1}
-                            placeholder="放大镜倍数"
-                          />
-                        </Form.Item>
-                      </Fragment>
+                        <InputNumber
+                          min={1}
+                          placeholder="放大镜倍数"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="magnifierWidth"
+                        label="放大镜宽"
+                      >
+                        <InputNumber
+                          min={1}
+                          placeholder="放大镜宽度"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="magnifierHeight"
+                        label="放大镜高"
+                      >
+                        <InputNumber
+                          min={1}
+                          placeholder="放大镜高度"
+                        />
+                      </Form.Item>
                       <Form.Item
                         name="comparison"
                         label="开启对比图"
@@ -2271,38 +2264,12 @@ const Home: React.FC<any> = (props: any) => {
                         <Switch />
                       </Form.Item>
                       <Form.Item
-                        name="markNumber"
-                        label="显示图示"
+                        name="showImgList"
+                        label="图片列表"
                         valuePropName="checked"
                       >
                         <Switch />
                       </Form.Item>
-                      {/* {
-                        !!form.getFieldValue('markNumber') ?
-                          <Fragment>
-                            <Form.Item
-                              name="markNumberTop"
-                              label="顶部图示长度"
-                              rules={[{ required: true, message: '顶部图示长度' }]}
-                            >
-                              <InputNumber
-                                min={1}
-                                placeholder="顶部图示长度"
-                              />
-                            </Form.Item>
-                            <Form.Item
-                              name="markNumberLeft"
-                              label="左侧图示长度"
-                              rules={[{ required: true, message: '左侧图示长度' }]}
-                            >
-                              <InputNumber
-                                min={1}
-                                placeholder="左侧图示长度"
-                              />
-                            </Form.Item>
-                          </Fragment>
-                          : null
-                      } */}
                     </Fragment>
                     : null
                 }

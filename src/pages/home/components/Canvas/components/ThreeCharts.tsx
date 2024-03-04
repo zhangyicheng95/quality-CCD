@@ -225,7 +225,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         if (!!item3 && !!item3?.Track && Object.keys(item3)?.length) {
                             const { Track, ...rest } = item3;
                             const list: any = [];
-                            (Track || []).forEach((item4: any) => {
+                            (Track || []).forEach((item4: any, index4: number) => {
                                 const { Point_Normal, ...restItem4 } = item4;
                                 list.push({
                                     ...rest,
@@ -237,7 +237,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                     areaIndex,
                                     regionID: index + 1,
                                     robID: Number(item2[0]?.replace(/[^\d]/g, "") || '1'),
-                                    surfaceType: item1.surfaceType
+                                    surfaceType: item1.surfaceType,
+                                    pointIndex: index4
                                 });
                             });
                             areaIndex += 1;
@@ -1135,7 +1136,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                             if (!item3 || !item3?.Track) return;
                             const { Track, ...rest } = item3;
                             const list: any = [];
-                            (Track || []).forEach((item4: any) => {
+                            (Track || []).forEach((item4: any, index4: number) => {
                                 const { Point_Normal, point, normVec, ...restItem4 } = item4;
                                 const po = Point_Normal?.slice(0, 3),
                                     no = Point_Normal?.slice(3);
@@ -1149,7 +1150,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                     areaIndex,
                                     regionID: index + 1,
                                     robID: Number(item2[0]?.replace(/[^\d]/g, "") || '1'),
-                                    surfaceType: item1.surfaceType
+                                    surfaceType: item1.surfaceType,
+                                    pointIndex: index4
                                 });
                             });
                             areaIndex += 1;
@@ -1157,7 +1159,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         });
                     });
             });
-            console.log('pointList', pointList);
             loadModel('', pointList, 'add');
             return;
         };
@@ -2544,23 +2545,23 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                         const {
                                             position, normVec, regionID = 1, robID = 1, surfaceType, __props = {}
                                         } = point;
-                                        const { index } = __props?.area;
+                                        const { index, } = __props?.area;
                                         const options = {
                                             point: position,
-                                            normVec, regionID, robID, surfaceType,
+                                            normVec, regionID, robID, surfaceType, pointIndex: __props?.pointIndex
                                         };
                                         const objName = `Rob${robID}_${surfaceType}_Region${regionID}_Track${index}`;
                                         if (!!obj[objName]) {
-                                            obj[objName].push({
+                                            obj[objName][__props?.pointIndex] = {
                                                 ...__props,
                                                 ...options
-                                            });
+                                            };
                                         } else {
                                             obj[objName] = [];
-                                            obj[objName] = [{
+                                            obj[objName][__props?.pointIndex] = {
                                                 ...__props,
                                                 ...options
-                                            }];
+                                            };
                                         }
                                     });
                                     const params = Object.entries(obj)?.reduce((pre: any, cen: any) => {

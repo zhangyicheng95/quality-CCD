@@ -18,7 +18,7 @@ interface Props {
 const ImgCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id } = props;
     let {
-        defaultImg, dataValue = '',
+        defaultImg, dataValue = '', showImgList,
         comparison, magnifierSize = 6, markNumber,
         ifShowHeader, magnifierWidth, magnifierHeight
     } = data;
@@ -358,9 +358,13 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         <div
             id={`echart-${id}`}
             className={`flex-box ${styles.imgCharts}`}
-            ref={dom}
+
         >
-            <div className="flex-box img-box-mark-body" style={markNumber ? { height: 'calc(100% - 20px)' } : { height: '100%' }}>
+            <div
+                className="flex-box img-box-mark-body"
+                style={showImgList ? { height: 'calc(100% - 50px)' } : { height: '100%' }}
+                ref={dom}
+            >
                 <div className={`flex-box-center img-box-mark-right`} style={markNumber ? { width: 'calc(100% - 20px)' } : { width: '100%' }}>
                     {
                         (!!urlList.current?.[selectedNum] || !!dataValue || !!defaultImg) ?
@@ -454,6 +458,22 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                     </Image.PreviewGroup>
                 </div>
             </div>
+            {
+                showImgList ?
+                    <div className="flex-box-center img-box-footer-list">
+                        {
+                            (
+                                urlList.current.slice(-6) || [])?.map((item: any, index: number) => {
+                                    return <div className="img-box-footer-list-item" onClick={() => {
+                                        setSelectedNum(urlList.current.slice(0, -6)?.length + index);
+                                    }}>
+                                        <img src={item} alt={index + ''} key={`img-${index}`} />
+                                    </div>
+                                })
+                        }
+                    </div>
+                    : null
+            }
             {
                 (_.isBoolean(comparison) ? comparison : true) ?
                     <div className="contrast-box flex-box" onClick={() => setImgVisible(true)}>

@@ -49,6 +49,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     const [selectedPath, setSelectedPath] = useState<any>({});
     const [selectedOption, setSelectedOption] = useState<any>({});
     const [locked, setLocked] = useState(true);
+
     // 初始化
     const init = (data?: any) => {
         const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
@@ -86,7 +87,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         if (locked) {
             if (!!dataValue && !_.isEmpty(dataValue)) {
                 resetFields();
-                init(dataValue);
+                init();
                 let obj = {};
                 Object.entries(dataValue)?.map((res: any) => {
                     obj[res[0]] = res[1];
@@ -96,7 +97,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                 init();
             }
         }
-    }, [dataValue, params, locked]);
+    }, [dataValue, locked]);
     const widgetChange = (key: string, value: any) => {
         setConfigList((prev: any) => (prev || [])?.map((item: any) => {
             if (item.name === key) {
@@ -141,6 +142,9 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                         data: result
                     };
                     btnFetch('post', xName, requestParams).then((res) => {
+                        setTimeout(() => {
+                            setFieldsValue(result);
+                        }, 500);
                         setLocked(true);
                     });
                     if (ifUpdateProject) {

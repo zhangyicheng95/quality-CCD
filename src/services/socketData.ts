@@ -31,14 +31,16 @@ const listen = (action: any) => {
                   ? cen[1]
                     ? 'RUNNING'
                     : 'STOPPED'
-                  : (!!cen[1]?.name?.indexOf('utput.ply')) ? { ...cen[1], guid: guid() } : cen[1];
+                  : !!cen[1]?.name?.indexOf('.ply') || !!cen[1]?.name?.indexOf('.stl')
+                  ? { ...cen[1], guid: guid() }
+                  : cen[1];
 
               if (key == 'uid') {
                 return {
                   uid,
                   ...pre,
                 };
-              };
+              }
               return {
                 uid,
                 ...pre,
@@ -48,7 +50,7 @@ const listen = (action: any) => {
             }, {});
             action({ type: `home/${type}Message`, payload: newData });
           }
-        } catch (err) { }
+        } catch (err) {}
       };
       socket.onclose = function () {
         console.log(`${type} ws:close`);
@@ -82,7 +84,7 @@ function reconnect(action: any) {
   setTimeout(() => {
     listen(action);
   }, 2000);
-};
+}
 
 const close = (action: any) => {
   if (socket) {
