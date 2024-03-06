@@ -52,6 +52,7 @@ import { btnFetch } from '@/services/api';
 import FileManager from '@/components/FileManager';
 import html2canvas from 'html2canvas';
 import Measurement from '@/components/Measurement';
+import AntDraggableModal from '@/components/AntDraggableModal';
 
 const colorTran = [
   new THREE.Color(0, 0, 0),
@@ -3112,10 +3113,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         </Modal>
       ) : null}
       {!!selectedArea && !_.isEmpty(selectedArea) ? (
-        <Modal
+        <AntDraggableModal
           title="框选位置"
-          open={!!selectedArea && !_.isEmpty(selectedArea)}
-          centered
+          visible={!!selectedArea && !_.isEmpty(selectedArea)}
+          // centered
           onCancel={() => {
             form1.resetFields();
             selectedArea.object.children[0].material.color = new THREE.Color(1, 0, 0);
@@ -3244,7 +3245,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
               />
             </Form.Item>
           </Form>
-        </Modal>
+        </AntDraggableModal>
       ) : null}
     </div>
   );
