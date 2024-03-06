@@ -3212,8 +3212,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             <Form.Item name="position" label="坐标" rules={[{ required: true, message: '坐标' }]}>
               <Measurement
                 lineNum={3}
-                onChange={(e: any) => {
-                  const cut_direction = form1.getFieldValue('cut_direction');
+                onOpenChange={(e: any) => {
+                  const cut_direction = form1.getFieldValue('cut_direction')?.length
+                    ? form1.getFieldValue('cut_direction')
+                    : undefined;
                   const cut_step = form1.getFieldValue('cut_step');
                   const robotTracksSplitDir = form1.getFieldValue('robotTracksSplitDir');
                   onModifyArea({ position: e, cut_direction, cut_step, robotTracksSplitDir }).then(
