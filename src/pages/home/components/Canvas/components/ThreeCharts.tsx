@@ -2391,7 +2391,45 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       cameraRotate(cameraList, cameraList.length);
     };
   }, [scene.current, cameraSwitch, cameraSwitchTime]);
-
+  // 修改分区位置
+  const onModifyArea = (values: any) => {
+    return new Promise((resolve, reject) => {
+      const { position, cut_direction, ...rest } = values;
+      const positions = [
+        position.x1.value,
+        position.y1.value,
+        position.z1.value,
+        position.x2.value,
+        position.y2.value,
+        position.z2.value,
+      ];
+      editableObjects.current = (editableObjects.current || []).filter(
+        (i: any) => i.name !== selectedArea.object.name,
+      );
+      scene.current?.remove?.(selectedArea.object);
+      // 释放物体占用的内存资源
+      if (selectedArea.object.geometry) selectedArea.object?.geometry?.dispose?.();
+      if (selectedArea.object.material) {
+        if (!!selectedArea.object?.material?.materials?.length) {
+          selectedArea.object.material.materials.forEach(function (mat: any) {
+            mat?.dispose?.();
+          });
+        } else {
+          selectedArea.object?.material?.dispose?.();
+        }
+      }
+      addRectArea({
+        ...rest,
+        positions,
+        cut_direction: !!cut_direction ? JSON.parse(cut_direction) : [],
+        addType: 'form', //selectedArea.object?.__props?.addType,
+        cameraDirection: selectedArea.object?.__props?.cameraDirection,
+      }).then((cube: any) => {
+        editableObjects.current?.push?.(cube);
+        resolve(cube);
+      });
+    });
+  };
   return (
     <div id={`echart-${id}`} className={`${styles.threeCharts} flex-box`} style={{ fontSize }}>
       <div id="instructions" className="flex-box-justify-between">
@@ -3155,42 +3193,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 type="primary"
                 onClick={() => {
                   form1.validateFields().then((values) => {
-                    const { position, cut_direction, ...rest } = values;
-                    const positions = [
-                      position.x1.value,
-                      position.y1.value,
-                      position.z1.value,
-                      position.x2.value,
-                      position.y2.value,
-                      position.z2.value,
-                    ];
-                    editableObjects.current = (editableObjects.current || []).filter(
-                      (i: any) => i.name !== selectedArea.object.name,
-                    );
-                    scene.current?.remove?.(selectedArea.object);
-                    // 释放物体占用的内存资源
-                    if (selectedArea.object.geometry) selectedArea.object?.geometry?.dispose?.();
-                    if (selectedArea.object.material) {
-                      if (!!selectedArea.object?.material?.materials?.length) {
-                        selectedArea.object.material.materials.forEach(function (mat: any) {
-                          mat?.dispose?.();
-                        });
-                      } else {
-                        selectedArea.object?.material?.dispose?.();
-                      }
-                    }
-                    addRectArea({
-                      ...rest,
-                      positions,
-                      cut_direction: !!cut_direction ? JSON.parse(cut_direction) : [],
-                      addType: 'form', //selectedArea.object?.__props?.addType,
-                      cameraDirection: selectedArea.object?.__props?.cameraDirection,
-                    }).then((cube) => {
-                      editableObjects.current?.push?.(cube);
+                    onModifyArea(values).then(() => {
+                      setSelectedArea(null);
+                      selectedArea.object.children[0].material.color = new THREE.Color(1, 0, 0);
+                      form1.resetFields();
                     });
-                    setSelectedArea(null);
-                    selectedArea.object.children[0].material.color = new THREE.Color(1, 0, 0);
-                    form1.resetFields();
                   });
                 }}
               >
@@ -3199,11 +3206,23 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             </div>
           }
           destroyOnClose
-          maskClosable={false}
+          // maskClosable={false}
         >
           <Form form={form1} scrollToFirstError>
             <Form.Item name="position" label="坐标" rules={[{ required: true, message: '坐标' }]}>
-              <Measurement lineNum={3} />
+              <Measurement
+                lineNum={3}
+                onChange={(e: any) => {
+                  const cut_direction = form1.getFieldValue('cut_direction');
+                  const cut_step = form1.getFieldValue('cut_step');
+                  const robotTracksSplitDir = form1.getFieldValue('robotTracksSplitDir');
+                  onModifyArea({ position: e, cut_direction, cut_step, robotTracksSplitDir }).then(
+                    (cube: any) => {
+                      setSelectedArea(cube?.children?.[0]);
+                    },
+                  );
+                }}
+              />
             </Form.Item>
             <Form.Item
               name="cut_direction"
