@@ -151,10 +151,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
   const [selectedPoint, setSelectedPoint] = useState<any>(null);
   const [selectedArea, setSelectedArea] = useState<any>(null);
   const [cameraDirection, setCameraDirection] = useState<any>([]);
+
   const pointRef = useMemo(() => {
     return Object.keys(value);
   }, [value]);
-
   const theme = useMemo(() => {
     return params?.contentData?.theme || 'realDark';
   }, [params?.contentData?.theme]);
@@ -177,6 +177,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
 
   // 定义常变量
   let ctrlDown = false;
+  let moveDown = false;
   let lineId = 'measure_0';
   let line: any;
   let drawingLine = false;
@@ -580,11 +581,16 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         controls.current.enabled = false;
         renderer.current.domElement.style.cursor = 'crosshair';
         setSelectedBtn((prev: any) => (prev || []).concat('bzBtn01'));
+      } else if (e.keyCode === 87) {
+        // w 键按下
+        moveDown = true;
       }
     };
     window.addEventListener('keydown', onKeyDown);
     // 取消标注
     function onKeyUp(e: any) {
+      moveDown = false;
+      ctrlDown = false;
       if (e.keyCode === 17 || e.keyCode === 27) {
         // 17是ctrl，27是esc
         cancelMeasurement();
@@ -614,13 +620,36 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             });
           }
         }
+      } else if (moveDown) {
+        const positionIntersect = raycaster.intersectObjects(pickableObjects, false);
+        const intersects: any = raycaster.intersectObjects(editableObjects.current, false); // 获取光线投射的对象
+        if (intersects.length > 0 && positionIntersect?.[0]?.point) {
+          const intersect: any = intersects[0];
+          if (intersect?.object?.name?.indexOf('editArea-') > -1) {
+            intersect.object.__props = {
+              ...intersect.object.__props,
+              positions: [
+                intersect.object.position.x - intersect.object?.geometry?.parameters?.width / 2,
+                intersect.object.position.y - intersect.object?.geometry?.parameters?.height / 2,
+                intersect.object.position.z - intersect.object.geometry?.parameters?.depth / 2,
+                intersect.object.position.x + intersect.object?.geometry?.parameters?.width / 2,
+                intersect.object.position.y + intersect.object?.geometry?.parameters?.height / 2,
+                intersect.object.position.z + intersect.object.geometry?.parameters?.depth / 2,
+              ],
+            };
+            intersect?.object?.position?.set(
+              positionIntersect[0]?.point.x,
+              positionIntersect[0]?.point.y,
+              positionIntersect[0]?.point.z,
+            );
+          }
+        }
       } else {
         event.preventDefault();
         mouse.x = (event.offsetX / renderer.current?.domElement.offsetWidth) * 2 - 1;
         mouse.y = -(event.offsetY / renderer.current?.domElement.offsetHeight) * 2 + 1;
         raycaster.setFromCamera(mouse, camera.current);
         intersects = raycaster.intersectObjects(pickableObjects, false);
-
         // 显示边框
         const models = getAllModelsFromScene(scene.current);
         const axis: any = scene?.current?.getObjectByName?.('axis');
@@ -638,9 +667,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       }
     }
     function onDocumentMouseMove(event: any) {
-      event.preventDefault();
-      mouse.x = (event.offsetX / renderer.current.domElement.offsetWidth) * 2 - 1;
-      mouse.y = -(event.offsetY / renderer.current.domElement.offsetHeight) * 2 + 1;
+      if (moveDown) {
+        event.preventDefault();
+        mouse.x = (event.offsetX / renderer.current?.domElement.offsetWidth) * 2 - 1;
+        mouse.y = -(event.offsetY / renderer.current?.domElement.offsetHeight) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera.current);
+      }
     }
     function onMouseUp() {
       if (!renderer.current) return;
