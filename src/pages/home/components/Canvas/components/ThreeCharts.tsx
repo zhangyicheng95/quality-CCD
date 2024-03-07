@@ -838,421 +838,188 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       let pointList: any = [],
         areaIndex = 0;
       // [
-      //     {
-      //         "surfaceType": "Up",
-      //         "rob1_tracks": [
-      //             {
-      //                 "PreStP_num": 0,
-      //                 "PreEdP_num": 3,
-      //                 "Track": [
-      //                     {
-      //                         "Point_Normal": [
-      //                             294.88275146484375,
-      //                             123,
-      //                             -833,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             225.20053100585938,
-      //                             107,
-      //                             -833,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             148.692138671875,
-      //                             16,
-      //                             -833,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             -152.32077026367188,
-      //                             16,
-      //                             -833,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     }
-      //                 ]
-      //             },
-      //             {
-      //                 "PreStP_num": 0,
-      //                 "PreEdP_num": 4,
-      //                 "Track": [
-      //                     {
-      //                         "Point_Normal": [
-      //                             -115.62741088867188,
-      //                             16,
-      //                             -1033,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             -144.7851104736328,
-      //                             16,
-      //                             -1033,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             225.53146362304688,
-      //                             107,
-      //                             -1033,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             219.2804412841797,
-      //                             16,
-      //                             -1033,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             -85.11199188232422,
-      //                             16,
-      //                             -1033,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     }
-      //                 ]
-      //             },
-      //             {
-      //                 "PreStP_num": 0,
-      //                 "PreEdP_num": 3,
-      //                 "Track": [
-      //                     {
-      //                         "Point_Normal": [
-      //                             290.06597900390625,
-      //                             123,
-      //                             -1233,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             226.36282348632812,
-      //                             107,
-      //                             -1233,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             180.6002197265625,
-      //                             16,
-      //                             -1233,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             -181.92457580566406,
-      //                             16,
-      //                             -1233,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     }
-      //                 ]
-      //             }
+      //   {
+      //     surfaceType: 'Up',
+      //     rob1_tracks: [
+      //       {
+      //         PreStP_num: 0,
+      //         PreEdP_num: 3,
+      //         Track: [
+      //           {
+      //             Point_Normal: [294.88275146484375, 123, -833, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [225.20053100585938, 107, -833, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [148.692138671875, 16, -833, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [-152.32077026367188, 16, -833, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
       //         ],
-      //         "rob2_tracks": [
-      //             {
-      //                 "PreStP_num": 0,
-      //                 "PreEdP_num": 3,
-      //                 "Track": [
-      //                     {
-      //                         "Point_Normal": [
-      //                             290.36468505859375,
-      //                             123,
-      //                             -33,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             225.05929565429688,
-      //                             107,
-      //                             -33,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             185.28594970703125,
-      //                             16,
-      //                             -33,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             -139.76104736328125,
-      //                             16,
-      //                             -33,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     }
-      //                 ]
-      //             },
-      //             {
-      //                 "PreStP_num": 0,
-      //                 "PreEdP_num": 7,
-      //                 "Track": [
-      //                     {
-      //                         "Point_Normal": [
-      //                             267.3298645019531,
-      //                             107,
-      //                             -233,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             145.76925659179688,
-      //                             16,
-      //                             -233,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             225.2796630859375,
-      //                             107,
-      //                             -233,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             77.19525146484375,
-      //                             16,
-      //                             -233,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             218.71026611328125,
-      //                             16,
-      //                             -233,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             -62.89788818359375,
-      //                             16,
-      //                             -233,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             9.728561401367188,
-      //                             16,
-      //                             -233,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             -133.61636352539062,
-      //                             16,
-      //                             -233,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     }
-      //                 ]
-      //             },
-      //             {
-      //                 "PreStP_num": 0,
-      //                 "PreEdP_num": 3,
-      //                 "Track": [
-      //                     {
-      //                         "Point_Normal": [
-      //                             290.0918273925781,
-      //                             123,
-      //                             -433,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             225.7637481689453,
-      //                             107,
-      //                             -433,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             174.66629028320312,
-      //                             16,
-      //                             -433,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             -145.67567443847656,
-      //                             16,
-      //                             -433,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     }
-      //                 ]
-      //             },
-      //             {
-      //                 "PreStP_num": 0,
-      //                 "PreEdP_num": 3,
-      //                 "Track": [
-      //                     {
-      //                         "Point_Normal": [
-      //                             290,
-      //                             122.8204574584961,
-      //                             -633,
-      //                             -1,
-      //                             0,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             226.3599853515625,
-      //                             107,
-      //                             -633,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             200.65145874023438,
-      //                             16,
-      //                             -633,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     },
-      //                     {
-      //                         "Point_Normal": [
-      //                             -168.17965698242188,
-      //                             16,
-      //                             -633,
-      //                             0,
-      //                             1,
-      //                             0
-      //                         ],
-      //                         "PntTpe": 1
-      //                     }
-      //                 ]
-      //             }
+      //       },
+      //       {
+      //         PreStP_num: 0,
+      //         PreEdP_num: 4,
+      //         Track: [
+      //           {
+      //             Point_Normal: [-115.62741088867188, 16, -1033, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [-144.7851104736328, 16, -1033, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [225.53146362304688, 107, -1033, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [219.2804412841797, 16, -1033, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [-85.11199188232422, 16, -1033, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
       //         ],
-      //         "position": [
-      //             null
-      //         ]
-      //     }
+      //       },
+      //       {
+      //         PreStP_num: 0,
+      //         PreEdP_num: 3,
+      //         Track: [
+      //           {
+      //             Point_Normal: [290.06597900390625, 123, -1233, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [226.36282348632812, 107, -1233, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [180.6002197265625, 16, -1233, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [-181.92457580566406, 16, -1233, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //         ],
+      //       },
+      //     ],
+      //     rob2_tracks: [
+      //       {
+      //         PreStP_num: 0,
+      //         PreEdP_num: 3,
+      //         Track: [
+      //           {
+      //             Point_Normal: [290.36468505859375, 123, -33, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [225.05929565429688, 107, -33, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [185.28594970703125, 16, -33, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [-139.76104736328125, 16, -33, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //         ],
+      //       },
+      //       {
+      //         PreStP_num: 0,
+      //         PreEdP_num: 7,
+      //         Track: [
+      //           {
+      //             Point_Normal: [267.3298645019531, 107, -233, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [145.76925659179688, 16, -233, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [225.2796630859375, 107, -233, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [77.19525146484375, 16, -233, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [218.71026611328125, 16, -233, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [-62.89788818359375, 16, -233, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [9.728561401367188, 16, -233, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [-133.61636352539062, 16, -233, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //         ],
+      //       },
+      //       {
+      //         PreStP_num: 0,
+      //         PreEdP_num: 3,
+      //         Track: [
+      //           {
+      //             Point_Normal: [290.0918273925781, 123, -433, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [225.7637481689453, 107, -433, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [174.66629028320312, 16, -433, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [-145.67567443847656, 16, -433, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //         ],
+      //       },
+      //       {
+      //         PreStP_num: 0,
+      //         PreEdP_num: 3,
+      //         Track: [
+      //           {
+      //             Point_Normal: [290, 122.8204574584961, -633, -1, 0, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [226.3599853515625, 107, -633, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [200.65145874023438, 16, -633, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //           {
+      //             Point_Normal: [-168.17965698242188, 16, -633, 0, 1, 0],
+      //             PntTpe: 1,
+      //           },
+      //         ],
+      //       },
+      //     ],
+      //     position: [null],
+      //   },
       // ] ||
       (value || []).forEach((item1: any, index: number) => {
         Object.entries(item1)
@@ -3079,33 +2846,58 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
           title="轨迹位置"
           open={!!selectedPoint && !_.isEmpty(selectedPoint)}
           centered
-          onOk={() => {
-            validateFields().then((values) => {
-              const { point, normVec, regionID, robID, surfaceType } = values;
-              selectedPoint.object.position.set(point.x.value, point.y.value, point.z.value);
-              selectedPoint.object.normVec = {
-                x: normVec.x.value,
-                y: normVec.y.value,
-                z: normVec.z.value,
-              };
-              selectedPoint.object.material.color = colorTran[selectedPoint.object.areaIndex];
-              const points = getAllModelsFromScene(scene.current, 'editPoint');
-              (points || []).forEach((point: any) => {
-                if (point.areaIndex === selectedPoint.object.areaIndex) {
-                  point['regionID'] = regionID;
-                  point['robID'] = robID;
-                  point['surfaceType'] = surfaceType;
-                }
-              });
-              setSelectedPoint(null);
-              form.resetFields();
-            });
-          }}
           onCancel={() => {
             form.resetFields();
             selectedPoint.object.material.color = colorTran[selectedPoint.object.areaIndex];
             setSelectedPoint(null);
           }}
+          footer={
+            <div className="flex-box-justify-end" style={{ gap: 8 }}>
+              <Button
+                onClick={() => {
+                  editableObjects.current = (editableObjects.current || []).filter(
+                    (i: any) => i.name !== selectedPoint.object.name,
+                  );
+                  scene.current?.remove?.(selectedPoint.object);
+                  // 释放物体占用的内存资源
+                  if (selectedPoint.object.geometry) selectedPoint.object?.geometry?.dispose?.();
+                  if (selectedPoint.object.material) selectedPoint.object?.material?.dispose?.();
+                  form.resetFields();
+                  selectedPoint.object.material.color = colorTran[selectedPoint.object.areaIndex];
+                  setSelectedPoint(null);
+                }}
+              >
+                删除此点
+              </Button>
+              <Button
+                type="primary"
+                onClick={() => {
+                  validateFields().then((values) => {
+                    const { point, normVec, regionID, robID, surfaceType } = values;
+                    selectedPoint.object.position.set(point.x.value, point.y.value, point.z.value);
+                    selectedPoint.object.normVec = {
+                      x: normVec.x.value,
+                      y: normVec.y.value,
+                      z: normVec.z.value,
+                    };
+                    selectedPoint.object.material.color = colorTran[selectedPoint.object.areaIndex];
+                    const points = getAllModelsFromScene(scene.current, 'editPoint');
+                    (points || []).forEach((point: any) => {
+                      if (point.areaIndex === selectedPoint.object.areaIndex) {
+                        point['regionID'] = regionID;
+                        point['robID'] = robID;
+                        point['surfaceType'] = surfaceType;
+                      }
+                    });
+                    setSelectedPoint(null);
+                    form.resetFields();
+                  });
+                }}
+              >
+                修改
+              </Button>
+            </div>
+          }
           destroyOnClose
           maskClosable={false}
         >
