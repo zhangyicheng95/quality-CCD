@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { message, Modal } from 'antd';
@@ -22,10 +22,12 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
     markNumberLeft,
     markNumberTop,
   } = data;
-
+  const ifCanEdit = useMemo(() => {
+    return location.hash.indexOf('edit') > -1;
+  }, [location.hash]);
   const [visible, setVisible] = useState(false);
   const [defect, setDefect] = useState('');
-  const [defectSelect, setDefectSelect] = useState<any>([]);
+  const [defectSelect, setDefectSelect] = useState<any>({});
 
   return (
     <div
@@ -33,7 +35,16 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
       className={`flex-box-center ${styles.imgButtonCharts}`}
       style={{ fontSize }}
     >
-      {(xColumns || [])?.map((item: any, index: number) => {
+      <div
+        className={`flex-box-center img-button ${ifCanEdit ? 'editColor' : ''}`}
+        onClick={() => {
+          setDefect(xColumns?.[0]?.value);
+          setVisible(true);
+        }}
+      >
+        {ifCanEdit ? '保存后透明' : ''}
+      </div>
+      {/* {(xColumns || [])?.map((item: any, index: number) => {
         const { label, value, color } = item;
         return (
           <div
@@ -49,7 +60,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
             <div>{dataValue?.[value]}</div>
           </div>
         );
-      })}
+      })} */}
       {!!visible ? (
         <Modal
           title={`缺陷上报`}
@@ -60,8 +71,9 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
           maskClosable={false}
           destroyOnClose
           onOk={() => {
-            if (defectSelect?.length) {
-              btnFetch(fetchType, xName, { defect, defectSelect }).then((res: any) => {
+            if (Object.keys(defectSelect).length > 0) {
+              console.log(defectSelect);
+              btnFetch(fetchType, xName, { data: defectSelect }).then((res: any) => {
                 if (res && res.code === 'SUCCESS') {
                   message.success('上传成功');
                   setVisible(false);
@@ -105,16 +117,18 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
                           return (
                             <div
                               className={`img-button-item-box ${
-                                defectSelect?.includes(title) ? 'img-button-item-box-selected' : ''
+                                defectSelect?.[defect]?.includes(title)
+                                  ? 'img-button-item-box-selected'
+                                  : ''
                               }`}
                               key={`top-${tIndex}`}
                               onClick={() => {
                                 setDefectSelect((prev: any) => {
-                                  if (prev?.includes(title)) {
-                                    return prev.filter((i: any) => i !== title);
-                                  } else {
-                                    return prev.concat(title);
-                                  }
+                                  return Object.assign({}, prev, {
+                                    [defect]: prev?.[defect]?.includes(title)
+                                      ? prev?.[defect].filter((i: any) => i !== title)
+                                      : (prev?.[defect] || []).concat(title),
+                                  });
                                 });
                               }}
                             >

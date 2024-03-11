@@ -92,7 +92,6 @@ import ButtonUploadCharts from './components/ButtonUploadCharts';
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
   const { params: paramsData } = initialState;
-  const history = useHistory();
   const { dispatch, started, taskDataConnect, snapshot, activeTab, projectStatus } = props;
   const { logStr, gridContentList, footerData, errorData } = snapshot;
   const [form] = Form.useForm();
@@ -1057,6 +1056,7 @@ const Home: React.FC<any> = (props: any) => {
             className={`drag-item-content-box ${
               backgroundColor === 'default' ? 'background-ubv' : ''
             }`}
+            style={['imgButton'].includes(type) ? { backgroundColor: 'transparent' } : {}}
           >
             {ifShowHeader ? (
               <div className="common-card-title-box flex-box">
@@ -1861,7 +1861,7 @@ const Home: React.FC<any> = (props: any) => {
           </div>,
         );
         layoutData = layoutData.concat(
-          type === 'modal' && !ifCanEdit ? { ...size, w: 0, minW: 0, h: 0, minH: 0 } : size,
+          ['modal'].includes(type) && !ifCanEdit ? { ...size, w: 0, minW: 0, h: 0, minH: 0 } : size,
         );
 
         if (!!ifLocalStorage) {
