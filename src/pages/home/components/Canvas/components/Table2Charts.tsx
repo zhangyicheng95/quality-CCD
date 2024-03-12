@@ -187,7 +187,39 @@ const Table2Charts: React.FC<Props> = (props: any) => {
       setTableScroll(true);
     }
   }, [dataValue]);
-
+  const updateCanvas = (tableSizes: any) => {
+    const updateParam = {
+      ...params,
+      contentData: {
+        ...params?.contentData,
+        content: params?.contentData?.content.map((item: any) => {
+          if (item.id === id) {
+            return Object.assign({}, item, {
+              tableSize: tableSizes,
+            });
+          }
+          return item;
+        }),
+      },
+    };
+    setInitialState((preInitialState: any) => ({
+      ...preInitialState,
+      params: updateParam,
+    }));
+    updateParams({
+      id: params.id,
+      data: updateParam,
+    }).then((res: any) => {
+      if (res && res.code === 'SUCCESS') {
+        // setInitialState((preInitialState: any) => ({
+        //     ...preInitialState,
+        //     params: res?.data
+        // }));
+      } else {
+        message.error(res?.msg || res?.message || '接口异常');
+      }
+    });
+  };
   const onMoveIconMouseDown = (ev: any, index: number) => {
     const { target } = ev;
     const parent = target.parentNode;
@@ -217,37 +249,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
       }
       setTableSizeSelf(tableSizes);
 
-      const updateParam = {
-        ...params,
-        contentData: {
-          ...params?.contentData,
-          content: params?.contentData?.content.map((item: any) => {
-            if (item.id === id) {
-              return Object.assign({}, item, {
-                tableSize: tableSizes,
-              });
-            }
-            return item;
-          }),
-        },
-      };
-      setInitialState((preInitialState: any) => ({
-        ...preInitialState,
-        params: updateParam,
-      }));
-      updateParams({
-        id: params.id,
-        data: updateParam,
-      }).then((res: any) => {
-        if (res && res.code === 'SUCCESS') {
-          // setInitialState((preInitialState: any) => ({
-          //     ...preInitialState,
-          //     params: res?.data
-          // }));
-        } else {
-          message.error(res?.msg || res?.message || '接口异常');
-        }
-      });
+      updateCanvas(tableSizes);
       domRef.current.onmousemove = (e: any) => {
         // 释放鼠标
       };
@@ -306,6 +308,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
             className="reset-table-size"
             onClick={() => {
               setTableSizeSelf([]);
+              updateCanvas([]);
             }}
           />
         ) : null}
