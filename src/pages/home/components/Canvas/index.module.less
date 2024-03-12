@@ -677,6 +677,18 @@
       background-color: @background-color-base;
       border-left: 1px solid @border-color-base;
 
+      .reset-table-size {
+        position: absolute;
+        right: 2px;
+        opacity: 0;
+      }
+
+      &:hover {
+        .reset-table-size {
+          opacity: 1;
+        }
+      }
+
       .charts-header-item {
         width: 100%;
         height: 38px;
