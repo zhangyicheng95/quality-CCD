@@ -63,26 +63,28 @@ export async function getInitialState(): Promise<{
       obj[param[0]] = param[1];
     }
     return obj;
-  };
+  }
   const query: any = GetQueryObj(window.location.hash);
   /***************************** ****************************************/
-
   let params: any = {};
   let title: any = '';
-  const ipUrl = !!Object.keys(query).length ? (query?.ipUrl || 'localhost:8866') : 'localhost:8866';
-  const ipString = localStorage.getItem("ipString") || query?.id || '';
+  const ipUrl = !!Object.keys(query).length ? query?.ipUrl || 'localhost:8866' : 'localhost:8866';
+  const ipString = query?.inIframe
+    ? query?.id
+    : localStorage.getItem('ipString') || query?.id || '';
+  const iframeTheme = query?.theme;
 
-  if (!localStorage.getItem("ipString")) {
-    localStorage.setItem("ipString", ipString);
+  if (!localStorage.getItem('ipString')) {
+    localStorage.setItem('ipString', ipString);
   }
-  if (!localStorage.getItem("ipUrlList")) {
-    localStorage.setItem("ipUrlList", JSON.stringify([{ name: '本地服务', value: ipUrl }]));
+  if (!localStorage.getItem('ipUrlList')) {
+    localStorage.setItem('ipUrlList', JSON.stringify([{ name: '本地服务', value: ipUrl }]));
   }
-  if (!localStorage.getItem("ipUrl-history")) {
-    localStorage.setItem("ipUrl-history", 'localhost:8867');
+  if (!localStorage.getItem('ipUrl-history')) {
+    localStorage.setItem('ipUrl-history', 'localhost:8867');
   }
-  if (!localStorage.getItem("ipUrl-realtime")) {
-    localStorage.setItem("ipUrl-realtime", ipUrl);
+  if (!localStorage.getItem('ipUrl-realtime')) {
+    localStorage.setItem('ipUrl-realtime', ipUrl);
     window.location.reload();
   } else {
     if (ipString) {
@@ -100,18 +102,18 @@ export async function getInitialState(): Promise<{
               if (item.key === res.data.id) {
                 return {
                   ...item,
-                  label: res?.data?.name
+                  label: res?.data?.name,
                 };
-              };
+              }
               return item;
-            })
-          }
+            }),
+          },
         };
-        defaultSettings.navTheme = theme || 'realDark';
+        defaultSettings.navTheme = iframeTheme === 'dark' ? 'realDark' : theme || 'realDark';
       } else {
-        console.log("appjs中方案信息报错: ", res);
-        localStorage.setItem("ipString", query?.id);
-        message.error("获取方案信息接口报错，5秒钟后自动刷新");
+        console.log('appjs中方案信息报错: ', res);
+        localStorage.setItem('ipString', query?.id);
+        message.error('获取方案信息接口报错，5秒钟后自动刷新');
         setTimeout(() => {
           window.location.reload();
         }, 5000);
@@ -145,8 +147,9 @@ const iconDom = (
   <img
     src={
       !!localStorage.getItem('quality_icon')
-        ? `${BASE_IP}file_browser${localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'
-        }${localStorage.getItem('quality_icon')}`
+        ? `${BASE_IP}file_browser${
+            localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'
+          }${localStorage.getItem('quality_icon')}`
         : icon
     }
     alt="logo"
@@ -156,68 +159,70 @@ const iconDom = (
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = (props) => {
   const { initialState, setInitialState } = props;
-  return Object.assign(initialState?.settings, {
-    rightContentRender: () => <RightContent />,
-    disableContentMargin: false,
-    waterMarkProps: {
-      content: initialState?.currentUser?.name,
-    },
-    footerRender: () => null,
-    onPageChange: () => {
-
-    },
-    links: isDev
-      ? [
-        <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-          <LinkOutlined />
-          <span>OpenAPI 文档</span>
-        </Link>,
-        <Link to="/~docs" key="docs">
-          <BookOutlined />
-          <span>业务组件文档</span>
-        </Link>,
-      ]
-      : [],
-    menuHeaderRender: undefined,
-    // 自定义 403 页面
-    // unAccessible: <div>unAccessible</div>,
-    // 增加一个 loading 的状态
-    childrenRender: (children: any, _props: any) => {
-      // if (initialState?.loading) return <PageLoading />;
-      return (
-        // @ts-ignore
-        <ErrorBoundary>
-          {
-            !_props.location?.pathname?.includes('/login') ?
-              <HomeLayout initialState={initialState} setInitialState={setInitialState}>{children}</HomeLayout>
-              :
+  return Object.assign(
+    initialState?.settings,
+    {
+      rightContentRender: () => <RightContent />,
+      disableContentMargin: false,
+      waterMarkProps: {
+        content: initialState?.currentUser?.name,
+      },
+      footerRender: () => null,
+      onPageChange: () => {},
+      links: isDev
+        ? [
+            <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
+              <LinkOutlined />
+              <span>OpenAPI 文档</span>
+            </Link>,
+            <Link to="/~docs" key="docs">
+              <BookOutlined />
+              <span>业务组件文档</span>
+            </Link>,
+          ]
+        : [],
+      menuHeaderRender: undefined,
+      // 自定义 403 页面
+      // unAccessible: <div>unAccessible</div>,
+      // 增加一个 loading 的状态
+      childrenRender: (children: any, _props: any) => {
+        // if (initialState?.loading) return <PageLoading />;
+        return (
+          // @ts-ignore
+          <ErrorBoundary>
+            {!_props.location?.pathname?.includes('/login') ? (
+              <HomeLayout initialState={initialState} setInitialState={setInitialState}>
+                {children}
+              </HomeLayout>
+            ) : (
               children
-          }
-          {!_props.location?.pathname?.includes('/login') && (
-            <SettingDrawerWrapper
-              initialState={initialState}
-              setInitialState={setInitialState}
-            />
-            // <SettingDrawer
-            //   disableUrlParams
-            //   enableDarkTheme
-            //   settings={initialState?.settings}
-            //   onSettingChange={(settings) => {
-            //     setInitialState((preInitialState: any) => ({
-            //       ...preInitialState,
-            //       settings,
-            //     }));
-            //   }}
-            // />
-          )}
-        </ErrorBoundary>
-      );
+            )}
+            {!_props.location?.pathname?.includes('/login') && (
+              <SettingDrawerWrapper initialState={initialState} setInitialState={setInitialState} />
+              // <SettingDrawer
+              //   disableUrlParams
+              //   enableDarkTheme
+              //   settings={initialState?.settings}
+              //   onSettingChange={(settings) => {
+              //     setInitialState((preInitialState: any) => ({
+              //       ...preInitialState,
+              //       settings,
+              //     }));
+              //   }}
+              // />
+            )}
+          </ErrorBoundary>
+        );
+      },
+      // @ts-ignore
+      logo: window?.QUALITY_CCD_CONFIG?.showLogo ? iconDom : null,
+      title: initialState?.title || 'UBVision',
     },
-    // @ts-ignore
-    logo: window?.QUALITY_CCD_CONFIG?.showLogo ? iconDom : null,
-    title: initialState?.title || 'UBVision',
-  }, location.hash?.indexOf('inIframe') > -1 ? {
-    headerRender: () => null,
-    headerHeight: 0,
-  } : {});
+    location.hash?.indexOf('inIframe') > -1
+      ? {
+          headerRender: () => null,
+          headerHeight: 0,
+        }
+      : {},
+  );
 };

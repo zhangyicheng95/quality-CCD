@@ -2626,10 +2626,13 @@ const Home: React.FC<any> = (props: any) => {
                                 if (location.href?.indexOf('?') > -1) {
                                   hash = location.href.split('?')[1];
                                 }
-                                location.href = `${location.href?.split('#/')?.[0]}#/home${
-                                  !!hash ? `?${hash}` : ''
-                                }`;
-                                window.location.reload();
+                                if (location.hash?.indexOf('inIframe') > -1) {
+                                  window.history.go(-2); //返回上一页
+                                } else {
+                                  location.href = `${location.href?.split('#/')?.[0]}#/home${
+                                    !!hash ? `?${hash}` : ''
+                                  }`;
+                                }
                               } else {
                                 message.error(res?.msg || res?.message || '接口异常');
                               }
