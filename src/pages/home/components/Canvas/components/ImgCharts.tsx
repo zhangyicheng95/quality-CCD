@@ -486,8 +486,8 @@ const ImgCharts: React.FC<Props> = (props: any) => {
               item?.indexOf('OK') > -1
                 ? 'OK'
                 : item?.indexOf('NG') > -1
-                ? item.split('NG/')?.[1]?.split('/')?.[0]?.split('\\')?.[0]
-                : '';
+                ? item.split('NG/')?.[1]?.split('/')?.[0]
+                : 'NG';
             return (
               <div
                 key={`${type}-${index}`}
