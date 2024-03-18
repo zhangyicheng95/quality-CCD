@@ -490,6 +490,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                 : '';
             return (
               <div
+                key={`${type}-${index}`}
                 className="img-box-footer-list-item"
                 onClick={() => {
                   setSelectedNum(urlList.current.slice(0, -6)?.length + index);

@@ -97,8 +97,6 @@ const Home: React.FC<any> = (props: any) => {
   const [form] = Form.useForm();
   const [form2] = Form.useForm();
   const { validateFields, setFieldsValue, getFieldValue } = form;
-  // @ts-ignore
-  const { type } = window.QUALITY_CCD_CONFIG;
   const ipString: any = localStorage.getItem('ipString') || '';
   const updateTimer = useRef<any>();
   const logReloadTimer = useRef<any>();
@@ -169,11 +167,6 @@ const Home: React.FC<any> = (props: any) => {
   const ifCanEdit = useMemo(() => {
     return location.hash.indexOf('edit') > -1;
   }, [location.hash, paramData]);
-
-  const isVision = useMemo(() => {
-    // @ts-ignore
-    return window.QUALITY_CCD_CONFIG.type === 'vision';
-  }, []);
   // 迁移描述信息组件
   useEffect(() => {
     if (_.isArray(paramData?.commonInfo?.data)) {
@@ -205,11 +198,7 @@ const Home: React.FC<any> = (props: any) => {
             <div className={`common-card-title-box flex-box `}>
               <div className="flex-box common-card-title">
                 当前状态：
-                {isVision ? (
-                  <Tooltip title={'服务已连接'} placement={'bottom'}>
-                    <Badge status="success" className="status-icon" />
-                  </Tooltip>
-                ) : started ? (
+                {started ? (
                   taskDataConnect ? (
                     <Tooltip title={'服务已连接'} placement={'bottom'}>
                       <Badge status="success" className="status-icon" />
@@ -614,7 +603,6 @@ const Home: React.FC<any> = (props: any) => {
       </div>,
     ],
     [
-      isVision,
       started,
       taskDataConnect,
       loading,
@@ -953,7 +941,7 @@ const Home: React.FC<any> = (props: any) => {
   // }, [started, errorData]);
   // 轮训获取运行状态
   useEffect(() => {
-    if (!ipString || ifCanEdit || isVision) return;
+    if (!ipString || ifCanEdit) return;
     getServiceStatus();
   }, [projectStatus]);
   // 监控窗口动态添加
@@ -2068,7 +2056,7 @@ const Home: React.FC<any> = (props: any) => {
   }, 300);
   // 监听任务启动，开启socket
   useEffect(() => {
-    if ((started && ipString && dispatch && !ifCanEdit) || isVision) {
+    if (started && ipString && dispatch && !ifCanEdit) {
       // dispatch({ type: 'home/set', payload: {started: true} });
       const logModal = gridHomeList?.filter((item: any) => item.i === 'footer-1')[0];
       // 没有日志窗口，就不开启日志的socket
@@ -3074,7 +3062,7 @@ const Home: React.FC<any> = (props: any) => {
                   ]}
                 />
               </Form.Item>
-              {['img'].includes(windowType) && !isVision ? (
+              {['img'].includes(windowType) ? (
                 <Fragment>
                   <Form.Item
                     name={'defaultImg'}
@@ -4350,7 +4338,7 @@ const Home: React.FC<any> = (props: any) => {
                   </Form.Item>
                 </Fragment>
               ) : null}
-              {['imgButton'].includes(windowType) && !isVision ? (
+              {['imgButton'].includes(windowType) ? (
                 <Fragment>
                   <Form.Item
                     name="markNumberTop"
@@ -4527,7 +4515,7 @@ const Home: React.FC<any> = (props: any) => {
                   </Form.Item>
                 </Fragment>
               ) : null}
-              {['buttonImages'].includes(windowType) && !isVision ? (
+              {['buttonImages'].includes(windowType) ? (
                 <Fragment>
                   <Form.Item name={`reverse`} label={'槽位倒序'} valuePropName="checked">
                     <Switch />
@@ -4733,12 +4721,9 @@ const Home: React.FC<any> = (props: any) => {
             未启动
           </div>
         )}
-        {
-          // @ts-ignore
-          window?.QUALITY_CCD_CONFIG?.showLogo ? (
-            <div className="home-footer-powerby">&copy;技术支持: UBVision团队</div>
-          ) : null
-        }
+        {paramData?.contentData?.showLogo ? (
+          <div className="home-footer-powerby">&copy;技术支持: UBVision团队</div>
+        ) : null}
         {useMemo(() => {
           return (
             <Fragment>

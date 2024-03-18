@@ -215,8 +215,7 @@ export const layout: RunTimeLayoutConfig = (props) => {
           </ErrorBoundary>
         );
       },
-      // @ts-ignore
-      logo: window?.QUALITY_CCD_CONFIG?.showLogo ? iconDom : null,
+      logo: initialState?.params?.contentData?.showLogo ? iconDom : null,
       title: initialState?.title || 'UBVision',
     },
     location.hash?.indexOf('inIframe') > -1

@@ -1077,7 +1077,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       const material = new THREE.MeshBasicMaterial({});
       material.opacity = 0;
       material.transparent = true;
-      const cube = new THREE.Mesh(geometry, material);
+      const cube: any = new THREE.Mesh(geometry, material);
       cube.name = name;
       cube['__props'] = props;
       cube.position.x =
@@ -1842,7 +1842,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         const scale = camera?.current?.zoom || 1.5;
         const geometry = new THREE.SphereGeometry(scale * 10, 32, 32);
         const material = new THREE.MeshBasicMaterial({ color: colorTran[areaIndex] });
-        const cube = new THREE.Mesh(geometry, material);
+        const cube: any = new THREE.Mesh(geometry, material);
         if (!!cube) {
           cube.position.x = point?.x;
           cube.position.y = point?.y;
@@ -2881,7 +2881,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     });
                     const geometry = selectedPoint?.object?.geometry;
                     const material = selectedPoint?.object?.material;
-                    const cube = new THREE.Mesh(geometry, material);
+                    const cube: any = new THREE.Mesh(geometry, material);
                     if (!!cube) {
                       cube.position.x = point?.x.value;
                       cube.position.y = point?.y.value;
