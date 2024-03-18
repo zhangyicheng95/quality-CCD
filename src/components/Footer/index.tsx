@@ -13,21 +13,21 @@ const Footer: React.FC = () => {
 
   return (
     <DefaultFooter
-      copyright={`技术支持: 三一重工股份有限公司-盛景智能科技（嘉兴）有限公司-UBVision团队`}
-    // links={[
-    //   {
-    //     key: 'UBVision & Dashboard',
-    //     title: 'UBVision',
-    //     href: '',
-    //     blankTarget: false,
-    //   },
-    //   {
-    //     key: 'Dashboard',
-    //     title: 'Dashboard',
-    //     href: '',
-    //     blankTarget: false,
-    //   },
-    // ]}
+      copyright={`技术支持: UBVision团队`}
+      // links={[
+      //   {
+      //     key: 'UBVision & Dashboard',
+      //     title: 'UBVision',
+      //     href: '',
+      //     blankTarget: false,
+      //   },
+      //   {
+      //     key: 'Dashboard',
+      //     title: 'Dashboard',
+      //     href: '',
+      //     blankTarget: false,
+      //   },
+      // ]}
     />
   );
 };

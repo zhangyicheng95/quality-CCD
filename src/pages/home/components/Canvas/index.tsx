@@ -1473,7 +1473,6 @@ const Home: React.FC<any> = (props: any) => {
                 style={type === 'table2' ? { height: 'calc(100% - 38px)', marginTop: 38 } : {}}
                 className="flex-box-center drag-item-content-mask common-card-title"
                 onDoubleClick={() => {
-                  console.log(item);
                   // 双击事件触发的操作
                   if (!!addWindowVisible || !!homeSettingVisible) {
                     setAddWindowVisible('');
@@ -2633,6 +2632,7 @@ const Home: React.FC<any> = (props: any) => {
                                     !!hash ? `?${hash}` : ''
                                   }`;
                                 }
+                                window.location.reload();
                               } else {
                                 message.error(res?.msg || res?.message || '接口异常');
                               }

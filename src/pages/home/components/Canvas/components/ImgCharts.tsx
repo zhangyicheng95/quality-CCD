@@ -482,6 +482,12 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       {showImgList ? (
         <div className="flex-box-center img-box-footer-list">
           {(urlList.current.slice(-6) || [])?.map((item: any, index: number) => {
+            const type =
+              item?.indexOf('OK') > -1
+                ? 'OK'
+                : item?.indexOf('NG') > -1
+                ? item.split('NG/')?.[1]?.split('/')?.[0]?.split('\\')?.[0]
+                : '';
             return (
               <div
                 className="img-box-footer-list-item"
@@ -490,6 +496,13 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                 }}
               >
                 <img src={item} alt={index + ''} key={`img-${index}`} />
+                <div
+                  className={`img-box-footer-list-item-type ${
+                    type === 'OK' ? 'OK-font' : 'NG-font'
+                  }`}
+                >
+                  {type}
+                </div>
               </div>
             );
           })}

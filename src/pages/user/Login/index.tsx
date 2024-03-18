@@ -1,8 +1,4 @@
-import {
-  DesktopOutlined,
-  LockOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { DesktopOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Alert, Button, Form, Input, message } from 'antd';
 import React, { useState } from 'react';
 import { ProFormText, LoginForm } from '@ant-design/pro-form';
@@ -42,10 +38,10 @@ const Login: React.FC = () => {
       }).then((res: any) => {
         if (res?.code === 'SUCCESS') {
           message.success('登录成功！');
-          localStorage.setItem('userInfo', JSON.stringify(Object.assign({},
-            res?.data,
-            { loginTime: new Date().getTime() },
-          )));
+          localStorage.setItem(
+            'userInfo',
+            JSON.stringify(Object.assign({}, res?.data, { loginTime: new Date().getTime() })),
+          );
           /** 此方法会跳转到 redirect 参数所在的位置 */
           if (!history) return;
           // await setInitialState((s: any) => ({
@@ -88,7 +84,7 @@ const Login: React.FC = () => {
           // setUserLoginState(msg);
         } else {
           message.error(res?.message || '接口异常');
-        };
+        }
         setLoading(false);
       });
     } catch (error) {
@@ -99,17 +95,19 @@ const Login: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <div className={"lang"} data-lang>
-        {SelectLang && <SelectLang
-          postLocalesData={(list: any) => {
-            return list.filter((i: any) => ["en-US", "zh-CN", "zh-TW"].includes(i.lang)) || [];
-          }}
-        />}
+      <div className={'lang'} data-lang>
+        {SelectLang && (
+          <SelectLang
+            postLocalesData={(list: any) => {
+              return list.filter((i: any) => ['en-US', 'zh-CN', 'zh-TW'].includes(i.lang)) || [];
+            }}
+          />
+        )}
       </div>
       <div className="flex-box-center content">
         <div className="flex-box-center login-title">
-          <img alt="logo" src="/favicon.ico" />
-          <h1>通用型视觉大屏</h1>
+          {/* <img alt="logo" src="/favicon.ico" /> */}
+          <h1>视觉大屏</h1>
         </div>
         <Form
           name="basic"
@@ -142,10 +140,16 @@ const Login: React.FC = () => {
               </Button>
             </Form.Item>
             <Form.Item style={{ flex: 1 }}>
-              <Button loading={loading} size="large" onClick={() => {
-                location.href = location.href?.split('#/')?.[0] + '#/home';
-                window.location.reload();
-              }} >访客</Button>
+              <Button
+                loading={loading}
+                size="large"
+                onClick={() => {
+                  location.href = location.href?.split('#/')?.[0] + '#/home';
+                  window.location.reload();
+                }}
+              >
+                访客
+              </Button>
             </Form.Item>
           </div>
         </Form>

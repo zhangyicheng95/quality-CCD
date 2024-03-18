@@ -2492,6 +2492,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
               <Button
                 onClick={() => {
                   const points = getAllModelsFromScene(scene.current, 'editPoint');
+                  console.log(points);
                   let obj: any = [];
                   points.forEach((point: any) => {
                     const {
@@ -2502,27 +2503,31 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                       surfaceType,
                       __props = {},
                     } = point;
-                    const { index } = __props?.area;
-                    const options = {
-                      point: position,
-                      normVec,
-                      regionID,
-                      robID,
-                      surfaceType,
-                      pointIndex: __props?.pointIndex,
-                    };
-                    const objName = `Rob${robID}_${surfaceType}_Region${regionID}_Track${index}`;
-                    if (!!obj[objName]) {
-                      obj[objName][__props?.pointIndex] = {
-                        ...__props,
-                        ...options,
+                    if (!!position) {
+                      const { index } = __props?.area;
+                      const options = {
+                        point: position,
+                        normVec,
+                        regionID,
+                        robID,
+                        surfaceType,
+                        pointIndex: __props?.pointIndex,
                       };
+                      const objName = `Rob${robID}_${surfaceType}_Region${regionID}_Track${index}`;
+                      if (!!obj[objName]) {
+                        obj[objName][__props?.pointIndex] = {
+                          ...__props,
+                          ...options,
+                        };
+                      } else {
+                        obj[objName] = [];
+                        obj[objName][__props?.pointIndex] = {
+                          ...__props,
+                          ...options,
+                        };
+                      }
                     } else {
-                      obj[objName] = [];
-                      obj[objName][__props?.pointIndex] = {
-                        ...__props,
-                        ...options,
-                      };
+                      console.log('这个点有问题', point);
                     }
                   });
                   const params = Object.entries(obj)?.reduce((pre: any, cen: any) => {
@@ -2853,6 +2858,57 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
           }}
           footer={
             <div className="flex-box-justify-end" style={{ gap: 8 }}>
+              <Button
+                onClick={() => {
+                  validateFields().then((values) => {
+                    const { point, normVec, regionID, robID, surfaceType } = values;
+                    const editPointLength = (editableObjects.current || []).filter(
+                      (i: any) => i.name?.indexOf('editPoint-') > -1,
+                    )?.length;
+                    const { areaIndex, __props, name } = selectedPoint?.object;
+                    // 先把同一轨迹的点，下标+1
+                    (editableObjects.current || []).forEach((i: any) => {
+                      if (i.name?.indexOf('editPoint') > -1) {
+                        if (i.areaIndex === selectedPoint.object.areaIndex) {
+                          i['regionID'] = regionID;
+                          i['robID'] = robID;
+                          i['surfaceType'] = surfaceType;
+                          if (i?.__props?.pointIndex > __props.pointIndex) {
+                            i.__props.pointIndex += 1;
+                          }
+                        }
+                      }
+                    });
+                    const geometry = selectedPoint?.object?.geometry;
+                    const material = selectedPoint?.object?.material;
+                    const cube = new THREE.Mesh(geometry, material);
+                    if (!!cube) {
+                      cube.position.x = point?.x.value;
+                      cube.position.y = point?.y.value;
+                      cube.position.z = point?.z.value;
+                      cube['normVec'] = {
+                        x: normVec.x.value,
+                        y: normVec.y.value,
+                        z: normVec.z.value,
+                      };
+                      cube['areaIndex'] = areaIndex;
+                      cube['regionID'] = regionID;
+                      cube['robID'] = robID;
+                      cube['surfaceType'] = surfaceType;
+                      cube['__props'] = { ...__props, pointIndex: __props.pointIndex + 1 };
+                      cube.name = `editPoint-${editPointLength}`;
+                      editableObjects.current?.push?.(cube);
+                      scene.current?.add?.(cube);
+                    }
+                    console.log(editableObjects.current);
+                    form.resetFields();
+                    selectedPoint.object.material.color = colorTran[selectedPoint.object.areaIndex];
+                    setSelectedPoint(null);
+                  });
+                }}
+              >
+                增加一个点
+              </Button>
               <Button
                 onClick={() => {
                   editableObjects.current = (editableObjects.current || []).filter(

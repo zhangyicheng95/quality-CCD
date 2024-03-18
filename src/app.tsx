@@ -109,7 +109,8 @@ export async function getInitialState(): Promise<{
             }),
           },
         };
-        defaultSettings.navTheme = iframeTheme === 'dark' ? 'realDark' : theme || 'realDark';
+        defaultSettings.navTheme =
+          (iframeTheme === 'dark' ? 'realDark' : iframeTheme) || theme || 'realDark';
       } else {
         console.log('appjs中方案信息报错: ', res);
         localStorage.setItem('ipString', query?.id);
