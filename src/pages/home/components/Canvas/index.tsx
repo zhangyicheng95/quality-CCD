@@ -4721,7 +4721,9 @@ const Home: React.FC<any> = (props: any) => {
             未启动
           </div>
         )}
-        {paramData?.contentData?.showLogo ? (
+        {(
+          _.isBoolean(paramData?.contentData?.showLogo) ? paramData?.contentData?.showLogo : true
+        ) ? (
           <div className="home-footer-powerby">&copy;技术支持: UBVision团队</div>
         ) : null}
         {useMemo(() => {

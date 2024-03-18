@@ -12,6 +12,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import RightContent from './components/RightContent';
 import { getParams } from './services/api';
 import { message } from 'antd';
+import * as _ from 'lodash';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -215,7 +216,13 @@ export const layout: RunTimeLayoutConfig = (props) => {
           </ErrorBoundary>
         );
       },
-      logo: initialState?.params?.contentData?.showLogo ? iconDom : null,
+      logo: (
+        _.isBoolean(initialState?.params?.contentData?.showLogo)
+          ? initialState?.params?.contentData?.showLogo
+          : true
+      )
+        ? iconDom
+        : null,
       title: initialState?.title || 'UBVision',
     },
     location.hash?.indexOf('inIframe') > -1
