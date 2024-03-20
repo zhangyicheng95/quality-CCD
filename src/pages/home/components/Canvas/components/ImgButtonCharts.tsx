@@ -26,7 +26,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
   const ifCanEdit = useMemo(() => {
     return location.hash.indexOf('edit') > -1;
   }, [location.hash]);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
   const [defect, setDefect] = useState('');
   const [defectSelect, setDefectSelect] = useState<any>({});
 
@@ -38,7 +38,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
           setDefectSelect((prev: any) => {
             return {
               ...prev,
-              [defect]: res.data || [],
+              [type]: res.data || [],
             };
           });
           reslove(true);
@@ -49,21 +49,24 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
     });
   };
   const onUpload = () => {
-    if (Object.keys(defectSelect).length > 0) {
-      if (!fetchType || !xName) return;
-      console.log(defectSelect);
-      btnFetch(fetchType, xName, { data: defectSelect }).then((res: any) => {
-        if (res && res.code === 'SUCCESS') {
-          message.success('上传成功');
-          setVisible(false);
-          setDefectSelect({});
-        } else {
-          message.error(res?.msg || res?.message || '接口异常');
-        }
-      });
-    } else {
-      message.warning('请选择缺陷区域');
-    }
+    setDefectSelect((prev: any) => {
+      if (Object.keys(prev).length > 0) {
+        if (!fetchType || !xName) return;
+        btnFetch(fetchType, xName, { data: prev }).then((res: any) => {
+          if (res && res.code === 'SUCCESS') {
+            message.success('上传成功');
+            setVisible(false);
+            setDefectSelect({});
+          } else {
+            message.error(res?.msg || res?.message || '接口异常');
+          }
+        });
+      } else {
+        message.warning('请选择缺陷区域');
+      }
+
+      return prev;
+    });
   };
   const onKeyDown = (event: any) => {
     const { key } = event;
@@ -83,7 +86,12 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
         setVisible(true);
       });
     } else if (key === 'Enter') {
-      onUpload();
+      setVisible((prev) => {
+        if (prev) {
+          onUpload();
+        }
+        return prev;
+      });
     }
   };
   useEffect(() => {
