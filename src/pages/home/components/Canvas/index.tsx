@@ -88,6 +88,7 @@ import ImgButtonCharts from './components/ImgButtonCharts';
 import ButtonImagesCharts from './components/ButtonImagesCharts';
 import AlertImgCharts from './components/AlertImgCharts';
 import ButtonUploadCharts from './components/ButtonUploadCharts';
+import IframeCharts from './components/IframeCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -1416,6 +1417,7 @@ const Home: React.FC<any> = (props: any) => {
                       xColumns,
                       fetchType,
                       xName,
+                      yName,
                       markNumberLeft,
                       markNumberTop,
                     }}
@@ -1430,6 +1432,14 @@ const Home: React.FC<any> = (props: any) => {
                       columnNumber,
                       magnifier,
                       magnifierSize,
+                    }}
+                  />
+                ) : type === 'iframe' ? (
+                  <IframeCharts
+                    id={key}
+                    data={{
+                      dataValue,
+                      xName,
                     }}
                   />
                 ) : (
@@ -4508,7 +4518,14 @@ const Home: React.FC<any> = (props: any) => {
                   </Form.Item>
                   <Form.Item
                     name={`xName`}
-                    label={'接口地址'}
+                    label={'上传缺陷地址'}
+                    rules={[{ required: false, message: '接口地址' }]}
+                  >
+                    <Input placeholder="接口地址" size="large" />
+                  </Form.Item>
+                  <Form.Item
+                    name={`yName`}
+                    label={'获取缺陷地址'}
                     rules={[{ required: false, message: '接口地址' }]}
                   >
                     <Input placeholder="接口地址" size="large" />
@@ -4555,6 +4572,17 @@ const Home: React.FC<any> = (props: any) => {
                       </Form.Item>
                     </Fragment>
                   ) : null}
+                </Fragment>
+              ) : null}
+              {['iframe'].includes(windowType) ? (
+                <Fragment>
+                  <Form.Item
+                    name={`xName`}
+                    label={'嵌套地址'}
+                    rules={[{ required: true, message: '嵌套地址' }]}
+                  >
+                    <Input size="large" />
+                  </Form.Item>
                 </Fragment>
               ) : null}
               <Form.Item

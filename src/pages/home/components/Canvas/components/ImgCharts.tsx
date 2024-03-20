@@ -23,7 +23,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
     defaultImg,
-    dataValue = '',
+    dataValue,
     showImgList,
     comparison,
     magnifierSize = 6,
@@ -86,11 +86,6 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     };
   }, []);
   useEffect(() => {
-    if (!_.isString(dataValue)) {
-      message.error('图片组件数据格式不正确，请检查');
-      console.log('ImgCharts:', dataValue);
-      return;
-    }
     const localhostList = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || '[]');
     if (!dataValue) {
       dataValue = localhostList?.[localhostList?.length - 1] || '';
@@ -109,7 +104,8 @@ const ImgCharts: React.FC<Props> = (props: any) => {
   }, [dataValue, comparison]);
   useEffect(() => {
     let img: any = document.createElement('img');
-    img.src = urlList.current?.[selectedNum] || dataValue;
+    const source = urlList.current?.[selectedNum] || dataValue;
+    img.src = _.isString(source) ? source : source?.url;
     img.title = 'img.png';
     img.onload = (res: any) => {
       const { width = 1, height = 1 } = img;
@@ -237,16 +233,17 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             mask.style['top'] = top + 'px';
             let bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
             let imgDom: any = document.getElementById(`img-charts-bigImg-${id}`);
+            const source = urlList.current?.[selectedNum] || dataValue;
             if (!imgDom) {
               bigDom = document.createElement('div');
               bigDom.className = `img-charts-big img-charts-big-${id}`;
               document.body.appendChild(bigDom);
               imgDom = document.createElement('img');
               imgDom.id = `img-charts-bigImg-${id}`;
-              imgDom.src = urlList.current?.[selectedNum] || dataValue || defaultImg;
+              imgDom.src = _.isString(source) ? source : source?.url || defaultImg;
               bigDom.appendChild(imgDom);
             } else {
-              imgDom.src = urlList.current?.[selectedNum] || dataValue || defaultImg;
+              imgDom.src = _.isString(source) ? source : source?.url || defaultImg;
               bigDom.style.display = 'block';
             }
             // 放大镜大小
@@ -345,13 +342,10 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         }
       };
     }
-  }, [
-    magnifierVisible,
-    selectedNum,
-    dataValue,
-    // magnifierSize, dataValue, id, chartSize,
-    // dom?.current?.clientWidth, dom?.current?.clientHeight
-  ]);
+  }, [magnifierVisible, selectedNum, dataValue]);
+  const source = useMemo(() => {
+    return urlList.current?.[selectedNum] || dataValue;
+  }, [urlList.current, selectedNum, dataValue]);
   const onPrev = () => {
     setSelectedNum((pre: number) => {
       if (pre - 1 >= 0) {
@@ -379,7 +373,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
           className={`flex-box-center img-box-mark-right`}
           style={markNumber ? { width: 'calc(100% - 20px)' } : { width: '100%' }}
         >
-          {!!urlList.current?.[selectedNum] || !!dataValue || !!defaultImg ? (
+          {!!source || !!defaultImg ? (
             <Fragment>
               <div
                 className="img-box"
@@ -397,7 +391,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                   }
                 />
                 <Image
-                  src={urlList.current?.[selectedNum] || dataValue || defaultImg}
+                  src={_.isString(source) ? source : source?.url || defaultImg}
                   alt="logo"
                   style={
                     chartSize
@@ -454,10 +448,6 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                     });
                   }}
                 />
-                {/* <ZoomInOutlined
-                                        className={`img-box-btn-item ${magnifierVisible ? "img-box-btn-item-selected" : ""}`}
-                                        onClick={() => setMagnifierVisible((prev: any) => !prev)}
-                                    /> */}
                 <ExpandOutlined className="img-box-btn-item" onClick={() => setVisible(true)} />
               </div>
             </Fragment>
@@ -473,8 +463,13 @@ const ImgCharts: React.FC<Props> = (props: any) => {
               onVisibleChange: (vis) => setVisible(vis),
             }}
           >
-            {(urlList.current || []).map((url: string) => {
-              return <Image src={url} alt={url} key={url} />;
+            {(urlList.current || []).map((item: any) => {
+              if (_.isString(item)) {
+                return <Image src={item} alt={item} key={item} />;
+              } else if (!!item.url) {
+                return <Image src={item.url} alt={item.url} key={item.url} />;
+              }
+              return null;
             })}
           </Image.PreviewGroup>
         </div>
@@ -482,12 +477,14 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       {showImgList ? (
         <div className="flex-box-center img-box-footer-list">
           {(urlList.current.slice(-6) || [])?.map((item: any, index: number) => {
-            const type =
-              item?.indexOf('OK') > -1
+            const type = _.isString(item)
+              ? item?.indexOf('OK') > -1
                 ? 'OK'
                 : item?.indexOf('NG') > -1
                 ? item.split('NG/')?.[1]?.split('/')?.[0]
-                : 'NG';
+                : 'NG'
+              : item.type;
+            const url = _.isString(item) ? item : item.url;
             return (
               <div
                 key={`${type}-${index}`}
@@ -496,7 +493,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                   setSelectedNum(urlList.current.slice(0, -6)?.length + index);
                 }}
               >
-                <img src={item} alt={index + ''} key={`img-${index}`} />
+                <img src={url} alt={index + ''} key={`img-${index}`} />
                 <div
                   className={`img-box-footer-list-item-type ${
                     type === 'OK' ? 'OK-font' : 'NG-font'

@@ -19,6 +19,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
     xColumns = [],
     fetchType,
     xName,
+    yName,
     markNumberLeft,
     markNumberTop,
   } = data;
@@ -29,6 +30,71 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
   const [defect, setDefect] = useState('');
   const [defectSelect, setDefectSelect] = useState<any>({});
 
+  const onDefectClick = (type: string) => {
+    if (!yName) return;
+    return new Promise((reslove, reject) => {
+      btnFetch('get', yName, { type }).then((res: any) => {
+        if (res && res.code === 'SUCCESS') {
+          setDefectSelect((prev: any) => {
+            return {
+              ...prev,
+              [defect]: res.data || [],
+            };
+          });
+          reslove(true);
+        } else {
+          message.error(res?.msg || res?.message || '接口异常');
+        }
+      });
+    });
+  };
+  const onUpload = () => {
+    if (Object.keys(defectSelect).length > 0) {
+      if (!fetchType || !xName) return;
+      console.log(defectSelect);
+      btnFetch(fetchType, xName, { data: defectSelect }).then((res: any) => {
+        if (res && res.code === 'SUCCESS') {
+          message.success('上传成功');
+          setVisible(false);
+          setDefectSelect({});
+        } else {
+          message.error(res?.msg || res?.message || '接口异常');
+        }
+      });
+    } else {
+      message.warning('请选择缺陷区域');
+    }
+  };
+  const onKeyDown = (event: any) => {
+    const { key } = event;
+    if (key === '1') {
+      if (!fetchType || !xName) return;
+      // 触发接口传OK
+      btnFetch(fetchType, xName, { data: [] }).then((res: any) => {
+        if (res && res.code === 'SUCCESS') {
+          message.success('上传成功');
+        } else {
+          message.error(res?.msg || res?.message || '接口异常');
+        }
+      });
+    } else if (key === '4') {
+      onDefectClick(xColumns?.[0]?.value)?.then((res) => {
+        setDefect(xColumns?.[0]?.value);
+        setVisible(true);
+      });
+    } else if (key === 'Enter') {
+      onUpload();
+    }
+  };
+  useEffect(() => {
+    if (ifCanEdit) return;
+    document.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, []);
+
   return (
     <div
       id={`echart-${id}`}
@@ -38,29 +104,14 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
       <div
         className={`flex-box-center img-button ${ifCanEdit ? 'editColor' : ''}`}
         onClick={() => {
-          setDefect(xColumns?.[0]?.value);
-          setVisible(true);
+          onDefectClick(xColumns?.[0]?.value)?.then((res) => {
+            setDefect(xColumns?.[0]?.value);
+            setVisible(true);
+          });
         }}
       >
         {ifCanEdit ? '保存后透明' : ''}
       </div>
-      {/* {(xColumns || [])?.map((item: any, index: number) => {
-        const { label, value, color } = item;
-        return (
-          <div
-            className="flex-box-center img-button-box-item"
-            key={value}
-            style={!!color ? { backgroundColor: color } : {}}
-            onClick={() => {
-              setDefect(value);
-              setVisible(true);
-            }}
-          >
-            {label}
-            <div>{dataValue?.[value]}</div>
-          </div>
-        );
-      })} */}
       {!!visible ? (
         <Modal
           title={`缺陷上报`}
@@ -70,25 +121,10 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
           open={!!visible}
           maskClosable={false}
           destroyOnClose
-          onOk={() => {
-            if (Object.keys(defectSelect).length > 0) {
-              console.log(defectSelect);
-              btnFetch(fetchType, xName, { data: defectSelect }).then((res: any) => {
-                if (res && res.code === 'SUCCESS') {
-                  message.success('上传成功');
-                  setVisible(false);
-                  setDefectSelect([]);
-                } else {
-                  message.error(res?.msg || res?.message || '接口异常');
-                }
-              });
-            } else {
-              message.warning('请选择缺陷区域');
-            }
-          }}
+          onOk={() => onUpload()}
           onCancel={() => {
             setVisible(false);
-            setDefectSelect([]);
+            setDefectSelect({});
           }}
         >
           <div className="flex-box header-img-button-box">
@@ -99,7 +135,10 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
                   className={`flex-box-center header-img-button-box-item ${
                     defect === value ? 'header-img-button-box-selected' : ''
                   }`}
-                  onClick={() => setDefect(value)}
+                  onClick={() => {
+                    setDefect(value);
+                    onDefectClick(value);
+                  }}
                 >
                   {label}
                 </div>

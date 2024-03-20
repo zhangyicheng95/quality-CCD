@@ -29,6 +29,8 @@ import gunyaIcon from '@/assets/dashboard-imgs/gunya_background.png';
 import platFormIcon from '@/assets/dashboard-imgs/platForm.png';
 import modalIcon from '@/assets/dashboard-imgs/modal.png';
 import imgButtonIcon from '@/assets/dashboard-imgs/img_button.png';
+import buttonImagesIcon from '@/assets/dashboard-imgs/buttonImages.png';
+import iframeIcon from '@/assets/dashboard-imgs/iframe.png';
 
 export const layoutTransform = {
   0: { i: '0', x: 0, y: 0, w: 5, h: 20, minW: 2, maxW: 10, minH: 4, maxH: 32 },
@@ -37,7 +39,7 @@ export const layoutTransform = {
   3: { i: '3', x: 9, y: 0, w: 2, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
   4: { i: '4', x: 5, y: 10, w: 2, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
   5: { i: '5', x: 7, y: 10, w: 2, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
-  6: { i: '6', x: 9, y: 10, w: 2, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 }
+  6: { i: '6', x: 9, y: 10, w: 2, h: 10, minW: 2, maxW: 10, minH: 4, maxH: 32 },
 };
 
 // @ts-ignore
@@ -182,8 +184,13 @@ export const windowTypeList: any = [
   {
     value: 'buttonImages',
     label: '缺陷按钮组件',
-    icon: imgButtonIcon,
-  }
+    icon: buttonImagesIcon,
+  },
+  {
+    value: 'iframe',
+    label: 'iframe嵌套组件',
+    icon: iframeIcon,
+  },
 ];
 // 默认基础组件
 export const basicWindowList: any = [
@@ -206,7 +213,7 @@ export const basicWindowList: any = [
     value: 'footer-2',
     label: '错误信息',
     icon: footer2Icon,
-  }
+  },
 ];
 // 仿真涂层-背景图
 export const simulatedCoatingList: any = [
@@ -224,7 +231,7 @@ export const simulatedCoatingList: any = [
     value: 'gyj',
     label: '辊压机仿真',
     icon: gunyaIcon,
-  }
+  },
 ];
 export const logColors = {
   warning: 'rgba(245,160,49,1)',
@@ -275,7 +282,7 @@ export const portTypeObj: any = {
     title: '任意类型',
     type: 'dict',
   },
-  default: '#4b5054'
+  default: '#4b5054',
 };
 export const portTypeList = ['file', 'int', 'float', 'bool', 'dir'];
 export const outputTypeObj: any = {
