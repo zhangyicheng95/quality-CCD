@@ -26,7 +26,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
   const ifCanEdit = useMemo(() => {
     return location.hash.indexOf('edit') > -1;
   }, [location.hash]);
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [defect, setDefect] = useState('');
   const [defectSelect, setDefectSelect] = useState<any>({});
 
