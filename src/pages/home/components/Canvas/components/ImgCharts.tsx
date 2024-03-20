@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Button, Image, message, Modal, Skeleton } from 'antd';
+import { Button, Image, Modal, Skeleton } from 'antd';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
