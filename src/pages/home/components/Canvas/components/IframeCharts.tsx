@@ -1,9 +1,5 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import * as echarts from 'echarts';
-import options from './commonOptions';
+import React from 'react';
 import * as _ from 'lodash';
-import { message } from 'antd';
-import { CompressOutlined } from '@ant-design/icons';
 import styles from '../index.module.less';
 
 interface Props {

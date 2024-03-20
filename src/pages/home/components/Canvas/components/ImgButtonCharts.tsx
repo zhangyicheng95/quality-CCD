@@ -13,16 +13,7 @@ interface Props {
 
 const ImgButtonCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  const {
-    dataValue,
-    fontSize,
-    xColumns = [],
-    fetchType,
-    xName,
-    yName,
-    markNumberLeft,
-    markNumberTop,
-  } = data;
+  const { fontSize, xColumns = [], fetchType, xName, yName, markNumberLeft, markNumberTop } = data;
   const ifCanEdit = useMemo(() => {
     return location.hash.indexOf('edit') > -1;
   }, [location.hash]);
@@ -32,7 +23,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
 
   const onDefectClick = (type: string) => {
     if (!yName) return;
-    return new Promise((reslove, reject) => {
+    return new Promise((resolve, reject) => {
       btnFetch('get', yName, { type }).then((res: any) => {
         if (res && res.code === 'SUCCESS') {
           setDefectSelect((prev: any) => {
@@ -41,7 +32,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
               [type]: res.data || [],
             };
           });
-          reslove(true);
+          resolve(true);
         } else {
           message.error(res?.msg || res?.message || '接口异常');
         }
@@ -73,7 +64,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
     if (key === '1') {
       if (!fetchType || !xName) return;
       // 触发接口传OK
-      btnFetch(fetchType, xName, { data: [] }).then((res: any) => {
+      btnFetch(fetchType, xName, { data: {} }).then((res: any) => {
         if (res && res.code === 'SUCCESS') {
           message.success('上传成功');
         } else {
