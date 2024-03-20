@@ -151,7 +151,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
                     <div className="flex-box img-button-item-line" key={`left-${lIndex}`}>
                       {Array.from({ length: markNumberTop || 0 }).map(
                         (top: any, tIndex: number) => {
-                          const title = `${numToString(lIndex + 1)} - ${tIndex + 1}`;
+                          const title = `${numToString(lIndex + 1)}-${tIndex + 1}`;
                           return (
                             <div
                               className={`img-button-item-box ${

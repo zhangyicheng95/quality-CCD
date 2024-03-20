@@ -299,7 +299,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   },
                   name: item2[0],
                   areaIndex,
-                  regionID: index + 1,
+                  regionID: 1,
                   robID: Number(item2[0]?.replace(/[^\d]/g, '') || '1'),
                   surfaceType: item1.surfaceType,
                   pointIndex: index4,
@@ -1046,7 +1046,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   },
                   name: item2[0],
                   areaIndex,
-                  regionID: index + 1,
+                  regionID: 1,
                   robID: Number(item2[0]?.replace(/[^\d]/g, '') || '1'),
                   surfaceType: item1.surfaceType,
                   pointIndex: index4,
@@ -2969,7 +2969,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
               <Measurement />
             </Form.Item>
             <Form.Item name="regionID" label="排序" rules={[{ required: true, message: '排序' }]}>
-              <InputNumber min={1} />
+              <InputNumber min={1} max={6} />
             </Form.Item>
             <Form.Item
               name="robID"
