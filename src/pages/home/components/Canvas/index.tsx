@@ -1027,6 +1027,7 @@ const Home: React.FC<any> = (props: any) => {
           markNumberLeft,
           markNumberTop,
           line_height,
+          staticHeight,
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1170,6 +1171,7 @@ const Home: React.FC<any> = (props: any) => {
                       des_bordered,
                       headerBackgroundColor,
                       valueColor,
+                      staticHeight,
                     }}
                   />
                 ) : type === 'table5' ? (
@@ -1190,6 +1192,7 @@ const Home: React.FC<any> = (props: any) => {
                     data={{
                       dataValue: dataValue || [],
                       fontSize,
+                      line_height,
                     }}
                   />
                 ) : type === 'three' ? (
@@ -1783,7 +1786,7 @@ const Home: React.FC<any> = (props: any) => {
                       ? { backgroundColor: backgroundColor?.rgb }
                       : {}),
                   }));
-
+                  console.log(type);
                   setWindowType(type);
                   if (type === 'operation2') {
                     const res = paramsData?.flowData?.nodes.filter(
@@ -2172,6 +2175,7 @@ const Home: React.FC<any> = (props: any) => {
       ifPopconfirm,
       showImgList,
       line_height,
+      staticHeight,
     } = values;
     if (['button', 'buttonInp', 'buttonPassword', 'buttonUpload'].includes(type) && !!fetchParams) {
       try {
@@ -2271,6 +2275,7 @@ const Home: React.FC<any> = (props: any) => {
             ifPopconfirm,
             showImgList,
             line_height,
+            staticHeight,
           },
           ['description'].includes(windowType) ? { basicInfoData } : {},
         ),
@@ -2349,6 +2354,7 @@ const Home: React.FC<any> = (props: any) => {
               ifPopconfirm,
               showImgList,
               line_height,
+              staticHeight,
             },
             ['description'].includes(windowType) ? { basicInfoData } : {},
           );
@@ -3442,6 +3448,18 @@ const Home: React.FC<any> = (props: any) => {
                     initialValue={38}
                   >
                     <InputNumber min={10} />
+                  </Form.Item>
+                </Fragment>
+              ) : null}
+              {['table4'].includes(windowType) ? (
+                <Fragment>
+                  <Form.Item
+                    name={`staticHeight`}
+                    label={'紧凑行高'}
+                    rules={[{ required: true, message: '紧凑行高' }]}
+                    initialValue={false}
+                  >
+                    <Switch />
                   </Form.Item>
                 </Fragment>
               ) : null}
