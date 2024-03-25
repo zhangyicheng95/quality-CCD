@@ -1,14 +1,16 @@
 import { fetchGet, fetchPost, fetchPut, fetchDelete, upload } from '@/services/fetch';
 import { parseParamsToUrl } from '@/utils/utils';
 import _ from 'lodash';
-export const BASE_IP = localStorage.getItem("ipUrl-realtime") ?
-  `http://${localStorage.getItem("ipUrl-realtime")}/` : `http://localhost:8866/`;
-export const BASE_HISTORY_IP = localStorage.getItem("ipUrl-history") ?
-  `http://${localStorage.getItem("ipUrl-history")}/` : `http://localhost:8867/`;
+export const BASE_IP = localStorage.getItem('ipUrl-realtime')
+  ? `http://${localStorage.getItem('ipUrl-realtime')}/`
+  : `http://localhost:8866/`;
+export const BASE_HISTORY_IP = localStorage.getItem('ipUrl-history')
+  ? `http://${localStorage.getItem('ipUrl-history')}/`
+  : `http://localhost:8867/`;
 
 // 获取项目列表
 export async function getAllProject(ip?: any) {
-  return fetchGet(`${ip ? ('http://' + ip + '/') : BASE_IP}projects`);
+  return fetchGet(`${ip ? 'http://' + ip + '/' : BASE_IP}projects`);
 }
 
 // 获取列表任务状态
@@ -20,9 +22,9 @@ export const getListStatusService = () => {
 export async function getAllHistory(params: any) {
   return fetchGet(`${BASE_HISTORY_IP}projects/list`, {
     params: {
-      "func": "SELECT",
-      "data": [params]
-    }
+      func: 'SELECT',
+      data: [params],
+    },
   });
 }
 // 获取历史记录 //尺寸
@@ -96,9 +98,7 @@ export async function login(params: any) {
 }
 
 // 退出登录
-export async function outLogin() {
-
-}
+export async function outLogin() {}
 
 export async function btnFetch(type: string, url: string, params = {}, options?: any) {
   if (url.indexOf('/') === 0) {
@@ -111,14 +111,15 @@ export async function btnFetch(type: string, url: string, params = {}, options?:
     url = 'http://' + url;
   }
   if (type === 'get') {
-    if (_.isObject(params)) {
+    if (Object.keys(params)?.length) {
       return fetchGet(`${url}?${parseParamsToUrl(params)}`, { ...options });
     }
     if (!_.isUndefined(params) && !_.isNull(params) && !!params) {
       return fetchGet(`${url}/${params}`);
     }
     return fetchGet(url);
-  } if (type === 'delete') {
+  }
+  if (type === 'delete') {
     if (_.isObject(params)) {
       return fetchDelete(url, { params, ...options });
     }
@@ -129,8 +130,11 @@ export async function btnFetch(type: string, url: string, params = {}, options?:
   } else if (type === 'post') {
     if (_.isObject(params)) {
       return fetchPost(url, {
-        body: (options?.headers["Content-Type"] === "application/x-www-form-urlencoded") ? parseParamsToUrl(params) : params,
-        ...options
+        body:
+          options?.headers['Content-Type'] === 'application/x-www-form-urlencoded'
+            ? parseParamsToUrl(params)
+            : params,
+        ...options,
       });
     }
     if (!_.isUndefined(params) && !_.isNull(params) && !!params) {

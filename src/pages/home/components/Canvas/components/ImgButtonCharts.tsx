@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { message, Modal } from 'antd';
+import { Button, message, Modal } from 'antd';
 import { numToString } from '@/utils/utils';
 import { btnFetch } from '@/services/api';
 
@@ -21,40 +21,30 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
   const [defect, setDefect] = useState('');
   const [defectSelect, setDefectSelect] = useState<any>({});
 
-  const onDefectClick = (type: string) => {
+  const onDefectClick = () => {
     if (!yName) return;
-    return new Promise((resolve, reject) => {
-      btnFetch('get', yName, { type }).then((res: any) => {
-        if (res && res.code === 'SUCCESS') {
-          setDefectSelect((prev: any) => {
-            return {
-              ...prev,
-              [type]: res.data || [],
-            };
-          });
-          resolve(true);
-        } else {
-          message.error(res?.msg || res?.message || '接口异常');
-        }
-      });
+    btnFetch('get', yName, {}).then((res: any) => {
+      if (res && res.code === 'SUCCESS') {
+        setDefectSelect(res.data);
+        setDefect(xColumns?.[0]?.value);
+        setVisible(true);
+      } else {
+        message.error(res?.msg || res?.message || '接口异常');
+      }
     });
   };
   const onUpload = () => {
     setDefectSelect((prev: any) => {
-      if (Object.keys(prev).length > 0) {
-        if (!fetchType || !xName) return;
-        btnFetch(fetchType, xName, { data: prev }).then((res: any) => {
-          if (res && res.code === 'SUCCESS') {
-            message.success('上传成功');
-            setVisible(false);
-            setDefectSelect({});
-          } else {
-            message.error(res?.msg || res?.message || '接口异常');
-          }
-        });
-      } else {
-        message.warning('请选择缺陷区域');
-      }
+      if (!fetchType || !xName) return;
+      btnFetch(fetchType, xName, { data: prev }).then((res: any) => {
+        if (res && res.code === 'SUCCESS') {
+          message.success('上传成功');
+          setVisible(false);
+          setDefectSelect({});
+        } else {
+          message.error(res?.msg || res?.message || '接口异常');
+        }
+      });
 
       return prev;
     });
@@ -72,10 +62,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
         }
       });
     } else if (key === '4') {
-      onDefectClick(xColumns?.[0]?.value)?.then((res) => {
-        setDefect(xColumns?.[0]?.value);
-        setVisible(true);
-      });
+      onDefectClick();
     } else if (key === 'Enter') {
       setVisible((prev) => {
         if (prev) {
@@ -93,7 +80,10 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
       document.removeEventListener('keydown', onKeyDown);
     };
   }, []);
-
+  const onCancel = () => {
+    setVisible(false);
+    setDefectSelect({});
+  };
   return (
     <div
       id={`echart-${id}`}
@@ -102,29 +92,38 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
     >
       <div
         className={`flex-box-center img-button ${ifCanEdit ? 'editColor' : ''}`}
-        onClick={() => {
-          onDefectClick(xColumns?.[0]?.value)?.then((res) => {
-            setDefect(xColumns?.[0]?.value);
-            setVisible(true);
-          });
-        }}
+        onClick={() => onDefectClick()}
       >
         {ifCanEdit ? '保存后透明' : ''}
       </div>
       {!!visible ? (
         <Modal
-          title={`缺陷上报`}
+          title="缺陷上报"
           wrapClassName="defect-modal"
           centered
           width="99vw"
           open={!!visible}
           maskClosable={false}
           destroyOnClose
-          onOk={() => onUpload()}
-          onCancel={() => {
-            setVisible(false);
-            setDefectSelect({});
-          }}
+          onCancel={() => onCancel()}
+          footer={
+            <div className="flex-box-end" style={{ gap: 8 }}>
+              <Button
+                type="link"
+                onClick={() => {
+                  setDefectSelect((prev: any) => {
+                    return _.omit(prev, defect);
+                  });
+                }}
+              >
+                清空当前缺陷
+              </Button>
+              <Button onClick={() => onCancel()}>取消</Button>
+              <Button type="primary" onClick={() => onUpload()}>
+                上传
+              </Button>
+            </div>
+          }
         >
           <div className="flex-box header-img-button-box">
             {(xColumns || [])?.map((item: any, index: number) => {
@@ -136,7 +135,6 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
                   }`}
                   onClick={() => {
                     setDefect(value);
-                    onDefectClick(value);
                   }}
                 >
                   {label}
@@ -162,11 +160,19 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
                               key={`top-${tIndex}`}
                               onClick={() => {
                                 setDefectSelect((prev: any) => {
-                                  return Object.assign({}, prev, {
-                                    [defect]: prev?.[defect]?.includes(title)
-                                      ? prev?.[defect].filter((i: any) => i !== title)
-                                      : (prev?.[defect] || []).concat(title),
-                                  });
+                                  let result = Object.assign({}, prev);
+                                  if (prev?.[defect]?.includes(title)) {
+                                    if (prev?.[defect].filter((i: any) => i !== title)?.length) {
+                                      result[defect] = prev?.[defect].filter(
+                                        (i: any) => i !== title,
+                                      );
+                                    } else {
+                                      result = _.omit(prev, defect);
+                                    }
+                                  } else {
+                                    result = (prev?.[defect] || []).concat(title);
+                                  }
+                                  return result;
                                 });
                               }}
                             >

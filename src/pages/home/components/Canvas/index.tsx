@@ -1026,6 +1026,7 @@ const Home: React.FC<any> = (props: any) => {
           showImgList,
           markNumberLeft,
           markNumberTop,
+          line_height,
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1124,6 +1125,7 @@ const Home: React.FC<any> = (props: any) => {
                       des_bordered,
                       headerBackgroundColor,
                       valueColor,
+                      line_height,
                     }}
                   />
                 ) : type === 'table2' ? (
@@ -1138,6 +1140,7 @@ const Home: React.FC<any> = (props: any) => {
                       des_bordered,
                       headerBackgroundColor,
                       valueColor,
+                      line_height,
                     }}
                   />
                 ) : type === 'table3' ? (
@@ -1152,6 +1155,7 @@ const Home: React.FC<any> = (props: any) => {
                       des_bordered,
                       headerBackgroundColor,
                       valueColor,
+                      line_height,
                     }}
                   />
                 ) : type === 'table4' ? (
@@ -2167,6 +2171,7 @@ const Home: React.FC<any> = (props: any) => {
       magnifierHeight,
       ifPopconfirm,
       showImgList,
+      line_height,
     } = values;
     if (['button', 'buttonInp', 'buttonPassword', 'buttonUpload'].includes(type) && !!fetchParams) {
       try {
@@ -2265,6 +2270,7 @@ const Home: React.FC<any> = (props: any) => {
             magnifierHeight,
             ifPopconfirm,
             showImgList,
+            line_height,
           },
           ['description'].includes(windowType) ? { basicInfoData } : {},
         ),
@@ -2342,6 +2348,7 @@ const Home: React.FC<any> = (props: any) => {
               magnifierHeight,
               ifPopconfirm,
               showImgList,
+              line_height,
             },
             ['description'].includes(windowType) ? { basicInfoData } : {},
           );
@@ -3427,6 +3434,14 @@ const Home: React.FC<any> = (props: any) => {
                         },
                       ]}
                     />
+                  </Form.Item>
+                  <Form.Item
+                    name={`line_height`}
+                    label={'内容行高'}
+                    rules={[{ required: true, message: '内容行高' }]}
+                    initialValue={38}
+                  >
+                    <InputNumber min={10} />
                   </Form.Item>
                 </Fragment>
               ) : null}

@@ -2532,7 +2532,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   });
                   const params = Object.entries(obj)?.reduce((pre: any, cen: any) => {
                     return pre.concat({
-                      [cen[0]]: cen[1],
+                      [cen[0]]: cen[1].filter(Boolean),
                     });
                   }, []);
                   if (!!fetchType && !!xName) {

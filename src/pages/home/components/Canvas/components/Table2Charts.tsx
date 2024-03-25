@@ -25,6 +25,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     des_bordered,
     headerBackgroundColor,
     valueColor = 'value',
+    line_height,
   } = data;
   if (process.env.NODE_ENV === 'development') {
     reverse = true;
@@ -369,6 +370,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                     : { backgroundColor: color, color: '#fff' }
                                   : {},
                                 des_bordered ? { borderWidth: '1px' } : {},
+                                line_height
+                                  ? { lineHeight: `${line_height - 4}px`, height: line_height }
+                                  : {},
                               )}
                               placement={'top'}
                               onClick={
@@ -382,7 +386,10 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                               {value?.indexOf?.('http://') > -1 ? '查看' : value}
                             </TooltipDiv>
                             {!des_bordered || index + 1 === dataValue?.length ? null : (
-                              <div className="charts-body-item-border" />
+                              <div
+                                className="charts-body-item-border"
+                                style={line_height ? { height: line_height } : {}}
+                              />
                             )}
                           </div>
                         );
@@ -406,6 +413,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                   : { backgroundColor: color, color: '#fff' }
                                 : {},
                               des_bordered ? { borderWidth: '1px' } : {},
+                              line_height
+                                ? { lineHeight: `${line_height - 4}px`, height: line_height }
+                                : {},
                             )}
                             placement={'top'}
                             onClick={
@@ -419,7 +429,10 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                             {val?.indexOf?.('http://') > -1 ? '查看' : val}
                           </TooltipDiv>
                           {!des_bordered || index + 1 === dataValue?.length ? null : (
-                            <div className="charts-body-item-border" />
+                            <div
+                              className="charts-body-item-border"
+                              style={line_height ? { height: line_height } : {}}
+                            />
                           )}
                         </div>
                       );
