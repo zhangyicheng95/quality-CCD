@@ -36,6 +36,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
   const [fileSelect, setFileSelect] = useState<any>([]);
 
   useEffect(() => {
+    console.log('拿到的：', dataValue);
     if (!!dataValue?.action && dataValue.action === 1) {
       itemClicked.current = 0;
     }
