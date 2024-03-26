@@ -1309,6 +1309,35 @@
     }
   }
 
+  .file-type-modal {
+    .ant-modal-body {
+      padding: 0 !important;
+      overflow: hidden !important;
+
+      .file-type-box {
+        padding: 16px;
+        gap: 16px;
+        flex-wrap: wrap;
+
+        .file-type-item {
+          background-color: rgba(234, 234, 234, 0.8);
+          padding: 12px 8px;
+          border-radius: 4px;
+          cursor: pointer;
+          white-space: nowrap;
+
+          &:hover {
+            background-color: rgba(144, 144, 144, 0.6);
+          }
+        }
+
+        .file-type-item-selected {
+          background-color: rgba(144, 144, 144, 0.6);
+        }
+      }
+    }
+  }
+
   .view-defect-modal {
     .ant-modal-body {
       padding: 0 !important;
@@ -1504,6 +1533,7 @@
       gap: 8px;
       width: 180px !important;
       padding-left: 12px;
+      font-size: 12px;
 
       .ant-btn {
         padding: 4px 6px;
@@ -1512,6 +1542,10 @@
       &-load-icon {
         width: 26px;
         padding: 2px 5px !important;
+      }
+
+      .ant-upload {
+        font-size: inherit;
       }
     }
 

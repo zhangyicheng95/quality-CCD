@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { Button, message, Modal } from 'antd';
@@ -13,18 +13,43 @@ interface Props {
 
 const ImgButtonCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  const { fontSize, xColumns = [], fetchType, xName, yName, markNumberLeft, markNumberTop } = data;
+  const {
+    dataValue,
+    fontSize,
+    xColumns = [],
+    fetchType,
+    xName,
+    yName,
+    markNumberLeft,
+    markNumberTop,
+    fileTypes,
+    fileFetch,
+  } = data;
   const ifCanEdit = useMemo(() => {
     return location.hash.indexOf('edit') > -1;
   }, [location.hash]);
+  const itemClicked = useRef(0); //记录按键次数，下一次数据来了之后清空
   const [visible, setVisible] = useState(false);
   const [defect, setDefect] = useState('');
   const [defectSelect, setDefectSelect] = useState<any>({});
+  const [fileVisible, setFileVisible] = useState(false);
+  const [fileSelect, setFileSelect] = useState<any>([]);
+
+  useEffect(() => {
+    if (!!dataValue?.action && dataValue.action === 1) {
+      itemClicked.current = 0;
+    }
+  }, [dataValue]);
 
   const onDefectClick = () => {
+    if (itemClicked.current > 0) {
+      message.warning('只允许上传一次');
+      return;
+    }
     if (!yName) return;
     btnFetch('get', yName, {}).then((res: any) => {
       if (res && res.code === 'SUCCESS') {
+        itemClicked.current += 1;
         setDefectSelect(res.data);
         setDefect(xColumns?.[0]?.value);
         setVisible(true);
@@ -39,8 +64,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
       btnFetch(fetchType, xName, { data: prev }).then((res: any) => {
         if (res && res.code === 'SUCCESS') {
           message.success('上传成功');
-          setVisible(false);
-          setDefectSelect({});
+          onCancel();
         } else {
           message.error(res?.msg || res?.message || '接口异常');
         }
@@ -49,13 +73,34 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
       return prev;
     });
   };
+  const onFileUpload = () => {
+    if (itemClicked.current > 0) {
+      message.warning('只允许上传一次');
+      return;
+    }
+    if (!fileFetch) return;
+    btnFetch(fetchType, fileFetch, { data: fileSelect }).then((res: any) => {
+      if (res && res.code === 'SUCCESS') {
+        itemClicked.current += 1;
+        message.success('上传成功');
+        onCancel();
+      } else {
+        message.error(res?.msg || res?.message || '接口异常');
+      }
+    });
+  };
   const onKeyDown = (event: any) => {
     const { key } = event;
     if (key === '1') {
+      if (itemClicked.current > 0) {
+        message.warning('只允许上传一次');
+        return;
+      }
       if (!fetchType || !xName) return;
       // 触发接口传OK
       btnFetch(fetchType, xName, { data: {} }).then((res: any) => {
         if (res && res.code === 'SUCCESS') {
+          itemClicked.current += 1;
           message.success('上传成功');
         } else {
           message.error(res?.msg || res?.message || '接口异常');
@@ -63,6 +108,8 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
       });
     } else if (key === '4') {
       onDefectClick();
+    } else if (key === '9') {
+      setFileVisible(true);
     } else if (key === 'Enter') {
       setVisible((prev) => {
         if (prev) {
@@ -83,7 +130,10 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
   const onCancel = () => {
     setVisible(false);
     setDefectSelect({});
+    setFileVisible(false);
+    setFileSelect([]);
   };
+
   return (
     <div
       id={`echart-${id}`}
@@ -112,7 +162,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
                 type="link"
                 onClick={() => {
                   setDefectSelect((prev: any) => {
-                    return _.omit(prev, defect);
+                    return _.omit(prev, defect + '');
                   });
                 }}
               >
@@ -131,7 +181,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
               return (
                 <div
                   className={`flex-box-center header-img-button-box-item ${
-                    defect === value ? 'header-img-button-box-selected' : ''
+                    defect == value ? 'header-img-button-box-selected' : ''
                   }`}
                   onClick={() => {
                     setDefect(value);
@@ -153,7 +203,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
                           return (
                             <div
                               className={`img-button-item-box ${
-                                defectSelect?.[defect]?.includes(title)
+                                defectSelect?.[defect + '']?.includes(title)
                                   ? 'img-button-item-box-selected'
                                   : ''
                               }`}
@@ -161,16 +211,18 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
                               onClick={() => {
                                 setDefectSelect((prev: any) => {
                                   let result = Object.assign({}, prev);
-                                  if (prev?.[defect]?.includes(title)) {
-                                    if (prev?.[defect].filter((i: any) => i !== title)?.length) {
-                                      result[defect] = prev?.[defect].filter(
+                                  if (prev?.[defect + '']?.includes(title)) {
+                                    if (
+                                      prev?.[defect + ''].filter((i: any) => i !== title)?.length
+                                    ) {
+                                      result[defect + ''] = prev?.[defect + ''].filter(
                                         (i: any) => i !== title,
                                       );
                                     } else {
-                                      result = _.omit(prev, defect);
+                                      result = _.omit(prev, defect + '');
                                     }
                                   } else {
-                                    result = (prev?.[defect] || []).concat(title);
+                                    result[defect + ''] = (prev?.[defect + ''] || []).concat(title);
                                   }
                                   return result;
                                 });
@@ -185,6 +237,43 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
                   );
                 })
               : null}
+          </div>
+        </Modal>
+      ) : null}
+
+      {!!fileVisible ? (
+        <Modal
+          title="返工归档"
+          wrapClassName="file-type-modal"
+          centered
+          // width="40vw"
+          open={!!fileVisible}
+          maskClosable={false}
+          destroyOnClose
+          onCancel={() => onCancel()}
+          onOk={() => onFileUpload()}
+        >
+          <div className="flex-box file-type-box">
+            {(fileTypes || [])?.map((item: any) => {
+              return (
+                <div
+                  className={`file-type-item ${
+                    fileSelect?.includes(item) ? 'file-type-item-selected' : ''
+                  }`}
+                  onClick={() => {
+                    setFileSelect((prev: any) => {
+                      if (prev?.includes(item)) {
+                        return prev.filter((i: any) => i !== item);
+                      } else {
+                        return (prev || []).concat(item);
+                      }
+                    });
+                  }}
+                >
+                  {item}
+                </div>
+              );
+            })}
           </div>
         </Modal>
       ) : null}

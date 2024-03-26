@@ -28,7 +28,6 @@ import {
 import GridLayout from '@/components/GridLayout';
 import {
   AndroidOutlined,
-  CloseOutlined,
   CompressOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
@@ -40,7 +39,7 @@ import {
   SaveOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { connect, useHistory, useModel } from 'umi';
+import { connect, useModel } from 'umi';
 import { ChromePicker } from 'react-color';
 import socketErrorListen from '@/services/socketError';
 import socketLogListen from '@/services/socketLog';
@@ -980,7 +979,6 @@ const Home: React.FC<any> = (props: any) => {
           progressType = 'line',
           progressSize = 8,
           progressSteps = 5,
-          windowControl,
           des_bordered,
           des_column,
           des_layout,
@@ -1028,6 +1026,8 @@ const Home: React.FC<any> = (props: any) => {
           markNumberTop,
           line_height,
           staticHeight,
+          fileTypes,
+          fileFetch,
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1427,6 +1427,8 @@ const Home: React.FC<any> = (props: any) => {
                       yName,
                       markNumberLeft,
                       markNumberTop,
+                      fileTypes,
+                      fileFetch,
                     }}
                   />
                 ) : type === 'alertImg' ? (
@@ -1873,7 +1875,7 @@ const Home: React.FC<any> = (props: any) => {
             !!dataValue && !['operation2'].includes(type)
               ? {
                   ...item,
-                  [value[1]]: ['three', 'buttonImages'].includes(type)
+                  [value[1]]: ['three', 'buttonImages', 'imgButton'].includes(type)
                     ? _.omit(dataValue, 'action')
                     : dataValue,
                 }
@@ -2128,7 +2130,6 @@ const Home: React.FC<any> = (props: any) => {
       progressType,
       progressSize,
       progressSteps,
-      windowControl,
       des_bordered,
       des_column,
       des_layout,
@@ -2176,6 +2177,8 @@ const Home: React.FC<any> = (props: any) => {
       showImgList,
       line_height,
       staticHeight,
+      fileTypes,
+      fileFetch,
     } = values;
     if (['button', 'buttonInp', 'buttonPassword', 'buttonUpload'].includes(type) && !!fetchParams) {
       try {
@@ -2228,7 +2231,6 @@ const Home: React.FC<any> = (props: any) => {
             progressType,
             progressSize,
             progressSteps,
-            windowControl,
             des_bordered,
             des_column,
             des_layout,
@@ -2276,6 +2278,8 @@ const Home: React.FC<any> = (props: any) => {
             showImgList,
             line_height,
             staticHeight,
+            fileTypes,
+            fileFetch,
           },
           ['description'].includes(windowType) ? { basicInfoData } : {},
         ),
@@ -2307,7 +2311,6 @@ const Home: React.FC<any> = (props: any) => {
               progressType,
               progressSize,
               progressSteps,
-              windowControl,
               des_bordered,
               des_column,
               des_layout,
@@ -2355,6 +2358,8 @@ const Home: React.FC<any> = (props: any) => {
               showImgList,
               line_height,
               staticHeight,
+              fileTypes,
+              fileFetch,
             },
             ['description'].includes(windowType) ? { basicInfoData } : {},
           );
@@ -2397,7 +2402,6 @@ const Home: React.FC<any> = (props: any) => {
       progressType: 'line',
       progressSize: 8,
       progressSteps: 5,
-      windowControl: undefined,
       ifLocalStorage: undefined,
       CCDName: undefined,
       magnifier: false,
@@ -2443,20 +2447,6 @@ const Home: React.FC<any> = (props: any) => {
     setOverallVisible(false);
     setHomeSettingVisible('');
   };
-
-  const homeDom: any = useMemo(() => {
-    return document.getElementById('dashboardContent');
-  }, [document.getElementById('dashboardContent')]);
-  const homePageIcon = useMemo(() => {
-    const length = Math.ceil(
-      (homeDom?.scrollHeight || 0) / (document.querySelector('.home-body')?.clientHeight || 1),
-    );
-    let arr: any = [];
-    for (let i = 0; i < length; i++) {
-      arr = arr.concat(i + 1);
-    }
-    return arr;
-  }, [homeDom?.clientHeight, homeDom?.clientWidth]);
   useEffect(() => {
     setFieldsValue({
       xColumns: editWindowData.xColumns,
@@ -2548,7 +2538,7 @@ const Home: React.FC<any> = (props: any) => {
                 // @ts-ignore
                 moveCard={(dragIndex: any, hoverIndex: any, e: any) => {
                   const item = JSON.parse(dragIndex);
-                  const { key, value, label, icon } = item;
+                  const { key, value, icon } = item;
                   if (
                     !paramData?.contentData?.contentSize?.width ||
                     !paramData?.contentData?.contentSize?.height
@@ -4454,50 +4444,6 @@ const Home: React.FC<any> = (props: any) => {
                               }}
                             />
                           </div>
-                          <div style={{ flex: 1 }}>
-                            <Select
-                              style={{ width: '100%' }}
-                              allowClear
-                              options={[
-                                {
-                                  value: '#ff6b68',
-                                  label: '红色',
-                                },
-                                {
-                                  value: '#f5a031',
-                                  label: '黄色',
-                                },
-                                {
-                                  value: '#52c41a',
-                                  label: '绿色',
-                                },
-                                {
-                                  value: '#70c8ff',
-                                  label: '蓝色',
-                                },
-                                {
-                                  value: '',
-                                  label: '默认',
-                                },
-                              ]}
-                              onChange={(val: any) => {
-                                setEditWindowData((prev: any) => {
-                                  return {
-                                    ...prev,
-                                    xColumns: (prev.xColumns || []).map((i: any) => {
-                                      if (i.id === id) {
-                                        return {
-                                          ...i,
-                                          color: val || '',
-                                        };
-                                      }
-                                      return i;
-                                    }),
-                                  };
-                                });
-                              }}
-                            />
-                          </div>
                           <div style={{ height: '100%' }}>
                             <Button
                               style={{ height: '100%' }}
@@ -4538,7 +4484,7 @@ const Home: React.FC<any> = (props: any) => {
                   <Form.Item
                     name={`fetchType`}
                     label={'http类型'}
-                    rules={[{ required: false, message: 'http类型' }]}
+                    rules={[{ required: true, message: 'http类型' }]}
                   >
                     <Select
                       style={{ width: '100%' }}
@@ -4552,16 +4498,38 @@ const Home: React.FC<any> = (props: any) => {
                   <Form.Item
                     name={`xName`}
                     label={'上传缺陷地址'}
-                    rules={[{ required: false, message: '接口地址' }]}
+                    rules={[{ required: true, message: '接口地址' }]}
                   >
                     <Input placeholder="接口地址" size="large" />
                   </Form.Item>
                   <Form.Item
                     name={`yName`}
                     label={'获取缺陷地址'}
-                    rules={[{ required: false, message: '接口地址' }]}
+                    rules={[{ required: true, message: '接口地址' }]}
                   >
                     <Input placeholder="接口地址" size="large" />
+                  </Form.Item>
+                  <Form.Item
+                    name="fileTypes"
+                    label="归档类型"
+                    initialValue={[
+                      '无图',
+                      '功率异常',
+                      '胶线不良',
+                      '接线盒不良',
+                      '边框不良',
+                      '条码铭牌不清晰',
+                    ]}
+                    rules={[{ required: true, message: '归档类型' }]}
+                  >
+                    <Select mode="tags" style={{ width: '100%' }} options={[]} />
+                  </Form.Item>
+                  <Form.Item
+                    name={`fileFetch`}
+                    label={'归档地址'}
+                    rules={[{ required: true, message: '归档地址' }]}
+                  >
+                    <Input placeholder="归档地址" size="large" />
                   </Form.Item>
                 </Fragment>
               ) : null}

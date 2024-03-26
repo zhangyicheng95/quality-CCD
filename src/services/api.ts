@@ -111,10 +111,10 @@ export async function btnFetch(type: string, url: string, params = {}, options?:
     url = 'http://' + url;
   }
   if (type === 'get') {
-    if (Object.keys(params)?.length) {
+    if (_.isObject(params)) {
       return fetchGet(`${url}?${parseParamsToUrl(params)}`, { ...options });
     }
-    if (!_.isUndefined(params) && !_.isNull(params) && !!params) {
+    if (_.isString(params)) {
       return fetchGet(`${url}/${params}`);
     }
     return fetchGet(url);

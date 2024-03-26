@@ -1094,6 +1094,30 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       resolve(cube);
     });
   };
+  // 添加轨迹点
+  const addPointFun = (list: any) => {
+    (list || []).forEach((item: any, index: number) => {
+      const { point, normVec, areaIndex, regionID, robID, surfaceType } = item;
+      const scale = camera?.current?.zoom || 1.5;
+      const geometry = new THREE.SphereGeometry(scale * 10, 32, 32);
+      const material = new THREE.MeshBasicMaterial({ color: colorTran[areaIndex] });
+      const cube: any = new THREE.Mesh(geometry, material);
+      if (!!cube) {
+        cube.position.x = point?.x;
+        cube.position.y = point?.y;
+        cube.position.z = point?.z;
+        cube['normVec'] = normVec;
+        cube['areaIndex'] = areaIndex;
+        cube['regionID'] = regionID;
+        cube['robID'] = robID;
+        cube['surfaceType'] = surfaceType;
+        cube['__props'] = item;
+        cube.name = `editPoint-${index}`;
+        editableObjects.current?.push?.(cube);
+        scene.current?.add?.(cube);
+      }
+    });
+  };
   // 获取场景中的全部模型对象
   function getAllModelsFromScene(scene: any, filterName?: string) {
     const models: any = [];
@@ -1837,27 +1861,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         }
       });
       console.log('点数据', value);
-      (value || []).forEach((item: any, index: number) => {
-        const { point, normVec, areaIndex, regionID, robID, surfaceType, ...rest } = item;
-        const scale = camera?.current?.zoom || 1.5;
-        const geometry = new THREE.SphereGeometry(scale * 10, 32, 32);
-        const material = new THREE.MeshBasicMaterial({ color: colorTran[areaIndex] });
-        const cube: any = new THREE.Mesh(geometry, material);
-        if (!!cube) {
-          cube.position.x = point?.x;
-          cube.position.y = point?.y;
-          cube.position.z = point?.z;
-          cube['normVec'] = normVec;
-          cube['areaIndex'] = areaIndex;
-          cube['regionID'] = regionID;
-          cube['robID'] = robID;
-          cube['surfaceType'] = surfaceType;
-          cube['__props'] = rest;
-          cube.name = `editPoint-${index}`;
-          editableObjects.current?.push?.(cube);
-          scene.current?.add?.(cube);
-        }
-      });
+      addPointFun(value);
     }
   };
   // 获取模型实际尺寸
@@ -2116,6 +2120,27 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       };
     },
   };
+  // 导入轨迹点
+  const uploadPointProps = {
+    accept: '.json',
+    showUploadList: false,
+    multiple: false,
+    beforeUpload(file: any) {
+      const reader = new FileReader(); // 创建文件对象
+      reader.readAsText(file); // 读取文件的内容/URL
+      reader.onload = (res: any) => {
+        const {
+          target: { result },
+        } = res;
+        try {
+          const pointList = JSON.parse(result);
+          addPointFun(pointList);
+        } catch (err) {
+          console.log(err);
+        }
+      };
+    },
+  };
   useEffect(() => {
     const mesh: any = scene?.current?.getObjectByName?.('tx-0');
     if (!scene.current || !mesh) {
@@ -2340,28 +2365,34 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 );
               })
             : null}
-          <Tooltip title="导出框选">
-            <Button
-              icon={<CloudDownloadOutlined />}
-              className="camera-position-load-icon"
-              onClick={() => {
-                const areas = getAllModelsFromScene(scene.current)?.filter(
-                  (i: any) => i?.name?.indexOf('editArea') > -1,
-                );
-                const params = (areas || [])?.map((item: any) => item?.__props);
-                downFileFun(JSON.stringify(params), `框选.json`);
-              }}
-            />
-          </Tooltip>
+          <Button
+            onClick={() => {
+              const areas = getAllModelsFromScene(scene.current)?.filter(
+                (i: any) => i?.name?.indexOf('editArea') > -1,
+              );
+              const params = (areas || [])?.map((item: any) => item?.__props);
+              downFileFun(JSON.stringify(params), `框选.json`);
+            }}
+          >
+            导出框
+          </Button>
           <Upload {...uploadAreaProps}>
-            <Button
-              icon={
-                <Tooltip title="导入框选">
-                  <CloudUploadOutlined />
-                </Tooltip>
-              }
-              className="camera-position-load-icon"
-            />
+            <Button>导入框</Button>
+          </Upload>
+          <Button
+            onClick={() => {
+              const points = getAllModelsFromScene(scene.current)?.filter(
+                (i: any) => i?.name?.indexOf('editPoint') > -1,
+              );
+              const params = (points || [])?.map((item: any) => item?.__props);
+              console.log(params);
+              downFileFun(JSON.stringify(params), `轨迹点.json`);
+            }}
+          >
+            导出点
+          </Button>
+          <Upload {...uploadPointProps}>
+            <Button>导入点</Button>
           </Upload>
         </div>
         <div className="flex-box">
@@ -2492,7 +2523,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
               <Button
                 onClick={() => {
                   const points = getAllModelsFromScene(scene.current, 'editPoint');
-                  console.log(points);
                   let obj: any = [];
                   points.forEach((point: any) => {
                     const {
@@ -2513,7 +2543,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         surfaceType,
                         pointIndex: __props?.pointIndex,
                       };
-                      const objName = `Rob${robID}_${surfaceType}_Region${regionID}_Track${index}`;
+                      const objName = `Region${regionID}_Track${index}`; //Rob${robID}_${surfaceType}_
                       if (!!obj[objName]) {
                         obj[objName][__props?.pointIndex] = {
                           ...__props,
@@ -2939,10 +2969,36 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     selectedPoint.object.material.color = colorTran[selectedPoint.object.areaIndex];
                     const points = getAllModelsFromScene(scene.current, 'editPoint');
                     (points || []).forEach((point: any) => {
-                      if (point.areaIndex === selectedPoint.object.areaIndex) {
+                      if (point.name === selectedPoint.object.name) {
                         point['regionID'] = regionID;
                         point['robID'] = robID;
                         point['surfaceType'] = surfaceType;
+                        point['__props'] = {
+                          ...point['__props'],
+                          regionID,
+                          robID,
+                          surfaceType,
+                          point: {
+                            x: values.point?.x.value,
+                            y: values.point?.y.value,
+                            z: values.point?.z.value,
+                          },
+                          normVec: {
+                            x: normVec.x.value,
+                            y: normVec.y.value,
+                            z: normVec.z.value,
+                          },
+                        };
+                      } else if (point.areaIndex === selectedPoint.object.areaIndex) {
+                        point['regionID'] = regionID;
+                        point['robID'] = robID;
+                        point['surfaceType'] = surfaceType;
+                        point['__props'] = {
+                          ...point['__props'],
+                          regionID,
+                          robID,
+                          surfaceType,
+                        };
                       }
                     });
                     setSelectedPoint(null);
@@ -2971,7 +3027,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             <Form.Item name="regionID" label="排序" rules={[{ required: true, message: '排序' }]}>
               <InputNumber min={1} max={6} />
             </Form.Item>
-            <Form.Item
+            {/* <Form.Item
               name="robID"
               label="机器人ID"
               rules={[{ required: true, message: '机器人ID' }]}
@@ -2994,7 +3050,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   return { label: item, value: item };
                 })}
               />
-            </Form.Item>
+            </Form.Item> */}
           </Form>
         </Modal>
       ) : null}
