@@ -153,9 +153,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
   const [selectedArea, setSelectedArea] = useState<any>(null);
   const [cameraDirection, setCameraDirection] = useState<any>([]);
 
-  const pointRef = useMemo(() => {
-    return Object.keys(value);
-  }, [value]);
+  const [pointRef, setPointRef] = useState(false);
   const theme = useMemo(() => {
     return params?.contentData?.theme || 'realDark';
   }, [params?.contentData?.theme]);
@@ -275,40 +273,44 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       return;
     } else if (!!scene.current && addType === 'rxptPoint') {
       let pointList: any = [],
-        areaIndex = 0;
+        areaIndex = 0,
+        regionIndex = 1;
       (value || []).forEach((item1: any, index: number) => {
-        Object.entries(item1)?.forEach((item2: any, index2: number) => {
-          if (!_.isArray(item2[1])) {
-            return;
-          }
+        const list1 = Object.entries(item1)?.filter(
+          (i: any) => _.isArray(i[1]) && _.isObject(i[1][0]),
+        );
+        list1?.forEach((item2: any, index2: number) => {
+          if (!_.isArray(item2[1])) return;
           (item2[1] || []).forEach((item3: any, index3: number) => {
-            if (!!item3 && !!item3?.Track && Object.keys(item3)?.length) {
-              const { Track, ...rest } = item3;
-              const list: any = [];
-              (Track || []).forEach((item4: any, index4: number) => {
-                const { Point_Normal, ...restItem4 } = item4;
-                list.push({
-                  ...rest,
-                  ...restItem4,
-                  point: Point_Normal?.slice(0, 3),
-                  normVec: Point_Normal?.slice(3),
-                  area: {
-                    area: index,
-                    rob: Number(item2[0]?.replace(/[^\d]/g, '') || '1'),
-                    index: index3,
-                  },
-                  name: item2[0],
-                  areaIndex,
-                  regionID: 1,
-                  robID: Number(item2[0]?.replace(/[^\d]/g, '') || '1'),
-                  surfaceType: item1.surfaceType,
-                  pointIndex: index4,
-                });
+            if (!item3 || !item3?.Track) return;
+            const { Track, ...rest } = item3;
+            const list: any = [];
+            (Track || []).forEach((item4: any, index4: number) => {
+              const { Point_Normal, point, normVec, ...restItem4 } = item4;
+              const po = Point_Normal?.slice(0, 3),
+                no = Point_Normal?.slice(3);
+              list.push({
+                ...rest,
+                ...restItem4,
+                point: !!point ? point : { x: po?.[0], y: po?.[1], z: po?.[2] },
+                normVec: !!normVec ? normVec : { x: no?.[0], y: no?.[1], z: no?.[2] },
+                area: {
+                  area: index,
+                  rob: Number(item2[0]?.replace(/[^\d]/g, '') || '1'),
+                  index: index3 + 1,
+                },
+                name: item2[0],
+                areaIndex,
+                regionID: regionIndex,
+                robID: Number(item2[0]?.replace(/[^\d]/g, '') || '1'),
+                surfaceType: item1.surfaceType,
+                pointIndex: index4,
               });
-              areaIndex += 1;
-              pointList = pointList.concat(list);
-            }
+            });
+            areaIndex += 1;
+            pointList = pointList.concat(list);
           });
+          regionIndex += 1;
         });
       });
       loadModel('', pointList, 'add');
@@ -836,7 +838,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       setCameraDirection([]);
       /***************清理框选区域********************/
       let pointList: any = [],
-        areaIndex = 0;
+        areaIndex = 0,
+        regionIndex = 1;
       // [
       //   {
       //     surfaceType: 'Up',
@@ -1022,40 +1025,42 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       //   },
       // ] ||
       (value || []).forEach((item1: any, index: number) => {
-        Object.entries(item1)
-          ?.filter((i: any) => _.isArray(i[1]) && _.isObject(i[1][0]))
-          ?.forEach((item2: any, index2: number) => {
-            if (!_.isArray(item2[1])) return;
-            (item2[1] || []).forEach((item3: any, index3: number) => {
-              if (!item3 || !item3?.Track) return;
-              const { Track, ...rest } = item3;
-              const list: any = [];
-              (Track || []).forEach((item4: any, index4: number) => {
-                const { Point_Normal, point, normVec, ...restItem4 } = item4;
-                const po = Point_Normal?.slice(0, 3),
-                  no = Point_Normal?.slice(3);
-                list.push({
-                  ...rest,
-                  ...restItem4,
-                  point: !!point ? point : { x: po?.[0], y: po?.[1], z: po?.[2] },
-                  normVec: !!normVec ? normVec : { x: no?.[0], y: no?.[1], z: no?.[2] },
-                  area: {
-                    area: index,
-                    rob: Number(item2[0]?.replace(/[^\d]/g, '') || '1'),
-                    index: index3 + 1,
-                  },
-                  name: item2[0],
-                  areaIndex,
-                  regionID: 1,
-                  robID: Number(item2[0]?.replace(/[^\d]/g, '') || '1'),
-                  surfaceType: item1.surfaceType,
-                  pointIndex: index4,
-                });
+        const list1 = Object.entries(item1)?.filter(
+          (i: any) => _.isArray(i[1]) && _.isObject(i[1][0]),
+        );
+        list1?.forEach((item2: any, index2: number) => {
+          if (!_.isArray(item2[1])) return;
+          (item2[1] || []).forEach((item3: any, index3: number) => {
+            if (!item3 || !item3?.Track) return;
+            const { Track, ...rest } = item3;
+            const list: any = [];
+            (Track || []).forEach((item4: any, index4: number) => {
+              const { Point_Normal, point, normVec, ...restItem4 } = item4;
+              const po = Point_Normal?.slice(0, 3),
+                no = Point_Normal?.slice(3);
+              list.push({
+                ...rest,
+                ...restItem4,
+                point: !!point ? point : { x: po?.[0], y: po?.[1], z: po?.[2] },
+                normVec: !!normVec ? normVec : { x: no?.[0], y: no?.[1], z: no?.[2] },
+                area: {
+                  area: index,
+                  rob: Number(item2[0]?.replace(/[^\d]/g, '') || '1'),
+                  index: index3 + 1,
+                },
+                name: item2[0],
+                areaIndex,
+                regionID: regionIndex,
+                robID: Number(item2[0]?.replace(/[^\d]/g, '') || '1'),
+                surfaceType: item1.surfaceType,
+                pointIndex: index4,
               });
-              areaIndex += 1;
-              pointList = pointList.concat(list);
             });
+            areaIndex += 1;
+            pointList = pointList.concat(list);
           });
+          regionIndex += 1;
+        });
       });
       loadModel('', pointList, 'add');
       return;
@@ -1096,27 +1101,32 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
   };
   // 添加轨迹点
   const addPointFun = (list: any) => {
-    (list || []).forEach((item: any, index: number) => {
-      const { point, normVec, areaIndex, regionID, robID, surfaceType } = item;
-      const scale = camera?.current?.zoom || 1.5;
-      const geometry = new THREE.SphereGeometry(scale * 10, 32, 32);
-      const material = new THREE.MeshBasicMaterial({ color: colorTran[areaIndex] });
-      const cube: any = new THREE.Mesh(geometry, material);
-      if (!!cube) {
-        cube.position.x = point?.x;
-        cube.position.y = point?.y;
-        cube.position.z = point?.z;
-        cube['normVec'] = normVec;
-        cube['areaIndex'] = areaIndex;
-        cube['regionID'] = regionID;
-        cube['robID'] = robID;
-        cube['surfaceType'] = surfaceType;
-        cube['__props'] = item;
-        cube.name = `editPoint-${index}`;
-        editableObjects.current?.push?.(cube);
-        scene.current?.add?.(cube);
-      }
-    });
+    if (list?.length) {
+      (list || []).forEach((item: any, index: number) => {
+        const { point, normVec, areaIndex, regionID, robID, surfaceType } = item;
+        const scale = camera?.current?.zoom || 1.5;
+        const geometry = new THREE.SphereGeometry(scale * 10, 32, 32);
+        const material = new THREE.MeshBasicMaterial({ color: colorTran[areaIndex] });
+        const cube: any = new THREE.Mesh(geometry, material);
+        if (!!cube) {
+          cube.position.x = point?.x;
+          cube.position.y = point?.y;
+          cube.position.z = point?.z;
+          cube['normVec'] = normVec;
+          cube['areaIndex'] = areaIndex;
+          cube['regionID'] = regionID;
+          cube['robID'] = robID;
+          cube['surfaceType'] = surfaceType;
+          cube['__props'] = item;
+          cube.name = `editPoint-${index}`;
+          editableObjects.current?.push?.(cube);
+          scene.current?.add?.(cube);
+        }
+      });
+      setPointRef(true);
+    } else {
+      setPointRef(false);
+    }
   };
   // 获取场景中的全部模型对象
   function getAllModelsFromScene(scene: any, filterName?: string) {
@@ -2519,7 +2529,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             }
           </Tooltip>
           {modelUpload ? (
-            pointRef?.length ? (
+            pointRef ? (
               <Button
                 onClick={() => {
                   const points = getAllModelsFromScene(scene.current, 'editPoint');
@@ -2536,6 +2546,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     if (!!position) {
                       const { index } = __props?.area;
                       const options = {
+                        name: point.name,
                         point: position,
                         normVec,
                         regionID,
@@ -3025,7 +3036,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
               <Measurement />
             </Form.Item>
             <Form.Item name="regionID" label="排序" rules={[{ required: true, message: '排序' }]}>
-              <InputNumber min={1} max={6} />
+              <InputNumber min={1} max={18} />
             </Form.Item>
             {/* <Form.Item
               name="robID"

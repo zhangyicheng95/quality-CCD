@@ -36,8 +36,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
   const [fileSelect, setFileSelect] = useState<any>([]);
 
   useEffect(() => {
-    console.log('拿到的：', dataValue);
-    if (!!dataValue?.action && dataValue.action === 1) {
+    if (dataValue?.action == 1) {
       itemClicked.current = 0;
     }
   }, [dataValue]);
@@ -64,6 +63,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
       if (!fetchType || !xName) return;
       btnFetch(fetchType, xName, { data: prev }).then((res: any) => {
         if (res && res.code === 'SUCCESS') {
+          itemClicked.current += 1;
           message.success('上传成功');
           onCancel();
         } else {
