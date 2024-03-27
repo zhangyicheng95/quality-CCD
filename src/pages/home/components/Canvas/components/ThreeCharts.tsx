@@ -1981,7 +1981,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
           if (type === 'download') {
             var link = document.createElement('a');
             link.href = imageDataURL;
-            link.download = `output_${uuid()}.png`;
+            link.download = `output_${guid()}.png`;
             link.click();
           }
           maskBox.style.display = maskStatus;
@@ -2011,7 +2011,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       //     if (type === 'download') {
       //         var link = document.createElement('a');
       //         link.href = imageDataURL;
-      //         link.download = `output_${uuid()}.png`;
+      //         link.download = `output_${guid()}.png`;
       //         link.click();
       //     }
       //     // 将射线显示回来
