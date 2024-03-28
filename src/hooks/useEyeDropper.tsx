@@ -1,38 +1,38 @@
-import { hexToRGB } from "@/utils/utils";
-import { useCallback, useMemo, useState } from "react";
+import { hexToRGB } from '@/utils/utils';
+import { useCallback, useMemo, useState } from 'react';
 
 type EyeDropper = {
-    open: (options?: { signal?: AbortSignal }) => Promise<{ sRGBHex: string | undefined }>;
+  open: (options?: { signal?: AbortSignal }) => Promise<{ sRGBHex: string | undefined }>;
 };
 
 export default function useEyeDropper(
-    init?: string,
+  init?: string,
 ): [
-        state: { canUse: boolean; color: string },
-        action: (signal?: AbortSignal | undefined) => Promise<string | undefined>,
-    ] {
-    const canUse = useMemo(function () {
-        return Object.prototype.hasOwnProperty.call(window, 'EyeDropper');
-    }, []);
-    const [color, setColor] = useState(init ?? '');
+  state: { canUse: boolean; color: string },
+  action: (signal?: AbortSignal | undefined) => Promise<string | undefined>,
+] {
+  const canUse = useMemo(function () {
+    return Object.prototype.hasOwnProperty.call(window, 'EyeDropper');
+  }, []);
+  const [color, setColor] = useState(init ?? '');
 
-    const open = useCallback(
-        async function (signal?: AbortSignal) {
-            if (!canUse) return;
-            let res: any = null;
-            try {
-                const eyeDropper: EyeDropper = new (window as any).EyeDropper();
-                if (!eyeDropper) return '';
-                res = await eyeDropper.open({ signal });
-                res.sRGBHex && setColor(res.sRGBHex);
-                alert(`点击位置的灰度值为：${hexToRGB(res.sRGBHex)}`);
-            } catch (err) {
-                console.error(err);
-            }
-            return !!res ? res.sRGBHex : '';
-        },
-        [canUse],
-    );
+  const open = useCallback(
+    async function (signal?: AbortSignal) {
+      if (!canUse) return;
+      let res: any = null;
+      try {
+        const eyeDropper: EyeDropper = new (window as any).EyeDropper();
+        if (!eyeDropper) return '';
+        res = await eyeDropper.open({ signal });
+        res.sRGBHex && setColor(res.sRGBHex);
+        alert(`点击位置的灰度值为：${hexToRGB(res.sRGBHex)}`);
+      } catch (err) {
+        console.error(err);
+      }
+      return !!res ? res.sRGBHex : '';
+    },
+    [canUse],
+  );
 
-    return [{ canUse, color }, open];
-};
+  return [{ canUse, color }, open];
+}

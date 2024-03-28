@@ -225,7 +225,9 @@ export const layout: RunTimeLayoutConfig = (props) => {
         : null,
       title: initialState?.title || 'UBVision',
     },
-    location.hash?.indexOf('inIframe') > -1
+    location.hash?.indexOf('inIframe') > -1 ||
+      (_.isBoolean(initialState?.params?.contentData?.showHeader) &&
+        !initialState?.params?.contentData?.showHeader)
       ? {
           headerRender: () => null,
           headerHeight: 0,

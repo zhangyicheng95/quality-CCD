@@ -1,11 +1,11 @@
-import { getAllProject, getListStatusService } from "@/services/api";
-import { message, } from "antd";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { getAllProject, getListStatusService } from '@/services/api';
+import { message } from 'antd';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as _ from 'lodash';
-import styles from "./index.module.less";
-import { connect } from "umi";
-import { getUserData } from "@/utils/utils";
-import { useReloadAfterStationary } from "@/hooks/useReloadAfterStationary";
+import styles from './index.module.less';
+import { connect } from 'umi';
+import { getUserData } from '@/utils/utils';
+import { useReloadAfterStationary } from '@/hooks/useReloadAfterStationary';
 
 const HomeLayout: React.FC<any> = (props) => {
   const { children, initialState = {}, setInitialState, dispatch } = props;
@@ -26,24 +26,27 @@ const HomeLayout: React.FC<any> = (props) => {
     if (isVision) return;
     setHasInit(true);
     try {
-      const list = JSON.parse(localStorage.getItem("ipUrlList") || JSON.stringify([{ name: '本地服务', value: 'localhost:8866' }]));
+      const list = JSON.parse(
+        localStorage.getItem('ipUrlList') ||
+          JSON.stringify([{ name: '本地服务', value: 'localhost:8866' }]),
+      );
       if (!!list.length) {
         loopGetProjects(0, list[0], list);
       } else {
         dispatch({
           type: 'themeStore/projectListAction',
-          payload: [{ name: '本地服务', value: 'localhost:8866' }]
+          payload: [{ name: '本地服务', value: 'localhost:8866' }],
         });
       }
     } catch (e) {
       console.log('ipUrlList有问题', e);
-      localStorage.removeItem("ipUrlList");
+      localStorage.removeItem('ipUrlList');
     }
 
     return () => {
       timerRef.current && clearTimeout(timerRef.current);
       setHasInit(false);
-    }
+    };
   }, []);
   // 循环获取项目列表
   const loopGetProjects = (index: number, data: any, list: any) => {
@@ -63,7 +66,7 @@ const HomeLayout: React.FC<any> = (props) => {
         setProjectList((prev) => prev.concat(result));
         dispatch({
           type: 'themeStore/projectListAction',
-          payload: { label: data.name, options: result }
+          payload: { label: data.name, options: result },
         });
       } else {
         message.error(res?.msg || res?.message || '接口异常');
@@ -88,7 +91,7 @@ const HomeLayout: React.FC<any> = (props) => {
           setHasInit((prev: any) => {
             if (prev) {
               loopGetStatus(list);
-            };
+            }
             return prev;
           });
         }, 2500);
@@ -98,18 +101,18 @@ const HomeLayout: React.FC<any> = (props) => {
             ...item,
             running: _.isObject(res?.data) && !_.isEmpty(res?.data[value]),
           };
-        })
+        });
         setList(result);
         dispatch({
           type: 'themeStore/statusAction',
-          payload: result
+          payload: result,
         });
       } else {
         message.error(res?.message || '接口异常');
         setList(list);
         dispatch({
           type: 'themeStore/statusAction',
-          payload: list
+          payload: list,
         });
       }
     });
@@ -135,36 +138,37 @@ const HomeLayout: React.FC<any> = (props) => {
         setInitialState((preInitialState: any) => ({
           ...preInitialState,
           params: {
-            ...params, contentData: {
+            ...params,
+            contentData: {
               ...params?.contentData,
-              ipList: data
-            }
-          }
+              ipList: data,
+            },
+          },
         }));
-      } catch (err) { }
+      } catch (err) {}
     } else {
       if (!!name) {
-        const list = [
-          { label: name, name: name, children: null, key: id },
-        ];
+        const list = [{ label: name, name: name, children: null, key: id }];
         setInitialState((preInitialState: any) => ({
           ...preInitialState,
           params: {
-            ...params, contentData: {
+            ...params,
+            contentData: {
               ...params?.contentData,
-              ipList: list
-            }
-          }
+              ipList: list,
+            },
+          },
         }));
       } else {
         setInitialState((preInitialState: any) => ({
           ...preInitialState,
           params: {
-            ...params, contentData: {
+            ...params,
+            contentData: {
               ...params?.contentData,
-              ipList: []
-            }
-          }
+              ipList: [],
+            },
+          },
         }));
       }
     }
@@ -181,18 +185,16 @@ const HomeLayout: React.FC<any> = (props) => {
       location.href = `${location.href?.split('#/')?.[0]}#/home${!!hash ? `?${hash}` : ''}`;
       window.location.reload();
     });
-  };
+  }
   // 一个小时无操作的话，自动刷新重连，防止socket不推送数据
   useReloadAfterStationary({ wait: 1000 * 60 * 60, interval: 1000 * 60 }, () => {
     window.location.reload();
   });
-
+  window.focus();
   return (
     <div className={styles.reportWrap}>
       <div className="box flex-box">
-        <div className="content-box">
-          {children}
-        </div>
+        <div className="content-box">{children}</div>
       </div>
     </div>
   );

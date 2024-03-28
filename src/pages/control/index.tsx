@@ -1221,10 +1221,9 @@ export const FormatWidgetToDom: any = (props: any) => {
               {(options || []).map((option: any) => {
                 const { id, name } = option;
                 return (
-                  //@ts-ignore
-                  <Option key={name} value={name} propsKey={JSON.stringify(option)}>
+                  <Select.Option key={name} value={name} propsKey={JSON.stringify(option)}>
                     {name}
-                  </Option>
+                  </Select.Option>
                 );
               })}
             </Select>

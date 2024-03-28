@@ -47,27 +47,29 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
       return;
     }
     if (!yName) return;
+    itemClicked.current += 1;
     btnFetch('get', yName, {}).then((res: any) => {
       if (res && res.code === 'SUCCESS') {
-        itemClicked.current += 1;
         setDefectSelect(res.data);
         setDefect(xColumns?.[0]?.value);
         setVisible(true);
       } else {
         message.error(res?.msg || res?.message || '接口异常');
+        itemClicked.current = 0;
       }
     });
   };
   const onUpload = () => {
     setDefectSelect((prev: any) => {
       if (!fetchType || !xName) return;
+      itemClicked.current += 1;
       btnFetch(fetchType, xName, { data: prev }).then((res: any) => {
         if (res && res.code === 'SUCCESS') {
-          itemClicked.current += 1;
           message.success('上传成功');
           onCancel();
         } else {
           message.error(res?.msg || res?.message || '接口异常');
+          itemClicked.current = 0;
         }
       });
 
@@ -80,13 +82,14 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
       return;
     }
     if (!fileFetch) return;
+    itemClicked.current += 1;
     btnFetch(fetchType, fileFetch, { data: fileSelect }).then((res: any) => {
       if (res && res.code === 'SUCCESS') {
-        itemClicked.current += 1;
         message.success('上传成功');
         onCancel();
       } else {
         message.error(res?.msg || res?.message || '接口异常');
+        itemClicked.current = 0;
       }
     });
   };
@@ -98,13 +101,14 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
         return;
       }
       if (!fetchType || !xName) return;
+      itemClicked.current += 1;
       // 触发接口传OK
       btnFetch(fetchType, xName, { data: {} }).then((res: any) => {
         if (res && res.code === 'SUCCESS') {
-          itemClicked.current += 1;
           message.success('上传成功');
         } else {
           message.error(res?.msg || res?.message || '接口异常');
+          itemClicked.current = 0;
         }
       });
     } else if (key === '4') {

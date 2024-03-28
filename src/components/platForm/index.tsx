@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { message, Modal, } from 'antd';
+import { message, Modal } from 'antd';
 import * as _ from 'lodash';
 import styles from './index.less';
 import MarkCanvas from './MarkCanvas';
@@ -12,39 +12,34 @@ interface Props {
 }
 
 const PlatFormModal: React.FC<Props> = (props) => {
-  const {
-    data,
-    visible,
-    onOk,
-    onCancel,
-  } = props;
+  const { data, visible, onOk, onCancel } = props;
   const { inHome } = data;
   const [getDataFun, setGetDataFun] = useState<any>({ feat: null, pen: null });
   const [selectedFeature, setSelectedFeature] = useState(0);
 
   return (
     <Modal
-      title='数据标注'
-      width={inHome ? "100%" : "calc(100vw - 48px)"}
-      wrapClassName={inHome ? styles["plat-form-modal1"] : styles["plat-form-modal"]}
+      title="数据标注"
+      width={inHome ? '100%' : 'calc(100vw - 48px)'}
+      wrapClassName={inHome ? styles['plat-form-modal1'] : styles['plat-form-modal']}
       centered
       open={visible}
       maskClosable={false}
       onOk={() => {
         if (!!selectedFeature) {
-          message.warning("请先保存设置框");
-          return false;
+          message.warning('请先保存设置框');
+          return;
         }
-        const { feat, pen, zoom, value, } = getDataFun;
+        const { feat, pen, zoom, value } = getDataFun;
         const data1 = ((feat && feat().map((item: any) => _.omit(item, 'layer'))) || [])
           .map((item: any) => {
             const { id, props, type, shape } = item;
             if (type === 'LINE') {
-              if (!shape?.start?.x || !shape?.end?.x) {
+              if (!_.isNumber(shape?.start?.x) || !_.isNumber(shape?.end?.x)) {
                 return null;
               }
             } else if (type === 'RECT') {
-              if (!shape?.x || !shape?.width) {
+              if (!_.isNumber(shape?.x) || !shape?.width) {
                 return null;
               }
             } else if (type === 'CIRCLE') {
@@ -52,18 +47,26 @@ const PlatFormModal: React.FC<Props> = (props) => {
                 return null;
               }
             } else if (type === 'POINT') {
-              if (!shape?.x || !shape?.y || !shape?.sr) {
+              if (!_.isNumber(shape?.x) || !_.isNumber(shape?.y) || !shape?.sr) {
                 return null;
               }
-            };
+            }
             return Object.assign({}, item, {
-              props: Object.assign({}, props, {
-                initParams: _.omit(value?.[id], '旋转角度'),
-              }, !!value?.[id]?.option_type ? {
-                label: value?.[id]?.option_type?.value
-              } : {})
+              props: Object.assign(
+                {},
+                props,
+                {
+                  initParams: _.omit(value?.[id], '旋转角度'),
+                },
+                !!value?.[id]?.option_type
+                  ? {
+                      label: value?.[id]?.option_type?.value,
+                    }
+                  : {},
+              ),
             });
-          }).filter(Boolean);
+          })
+          .filter(Boolean);
         let ifCangoOn = true;
         try {
           data1.forEach((item: any) => {
@@ -74,91 +77,115 @@ const PlatFormModal: React.FC<Props> = (props) => {
               throw new Error();
             }
           });
-        } catch (err) {
-
-        }
+        } catch (err) {}
         if (!ifCangoOn) {
           message.error('画框未进行标注，请返回标注');
           return;
         }
         const data2 = (pen && pen()) || [];
-        const params = Object.assign({}, data,
-          {
-            zoom,
-            platFormValue: _.uniqBy(data1, 'id').concat(data2),
-            value: _.uniqBy(data1, 'id').concat(data2).map((item: any) => {
+        const params = Object.assign({}, data, {
+          zoom,
+          platFormValue: _.uniqBy(data1, 'id').concat(data2),
+          value: _.uniqBy(data1, 'id')
+            .concat(data2)
+            .map((item: any) => {
               const { props, shape, type, id } = item;
               const { initParams = {} } = props;
               const initValue = Object.entries(initParams)?.reduce((pre: any, cen: any) => {
-                return Object.assign({}, pre, (cen[0] === 'roi') ?
-                  (!!cen[1]?.realValue?.x ?
-                    {
-                      [cen[0]]: Object.assign({}, {
-                        cx: {
-                          alias: "cx",
-                          value: Number(cen[1]?.realValue?.x?.value?.toFixed(2))
-                        },
-                        cy: {
-                          alias: "cy",
-                          value: Number(cen[1]?.realValue?.y?.value?.toFixed(2))
-                        },
-                      }, type === 'RECT' ? Object.assign(
-                        {
-                          width: { alias: 'width', value: Number(cen[1]?.realValue?.width?.value?.toFixed(2)) },
-                          height: { alias: 'height', value: Number(cen[1]?.realValue?.height?.value?.toFixed(2)) }
-                        },
-                        props?.type === 'AXIS' ?
-                          {
-                            xLength: { alias: 'xLength', value: Number(cen[1]?.realValue?.xLength?.value?.toFixed(2)) },
-                            yLength: { alias: 'yLength', value: Number(cen[1]?.realValue?.yLength?.value?.toFixed(2)) },
-                          }
-                          : {}
-                      ) : {
-                        ..._.omit(_.omit(cen[1]?.realValue, "x"), "y"),
-                      })
-                    }
-                    : {})
-                  :
-                  { [cen[0]]: cen[1]?.value },
-                  { localPath: data.localPath });
+                return Object.assign(
+                  {},
+                  pre,
+                  cen[0] === 'roi'
+                    ? !!cen[1]?.realValue?.x
+                      ? {
+                          [cen[0]]: Object.assign(
+                            {},
+                            {
+                              cx: {
+                                alias: 'cx',
+                                value: Number(cen[1]?.realValue?.x?.value?.toFixed(2)),
+                              },
+                              cy: {
+                                alias: 'cy',
+                                value: Number(cen[1]?.realValue?.y?.value?.toFixed(2)),
+                              },
+                            },
+                            type === 'RECT'
+                              ? Object.assign(
+                                  {
+                                    width: {
+                                      alias: 'width',
+                                      value: Number(cen[1]?.realValue?.width?.value?.toFixed(2)),
+                                    },
+                                    height: {
+                                      alias: 'height',
+                                      value: Number(cen[1]?.realValue?.height?.value?.toFixed(2)),
+                                    },
+                                  },
+                                  props?.type === 'AXIS'
+                                    ? {
+                                        xLength: {
+                                          alias: 'xLength',
+                                          value: Number(
+                                            cen[1]?.realValue?.xLength?.value?.toFixed(2),
+                                          ),
+                                        },
+                                        yLength: {
+                                          alias: 'yLength',
+                                          value: Number(
+                                            cen[1]?.realValue?.yLength?.value?.toFixed(2),
+                                          ),
+                                        },
+                                      }
+                                    : {},
+                                )
+                              : {
+                                  ..._.omit(_.omit(cen[1]?.realValue, 'x'), 'y'),
+                                },
+                          ),
+                        }
+                      : {}
+                    : { [cen[0]]: cen[1]?.value },
+                  { localPath: data.localPath },
+                );
               }, {});
               if (type === 'RECT') {
                 return {
                   // id,
-                  type: props.type || "RECT",
+                  type: props.type || 'RECT',
                   roi: {
-                    cx: { alias: "cx", value: shape.x + shape.width / 2 },
-                    cy: { alias: "cy", value: shape.y + shape.height / 2 },
-                    width: { alias: "width", value: Number(shape.width?.toFixed(2)) },
-                    height: { alias: "height", value: Number(shape.height?.toFixed(2)) }
+                    cx: { alias: 'cx', value: shape.x + shape.width / 2 },
+                    cy: { alias: 'cy', value: shape.y + shape.height / 2 },
+                    width: { alias: 'width', value: Number(shape.width?.toFixed(2)) },
+                    height: { alias: 'height', value: Number(shape.height?.toFixed(2)) },
                   },
-                  ...initValue
-                }
+                  ...initValue,
+                };
               } else if (type === 'LINE') {
                 return {
                   // id,
-                  type: "LINE",
+                  type: 'LINE',
                   roi: shape,
-                  ...initValue
-                }
+                  ...initValue,
+                };
               } else if (type === 'CIRCLE') {
                 return {
                   // id,
-                  type: "CIRCLE",
+                  type: 'CIRCLE',
                   roi: shape,
-                  ...initValue
-                }
+                  ...initValue,
+                };
               } else if (type === 'POINT') {
                 return {
                   // id,
-                  type: "POINT",
+                  type: 'POINT',
                   roi: shape,
-                  ...initValue
-                }
+                  ...initValue,
+                };
               }
-            }).filter(Boolean)
-          }
-        );
+            })
+            .filter(Boolean),
+        });
         console.log(params);
         onOk?.(params);
       }}
