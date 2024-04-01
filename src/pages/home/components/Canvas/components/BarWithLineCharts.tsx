@@ -24,7 +24,7 @@ const colorOption = [
   '#ea7ccc',
 ];
 
-const BarCharts: React.FC<Props> = (props: any) => {
+const BarWithLineCharts: React.FC<Props> = (props: any) => {
   let myChart: any = null;
   const { data = {}, id, setMyChartVisible } = props;
   let { dataValue = [], yName, xName = '', direction, align, barColor = [] } = data;
@@ -96,37 +96,35 @@ const BarCharts: React.FC<Props> = (props: any) => {
       },
       grid: Object.assign(
         options.grid,
-        { top: '40px' },
+        { top: '50px' },
         align === 'right'
           ? {
               left: `${xName?.length * (xName?.length < 4 ? 24 : 16)}px`,
               right: '3%',
             }
           : {
+              left: '16px',
               right: `${xName?.length * (xName?.length < 4 ? 24 : 16)}px`,
             },
       ),
-      yAxis: Object.assign(
-        {},
-        options.yAxis,
+      yAxis: [
+        { show: false },
         {
-          axisLabel: {
-            show: false,
-          },
-        },
-        {
+          ...options.yAxis,
           type: direction === 'rows' ? 'category' : 'value',
           name: direction === 'rows' ? xName : yName,
           boundaryGap: ['5%', '5%'],
+          axisLabel: { show: false },
+          splitLine: { show: false },
           splitNumber: 3,
           scale: false,
           position: align || 'left',
           axisTick: { show: false },
+          ...(direction === 'rows'
+            ? { data: yData }
+            : { min: threshold_start, max: threshold_end || (maxValue * 1.05).toFixed(1) }),
         },
-        direction === 'rows'
-          ? { data: yData }
-          : { min: threshold_start, max: threshold_end || (maxValue * 1.05).toFixed(1) },
-      ),
+      ],
       xAxis: Object.assign(
         {},
         options.xAxis,
@@ -158,7 +156,10 @@ const BarCharts: React.FC<Props> = (props: any) => {
             padding: [0, 0, 0, 12],
             fontSize: 14,
           },
-          stack: 'total',
+          showBackground: true,
+          backgroundStyle: {
+            color: 'rgba(180, 180, 180, 0.2)',
+          },
           data: seriesData.map((item: any, index: number) => {
             const { value, color } = item;
             var colorList = ['rgba(39,97,235,0.8)', 'rgba(56,200,234,0.8)'];
@@ -220,22 +221,15 @@ const BarCharts: React.FC<Props> = (props: any) => {
           ...(barColor.includes('default') ? { colorBy: 'data' } : {}),
         },
         {
-          type: 'bar',
-          itemStyle: {
-            normal: {
-              label: {
-                show: true,
-                position: direction === 'rows' ? 'insideRight' : 'insideTop',
-                formatter: '{b}',
-                padding: [0, 12, 0, 0],
-                fontSize: 14,
-              },
-              color: 'rgba(180, 180, 180, 0.2)',
-            },
+          name: 'name',
+          type: 'line',
+          tooltip: {
+            show: false,
           },
-          tooltip: { show: false },
-          stack: 'total',
-          data: seriesData.map(() => max),
+          data: seriesData.map((item: any, index: number) => {
+            const { value } = item;
+            return value;
+          }),
         },
       ],
     });
@@ -289,4 +283,4 @@ const BarCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default BarCharts;
+export default BarWithLineCharts;

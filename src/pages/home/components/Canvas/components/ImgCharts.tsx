@@ -12,6 +12,7 @@ import {
   SwapOutlined,
 } from '@ant-design/icons';
 import html2canvas from 'html2canvas';
+import TooltipDiv from '@/components/TooltipDiv';
 
 interface Props {
   data: any;
@@ -25,6 +26,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     defaultImg,
     dataValue,
     showImgList,
+    showFooter,
     comparison,
     magnifierSize = 6,
     markNumber,
@@ -35,7 +37,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
 
   if (process.env.NODE_ENV === 'development' && !dataValue) {
     dataValue =
-      'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
+      'https://ts1.cn.mm.bing.net/th/id/R-C.6195f97cbda5adc5c5a20bd54f8f1787?rik=DCKWcoAcSLKKLQ&riu=http%3a%2f%2fimg1.xcarimg.com%2fnews%2f3305%2f3308%2f4390%2f20110810232606712965.jpg-908x681.jpg&ehk=eHQs4fbLytZQlYDb9EngsqDxiiZ0VXw62bpt2YZS7jI%3d&risl=&pid=ImgRaw&r=0';
   }
   const ifCanEdit = useMemo(() => {
     return location.hash.indexOf('edit') > -1;
@@ -502,6 +504,35 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                   {type}
                 </div>
               </div>
+            );
+          })}
+        </div>
+      ) : null}
+      {showFooter ? ( //&& _.isObject(source)
+        <div className="flex-box-justify-between img-box-footer-list2">
+          {(
+            Object.entries({
+              position: { label: '', value: '右' },
+              carType: { label: '车型', value: '206_2' },
+              url: 'http://',
+              point: { label: '点位', value: '8' },
+              status: { label: '', value: 'OK' },
+            }) || []
+          ).map((item: any) => {
+            if (item[0] == 'url') {
+              return null;
+            }
+            return (
+              <TooltipDiv className="flex-box img-box-footer-list2-item">
+                {
+                  // @ts-ignore
+                  _.isObject(item[1]) && !!item[1]?.label ? `${item[1]?.label}：` : ''
+                }
+                {
+                  // @ts-ignore
+                  _.isObject(item[1]) ? item[1]?.value : item[1]
+                }
+              </TooltipDiv>
             );
           })}
         </div>

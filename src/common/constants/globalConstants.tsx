@@ -5,6 +5,7 @@ import imgsIcon from '@/assets/dashboard-imgs/imgs.png';
 import lineIcon from '@/assets/dashboard-imgs/line.png';
 import pointIcon from '@/assets/dashboard-imgs/point.png';
 import barIcon from '@/assets/dashboard-imgs/bar.png';
+import barWithLineIcon from '@/assets/dashboard-imgs/bar-with-line.png';
 import pieIcon from '@/assets/dashboard-imgs/pie.png';
 import tableIcon from '@/assets/dashboard-imgs/table.png';
 import table2Icon from '@/assets/dashboard-imgs/table2.png';
@@ -31,6 +32,8 @@ import modalIcon from '@/assets/dashboard-imgs/modal.png';
 import imgButtonIcon from '@/assets/dashboard-imgs/img_button.png';
 import buttonImagesIcon from '@/assets/dashboard-imgs/buttonImages.png';
 import iframeIcon from '@/assets/dashboard-imgs/iframe.png';
+import dataHeaderImage from '@/assets/images/header-bg.png';
+import dataHomeImage from '@/assets/images/home-bg.png';
 
 export const layoutTransform = {
   0: { i: '0', x: 0, y: 0, w: 5, h: 20, minW: 2, maxW: 10, minH: 4, maxH: 32 },
@@ -75,6 +78,11 @@ export const windowTypeList: any = [
     value: 'bar',
     label: '柱状图窗口',
     icon: barIcon,
+  },
+  {
+    value: 'barWithLine',
+    label: '折柱混合窗口',
+    icon: barWithLineIcon,
   },
   {
     value: 'pie',
@@ -195,6 +203,11 @@ export const windowTypeList: any = [
 // 默认基础组件
 export const basicWindowList: any = [
   {
+    value: 'header',
+    label: '数据头部',
+    icon: dataHeaderImage,
+  },
+  {
     value: 'slider-1',
     label: '功能按钮',
     icon: slider1Icon,
@@ -218,19 +231,9 @@ export const basicWindowList: any = [
 // 仿真涂层-背景图
 export const simulatedCoatingList: any = [
   {
-    value: 'tbj',
-    label: '涂布机仿真',
-    icon: slider4Icon,
-  },
-  {
-    value: 'dpj',
-    label: '叠片机仿真',
-    icon: footer1Icon,
-  },
-  {
-    value: 'gyj',
-    label: '辊压机仿真',
-    icon: gunyaIcon,
+    value: 'bg1',
+    label: '大屏背景图',
+    icon: dataHomeImage,
   },
 ];
 export const logColors = {

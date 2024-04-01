@@ -67,7 +67,11 @@ import ChartPreviewModal from '@/pages/home/components/Canvas/components/ChartPr
 import LogPreviewModal from '@/pages/home/components/Canvas/components/LogPreviewModal';
 import { useThrottleAndMerge } from '@/utils/useThrottleAndMerge';
 import FileManager from '@/components/FileManager';
-import { basicWindowList, windowTypeList } from '@/common/constants/globalConstants';
+import {
+  basicWindowList,
+  simulatedCoatingList,
+  windowTypeList,
+} from '@/common/constants/globalConstants';
 import { getuid, guid } from '@/utils/utils';
 import moment from 'moment';
 import leftIcon from '@/assets/imgs/left-icon.svg';
@@ -88,6 +92,13 @@ import ButtonImagesCharts from './components/ButtonImagesCharts';
 import AlertImgCharts from './components/AlertImgCharts';
 import ButtonUploadCharts from './components/ButtonUploadCharts';
 import IframeCharts from './components/IframeCharts';
+import dataHeaderImage from '@/assets/images/header-bg.png';
+import dataItemImage1 from '@/assets/images/item-bg-1.png';
+import dataItemImage2 from '@/assets/images/item-bg-2.png';
+import dataItemImage3 from '@/assets/images/item-bg-3.png';
+import dataItemImageNG from '@/assets/images/item-bg-ng.png';
+import HeaderCharts from './components/HeaderCharts';
+import BarWithLineCharts from './components/BarWithLineCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -126,15 +137,17 @@ const Home: React.FC<any> = (props: any) => {
   const [logDataVisible, setLogDataVisible] = useState('');
   const [homeSettingVisible, setHomeSettingVisible] = useState('');
   const [homeSettingData, setHomeSettingData] = useState({
-    'slider-1': { des_column: 1, ifShowHeader: false },
+    header: { fontSize: 20, headerTitle: '', headerName: '', backgroundColor: 'default' },
+    'slider-1': { des_column: 1, ifShowHeader: false, backgroundColor: 'default' },
     'slider-4': {
       fontSize: 20,
       ifShowHeader: false,
+      backgroundColor: 'default',
       show_start_end: false,
       self_stop_other: false,
     },
-    'footer-1': { fontSize: 14, ifShowHeader: false, logSize: 50 },
-    'footer-2': { fontSize: 20, ifShowHeader: false, logSize: 50 },
+    'footer-1': { fontSize: 14, ifShowHeader: false, backgroundColor: 'default', logSize: 50 },
+    'footer-2': { fontSize: 20, ifShowHeader: false, backgroundColor: 'default', logSize: 50 },
   });
   const [basicInfoData, setBasicInfoData] = useState<any>([]);
   const [pageIconPosition, setPageIconPosition] = useState<any>({
@@ -155,12 +168,12 @@ const Home: React.FC<any> = (props: any) => {
       open: true,
       children: basicWindowList,
     },
-    // {
-    //   key: 'coating',
-    //   title: '背景涂层',
-    //   open: true,
-    //   children: simulatedCoatingList
-    // }
+    {
+      key: 'coating',
+      title: '背景涂层',
+      open: true,
+      children: simulatedCoatingList,
+    },
   ]);
   const [tabNum, setTabNum] = useState(0);
 
@@ -192,8 +205,61 @@ const Home: React.FC<any> = (props: any) => {
   // 基础组件
   const gridList = useMemo(
     () => [
+      <div key={'header'}>
+        <div
+          className="header-box drag-item-content-box background-ubv"
+          style={Object.assign(
+            {},
+            { fontSize: homeSettingData['header']?.fontSize },
+            homeSettingData['header']?.backgroundColor === 'default'
+              ? {}
+              : homeSettingData['header']?.backgroundColor === 'transparent'
+              ? { backgroundColor: 'transparent' }
+              : {
+                  backgroundImage: `url(${homeSettingData['header']?.backgroundColor})`,
+                  backgroundColor: 'transparent',
+                },
+          )}
+        >
+          <div className={`flex-box-justify-between header-box-body`}>
+            <HeaderCharts homeSettingData={homeSettingData} started={started} />
+          </div>
+          {ifCanEdit ? (
+            <div
+              className="flex-box-center drag-item-content-mask common-card-title"
+              onDoubleClick={() => {
+                // 双击事件触发的操作
+                if (!!addWindowVisible || !!homeSettingVisible) {
+                  setAddWindowVisible('');
+                  setHomeSettingVisible('');
+                }
+                setFieldsValue(homeSettingData?.['header']);
+                setHomeSettingVisible('header');
+              }}
+            >
+              <Popconfirm
+                title="确认删除监控窗口吗?"
+                onConfirm={() => deleteBasic('header')}
+                okText="确认"
+                cancelText="取消"
+              >
+                <DeleteOutlined className="drag-item-content-mask-icon" />
+              </Popconfirm>
+            </div>
+          ) : null}
+        </div>
+      </div>,
       <div key={'slider-1'}>
-        <div className="btn-box drag-item-content-box background-ubv">
+        <div
+          className="btn-box drag-item-content-box background-ubv"
+          style={
+            homeSettingData['slider-1']?.backgroundColor === 'default'
+              ? {}
+              : homeSettingData['slider-1']?.backgroundColor === 'transparent'
+              ? { backgroundColor: 'transparent' }
+              : { backgroundImage: homeSettingData['slider-1']?.backgroundColor }
+          }
+        >
           {homeSettingData['slider-1']?.ifShowHeader ? (
             <div className={`common-card-title-box flex-box `}>
               <div className="flex-box common-card-title">
@@ -308,7 +374,7 @@ const Home: React.FC<any> = (props: any) => {
                   setAddWindowVisible('');
                   setHomeSettingVisible('');
                 }
-                setFieldsValue({ des_column: homeSettingData?.['slider-1']?.des_column || 1 });
+                setFieldsValue(homeSettingData?.['slider-1']);
                 setHomeSettingVisible('slider-1');
               }}
             >
@@ -325,7 +391,16 @@ const Home: React.FC<any> = (props: any) => {
         </div>
       </div>,
       <div key={'slider-4'}>
-        <div className="info-box message-box drag-item-content-box background-ubv">
+        <div
+          className="info-box message-box drag-item-content-box background-ubv"
+          style={
+            homeSettingData['slider-4']?.backgroundColor === 'default'
+              ? {}
+              : homeSettingData['slider-4']?.backgroundColor === 'transparent'
+              ? { backgroundColor: 'transparent' }
+              : { backgroundImage: homeSettingData['slider-4']?.backgroundColor }
+          }
+        >
           {homeSettingData['slider-4']?.ifShowHeader ? (
             <div className="common-card-title-box flex-box ">
               <div className="flex-box common-card-title">方案列表</div>
@@ -334,7 +409,7 @@ const Home: React.FC<any> = (props: any) => {
           <div
             className={`flex-box info-box-content tabs-box`}
             style={{
-              ...homeSettingData?.['slider-4'],
+              fontSize: homeSettingData['slider-4']?.fontSize || 'inherit',
             }}
           >
             {!!paramData?.contentData?.ipList?.length &&
@@ -456,7 +531,7 @@ const Home: React.FC<any> = (props: any) => {
                   setAddWindowVisible('');
                   setHomeSettingVisible('');
                 }
-                setFieldsValue({ fontSize: homeSettingData?.['slider-4']?.fontSize || 20 });
+                setFieldsValue(homeSettingData?.['slider-4']);
                 setHomeSettingVisible('slider-4');
               }}
             >
@@ -473,7 +548,16 @@ const Home: React.FC<any> = (props: any) => {
         </div>
       </div>,
       <div key={'footer-1'}>
-        <div className="log-content message-box drag-item-content-box background-ubv">
+        <div
+          className="log-content message-box drag-item-content-box background-ubv"
+          style={
+            homeSettingData['footer-1']?.backgroundColor === 'default'
+              ? {}
+              : homeSettingData['footer-1']?.backgroundColor === 'transparent'
+              ? { backgroundColor: 'transparent' }
+              : { backgroundImage: homeSettingData['footer-1']?.backgroundColor }
+          }
+        >
           {homeSettingData['footer-1']?.ifShowHeader ? (
             <div className="common-card-title-box flex-box ">
               <div className="flex-box common-card-title">日志信息</div>
@@ -510,7 +594,7 @@ const Home: React.FC<any> = (props: any) => {
                   setAddWindowVisible('');
                   setHomeSettingVisible('');
                 }
-                setFieldsValue({ fontSize: homeSettingData?.['footer-1']?.fontSize || 14 });
+                setFieldsValue(homeSettingData?.['footer-1']);
                 setHomeSettingVisible('footer-1');
               }}
             >
@@ -527,7 +611,16 @@ const Home: React.FC<any> = (props: any) => {
         </div>
       </div>,
       <div key={'footer-2'}>
-        <div className="log-content message-box drag-item-content-box background-ubv">
+        <div
+          className="log-content message-box drag-item-content-box background-ubv"
+          style={
+            homeSettingData['footer-2']?.backgroundColor === 'default'
+              ? {}
+              : homeSettingData['footer-2']?.backgroundColor === 'transparent'
+              ? { backgroundColor: 'transparent' }
+              : { backgroundImage: homeSettingData['footer-2']?.backgroundColor }
+          }
+        >
           {homeSettingData['footer-2']?.ifShowHeader ? (
             <div className="common-card-title-box flex-box ">
               <div className="flex-box common-card-title">错误信息</div>
@@ -542,7 +635,7 @@ const Home: React.FC<any> = (props: any) => {
                   return (
                     <div className="log-item flex-box-start" key={index}>
                       <div className="log-item-content">
-                        <div className="content-item" style={homeSettingData['error']}>
+                        <div className="content-item" style={homeSettingData['footer-2']}>
                           <span
                             style={{
                               fontSize: homeSettingData['footer-2']?.fontSize + 2 || 'inherit',
@@ -585,7 +678,7 @@ const Home: React.FC<any> = (props: any) => {
                   setAddWindowVisible('');
                   setHomeSettingVisible('');
                 }
-                setFieldsValue({ fontSize: homeSettingData?.['error']?.fontSize || 20 });
+                setFieldsValue(homeSettingData?.['footer-2']);
                 setHomeSettingVisible('footer-2');
               }}
             >
@@ -645,6 +738,7 @@ const Home: React.FC<any> = (props: any) => {
     data?.forEach((item: any) => {
       if (
         [
+          'header',
           'slider-1',
           'slider-2',
           'slider-3',
@@ -739,15 +833,17 @@ const Home: React.FC<any> = (props: any) => {
   useEffect(() => {
     if (!ipString || _.isEmpty(paramsData)) return;
     const { flowData = {}, contentData = {}, selfStart = false } = paramsData;
+    const homeSelf = [
+      { i: 'header', x: 0, y: 0, w: 9, h: 8, minW: 1, maxW: 100, minH: 2, maxH: 100 },
+      { i: 'slider-1', x: 0, y: 0, w: 9, h: 8, minW: 1, maxW: 100, minH: 2, maxH: 100 },
+      { i: 'slider-2', x: 0, y: 8, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
+      { i: 'slider-3', x: 0, y: 0, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
+      { i: 'slider-4', x: 7, y: 0, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
+      { i: 'footer-1', x: 7, y: 8, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
+      { i: 'footer-2', x: 7, y: 0, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
+    ];
     const {
-      home = [
-        { i: 'slider-1', x: 0, y: 0, w: 9, h: 8, minW: 1, maxW: 100, minH: 2, maxH: 100 },
-        { i: 'slider-2', x: 0, y: 8, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
-        { i: 'slider-3', x: 0, y: 0, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
-        { i: 'slider-4', x: 7, y: 0, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
-        { i: 'footer-1', x: 7, y: 8, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
-        { i: 'footer-2', x: 7, y: 0, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
-      ],
+      home = [],
       content = {},
       footerSelectList,
       contentHeader = {},
@@ -783,7 +879,14 @@ const Home: React.FC<any> = (props: any) => {
     });
     setNodeList(list);
     setFooterSelectList(footerSelectList || []);
-    setGridHomeList(home);
+    setGridHomeList(
+      homeSelf.map((item: any) => {
+        return {
+          ...item,
+          ...home?.filter((i: any) => i.i === item.i)[0],
+        };
+      }),
+    );
     setHomeSettingData(homeSetting);
     setPageIconPosition(pageIconPosition || {});
     let newParams = paramsData;
@@ -1022,12 +1125,14 @@ const Home: React.FC<any> = (props: any) => {
           magnifierHeight,
           ifPopconfirm,
           showImgList,
+          showFooter,
           markNumberLeft,
           markNumberTop,
           line_height,
           staticHeight,
           fileTypes,
           fileFetch,
+          paddingSize,
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1044,11 +1149,31 @@ const Home: React.FC<any> = (props: any) => {
         listData = listData.concat(
           <div
             key={key}
-            className={`drag-item-content-box ${
-              backgroundColor === 'default' ? 'background-ubv' : ''
-            }`}
-            style={['imgButton'].includes(type) ? { backgroundColor: 'transparent' } : {}}
+            className={`drag-item-content-box background-ubv`}
+            style={Object.assign(
+              {},
+              ['imgButton'].includes(type) ? { backgroundColor: 'transparent' } : {},
+              backgroundColor === 'default'
+                ? {}
+                : backgroundColor === 'transparent'
+                ? { backgroundColor: 'transparent' }
+                : {
+                    backgroundImage: `url(${
+                      type === 'img' &&
+                      (dataValue?.status == 'NG' || dataValue?.status?.value == 'NG')
+                        ? dataItemImageNG
+                        : backgroundColor
+                    })`,
+                    backgroundColor: 'transparent',
+                  },
+              { padding: paddingSize },
+            )}
           >
+            {!['default', 'transparent'].includes(backgroundColor) ? (
+              <div className="flex-box data-screen-card-title" style={{ fontSize }}>
+                {CCDName}
+              </div>
+            ) : null}
             {ifShowHeader ? (
               <div className="common-card-title-box flex-box">
                 <TooltipDiv className="flex-box common-card-title">
@@ -1092,6 +1217,19 @@ const Home: React.FC<any> = (props: any) => {
                   />
                 ) : type === 'bar' ? (
                   <BarCharts
+                    id={key}
+                    setMyChartVisible={setMyChartVisible}
+                    data={{
+                      dataValue: dataValue || [],
+                      yName,
+                      xName,
+                      direction,
+                      align,
+                      barColor,
+                    }}
+                  />
+                ) : type === 'barWithLine' ? (
+                  <BarWithLineCharts
                     id={key}
                     setMyChartVisible={setMyChartVisible}
                     data={{
@@ -1464,6 +1602,7 @@ const Home: React.FC<any> = (props: any) => {
                         : '',
                       dataValue,
                       showImgList,
+                      showFooter,
                       magnifier,
                       magnifierSize,
                       comparison,
@@ -2175,10 +2314,12 @@ const Home: React.FC<any> = (props: any) => {
       magnifierHeight,
       ifPopconfirm,
       showImgList,
+      showFooter,
       line_height,
       staticHeight,
       fileTypes,
       fileFetch,
+      paddingSize,
     } = values;
     if (['button', 'buttonInp', 'buttonPassword', 'buttonUpload'].includes(type) && !!fetchParams) {
       try {
@@ -2276,10 +2417,12 @@ const Home: React.FC<any> = (props: any) => {
             magnifierHeight,
             ifPopconfirm,
             showImgList,
+            showFooter,
             line_height,
             staticHeight,
             fileTypes,
             fileFetch,
+            paddingSize,
           },
           ['description'].includes(windowType) ? { basicInfoData } : {},
         ),
@@ -2356,10 +2499,12 @@ const Home: React.FC<any> = (props: any) => {
               magnifierHeight,
               ifPopconfirm,
               showImgList,
+              showFooter,
               line_height,
               staticHeight,
               fileTypes,
               fileFetch,
+              paddingSize,
             },
             ['description'].includes(windowType) ? { basicInfoData } : {},
           );
@@ -2440,6 +2585,8 @@ const Home: React.FC<any> = (props: any) => {
       magnifierHeight: undefined,
       ifPopconfirm: true,
       showImgList: false,
+      showFooter: false,
+      paddingSize: 0,
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -3049,18 +3196,6 @@ const Home: React.FC<any> = (props: any) => {
                 initialValue={'default'}
                 rules={[{ required: false, message: '窗口背景色' }]}
               >
-                {/* <ChromePicker
-                    color={colorSelector?.backgroundColor}
-                    onChange={(value: any) => {
-                      const { rgb } = value;
-                      setColorSelector((prev: any) => {
-                        return {
-                          ...prev,
-                          backgroundColor: rgb
-                        }
-                      });
-                    }}
-                  /> */}
                 <Select
                   style={{ width: '100%' }}
                   options={[
@@ -3071,6 +3206,18 @@ const Home: React.FC<any> = (props: any) => {
                     {
                       value: 'transparent',
                       label: '透明色',
+                    },
+                    {
+                      value: dataItemImage1,
+                      label: '背景图1',
+                    },
+                    {
+                      value: dataItemImage2,
+                      label: '背景图2',
+                    },
+                    {
+                      value: dataItemImage3,
+                      label: '背景图3',
                     },
                   ]}
                 />
@@ -3120,6 +3267,9 @@ const Home: React.FC<any> = (props: any) => {
                   <Form.Item name="showImgList" label="图片列表" valuePropName="checked">
                     <Switch />
                   </Form.Item>
+                  <Form.Item name="showFooter" label="显示底部描述" valuePropName="checked">
+                    <Switch />
+                  </Form.Item>
                 </Fragment>
               ) : null}
               {['alertImg'].includes(windowType) ? (
@@ -3150,7 +3300,7 @@ const Home: React.FC<any> = (props: any) => {
                   </Form.Item>
                 </Fragment>
               ) : null}
-              {['point', 'bar', 'line', 'table'].includes(windowType) ? (
+              {['point', 'bar', 'barWithLine', 'line', 'table'].includes(windowType) ? (
                 <Fragment>
                   <Form.Item
                     name={`yName`}
@@ -3199,7 +3349,7 @@ const Home: React.FC<any> = (props: any) => {
                   />
                 </Form.Item>
               ) : null}
-              {['bar'].includes(windowType) ? (
+              {['bar', 'barWithLine'].includes(windowType) ? (
                 <Fragment>
                   <Form.Item
                     name={`align`}
@@ -3223,7 +3373,7 @@ const Home: React.FC<any> = (props: any) => {
                   </Form.Item>
                 </Fragment>
               ) : null}
-              {['bar', 'progress'].includes(windowType) ? (
+              {['bar', 'barWithLine', 'progress'].includes(windowType) ? (
                 <Form.Item
                   name={`barColor`}
                   label={'图形颜色'}
@@ -3235,6 +3385,7 @@ const Home: React.FC<any> = (props: any) => {
                     mode={['bar'].includes(windowType) ? 'multiple' : undefined}
                     options={[
                       ['default', '默认'],
+                      ['line', '渐变'],
                       ['#73c0de', '蓝色'],
                       ['#5470c6', '深蓝'],
                       ['#91cc75', '绿色'],
@@ -3264,9 +3415,17 @@ const Home: React.FC<any> = (props: any) => {
                       };
                     })}
                     onChange={(value) => {
-                      if (value.includes('default')) {
+                      if (value.indexOf('default') > 0) {
                         setFieldsValue({
                           barColor: 'default',
+                        });
+                      } else if (value.indexOf('line') > 0) {
+                        setFieldsValue({
+                          barColor: 'line',
+                        });
+                      } else {
+                        setFieldsValue({
+                          barColor: _.pull(value, 'default', 'line'),
                         });
                       }
                     }}
@@ -4594,6 +4753,14 @@ const Home: React.FC<any> = (props: any) => {
               >
                 <InputNumber min={12} />
               </Form.Item>
+              <Form.Item
+                name={'paddingSize'}
+                label="内边距"
+                initialValue={0}
+                rules={[{ required: false, message: '内边距' }]}
+              >
+                <InputNumber min={0} />
+              </Form.Item>
               {!['modal'].includes(windowType) ? (
                 <Form.Item
                   name="ifLocalStorage"
@@ -4651,6 +4818,57 @@ const Home: React.FC<any> = (props: any) => {
                 valuePropName="checked"
               >
                 <Switch />
+              </Form.Item>
+              {['header'].includes(homeSettingVisible) ? (
+                <Fragment>
+                  <Form.Item name="headerTitle" label="名称">
+                    <Input />
+                  </Form.Item>
+                  <Form.Item name="headerName" label="标题">
+                    <Input />
+                  </Form.Item>
+                </Fragment>
+              ) : null}
+              <Form.Item
+                name={`backgroundColor`}
+                label={'窗口背景色'}
+                initialValue={'default'}
+                rules={[{ required: false, message: '窗口背景色' }]}
+              >
+                <Select
+                  style={{ width: '100%' }}
+                  options={[
+                    {
+                      value: 'default',
+                      label: '默认',
+                    },
+                    {
+                      value: 'transparent',
+                      label: '透明色',
+                    },
+                    ...(homeSettingVisible === 'header'
+                      ? [
+                          {
+                            value: dataHeaderImage,
+                            label: '背景图1',
+                          },
+                        ]
+                      : [
+                          {
+                            value: dataItemImage1,
+                            label: '背景图1',
+                          },
+                          {
+                            value: dataItemImage2,
+                            label: '背景图2',
+                          },
+                          {
+                            value: dataItemImage3,
+                            label: '背景图3',
+                          },
+                        ]),
+                  ]}
+                />
               </Form.Item>
             </Form>
           ) : !!overallVisible ? (
