@@ -35,7 +35,7 @@ const mockInstance = new MockAdapter(axiosInstance);
 //       return new Promise((resolve, reject) => {
 //         data(config.data, config)
 //           .then((res) => {
-//             resolve([rule.response.status, res.data, config.headers]);
+//             resolve([rule.response.status, res?.data, config.headers]);
 //           })
 //           .catch((error) => {
 //             if (process.env.NODE_ENV === 'development') {

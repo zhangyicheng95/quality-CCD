@@ -9,14 +9,14 @@ import BasicTable from '@/components/BasicTable';
 import TooltipDiv from '@/components/TooltipDiv';
 
 const LABEL_RESULT = {
-  "OK": "正常",
-  "": "未审核",
-  "NG": "异常",
+  OK: '正常',
+  '': '未审核',
+  NG: '异常',
 };
 const CLASS_RESULT = {
-  "OK": "success-font",
-  "": "normal-font",
-  "NG": "error-font",
+  OK: 'success-font',
+  '': 'normal-font',
+  NG: 'error-font',
 };
 
 const RangePicker: any = DatePicker.RangePicker;
@@ -31,7 +31,7 @@ const HistoryList: React.FC<any> = (props: any) => {
 
   const updateFun = (res: any) => {
     if (res?.code === 'SUCCESS' || res?.code === 200) {
-      const { list, pageNum, pageSize, total, } = res.data;
+      const { list, pageNum, pageSize, total } = res?.data;
       setData(list);
       setParams((prev: any) => Object.assign({}, prev, { pageNum, pageSize, total }));
     } else {
@@ -70,10 +70,7 @@ const HistoryList: React.FC<any> = (props: any) => {
       width: 150,
       align: 'center',
       render: (text: any, record: any) => (
-        <TooltipDiv
-          title={text}
-          placement="top"
-        >
+        <TooltipDiv title={text} placement="top">
           {text}
         </TooltipDiv>
       ),
@@ -90,10 +87,7 @@ const HistoryList: React.FC<any> = (props: any) => {
       width: 150,
       align: 'center',
       render: (text: any, record: any) => (
-        <TooltipDiv
-          title={text}
-          placement="top"
-        >
+        <TooltipDiv title={text} placement="top">
           {text}
         </TooltipDiv>
       ),
@@ -127,15 +121,13 @@ const HistoryList: React.FC<any> = (props: any) => {
       align: 'center',
       render: (text: any, record: any) => {
         const result = text?.split('/');
-        return !!result ?
-          <TooltipDiv
-            title={text}
-            placement="top"
-          >
-            <a href={text} target="_blank">{result[result.length - 1]}</a>
+        return !!result ? (
+          <TooltipDiv title={text} placement="top">
+            <a href={text} target="_blank">
+              {result[result.length - 1]}
+            </a>
           </TooltipDiv>
-          :
-          null
+        ) : null;
       },
     },
     {
@@ -145,9 +137,7 @@ const HistoryList: React.FC<any> = (props: any) => {
       width: 100,
       align: 'center',
       render: (text: any, record: any) => {
-        return <span className={CLASS_RESULT[text]}>
-          {LABEL_RESULT[text]}
-        </span>
+        return <span className={CLASS_RESULT[text]}>{LABEL_RESULT[text]}</span>;
       },
     },
   ];
@@ -163,10 +153,17 @@ const HistoryList: React.FC<any> = (props: any) => {
             initialValues={{}}
             onFinish={(values) => {
               const { timeRange, ...rest } = values;
-              const result = Object.assign({}, params, rest, !!timeRange ? {
-                loLimit: timeRange[0].format('YYYY-MM-DD HH:mm:ss'),
-                upLimit: timeRange[1].format('YYYY-MM-DD HH:mm:ss'),
-              } : {});
+              const result = Object.assign(
+                {},
+                params,
+                rest,
+                !!timeRange
+                  ? {
+                      loLimit: timeRange[0].format('YYYY-MM-DD HH:mm:ss'),
+                      upLimit: timeRange[1].format('YYYY-MM-DD HH:mm:ss'),
+                    }
+                  : {},
+              );
               getList(result);
               setParams(result);
             }}
@@ -175,11 +172,15 @@ const HistoryList: React.FC<any> = (props: any) => {
               <Form.Item label="时间" name="timeRange">
                 <RangePicker showTime size="large" />
               </Form.Item>
-              <Form.Item label="类型" name="type" initialValue={"size"}>
-                <Select size="large" options={[
-                  { label: '尺寸', value: 'size' },
-                  { label: '缺陷', value: 'defect' }
-                ]} style={{ width: 200 }} />
+              <Form.Item label="类型" name="type" initialValue={'size'}>
+                <Select
+                  size="large"
+                  options={[
+                    { label: '尺寸', value: 'size' },
+                    { label: '缺陷', value: 'defect' },
+                  ]}
+                  style={{ width: 200 }}
+                />
               </Form.Item>
               <Form.Item label="名称" name="colName">
                 <Input />

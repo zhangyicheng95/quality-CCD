@@ -50,7 +50,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
     itemClicked.current += 1;
     btnFetch('get', yName, {}).then((res: any) => {
       if (res && res.code === 'SUCCESS') {
-        setDefectSelect(res.data);
+        setDefectSelect(res?.data || {});
         setDefect(xColumns?.[0]?.value);
         setVisible(true);
       } else {

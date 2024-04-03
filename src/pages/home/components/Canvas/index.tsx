@@ -339,31 +339,6 @@ const Home: React.FC<any> = (props: any) => {
             >
               重启
             </Button>
-            {process.env.NODE_ENV === 'development' ? (
-              <Button
-                className="flex-box btn"
-                style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
-                icon={<AndroidOutlined className="btn-icon" />}
-                type="link"
-                onClick={() => {
-                  // dispatch({
-                  //   type: 'home/set',
-                  //   payload: {
-                  //     gridContentList: [
-                  //       { "id": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "value": ["96c525f8-fada-4512-8b44-7e8995278e63", "filepath"], "filepath": { "name": "models/output.ply", "value": [{}, {}] }, "size": { "i": "96c525f8-fada-4512-8b44-7e8995278e63$$filepath$$three", "x": 7, "y": 3, "w": 36, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "three", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "comparison": false, "interlacing": false, "modelRotate": false, "modelScale": false },
-                  //       { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "frame"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$frame$$img", "x": 43, "y": 3, "w": 30, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "img", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true, "magnifier": false },
-                  //       { "id": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "value": ["d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb", "cam_name"], "size": { "i": "d3b8e17c-3ad2-4e78-a8e9-b3153490bcbb$$cam_name$$pie", "x": 73, "y": 3, "w": 23, "h": 35, "minW": 1, "maxW": 100, "minH": 2, "maxH": 100 }, "type": "pie", "tab": "1", "fontSize": 12, "backgroundColor": "default", "ifLocalStorage": true }
-                  //     ],
-                  //   },
-                  // });
-                  touchFlowService();
-                }}
-                disabled={(!started && process.env.NODE_ENV !== 'development') || ifCanEdit}
-                loading={started && loading}
-              >
-                自助
-              </Button>
-            ) : null}
           </div>
           {ifCanEdit ? (
             <div
@@ -1600,6 +1575,7 @@ const Home: React.FC<any> = (props: any) => {
                               : '\\'
                           }${defaultImg}`
                         : '',
+                      fontSize,
                       dataValue,
                       showImgList,
                       showFooter,
@@ -5119,7 +5095,7 @@ const Home: React.FC<any> = (props: any) => {
                   if (res && res.code === 'SUCCESS') {
                     setInitialState((preInitialState: any) => ({
                       ...preInitialState,
-                      params: res.data,
+                      params: res?.data,
                     }));
                   } else {
                     message.error(res?.msg || res?.message || '接口异常');

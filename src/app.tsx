@@ -100,7 +100,7 @@ export async function getInitialState(): Promise<{
           contentData: {
             ...contentData,
             ipList: (ipList || [])?.map((item: any) => {
-              if (item.key === res.data.id) {
+              if (item.key === res?.data?.id) {
                 return {
                   ...item,
                   label: res?.data?.name,

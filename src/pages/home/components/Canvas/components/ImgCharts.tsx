@@ -25,6 +25,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
   let {
     defaultImg,
     dataValue,
+    fontSize,
     showImgList,
     showFooter,
     comparison,
@@ -365,7 +366,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     });
   };
   return (
-    <div id={`echart-${id}`} className={`flex-box ${styles.imgCharts}`}>
+    <div id={`echart-${id}`} className={`flex-box ${styles.imgCharts}`} style={{ fontSize }}>
       <div
         className="flex-box img-box-mark-body"
         style={showImgList ? { height: 'calc(100% - 50px)' } : { height: '100%' }}
@@ -465,11 +466,11 @@ const ImgCharts: React.FC<Props> = (props: any) => {
               onVisibleChange: (vis) => setVisible(vis),
             }}
           >
-            {(urlList.current || []).map((item: any) => {
+            {(urlList.current || []).map((item: any, index: number) => {
               if (_.isString(item)) {
-                return <Image src={item} alt={item} key={item} />;
+                return <Image src={item} alt={item} key={`${id}-${item}-${index}`} />;
               } else if (!!item.url) {
-                return <Image src={item.url} alt={item.url} key={item.url} />;
+                return <Image src={item.url} alt={item.url} key={`${id}-${item.url}-${index}`} />;
               }
               return null;
             })}
@@ -489,13 +490,13 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             const url = _.isString(item) ? item : item.url;
             return (
               <div
-                key={`${type}-${index}`}
+                key={`${id}-${type}-${index}`}
                 className="img-box-footer-list-item"
                 onClick={() => {
                   setSelectedNum(urlList.current.slice(0, -6)?.length + index);
                 }}
               >
-                <img src={url} alt={index + ''} key={`img-${index}`} />
+                <img src={url} alt={index + ''} />
                 <div
                   className={`img-box-footer-list-item-type ${
                     type === 'OK' ? 'OK-font' : 'NG-font'
@@ -508,33 +509,36 @@ const ImgCharts: React.FC<Props> = (props: any) => {
           })}
         </div>
       ) : null}
-      {showFooter ? ( //&& _.isObject(source)
+      {showFooter ? (
         <div className="flex-box-justify-between img-box-footer-list2">
-          {(
-            Object.entries({
-              position: { label: '', value: '右' },
-              carType: { label: '车型', value: '206_2' },
-              url: 'http://',
-              point: { label: '点位', value: '8' },
-              status: { label: '', value: 'OK' },
-            }) || []
-          ).map((item: any) => {
-            if (item[0] == 'url') {
-              return null;
-            }
-            return (
-              <TooltipDiv className="flex-box img-box-footer-list2-item">
-                {
-                  // @ts-ignore
-                  _.isObject(item[1]) && !!item[1]?.label ? `${item[1]?.label}：` : ''
-                }
-                {
-                  // @ts-ignore
-                  _.isObject(item[1]) ? item[1]?.value : item[1]
-                }
-              </TooltipDiv>
-            );
-          })}
+          {
+            // _.isObject(source)&&
+            (
+              Object.entries({
+                position: { label: '', value: '右' },
+                carType: { label: '车型', value: '206_2' },
+                url: 'http://',
+                point: { label: '点位', value: '8' },
+                status: { label: '', value: 'OK' },
+              }) || []
+            ).map((item: any) => {
+              if (item[0] == 'url') {
+                return null;
+              }
+              return (
+                <TooltipDiv className="flex-box img-box-footer-list2-item" key={`${id}-${item[0]}`}>
+                  {
+                    // @ts-ignore
+                    _.isObject(item[1]) && !!item[1]?.label ? `${item[1]?.label}：` : ''
+                  }
+                  {
+                    // @ts-ignore
+                    _.isObject(item[1]) ? item[1]?.value : item[1]
+                  }
+                </TooltipDiv>
+              );
+            })
+          }
         </div>
       ) : null}
       {(_.isBoolean(comparison) ? comparison : true) ? (

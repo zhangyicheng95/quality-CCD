@@ -48,8 +48,8 @@ const BarWithLineCharts: React.FC<Props> = (props: any) => {
   barColor = [].concat(barColor);
   useEffect(() => {
     if (!_.isArray(dataValue)) {
-      message.error('柱状图数据格式不正确，请检查');
-      console.log('BarCharts:', dataValue);
+      message.error('折柱组合图数据格式不正确，请检查');
+      console.log('BarWithLineCharts:', dataValue);
       return;
     }
     let seriesData: any = [],
