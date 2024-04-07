@@ -1961,6 +1961,7 @@ const Home: React.FC<any> = (props: any) => {
                     // 复制监控窗口
                     const uuid32 = getuid();
                     addWindow({
+                      ...item,
                       value: [uuid32],
                       type,
                       size: {
