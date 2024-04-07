@@ -29,6 +29,7 @@ import GridLayout from '@/components/GridLayout';
 import {
   AndroidOutlined,
   CompressOutlined,
+  CopyOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
   LoadingOutlined,
@@ -809,7 +810,7 @@ const Home: React.FC<any> = (props: any) => {
     if (!ipString || _.isEmpty(paramsData)) return;
     const { flowData = {}, contentData = {}, selfStart = false } = paramsData;
     const homeSelf = [
-      { i: 'header', x: 0, y: 0, w: 9, h: 8, minW: 1, maxW: 100, minH: 2, maxH: 100 },
+      { i: 'header', x: 0, y: 0, w: 9, h: 8, minW: 0, maxW: 100, minH: 0, maxH: 100 },
       { i: 'slider-1', x: 0, y: 0, w: 9, h: 8, minW: 1, maxW: 100, minH: 2, maxH: 100 },
       { i: 'slider-2', x: 0, y: 8, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
       { i: 'slider-3', x: 0, y: 0, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
@@ -1108,6 +1109,7 @@ const Home: React.FC<any> = (props: any) => {
           fileTypes,
           fileFetch,
           paddingSize,
+          showLabel,
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1120,7 +1122,6 @@ const Home: React.FC<any> = (props: any) => {
         const SecLabel = items?.filter(
           (i: any) => i.group === 'bottom' && i?.label?.name === value[1],
         )[0];
-
         listData = listData.concat(
           <div
             key={key}
@@ -1462,6 +1463,7 @@ const Home: React.FC<any> = (props: any) => {
                       operationList,
                       dataValue,
                       fontSize,
+                      showLabel,
                     }}
                   />
                 ) : type === 'operation2' ? (
@@ -1478,6 +1480,7 @@ const Home: React.FC<any> = (props: any) => {
                       blockType,
                       blockTypeLines,
                       ifPopconfirm,
+                      showLabel,
                     }}
                   />
                 ) : type === 'statistic' ? (
@@ -1952,6 +1955,21 @@ const Home: React.FC<any> = (props: any) => {
                   setAddWindowVisible(key);
                 }}
               >
+                <CopyOutlined
+                  className="drag-item-content-mask-icon"
+                  onClick={() => {
+                    // 复制监控窗口
+                    const uuid32 = getuid();
+                    addWindow({
+                      value: [uuid32],
+                      type,
+                      size: {
+                        x: size.x + size.w >= 96 ? size.x - size.w : size.x + size.w,
+                        y: size.y,
+                      },
+                    });
+                  }}
+                />
                 <Popconfirm
                   title="确认删除监控窗口吗?"
                   onConfirm={() => {
@@ -2296,6 +2314,7 @@ const Home: React.FC<any> = (props: any) => {
       fileTypes,
       fileFetch,
       paddingSize,
+      showLabel,
     } = values;
     if (['button', 'buttonInp', 'buttonPassword', 'buttonUpload'].includes(type) && !!fetchParams) {
       try {
@@ -2399,6 +2418,7 @@ const Home: React.FC<any> = (props: any) => {
             fileTypes,
             fileFetch,
             paddingSize,
+            showLabel,
           },
           ['description'].includes(windowType) ? { basicInfoData } : {},
         ),
@@ -2481,6 +2501,7 @@ const Home: React.FC<any> = (props: any) => {
               fileTypes,
               fileFetch,
               paddingSize,
+              showLabel,
             },
             ['description'].includes(windowType) ? { basicInfoData } : {},
           );
@@ -2563,6 +2584,7 @@ const Home: React.FC<any> = (props: any) => {
       showImgList: false,
       showFooter: false,
       paddingSize: 0,
+      showLabel: true,
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -2685,9 +2707,8 @@ const Home: React.FC<any> = (props: any) => {
                   const y = (e.y / height) * ((height / 300) * 14);
                   if (key === 'main') {
                     // 添加监控窗口
-                    const uuid32 = nodeList?.[0]?.key || getuid();
-                    const port = nodeList?.[0]?.children?.[0]?.value;
-                    addWindow({ value: [uuid32, port], type: value, size: { x, y } });
+                    const uuid32 = getuid();
+                    addWindow({ value: [uuid32], type: value, size: { x, y } });
                   } else if (key === 'basic') {
                     // 添加基础窗口
                     setGridHomeList((prev: any) => {
@@ -4265,6 +4286,14 @@ const Home: React.FC<any> = (props: any) => {
                       </Form.Item>
                     </Fragment>
                   ) : null}
+                  <Form.Item
+                    name="showLabel"
+                    label="显示标题"
+                    valuePropName="checked"
+                    initialValue={true}
+                  >
+                    <Switch />
+                  </Form.Item>
                 </Fragment>
               ) : null}
               {['statistic'].includes(windowType) ? (

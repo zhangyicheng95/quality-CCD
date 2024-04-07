@@ -19,7 +19,7 @@ interface Props {
 
 const OperationCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id, started } = props;
-  const { operationList, dataValue, fontSize } = data;
+  const { operationList, dataValue, fontSize, showLabel = true } = data;
   const [form] = Form.useForm();
   const { validateFields, resetFields } = form;
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -188,18 +188,20 @@ const OperationCharts: React.FC<Props> = (props: any) => {
               const { type } = widget;
               return (
                 <div className="flex-box param-item" key={`${id}@$@${name}`}>
-                  <div className="title-box">
-                    <TooltipDiv
-                      style={{ fontSize: fontSize + 4 }}
-                      className="first"
-                      title={alias || name}
-                    >
-                      {alias || name}
-                    </TooltipDiv>
-                    <TooltipDiv className="second" style={{ fontSize }}>
-                      {name}
-                    </TooltipDiv>
-                  </div>
+                  {showLabel ? (
+                    <div className="title-box">
+                      <TooltipDiv
+                        style={{ fontSize: fontSize + 4 }}
+                        className="first"
+                        title={alias || name}
+                      >
+                        {alias || name}
+                      </TooltipDiv>
+                      <TooltipDiv className="second" style={{ fontSize }}>
+                        {name}
+                      </TooltipDiv>
+                    </div>
+                  ) : null}
                   <div className="value-box">
                     <FormatWidgetToDom
                       key={item?.name}
@@ -220,7 +222,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
                 </div>
               );
             });
-          }, [configList, started])}
+          }, [configList, started, showLabel])}
         </Form>
       </div>
       {/* <div className="operation-footer flex-box-center">

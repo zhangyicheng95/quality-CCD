@@ -47,6 +47,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     blockType,
     blockTypeLines = 2,
     ifPopconfirm,
+    showLabel = true,
   } = data;
   // if (process.env.NODE_ENV === 'development') {
   //     started = true;
@@ -269,14 +270,16 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                                             {_.toUpper(type.slice(0, 1))} */}
         {/* <BlockOutlined className="item-icon" /> */}
         {/* </div> */}
-        <div className="title-box">
-          <TooltipDiv style={{ fontSize: fontSize + 4 }} className="first" title={alias || name}>
-            {alias || name}
-          </TooltipDiv>
-          <TooltipDiv className="second" style={{ fontSize }}>
-            {name}
-          </TooltipDiv>
-        </div>
+        {showLabel ? (
+          <div className="title-box">
+            <TooltipDiv style={{ fontSize }} className="first" title={alias || name}>
+              {alias || name}
+            </TooltipDiv>
+            <TooltipDiv className="second" style={{ fontSize: fontSize - 4 }}>
+              {name}
+            </TooltipDiv>
+          </div>
+        ) : null}
         {/* </div> */}
         <div
           className="value-box"
@@ -366,6 +369,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             listType,
             blockType,
             fontSize,
+            showLabel,
           ])}
         </Form>
       </div>

@@ -12,6 +12,15 @@ const HeaderCharts: React.FC<Props> = (props: any) => {
   const { homeSettingData, started } = props;
   const { time } = useClock();
 
+  if (!homeSettingData['header']?.fontSize) {
+    if (!homeSettingData['header']) {
+      homeSettingData['header'] = {};
+      homeSettingData['header']['fontSize'] = 20;
+    } else {
+      homeSettingData['header']['fontSize'] = 20;
+    }
+  }
+
   return (
     <Fragment>
       <div
