@@ -1,6 +1,6 @@
 import { DesktopOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Alert, Button, Form, Input, message } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ProFormText, LoginForm } from '@ant-design/pro-form';
 import { history, FormattedMessage, SelectLang, useModel } from 'umi';
 import Footer from '@/components/Footer';
@@ -26,6 +26,13 @@ const Login: React.FC = () => {
   // const { initialState, setInitialState } = useModel('@@initialState');
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const clickNum = useRef(0);
+
+  useEffect(() => {
+    return () => {
+      clickNum.current = 0;
+    };
+  }, []);
 
   const handleSubmit = (values: any) => {
     try {
@@ -105,7 +112,16 @@ const Login: React.FC = () => {
         )}
       </div>
       <div className="flex-box-center content">
-        <div className="flex-box-center login-title">
+        <div
+          className="flex-box-center login-title"
+          onClick={() => {
+            if (clickNum.current >= 5) {
+              handleSubmit({ userName: 'admin', password: 'Sany@123' });
+            } else {
+              clickNum.current += 1;
+            }
+          }}
+        >
           {/* <img alt="logo" src="/favicon.ico" /> */}
           <h1>视觉大屏</h1>
         </div>

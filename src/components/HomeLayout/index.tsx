@@ -23,6 +23,12 @@ const HomeLayout: React.FC<any> = (props) => {
   }, []);
   // 获取方案列表
   useEffect(() => {
+    const messageFun = (e: any) => {
+      if (e.data.from === 'open') {
+        localStorage.setItem('parentOrigin', e.origin);
+      }
+    };
+    window.addEventListener('message', messageFun);
     if (isVision) return;
     setHasInit(true);
     try {
@@ -44,6 +50,7 @@ const HomeLayout: React.FC<any> = (props) => {
     }
 
     return () => {
+      window.removeEventListener('message', messageFun);
       timerRef.current && clearTimeout(timerRef.current);
       setHasInit(false);
     };

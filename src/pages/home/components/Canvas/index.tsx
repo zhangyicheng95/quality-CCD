@@ -100,6 +100,7 @@ import dataItemImage3 from '@/assets/images/item-bg-3.png';
 import dataItemImageNG from '@/assets/images/item-bg-ng.png';
 import HeaderCharts from './components/HeaderCharts';
 import BarWithLineCharts from './components/BarWithLineCharts';
+import ChooseFileButton from '@/components/ChooseFileButton';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -3230,14 +3231,31 @@ const Home: React.FC<any> = (props: any) => {
                     <div className="flex-box">
                       <TooltipDiv style={{ paddingRight: 10 }}>{selectedPath.value}</TooltipDiv>
                       {!selectedPath.value ? (
-                        <Button
+                        <ChooseFileButton
+                          name={'defaultImg'}
                           onClick={() => {
-                            setFieldsValue({ defaultImg: undefined });
-                            setSelectPathVisible(true);
+                            if (!!localStorage.getItem('parentOrigin')) {
+                              window.parent.postMessage(
+                                {
+                                  type: 'openFile',
+                                  name: 'defaultImg',
+                                  suffix: ['.jpg', '.png', '.svg'],
+                                },
+                                localStorage.getItem('parentOrigin') || '',
+                              );
+                            } else {
+                              setFieldsValue({ defaultImg: undefined });
+                              setSelectPathVisible(true);
+                            }
+                          }}
+                          onOk={(value: any) => {
+                            setFieldsValue({ defaultImg: value });
+                            setSelectedPath({ value });
+                            setSelectPathVisible(false);
                           }}
                         >
                           选择文件
-                        </Button>
+                        </ChooseFileButton>
                       ) : (
                         <Button
                           type="link"

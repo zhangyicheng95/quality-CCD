@@ -25,6 +25,8 @@ import SliderGroup from '@/components/SliderGroup';
 import { formatJson } from '@/utils/utils';
 import IpInput from '@/components/IpInputGroup';
 import moment from 'moment';
+import ChooseFileButton from '@/components/ChooseFileButton';
+import ChooseDirButton from '@/components/ChooseDirButton';
 
 const FormItem = Form.Item;
 interface Props {
@@ -834,15 +836,29 @@ function FormatWidgetToDom(props: any) {
         >
           <div className="flex-box dir">
             <TooltipDiv title={value}>{value}</TooltipDiv>
-            <Button
+            <ChooseFileButton
+              name={name}
               onClick={() => {
-                setSelectedPath(Object.assign(config[1], { id: name, fileType: 'file' }));
-                setSelectPathVisible(true);
+                if (!!localStorage.getItem('parentOrigin')) {
+                  window.parent.postMessage(
+                    { type: 'openFile', name, suffix },
+                    localStorage.getItem('parentOrigin') || '',
+                  );
+                } else {
+                  setSelectedPath(Object.assign(config[1], { id: name, fileType: 'file' }));
+                  setSelectPathVisible(true);
+                }
+              }}
+              onOk={(value: any) => {
+                widgetChange(name, { ...config[1], value });
+                form.setFieldsValue({ [name]: value });
+                setSelectedPath?.({});
+                setSelectPathVisible?.(false);
               }}
               disabled={disabled}
             >
               选择文件
-            </Button>
+            </ChooseFileButton>
           </div>
         </FormItem>
       );
@@ -865,15 +881,29 @@ function FormatWidgetToDom(props: any) {
         >
           <div className="flex-box dir">
             <TooltipDiv title={value}>{value}</TooltipDiv>
-            <Button
+            <ChooseDirButton
+              name={name}
               onClick={() => {
-                setSelectedPath(Object.assign(config[1], { id: name, fileType: 'dir' }));
-                setSelectPathVisible(true);
+                if (!!localStorage.getItem('parentOrigin')) {
+                  window.parent.postMessage(
+                    { type: 'openDir', name },
+                    localStorage.getItem('parentOrigin') || '',
+                  );
+                } else {
+                  setSelectedPath?.(Object.assign(config[1], { id: name, fileType: 'dir' }));
+                  setSelectPathVisible?.(true);
+                }
+              }}
+              onOk={(value: any) => {
+                widgetChange(name, { ...config[1], value });
+                form.setFieldsValue({ [name]: value });
+                setSelectedPath?.({});
+                setSelectPathVisible?.(false);
               }}
               disabled={disabled}
             >
               选择文件夹
-            </Button>
+            </ChooseDirButton>
           </div>
         </FormItem>
       );
@@ -918,18 +948,32 @@ function FormatWidgetToDom(props: any) {
             <TooltipDiv title={localPath}>{localPath}</TooltipDiv>
           </FormItem>
           <div className="flex-box">
-            <Button
+            <ChooseFileButton
+              name={name}
               onClick={() => {
-                setSelectedPath(
-                  Object.assign(_.omit(config[1], 'value'), { id: name, fileType: 'file' }),
-                );
-                setSelectPathVisible(true);
+                if (!!localStorage.getItem('parentOrigin')) {
+                  window.parent.postMessage(
+                    { type: 'openFile', name, suffix },
+                    localStorage.getItem('parentOrigin') || '',
+                  );
+                } else {
+                  setSelectedPath?.(
+                    Object.assign(_.omit(config[1], 'value'), { id: name, fileType: 'file' }),
+                  );
+                  setSelectPathVisible?.(true);
+                }
+              }}
+              onOk={(value: any) => {
+                widgetChange(name, { ...config[1], localPath: value });
+                form.setFieldsValue({ [name]: value });
+                setSelectedPath?.({});
+                setSelectPathVisible?.(false);
               }}
               disabled={disabled}
               style={{ marginRight: 8 }}
             >
               选择文件
-            </Button>
+            </ChooseFileButton>
             <Button
               type="primary"
               onClick={() => {

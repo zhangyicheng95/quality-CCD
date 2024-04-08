@@ -2859,30 +2859,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
               />
             </Form.Item>
             <Form.Item
-              name="fill_directions"
-              label="需要填补空洞的面"
-              rules={[{ required: false, message: '需要填补空洞的面' }]}
-            >
-              <Select
-                placeholder="需要填补空洞的面"
-                mode="multiple"
-                options={[
-                  { label: 'x+', value: 'x+' },
-                  { label: 'x-', value: 'x-' },
-                  { label: 'y+', value: 'y+' },
-                  { label: 'y-', value: 'y-' },
-                  { label: 'z+', value: 'z+' },
-                  { label: 'z-', value: 'z-' },
-                ]}
-              />
-            </Form.Item>
-            <Form.Item
-              name="pointNum"
-              label="采样点数"
-              initialValue={100000}
+              name="sampleDis"
+              label="采样距离"
+              initialValue={10.0}
               rules={[{ required: true, message: '采样点数' }]}
             >
-              <InputNumber min={100000} />
+              <InputNumber precision={1} min={0} max={1000} />
             </Form.Item>
           </Form>
         </Modal>
