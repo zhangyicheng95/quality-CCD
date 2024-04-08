@@ -31,11 +31,11 @@ const StatisticCharts: React.FC<Props> = (props: any) => {
           {
             fontSize: Number(fontSize) + 10,
           },
-          !!fontColor && !!fontColor?.rgb
+          !!dataValue?.color
+            ? { color: dataValue?.color }
+            : !!fontColor && !!fontColor?.rgb
             ? {
-                color: !!dataValue?.color
-                  ? dataValue?.color
-                  : `rgba(${fontColor.rgb.r},${fontColor.rgb.g},${fontColor.rgb.b},${fontColor.rgb.a})`,
+                color: `rgba(${fontColor.rgb.r},${fontColor.rgb.g},${fontColor.rgb.b},${fontColor.rgb.a})`,
               }
             : {},
         )}
