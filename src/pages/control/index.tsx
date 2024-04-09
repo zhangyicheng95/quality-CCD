@@ -347,15 +347,19 @@ const Control: React.FC<any> = (props: any) => {
       });
   };
   const formatNode = () => {
-    return nodeList.map((node: any) => {
+    const result = nodeList.map((node: any) => {
       const initParams = Object.entries(node?.config?.initParams || {}).reduce(
         (pre: any, cen: any) => {
-          if (cen[1]?.widget?.type === 'ImageLabelField' && !_.isArray(cen[1]?.value)) {
+          if (
+            cen[1]?.widget?.type === 'ImageLabelField' &&
+            !!cen[1]?.value &&
+            !_.isArray(cen[1]?.value)
+          ) {
             return {
               ...pre,
               [cen[0]]: {
                 ...cen[1],
-                value: Object.entries(cen[1]?.value).map((i: any) => i[1]),
+                value: Object.entries(cen[1]?.value || {}).map((i: any) => i[1]),
               },
             };
           }
@@ -363,6 +367,7 @@ const Control: React.FC<any> = (props: any) => {
         },
         {},
       );
+
       return {
         ...node,
         config: {
@@ -371,6 +376,8 @@ const Control: React.FC<any> = (props: any) => {
         },
       };
     });
+
+    return result;
   };
   // 提交表单
   const onFinish = () => {
@@ -394,6 +401,7 @@ const Control: React.FC<any> = (props: any) => {
             listType: listType || 'line',
           }),
         };
+        debugger;
         setInitialState({ ...initialState, params: params.data });
         updateParams(params).then((res: any) => {
           if (res && res.code === 'SUCCESS') {
