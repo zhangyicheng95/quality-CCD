@@ -131,8 +131,9 @@ const Control: React.FC<any> = (props: any) => {
         });
         if (!node.sortId || node.sortId !== 0) {
           list.push({ ...node, sortId: index });
+        } else {
+          list.push(node);
         }
-        list.push(node);
       });
       setParamData(paramsData);
       setNodeList(list);
@@ -620,14 +621,15 @@ const Control: React.FC<any> = (props: any) => {
                                 return null;
                               return (
                                 <div
-                                  className={`${type === 'TagRadio' ? '' : 'flex-box'} param-item`}
+                                  className={`${
+                                    type === 'TagRadio' ? '' : 'flex-box-start'
+                                  } param-item`}
                                   key={`${id}@$@${item[0]}`}
                                 >
                                   <div className="flex-box">
-                                    <div className="icon-box flex-box">
+                                    {/* <div className="icon-box flex-box">
                                       {_.toUpper(type.slice(0, 1))}
-                                      {/* <BlockOutlined className="item-icon" /> */}
-                                    </div>
+                                    </div> */}
                                     <div
                                       className="title-box"
                                       style={listType === 'block' ? { width: 'auto' } : {}}
@@ -728,7 +730,7 @@ const Control: React.FC<any> = (props: any) => {
                                         } param-item`}
                                         key={`${id}@$@${child}`}
                                       >
-                                        <div className="flex-box">
+                                        <div className="flex-box-start">
                                           <div className="icon-box flex-box">
                                             {_.toUpper(type.slice(0, 1))}
                                             {/* <BlockOutlined className="item-icon" /> */}

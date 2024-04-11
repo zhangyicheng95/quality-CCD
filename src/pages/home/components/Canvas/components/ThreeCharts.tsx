@@ -53,6 +53,7 @@ import FileManager from '@/components/FileManager';
 import html2canvas from 'html2canvas';
 import Measurement from '@/components/Measurement';
 import AntDraggableModal from '@/components/AntDraggableModal';
+import ChooseFileButton from '@/components/ChooseFileButton';
 
 const colorTran = [
   new THREE.Color(0, 0, 0),
@@ -2511,7 +2512,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   上传模型
                 </Button>
               ) : (
-                <Button
+                <ChooseFileButton
+                  name="selectPLY"
                   icon={<UploadOutlined />}
                   onClick={() => {
                     if (!!localStorage.getItem(`localGridContentList-${params.id}`)) {
@@ -2522,7 +2524,38 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                         }
                       });
                     }
-                    setSelectPathVisible(true);
+                    if (!!localStorage.getItem('parentOrigin')) {
+                      window.parent.postMessage(
+                        { type: 'openFile', name: 'selectPLY' },
+                        localStorage.getItem('parentOrigin') || '',
+                      );
+                    } else {
+                      setSelectPathVisible(true);
+                    }
+                  }}
+                  onOk={(value: any) => {
+                    console.log(value);
+                    const path = `http://localhost:5001/files/${value}`;
+                    if (modelUploadVisible) {
+                      form2.setFieldsValue({ modelfilename: value });
+                    }
+                    setSelectedPath(path);
+                    setSelectPathVisible(false);
+                    const param = JSON.parse(
+                      localStorage.getItem(`localGridContentList-${params.id}`) || '[]',
+                    ).map((i: any) => {
+                      if (i.id === id) {
+                        return {
+                          ...i,
+                          name: path,
+                        };
+                      }
+                      return i;
+                    });
+                    localStorage.setItem(
+                      `localGridContentList-${params.id}`,
+                      JSON.stringify(param),
+                    );
                   }}
                 />
               )
@@ -2850,11 +2883,41 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
               rules={[{ required: true, message: '上传模型' }]}
             >
               {form2.getFieldValue('modelfilename')}
-              <Button
+              <ChooseFileButton
+                name="selectPLY"
                 style={{ marginLeft: 8 }}
                 icon={<UploadOutlined />}
                 onClick={() => {
-                  setSelectPathVisible(true);
+                  if (!!localStorage.getItem('parentOrigin')) {
+                    window.parent.postMessage(
+                      { type: 'openFile', name: 'selectPLY' },
+                      localStorage.getItem('parentOrigin') || '',
+                    );
+                  } else {
+                    setSelectPathVisible(true);
+                  }
+                }}
+                onOk={(value: any) => {
+                  const path = `http://localhost:5001/files${
+                    value?.indexOf('/') === 0 ? '' : '/'
+                  }${value}`;
+                  if (modelUploadVisible) {
+                    form2.setFieldsValue({ modelfilename: value });
+                  }
+                  setSelectedPath(path);
+                  setSelectPathVisible(false);
+                  const param = JSON.parse(
+                    localStorage.getItem(`localGridContentList-${params.id}`) || '[]',
+                  ).map((i: any) => {
+                    if (i.id === id) {
+                      return {
+                        ...i,
+                        name: path,
+                      };
+                    }
+                    return i;
+                  });
+                  localStorage.setItem(`localGridContentList-${params.id}`, JSON.stringify(param));
                 }}
               />
             </Form.Item>

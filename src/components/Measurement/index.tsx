@@ -111,7 +111,7 @@ const Measurement: React.FC<Props> = (props: any) => {
           <div
             key={index}
             className="flex-box-center item-input-box"
-            style={{ minWidth: `calc(${100 / lineNum}% - 8px)` }}
+            style={{ minWidth: `calc(${100 / lineNum}% - 24px)` }}
           >
             <div
               className={`input-name ${focus[`refnum_${index}`] ? 'focus' : ''} ${

@@ -178,7 +178,6 @@ const Home: React.FC<any> = (props: any) => {
     },
   ]);
   const [tabNum, setTabNum] = useState(0);
-
   const ifCanEdit = useMemo(() => {
     return location.hash.indexOf('edit') > -1;
   }, [location.hash, paramData]);
@@ -915,56 +914,58 @@ const Home: React.FC<any> = (props: any) => {
         }),
       });
     }
-    if (_.isArray(content)) {
-      dispatch({
-        type: 'home/set',
-        payload: {
-          gridContentList: content.map((item: any) => ({
-            ...item,
-            key: item.id?.split('$$')?.[0],
-          })),
-        },
-      });
-      dispatch({ type: 'home/snapshot' });
-      setAddContentList(content);
-      setParamData(newParams);
-      setInitialState((preInitialState: any) => ({
-        ...preInitialState,
-        params: newParams,
-      }));
-    } else {
-      const result = Object.entries(content)?.map((item: any) => {
-        const { value, type, size } = item[1];
-        const id = `${value?.join('$$')}$$${type}`;
-        return {
-          ...item[1],
-          id,
-          size: Object.assign({}, size, {
-            i: id,
+    if (!!content) {
+      if (_.isArray(content)) {
+        dispatch({
+          type: 'home/set',
+          payload: {
+            gridContentList: content.map((item: any) => ({
+              ...item,
+              key: item.id?.split('$$')?.[0],
+            })),
+          },
+        });
+        dispatch({ type: 'home/snapshot' });
+        setAddContentList(content);
+        setParamData(newParams);
+        setInitialState((preInitialState: any) => ({
+          ...preInitialState,
+          params: newParams,
+        }));
+      } else {
+        const result = Object.entries(content || {})?.map((item: any) => {
+          const { value, type, size } = item[1];
+          const id = `${value?.join('$$')}$$${type}`;
+          return {
+            ...item[1],
+            id,
+            size: Object.assign({}, size, {
+              i: id,
+            }),
+            key: id.split('$$')?.[0],
+          };
+        });
+        dispatch({
+          type: 'home/set',
+          payload: {
+            gridContentList: result,
+          },
+        });
+        dispatch({ type: 'home/snapshot' });
+        setAddContentList(result);
+        const resultParams = Object.assign({}, newParams, {
+          contentData: Object.assign({}, contentData, {
+            content: result,
+            autoSize: _.isBoolean(contentData?.autoSize) ? contentData?.autoSize : true,
           }),
-          key: id.split('$$')?.[0],
-        };
-      });
-      dispatch({
-        type: 'home/set',
-        payload: {
-          gridContentList: result,
-        },
-      });
-      dispatch({ type: 'home/snapshot' });
-      setAddContentList(result);
-      const resultParams = Object.assign({}, newParams, {
-        contentData: Object.assign({}, contentData, {
-          content: result,
-          autoSize: _.isBoolean(contentData?.autoSize) ? contentData?.autoSize : true,
-        }),
-      });
+        });
 
-      setInitialState((preInitialState: any) => ({
-        ...preInitialState,
-        params: resultParams,
-      }));
-      setParamData(resultParams);
+        setInitialState((preInitialState: any) => ({
+          ...preInitialState,
+          params: resultParams,
+        }));
+        setParamData(resultParams);
+      }
     }
     if (ifCanEdit) {
       form2.setFieldsValue({
