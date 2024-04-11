@@ -27,6 +27,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     dataValue,
     fontSize,
     showImgList,
+    imgListNum,
     showFooter,
     comparison,
     magnifierSize = 6,
@@ -479,66 +480,58 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       </div>
       {showImgList ? (
         <div className="flex-box-center img-box-footer-list">
-          {(urlList.current.slice(-6) || [])?.map((item: any, index: number) => {
-            const type = _.isString(item)
-              ? item?.indexOf('OK') > -1
-                ? 'OK'
-                : item?.indexOf('NG') > -1
-                ? item.split('NG/')?.[1]?.split('/')?.[0]
-                : 'NG'
-              : item.type;
-            const url = _.isString(item) ? item : item.url;
-            return (
-              <div
-                key={`${id}-${type}-${index}`}
-                className="img-box-footer-list-item"
-                onClick={() => {
-                  setSelectedNum(urlList.current.slice(0, -6)?.length + index);
-                }}
-              >
-                <img src={url} alt={index + ''} />
-                <div
-                  className={`img-box-footer-list-item-type ${
-                    type === 'OK' ? 'OK-font' : 'NG-font'
-                  }`}
-                >
-                  {type}
-                </div>
-              </div>
-            );
-          })}
+          {(urlList.current.slice(!!imgListNum ? -imgListNum : -6) || [])?.map(
+            (item: any, index: number) => {
+              const type = _.isString(item)
+                ? item?.indexOf('OK') > -1
+                  ? 'OK'
+                  : item?.indexOf('NG') > -1
+                  ? !!item.split('NG/')?.[1]?.split('/')?.[0]
+                    ? item.split('NG/')?.[1]?.split('/')?.[0]
+                    : 'NG'
+                  : ''
+                : item.type;
+              const url = _.isString(item) ? item : item.url;
+              if (!!url) {
+                return (
+                  <div
+                    key={`${id}-${type}-${index}`}
+                    className="img-box-footer-list-item"
+                    onClick={() => {
+                      setSelectedNum(urlList.current.slice(0, -6)?.length + index);
+                    }}
+                  >
+                    <img src={url} alt={index + ''} />
+                    <div
+                      className={`img-box-footer-list-item-type ${
+                        type === 'OK' ? 'OK-font' : 'NG-font'
+                      }`}
+                    >
+                      {type}
+                    </div>
+                  </div>
+                );
+              } else {
+                return null;
+              }
+            },
+          )}
         </div>
       ) : null}
       {showFooter ? (
         <div className="flex-box-justify-between img-box-footer-list2">
-          {
-            // _.isObject(source)&&
-            (
-              Object.entries({
-                position: { label: '', value: '右' },
-                carType: { label: '车型', value: '206_2' },
-                url: 'http://',
-                point: { label: '点位', value: '8' },
-                status: { label: '', value: 'OK' },
-              }) || []
-            ).map((item: any) => {
+          {_.isObject(source) &&
+            (Object.entries(source) || []).map((item: any) => {
               if (item[0] == 'url') {
                 return null;
               }
               return (
                 <TooltipDiv className="flex-box img-box-footer-list2-item" key={`${id}-${item[0]}`}>
-                  {
-                    // @ts-ignore
-                    _.isObject(item[1]) && !!item[1]?.label ? `${item[1]?.label}：` : ''
-                  }
-                  {
-                    // @ts-ignore
-                    _.isObject(item[1]) ? item[1]?.value : item[1]
-                  }
+                  {!!item[1]?.label ? `${item[1]?.label}：` : ''}
+                  {!!item[1]?.value || _.isBoolean(item[1]?.value) ? item[1]?.value : item[1]}
                 </TooltipDiv>
               );
-            })
-          }
+            })}
         </div>
       ) : null}
       {(_.isBoolean(comparison) ? comparison : true) ? (

@@ -1103,6 +1103,7 @@ const Home: React.FC<any> = (props: any) => {
           magnifierHeight,
           ifPopconfirm,
           showImgList,
+          imgListNum,
           showFooter,
           markNumberLeft,
           markNumberTop,
@@ -1583,6 +1584,7 @@ const Home: React.FC<any> = (props: any) => {
                       fontSize,
                       dataValue,
                       showImgList,
+                      imgListNum,
                       showFooter,
                       magnifier,
                       magnifierSize,
@@ -2311,6 +2313,7 @@ const Home: React.FC<any> = (props: any) => {
       magnifierHeight,
       ifPopconfirm,
       showImgList,
+      imgListNum,
       showFooter,
       line_height,
       staticHeight,
@@ -2415,6 +2418,7 @@ const Home: React.FC<any> = (props: any) => {
             magnifierHeight,
             ifPopconfirm,
             showImgList,
+            imgListNum,
             showFooter,
             line_height,
             staticHeight,
@@ -2498,6 +2502,7 @@ const Home: React.FC<any> = (props: any) => {
               magnifierHeight,
               ifPopconfirm,
               showImgList,
+              imgListNum,
               showFooter,
               line_height,
               staticHeight,
@@ -2585,6 +2590,7 @@ const Home: React.FC<any> = (props: any) => {
       magnifierHeight: undefined,
       ifPopconfirm: true,
       showImgList: false,
+      imgListNum: 6,
       showFooter: false,
       paddingSize: 0,
       showLabel: true,
@@ -3283,6 +3289,9 @@ const Home: React.FC<any> = (props: any) => {
                   </Form.Item>
                   <Form.Item name="showImgList" label="图片列表" valuePropName="checked">
                     <Switch />
+                  </Form.Item>
+                  <Form.Item name="imgListNum" label="图片列表数量">
+                    <InputNumber min={1} placeholder="图片列表数量" />
                   </Form.Item>
                   <Form.Item name="showFooter" label="显示底部描述" valuePropName="checked">
                     <Switch />
