@@ -1,13 +1,13 @@
-import React, { Fragment, useEffect, useMemo, useState, } from "react";
-import { Form, Input, message, Button, Tree, Select, Switch, Row, Col, Modal } from "antd";
-import * as _ from "lodash";
-import styles from "./index.module.less";
-import { getAllProject, updateParams } from "@/services/api";
-import PrimaryTitle from "@/components/PrimaryTitle";
-import FileManager from "@/components/FileManager";
-import TooltipDiv from "@/components/TooltipDiv";
-import { connect, useHistory, useModel } from "umi";
-import { DeleteOutlined, EditOutlined, FormOutlined, } from "@ant-design/icons";
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import { Form, Input, message, Button, Tree, Select, Row, Col, Modal } from 'antd';
+import * as _ from 'lodash';
+import styles from './index.module.less';
+import { updateParams } from '@/services/api';
+import PrimaryTitle from '@/components/PrimaryTitle';
+import FileManager from '@/components/FileManager';
+import TooltipDiv from '@/components/TooltipDiv';
+import { connect, useHistory, useModel } from 'umi';
+import { DeleteOutlined, EditOutlined, FormOutlined } from '@ant-design/icons';
 
 const Setting: React.FC<any> = (props) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -37,54 +37,56 @@ const Setting: React.FC<any> = (props) => {
       const { quality_name, name, password, flowData } = paramsData;
       const { nodes } = flowData;
       let checkedList: any = [];
-      const result: any = (nodes || []).map((node: any) => {
-        const { alias, name, id, config = {} } = node;
-        const { initParams = {} } = config;
-        if (!!initParams && !_.isEmpty(initParams)) {
-          return {
-            title: alias || name,
-            key: id,
-            children: Object.entries(initParams).map((param: any) => {
-              const { alias, name, onHidden } = param[1];
-              const key = `${id}@$@${param[0]}`;
-              if (!onHidden) {
-                checkedList = checkedList.concat(key)
-              }
-              return {
-                title: alias || name,
-                key: key,
-                checked: true,
-              };
-            }),
+      const result: any = (nodes || [])
+        .map((node: any) => {
+          const { alias, name, id, config = {} } = node;
+          const { initParams = {} } = config;
+          if (!!initParams && !_.isEmpty(initParams)) {
+            return {
+              title: alias || name,
+              key: id,
+              children: Object.entries(initParams).map((param: any) => {
+                const { alias, name, onHidden } = param[1];
+                const key = `${id}@$@${param[0]}`;
+                if (!onHidden) {
+                  checkedList = checkedList.concat(key);
+                }
+                return {
+                  title: alias || name,
+                  key: key,
+                  checked: true,
+                };
+              }),
+            };
           }
-        };
-        return null;
-      }).filter(Boolean);
+          return null;
+        })
+        .filter(Boolean);
       setParamData(paramsData);
       setTreeData([{ title: '参数节点', key: 'parent_001', children: result }]);
       setCheckedKeys(checkedList);
       setFieldsValue({
         quality_name: quality_name || name,
         selfStart: paramsData.selfStart || false,
-        errorSelfStart: paramsData.errorSelfStart || false
+        errorSelfStart: paramsData.errorSelfStart || false,
       });
     }
   }, [paramsData]);
   // 设置服务端IP
   useEffect(() => {
-    if (!localStorage.getItem("ipUrl-history")) {
-      localStorage.setItem("ipUrl-history", 'localhost:8867');
-      setFieldsValue({ "ipUrl-history": 'localhost:8867' });
+    if (!localStorage.getItem('ipUrl-history')) {
+      localStorage.setItem('ipUrl-history', 'localhost:8867');
+      setFieldsValue({ 'ipUrl-history': 'localhost:8867' });
     }
-    if (!localStorage.getItem("ipUrl-realtime")) {
-      localStorage.setItem("ipUrl-realtime", 'localhost:8866');
-      setFieldsValue({ "ipUrl-realtime": 'localhost:8866' });
+    if (!localStorage.getItem('ipUrl-realtime')) {
+      localStorage.setItem('ipUrl-realtime', 'localhost:8866');
+      setFieldsValue({ 'ipUrl-realtime': 'localhost:8866' });
     }
-    if (!localStorage.getItem("ipUrlList")) {
+    if (!localStorage.getItem('ipUrlList')) {
       setIpUrlList([{ name: '本地服务', value: 'localhost:8866' }]);
     } else {
       try {
-        const list = JSON.parse(localStorage.getItem("ipUrlList") || "[]");
+        const list = JSON.parse(localStorage.getItem('ipUrlList') || '[]');
         if (!!list.length) {
           setIpUrlList(list);
         } else {
@@ -92,26 +94,31 @@ const Setting: React.FC<any> = (props) => {
         }
       } catch (e) {
         console.log('ipUrlList有问题', e);
-        localStorage.removeItem("ipUrlList");
+        localStorage.removeItem('ipUrlList');
       }
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("ipUrlList", JSON.stringify(ipUrlList.map((item: any) => _.omit(item, 'edit'))));
+    localStorage.setItem(
+      'ipUrlList',
+      JSON.stringify(ipUrlList.map((item: any) => _.omit(item, 'edit'))),
+    );
   }, [ipUrlList]);
   // 服务端地址列表
   const updateIpUrl = (index: number, name: string, value: any) => {
-    setIpUrlList((prev: any) => prev.map((item: any, iIndex: number) => {
-      if (index === iIndex) {
-        return { ...item, [name]: value };
-      }
-      return item;
-    }));
+    setIpUrlList((prev: any) =>
+      prev.map((item: any, iIndex: number) => {
+        if (index === iIndex) {
+          return { ...item, [name]: value };
+        }
+        return item;
+      }),
+    );
   };
   // 参数树状结构
   const onCheck = (checkedKeysValue: React.Key[]) => {
-    setCheckedKeys(checkedKeysValue.filter((i: any) => i?.indexOf("@$@") > -1));
+    setCheckedKeys(checkedKeysValue.filter((i: any) => i?.indexOf('@$@') > -1));
   };
   // 保存
   const onFinish = () => {
@@ -128,57 +135,58 @@ const Setting: React.FC<any> = (props) => {
                 initParams: Object.entries(initParams).reduce((pre: any, cen: any) => {
                   return Object.assign({}, pre, {
                     [cen[0]]: Object.assign({}, cen[1], {
-                      onHidden: !checkedKeys.includes(`${node.id}@$@${cen[0]}`)
-                    })
+                      onHidden: !checkedKeys.includes(`${node.id}@$@${cen[0]}`),
+                    }),
                   });
                 }, {}),
-              })
+              }),
             });
-          })
+          });
         });
         const result = Object.assign({}, paramData, {
           quality_name,
-          selfStart, errorSelfStart,
+          selfStart,
+          errorSelfStart,
           contentData: {
             ...(paramData?.contentData || {}),
             ipList: (paramData?.contentData?.ipList || [])?.map((item: any) => {
               if (item.key === paramData.id) {
                 return {
                   ...item,
-                  label: quality_name
+                  label: quality_name,
                 };
-              };
+              }
               return item;
-            })
+            }),
           },
           configList: (paramData.configList || []).map((config: any) => {
             if (config.value === paramData?.selectedConfig) {
               return Object.assign({}, config, {
-                data: nodeList
+                data: nodeList,
               });
             }
             return config;
           }),
           flowData: Object.assign({}, paramData?.flowData, {
             nodes: nodeList,
-          })
+          }),
         });
         updateParams({
           id: paramData.id,
-          data: result
+          data: result,
         }).then((res: any) => {
           if (res && res.code === 'SUCCESS') {
-            message.success('更新配置成功')
+            message.success('更新配置成功');
           } else {
             message.error(res?.msg || res?.message || '接口异常');
           }
           if (!!quality_icon) {
-            localStorage.setItem("quality_icon", quality_icon || '');
+            localStorage.setItem('quality_icon', quality_icon || '');
           } else {
-            localStorage.removeItem("quality_icon");
+            localStorage.removeItem('quality_icon');
           }
-          localStorage.setItem("ipUrl-history", values['ipUrl-history'] || '');
-          localStorage.setItem("ipString", values['ipString'] || '');
+          localStorage.setItem('ipUrl-history', values['ipUrl-history'] || '');
+          localStorage.setItem('ipString', values['ipString'] || '');
           window.location.reload();
         });
       })
@@ -186,131 +194,151 @@ const Setting: React.FC<any> = (props) => {
         const { errorFields } = err;
         _.isArray(errorFields) && message.error(`${errorFields[0]?.errors[0]} 是必填项`);
       });
-  }
+  };
 
   return (
     <div className={`${styles.setting} flex-box page-size background-ubv`}>
-      <PrimaryTitle title={"系统配置"} />
+      <PrimaryTitle title={'系统配置'} />
       <div className="body">
-        <Form
-          form={form}
-          layout="horizontal"
-          scrollToFirstError
-        >
+        <Form form={form} layout="horizontal" scrollToFirstError>
           {
             // @ts-ignore
-            !!window.QUALITY_CCD_CONFIG?.canChangeLogo ?
+            !!window.QUALITY_CCD_CONFIG?.canChangeLogo ? (
               <Form.Item
                 name="quality_icon"
                 label="系统图标"
-                initialValue={localStorage.getItem("quality_icon") || ''}
-                rules={[{ required: false, message: "系统图标" }]}
+                initialValue={localStorage.getItem('quality_icon') || ''}
+                rules={[{ required: false, message: '系统图标' }]}
               >
                 <div className="flex-box">
-                  {
-                    getFieldValue("quality_icon") ?
-                      <TooltipDiv title={getFieldValue("quality_icon")} style={{ marginRight: 16, }}>
-                        {getFieldValue("quality_icon")}
-                      </TooltipDiv>
-                      : null
-                  }
-                  {
-                    getFieldValue("quality_icon") ?
-                      <Button style={{ height: 40 }} onClick={() => {
-                        setFieldsValue({ "quality_icon": undefined });
-                      }}>移除</Button>
-                      :
-                      <Button style={{ height: 40 }} onClick={() => {
-                        setSelectedPath(localStorage.getItem("quality_icon") || '');
+                  {getFieldValue('quality_icon') ? (
+                    <TooltipDiv title={getFieldValue('quality_icon')} style={{ marginRight: 16 }}>
+                      {getFieldValue('quality_icon')}
+                    </TooltipDiv>
+                  ) : null}
+                  {getFieldValue('quality_icon') ? (
+                    <Button
+                      style={{ height: 40 }}
+                      onClick={() => {
+                        setFieldsValue({ quality_icon: undefined });
+                      }}
+                    >
+                      移除
+                    </Button>
+                  ) : (
+                    <Button
+                      style={{ height: 40 }}
+                      onClick={() => {
+                        setSelectedPath(localStorage.getItem('quality_icon') || '');
                         setSelectPathVisible(true);
-                      }}>选择系统图标</Button>
-                  }
+                      }}
+                    >
+                      选择系统图标
+                    </Button>
+                  )}
                 </div>
               </Form.Item>
-              : null
+            ) : null
           }
           <Form.Item
             name="quality_name"
             label="系统名称"
             initialValue={paramData?.quality_name || paramData?.name}
-            rules={[{ required: false, message: "系统名称" }]}
+            rules={[{ required: false, message: '系统名称' }]}
           >
             <Input placeholder="系统名称" />
           </Form.Item>
           <Form.Item
             name="ipUrl"
             label="服务端地址"
-            rules={[{ required: false, message: "服务端地址" }]}
+            rules={[{ required: false, message: '服务端地址' }]}
           >
-            {
-              isVision ?
-                <Input placeholder="localhost:8866" onBlur={(e) => localStorage.setItem("ipUrl-realtime", e.target.value)} />
-                :
-                <Fragment>
-                  {
-                    (ipUrlList || []).map((ip: any, index: number) => {
-                      const { name, value, edit } = ip;
-                      return <div className="flex-box ipList-item" key={`ipUrl-${index}`}>
-                        <Input defaultValue={name} disabled={!edit} onBlur={(e) => updateIpUrl(index, 'name', e.target.value)} />
-                        <Input defaultValue={value} disabled={!edit} onBlur={(e) => updateIpUrl(index, 'value', e.target.value)} />
-                        <Button
-                          icon={<EditOutlined />}
-                          className="del-btn"
-                          onClick={() => updateIpUrl(index, 'edit', !edit)}
-                        />
-                        <Button
-                          icon={<DeleteOutlined />}
-                          disabled={ipUrlList?.length === 1}
-                          className="del-btn"
-                          onClick={() => {
-                            setIpUrlList((prev: any) => prev.filter((i: any, iIndex: number) => iIndex !== index));
-                          }}
-                        />
-                      </div>
-                    })
-                  }
-                  <Button type="primary" onClick={() => {
+            {isVision ? (
+              <Input
+                placeholder="localhost:8866"
+                onBlur={(e) => localStorage.setItem('ipUrl-realtime', e.target.value)}
+              />
+            ) : (
+              <Fragment>
+                {(ipUrlList || []).map((ip: any, index: number) => {
+                  const { name, value, edit } = ip;
+                  return (
+                    <div className="flex-box ipList-item" key={`ipUrl-${index}`}>
+                      <Input
+                        defaultValue={name}
+                        disabled={!edit}
+                        onBlur={(e) => updateIpUrl(index, 'name', e.target.value)}
+                      />
+                      <Input
+                        defaultValue={value}
+                        disabled={!edit}
+                        onBlur={(e) => updateIpUrl(index, 'value', e.target.value)}
+                      />
+                      <Button
+                        icon={<EditOutlined />}
+                        className="del-btn"
+                        onClick={() => updateIpUrl(index, 'edit', !edit)}
+                      />
+                      <Button
+                        icon={<DeleteOutlined />}
+                        disabled={ipUrlList?.length === 1}
+                        className="del-btn"
+                        onClick={() => {
+                          setIpUrlList((prev: any) =>
+                            prev.filter((i: any, iIndex: number) => iIndex !== index),
+                          );
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+                <Button
+                  type="primary"
+                  onClick={() => {
                     setIpUrlList((prev: any) => prev.concat({ name: '', value: '', edit: true }));
-                  }}>
-                    添加服务地址
-                  </Button>
-                </Fragment>
-            }
+                  }}
+                >
+                  添加服务地址
+                </Button>
+              </Fragment>
+            )}
           </Form.Item>
           <Form.Item
             name="ipUrl-history"
             label="历史记录地址"
-            initialValue={localStorage.getItem("ipUrl-history") || undefined}
-            rules={[{ required: false, message: "历史记录服务端地址" }]}
+            initialValue={localStorage.getItem('ipUrl-history') || undefined}
+            rules={[{ required: false, message: '历史记录服务端地址' }]}
           >
-            <Input placeholder="localhost:8867" onBlur={(e) => localStorage.setItem("ipUrl-history", e.target.value)} />
+            <Input
+              placeholder="localhost:8867"
+              onBlur={(e) => localStorage.setItem('ipUrl-history', e.target.value)}
+            />
           </Form.Item>
           <Form.Item
             name="ipString"
             label="方案ID绑定"
-            initialValue={localStorage.getItem("ipString") || undefined}
-            rules={[{ required: false, message: "方案ID绑定" }]}
+            initialValue={localStorage.getItem('ipString') || undefined}
+            rules={[{ required: false, message: '方案ID绑定' }]}
           >
-            {
-              isVision ?
-                <Input placeholder="方案ID" />
-                :
-                <Select
-                  style={{ width: '100%' }}
-                  size="large"
-                  allowClear
-                  showSearch
-                  optionFilterProp="label"
-                  options={projectListStore}
-                  placeholder="方案ID"
-                  onChange={(e, option: any) => {
-                    const { value, realIp } = option;
-                    localStorage.setItem("ipUrl-realtime", realIp);
-                    localStorage.setItem("ipString", value);
-                    window.location.reload();
-                  }}
-                />
-            }
+            {isVision ? (
+              <Input placeholder="方案ID" />
+            ) : (
+              <Select
+                style={{ width: '100%' }}
+                size="large"
+                allowClear
+                showSearch
+                optionFilterProp="label"
+                options={projectListStore}
+                placeholder="方案ID"
+                onChange={(e, option: any) => {
+                  const { value, realIp } = option;
+                  localStorage.setItem('ipUrl-realtime', realIp);
+                  localStorage.setItem('ipString', value);
+                  window.location.reload();
+                }}
+              />
+            )}
           </Form.Item>
           <Row>
             <Col span={8} className="flex-box ant-form-item">
@@ -325,7 +353,9 @@ const Setting: React.FC<any> = (props) => {
                   if (location.href?.indexOf('?') > -1) {
                     hash = location.href.split('?')[1];
                   }
-                  location.href = `${location.href?.split('#/')?.[0]}#/home/edit${!!hash ? `?${hash}` : ''}`;
+                  location.href = `${location.href?.split('#/')?.[0]}#/home/edit${
+                    !!hash ? `?${hash}` : ''
+                  }`;
                   window.location.reload();
                 }}
               >
@@ -342,8 +372,8 @@ const Setting: React.FC<any> = (props) => {
               >
                 <Switch />
               </Form.Item>
-            </Col>
-            <Col span={8}>
+            </Col> */}
+            {/* <Col span={8}>
               <Form.Item
                 name="errorSelfStart"
                 label="异常自动重启"
@@ -355,11 +385,11 @@ const Setting: React.FC<any> = (props) => {
               </Form.Item>
             </Col> */}
           </Row>
-          <Form.Item
+          {/* <Form.Item
             name="password"
             label="权限密码"
             initialValue={paramData.password}
-            rules={[{ required: false, message: "权限密码" }]}
+            rules={[{ required: false, message: '权限密码' }]}
           >
             <Button
               icon={<FormOutlined />}
@@ -370,55 +400,52 @@ const Setting: React.FC<any> = (props) => {
             >
               修改权限密码
             </Button>
-          </Form.Item>
-          {
-            (!isVision && !_.isEmpty(treeData) && !!treeData?.length) ?
-              <Form.Item
-                name="params"
-                label="参数项管理"
-                rules={[{ required: false, message: "参数项管理" }]}
-              >
-                <Tree
-                  checkable
-                  defaultExpandedKeys={['parent_001']}
-                  showLine={true}
-                  // @ts-ignore
-                  onCheck={(checkedKeysValue: any) => {
-                    onCheck(_.pull(checkedKeysValue, 'parent_001'));
-                  }}
-                  checkedKeys={checkedKeys}
-                  treeData={treeData}
-                />
-              </Form.Item>
-              : null
-          }
+          </Form.Item> */}
+          {!isVision && !_.isEmpty(treeData) && !!treeData?.length ? (
+            <Form.Item
+              name="params"
+              label="参数项管理"
+              rules={[{ required: false, message: '参数项管理' }]}
+            >
+              <Tree
+                checkable
+                defaultExpandedKeys={['parent_001']}
+                showLine={true}
+                // @ts-ignore
+                onCheck={(checkedKeysValue: any) => {
+                  onCheck(_.pull(checkedKeysValue, 'parent_001'));
+                }}
+                checkedKeys={checkedKeys}
+                treeData={treeData}
+              />
+            </Form.Item>
+          ) : null}
         </Form>
-
       </div>
       <div className="footer flex-box">
-        <Button type="primary" onClick={() => onFinish()}>保存</Button>
+        <Button type="primary" onClick={() => onFinish()}>
+          保存
+        </Button>
       </div>
 
-      {
-        selectPathVisible ?
-          <FileManager
-            data={{ value: selectedPath }}
-            onOk={(val: any) => {
-              const { value } = val;
-              setFieldsValue({ quality_icon: value })
-              setSelectPathVisible(false);
-              setSelectedPath('');
-            }}
-            onCancel={() => {
-              setSelectPathVisible(false);
-              setSelectedPath('');
-            }}
-          />
-          : null
-      }
+      {selectPathVisible ? (
+        <FileManager
+          data={{ value: selectedPath }}
+          onOk={(val: any) => {
+            const { value } = val;
+            setFieldsValue({ quality_icon: value });
+            setSelectPathVisible(false);
+            setSelectedPath('');
+          }}
+          onCancel={() => {
+            setSelectPathVisible(false);
+            setSelectedPath('');
+          }}
+        />
+      ) : null}
       {
         // 密码框
-        !!passwordVisible ?
+        !!passwordVisible ? (
           <Modal
             title={`修改权限密码`}
             wrapClassName="button-password-modal"
@@ -427,22 +454,22 @@ const Setting: React.FC<any> = (props) => {
             destroyOnClose
             maskClosable={false}
             onOk={() => {
-              form1.validateFields().then(values => {
+              form1.validateFields().then((values) => {
                 const { prePassword, password } = values;
-                if (!paramData?.password || (prePassword === paramData?.password)) {
+                if (!paramData?.password || prePassword === paramData?.password) {
                   updateParams({
                     id: paramData.id,
                     data: {
                       ...paramData,
-                      password: password || ''
-                    }
+                      password: password || '',
+                    },
                   }).then((res: any) => {
                     if (res && res.code === 'SUCCESS') {
                       message.success('更新配置成功');
                       window.location.reload();
                     } else {
                       message.error(res?.msg || res?.message || '接口异常');
-                    };
+                    }
                     form1.resetFields();
                   });
                 } else {
@@ -455,19 +482,17 @@ const Setting: React.FC<any> = (props) => {
               setPasswordVisible(false);
             }}
           >
-            <Form form={form1} scrollToFirstError >
-              {
-                !!paramData?.password ?
-                  <Form.Item
-                    name="prePassword"
-                    label="原始密码"
-                    rules={[{ required: true, message: '原始密码' }]}
-                    {...passwordvalidate}
-                  >
-                    <Input.Password visibilityToggle={false} allowClear placeholder="原始密码" />
-                  </Form.Item>
-                  : null
-              }
+            <Form form={form1} scrollToFirstError>
+              {!!paramData?.password ? (
+                <Form.Item
+                  name="prePassword"
+                  label="原始密码"
+                  rules={[{ required: true, message: '原始密码' }]}
+                  {...passwordvalidate}
+                >
+                  <Input.Password visibilityToggle={false} allowClear placeholder="原始密码" />
+                </Form.Item>
+              ) : null}
               <Form.Item
                 name="password"
                 label="权限密码"
@@ -478,7 +503,7 @@ const Setting: React.FC<any> = (props) => {
               </Form.Item>
             </Form>
           </Modal>
-          : null
+        ) : null
       }
     </div>
   );
@@ -486,5 +511,5 @@ const Setting: React.FC<any> = (props) => {
 
 export default connect(({ home, themeStore }) => ({
   projectStatus: themeStore.projectStatus,
-  projectListStore: themeStore.projectList
+  projectListStore: themeStore.projectList,
 }))(Setting);

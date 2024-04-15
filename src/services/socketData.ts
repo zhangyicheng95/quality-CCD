@@ -26,6 +26,24 @@ const listen = (action: any) => {
           const { uid = '', data = {}, ...rest } = result;
           if (uid) {
             const newData = (Object.entries(data || {}) || []).reduce((pre: any, cen: any) => {
+              /*************监听系统命令及提示框************/
+              if (cen[0]?.indexOf('__cmd__') > -1) {
+                window.parent.postMessage(
+                  { type: '__cmd__', name: '__cmd__', value: cen[1] },
+                  localStorage.getItem('parentOrigin') || '',
+                );
+              }
+              if (cen[0]?.indexOf('__notification__') > -1) {
+                window.parent.postMessage(
+                  {
+                    type: '__notification__',
+                    name: '__notification__',
+                    value: _.isString(cen[1]) ? cen[1] : JSON.stringify(cen[1]),
+                  },
+                  localStorage.getItem('parentOrigin') || '',
+                );
+              }
+              /************监听系统命令及提示框*************/
               const key = cen[0]?.split('@')[0],
                 value = _.isBoolean(cen[1])
                   ? cen[1]

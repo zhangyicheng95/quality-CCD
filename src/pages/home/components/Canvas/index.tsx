@@ -1961,9 +1961,9 @@ const Home: React.FC<any> = (props: any) => {
                   setAddWindowVisible(key);
                 }}
               >
-                <CopyOutlined
-                  className="drag-item-content-mask-icon"
-                  onClick={() => {
+                <Popconfirm
+                  title="复制此窗口?"
+                  onConfirm={() => {
                     // 复制监控窗口
                     const uuid32 = getuid();
                     addWindow({
@@ -1976,7 +1976,11 @@ const Home: React.FC<any> = (props: any) => {
                       },
                     });
                   }}
-                />
+                  okText="确认"
+                  cancelText="取消"
+                >
+                  <CopyOutlined className="drag-item-content-mask-icon" />
+                </Popconfirm>
                 <Popconfirm
                   title="确认删除监控窗口吗?"
                   onConfirm={() => {
@@ -2613,8 +2617,8 @@ const Home: React.FC<any> = (props: any) => {
   return (
     <div className={`${styles.home}`}>
       <div className="flex-box home-body">
-        <DndProvider backend={HTML5Backend}>
-          {ifCanEdit ? (
+        {ifCanEdit ? (
+          <DndProvider backend={HTML5Backend}>
             <div className="left-panel" style={leftPanelVisible ? {} : { left: '-260px' }}>
               <div
                 className="flex-box-center left-panel-switch-button"
@@ -2686,75 +2690,73 @@ const Home: React.FC<any> = (props: any) => {
                 </div>
               </div>
             </div>
-          ) : null}
-          <div className="flex-box right-canvas">
-            {
-              // @ts-ignore
-              <DropSortableItem
+            <div className="flex-box right-canvas">
+              {
                 // @ts-ignore
-                moveCard={(dragIndex: any, hoverIndex: any, e: any) => {
-                  const item = JSON.parse(dragIndex);
-                  const { key, value, icon } = item;
-                  if (
-                    !paramData?.contentData?.contentSize?.width ||
-                    !paramData?.contentData?.contentSize?.height
-                  ) {
-                    message.error('请先设置画布尺寸');
-                    return;
-                  }
-                  let { width, height } = paramData?.contentData?.contentSize;
-                  if (
-                    !!paramData?.contentData?.autoSize ||
-                    !_.isBoolean(paramData?.contentData?.autoSize)
-                  ) {
-                    width = window.screen.width;
-                    height = window.screen.height;
-                  }
-                  height = height - 77 - (paramData?.contentData?.tabList?.length > 1 ? 28 : 0);
-                  // 画布与实际屏幕的宽度差值
-                  const diffWidth = (window.screen.width - width) / 2;
-                  // 计算实际的x,y坐标
-                  const x = ((e.x + tabNum * width - diffWidth) / width) * 96;
-                  const y = (e.y / height) * ((height / 300) * 14);
-                  if (key === 'main') {
-                    // 添加监控窗口
-                    const uuid32 = getuid();
-                    addWindow({ value: [uuid32], type: value, size: { x, y } });
-                  } else if (key === 'basic') {
-                    // 添加基础窗口
-                    setGridHomeList((prev: any) => {
-                      return prev?.map((item: any) => {
-                        if (item.i === value) {
-                          return {
-                            ...item,
-                            x,
-                            y,
-                            w: 9,
-                            h: 4,
-                            minW: 1,
-                            minH: 2,
-                          };
-                        }
-                        return item;
-                      });
-                    });
-                  } else if (key === 'coating') {
-                    // 添加涂层
-                    if (paramsData.id) {
-                      setParamData((prev: any) =>
-                        Object.assign({}, prev, {
-                          contentData: Object.assign({}, prev.contentData, {
-                            contentBackground:
-                              prev?.contentData?.contentBackground === icon ? '' : icon,
-                          }),
-                        }),
-                      );
+                <DropSortableItem
+                  // @ts-ignore
+                  moveCard={(dragIndex: any, hoverIndex: any, e: any) => {
+                    const item = JSON.parse(dragIndex);
+                    const { key, value, icon } = item;
+                    if (
+                      !paramData?.contentData?.contentSize?.width ||
+                      !paramData?.contentData?.contentSize?.height
+                    ) {
+                      message.error('请先设置画布尺寸');
+                      return;
                     }
-                  }
-                }}
-              >
-                <div className="flex-box right-canvas">
-                  {ifCanEdit ? (
+                    let { width, height } = paramData?.contentData?.contentSize;
+                    if (
+                      !!paramData?.contentData?.autoSize ||
+                      !_.isBoolean(paramData?.contentData?.autoSize)
+                    ) {
+                      width = window.screen.width;
+                      height = window.screen.height;
+                    }
+                    height = height - 77 - (paramData?.contentData?.tabList?.length > 1 ? 28 : 0);
+                    // 画布与实际屏幕的宽度差值
+                    const diffWidth = (window.screen.width - width) / 2;
+                    // 计算实际的x,y坐标
+                    const x = ((e.x + tabNum * width - diffWidth) / width) * 96;
+                    const y = (e.y / height) * ((height / 300) * 14);
+                    if (key === 'main') {
+                      // 添加监控窗口
+                      const uuid32 = getuid();
+                      addWindow({ value: [uuid32], type: value, size: { x, y } });
+                    } else if (key === 'basic') {
+                      // 添加基础窗口
+                      setGridHomeList((prev: any) => {
+                        return prev?.map((item: any) => {
+                          if (item.i === value) {
+                            return {
+                              ...item,
+                              x,
+                              y,
+                              w: 9,
+                              h: 4,
+                              minW: 1,
+                              minH: 2,
+                            };
+                          }
+                          return item;
+                        });
+                      });
+                    } else if (key === 'coating') {
+                      // 添加涂层
+                      if (paramsData.id) {
+                        setParamData((prev: any) =>
+                          Object.assign({}, prev, {
+                            contentData: Object.assign({}, prev.contentData, {
+                              contentBackground:
+                                prev?.contentData?.contentBackground === icon ? '' : icon,
+                            }),
+                          }),
+                        );
+                      }
+                    }
+                  }}
+                >
+                  <div className="flex-box right-canvas">
                     <div
                       className="flex-box-justify-between right-canvas-toolbar"
                       style={leftPanelVisible ? { paddingLeft: 276 } : { paddingLeft: 60 }}
@@ -2841,7 +2843,10 @@ const Home: React.FC<any> = (props: any) => {
                                     contentSize: Object.assign(
                                       {},
                                       paramData?.contentData?.contentSize,
-                                      { width: Number(canvasWidth), height: Number(canvasHeight) },
+                                      {
+                                        width: Number(canvasWidth),
+                                        height: Number(canvasHeight),
+                                      },
                                     ),
                                   },
                                 },
@@ -2892,152 +2897,298 @@ const Home: React.FC<any> = (props: any) => {
                       </div>
                       <div></div>
                     </div>
-                  ) : null}
-                  {useMemo(() => {
-                    return !paramData?.contentData?.contentSize?.width ||
-                      !paramData?.contentData?.contentSize?.height ? null : (
-                      <div
-                        className="flex-box right-canvas-body"
-                        style={Object.assign(
-                          {},
-                          !!paramData?.contentData?.contentBackground
-                            ? {
-                                backgroundImage: `url(${paramData?.contentData?.contentBackground})`,
-                              }
-                            : {},
-                          !paramData?.contentData?.autoSize &&
-                            paramData?.contentData?.contentSize?.width
-                            ? {
-                                width: `${paramData?.contentData?.contentSize?.width}px`,
-                                minWidth: `${paramData?.contentData?.contentSize?.width}px`,
-                                maxWidth: `${paramData?.contentData?.contentSize?.width}px`,
-                              }
-                            : {},
-                          !paramData?.contentData?.autoSize &&
-                            paramData?.contentData?.contentSize?.height
-                            ? {
-                                height: `${paramData?.contentData?.contentSize?.height - 93}px`,
-                                minHeight: `${paramData?.contentData?.contentSize?.height - 93}px`,
-                                maxHeight: `${paramData?.contentData?.contentSize?.height - 93}px`,
-                              }
-                            : {},
-                          paramData?.contentData?.overallBackgroundColor &&
-                            paramData?.contentData?.overallBackgroundColor?.rgb
-                            ? {
-                                backgroundColor: `rgba(${paramData?.contentData?.overallBackgroundColor.rgb.r},${paramData?.contentData?.overallBackgroundColor.rgb.g},${paramData?.contentData?.overallBackgroundColor.rgb.b},${paramData?.contentData?.overallBackgroundColor.rgb.a})`,
-                              }
-                            : {},
-                          !!paramData?.contentData?.autoSize ||
-                            !_.isBoolean(paramData?.contentData?.autoSize)
-                            ? { width: '100%', maxWidth: '100%', height: '100%', maxHeight: '100%' }
-                            : {},
-                        )}
-                      >
-                        <div className="right-canvas-body-grid">
-                          {paramData?.contentData?.tabList?.length > 1 ? (
-                            <div className="flex-box right-canvas-body-grid-tab">
-                              {(paramData?.contentData?.tabList || []).map(
-                                (tab: any, index: number) => {
-                                  const { name, id } = tab;
-                                  return (
-                                    <div
-                                      className={`right-canvas-body-grid-tab-item ${
-                                        tabNum == index ? 'right-canvas-body-grid-tab-selected' : ''
-                                      }`}
-                                      key={id}
-                                      onClick={() => {
-                                        localStorage.setItem(
-                                          `localGridContent-tab-${paramData.id}`,
-                                          index + '',
-                                        );
-                                        setTabNum(index);
-                                      }}
-                                    >
-                                      {name}
-                                    </div>
-                                  );
-                                },
-                              )}
-                            </div>
-                          ) : null}
-                          <div
-                            className="right-canvas-body-grid-body"
-                            style={Object.assign(
-                              {},
-                              !paramData?.contentData?.autoSize &&
-                                paramData?.contentData?.contentSize?.width
-                                ? {
-                                    width: `${
-                                      (paramData?.contentData?.tabList?.length || 1) *
-                                      paramData?.contentData?.contentSize?.width
-                                    }px`,
-                                    minWidth: `${
-                                      (paramData?.contentData?.tabList?.length || 1) *
-                                      paramData?.contentData?.contentSize?.width
-                                    }px`,
-                                    maxWidth: `${
-                                      (paramData?.contentData?.tabList?.length || 1) *
-                                      paramData?.contentData?.contentSize?.width
-                                    }px`,
-                                  }
-                                : {},
-                              !!paramData?.contentData?.autoSize ||
-                                !_.isBoolean(paramData?.contentData?.autoSize)
-                                ? {
-                                    width: `${
-                                      (paramData?.contentData?.tabList?.length || 1) * 100
-                                    }%`,
-                                    maxWidth: `${
-                                      (paramData?.contentData?.tabList?.length || 1) * 100
-                                    }%`,
-                                    height: '100%',
-                                  }
-                                : {},
-                              paramData?.contentData?.tabList?.length > 1
-                                ? { height: 'calc(100% - 28px)' }
-                                : {},
-                              { marginLeft: `${-1 * tabNum * 100}%` },
-                            )}
-                          >
-                            {!_.isEmpty(gridHomeList) ? (
-                              <GridLayout
-                                dragName={ifCanEdit ? '.common-card-title' : ''}
-                                list={gridList.concat(contentList)}
-                                layout={gridHomeList.concat(contentLayout)}
-                                tabLength={paramData?.contentData?.tabList?.length || 1}
-                                margin={
-                                  _.isNumber(paramData?.contentData?.gridMargin)
-                                    ? [
-                                        paramData?.contentData?.gridMargin,
-                                        paramData?.contentData?.gridMargin,
-                                      ]
-                                    : [8, 8]
+                    {useMemo(() => {
+                      return !paramData?.contentData?.contentSize?.width ||
+                        !paramData?.contentData?.contentSize?.height ? null : (
+                        <div
+                          className="flex-box right-canvas-body"
+                          style={Object.assign(
+                            {},
+                            !!paramData?.contentData?.contentBackground
+                              ? {
+                                  backgroundImage: `url(${paramData?.contentData?.contentBackground})`,
                                 }
-                                onChange={(data: any) => {
-                                  saveGridFunc(data);
-                                }}
-                              />
+                              : {},
+                            !paramData?.contentData?.autoSize &&
+                              paramData?.contentData?.contentSize?.width
+                              ? {
+                                  width: `${paramData?.contentData?.contentSize?.width}px`,
+                                  minWidth: `${paramData?.contentData?.contentSize?.width}px`,
+                                  maxWidth: `${paramData?.contentData?.contentSize?.width}px`,
+                                }
+                              : {},
+                            !paramData?.contentData?.autoSize &&
+                              paramData?.contentData?.contentSize?.height
+                              ? {
+                                  height: `${paramData?.contentData?.contentSize?.height - 93}px`,
+                                  minHeight: `${
+                                    paramData?.contentData?.contentSize?.height - 93
+                                  }px`,
+                                  maxHeight: `${
+                                    paramData?.contentData?.contentSize?.height - 93
+                                  }px`,
+                                }
+                              : {},
+                            paramData?.contentData?.overallBackgroundColor &&
+                              paramData?.contentData?.overallBackgroundColor?.rgb
+                              ? {
+                                  backgroundColor: `rgba(${paramData?.contentData?.overallBackgroundColor.rgb.r},${paramData?.contentData?.overallBackgroundColor.rgb.g},${paramData?.contentData?.overallBackgroundColor.rgb.b},${paramData?.contentData?.overallBackgroundColor.rgb.a})`,
+                                }
+                              : {},
+                            !!paramData?.contentData?.autoSize ||
+                              !_.isBoolean(paramData?.contentData?.autoSize)
+                              ? {
+                                  width: '100%',
+                                  maxWidth: '100%',
+                                  height: '100%',
+                                  maxHeight: '100%',
+                                }
+                              : {},
+                          )}
+                        >
+                          <div className="right-canvas-body-grid">
+                            {paramData?.contentData?.tabList?.length > 1 ? (
+                              <div className="flex-box right-canvas-body-grid-tab">
+                                {(paramData?.contentData?.tabList || []).map(
+                                  (tab: any, index: number) => {
+                                    const { name, id } = tab;
+                                    return (
+                                      <div
+                                        className={`right-canvas-body-grid-tab-item ${
+                                          tabNum == index
+                                            ? 'right-canvas-body-grid-tab-selected'
+                                            : ''
+                                        }`}
+                                        key={id}
+                                        onClick={() => {
+                                          localStorage.setItem(
+                                            `localGridContent-tab-${paramData.id}`,
+                                            index + '',
+                                          );
+                                          setTabNum(index);
+                                        }}
+                                      >
+                                        {name}
+                                      </div>
+                                    );
+                                  },
+                                )}
+                              </div>
                             ) : null}
+                            <div
+                              className="right-canvas-body-grid-body"
+                              style={Object.assign(
+                                {},
+                                !paramData?.contentData?.autoSize &&
+                                  paramData?.contentData?.contentSize?.width
+                                  ? {
+                                      width: `${
+                                        (paramData?.contentData?.tabList?.length || 1) *
+                                        paramData?.contentData?.contentSize?.width
+                                      }px`,
+                                      minWidth: `${
+                                        (paramData?.contentData?.tabList?.length || 1) *
+                                        paramData?.contentData?.contentSize?.width
+                                      }px`,
+                                      maxWidth: `${
+                                        (paramData?.contentData?.tabList?.length || 1) *
+                                        paramData?.contentData?.contentSize?.width
+                                      }px`,
+                                    }
+                                  : {},
+                                !!paramData?.contentData?.autoSize ||
+                                  !_.isBoolean(paramData?.contentData?.autoSize)
+                                  ? {
+                                      width: `${
+                                        (paramData?.contentData?.tabList?.length || 1) * 100
+                                      }%`,
+                                      maxWidth: `${
+                                        (paramData?.contentData?.tabList?.length || 1) * 100
+                                      }%`,
+                                      height: '100%',
+                                    }
+                                  : {},
+                                paramData?.contentData?.tabList?.length > 1
+                                  ? { height: 'calc(100% - 28px)' }
+                                  : {},
+                                { marginLeft: `${-1 * tabNum * 100}%` },
+                              )}
+                            >
+                              {!_.isEmpty(gridHomeList) ? (
+                                <GridLayout
+                                  dragName={ifCanEdit ? '.common-card-title' : ''}
+                                  list={gridList.concat(contentList)}
+                                  layout={gridHomeList.concat(contentLayout)}
+                                  tabLength={paramData?.contentData?.tabList?.length || 1}
+                                  margin={
+                                    _.isNumber(paramData?.contentData?.gridMargin)
+                                      ? [
+                                          paramData?.contentData?.gridMargin,
+                                          paramData?.contentData?.gridMargin,
+                                        ]
+                                      : [8, 8]
+                                  }
+                                  onChange={(data: any) => {
+                                    saveGridFunc(data);
+                                  }}
+                                />
+                              ) : null}
+                            </div>
                           </div>
                         </div>
+                      );
+                    }, [
+                      gridHomeList,
+                      contentLayout,
+                      gridList,
+                      contentList,
+                      paramData?.contentData?.contentBackground,
+                      paramData?.contentData?.contentSize,
+                      tabNum,
+                      paramData?.contentData?.tabList?.length,
+                      paramData?.contentData?.gridMargin,
+                    ])}
+                  </div>
+                </DropSortableItem>
+              }
+            </div>
+          </DndProvider>
+        ) : (
+          <div className="flex-box right-canvas">
+            {useMemo(() => {
+              return !paramData?.contentData?.contentSize?.width ||
+                !paramData?.contentData?.contentSize?.height ? null : (
+                <div
+                  className="flex-box right-canvas-body"
+                  style={Object.assign(
+                    {},
+                    !!paramData?.contentData?.contentBackground
+                      ? {
+                          backgroundImage: `url(${paramData?.contentData?.contentBackground})`,
+                        }
+                      : {},
+                    !paramData?.contentData?.autoSize && paramData?.contentData?.contentSize?.width
+                      ? {
+                          width: `${paramData?.contentData?.contentSize?.width}px`,
+                          minWidth: `${paramData?.contentData?.contentSize?.width}px`,
+                          maxWidth: `${paramData?.contentData?.contentSize?.width}px`,
+                        }
+                      : {},
+                    !paramData?.contentData?.autoSize && paramData?.contentData?.contentSize?.height
+                      ? {
+                          height: `${paramData?.contentData?.contentSize?.height - 93}px`,
+                          minHeight: `${paramData?.contentData?.contentSize?.height - 93}px`,
+                          maxHeight: `${paramData?.contentData?.contentSize?.height - 93}px`,
+                        }
+                      : {},
+                    paramData?.contentData?.overallBackgroundColor &&
+                      paramData?.contentData?.overallBackgroundColor?.rgb
+                      ? {
+                          backgroundColor: `rgba(${paramData?.contentData?.overallBackgroundColor.rgb.r},${paramData?.contentData?.overallBackgroundColor.rgb.g},${paramData?.contentData?.overallBackgroundColor.rgb.b},${paramData?.contentData?.overallBackgroundColor.rgb.a})`,
+                        }
+                      : {},
+                    !!paramData?.contentData?.autoSize ||
+                      !_.isBoolean(paramData?.contentData?.autoSize)
+                      ? { width: '100%', maxWidth: '100%', height: '100%', maxHeight: '100%' }
+                      : {},
+                  )}
+                >
+                  <div className="right-canvas-body-grid">
+                    {paramData?.contentData?.tabList?.length > 1 ? (
+                      <div className="flex-box right-canvas-body-grid-tab">
+                        {(paramData?.contentData?.tabList || []).map((tab: any, index: number) => {
+                          const { name, id } = tab;
+                          return (
+                            <div
+                              className={`right-canvas-body-grid-tab-item ${
+                                tabNum == index ? 'right-canvas-body-grid-tab-selected' : ''
+                              }`}
+                              key={id}
+                              onClick={() => {
+                                localStorage.setItem(
+                                  `localGridContent-tab-${paramData.id}`,
+                                  index + '',
+                                );
+                                setTabNum(index);
+                              }}
+                            >
+                              {name}
+                            </div>
+                          );
+                        })}
                       </div>
-                    );
-                  }, [
-                    gridHomeList,
-                    contentLayout,
-                    gridList,
-                    contentList,
-                    paramData?.contentData?.contentBackground,
-                    paramData?.contentData?.contentSize,
-                    tabNum,
-                    paramData?.contentData?.tabList?.length,
-                    paramData?.contentData?.gridMargin,
-                  ])}
+                    ) : null}
+                    <div
+                      className="right-canvas-body-grid-body"
+                      style={Object.assign(
+                        {},
+                        !paramData?.contentData?.autoSize &&
+                          paramData?.contentData?.contentSize?.width
+                          ? {
+                              width: `${
+                                (paramData?.contentData?.tabList?.length || 1) *
+                                paramData?.contentData?.contentSize?.width
+                              }px`,
+                              minWidth: `${
+                                (paramData?.contentData?.tabList?.length || 1) *
+                                paramData?.contentData?.contentSize?.width
+                              }px`,
+                              maxWidth: `${
+                                (paramData?.contentData?.tabList?.length || 1) *
+                                paramData?.contentData?.contentSize?.width
+                              }px`,
+                            }
+                          : {},
+                        !!paramData?.contentData?.autoSize ||
+                          !_.isBoolean(paramData?.contentData?.autoSize)
+                          ? {
+                              width: `${(paramData?.contentData?.tabList?.length || 1) * 100}%`,
+                              maxWidth: `${(paramData?.contentData?.tabList?.length || 1) * 100}%`,
+                              height: '100%',
+                            }
+                          : {},
+                        paramData?.contentData?.tabList?.length > 1
+                          ? { height: 'calc(100% - 28px)' }
+                          : {},
+                        { marginLeft: `${-1 * tabNum * 100}%` },
+                      )}
+                    >
+                      {!_.isEmpty(gridHomeList) ? (
+                        <GridLayout
+                          dragName={ifCanEdit ? '.common-card-title' : ''}
+                          list={gridList.concat(contentList)}
+                          layout={gridHomeList.concat(contentLayout)}
+                          tabLength={paramData?.contentData?.tabList?.length || 1}
+                          margin={
+                            _.isNumber(paramData?.contentData?.gridMargin)
+                              ? [
+                                  paramData?.contentData?.gridMargin,
+                                  paramData?.contentData?.gridMargin,
+                                ]
+                              : [8, 8]
+                          }
+                          onChange={(data: any) => {
+                            saveGridFunc(data);
+                          }}
+                        />
+                      ) : null}
+                    </div>
+                  </div>
                 </div>
-              </DropSortableItem>
-            }
+              );
+            }, [
+              gridHomeList,
+              contentLayout,
+              gridList,
+              contentList,
+              paramData?.contentData?.contentBackground,
+              paramData?.contentData?.contentSize,
+              tabNum,
+              paramData?.contentData?.tabList?.length,
+              paramData?.contentData?.gridMargin,
+            ])}
           </div>
-        </DndProvider>
+        )}
         <NodeDetailWrapper
           className="config-panel"
           style={
