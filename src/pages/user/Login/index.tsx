@@ -1,11 +1,10 @@
-import { DesktopOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Alert, Button, Form, Input, message } from 'antd';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Alert, AutoComplete, Button, Form, Input, message } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
-import { ProFormText, LoginForm } from '@ant-design/pro-form';
-import { history, FormattedMessage, SelectLang, useModel } from 'umi';
+import { history, SelectLang } from 'umi';
 import Footer from '@/components/Footer';
 import { login } from '@/services/api';
-
+import * as _ from 'lodash';
 import styles from './index.less';
 import { cryptoEncryption } from '@/utils/utils';
 
@@ -29,6 +28,10 @@ const Login: React.FC = () => {
   const clickNum = useRef(0);
 
   useEffect(() => {
+    if (!localStorage.getItem('userList')) {
+      localStorage.setItem('userList', JSON.stringify(['admin', 'sany']));
+    }
+
     return () => {
       clickNum.current = 0;
     };
@@ -38,13 +41,19 @@ const Login: React.FC = () => {
     try {
       setLoading(true);
       // 登录
-      const { password, ...rest } = values;
+      const { userName, password } = values;
       login({
+        ...values,
         password: cryptoEncryption(password),
-        ...rest,
       }).then((res: any) => {
         if (res?.code === 'SUCCESS') {
           message.success('登录成功！');
+          localStorage.setItem(
+            'userList',
+            JSON.stringify(
+              _.uniq(JSON.parse(localStorage.getItem('userList') || '[]').concat(userName)),
+            ),
+          );
           localStorage.setItem(
             'userInfo',
             JSON.stringify(Object.assign({}, res?.data, { loginTime: new Date().getTime() })),
@@ -139,7 +148,15 @@ const Login: React.FC = () => {
             name="userName"
             rules={[{ required: true, message: '请输入用户名!' }]}
           >
-            <Input prefix={<UserOutlined />} size="large" />
+            <AutoComplete
+              style={{ width: '100%' }}
+              options={JSON.parse(localStorage.getItem('userList') || '[]')?.map((item: any) => ({
+                label: item,
+                value: item,
+              }))}
+            >
+              <Input prefix={<UserOutlined />} size="large" />
+            </AutoComplete>
           </Form.Item>
 
           <Form.Item
