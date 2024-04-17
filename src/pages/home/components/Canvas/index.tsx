@@ -101,6 +101,7 @@ import dataItemImageNG from '@/assets/images/item-bg-ng.png';
 import HeaderCharts from './components/HeaderCharts';
 import BarWithLineCharts from './components/BarWithLineCharts';
 import ChooseFileButton from '@/components/ChooseFileButton';
+import ImgContrastCharts from './components/ImgContrastCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -1572,6 +1573,14 @@ const Home: React.FC<any> = (props: any) => {
                       xName,
                     }}
                   />
+                ) : type === 'imgContrast' ? (
+                  <ImgContrastCharts
+                    id={key}
+                    data={{
+                      dataValue,
+                      fontSize,
+                    }}
+                  />
                 ) : (
                   <ImgCharts
                     id={key}
@@ -2354,7 +2363,7 @@ const Home: React.FC<any> = (props: any) => {
               x: 16,
               y: 0,
               w: 10,
-              h: 4,
+              h: 8,
               minW: 1,
               maxW: 100,
               minH: 2,

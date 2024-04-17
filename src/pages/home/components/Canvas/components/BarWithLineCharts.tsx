@@ -23,7 +23,7 @@ const colorOption = [
   '#9a60b4',
   '#ea7ccc',
 ];
-
+// 折线柱状混合
 const BarWithLineCharts: React.FC<Props> = (props: any) => {
   let myChart: any = null;
   const { data = {}, id, setMyChartVisible } = props;

@@ -10,6 +10,7 @@ import {
   LeftCircleOutlined,
   RightCircleOutlined,
   SwapOutlined,
+  SyncOutlined,
 } from '@ant-design/icons';
 import html2canvas from 'html2canvas';
 import TooltipDiv from '@/components/TooltipDiv';
@@ -35,6 +36,8 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     ifShowHeader,
     magnifierWidth,
     magnifierHeight,
+    notLocalStorage,
+    onImgChange,
   } = data;
 
   if (process.env.NODE_ENV === 'development' && !dataValue) {
@@ -90,20 +93,26 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     };
   }, []);
   useEffect(() => {
-    const localhostList = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || '[]');
-    if (!dataValue) {
-      dataValue = localhostList?.[localhostList?.length - 1] || '';
-    }
-    let list = Array.from(new Set(urlList.current.concat(dataValue)));
-    if (list?.length >= 101) {
-      list = list.slice(-95);
-      localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
-      setSelectedNum(list?.length - 1);
-      urlList.current = list;
+    if (notLocalStorage) {
+      localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify([dataValue]));
+      setSelectedNum(0);
+      urlList.current = [dataValue];
     } else {
-      localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
-      setSelectedNum(list?.length - 1 >= 99 ? 99 : list?.length - 1);
-      urlList.current = list.slice(-100);
+      const localhostList = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || '[]');
+      if (!dataValue) {
+        dataValue = localhostList?.[localhostList?.length - 1] || '';
+      }
+      let list = Array.from(new Set(urlList.current.concat(dataValue)));
+      if (list?.length >= 101) {
+        list = list.slice(-95);
+        localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
+        setSelectedNum(list?.length - 1);
+        urlList.current = list;
+      } else {
+        localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
+        setSelectedNum(list?.length - 1 >= 99 ? 99 : list?.length - 1);
+        urlList.current = list.slice(-100);
+      }
     }
   }, [dataValue, comparison]);
   useEffect(() => {
@@ -181,7 +190,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
 
       img = null;
     };
-  }, [selectedNum, dom?.current?.clientWidth, dom?.current?.clientHeight]);
+  }, [selectedNum, dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight]);
   useEffect(() => {
     if (!dataValue) {
       const list = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || '[]');
@@ -348,7 +357,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     }
   }, [magnifierVisible, selectedNum, dataValue]);
   const source = useMemo(() => {
-    return urlList.current?.[selectedNum] || dataValue;
+    return notLocalStorage ? dataValue : urlList.current?.[selectedNum] || dataValue;
   }, [urlList.current, selectedNum, dataValue]);
   const onPrev = () => {
     setSelectedNum((pre: number) => {
@@ -420,21 +429,34 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                 className="flex-box img-box-btn-box"
                 style={!!ifShowHeader ? { display: 'flex', top: '-26px' } : {}}
               >
-                <div
-                  className={`${selectedNum === 0 ? 'greyColorStyle' : ''} prev-btn`}
-                  onClick={() => onPrev()}
-                >
-                  {'< '}
-                </div>
-                {`${selectedNum + 1}/${urlList.current?.length}`}
-                <div
-                  className={`next-btn ${
-                    selectedNum + 1 === urlList.current.length ? 'greyColorStyle' : ''
-                  }`}
-                  onClick={() => onNext()}
-                >
-                  {' >'}
-                </div>
+                {notLocalStorage ? (
+                  !!onImgChange ? (
+                    <SyncOutlined
+                      className="img-box-btn-item"
+                      onClick={() => {
+                        onImgChange && onImgChange?.();
+                      }}
+                    />
+                  ) : null
+                ) : (
+                  <Fragment>
+                    <div
+                      className={`${selectedNum === 0 ? 'greyColorStyle' : ''} prev-btn`}
+                      onClick={() => onPrev()}
+                    >
+                      {'< '}
+                    </div>
+                    {`${selectedNum + 1}/${urlList.current?.length}`}
+                    <div
+                      className={`next-btn ${
+                        selectedNum + 1 === urlList.current.length ? 'greyColorStyle' : ''
+                      }`}
+                      onClick={() => onNext()}
+                    >
+                      {' >'}
+                    </div>
+                  </Fragment>
+                )}
                 <DownloadOutlined
                   className="img-box-btn-item"
                   onClick={() => {

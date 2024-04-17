@@ -1,12 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Select,
-  Modal,
-  Input,
-  message,
-  Upload,
-  Button,
-} from 'antd';
+import { Select, Modal, Input, message, Upload, Button } from 'antd';
 import Monaco from 'react-monaco-editor';
 import * as _ from 'lodash';
 import './index.less';
@@ -25,14 +18,7 @@ interface Props {
 }
 let timer: NodeJS.Timeout | null = null;
 const MonacoEditor: React.FC<Props> = (props) => {
-  const {
-    id = '',
-    defaultValue = '',
-    language = 'json',
-    visible,
-    onOk,
-    onCancel,
-  } = props;
+  const { id = '', defaultValue = '', language = 'json', visible, onOk, onCancel } = props;
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
   const editorRef = useRef<any>({
@@ -47,18 +33,20 @@ const MonacoEditor: React.FC<Props> = (props) => {
   }, [params?.contentData?.theme]);
 
   useEffect(() => {
-    document.oncontextmenu = function (e) {/*屏蔽浏览器默认右键事件*/
+    document.oncontextmenu = function (e) {
+      /*屏蔽浏览器默认右键事件*/
       e = e || window.event;
       return false;
     };
 
     return () => {
-      document.oncontextmenu = function (e) {/*允许浏览器默认右键事件*/
+      document.oncontextmenu = function (e) {
+        /*允许浏览器默认右键事件*/
         e = e || window.event;
         return true;
       };
-    }
-  }, [])
+    };
+  }, []);
   useEffect(() => {
     setEditorValue(defaultValue);
     editorRef.current.editorValue = defaultValue;
@@ -117,7 +105,7 @@ const MonacoEditor: React.FC<Props> = (props) => {
           <Upload {...uploadProps}>
             <Button
               icon={<UploadOutlined />}
-            // type="primary"
+              // type="primary"
             >
               导入本地json
             </Button>
@@ -125,21 +113,26 @@ const MonacoEditor: React.FC<Props> = (props) => {
         </div>
       }
       width="calc(100vw - 48px)"
-      wrapClassName={"monaco-editor-modal"}
+      wrapClassName={'monaco-editor-modal'}
       centered
       open={visible}
       onOk={() => {
-        onOk({
-          id,
-          value: editorValue,
-          language: editorLanguage,
-        });
+        try {
+          JSON.parse(editorValue);
+          onOk({
+            id,
+            value: editorValue,
+            language: editorLanguage,
+          });
+        } catch (err) {
+          message.error('json格式错误');
+        }
         // setEditorValue(editorRef.current.editorValue);
       }}
       onCancel={() => {
         onCancel();
       }}
-    // getContainer={false}
+      // getContainer={false}
     >
       <Input.TextArea
         style={{ height: '100%' }}

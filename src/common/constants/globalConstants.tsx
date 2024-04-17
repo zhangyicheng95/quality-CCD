@@ -65,6 +65,11 @@ export const windowTypeList: any = [
     icon: imgsIcon,
   },
   {
+    value: 'imgContrast',
+    label: '图片对比切换窗口',
+    icon: imgsIcon,
+  },
+  {
     value: 'line',
     label: '折线趋势图窗口',
     icon: lineIcon,

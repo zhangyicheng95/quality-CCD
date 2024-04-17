@@ -1501,6 +1501,53 @@
   }
 }
 
+.ImgContrastCharts {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  position: relative;
+
+  :global {
+    .img-contrast-select {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      z-index: 10;
+      width: 100px;
+      opacity: 0;
+
+      &-icon {
+        font-size: 20px;
+      }
+    }
+
+    .img-contrast-title-box {
+      position: absolute;
+      bottom: 8px;
+      margin: 0 auto;
+      opacity: 0;
+    }
+
+    .ant-image {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &:hover {
+    :global {
+      .img-contrast-select {
+        opacity: 1;
+      }
+
+      .img-contrast-title-box {
+        opacity: 1;
+      }
+    }
+  }
+}
+
 .buttonCharts {
   width: 100%;
   height: 100%;
