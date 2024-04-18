@@ -1548,6 +1548,33 @@
   }
 }
 
+.timeSelectCharts {
+  width: 100%;
+  height: 100%;
+
+  :global {
+    .ant-picker {
+      height: 100%;
+      width: 100%;
+      font-size: inherit;
+      background-color: transparent;
+
+      .ant-picker-input,
+      .ant-picker-range-separator {
+        font-size: inherit;
+
+        &>input {
+          font-size: inherit;
+        }
+
+        .ant-picker-separator {
+          font-size: inherit;
+        }
+      }
+    }
+  }
+}
+
 .buttonCharts {
   width: 100%;
   height: 100%;

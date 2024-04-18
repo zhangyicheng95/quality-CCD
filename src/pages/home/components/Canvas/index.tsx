@@ -102,6 +102,7 @@ import HeaderCharts from './components/HeaderCharts';
 import BarWithLineCharts from './components/BarWithLineCharts';
 import ChooseFileButton from '@/components/ChooseFileButton';
 import ImgContrastCharts from './components/ImgContrastCharts';
+import TimeSelectCharts from './components/TimeSelectCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -1424,6 +1425,16 @@ const Home: React.FC<any> = (props: any) => {
                   >
                     {yName || '按钮'}
                   </Button>
+                ) : type === 'timeSelect' ? (
+                  <TimeSelectCharts
+                    id={key}
+                    data={{
+                      fontSize,
+                      yName,
+                      xName,
+                      fetchType,
+                    }}
+                  />
                 ) : type === 'buttonInp' ? (
                   <ButtonCharts
                     id={key}
@@ -4207,6 +4218,54 @@ const Home: React.FC<any> = (props: any) => {
                         },
                       ]}
                     />
+                  </Form.Item>
+                </Fragment>
+              ) : null}
+              {['timeSelect'].includes(windowType) ? (
+                <Fragment>
+                  <Form.Item
+                    name={`yName`}
+                    label={'类型'}
+                    initialValue={'datePicker'}
+                    rules={[{ required: true, message: '类型' }]}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      options={[
+                        {
+                          value: 'datePicker',
+                          label: '日期',
+                        },
+                        {
+                          value: 'datePickerWidthTime',
+                          label: '日期+时间',
+                        },
+                        {
+                          value: 'rangePicker',
+                          label: '区间',
+                        },
+                      ]}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name={`fetchType`}
+                    label={'http类型'}
+                    rules={[{ required: false, message: 'http类型' }]}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      options={['get', 'post', 'put', 'delete'].map((item: any) => ({
+                        value: item,
+                        label: _.toUpper(item),
+                      }))}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name={`xName`}
+                    label={'接口地址'}
+                    rules={[{ required: false, message: '接口地址' }]}
+                  >
+                    <Input size="large" />
                   </Form.Item>
                 </Fragment>
               ) : null}

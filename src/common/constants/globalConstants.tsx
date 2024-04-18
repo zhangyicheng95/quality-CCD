@@ -16,6 +16,7 @@ import table5Icon from '@/assets/dashboard-imgs/table4.png';
 import treeIcon from '@/assets/dashboard-imgs/tree.png';
 import threeIcon from '@/assets/dashboard-imgs/three.png';
 import alertIcon from '@/assets/dashboard-imgs/alert.png';
+import timeSelectIcon from '@/assets/dashboard-imgs/time-select.png';
 import buttonIcon from '@/assets/dashboard-imgs/button.png';
 import buttonIpIcon from '@/assets/dashboard-imgs/button2.png';
 import processIcon from '@/assets/dashboard-imgs/process.png';
@@ -134,6 +135,11 @@ export const windowTypeList: any = [
     value: 'alert',
     label: '状态窗口',
     icon: alertIcon,
+  },
+  {
+    value: 'timeSelect',
+    label: '时间选择组件',
+    icon: timeSelectIcon,
   },
   {
     value: 'button',
