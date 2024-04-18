@@ -295,6 +295,7 @@ const Home: React.FC<any> = (props: any) => {
               ...(homeSettingData['slider-1']?.ifShowHeader
                 ? { height: 'calc(100% - 28px)' }
                 : { height: '100%' }),
+              ...(homeSettingData?.['slider-1']?.des_column === 3 ? { overflow: 'hidden' } : {}),
             }}
           >
             <Button
@@ -812,7 +813,7 @@ const Home: React.FC<any> = (props: any) => {
     if (!ipString || _.isEmpty(paramsData)) return;
     const { flowData = {}, contentData = {}, selfStart = false } = paramsData;
     const homeSelf = [
-      { i: 'header', x: 0, y: 0, w: 96, h: 4, minW: 0, maxW: 100, minH: 0, maxH: 100 },
+      { i: 'header', x: 0, y: 0, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
       { i: 'slider-1', x: 0, y: 0, w: 9, h: 8, minW: 1, maxW: 100, minH: 2, maxH: 100 },
       { i: 'slider-2', x: 0, y: 8, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
       { i: 'slider-3', x: 0, y: 0, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },

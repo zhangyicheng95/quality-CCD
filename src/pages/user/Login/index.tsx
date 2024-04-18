@@ -150,7 +150,10 @@ const Login: React.FC = () => {
           >
             <AutoComplete
               style={{ width: '100%' }}
-              options={JSON.parse(localStorage.getItem('userList') || '[]')?.map((item: any) => ({
+              options={(!!localStorage.getItem('userList')
+                ? JSON.parse(localStorage.getItem('userList') || '[]')
+                : ['admin', 'sany']
+              )?.map((item: any) => ({
                 label: item,
                 value: item,
               }))}
