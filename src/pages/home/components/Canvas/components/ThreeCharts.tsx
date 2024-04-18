@@ -2525,7 +2525,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                       });
                     }
                     if (!!localStorage.getItem('parentOrigin')) {
-                      window.parent.postMessage(
+                      window?.parent?.postMessage?.(
                         { type: 'openFile', name: 'selectPLY' },
                         localStorage.getItem('parentOrigin') || '',
                       );
@@ -2889,7 +2889,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 icon={<UploadOutlined />}
                 onClick={() => {
                   if (!!localStorage.getItem('parentOrigin')) {
-                    window.parent.postMessage(
+                    window?.parent?.postMessage?.(
                       { type: 'openFile', name: 'selectPLY' },
                       localStorage.getItem('parentOrigin') || '',
                     );

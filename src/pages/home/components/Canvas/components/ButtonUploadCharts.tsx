@@ -32,7 +32,7 @@ const ButtonUploadCharts: React.FC<Props> = (props: any) => {
         )}
         onClick={() => {
           if (!!localStorage.getItem('parentOrigin')) {
-            window.parent.postMessage(
+            window?.parent?.postMessage?.(
               { type: 'openFile', name: yName },
               localStorage.getItem('parentOrigin') || '',
             );

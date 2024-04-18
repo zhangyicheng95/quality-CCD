@@ -3404,7 +3404,7 @@ const Home: React.FC<any> = (props: any) => {
                           name={'defaultImg'}
                           onClick={() => {
                             if (!!localStorage.getItem('parentOrigin')) {
-                              window.parent.postMessage(
+                              window?.parent?.postMessage?.(
                                 {
                                   type: 'openFile',
                                   name: 'defaultImg',

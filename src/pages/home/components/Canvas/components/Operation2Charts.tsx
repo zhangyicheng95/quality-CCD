@@ -840,7 +840,7 @@ function FormatWidgetToDom(props: any) {
               name={name}
               onClick={() => {
                 if (!!localStorage.getItem('parentOrigin')) {
-                  window.parent.postMessage(
+                  window?.parent?.postMessage?.(
                     { type: 'openFile', name, suffix },
                     localStorage.getItem('parentOrigin') || '',
                   );
@@ -885,7 +885,7 @@ function FormatWidgetToDom(props: any) {
               name={name}
               onClick={() => {
                 if (!!localStorage.getItem('parentOrigin')) {
-                  window.parent.postMessage(
+                  window?.parent?.postMessage?.(
                     { type: 'openDir', name },
                     localStorage.getItem('parentOrigin') || '',
                   );
@@ -952,7 +952,7 @@ function FormatWidgetToDom(props: any) {
               name={name}
               onClick={() => {
                 if (!!localStorage.getItem('parentOrigin')) {
-                  window.parent.postMessage(
+                  window?.parent?.postMessage?.(
                     { type: 'openFile', name, suffix },
                     localStorage.getItem('parentOrigin') || '',
                   );

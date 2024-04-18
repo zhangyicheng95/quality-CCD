@@ -10,12 +10,10 @@ import { connect, useHistory, useModel } from 'umi';
 import { DeleteOutlined, EditOutlined, FormOutlined } from '@ant-design/icons';
 
 const Setting: React.FC<any> = (props) => {
-  const { initialState, setInitialState } = useModel<any>('@@initialState');
+  const { initialState } = useModel<any>('@@initialState');
   const { params: paramsData } = initialState;
   const { projectStatus, projectListStore } = props;
   const [form] = Form.useForm();
-  const [form1] = Form.useForm();
-  const history = useHistory();
   const { validateFields, setFieldsValue, getFieldValue } = form;
   const [paramData, setParamData] = useState<any>({});
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
@@ -23,8 +21,6 @@ const Setting: React.FC<any> = (props) => {
   const [selectPathVisible, setSelectPathVisible] = useState(false);
   const [selectedPath, setSelectedPath] = useState<any>('');
   const [ipUrlList, setIpUrlList] = useState<any>([]);
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [passwordvalidate, setPasswordvalidate] = useState({});
 
   const isVision = useMemo(() => {
     // @ts-ignore
@@ -34,7 +30,7 @@ const Setting: React.FC<any> = (props) => {
   // 获取数据信息
   useEffect(() => {
     if (!_.isEmpty(paramsData) && !_.isEmpty(paramsData?.flowData)) {
-      const { quality_name, name, password, flowData } = paramsData;
+      const { quality_name, name, flowData } = paramsData;
       const { nodes } = flowData;
       let checkedList: any = [];
       const result: any = (nodes || [])
@@ -201,45 +197,42 @@ const Setting: React.FC<any> = (props) => {
       <PrimaryTitle title={'系统配置'} />
       <div className="body">
         <Form form={form} layout="horizontal" scrollToFirstError>
-          {
-            // @ts-ignore
-            !!window.QUALITY_CCD_CONFIG?.canChangeLogo ? (
-              <Form.Item
-                name="quality_icon"
-                label="系统图标"
-                initialValue={localStorage.getItem('quality_icon') || ''}
-                rules={[{ required: false, message: '系统图标' }]}
-              >
-                <div className="flex-box">
-                  {getFieldValue('quality_icon') ? (
-                    <TooltipDiv title={getFieldValue('quality_icon')} style={{ marginRight: 16 }}>
-                      {getFieldValue('quality_icon')}
-                    </TooltipDiv>
-                  ) : null}
-                  {getFieldValue('quality_icon') ? (
-                    <Button
-                      style={{ height: 40 }}
-                      onClick={() => {
-                        setFieldsValue({ quality_icon: undefined });
-                      }}
-                    >
-                      移除
-                    </Button>
-                  ) : (
-                    <Button
-                      style={{ height: 40 }}
-                      onClick={() => {
-                        setSelectedPath(localStorage.getItem('quality_icon') || '');
-                        setSelectPathVisible(true);
-                      }}
-                    >
-                      选择系统图标
-                    </Button>
-                  )}
-                </div>
-              </Form.Item>
-            ) : null
-          }
+          {paramData?.contentData?.changeLogo ? (
+            <Form.Item
+              name="quality_icon"
+              label="系统图标"
+              initialValue={localStorage.getItem('quality_icon') || ''}
+              rules={[{ required: false, message: '系统图标' }]}
+            >
+              <div className="flex-box">
+                {getFieldValue('quality_icon') ? (
+                  <TooltipDiv title={getFieldValue('quality_icon')} style={{ marginRight: 16 }}>
+                    {getFieldValue('quality_icon')}
+                  </TooltipDiv>
+                ) : null}
+                {getFieldValue('quality_icon') ? (
+                  <Button
+                    style={{ height: 40 }}
+                    onClick={() => {
+                      setFieldsValue({ quality_icon: undefined });
+                    }}
+                  >
+                    移除
+                  </Button>
+                ) : (
+                  <Button
+                    style={{ height: 40 }}
+                    onClick={() => {
+                      setSelectedPath(localStorage.getItem('quality_icon') || '');
+                      setSelectPathVisible(true);
+                    }}
+                  >
+                    选择系统图标
+                  </Button>
+                )}
+              </div>
+            </Form.Item>
+          ) : null}
           <Form.Item
             name="quality_name"
             label="系统名称"
@@ -385,22 +378,6 @@ const Setting: React.FC<any> = (props) => {
               </Form.Item>
             </Col> */}
           </Row>
-          {/* <Form.Item
-            name="password"
-            label="权限密码"
-            initialValue={paramData.password}
-            rules={[{ required: false, message: '权限密码' }]}
-          >
-            <Button
-              icon={<FormOutlined />}
-              type="primary"
-              onClick={() => {
-                setPasswordVisible(true);
-              }}
-            >
-              修改权限密码
-            </Button>
-          </Form.Item> */}
           {!isVision && !_.isEmpty(treeData) && !!treeData?.length ? (
             <Form.Item
               name="params"
@@ -443,68 +420,6 @@ const Setting: React.FC<any> = (props) => {
           }}
         />
       ) : null}
-      {
-        // 密码框
-        !!passwordVisible ? (
-          <Modal
-            title={`修改权限密码`}
-            wrapClassName="button-password-modal"
-            centered
-            open={!!passwordVisible}
-            destroyOnClose
-            maskClosable={false}
-            onOk={() => {
-              form1.validateFields().then((values) => {
-                const { prePassword, password } = values;
-                if (!paramData?.password || prePassword === paramData?.password) {
-                  updateParams({
-                    id: paramData.id,
-                    data: {
-                      ...paramData,
-                      password: password || '',
-                    },
-                  }).then((res: any) => {
-                    if (res && res.code === 'SUCCESS') {
-                      message.success('更新配置成功');
-                      window.location.reload();
-                    } else {
-                      message.error(res?.msg || res?.message || '接口异常');
-                    }
-                    form1.resetFields();
-                  });
-                } else {
-                  message.error('原始密码错误', 5);
-                }
-              });
-            }}
-            onCancel={() => {
-              form1.resetFields();
-              setPasswordVisible(false);
-            }}
-          >
-            <Form form={form1} scrollToFirstError>
-              {!!paramData?.password ? (
-                <Form.Item
-                  name="prePassword"
-                  label="原始密码"
-                  rules={[{ required: true, message: '原始密码' }]}
-                  {...passwordvalidate}
-                >
-                  <Input.Password visibilityToggle={false} allowClear placeholder="原始密码" />
-                </Form.Item>
-              ) : null}
-              <Form.Item
-                name="password"
-                label="权限密码"
-                rules={[{ required: false, message: '权限密码' }]}
-                {...passwordvalidate}
-              >
-                <Input.Password visibilityToggle={false} allowClear placeholder="权限密码" />
-              </Form.Item>
-            </Form>
-          </Modal>
-        ) : null
-      }
     </div>
   );
 };

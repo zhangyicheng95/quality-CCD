@@ -2,6 +2,7 @@ import _ from 'lodash';
 import imgIcon from '@/assets/dashboard-imgs/img.png';
 import alertImgIcon from '@/assets/dashboard-imgs/alert-img.png';
 import imgsIcon from '@/assets/dashboard-imgs/imgs.png';
+import imgContrastIcon from '@/assets/dashboard-imgs/img-contrast.png';
 import lineIcon from '@/assets/dashboard-imgs/line.png';
 import pointIcon from '@/assets/dashboard-imgs/point.png';
 import barIcon from '@/assets/dashboard-imgs/bar.png';
@@ -67,7 +68,7 @@ export const windowTypeList: any = [
   {
     value: 'imgContrast',
     label: '图片对比切换窗口',
-    icon: imgsIcon,
+    icon: imgContrastIcon,
   },
   {
     value: 'line',

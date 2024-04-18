@@ -28,13 +28,13 @@ const listen = (action: any) => {
             const newData = (Object.entries(data || {}) || []).reduce((pre: any, cen: any) => {
               /*************监听系统命令及提示框************/
               if (cen[0]?.indexOf('__cmd__') > -1) {
-                window.parent.postMessage(
+                window?.parent?.postMessage?.(
                   { type: '__cmd__', name: '__cmd__', value: cen[1] },
                   localStorage.getItem('parentOrigin') || '',
                 );
               }
               if (cen[0]?.indexOf('__notification__') > -1) {
-                window.parent.postMessage(
+                window?.parent?.postMessage?.(
                   {
                     type: '__notification__',
                     name: '__notification__',
