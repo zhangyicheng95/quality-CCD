@@ -2180,7 +2180,7 @@ const Home: React.FC<any> = (props: any) => {
       if (res && res.code === 'SUCCESS') {
         setTimeout(() => {
           start();
-        }, 2000);
+        }, 3000);
       } else {
         message.error(res?.msg || res?.message || '接口异常');
       }
