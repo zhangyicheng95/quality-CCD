@@ -8,7 +8,7 @@ export default {
   'menu.setting': '设置',
   'menu.log': '日志',
   'menu.fileText': '操作文档',
-  'menu.mark': '数据标注',
+  'menu.mark': '测试demo',
   'menu.admin': '管理页',
   'menu.admin.sub-page': '二级管理页',
   'menu.login': '登录',

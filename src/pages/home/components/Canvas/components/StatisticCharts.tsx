@@ -11,9 +11,9 @@ interface Props {
 
 const StatisticCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  let { dataValue, fontSize, yName, fontColor, direction } = data;
+  let { dataValue, fontSize, yName, fontColor, direction, valueOnTop } = data;
   if (process.env.NODE_ENV === 'development') {
-    dataValue = 10;
+    dataValue = (Math.random() * 10000).toFixed(0);
   }
   return (
     <div
@@ -24,7 +24,7 @@ const StatisticCharts: React.FC<Props> = (props: any) => {
         alignItems: direction,
       }}
     >
-      <div className="statistic-title">{yName}</div>
+      {valueOnTop ? null : <div className="statistic-title">{yName}</div>}
       <div
         className="statistic-value"
         style={Object.assign(
@@ -46,6 +46,16 @@ const StatisticCharts: React.FC<Props> = (props: any) => {
           ? dataValue?.value
           : JSON.stringify(dataValue)}
       </div>
+      {valueOnTop ? (
+        <div
+          className="statistic-title"
+          style={{
+            fontSize: fontSize - 16,
+          }}
+        >
+          {yName}
+        </div>
+      ) : null}
     </div>
   );
 };

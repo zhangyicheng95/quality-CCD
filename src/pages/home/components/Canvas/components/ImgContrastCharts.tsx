@@ -25,11 +25,6 @@ const ImgContrastCharts: React.FC<Props> = (props: any) => {
         value:
           'https://img.zcool.cn/community/01a24d55efd0006ac7251df84f100f.jpg@3000w_1l_2o_100sh.jpg',
       },
-      {
-        title: '晚班2',
-        value:
-          'https://img.zcool.cn/community/01a24d55efd0006ac7251df84f100f.jpg@3000w_1l_2o_100sh.jpg',
-      },
     ];
   }
   const dom = useRef<any>();
@@ -60,7 +55,7 @@ const ImgContrastCharts: React.FC<Props> = (props: any) => {
       <ImgCharts
         id={`${id.split('$$')[0]}$$1$$imgContrast`}
         data={{
-          dataValue: dataValue?.[selected]?.value,
+          dataValue: dataValue?.[selected]?.value || '',
           notLocalStorage: true,
           comparison: false,
           magnifier: true,

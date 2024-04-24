@@ -20,56 +20,61 @@ const HeaderCharts: React.FC<Props> = (props: any) => {
       homeSettingData['header']['fontSize'] = 20;
     }
   }
+  if (!homeSettingData['header']?.headerTitleFontSize) {
+    homeSettingData['header']['headerTitleFontSize'] = 24;
+  }
 
   return (
     <Fragment>
       <div
         className="flex-box header-box-left"
-        style={{ fontSize: homeSettingData['header']?.fontSize - 8 }}
+        style={{
+          fontSize: homeSettingData['header']?.headerTitleFontSize,
+          alignItems: homeSettingData['header']?.titleAlign,
+        }}
       >
-        <img
-          src={icon}
-          alt="logo"
-          className="header-box-left-logo"
-          style={{ width: homeSettingData['header']?.fontSize }}
-        />
-        <div className="flex-box header-box-left-title">
+        {!!homeSettingData['header']?.headerTitle ? (
+          <img
+            src={icon}
+            alt="logo"
+            className="header-box-left-logo"
+            style={{
+              width: homeSettingData['header']?.headerTitleFontSize,
+              height: homeSettingData['header']?.headerTitleFontSize,
+            }}
+          />
+        ) : null}
+        <div
+          className="flex-box header-box-left-title"
+          style={{ height: homeSettingData['header']?.headerTitleFontSize }}
+        >
           {homeSettingData['header']?.headerTitle}
         </div>
-        {/* {started ? (
-          <div className="flex-box header-box-left-status">
-            <div
-              className="header-box-left-status-icon"
-              style={{
-                width: homeSettingData['header']?.fontSize,
-                height: homeSettingData['header']?.fontSize,
-              }}
-            />
-            正在运行
-          </div>
-        ) : null} */}
       </div>
       <div className="header-box-title">{homeSettingData['header']?.headerName}</div>
       <div
         className="flex-box header-box-time"
-        style={{ fontSize: homeSettingData['header']?.fontSize - 18 }}
+        style={{
+          fontSize: homeSettingData['header']?.headerTitleFontSize,
+          alignItems: homeSettingData['header']?.titleAlign,
+        }}
       >
         {started ? (
           <div
             className="flex-box header-box-time-status"
-            style={{ fontSize: homeSettingData['header']?.fontSize - 12 }}
+            style={{ fontSize: Math.max(homeSettingData['header']?.fontSize - 12, 20) }}
           >
             <div
               className="header-box-time-status-icon"
               style={{
-                width: homeSettingData['header']?.fontSize,
-                height: homeSettingData['header']?.fontSize,
+                width: homeSettingData['header']?.headerTitleFontSize,
+                height: homeSettingData['header']?.headerTitleFontSize,
               }}
             />
             在线
           </div>
         ) : null}
-        {time}
+        <div style={{ height: homeSettingData['header']?.headerTitleFontSize }}>{time}</div>
       </div>
     </Fragment>
   );

@@ -1,4 +1,4 @@
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { CloseOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Alert, AutoComplete, Button, Form, Input, message } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { history, SelectLang } from 'umi';
@@ -28,10 +28,6 @@ const Login: React.FC = () => {
   const clickNum = useRef(0);
 
   useEffect(() => {
-    if (!localStorage.getItem('userList')) {
-      localStorage.setItem('userList', JSON.stringify(['admin', 'sany']));
-    }
-
     return () => {
       clickNum.current = 0;
     };
@@ -150,11 +146,27 @@ const Login: React.FC = () => {
           >
             <AutoComplete
               style={{ width: '100%' }}
-              options={(!!localStorage.getItem('userList')
-                ? JSON.parse(localStorage.getItem('userList') || '[]')
-                : ['admin', 'sany']
+              options={_.uniq(
+                JSON.parse(localStorage.getItem('userList') || '[]')?.concat(['工程师', '操作员']),
               )?.map((item: any) => ({
-                label: item,
+                label: (
+                  <div className="flex-box-justify-between">
+                    {item}
+                    {['工程师', '操作员'].includes(item) ? null : (
+                      <span
+                        onClick={(event: any) => {
+                          event.stopPropagation();
+                          const list = _.uniq(JSON.parse(localStorage.getItem('userList') || '[]'));
+                          const result = _.pull(list, item);
+                          console.log(result);
+                          localStorage.setItem('userList', JSON.stringify(result));
+                        }}
+                      >
+                        <CloseOutlined />
+                      </span>
+                    )}
+                  </div>
+                ),
                 value: item,
               }))}
             >

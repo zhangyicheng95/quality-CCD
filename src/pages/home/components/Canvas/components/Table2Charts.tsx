@@ -7,6 +7,7 @@ import { useModel } from 'umi';
 import { guid } from '@/utils/utils';
 import { updateParams } from '@/services/api';
 import { UndoOutlined } from '@ant-design/icons';
+import moment from 'moment';
 
 interface Props {
   data: any;
@@ -26,138 +27,49 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     headerBackgroundColor,
     valueColor = 'value',
     line_height,
+    bodyPaddingSize,
   } = data;
   if (process.env.NODE_ENV === 'development') {
     reverse = true;
     dataValue = [
       {
-        name: '左极耳',
-        value: [
-          { value: 37.69, color: 'red' },
-          { value: 37.69, color: 'red' },
-          { value: 37.69, color: 'red' },
-          { value: 37.69, color: 'red' },
-          { value: 37.69, color: 'red' },
-          { value: 37.69, color: 'red' },
-          { value: 37.69, color: 'red' },
-        ],
+        name: '产品型号',
+        value: [{ value: '123456789', color: '' }],
         color: null,
       },
       {
-        name: '左陶瓷',
-        value: [
-          { value: 2.313, color: 'red' },
-          { value: 2.313, color: 'red' },
-          { value: 2.313, color: 'red' },
-          { value: 2.313, color: 'red' },
-          { value: 2.313, color: 'red' },
-          { value: 2.313, color: 'red' },
-          { value: 2.313, color: 'red' },
-        ],
+        name: '物料编码',
+        value: [{ value: '987654321', color: '' }],
         color: null,
       },
       {
-        name: '左涂覆',
-        value: [
-          { value: 377.083, color: 'red' },
-          { value: 377.083, color: 'red' },
-          { value: 377.083, color: 'red' },
-          { value: 377.083, color: 'red' },
-          { value: 377.083, color: 'red' },
-          { value: 377.083, color: 'red' },
-          { value: 377.083, color: 'red' },
-        ],
+        name: '物料名称',
+        value: [{ value: '车前门', color: '' }],
         color: null,
       },
       {
-        name: '左中陶瓷',
-        value: [
-          { value: 1.754, color: 'red' },
-          { value: 1.754, color: 'red' },
-          { value: 1.754, color: 'red' },
-          { value: 1.754, color: 'red' },
-          { value: 1.754, color: 'red' },
-          { value: 1.754, color: 'red' },
-          { value: 1.754, color: 'red' },
-        ],
+        name: '检测量',
+        value: [{ value: '201', color: '' }],
         color: null,
       },
       {
-        name: '中极耳',
-        value: [
-          { value: 79.556, color: 'red' },
-          { value: 79.556, color: 'red' },
-          { value: 79.519, color: 'red' },
-          { value: 79.556, color: 'red' },
-          { value: 79.556, color: 'red' },
-          { value: 79.556, color: 'red' },
-          { value: 79.556, color: 'red' },
-        ],
+        name: '单位',
+        value: [{ value: '件', color: '' }],
         color: null,
       },
       {
-        name: '右中陶瓷',
-        value: [
-          { value: -1, color: 'red' },
-          { value: -1, color: 'red' },
-          { value: -1, color: 'red' },
-          { value: -1, color: 'red' },
-          { value: -1, color: 'red' },
-          { value: -1, color: 'red' },
-          { value: -1, color: 'red' },
-        ],
+        name: '检测时间',
+        value: [{ value: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), color: '' }],
         color: null,
       },
       {
-        name: '右涂覆',
-        value: [
-          { value: 376.853, color: 'red' },
-          { value: 376.853, color: 'red' },
-          { value: 376.853, color: 'red' },
-          { value: 376.853, color: 'red' },
-          { value: 376.853, color: 'red' },
-          { value: 376.853, color: 'red' },
-          { value: 376.853, color: 'red' },
-        ],
+        name: '缺陷类型',
+        value: [{ value: '缺陷类型1', color: '' }],
         color: null,
       },
       {
-        name: '右陶瓷',
-        value: [
-          { value: -1, color: 'red' },
-          { value: -1, color: 'red' },
-          { value: -1, color: 'red' },
-          { value: -1, color: 'red' },
-          { value: -1, color: 'red' },
-          { value: -1, color: 'red' },
-          { value: -1, color: 'red' },
-        ],
-        color: null,
-      },
-      {
-        name: '右极耳',
-        value: [
-          { value: 39.898, color: 'red' },
-          { value: 45.343, color: 'red' },
-          { value: 39.898, color: 'red' },
-          { value: 39.898, color: 'red' },
-          { value: 39.898, color: 'red' },
-          { value: 39.898, color: 'red' },
-          { value: 39.898, color: 'red' },
-        ],
-        color: null,
-      },
-      {
-        name: '距离(mm)',
-        value: [
-          { value: 'http://D:/123/asd/img.png', color: null },
-          { value: 'http://D:/123/asd/img.png', color: null },
-          { value: 'http://D:/123/asd/img.png', color: null },
-          { value: 'http://D:/123/asd/img.png', color: null },
-          { value: 'http://D:/123/asd/img.png', color: null },
-          { value: 'http://D:/123/asd/img.png', color: null },
-          { value: 'http://D:/123/asd/img.png', color: null },
-        ],
+        name: '缺陷位置',
+        value: [{ value: '门把', color: '' }],
         color: null,
       },
     ];
@@ -263,8 +175,18 @@ const Table2Charts: React.FC<Props> = (props: any) => {
         className="charts-header-box flex-box"
         style={Object.assign(
           {},
-          tableScroll ? { width: 'calc(100% - 6px)' } : { width: 'calc(100% - 1px)' },
-          headerBackgroundColor === 'transparent' ? { backgroundColor: 'transparent' } : {},
+          tableScroll
+            ? { width: `calc(100% - 6px - ${bodyPaddingSize * 2}px)` }
+            : { width: `calc(100% - 0px - ${bodyPaddingSize * 2}px)` },
+          headerBackgroundColor === 'transparent'
+            ? { backgroundColor: 'transparent' }
+            : headerBackgroundColor === 'line1'
+            ? {
+                backgroundImage:
+                  'linear-gradient(to right, rgba(39,90,235,0.8), rgba(41,100,200,1))',
+              }
+            : {},
+          { left: bodyPaddingSize },
         )}
       >
         {_.isArray(dataValue) &&

@@ -93,15 +93,6 @@ const HomeLayout: React.FC<any> = (props) => {
   const loopGetStatus = (list: any) => {
     getListStatusService().then((res: any) => {
       if (!!res && res.code === 'SUCCESS') {
-        !!timerRef.current && clearTimeout(timerRef.current);
-        timerRef.current = setTimeout(() => {
-          setHasInit((prev: any) => {
-            if (prev) {
-              loopGetStatus(list);
-            }
-            return prev;
-          });
-        }, 2500);
         const result = list.map((item: any) => {
           const { value } = item;
           return {
@@ -122,6 +113,15 @@ const HomeLayout: React.FC<any> = (props) => {
           payload: list,
         });
       }
+      !!timerRef.current && clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
+        setHasInit((prev: any) => {
+          if (prev) {
+            loopGetStatus(list);
+          }
+          return prev;
+        });
+      }, 2500);
     });
   };
   // 进来默认加载标签页

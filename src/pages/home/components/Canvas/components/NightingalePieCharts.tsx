@@ -1,10 +1,12 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts';
 import options from './commonOptions';
 import _ from 'lodash';
 import { message } from 'antd';
 import { connect, useModel } from 'umi';
 import { CompressOutlined } from '@ant-design/icons';
+import styles from '../index.module.less';
+import bg1 from '@/assets/images/pie-bg-1.png';
 
 interface Props {
   data: any;
@@ -13,36 +15,55 @@ interface Props {
   onClick?: any;
 }
 
-const PieCharts: React.FC<Props> = (props: any) => {
+const NightingalePieCharts: React.FC<Props> = (props: any) => {
   let myChart: any = null;
   let { data = {}, id, legend, dispatch, setMyChartVisible } = props;
   let { dataValue = [], fontSize } = data;
-  if (process.env.NODE_ENV === 'development') {
-    dataValue = [
-      { name: '机台状态1', value: '1024' },
-      { name: '机台状态2', value: '888' },
-      { name: '机台状态3', value: '1024' },
-    ];
-  }
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
 
+  const [domSize, setDomSize] = useState({ width: 0, height: 0 });
   useEffect(() => {
     if (!_.isArray(dataValue)) {
       message.error('饼状图数据格式不正确，请检查');
       console.log('PieCharts:', dataValue);
       return;
     }
+    if (process.env.NODE_ENV === 'development') {
+      dataValue = [
+        { name: '缺陷类型1', value: '488' },
+        { name: '缺陷类型2', value: '1024' },
+        { name: '缺陷类型3', value: '824' },
+        { name: '缺陷类型4', value: '488' },
+        // { name: '缺陷类型5', value: '1024' },
+        // { name: '缺陷类型6', value: '824' },
+        // { name: '缺陷类型7', value: '488' },
+        // { name: '缺陷类型8', value: '1024' },
+        // { name: '缺陷类型9', value: '824' },
+      ];
+    }
+
     const dom: any = document.getElementById(`echart-${id}`);
     myChart = echarts.init(dom);
     const option = Object.assign({}, options, {
       legend: Object.assign(
         {},
-        options.legend,
-        { left: '3%' },
+        _.omit(options.legend, 'left'),
+        {
+          type: 'scroll',
+          orient: 'vertical',
+          right: '5%',
+          top: `center`,
+          textStyle: {
+            ...options.legend.textStyle,
+            fontSize: fontSize,
+          },
+          formatter: function (name: any, i: any) {
+            return name;
+          },
+        },
         legend[id] ? { selected: legend[id] } : {},
       ),
-      grid: { ...options.grid, top: 'bottom' },
       xAxis: { show: false },
       yAxis: { show: false },
       tooltip: {
@@ -52,50 +73,14 @@ const PieCharts: React.FC<Props> = (props: any) => {
       series: [
         {
           type: 'pie',
-          radius: ['20%', '70%'],
-          // top: "-30%",
-          // bottom: "-40%",
-          // right: "-50%",
-          // left: "-50%",
-          // label: {
-          //     position: "inside",
-          //     fontSize: 15,
-          //     formatter: `{b0}\n（{d0}%）`
-          // },
-          // labelLine: {
-          //     length: 15,
-          //     length2: 10,
-          // }
+          radius: ['30%', '80%'],
+          center: ['35%', '50%'],
+          roseType: 'area',
+          itemStyle: {
+            borderRadius: 8,
+          },
           label: {
-            alignTo: 'edge',
-            fontSize: fontSize ? fontSize : dataValue?.length > 4 ? 9 : 11,
-            formatter: '{name|{b}}\n{time|{d} %}',
-            // textBorderWidth: 3,
-            minMargin: 5,
-            edgeDistance: 10,
-            lineHeight: fontSize ? fontSize : 16,
-            rich: {
-              time: {
-                fontSize: fontSize ? fontSize - 2 : 10,
-                color: '#999',
-              },
-            },
-          },
-          labelLine: {
-            length: 15,
-            length2: 0,
-            maxSurfaceAngle: 80,
-          },
-          labelLayout: function (params: any) {
-            const isLeft = params.labelRect.x < myChart.getWidth() / 2;
-            const points = params.labelLinePoints;
-            // Update the end point.
-            points[2][0] = isLeft
-              ? params.labelRect.x
-              : params.labelRect.x + params.labelRect.width;
-            return {
-              labelLinePoints: points,
-            };
+            show: false,
           },
           data: (dataValue || []).map((item: any) => {
             const { name, value, color } = item;
@@ -105,16 +90,10 @@ const PieCharts: React.FC<Props> = (props: any) => {
               itemStyle: { color },
             };
           }),
-          emphasis: {
-            itemStyle: {
-              shadowBlur: 10,
-              shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)',
-            },
-          },
         },
       ],
     });
+
     myChart.on('legendselectchanged', function (obj: any) {
       const { selected } = obj;
       dispatch({
@@ -137,7 +116,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
       },
       false,
     );
-
+    setDomSize({ width: dom.clientWidth, height: dom.clientHeight });
     return () => {
       window.removeEventListener(
         'resize',
@@ -154,7 +133,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
   }, [dataValue, fontSize, legend]);
 
   return (
-    <Fragment>
+    <div className={`${styles.nightingalePieCharts}`}>
       <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} />
       <div className="preview-box flex-box-center">
         <CompressOutlined
@@ -167,10 +146,19 @@ const PieCharts: React.FC<Props> = (props: any) => {
           }}
         />
       </div>
-    </Fragment>
+      <div
+        className="night-pie-bg"
+        style={{
+          backgroundImage: `url(${bg1})`,
+          left: domSize.width * 0.35 - (domSize.height * 0.92) / 2,
+          width: domSize.height * 0.92,
+          height: domSize.height * 0.92,
+        }}
+      ></div>
+    </div>
   );
 };
 
 export default connect(({ home, themeStore }) => ({
   legend: themeStore.legend,
-}))(PieCharts);
+}))(NightingalePieCharts);

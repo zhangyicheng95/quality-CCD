@@ -14,10 +14,21 @@ interface Props {
 }
 
 const { RangePicker } = DatePicker;
+const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 
 const TimeSelectCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   const { fontSize = 14, yName, xName = '', fetchType } = data;
+
+  useEffect(() => {
+    btnFetch(fetchType, xName, {}).then((res: any) => {
+      if (!!res && res.code === 'SUCCESS') {
+        message.success('success');
+      } else {
+        message.error(res?.message || '接口异常');
+      }
+    });
+  }, []);
 
   const onChange = (dates: any, dateStrings: any) => {
     let param1 = {};
@@ -47,6 +58,15 @@ const TimeSelectCharts: React.FC<Props> = (props: any) => {
       {yName === 'rangePicker' ? (
         // @ts-ignore
         <RangePicker
+          defaultValue={[
+            moment(new Date().toLocaleDateString(), dateFormat),
+            moment(
+              new Date(
+                new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1,
+              ),
+              dateFormat,
+            ),
+          ]}
           ranges={{
             今日: [moment(), moment()],
             本周: [moment().startOf('week'), moment().endOf('week')],

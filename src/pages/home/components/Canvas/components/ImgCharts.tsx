@@ -431,12 +431,18 @@ const ImgCharts: React.FC<Props> = (props: any) => {
               >
                 {notLocalStorage ? (
                   !!onImgChange ? (
-                    <SyncOutlined
+                    <Button
                       className="img-box-btn-item"
+                      // className="flex-box"
+                      // style={{ gap: 4 }}
+                      type={'link'}
+                      icon={<SwapOutlined />}
                       onClick={() => {
                         onImgChange && onImgChange?.();
                       }}
-                    />
+                    >
+                      切换
+                    </Button>
                   ) : null
                 ) : (
                   <Fragment>

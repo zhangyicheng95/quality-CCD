@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { AutoComplete, Button, message } from 'antd';
+import { message } from 'antd';
 import { btnFetch } from '@/services/api';
-import { useModel } from 'umi';
-import TooltipDiv from '@/components/TooltipDiv';
 import FileManager from '@/components/FileManager';
 import ChooseFileButton from '@/components/ChooseFileButton';
 

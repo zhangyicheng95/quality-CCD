@@ -8,7 +8,7 @@ export default function access(initialState: any) {
 
   return {
     canAdmin: true, //currentUser && currentUser.access === 'admin',
-    canMark: false,
+    canMark: process.env.NODE_ENV === 'development',
     canHistory: userAuthList?.includes('history'),
     canControl: userAuthList?.includes('control'),
     canSetting: userAuthList?.includes('setting'),

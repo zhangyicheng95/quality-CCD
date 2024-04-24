@@ -5,6 +5,7 @@ import { useModel } from 'umi';
 import { message } from 'antd';
 import _ from 'lodash';
 import { CompressOutlined } from '@ant-design/icons';
+import moment from 'moment';
 
 interface Props {
   data: any;
@@ -13,35 +14,52 @@ interface Props {
   onClick?: any;
 }
 const colorOption = [
-  '#5470c6',
-  '#91cc75',
-  '#fac858',
   '#ee6666',
   '#73c0de',
   '#3ba272',
   '#fc8452',
   '#9a60b4',
   '#ea7ccc',
+  '#5470c6',
+  '#91cc75',
+  '#fac858',
 ];
+
+var colorList = ['rgba(39,97,235,0.8)', 'rgba(56,200,234,0.8)'];
+var colorList2 = ['rgba(40,255,187,0.6)', 'rgba(36,222,212,0.9)'];
 
 const BarCharts: React.FC<Props> = (props: any) => {
   let myChart: any = null;
   const { data = {}, id, setMyChartVisible } = props;
-  let { dataValue = [], yName, xName = '', direction, align, barColor = [] } = data;
+  let {
+    dataValue = [],
+    fontSize,
+    yName,
+    xName = '',
+    direction,
+    align,
+    hiddenAxis,
+    labelInxAxis,
+    labelDirection,
+    barRadius,
+    showBackground,
+    showWithLine,
+    barColor = [],
+  } = data;
   if (process.env.NODE_ENV === 'development') {
-    dataValue = [
-      { name: 'data1', value: 1.4, color: 'black' },
-      { name: 'data2', value: 6.95, color: 'blue' },
-      { name: 'data3', value: 0.4, color: 'black' },
-      { name: 'data4', value: 3.95, color: 'blue' },
-      { name: 'data5', value: 1.9, color: 'black' },
-      { name: 'data6', value: 2.95, color: 'blue' },
-      //   { name: '上限', value: 2.2, type: 'markLine', color: 'red' },
-      //   { name: '标准值', value: 1.6, type: 'markLine', color: 'green' },
-      //   { name: '下限', value: 1.53, type: 'markLine', color: 'red' },
-      //   { name: '开始', value: 2.2, type: 'start' },
-      //   { name: '截止', value: 2.2, type: 'end' },
-    ];
+    for (let i = 0; i < 7; i++) {
+      dataValue.push({
+        name: moment(+new Date() + i * 24 * 3600 * 1000).format('MM-DD'),
+        value: Math.random() * 10,
+      });
+    }
+    // dataValue = [
+    //   { name: '上限', value: 2.2, type: 'markLine', color: 'red' },
+    //   { name: '标准值', value: 1.6, type: 'markLine', color: 'green' },
+    //   { name: '下限', value: 1.53, type: 'markLine', color: 'red' },
+    //   { name: '开始', value: 2.2, type: 'start' },
+    //   { name: '截止', value: 2.2, type: 'end' },
+    // ];
   }
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
@@ -96,7 +114,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
       },
       grid: Object.assign(
         options.grid,
-        { top: '40px' },
+        { top: '30px' },
         align === 'right'
           ? {
               left: `${xName?.length * (xName?.length < 4 ? 24 : 16)}px`,
@@ -111,13 +129,18 @@ const BarCharts: React.FC<Props> = (props: any) => {
         options.yAxis,
         {
           axisLabel: {
+            ...options.yAxis.axisLabel,
+            show: labelDirection === 'none',
+            fontSize,
+          },
+          splitLine: {
             show: false,
           },
         },
         {
           type: direction === 'rows' ? 'category' : 'value',
           name: direction === 'rows' ? xName : yName,
-          boundaryGap: ['5%', '5%'],
+          // boundaryGap: ['5%', '5%'],
           splitNumber: 3,
           scale: false,
           position: align || 'left',
@@ -126,16 +149,23 @@ const BarCharts: React.FC<Props> = (props: any) => {
         direction === 'rows'
           ? { data: yData }
           : { min: threshold_start, max: threshold_end || (maxValue * 1.05).toFixed(1) },
+        hiddenAxis ? { show: false } : {},
       ),
       xAxis: Object.assign(
         {},
         options.xAxis,
         {
-          axisLabel: Object.assign({}, options.xAxis?.axisLabel, {
-            formatter: function (val: any) {
-              return val;
+          axisLabel: Object.assign(
+            {},
+            options.xAxis?.axisLabel,
+            {
+              formatter: function (val: any) {
+                return val;
+              },
             },
-          }),
+            labelInxAxis ? { inside: true, color: '#fff' } : {},
+            { fontSize },
+          ),
           type: direction === 'rows' ? 'value' : 'category',
           splitLine: { show: false },
           splitNumber: 3,
@@ -146,49 +176,86 @@ const BarCharts: React.FC<Props> = (props: any) => {
         direction === 'rows'
           ? { min: threshold_start, max: threshold_end || (maxValue * 1.05).toFixed(1) }
           : { data: yData },
+        hiddenAxis ? { show: false } : {},
       ),
       series: [
         {
           name: 'name',
           type: 'bar',
           label: {
-            show: true,
-            position: direction === 'rows' ? 'insideLeft' : 'insideBottom',
-            formatter: '{c}',
-            padding: [0, 0, 0, 12],
-            fontSize: 14,
+            show: labelDirection !== 'none',
+            fontFamily: 'monospace',
+            borderWidth: 0,
+            position:
+              direction === 'rows'
+                ? labelDirection === 'top'
+                  ? 'insideRight'
+                  : labelDirection === 'bottom'
+                  ? 'insideLeft'
+                  : 'inside'
+                : labelDirection === 'top'
+                ? 'top'
+                : labelDirection === 'bottom'
+                ? 'insideBottom'
+                : 'inside',
+            formatter: (params: any) => params?.value?.toFixed?.(2) || params?.value,
+            fontSize,
           },
           stack: 'total',
+          showBackground: !!barRadius && !!showBackground,
+          barMaxWidth: '50%',
           data: seriesData.map((item: any, index: number) => {
             const { value, color } = item;
-            var colorList = ['rgba(39,97,235,0.8)', 'rgba(56,200,234,0.8)'];
             if (params.dataIndex >= colorList.length) {
               index = params.dataIndex - colorList.length;
             }
             return {
               value: value,
-              itemStyle: barColor.includes('default')
-                ? { color: color }
-                : barColor.includes('line')
-                ? {
-                    color: new echarts.graphic.LinearGradient(
-                      direction === 'rows' ? 1 : 0,
-                      direction === 'rows' ? 0 : 1,
-                      0,
-                      0,
-                      [
-                        {
-                          offset: 0,
-                          color: colorList[0],
-                        },
-                        {
-                          offset: 1,
-                          color: colorList[1],
-                        },
-                      ],
-                    ),
-                  }
-                : { color: barColor[index % barColor?.length] },
+              itemStyle: Object.assign(
+                {},
+                barColor.includes('default')
+                  ? { color: color }
+                  : barColor.includes('line1')
+                  ? {
+                      color: new echarts.graphic.LinearGradient(
+                        direction === 'rows' ? 1 : 0,
+                        direction === 'rows' ? 0 : 1,
+                        0,
+                        0,
+                        [
+                          {
+                            offset: 0,
+                            color: colorList[0],
+                          },
+                          {
+                            offset: 1,
+                            color: colorList[1],
+                          },
+                        ],
+                      ),
+                    }
+                  : barColor.includes('line2')
+                  ? {
+                      color: new echarts.graphic.LinearGradient(
+                        direction === 'rows' ? 1 : 0,
+                        direction === 'rows' ? 0 : 1,
+                        0,
+                        0,
+                        [
+                          {
+                            offset: 0,
+                            color: colorList2[0],
+                          },
+                          {
+                            offset: 1,
+                            color: colorList2[1],
+                          },
+                        ],
+                      ),
+                    }
+                  : { color: barColor[index % barColor?.length] },
+                barRadius ? { borderRadius: [100, 100, 0, 0] } : {},
+              ),
             };
           }),
           markLine: {
@@ -219,25 +286,82 @@ const BarCharts: React.FC<Props> = (props: any) => {
           },
           ...(barColor.includes('default') ? { colorBy: 'data' } : {}),
         },
-        {
-          type: 'bar',
-          itemStyle: {
-            normal: {
-              label: {
-                show: true,
-                position: direction === 'rows' ? 'insideRight' : 'insideTop',
-                formatter: '{b}',
-                padding: [0, 12, 0, 0],
-                fontSize: 14,
+        !barRadius && !!showBackground
+          ? {
+              type: 'bar',
+              show: true,
+              itemStyle: {
+                normal: {
+                  label: {
+                    show: labelDirection !== 'none',
+                    position: direction === 'rows' ? 'insideRight' : 'insideTop',
+                    formatter: '{b}',
+                    padding: [0, 12, 0, 0],
+                    fontSize: 14,
+                  },
+                  color: 'rgba(180, 180, 180, 0.2)',
+                },
               },
-              color: 'rgba(180, 180, 180, 0.2)',
-            },
-          },
-          tooltip: { show: false },
-          stack: 'total',
-          data: seriesData.map(() => max),
-        },
-      ],
+              tooltip: { show: false },
+              stack: 'total',
+              data: seriesData.map(() => max),
+            }
+          : null,
+        showWithLine
+          ? {
+              name: 'name',
+              type: 'line',
+              tooltip: {
+                show: false,
+              },
+              lineStyle: {
+                ...(barColor.includes('line1')
+                  ? {
+                      color: new echarts.graphic.LinearGradient(
+                        direction === 'rows' ? 1 : 0,
+                        direction === 'rows' ? 0 : 1,
+                        0,
+                        0,
+                        [
+                          {
+                            offset: 0,
+                            color: colorList[0],
+                          },
+                          {
+                            offset: 1,
+                            color: colorList[1],
+                          },
+                        ],
+                      ),
+                    }
+                  : barColor.includes('line2')
+                  ? {
+                      color: new echarts.graphic.LinearGradient(
+                        direction === 'rows' ? 1 : 0,
+                        direction === 'rows' ? 0 : 1,
+                        0,
+                        0,
+                        [
+                          {
+                            offset: 0,
+                            color: colorList2[0],
+                          },
+                          {
+                            offset: 1,
+                            color: colorList2[1],
+                          },
+                        ],
+                      ),
+                    }
+                  : {}),
+              },
+              data: seriesData.map((item: any, index: number) => {
+                const { value } = item;
+                return value;
+              }),
+            }
+          : null,
+      ].filter(Boolean),
     });
 
     myChart.setOption(option);

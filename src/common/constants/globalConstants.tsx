@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import headerIcon from '@/assets/dashboard-imgs/header.png';
 import imgIcon from '@/assets/dashboard-imgs/img.png';
 import alertImgIcon from '@/assets/dashboard-imgs/alert-img.png';
 import imgsIcon from '@/assets/dashboard-imgs/imgs.png';
@@ -6,8 +7,9 @@ import imgContrastIcon from '@/assets/dashboard-imgs/img-contrast.png';
 import lineIcon from '@/assets/dashboard-imgs/line.png';
 import pointIcon from '@/assets/dashboard-imgs/point.png';
 import barIcon from '@/assets/dashboard-imgs/bar.png';
-import barWithLineIcon from '@/assets/dashboard-imgs/bar-with-line.png';
 import pieIcon from '@/assets/dashboard-imgs/pie.png';
+import pie3DIcon from '@/assets/dashboard-imgs/pie3D.png';
+import nightingalePieIcon from '@/assets/dashboard-imgs/nightingale.png';
 import tableIcon from '@/assets/dashboard-imgs/table.png';
 import table2Icon from '@/assets/dashboard-imgs/table2.png';
 import table3Icon from '@/assets/dashboard-imgs/table3.png';
@@ -24,6 +26,7 @@ import descriptionIcon from '@/assets/dashboard-imgs/description.png';
 import operationIcon from '@/assets/dashboard-imgs/operation.png';
 import operation2Icon from '@/assets/dashboard-imgs/operation2.png';
 import statisticIcon from '@/assets/dashboard-imgs/statistic.png';
+import rankIcon from '@/assets/dashboard-imgs/rank.png';
 import slider1Icon from '@/assets/dashboard-imgs/slider1.png';
 import slider4Icon from '@/assets/dashboard-imgs/slider4.png';
 import footer1Icon from '@/assets/dashboard-imgs/slider1.png';
@@ -51,6 +54,11 @@ export const layoutTransform = {
 export const systemType = window?.QUALITY_CCD_CONFIG?.type;
 // 自定义组件
 export const windowTypeList: any = [
+  // {
+  //   value: 'header',
+  //   label: '标头窗口',
+  //   icon: headerIcon,
+  // },
   {
     value: 'img',
     label: '图片窗口',
@@ -87,14 +95,24 @@ export const windowTypeList: any = [
     icon: barIcon,
   },
   {
-    value: 'barWithLine',
-    label: '折柱混合窗口',
-    icon: barWithLineIcon,
-  },
-  {
     value: 'pie',
     label: '饼状图窗口',
     icon: pieIcon,
+  },
+  {
+    value: 'pie3D',
+    label: '3D饼状图窗口',
+    icon: pie3DIcon,
+  },
+  {
+    value: 'nightingalePie',
+    label: '南丁格尔图窗口',
+    icon: nightingalePieIcon,
+  },
+  {
+    value: 'heatMap',
+    label: '热力图窗口',
+    icon: lineIcon,
   },
   {
     value: 'table',
@@ -211,6 +229,11 @@ export const windowTypeList: any = [
     label: 'iframe嵌套组件',
     icon: iframeIcon,
   },
+  {
+    value: 'rank',
+    label: '排行榜窗口',
+    icon: rankIcon,
+  },
 ];
 // 默认基础组件
 export const basicWindowList: any = [
@@ -238,6 +261,37 @@ export const basicWindowList: any = [
     value: 'footer-2',
     label: '错误信息',
     icon: footer2Icon,
+  },
+];
+// 定制组件
+export const customWindowList: any = [
+  {
+    value: 'formula',
+    label: '配方',
+  },
+  {
+    value: 'orderInformation',
+    label: '单号信息',
+  },
+  {
+    value: 'equipment',
+    label: '设备控制',
+  },
+  {
+    value: 'paramControl',
+    label: '生产统计',
+  },
+  {
+    value: 'connectStatus',
+    label: '模块状态',
+  },
+  {
+    value: 'fastFunction',
+    label: '便捷功能',
+  },
+  {
+    value: 'outputArea',
+    label: '出料区',
   },
 ];
 // 仿真涂层-背景图
