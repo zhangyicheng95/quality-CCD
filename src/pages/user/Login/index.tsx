@@ -24,10 +24,12 @@ const LoginMessage: React.FC<{
 const Login: React.FC = () => {
   // const { initialState, setInitialState } = useModel('@@initialState');
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
   const clickNum = useRef(0);
+  const [loading, setLoading] = useState(false);
+  const [userList, setUserList] = useState<any>([]);
 
   useEffect(() => {
+    setUserList(JSON.parse(localStorage.getItem('userList') || '[]'));
     return () => {
       clickNum.current = 0;
     };
@@ -146,9 +148,7 @@ const Login: React.FC = () => {
           >
             <AutoComplete
               style={{ width: '100%' }}
-              options={_.uniq(
-                JSON.parse(localStorage.getItem('userList') || '[]')?.concat(['工程师', '操作员']),
-              )?.map((item: any) => ({
+              options={_.uniq(userList?.concat(['工程师', '操作员']))?.map?.((item: any) => ({
                 label: (
                   <div className="flex-box-justify-between">
                     {item}
@@ -158,7 +158,7 @@ const Login: React.FC = () => {
                           event.stopPropagation();
                           const list = _.uniq(JSON.parse(localStorage.getItem('userList') || '[]'));
                           const result = _.pull(list, item);
-                          console.log(result);
+                          setUserList(result);
                           localStorage.setItem('userList', JSON.stringify(result));
                         }}
                       >

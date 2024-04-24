@@ -992,20 +992,23 @@
 
       .table-edit-item-box {
         width: 100%;
-        border: 1px solid rgba(144, 144, 144, .6);
+        border-left: 1px solid rgba(144, 144, 144, .6);
+        border-bottom: 1px solid rgba(144, 144, 144, .6);
 
         &-td {
           flex: 1;
           height: 100%;
-          min-width: 100px;
+          min-width: 80px;
           max-width: 300px;
+          border-top: 1px solid rgba(144, 144, 144, .6);
           border-right: 1px solid rgba(144, 144, 144, .6);
+          overflow: auto;
 
           .ant-input,
           &-title {
             height: 100%;
             width: 100%;
-            padding: 8px 4px;
+            padding: 0 4px;
           }
         }
       }
@@ -1110,7 +1113,7 @@
   position: relative;
 
   :global {
-    .car-bg-box {
+    .heat-map-bg-box {
       height: 100%;
       width: 100%;
       position: absolute;
@@ -1119,6 +1122,15 @@
       right: 0;
       bottom: 0;
       z-index: -1;
+    }
+
+    .heat-map-item {
+      width: 10px;
+      height: 10px;
+      position: absolute;
+      background-color: #f00;
+      border-radius: 50%;
+      box-shadow: 0 1px 2px 5px rgb(241, 154, 154);
     }
   }
 }
@@ -2419,7 +2431,7 @@
 
         &-icon {
           border-radius: 50%;
-          background-color: rgba(144, 144, 144, .2);
+          background: radial-gradient(circle at 50% 50%, #fff, rgb(157, 157, 157));
           overflow: hidden;
           margin-bottom: 8px;
 
@@ -2517,6 +2529,7 @@
         padding: 8px 16px;
         margin: 0 2% 16px 0;
         float: left;
+        font-size: inherit;
       }
     }
   }
@@ -2554,8 +2567,8 @@
 
         &-bottom {
           padding: 8px;
-          height: 100px;
-          min-height: 100px;
+          height: 60px;
+          min-height: 60px;
 
           &-left {
             height: 100%;
@@ -2572,6 +2585,8 @@
 
           &-right {
             flex: 1;
+            height: 100%;
+            overflow: auto;
             margin-left: 8px;
           }
         }
@@ -2579,14 +2594,14 @@
     }
 
     .output-area-center {
-      width: 99%;
+      width: 100%;
       margin: 32px 0;
       position: relative;
 
       &-line {
         position: absolute;
         left: 0;
-        top: 50%;
+        top: 40px;
         width: 98%;
         border-top: 3px solid rgba(144, 144, 144, .6);
         border-bottom: 3px solid rgba(144, 144, 144, .6);
@@ -2595,19 +2610,20 @@
 
       &-item {
         flex-direction: column;
-        width: 10%;
-        min-height: 150px;
+        width: 200px;
+        height: 120px;
         border: 1px solid rgba(144, 144, 144, .6);
         border-radius: 8px;
         background-color: @body-background;
         padding: 8px;
         margin-left: 1%;
+        font-size: 14px;
 
         &-btn-top,
         &-btn-bottom {
           width: 100%;
-          padding: 4px 32px;
-          border-radius: 12px;
+          padding: 2px 32px;
+          border-radius: 24px;
           text-align: center;
           cursor: pointer;
         }
@@ -2618,7 +2634,7 @@
         }
 
         &-btn-bottom {
-          background-color: rgb(42, 145, 144);
+          background-color: rgb(57, 218, 215);
         }
 
         &-center {

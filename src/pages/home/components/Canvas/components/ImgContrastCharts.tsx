@@ -31,7 +31,7 @@ const ImgContrastCharts: React.FC<Props> = (props: any) => {
   const [selected, setSelected] = useState(0);
 
   const selectOption = useMemo(() => {
-    return (dataValue || [])?.map((item: any, index: number) => ({
+    return (dataValue || [])?.map?.((item: any, index: number) => ({
       label: item?.title,
       value: index,
     }));

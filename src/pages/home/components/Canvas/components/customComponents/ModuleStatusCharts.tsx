@@ -9,7 +9,7 @@ interface Props {
   onClick?: any;
 }
 
-const ConnectStatusCharts: React.FC<Props> = (props: any) => {
+const ModuleStatusCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let { dataValue, titleFontSize = 24, fontSize = 20 } = data;
   if (process.env.NODE_ENV === 'development') {
@@ -17,40 +17,39 @@ const ConnectStatusCharts: React.FC<Props> = (props: any) => {
       {
         title: '3D',
         value: [
-          { name: 'L', status: 1 },
-          { name: 'M', status: 1 },
-          { name: 'R', status: 1 },
+          { name: 'L', status: 'success' },
+          { name: 'M', status: 'success' },
+          { name: 'R', status: 'success' },
         ],
       },
-      { title: '面阵', value: [{ name: 'ADT', status: 1 }] },
+      { title: '面阵', value: [{ name: 'ADT', status: 'success' }] },
       {
         title: '脏污',
         value: [
-          { name: 'T', status: 1 },
-          { name: 'B', status: 1 },
+          { name: 'T', status: 'error' },
+          { name: 'B', status: 'success' },
         ],
       },
-      { title: '隐裂', value: [{ name: 'NT', status: 1 }] },
+      { title: '隐裂', value: [{ name: 'NT', status: 'error' }] },
       {
         title: '侧边',
         value: [
-          { name: 'XA', status: 1 },
-          { name: 'XB', status: 1 },
-          { name: 'YA', status: 1 },
-          { name: 'YB', status: 1 },
+          { name: 'XA', status: 'warning' },
+          { name: 'XB', status: 'success' },
+          { name: 'YA', status: 'error' },
+          { name: 'YB', status: 'success' },
         ],
       },
-      { title: '电阻率', value: [{ name: 'RDT', status: 1 }] },
+      { title: '电阻率', value: [{ name: 'RDT', status: 'error' }] },
       {
         title: '孔洞',
         value: [
-          { name: 'T', status: 1 },
-          { name: 'B', status: 1 },
+          { name: 'T', status: 'warning' },
+          { name: 'B', status: 'success' },
         ],
       },
     ];
   }
-
   return (
     <div
       id={`echart-${id}`}
@@ -58,20 +57,18 @@ const ConnectStatusCharts: React.FC<Props> = (props: any) => {
       style={{ fontSize: titleFontSize }}
     >
       <CustomWindowBody title="模块状态" style={{ fontSize }}>
-        {(dataValue || [])?.map((item: any, index: number) => {
+        {(dataValue || [])?.map?.((item: any, index: number) => {
           const { title, value } = item;
           return (
             <div className="flex-box connect-status-item" key={`connect-status-item-${index}`}>
               <div className="connect-status-item-title">{title}-</div>
               <div className="flex-box connect-status-item-value">
-                {(value || [])?.map((itemSec: any, indexSec: number) => {
+                {(value || [])?.map?.((itemSec: any, indexSec: number) => {
                   const { name, status } = itemSec;
                   return (
                     <div
                       key={`connect-status-item-value-item-${indexSec}`}
-                      className={`connect-status-item-value-item ${
-                        status === 1 ? 'success' : 'error'
-                      }`}
+                      className={`connect-status-item-value-item ${_.lowerCase(status)}`}
                     >
                       {name}
                     </div>
@@ -86,4 +83,4 @@ const ConnectStatusCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default ConnectStatusCharts;
+export default ModuleStatusCharts;

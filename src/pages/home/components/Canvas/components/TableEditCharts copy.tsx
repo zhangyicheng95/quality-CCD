@@ -36,7 +36,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
     if (!xColumns?.length || !yColumns?.length) {
       return;
     }
-    return (xColumns?.[0]?.xName?.split?.(',') || [])?.map((item: any, index: number) => {
+    return (xColumns?.[0]?.xName?.split?.(',') || [])?.map?.((item: any, index: number) => {
       return Object.assign(
         {
           title: item,
@@ -181,11 +181,11 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
           const sheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[sheetName];
           const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-          const result = jsonData.map((item: any) => {
+          const result = jsonData?.map?.((item: any) => {
             return item
               .join('$@$')
               .split('$@$')
-              .map((i: any) => {
+              ?.map?.((i: any) => {
                 if (!!i) {
                   return i;
                 } else {
@@ -259,7 +259,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
         }
       });
       const subColumns = xColumns[1]?.xName?.split(',')?.slice(2) || [];
-      const parm1 = obj1.map((item: any) => {
+      const parm1 = obj1?.map?.((item: any) => {
         const { association, yName } = item;
         const result =
           obj2.filter((i: any) => i.association === association && i.yName === yName) || [];
@@ -278,14 +278,14 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
           children: (item.children || [])?.concat(result),
         };
       });
-      const parm2 = (xColumns?.[0]?.xName?.split?.(',')?.slice(2) || [])?.map(
+      const parm2 = (xColumns?.[0]?.xName?.split?.(',')?.slice(2) || [])?.map?.(
         (item: any, index: number) => {
           return {
             level: index + 1,
             title: item,
             alias: subColumns[index] || '',
             config: parm1
-              .map((i: any) => {
+              ?.map?.((i: any) => {
                 if (i.yName === item) {
                   return {
                     field_name:
@@ -312,7 +312,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
 
       const { flowData } = params;
       let { nodes } = flowData;
-      nodes = nodes.map((node: any) => {
+      nodes = nodes?.map?.((node: any) => {
         const { config = {} } = node;
         if (node.id === id.split('$$')[0]) {
           const { initParams = {} } = config;

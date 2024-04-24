@@ -204,7 +204,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
           stack: 'total',
           showBackground: !!barRadius && !!showBackground,
           barMaxWidth: '50%',
-          data: seriesData.map((item: any, index: number) => {
+          data: seriesData?.map?.((item: any, index: number) => {
             const { value, color } = item;
             if (params.dataIndex >= colorList.length) {
               index = params.dataIndex - colorList.length;
@@ -259,7 +259,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
             };
           }),
           markLine: {
-            data: markLineData?.map((mark: any, index: number) => {
+            data: markLineData?.map?.((mark: any, index: number) => {
               const { value, name, color } = mark;
               return Object.assign(
                 {},
@@ -304,7 +304,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
               },
               tooltip: { show: false },
               stack: 'total',
-              data: seriesData.map(() => max),
+              data: seriesData?.map?.(() => max),
             }
           : null,
         showWithLine
@@ -355,7 +355,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
                     }
                   : {}),
               },
-              data: seriesData.map((item: any, index: number) => {
+              data: seriesData?.map?.((item: any, index: number) => {
                 const { value } = item;
                 return value;
               }),

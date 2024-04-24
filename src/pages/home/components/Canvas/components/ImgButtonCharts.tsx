@@ -181,7 +181,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
           }
         >
           <div className="flex-box header-img-button-box">
-            {(xColumns || [])?.map((item: any, index: number) => {
+            {(xColumns || [])?.map?.((item: any, index: number) => {
               const { label, value } = item;
               return (
                 <div
@@ -199,10 +199,10 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
           </div>
           <div className="img-button-charts-body">
             {!!markNumberLeft
-              ? Array.from({ length: markNumberLeft || 0 }).map((left: any, lIndex: number) => {
+              ? Array.from({ length: markNumberLeft || 0 })?.map?.((left: any, lIndex: number) => {
                   return (
                     <div className="flex-box img-button-item-line" key={`left-${lIndex}`}>
-                      {Array.from({ length: markNumberTop || 0 }).map(
+                      {Array.from({ length: markNumberTop || 0 })?.map?.(
                         (top: any, tIndex: number) => {
                           const title = `${numToString(lIndex + 1)}-${tIndex + 1}`;
                           return (
@@ -259,7 +259,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
           onOk={() => onFileUpload()}
         >
           <div className="flex-box file-type-box">
-            {(fileTypes || [])?.map((item: any) => {
+            {(fileTypes || [])?.map?.((item: any) => {
               return (
                 <div
                   className={`file-type-item ${

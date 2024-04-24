@@ -110,8 +110,8 @@ import NightingalePieCharts from './components/NightingalePieCharts';
 import RankCharts from './components/RankCharts';
 import Pie3DCharts from './components/Pie3DCharts';
 import FormulaCharts from './components/customComponents/FormulaCharts';
-import ParamControlCharts from './components/customComponents/ParamControlCharts';
-import ConnectStatusCharts from './components/customComponents/ConnectStatusCharts';
+import StatisticsCharts from './components/customComponents/StatisticsCharts';
+import ModuleStatusCharts from './components/customComponents/ModuleStatusCharts';
 import FastFunctionCharts from './components/customComponents/FastFunctionCharts';
 import OutputAreaCharts from './components/customComponents/OutputAreaCharts';
 import EquipmentControlCharts from './components/customComponents/EquipmentControlCharts';
@@ -215,7 +215,7 @@ const Home: React.FC<any> = (props: any) => {
     if (_.isArray(paramData?.commonInfo?.data)) {
       setBasicInfoData(paramData?.commonInfo?.data);
     } else if (_.isObject(paramData?.commonInfo)) {
-      const result = Object.entries(paramData?.commonInfo)?.map((res: any, index: number) => {
+      const result = Object.entries(paramData?.commonInfo)?.map?.((res: any, index: number) => {
         return {
           id: guid(),
           name:
@@ -475,7 +475,7 @@ const Home: React.FC<any> = (props: any) => {
             >
               +
             </div>
-            {(paramData?.contentData?.ipList || [])?.map((item: any, index: number) => {
+            {(paramData?.contentData?.ipList || [])?.map?.((item: any, index: number) => {
               const { label, key } = item;
               const statusItem = projectStatus?.filter((i: any) => i.value === key)?.[0] || {};
               return (
@@ -636,7 +636,7 @@ const Home: React.FC<any> = (props: any) => {
             <div className="content-item-span">
               {errorData
                 ?.slice(errorData?.length - (homeSettingData['footer-2']?.logSize || 50))
-                ?.map((log: any, index: number) => {
+                ?.map?.((log: any, index: number) => {
                   const { color, node_name, nid, message, time } = log;
                   return (
                     <div className="log-item flex-box-start" key={index}>
@@ -716,7 +716,7 @@ const Home: React.FC<any> = (props: any) => {
   );
   // 删除基础组件
   const deleteBasic = (type: string) => {
-    const home = gridHomeList?.map((item: any) => {
+    const home = gridHomeList?.map?.((item: any) => {
       if (item.i === type) {
         return {
           ...item,
@@ -862,7 +862,7 @@ const Home: React.FC<any> = (props: any) => {
       gridMargin,
     } = contentData;
     const { nodes = [] } = flowData;
-    const list = nodes?.map((node: any) => {
+    const list = nodes?.map?.((node: any) => {
       const { name, alias, id, ports = {} } = node;
       const { items = [] } = ports;
       return {
@@ -872,7 +872,7 @@ const Home: React.FC<any> = (props: any) => {
         label: `${alias || name}`,
         children: items
           ?.filter((i: any) => i.group === 'bottom')
-          ?.map((port: any) => {
+          ?.map?.((port: any) => {
             const { label } = port;
             const { name, alias } = label;
             const value = alias || name;
@@ -886,7 +886,7 @@ const Home: React.FC<any> = (props: any) => {
     setNodeList(list);
     setFooterSelectList(footerSelectList || []);
     setGridHomeList(
-      homeSelf.map((item: any) => {
+      homeSelf?.map?.((item: any) => {
         return {
           ...item,
           ...home?.filter((i: any) => i.i === item.i)[0],
@@ -949,7 +949,7 @@ const Home: React.FC<any> = (props: any) => {
         dispatch({
           type: 'home/set',
           payload: {
-            gridContentList: content.map((item: any) => ({
+            gridContentList: content?.map?.((item: any) => ({
               ...item,
               key: item.id?.split('$$')?.[0],
             })),
@@ -965,7 +965,7 @@ const Home: React.FC<any> = (props: any) => {
           }));
         }
       } else {
-        const result = Object.entries(content || {})?.map((item: any) => {
+        const result = Object.entries(content || {})?.map?.((item: any) => {
           const { value, type, size } = item[1];
           const id = `${value?.join('$$')}$$${type}`;
           return {
@@ -1155,6 +1155,7 @@ const Home: React.FC<any> = (props: any) => {
           titleBackgroundColor,
           titleFontSize = 20,
           valueOnTop = false,
+          timeSelectDefault,
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1518,6 +1519,7 @@ const Home: React.FC<any> = (props: any) => {
                       yName,
                       xName,
                       fetchType,
+                      timeSelectDefault,
                     }}
                   />
                 ) : type === 'buttonInp' ? (
@@ -1566,6 +1568,7 @@ const Home: React.FC<any> = (props: any) => {
                       dataValue,
                       fontSize,
                       showLabel,
+                      ifPopconfirm,
                     }}
                   />
                 ) : type === 'operation2' ? (
@@ -1709,14 +1712,14 @@ const Home: React.FC<any> = (props: any) => {
                       titleFontSize,
                       loading,
                       start: () => start(),
+                      stop: () => end(),
                       reStart: () => reStart(),
-                      started,
                       fetchType,
                       xName,
                     }}
                   />
                 ) : type === 'paramControl' ? (
-                  <ParamControlCharts
+                  <StatisticsCharts
                     id={key}
                     data={{
                       dataValue,
@@ -1727,7 +1730,7 @@ const Home: React.FC<any> = (props: any) => {
                     }}
                   />
                 ) : type === 'connectStatus' ? (
-                  <ConnectStatusCharts
+                  <ModuleStatusCharts
                     id={key}
                     data={{
                       dataValue,
@@ -1964,7 +1967,7 @@ const Home: React.FC<any> = (props: any) => {
                       const { config = {} } = res;
                       if (!!config?.execParams && _.isObject(config?.execParams)) {
                         setSelectedNodeConfig(() =>
-                          Object.entries(config.execParams)?.map((item: any) => {
+                          Object.entries(config.execParams)?.map?.((item: any) => {
                             return {
                               label: item[1]?.alias,
                               value: item[0],
@@ -1973,7 +1976,7 @@ const Home: React.FC<any> = (props: any) => {
                         );
                       } else if (!!config?.initParams && _.isObject(config?.initParams)) {
                         setSelectedNodeConfig(() =>
-                          Object.entries(config.initParams)?.map((item: any) => {
+                          Object.entries(config.initParams)?.map?.((item: any) => {
                             return {
                               label: item[1]?.alias,
                               value: item[0],
@@ -1990,7 +1993,7 @@ const Home: React.FC<any> = (props: any) => {
                       const { config = {} } = res;
                       if (!!config?.initParams && _.isObject(config?.initParams)) {
                         setSelectedNodeConfig(() =>
-                          Object.entries(config.initParams)?.map((item: any) => {
+                          Object.entries(config.initParams)?.map?.((item: any) => {
                             return {
                               label: item[1]?.alias,
                               value: item[0],
@@ -2076,7 +2079,7 @@ const Home: React.FC<any> = (props: any) => {
     } else {
       setContentList([]);
     }
-  }, [gridContentList, addContentList, addWindowVisible]);
+  }, [gridContentList, addContentList, addWindowVisible, loading]);
   // 批量启动任务
   const startProjects = (item: any, list: any, index: number, projectStatus: any) => {
     const data = projectStatus?.filter((i: any) => i.value === item.key)?.[0] || {};
@@ -2222,7 +2225,7 @@ const Home: React.FC<any> = (props: any) => {
    * 处理日志信息
    */
   const logThrottleAndMerge = useThrottleAndMerge((logs) => {
-    // const logContent = logs?.map((item: any) => item.data);
+    // const logContent = logs?.map?.((item: any) => item.data);
     // setLogStr((cur: any) => {
     //   const newLogs = [...logContent, ...cur];
     //   return newLogs.slice(0, 50);
@@ -2379,6 +2382,7 @@ const Home: React.FC<any> = (props: any) => {
       titleBackgroundColor,
       titleFontSize,
       valueOnTop,
+      timeSelectDefault,
     } = values;
     if (['button', 'buttonInp', 'buttonPassword', 'buttonUpload'].includes(type) && !!fetchParams) {
       try {
@@ -2494,12 +2498,13 @@ const Home: React.FC<any> = (props: any) => {
             titleBackgroundColor,
             titleFontSize,
             valueOnTop,
+            timeSelectDefault,
           },
           ['description'].includes(windowType) ? { basicInfoData } : {},
         ),
       );
     } else {
-      result = (addContentList || [])?.map((item: any) => {
+      result = (addContentList || [])?.map?.((item: any) => {
         if (item.id === `${editWindowData?.value?.join('$$')}$$${editWindowData.type}`) {
           return Object.assign(
             {},
@@ -2588,6 +2593,7 @@ const Home: React.FC<any> = (props: any) => {
               titleBackgroundColor,
               titleFontSize,
               valueOnTop,
+              timeSelectDefault,
             },
             ['description'].includes(windowType) ? { basicInfoData } : {},
           );
@@ -2682,6 +2688,7 @@ const Home: React.FC<any> = (props: any) => {
       titleBackgroundColor: 'transparent',
       titleFontSize: 20,
       valueOnTop: false,
+      timeSelectDefault: 'day',
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -2717,7 +2724,7 @@ const Home: React.FC<any> = (props: any) => {
                   <span>Plugins</span>
                 </div>
                 <div className="left-panel-list">
-                  {(leftPanelData || [])?.map((panel: any, sIndex: number) => {
+                  {(leftPanelData || [])?.map?.((panel: any, sIndex: number) => {
                     const { title, key, open, children } = panel;
                     return (
                       <div
@@ -2728,7 +2735,7 @@ const Home: React.FC<any> = (props: any) => {
                           className="flex-box left-panel-list-title"
                           onClick={() => {
                             setLeftPanelData((prev: any) => {
-                              return prev.map((pre: any) => {
+                              return prev?.map?.((pre: any) => {
                                 if (pre.key === key) {
                                   return { ...pre, open: !open };
                                 }
@@ -2747,7 +2754,7 @@ const Home: React.FC<any> = (props: any) => {
                           {title}
                         </div>
                         {open
-                          ? (children || []).map((item: any, index: number) => {
+                          ? (children || [])?.map?.((item: any, index: number) => {
                               const { value, label, icon } = item;
                               return (
                                 <div key={`panel-${value}-${index}`}>
@@ -2810,7 +2817,7 @@ const Home: React.FC<any> = (props: any) => {
                     } else if (key === 'basic') {
                       // 添加基础窗口
                       setGridHomeList((prev: any) => {
-                        return prev?.map((item: any) => {
+                        return prev?.map?.((item: any) => {
                           if (item.i === value) {
                             return {
                               ...item,
@@ -3033,7 +3040,7 @@ const Home: React.FC<any> = (props: any) => {
                           <div className="right-canvas-body-grid">
                             {paramData?.contentData?.tabList?.length > 1 ? (
                               <div className="flex-box right-canvas-body-grid-tab">
-                                {(paramData?.contentData?.tabList || []).map(
+                                {(paramData?.contentData?.tabList || [])?.map?.(
                                   (tab: any, index: number) => {
                                     const { name, id } = tab;
                                     return (
@@ -3180,26 +3187,28 @@ const Home: React.FC<any> = (props: any) => {
                   <div className="right-canvas-body-grid">
                     {paramData?.contentData?.tabList?.length > 1 ? (
                       <div className="flex-box right-canvas-body-grid-tab">
-                        {(paramData?.contentData?.tabList || []).map((tab: any, index: number) => {
-                          const { name, id } = tab;
-                          return (
-                            <div
-                              className={`right-canvas-body-grid-tab-item ${
-                                tabNum == index ? 'right-canvas-body-grid-tab-selected' : ''
-                              }`}
-                              key={id}
-                              onClick={() => {
-                                localStorage.setItem(
-                                  `localGridContent-tab-${paramData.id}`,
-                                  index + '',
-                                );
-                                setTabNum(index);
-                              }}
-                            >
-                              {name}
-                            </div>
-                          );
-                        })}
+                        {(paramData?.contentData?.tabList || [])?.map?.(
+                          (tab: any, index: number) => {
+                            const { name, id } = tab;
+                            return (
+                              <div
+                                className={`right-canvas-body-grid-tab-item ${
+                                  tabNum == index ? 'right-canvas-body-grid-tab-selected' : ''
+                                }`}
+                                key={id}
+                                onClick={() => {
+                                  localStorage.setItem(
+                                    `localGridContent-tab-${paramData.id}`,
+                                    index + '',
+                                  );
+                                  setTabNum(index);
+                                }}
+                              >
+                                {name}
+                              </div>
+                            );
+                          },
+                        )}
                       </div>
                     ) : null}
                     <div
@@ -3381,7 +3390,7 @@ const Home: React.FC<any> = (props: any) => {
                           : null;
                         if (!!params && _.isObject(params)) {
                           setSelectedNodeConfig(() =>
-                            Object.entries(params)?.map((item: any) => {
+                            Object.entries(params)?.map?.((item: any) => {
                               return {
                                 label: item[1]?.alias,
                                 value: item[0],
@@ -3422,7 +3431,7 @@ const Home: React.FC<any> = (props: any) => {
                             : null;
                         if (!!params && _.isObject(params)) {
                           setSelectedNodeConfig(() =>
-                            Object.entries(params)?.map((item: any) => {
+                            Object.entries(params)?.map?.((item: any) => {
                               return {
                                 label: item[1]?.alias,
                                 value: item[0],
@@ -3801,7 +3810,7 @@ const Home: React.FC<any> = (props: any) => {
                         ['#ea7ccc', '粉色'],
                         ['#000', '黑色'],
                         ['#fff', '白色'],
-                      ].map((item: any, index: number) => {
+                      ]?.map?.((item: any, index: number) => {
                         return {
                           value: item[0],
                           label:
@@ -4086,7 +4095,7 @@ const Home: React.FC<any> = (props: any) => {
                     >
                       <Select
                         style={{ width: '100%' }}
-                        options={['get', 'post', 'put', 'delete'].map((item: any) => ({
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
                           value: item,
                           label: _.toUpper(item),
                         }))}
@@ -4135,7 +4144,7 @@ const Home: React.FC<any> = (props: any) => {
                     >
                       <Select
                         style={{ width: '100%' }}
-                        options={['get', 'post', 'put', 'delete'].map((item: any) => ({
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
                           value: item,
                           label: _.toUpper(item),
                         }))}
@@ -4187,7 +4196,7 @@ const Home: React.FC<any> = (props: any) => {
                     >
                       <Select
                         style={{ width: '100%' }}
-                        options={['get', 'post', 'put', 'delete'].map((item: any) => ({
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
                           value: item,
                           label: _.toUpper(item),
                         }))}
@@ -4282,7 +4291,7 @@ const Home: React.FC<any> = (props: any) => {
                     >
                       <Select
                         style={{ width: '100%' }}
-                        options={['get', 'post', 'put', 'delete'].map((item: any) => ({
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
                           value: item,
                           label: _.toUpper(item),
                         }))}
@@ -4295,13 +4304,39 @@ const Home: React.FC<any> = (props: any) => {
                     >
                       <Input size="large" />
                     </Form.Item>
+                    {form.getFieldValue('yName') === 'rangePicker' ? (
+                      <Form.Item
+                        name={`timeSelectDefault`}
+                        label={'默认时间范围'}
+                        initialValue={'day'}
+                        rules={[{ required: false, message: '默认时间范围' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: 'day',
+                              label: '当天',
+                            },
+                            {
+                              value: 'week',
+                              label: '过去7天',
+                            },
+                            {
+                              value: 'month',
+                              label: '过去一个月',
+                            },
+                          ]}
+                        />
+                      </Form.Item>
+                    ) : null}
                   </Fragment>
                 ) : null}
                 {['description'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item label="静态数据">
                       {_.isArray(basicInfoData)
-                        ? basicInfoData.map((item: any, index: number) => {
+                        ? basicInfoData?.map?.((item: any, index: number) => {
                             if (!item || _.isEmpty(item)) return null;
 
                             const { id, name, value } = item;
@@ -4318,7 +4353,7 @@ const Home: React.FC<any> = (props: any) => {
                                     onChange={(e) => {
                                       const val = e?.target?.value;
                                       setBasicInfoData((prev: any) => {
-                                        return prev.map((info: any) => {
+                                        return prev?.map?.((info: any) => {
                                           if (info.id === id) {
                                             return { ...info, name: val };
                                           }
@@ -4335,7 +4370,7 @@ const Home: React.FC<any> = (props: any) => {
                                     onChange={(e) => {
                                       const val = e?.target?.value;
                                       setBasicInfoData((prev: any) => {
-                                        return prev.map((info: any) => {
+                                        return prev?.map?.((info: any) => {
                                           if (info.id === id) {
                                             return { ...info, value: val };
                                           }
@@ -4450,7 +4485,7 @@ const Home: React.FC<any> = (props: any) => {
                         >
                           <Select
                             style={{ width: '100%' }}
-                            options={['get', 'post', 'put', 'delete'].map((item: any) => ({
+                            options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
                               value: item,
                               label: _.toUpper(item),
                             }))}
@@ -4554,16 +4589,16 @@ const Home: React.FC<any> = (props: any) => {
                         >
                           <Switch />
                         </Form.Item>
-                        <Form.Item
-                          name="ifPopconfirm"
-                          label="是否二次确认"
-                          initialValue={true}
-                          valuePropName="checked"
-                        >
-                          <Switch />
-                        </Form.Item>
                       </Fragment>
                     ) : null}
+                    <Form.Item
+                      name="ifPopconfirm"
+                      label="是否二次确认"
+                      initialValue={true}
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
                     <Form.Item
                       name="showLabel"
                       label="显示标题"
@@ -4640,7 +4675,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Select
                         style={{ width: '100%' }}
                         placeholder="http类型"
-                        options={['get', 'post', 'put', 'delete'].map((item: any) => ({
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
                           value: item,
                           label: _.toUpper(item),
                         }))}
@@ -4798,7 +4833,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Select
                         style={{ width: '100%' }}
                         placeholder="http类型"
-                        options={['get', 'post', 'put', 'delete'].map((item: any) => ({
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
                           value: item,
                           label: _.toUpper(item),
                         }))}
@@ -4833,7 +4868,7 @@ const Home: React.FC<any> = (props: any) => {
                       <InputNumber min={1} placeholder="左侧图示长度" />
                     </Form.Item>
                     <Form.Item label="缺陷类型" name="xColumns">
-                      {(editWindowData.xColumns || []).map((item: any, index: number) => {
+                      {(editWindowData.xColumns || [])?.map?.((item: any, index: number) => {
                         if (!item || _.isEmpty(item)) return null;
 
                         const { id, value, label } = item;
@@ -4852,7 +4887,7 @@ const Home: React.FC<any> = (props: any) => {
                                   setEditWindowData((prev: any) => {
                                     return {
                                       ...prev,
-                                      xColumns: (prev.xColumns || []).map((i: any) => {
+                                      xColumns: (prev.xColumns || [])?.map?.((i: any) => {
                                         if (i.id === id) {
                                           return {
                                             ...i,
@@ -4875,7 +4910,7 @@ const Home: React.FC<any> = (props: any) => {
                                   setEditWindowData((prev: any) => {
                                     return {
                                       ...prev,
-                                      xColumns: (prev.xColumns || []).map((i: any) => {
+                                      xColumns: (prev.xColumns || [])?.map?.((i: any) => {
                                         if (i.id === id) {
                                           return {
                                             ...i,
@@ -4935,7 +4970,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Select
                         style={{ width: '100%' }}
                         placeholder="http类型"
-                        options={['get', 'post', 'put', 'delete'].map((item: any) => ({
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
                           value: item,
                           label: _.toUpper(item),
                         }))}
@@ -5003,7 +5038,7 @@ const Home: React.FC<any> = (props: any) => {
                         >
                           <Select
                             style={{ width: '100%' }}
-                            options={['get', 'post', 'put', 'delete'].map((item: any) => ({
+                            options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
                               value: item,
                               label: _.toUpper(item),
                             }))}
@@ -5049,7 +5084,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Select
                         style={{ width: '100%' }}
                         placeholder="http类型"
-                        options={['get', 'post', 'put', 'delete'].map((item: any) => ({
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
                           value: item,
                           label: _.toUpper(item),
                         }))}
@@ -5228,7 +5263,7 @@ const Home: React.FC<any> = (props: any) => {
               </Form.Item>
               <Form.Item label="标签页">
                 {_.isArray(basicInfoData)
-                  ? basicInfoData.map((item: any, index: number) => {
+                  ? basicInfoData?.map?.((item: any, index: number) => {
                       if (!item || _.isEmpty(item)) return null;
 
                       const { id, name } = item;
@@ -5245,7 +5280,7 @@ const Home: React.FC<any> = (props: any) => {
                               onChange={(e) => {
                                 const val = e?.target?.value;
                                 setBasicInfoData((prev: any) => {
-                                  return prev.map((info: any) => {
+                                  return prev?.map?.((info: any) => {
                                     if (info.id === id) {
                                       return { ...info, name: val };
                                     }
@@ -5307,7 +5342,7 @@ const Home: React.FC<any> = (props: any) => {
               {
                 // 节点状态
                 !!footerSelectList?.length &&
-                  footerSelectList?.map((id: any, index: number) => {
+                  footerSelectList?.map?.((id: any, index: number) => {
                     const item = footerData?.['state']?.[id] || footerData[id];
                     if (!item) {
                       return null;
@@ -5335,7 +5370,7 @@ const Home: React.FC<any> = (props: any) => {
               {
                 // 内存状态
                 !!footerData?.['ram']
-                  ? Object.entries(footerData?.['ram']).map((item: any) => {
+                  ? Object.entries(footerData?.['ram'])?.map?.((item: any) => {
                       const { current, total } = item;
                       return (
                         <div
@@ -5396,7 +5431,7 @@ const Home: React.FC<any> = (props: any) => {
                   value: 'footer_001',
                   title: '节点状态列表',
                   label: '节点状态列表',
-                  children: nodeList?.map((item: any) => _.omit(item, 'children')),
+                  children: nodeList?.map?.((item: any) => _.omit(item, 'children')),
                 },
               ]}
             />
@@ -5479,10 +5514,10 @@ const Home: React.FC<any> = (props: any) => {
                   allowClear
                   showSearch
                   optionFilterProp="label"
-                  options={(projectStatus || [])?.map((item: any) => {
+                  options={(projectStatus || [])?.map?.((item: any) => {
                     return {
                       ...item,
-                      // disabled: (paramData?.contentData?.ipList.map((i: any) => i.key) || []).includes(item.value),
+                      // disabled: (paramData?.contentData?.ipList?.map?.((i: any) => i.key) || []).includes(item.value),
                     };
                   })}
                   placeholder="方案ID"

@@ -136,7 +136,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
         {},
         options.legend,
         {
-          data: (dataValue || []).map((item: any) => {
+          data: (dataValue || [])?.map?.((item: any) => {
             const { name } = item;
             return name;
           }),
@@ -192,7 +192,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
           },
         },
       }),
-      series: (dataValue || []).map((item: any) => {
+      series: (dataValue || [])?.map?.((item: any) => {
         const { name, value, type, color } = item;
         if (type === 'markLine') {
           return {

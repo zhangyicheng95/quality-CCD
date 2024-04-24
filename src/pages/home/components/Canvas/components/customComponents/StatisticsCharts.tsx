@@ -11,7 +11,7 @@ interface Props {
   onClick?: any;
 }
 
-const ParamControlCharts: React.FC<Props> = (props: any) => {
+const StatisticsCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let { dataValue, titleFontSize = 24, fontSize = 24, fetchType, xName } = data;
   if (process.env.NODE_ENV === 'development') {
@@ -62,10 +62,9 @@ const ParamControlCharts: React.FC<Props> = (props: any) => {
       },
     };
   }
-
   useEffect(() => {}, []);
   const onSubmit = () => {
-    btnFetch(fetchType, xName, { data: '' }).then((res: any) => {
+    btnFetch(fetchType, xName, { type: 'statistics', value: 0 }).then((res: any) => {
       if (!!res && res.code === 'SUCCESS') {
       } else {
         message.error(res?.msg || res?.message || '接口异常');
@@ -81,34 +80,38 @@ const ParamControlCharts: React.FC<Props> = (props: any) => {
     >
       <CustomWindowBody title="生产统计" style={{ fontSize }}>
         <div className="param-control-item-box">
-          {Object.entries(dataValue)?.map((item: any, index: number) => {
+          {Object.entries(dataValue || {})?.map?.((item: any, index: number) => {
             const { alias, value } = item[1];
             return (
               <div
                 className="flex-box param-control-item"
                 key={`param-control-item-${item[0]}`}
-                style={index + 1 === Object.entries(dataValue)?.length ? { marginBottom: 0 } : {}}
+                style={
+                  index + 1 === Object.entries(dataValue || {})?.length ? { marginBottom: 0 } : {}
+                }
               >
                 <div className="param-control-item-title">{alias} :</div>
                 <div className="param-control-item-value">{value}</div>
               </div>
             );
           })}
-          <div className="flex-box param-control-item">
-            <div className="param-control-item-title" />
-            <Button
-              type="primary"
-              className="param-control-item-value"
-              style={{ width: '100%' }}
-              onClick={() => onSubmit()}
-            >
-              清零
-            </Button>
-          </div>
+          {Object.entries(dataValue || {})?.length ? (
+            <div className="flex-box param-control-item">
+              <div className="param-control-item-title" />
+              <Button
+                type="primary"
+                className="param-control-item-value"
+                style={{ width: '100%' }}
+                onClick={() => onSubmit()}
+              >
+                清零
+              </Button>
+            </div>
+          ) : null}
         </div>
       </CustomWindowBody>
     </div>
   );
 };
 
-export default ParamControlCharts;
+export default StatisticsCharts;

@@ -501,7 +501,7 @@ export function downFileFun(data = '{}', name = '') {
 export const hexToRGB = (hex: any) => {
   let alpha = false,
     h = hex.slice(hex.startsWith('#') ? 1 : 0);
-  if (h.length === 3) h = [...h].map((x) => x + x).join('');
+  if (h.length === 3) h = [...h]?.map?.((x) => x + x).join('');
   else if (h.length === 8) alpha = true;
   h = parseInt(h, 16);
   return (

@@ -41,7 +41,7 @@ const RankCharts: React.FC<Props> = (props: any) => {
     <div id={`echart-${id}`} className={`${styles.rankCharts}`} style={{ fontSize }}>
       {(dataValue || [])
         ?.sort((a: any, b: any) => (yName === 'verse' ? b.value - a.value : a.value - b.value))
-        ?.map((item: any, index: number) => {
+        ?.map?.((item: any, index: number) => {
           const { title, value } = item;
           return (
             <div

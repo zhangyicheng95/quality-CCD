@@ -27,19 +27,20 @@ const FormulaCharts: React.FC<Props> = (props: any) => {
     };
   }
   const [form] = Form.useForm();
-
   useEffect(() => {}, []);
   const onChange = () => {
     form
       .validateFields()
       .then((values: any) => {
         if (Object.values(values).filter(Boolean)?.length > 1) {
-          btnFetch(fetchType, xName, { data: values }).then((res: any) => {
-            if (!!res && res.code === 'SUCCESS') {
-            } else {
-              message.error(res?.msg || res?.message || '接口异常');
-            }
-          });
+          btnFetch(fetchType, xName, { data: { type: 'formula', value: values } }).then(
+            (res: any) => {
+              if (!!res && res.code === 'SUCCESS') {
+              } else {
+                message.error(res?.msg || res?.message || '接口异常');
+              }
+            },
+          );
         }
       })
       .catch((err: any) => {

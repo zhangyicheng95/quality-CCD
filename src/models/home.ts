@@ -34,7 +34,7 @@ export default {
     *startLoop(action: any, { call, put, select }: any) {
       while (true) {
         yield call(delay, 300);
-        yield put({ type: 'takeSnapshot' })
+        yield put({ type: 'takeSnapshot' });
       }
     },
 
@@ -109,8 +109,8 @@ export default {
             payload.level === 'error'
               ? logColors.error
               : payload.level === 'critical'
-                ? logColors.critical
-                : logColors.warning,
+              ? logColors.critical
+              : logColors.warning,
         },
       ];
       yield put({
@@ -128,7 +128,7 @@ export default {
       const snapshot = state.snapshot;
       const diffObj = (a: any, b: any) => {
         return JSON.stringify(a) !== JSON.stringify(b);
-      }
+      };
       const diff = () => {
         if (_.cloneDeep(state.logData).join('<br/>') !== snapshot.logStr) {
           return true;
@@ -160,18 +160,18 @@ export default {
             errorData: state.errorData,
           },
         };
-      };
+      }
       return state;
     },
     setGridContentList: (state: any, { payload }: any) => {
       const prev = state.gridContentList;
-      const gridContentList = prev.map((item: any) => {
+      const gridContentList = prev?.map?.((item: any) => {
         if (item.key === payload.uid && !_.isUndefined(payload?.[item?.value?.[1]])) {
           return {
             ...item,
             ...payload,
           };
-        };
+        }
         return item;
       });
       return { ...state, gridContentList };
@@ -188,11 +188,11 @@ export default {
 
   subscriptions: {
     socket(props: any) {
-      const { dispatch, history, } = props;
+      const { dispatch, history } = props;
       history.listen((ev: any) => {
         const { pathname } = ev;
         if (pathname === '/home') {
-          dispatch({ type: 'startLoop' })
+          dispatch({ type: 'startLoop' });
           // dispatch({ type: 'startLoop', payload: true });
           // socketErrorListen.listen(dispatch);
           // socketLogListen.listen(dispatch);

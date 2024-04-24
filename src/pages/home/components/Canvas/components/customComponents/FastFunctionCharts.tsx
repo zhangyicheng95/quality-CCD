@@ -19,14 +19,13 @@ const FastFunctionCharts: React.FC<Props> = (props: any) => {
 
   useEffect(() => {}, []);
   const onChange = (val: any) => {
-    btnFetch(fetchType, xName, { data: val }).then((res: any) => {
+    btnFetch(fetchType, xName, { type: 'fastFun', value: val }).then((res: any) => {
       if (!!res && res.code === 'SUCCESS') {
       } else {
         message.error(res?.msg || res?.message || '接口异常');
       }
     });
   };
-
   return (
     <div
       id={`echart-${id}`}
@@ -45,7 +44,7 @@ const FastFunctionCharts: React.FC<Props> = (props: any) => {
             { title: '理论片数清空', type: '7', color: '' },
             { title: '上料停止', type: '8', color: 'warning' },
             { title: '维修模式', type: '9', color: '' },
-          ].map((item: any) => {
+          ]?.map?.((item: any) => {
             const { title, type, color } = item;
             return (
               <Button

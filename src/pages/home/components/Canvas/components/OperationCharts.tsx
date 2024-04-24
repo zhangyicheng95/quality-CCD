@@ -19,7 +19,7 @@ interface Props {
 
 const OperationCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id, started } = props;
-  const { operationList, dataValue, fontSize, showLabel = true } = data;
+  const { operationList, dataValue, fontSize, showLabel = true, ifPopconfirm } = data;
   const [form] = Form.useForm();
   const { validateFields, resetFields } = form;
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -58,7 +58,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
     validateFields()
       .then((values) => {
         setConfigList((prev: any) => {
-          const result = (prev || [])?.map((item: any, index: number) => {
+          const result = (prev || [])?.map?.((item: any, index: number) => {
             if (item.name === key) {
               return Object.assign(
                 {},
@@ -83,7 +83,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
           });
           const { flowData } = params;
           let { nodes } = flowData;
-          nodes = nodes.map((node: any) => {
+          nodes = nodes?.map?.((node: any) => {
             const { config = {} } = node;
             if (node.id === id.split('$$')[0]) {
               const { initParams = {} } = config;
@@ -112,14 +112,15 @@ const OperationCharts: React.FC<Props> = (props: any) => {
             ...preInitialState,
             params: requestParams.data,
           }));
-          updateParams(requestParams).then((res: any) => {
-            if (res && res.code === 'SUCCESS') {
-              message.success('修改成功');
-            } else {
-              message.error(res?.msg || res?.message || '接口异常');
-            }
-          });
-
+          if (!ifPopconfirm) {
+            updateParams(requestParams).then((res: any) => {
+              if (res && res.code === 'SUCCESS') {
+                message.success('修改成功');
+              } else {
+                message.error(res?.msg || res?.message || '接口异常');
+              }
+            });
+          }
           return result;
         });
       })
@@ -133,7 +134,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
       .then((values) => {
         const { flowData } = params;
         let { nodes } = flowData;
-        nodes = nodes.map((node: any) => {
+        nodes = nodes?.map?.((node: any) => {
           const { config = {} } = node;
           if (node.id === id.split('$$')[0]) {
             const { initParams = {} } = config;
@@ -183,7 +184,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
       <div className="operation-body">
         <Form form={form} scrollToFirstError>
           {useMemo(() => {
-            return configList.map((item: any, index: number) => {
+            return configList?.map?.((item: any, index: number) => {
               const { name, alias, widget = {} } = item;
               const { type } = widget;
               return (
@@ -225,10 +226,16 @@ const OperationCharts: React.FC<Props> = (props: any) => {
           }, [configList, started, showLabel])}
         </Form>
       </div>
-      {/* <div className="operation-footer flex-box-center">
-                <Button type="primary" disabled={!!started} onClick={() => onOk()} >确认</Button>
-                <Button disabled={!!started} onClick={() => onCancel()}>重置</Button>
-            </div> */}
+      {!!ifPopconfirm ? (
+        <div className="operation-footer flex-box-center">
+          <Button type="primary" disabled={!!started} onClick={() => onOk()}>
+            确认
+          </Button>
+          {/* <Button disabled={!!started} onClick={() => onCancel()}>
+            重置
+          </Button> */}
+        </div>
+      ) : null}
 
       {editorVisible ? (
         <MonacoEditor

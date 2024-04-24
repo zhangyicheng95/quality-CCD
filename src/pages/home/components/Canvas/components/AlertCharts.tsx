@@ -30,7 +30,7 @@ const AlertCharts: React.FC<Props> = (props: any) => {
   return (
     <div id={`echart-${id}`} className={`${styles.alertCharts} flex-box`}>
       {_.isArray(dataValue) &&
-        (dataValue || []).map((item: any, index: number) => {
+        (dataValue || [])?.map?.((item: any, index: number) => {
           const { name, value } = item;
           return (
             <div

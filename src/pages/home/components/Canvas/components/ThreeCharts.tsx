@@ -2248,7 +2248,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 { key: 'left', label: '左' },
                 { key: 'front', label: '前' },
                 { key: 'back', label: '后' },
-              ].map((item: any, index: number) => {
+              ]?.map?.((item: any, index: number) => {
                 const { key, label } = item;
                 return (
                   <Button
@@ -2381,7 +2381,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
               const areas = getAllModelsFromScene(scene.current)?.filter(
                 (i: any) => i?.name?.indexOf('editArea') > -1,
               );
-              const params = (areas || [])?.map((item: any) => item?.__props);
+              const params = (areas || [])?.map?.((item: any) => item?.__props);
               downFileFun(JSON.stringify(params), `框选.json`);
             }}
           >
@@ -2395,7 +2395,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
               const points = getAllModelsFromScene(scene.current)?.filter(
                 (i: any) => i?.name?.indexOf('editPoint') > -1,
               );
-              const params = (points || [])?.map((item: any) => item?.__props);
+              const params = (points || [])?.map?.((item: any) => item?.__props);
               console.log(params);
               downFileFun(JSON.stringify(params), `轨迹点.json`);
             }}
@@ -2543,7 +2543,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     setSelectPathVisible(false);
                     const param = JSON.parse(
                       localStorage.getItem(`localGridContentList-${params.id}`) || '[]',
-                    ).map((i: any) => {
+                    )?.map?.((i: any) => {
                       if (i.id === id) {
                         return {
                           ...i,
@@ -2629,7 +2629,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   const areas = getAllModelsFromScene(scene.current, 'editArea');
                   const params = {
                     action: 1,
-                    list: areas.map((area: any) => {
+                    list: areas?.map?.((area: any) => {
                       const { addType, cameraDirection, ...rest } = area?.__props;
                       return {
                         ...rest,
@@ -2685,7 +2685,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         return ifShowColorList && meshHasColor ? (
           <div className="sprite-box flex-box">
             <div className="number-box flex-box-justify-between">
-              {[2, 1.5, 1, 0.5, '0.0', -0.5, -1, -1.5, -2].map((item: any, index: number) => {
+              {[2, 1.5, 1, 0.5, '0.0', -0.5, -1, -1.5, -2]?.map?.((item: any, index: number) => {
                 return (
                   <div
                     className="number-item"
@@ -2824,7 +2824,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
               setSelectPathVisible(false);
               const param = JSON.parse(
                 localStorage.getItem(`localGridContentList-${params.id}`) || '[]',
-              ).map((i: any) => {
+              )?.map?.((i: any) => {
                 if (i.id === id) {
                   return {
                     ...i,
@@ -2908,7 +2908,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   setSelectPathVisible(false);
                   const param = JSON.parse(
                     localStorage.getItem(`localGridContentList-${params.id}`) || '[]',
-                  ).map((i: any) => {
+                  )?.map?.((i: any) => {
                     if (i.id === id) {
                       return {
                         ...i,
@@ -3090,7 +3090,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             >
               <Select
                 placeholder="机器人ID"
-                options={[1, 2, 3, 4].map((item: any) => {
+                options={[1, 2, 3, 4]?.map?.((item: any) => {
                   return { label: item, value: item };
                 })}
               />
@@ -3102,7 +3102,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             >
               <Select
                 placeholder="喷涂面类型"
-                options={['Up', 'Down', 'Left', 'Right', 'Front', 'Back'].map((item: any) => {
+                options={['Up', 'Down', 'Left', 'Right', 'Front', 'Back']?.map?.((item: any) => {
                   return { label: item, value: item };
                 })}
               />

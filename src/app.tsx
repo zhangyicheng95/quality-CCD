@@ -99,7 +99,7 @@ export async function getInitialState(): Promise<{
           ...params,
           contentData: {
             ...contentData,
-            ipList: (ipList || [])?.map((item: any) => {
+            ipList: (ipList || [])?.map?.((item: any) => {
               if (item.key === res?.data?.id) {
                 return {
                   ...item,

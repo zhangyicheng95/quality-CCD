@@ -105,7 +105,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
       ...params,
       contentData: {
         ...params?.contentData,
-        content: params?.contentData?.content.map((item: any) => {
+        content: params?.contentData?.content?.map?.((item: any) => {
           if (item.id === id) {
             return Object.assign({}, item, {
               tableSize: tableSizes,
@@ -190,7 +190,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
         )}
       >
         {_.isArray(dataValue) &&
-          (dataValue || []).map((item: any, index: number) => {
+          (dataValue || [])?.map?.((item: any, index: number) => {
             const { name } = item;
             return (
               <div
@@ -247,7 +247,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
         }
       >
         {_.isArray(dataValue)
-          ? (dataValue || []).map((item: any, index: number) => {
+          ? (dataValue || [])?.map?.((item: any, index: number) => {
               const { value = [], color } = item;
               if (!_.isArray(value)) {
                 const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
@@ -268,7 +268,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                       : {},
                   )}
                 >
-                  {(!!reverse ? _.cloneDeep(value).reverse() : value).map(
+                  {(!!reverse ? _.cloneDeep(value).reverse() : value)?.map?.(
                     (val: any, sIndex: number) => {
                       if (_.isObject(val)) {
                         // @ts-ignore

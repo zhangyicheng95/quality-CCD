@@ -82,7 +82,7 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
   return (
     <div id={`echart-${id}`} className={`${styles.imgsCharts}`} ref={dom}>
       {_.isArray(dataValue) &&
-        (dataValue || []).map((item: any, index: number) => {
+        (dataValue || [])?.map?.((item: any, index: number) => {
           const { name, value, imgWidth, imgHeight } = item;
           return (
             <div

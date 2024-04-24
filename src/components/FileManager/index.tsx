@@ -69,7 +69,7 @@ const FileManager: React.FC<Props> = (props) => {
           >
             <HomeOutlined style={{ marginRight: 8 }} />
           </a>
-          {selectList.map((item: string, index: number) => {
+          {selectList?.map?.((item: string, index: number) => {
             if (!item) return null;
             return (
               <a
@@ -100,7 +100,7 @@ const FileManager: React.FC<Props> = (props) => {
         </div>
         <div className="file-manager-item-box">
           <Spin spinning={loading}>
-            {(list || []).map((item: any, index: number) => {
+            {(list || [])?.map?.((item: any, index: number) => {
               const { type, name, create_at, update_time } = item;
               return (
                 <div className="file-manager-item flex-box" key={index}>

@@ -62,7 +62,7 @@ const HomeLayout: React.FC<any> = (props) => {
     }
     getAllProject(data.value).then((res: any) => {
       if (res && res.code === 'SUCCESS') {
-        const result = (res?.data || []).map((item: any) => {
+        const result = (res?.data || [])?.map?.((item: any) => {
           const { quality_name, name, id } = item;
           return {
             value: id,
@@ -93,7 +93,7 @@ const HomeLayout: React.FC<any> = (props) => {
   const loopGetStatus = (list: any) => {
     getListStatusService().then((res: any) => {
       if (!!res && res.code === 'SUCCESS') {
-        const result = list.map((item: any) => {
+        const result = list?.map?.((item: any) => {
           const { value } = item;
           return {
             ...item,
@@ -128,7 +128,7 @@ const HomeLayout: React.FC<any> = (props) => {
   useEffect(() => {
     if (!!params?.contentData?.ipList) {
       try {
-        const data = (params?.contentData?.ipList || []).map((item: any) => {
+        const data = (params?.contentData?.ipList || [])?.map?.((item: any) => {
           if (item.key === id) {
             return Object.assign({}, item, {
               name: name,

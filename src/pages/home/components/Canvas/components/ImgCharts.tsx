@@ -495,7 +495,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
               onVisibleChange: (vis) => setVisible(vis),
             }}
           >
-            {(urlList.current || []).map((item: any, index: number) => {
+            {(urlList.current || [])?.map?.((item: any, index: number) => {
               if (_.isString(item)) {
                 return <Image src={item} alt={item} key={`${id}-${item}-${index}`} />;
               } else if (!!item.url) {
@@ -508,7 +508,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       </div>
       {showImgList ? (
         <div className="flex-box-center img-box-footer-list">
-          {(urlList.current.slice(!!imgListNum ? -imgListNum : -6) || [])?.map(
+          {(urlList.current.slice(!!imgListNum ? -imgListNum : -6) || [])?.map?.(
             (item: any, index: number) => {
               const type = _.isString(item)
                 ? item?.indexOf('OK') > -1
@@ -549,7 +549,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       {showFooter ? (
         <div className="flex-box-justify-between img-box-footer-list2">
           {_.isObject(source) &&
-            (Object.entries(source) || []).map((item: any) => {
+            (Object.entries(source) || [])?.map?.((item: any) => {
               if (item[0] == 'url') {
                 return null;
               }

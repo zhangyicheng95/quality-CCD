@@ -2016,8 +2016,8 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
         },
       ],
     ];
-    dataValue['list'] = dataValue['list'].map((item: any) => {
-      return item.map((i: any, index: number) => {
+    dataValue['list'] = dataValue['list']?.map?.((item: any) => {
+      return item?.map?.((i: any, index: number) => {
         return { ...i, title: `${i.title}-${index + 1}` };
       });
     });
@@ -2103,7 +2103,7 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
               ref={downDom}
               onClick={() => downLoad('down')}
             />
-            {Array.from({ length: dataValue?.list[0]?.length / 2 || 24 }).map(
+            {Array.from({ length: dataValue?.list[0]?.length / 2 || 24 })?.map?.(
               (item: any, index: number) => {
                 index = index * 2;
                 let ngStatus = false;
@@ -2128,7 +2128,7 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
           </div>
           <div className="flex-box img-button-charts-body">
             <div className="flex-box img-box-mark-right">
-              {(!!reverse ? _.cloneDeep(dataValue?.list).reverse() : dataValue?.list).map(
+              {(!!reverse ? _.cloneDeep(dataValue?.list).reverse() : dataValue?.list)?.map?.(
                 (item: any, index: number) => {
                   let ngStatus = false;
                   try {
@@ -2146,7 +2146,7 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
                       >
                         {`${!!reverse ? `${dataValue?.list.length - index}` : `${index + 1}`}槽`}
                       </TooltipDiv>
-                      {Array.from({ length: item.length / 2 }).map((i: any, tIndex: number) => {
+                      {Array.from({ length: item.length / 2 })?.map?.((i: any, tIndex: number) => {
                         tIndex = tIndex * 2;
                         return (
                           <div

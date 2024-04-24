@@ -1,13 +1,13 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { Input, InputNumber } from 'antd';
-import styles from './index.less'
+import styles from './index.less';
 
 interface Props {
-  disabled?: Boolean,
-  value?: string,
-  className?: any,
-  onChange?: any,
-};
+  disabled?: Boolean;
+  value?: string;
+  className?: any;
+  onChange?: any;
+}
 
 const IpInput: React.FC<Props> = (props: any) => {
   const { onChange = null, value = '', disabled, className } = props;
@@ -31,18 +31,18 @@ const IpInput: React.FC<Props> = (props: any) => {
         ip_1: res[1],
         ip_2: res[2],
         ip_3: res[3],
-      })
+      });
     }
-  }, [value])
+  }, [value]);
   const handleNumberChange = (e: any, type: any) => {
     //确保最小值为0；
     const number = parseInt(e.target.value || 0, 10);
     if (isNaN(number)) {
       return;
-    };
+    }
     setSelfValue((prev: any) => {
       return Object.assign({}, prev, {
-        [type]: number
+        [type]: number,
       });
     });
     let Obj: any = selfValue;
@@ -72,35 +72,37 @@ const IpInput: React.FC<Props> = (props: any) => {
         refList[type + 1]?.current?.focus();
       }
     }
-  }
+  };
 
   return (
-    <div className={`flex-box-center ${styles.inputGroup}`} style={Object.assign({},
-      { height: '100%' },
-      disabled ? { backgroundColor: 'rgba(255, 255, 255, 0.08)' } : {}
-    )}>
-      {
-        Object.entries(selfValue).map((item: any, index: number) => {
-          return <Fragment key={index}>
+    <div
+      className={`flex-box-center ${styles.inputGroup}`}
+      style={Object.assign(
+        {},
+        { height: '100%' },
+        disabled ? { backgroundColor: 'rgba(255, 255, 255, 0.08)' } : {},
+      )}
+    >
+      {Object.entries(selfValue)?.map?.((item: any, index: number) => {
+        return (
+          <Fragment key={index}>
             <InputNumber
               disabled={disabled}
               className={`self_input ${className}`}
               ref={refList[index]}
               value={item[1]}
               maxLength={3}
-              onBlur={(e) => { handleNumberChange(e, item[0]) }}
-            // onKeyUp={(e) => turnIpPOS(e, index)}
+              onBlur={(e) => {
+                handleNumberChange(e, item[0]);
+              }}
+              // onKeyUp={(e) => turnIpPOS(e, index)}
             />
-            {
-              index !== 3 ?
-                <span className={'dot'} />
-                : null
-            }
+            {index !== 3 ? <span className={'dot'} /> : null}
           </Fragment>
-        })
-      }
+        );
+      })}
     </div>
-  )
+  );
 };
 
 export default IpInput;

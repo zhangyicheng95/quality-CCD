@@ -78,7 +78,7 @@ const GridLayout: React.FC<Props> = (props: any) => {
             draggableHandle={dragName}
             margin={margin}
           >
-            {list.filter(Boolean).map((item: any) => {
+            {list.filter(Boolean)?.map?.((item: any) => {
               return item;
             })}
           </ResponsiveGridLayout>

@@ -22,7 +22,6 @@ const OrderInformationCharts: React.FC<Props> = (props: any) => {
   const [formData, setFormData] = useState({});
   const [visible, setVisible] = useState(false);
   const [tableDataSource, setTableDataSource] = useState([]);
-
   useEffect(() => {
     // if (process.env.NODE_ENV === 'development') {
     //   dataValue = {
@@ -65,7 +64,7 @@ const OrderInformationCharts: React.FC<Props> = (props: any) => {
     setFormData(nextInfo);
     localStorage.setItem(`${id}-orderInformationList`, JSON.stringify(list));
     if (!!nextInfo) {
-      btnFetch(fetchType, xName, { data: nextInfo }).then((res: any) => {
+      btnFetch(fetchType, xName, { type: 'orderInfo', value: nextInfo }).then((res: any) => {
         if (!!res && res.code === 'SUCCESS') {
         } else {
           message.error(res?.msg || res?.message || '接口异常');
@@ -113,7 +112,7 @@ const OrderInformationCharts: React.FC<Props> = (props: any) => {
             { title: '晶棒编号', key: 'crystalRodNumber' },
             { title: '切割编号', key: 'cuttingNumber' },
             { title: '理论片数', key: 'theoreticalNumber' },
-          ].map((item: any, index: number) => {
+          ]?.map?.((item: any, index: number) => {
             const { title, key } = item;
             return (
               <div className="flex-box param-control-item" key={`param-control-item-${key}`}>
@@ -201,7 +200,7 @@ const OrderInformationCharts: React.FC<Props> = (props: any) => {
           <div className="order-information-modal-body-bottom">
             <BasicTable
               columns={columns}
-              dataSource={(tableDataSource || [])?.map((item: any) => ({ ...item, key: guid() }))}
+              dataSource={(tableDataSource || [])?.map?.((item: any) => ({ ...item, key: guid() }))}
               scroll={{
                 y: 290,
               }}

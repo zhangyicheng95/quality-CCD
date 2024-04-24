@@ -104,7 +104,7 @@ const Measurement: React.FC<Props> = (props: any) => {
 
   return (
     <div className={`flex-box ${styles['roi-mark']}`}>
-      {Object.entries(selfValue).map((item: any, index: number) => {
+      {Object.entries(selfValue)?.map?.((item: any, index: number) => {
         if (!item[1]) return null;
         const { alias, value } = item[1];
         return (

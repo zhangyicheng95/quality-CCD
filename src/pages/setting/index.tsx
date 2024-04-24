@@ -34,14 +34,14 @@ const Setting: React.FC<any> = (props) => {
       const { nodes } = flowData;
       let checkedList: any = [];
       const result: any = (nodes || [])
-        .map((node: any) => {
+        ?.map?.((node: any) => {
           const { alias, name, id, config = {} } = node;
           const { initParams = {} } = config;
           if (!!initParams && !_.isEmpty(initParams)) {
             return {
               title: alias || name,
               key: id,
-              children: Object.entries(initParams).map((param: any) => {
+              children: Object.entries(initParams)?.map?.((param: any) => {
                 const { alias, name, onHidden } = param[1];
                 const key = `${id}@$@${param[0]}`;
                 if (!onHidden) {
@@ -98,13 +98,13 @@ const Setting: React.FC<any> = (props) => {
   useEffect(() => {
     localStorage.setItem(
       'ipUrlList',
-      JSON.stringify(ipUrlList.map((item: any) => _.omit(item, 'edit'))),
+      JSON.stringify(ipUrlList?.map?.((item: any) => _.omit(item, 'edit'))),
     );
   }, [ipUrlList]);
   // 服务端地址列表
   const updateIpUrl = (index: number, name: string, value: any) => {
     setIpUrlList((prev: any) =>
-      prev.map((item: any, iIndex: number) => {
+      prev?.map?.((item: any, iIndex: number) => {
         if (index === iIndex) {
           return { ...item, [name]: value };
         }
@@ -123,7 +123,7 @@ const Setting: React.FC<any> = (props) => {
         const { quality_icon, quality_name, selfStart, errorSelfStart } = values;
         let nodeList: any = [].concat(paramData?.flowData?.nodes);
         (paramData?.flowData?.nodes || []).forEach((key: any) => {
-          nodeList = nodeList.map((node: any) => {
+          nodeList = nodeList?.map?.((node: any) => {
             const { config } = node;
             const { initParams = {} } = config;
             return Object.assign({}, node, {
@@ -145,7 +145,7 @@ const Setting: React.FC<any> = (props) => {
           errorSelfStart,
           contentData: {
             ...(paramData?.contentData || {}),
-            ipList: (paramData?.contentData?.ipList || [])?.map((item: any) => {
+            ipList: (paramData?.contentData?.ipList || [])?.map?.((item: any) => {
               if (item.key === paramData.id) {
                 return {
                   ...item,
@@ -155,7 +155,7 @@ const Setting: React.FC<any> = (props) => {
               return item;
             }),
           },
-          configList: (paramData.configList || []).map((config: any) => {
+          configList: (paramData.configList || [])?.map?.((config: any) => {
             if (config.value === paramData?.selectedConfig) {
               return Object.assign({}, config, {
                 data: nodeList,
@@ -253,7 +253,7 @@ const Setting: React.FC<any> = (props) => {
               />
             ) : (
               <Fragment>
-                {(ipUrlList || []).map((ip: any, index: number) => {
+                {(ipUrlList || [])?.map?.((ip: any, index: number) => {
                   const { name, value, edit } = ip;
                   return (
                     <div className="flex-box ipList-item" key={`ipUrl-${index}`}>

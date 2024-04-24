@@ -97,7 +97,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
               labelLinePoints: points,
             };
           },
-          data: (dataValue || []).map((item: any) => {
+          data: (dataValue || [])?.map?.((item: any) => {
             const { name, value, color } = item;
             return {
               name,

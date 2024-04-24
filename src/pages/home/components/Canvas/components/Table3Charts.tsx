@@ -155,7 +155,7 @@ const Table3Charts: React.FC<Props> = (props: any) => {
         ...params,
         contentData: {
           ...params?.contentData,
-          content: params?.contentData?.content.map((item: any) => {
+          content: params?.contentData?.content?.map?.((item: any) => {
             if (item.id === id) {
               return Object.assign({}, item, {
                 tableSize: tableSizes,
@@ -191,7 +191,7 @@ const Table3Charts: React.FC<Props> = (props: any) => {
   return (
     <div id={`echart-${id}`} className={styles.table3Charts} ref={domRef} style={{ fontSize }}>
       <div className="flex-box charts-tab-box">
-        {dataValue?.map((item: any, index: number) => {
+        {dataValue?.map?.((item: any, index: number) => {
           const { tab } = item;
           return (
             <div
@@ -217,7 +217,7 @@ const Table3Charts: React.FC<Props> = (props: any) => {
         )}
       >
         {_.isArray(dataValue[tabSelected]?.children) &&
-          (dataValue[tabSelected]?.children || []).map((item: any, index: number) => {
+          (dataValue[tabSelected]?.children || [])?.map?.((item: any, index: number) => {
             const { name } = item;
             return (
               <div
@@ -262,7 +262,7 @@ const Table3Charts: React.FC<Props> = (props: any) => {
         }
       >
         {_.isArray(dataValue[tabSelected]?.children)
-          ? (dataValue[tabSelected]?.children || []).map((item: any, index: number) => {
+          ? (dataValue[tabSelected]?.children || [])?.map?.((item: any, index: number) => {
               const { value = [], color } = item;
               if (!_.isArray(value)) {
                 const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
@@ -288,7 +288,7 @@ const Table3Charts: React.FC<Props> = (props: any) => {
                       : {},
                   )}
                 >
-                  {(!!reverse ? _.cloneDeep(value).reverse() : value).map(
+                  {(!!reverse ? _.cloneDeep(value).reverse() : value)?.map?.(
                     (val: any, sIndex: number) => {
                       if (_.isObject(val)) {
                         // @ts-ignore

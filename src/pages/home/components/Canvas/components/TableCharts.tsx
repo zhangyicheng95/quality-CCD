@@ -93,7 +93,7 @@ const TableCharts: React.FC<Props> = (props: any) => {
         }
       >
         {_.isArray(dataValue)
-          ? (!!reverse ? _.cloneDeep(dataValue).reverse() : dataValue).map(
+          ? (!!reverse ? _.cloneDeep(dataValue).reverse() : dataValue)?.map?.(
               (item: any, index: number) => {
                 const { name, value, color } = item;
                 if (_.isObject(item?.value[0]) && !_.isArray(item?.value[0])) {

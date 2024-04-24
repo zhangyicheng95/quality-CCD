@@ -101,7 +101,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         }
       }
     });
-    setConfigGroup(group.map((i: any) => ({ ...i, show: true })));
+    setConfigGroup(group?.map?.((i: any) => ({ ...i, show: true })));
     setSelectedOption(selectedOptions);
     setConfigList(resConfig);
   };
@@ -112,7 +112,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         resetFields();
         init();
         let obj = {};
-        Object.entries(dataValue)?.map((res: any) => {
+        Object.entries(dataValue)?.map?.((res: any) => {
           obj[res[0]] = res[1];
         });
         setFieldsValue(obj);
@@ -123,7 +123,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
   }, [dataValue, locked]);
   const widgetChange = (key: string, value: any) => {
     setConfigList((prev: any) =>
-      (prev || [])?.map((item: any) => {
+      (prev || [])?.map?.((item: any) => {
         if (item.name === key) {
           if (!!value?.widget?.type || item?.widget?.type === 'codeEditor') {
             setFieldsValue({ [key]: value?.value });
@@ -177,7 +177,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             // 2.保存数据到节点中
             const { flowData } = params;
             let { nodes } = flowData;
-            nodes = nodes.map((node: any) => {
+            nodes = nodes?.map?.((node: any) => {
               const { config = {} } = node;
               if (node.id === id.split('$$')[0]) {
                 let { initParams = {}, execParams } = config;
@@ -193,11 +193,11 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                       ? {
                           widget: {
                             ...item?.widget,
-                            options: (item?.widget?.options || [])?.map((option: any) => {
+                            options: (item?.widget?.options || [])?.map?.((option: any) => {
                               if (option.name === item?.value) {
                                 return {
                                   ...option,
-                                  children: (option?.children || [])?.map((child: any) => {
+                                  children: (option?.children || [])?.map?.((child: any) => {
                                     return {
                                       ...child,
                                       value: result[child?.name],
@@ -317,8 +317,8 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
           {useMemo(() => {
             return (
               <Fragment>
-                {configList?.map((item: any, index: number) => initItem({ ...item, locked }))}
-                {configGroup?.map((group: any, index: number) => {
+                {configList?.map?.((item: any, index: number) => initItem({ ...item, locked }))}
+                {configGroup?.map?.((group: any, index: number) => {
                   const { name, id, children, show } = group;
                   return (
                     <div
@@ -331,7 +331,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                         className="flex-box param-group-item-title"
                         onClick={() =>
                           setConfigGroup((prev: any) =>
-                            prev.map((item: any) => {
+                            prev?.map?.((item: any) => {
                               if (item.id === id) {
                                 return {
                                   ...item,
@@ -346,7 +346,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                         {name}
                       </div>
                       <div className="param-group-item-body" style={!show ? { height: 0 } : {}}>
-                        {(children || [])?.map((child: any, index: number) => {
+                        {(children || [])?.map?.((child: any, index: number) => {
                           const item = configList.filter((i: any) => i?.name === child)?.[0];
                           if (!item) return null;
                           return (
@@ -513,7 +513,7 @@ function FormatWidgetToDom(props: any) {
   const updateTimer = useRef<any>();
 
   if (_.isArray(options) && _.isString(options[0])) {
-    options = options.map((option: string) => ({ label: option, value: option }));
+    options = options?.map?.((option: string) => ({ label: option, value: option }));
   }
   const name = `${id}`;
 
@@ -602,7 +602,7 @@ function FormatWidgetToDom(props: any) {
               widgetChange?.(name, e.target.value, parent);
             }}
           >
-            {options.map((option: any, index: any) => {
+            {options?.map?.((option: any, index: any) => {
               const { label, value } = option;
               return (
                 <Radio key={`${name}_${value}`} value={value}>
@@ -643,7 +643,7 @@ function FormatWidgetToDom(props: any) {
                 widgetChange?.(name, value);
               }}
             >
-              {(options || []).map((option: any) => {
+              {(options || [])?.map?.((option: any) => {
                 const { id, name } = option;
                 return (
                   //@ts-ignore
@@ -655,7 +655,7 @@ function FormatWidgetToDom(props: any) {
             </Select>
           </FormItem>
           {
-            // (selectedOption?.[name] || []).map((item: any, index: number) => {
+            // (selectedOption?.[name] || [])?.map?.((item: any, index: number) => {
             //     if (!item || !item.widget) {
             //         return null;
             //     }
@@ -692,7 +692,7 @@ function FormatWidgetToDom(props: any) {
               widgetChange?.(name, e, parent);
             }}
           >
-            {options.map((option: any, index: any) => {
+            {options?.map?.((option: any, index: any) => {
               const { id, label, value } = option;
               return (
                 <Radio key={id} value={value}>
@@ -720,7 +720,7 @@ function FormatWidgetToDom(props: any) {
               widgetChange?.(name, e, parent);
             }}
           >
-            {options.map((option: any, index: any) => {
+            {options?.map?.((option: any, index: any) => {
               const { id, label, value } = option;
               return (
                 <Radio key={id} value={value}>

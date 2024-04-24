@@ -91,7 +91,7 @@ const Control: React.FC<any> = (props: any) => {
         const { alias, name, id, config } = node;
         const { initParams } = config;
         const childrenList = (Object.entries(initParams) || [])
-          ?.map((par: any) => {
+          ?.map?.((par: any) => {
             const { alias, name, widget } = par[1];
             // if (['TagRadio', 'File', 'Dir', 'codeEditor', 'ImageLabelField', 'DataMap'].includes(widget.type)) return null;
             return {
@@ -115,7 +115,7 @@ const Control: React.FC<any> = (props: any) => {
           if (item?.widget?.type === 'TagRadio') {
             configOption[item.name] = (item?.widget?.options || {})
               .filter((i: any) => i.name === item.value)?.[0]
-              ?.children?.map((child: any) => {
+              ?.children?.map?.((child: any) => {
                 return {
                   ...child,
                   parent: res[0],
@@ -123,7 +123,7 @@ const Control: React.FC<any> = (props: any) => {
               });
             let ids = (item?.widget?.options || []).reduce((optionP: any, optionC: any) => {
               const { children } = optionC;
-              const childIds = children.map((item: any) => item.id || item.name);
+              const childIds = children?.map?.((item: any) => item.id || item.name);
               return optionP.concat(childIds);
             }, []);
             TagRadioList = Array.from(new Set(TagRadioList.concat(ids)));
@@ -143,7 +143,7 @@ const Control: React.FC<any> = (props: any) => {
       setListType(listType);
       if (!!configList?.length) {
         setConfigList(configList);
-        //   configList.map((config: any) => {
+        //   configList?.map?.((config: any) => {
         //     if (config.value === 'default') {
         //       return {
         //         ...config,
@@ -166,7 +166,7 @@ const Control: React.FC<any> = (props: any) => {
           });
           if (!!data?.length && _.isArray(data)) {
             setNodeList(
-              (value === 'default' ? (data?.length >= nodes?.length ? data : nodes) : data).map(
+              (value === 'default' ? (data?.length >= nodes?.length ? data : nodes) : data)?.map?.(
                 (item: any, index: number) => {
                   if (!item.sortId || item.sortId !== 0) {
                     return { ...item, sortId: index };
@@ -187,7 +187,7 @@ const Control: React.FC<any> = (props: any) => {
     key = key.split('@$@');
     parent = parent?.split('@$@');
     setNodeList((prev: any) => {
-      return prev.map((item: any, index: any) => {
+      return prev?.map?.((item: any, index: any) => {
         if (item.id === key[0]) {
           const initParams = Object.entries(item?.config?.initParams)?.reduce(
             (pre: any, cen: any) => {
@@ -251,12 +251,12 @@ const Control: React.FC<any> = (props: any) => {
                         ...initParams[parent[1]],
                         widget: {
                           ...initParams[parent[1]]?.widget,
-                          options: (initParams[parent[1]]?.widget?.options || [])?.map(
+                          options: (initParams[parent[1]]?.widget?.options || [])?.map?.(
                             (option: any) => {
                               if (option?.name === initParams[parent[1]]?.value) {
                                 return {
                                   ...option,
-                                  children: (option?.children || [])?.map((child: any) => {
+                                  children: (option?.children || [])?.map?.((child: any) => {
                                     if (child?.name === key[1]) {
                                       return {
                                         ...child,
@@ -348,7 +348,7 @@ const Control: React.FC<any> = (props: any) => {
       });
   };
   const formatNode = () => {
-    const result = nodeList.map((node: any) => {
+    const result = nodeList?.map?.((node: any) => {
       const initParams = Object.entries(node?.config?.initParams || {}).reduce(
         (pre: any, cen: any) => {
           if (
@@ -360,7 +360,7 @@ const Control: React.FC<any> = (props: any) => {
               ...pre,
               [cen[0]]: {
                 ...cen[1],
-                value: Object.entries(cen[1]?.value || {}).map((i: any) => i[1]),
+                value: Object.entries(cen[1]?.value || {})?.map?.((i: any) => i[1]),
               },
             };
           }
@@ -392,7 +392,7 @@ const Control: React.FC<any> = (props: any) => {
             flowData: Object.assign({}, paramData.flowData, {
               nodes: nodes,
             }),
-            configList: configList.map((item: any) => {
+            configList: configList?.map?.((item: any) => {
               if (item.value === paramData.selectedConfig) {
                 return Object.assign({}, item, { data: nodes });
               }
@@ -420,7 +420,7 @@ const Control: React.FC<any> = (props: any) => {
   // 配置文件改变
   const selectUpdate = (val: any, option: any) => {
     const { data, edges } = option;
-    const result = data.map((item: any, index: number) => {
+    const result = data?.map?.((item: any, index: number) => {
       if (!item.sortId || item.sortId !== 0) {
         return { ...item, sortId: index };
       }
@@ -433,7 +433,7 @@ const Control: React.FC<any> = (props: any) => {
           nodes: result,
           edges,
         }),
-        configList: configList.map((item: any) => {
+        configList: configList?.map?.((item: any) => {
           if (item.value === val?.value) {
             return Object.assign({}, item, { data: result });
           }
@@ -512,7 +512,7 @@ const Control: React.FC<any> = (props: any) => {
                   selectUpdate(val, item);
                 }}
               >
-                {configList.map((item: any) => {
+                {configList?.map?.((item: any) => {
                   const { value, label } = item;
                   return (
                     <Select.Option value={value} propsKey={JSON.stringify(item)} key={value}>
@@ -547,7 +547,7 @@ const Control: React.FC<any> = (props: any) => {
             </Form.Item>
             {(nodeList || [])
               .sort((a: any, b: any) => a.sortId - b.sortId)
-              .map((node: any, index: any) => {
+              ?.map?.((node: any, index: any) => {
                 const { id, alias, name, config = {}, hidden, sortId } = node;
                 const { initParams = {}, group = [] } = config;
                 //判断属性是否在分组内
@@ -563,7 +563,7 @@ const Control: React.FC<any> = (props: any) => {
                     if (widget?.type === 'TagRadio') {
                       const ids = (widget?.options || []).reduce((optionP: any, optionC: any) => {
                         const { children = [] } = optionC;
-                        const childIds = (children || []).map((item: any) => item.id);
+                        const childIds = (children || [])?.map?.((item: any) => item.id);
                         return optionP.concat(childIds);
                       }, []);
                       return pre.concat(ids);
@@ -584,7 +584,7 @@ const Control: React.FC<any> = (props: any) => {
                                   style={hidden ? {} : { marginBottom: 8 }}
                                   onClick={() => {
                                     setNodeList((prev: any) => {
-                                      return prev.map((pre: any) => {
+                                      return prev?.map?.((pre: any) => {
                                         if (pre.id === id) {
                                           return Object.assign({}, pre, {
                                             hidden: !hidden,
@@ -609,7 +609,7 @@ const Control: React.FC<any> = (props: any) => {
                             ?.sort((a: any, b: any) => {
                               return a[1]?.orderId - b[1]?.orderId;
                             })
-                            .map((item: any) => {
+                            ?.map?.((item: any) => {
                               const { alias, name, widget, onHidden } = item[1];
                               const { type } = widget || {};
                               if (
@@ -668,7 +668,7 @@ const Control: React.FC<any> = (props: any) => {
                                 </div>
                               );
                             })}
-                          {group?.map((grou: any) => {
+                          {group?.map?.((grou: any) => {
                             if (!!!grou || _.isEmpty(grou)) {
                               return null;
                             }
@@ -681,11 +681,11 @@ const Control: React.FC<any> = (props: any) => {
                                     style={{ flex: 1, cursor: 'pointer', paddingRight: 0 }}
                                     onClick={() => {
                                       setNodeList((prev: any) => {
-                                        return prev.map((item: any) => {
+                                        return prev?.map?.((item: any) => {
                                           if (item.id === node.id) {
                                             return Object.assign({}, item, {
                                               config: Object.assign({}, item.config, {
-                                                group: item.config?.group.map((grou: any) => {
+                                                group: item.config?.group?.map?.((grou: any) => {
                                                   if (grou?.id === id) {
                                                     return Object.assign({}, grou, { open: !open });
                                                   }
@@ -711,7 +711,7 @@ const Control: React.FC<any> = (props: any) => {
                                   </Col>
                                 </Row>
                                 <div style={open ? {} : { display: 'none' }}>
-                                  {(children || [])?.map((child: any) => {
+                                  {(children || [])?.map?.((child: any) => {
                                     const parent = initParams || {};
                                     let item: any = {};
                                     if (parent[child]) {
@@ -914,7 +914,7 @@ const Control: React.FC<any> = (props: any) => {
               <Select
                 style={{ width: '100%' }}
                 placeholder="http类型"
-                options={['get', 'post', 'put', 'delete'].map((item: any) => ({
+                options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
                   value: item,
                   label: _.toUpper(item),
                 }))}
@@ -968,7 +968,7 @@ const Control: React.FC<any> = (props: any) => {
                 }, {});
                 form.setFieldsValue(obj);
                 setNodeList((prev: any) =>
-                  (prev || [])?.map((node: any) => {
+                  (prev || [])?.map?.((node: any) => {
                     const { id } = node;
                     if (newNodeList[id]) {
                       return {
@@ -1020,9 +1020,9 @@ const Control: React.FC<any> = (props: any) => {
                       ? item?.config?.initParams?.[e?.[0]?.[1]]
                       : item?.config?.initParams?.[selectOptions[0]?.[0]?.children?.[0]?.value];
                     setConnectNodeList((pre: any) =>
-                      (pre || [])?.map((i: any) => ({
+                      (pre || [])?.map?.((i: any) => ({
                         ...i,
-                        children: (i.children || [])?.map((child: any) => ({
+                        children: (i.children || [])?.map?.((child: any) => ({
                           ...child,
                           disabled: child?.__type !== widget?.widget?.type,
                         })),
@@ -1034,9 +1034,9 @@ const Control: React.FC<any> = (props: any) => {
                     });
                   } else {
                     setConnectNodeList((pre: any) =>
-                      (pre || [])?.map((i: any) => ({
+                      (pre || [])?.map?.((i: any) => ({
                         ...i,
-                        children: (i.children || [])?.map((child: any) => ({
+                        children: (i.children || [])?.map?.((child: any) => ({
                           ...child,
                           disabled: false,
                         })),
@@ -1110,7 +1110,7 @@ export const FormatWidgetToDom: any = (props: any) => {
   const updateTimer = useRef<any>();
 
   if (_.isArray(options) && _.isString(options[0])) {
-    options = options.map((option: string) => ({ label: option, value: option }));
+    options = options?.map?.((option: string) => ({ label: option, value: option }));
   }
   const name = `${id}`;
 
@@ -1199,7 +1199,7 @@ export const FormatWidgetToDom: any = (props: any) => {
               widgetChange?.(name, e.target.value, parent);
             }}
           >
-            {options.map((option: any, index: any) => {
+            {options?.map?.((option: any, index: any) => {
               const { label, value } = option;
               return (
                 <Radio key={`${name}_${value}`} value={value}>
@@ -1230,7 +1230,7 @@ export const FormatWidgetToDom: any = (props: any) => {
                 widgetChange?.(name, value, parent);
               }}
             >
-              {(options || []).map((option: any) => {
+              {(options || [])?.map?.((option: any) => {
                 const { id, name } = option;
                 return (
                   <Select.Option key={name} value={name} propsKey={JSON.stringify(option)}>
@@ -1240,7 +1240,7 @@ export const FormatWidgetToDom: any = (props: any) => {
               })}
             </Select>
           </FormItem>
-          {(selectedOption?.[aliasDefault] || []).map((item: any, index: number) => {
+          {(selectedOption?.[aliasDefault] || [])?.map?.((item: any, index: number) => {
             if (!item || !item.widget) {
               return null;
             }
@@ -1279,7 +1279,7 @@ export const FormatWidgetToDom: any = (props: any) => {
               widgetChange?.(name, e, parent);
             }}
           >
-            {options.map((option: any, index: any) => {
+            {options?.map?.((option: any, index: any) => {
               const { id, label, value } = option;
               return (
                 <Radio key={id || value} value={value}>
@@ -1308,7 +1308,7 @@ export const FormatWidgetToDom: any = (props: any) => {
               widgetChange?.(name, e, parent);
             }}
           >
-            {options.map((option: any, index: any) => {
+            {options?.map?.((option: any, index: any) => {
               const { id, label, value } = option;
               return (
                 <Radio key={id} value={value}>
@@ -1640,7 +1640,7 @@ export const FormatWidgetToDom: any = (props: any) => {
             style={display ? { display: 'none' } : {}}
             tooltip={description}
           >
-            {(options || []).map((item: any, index: number) => {
+            {(options || [])?.map?.((item: any, index: number) => {
               const { id, label, value } = item;
               return (
                 <div
@@ -1656,7 +1656,7 @@ export const FormatWidgetToDom: any = (props: any) => {
                       const { value } = e.target;
                       !!updateTimer?.current && clearTimeout(updateTimer?.current);
                       updateTimer.current = setTimeout(() => {
-                        const result = options.map((tag: any) => {
+                        const result = options?.map?.((tag: any) => {
                           if (tag.id === id) {
                             return Object.assign({}, tag, {
                               label: value,
@@ -1676,7 +1676,7 @@ export const FormatWidgetToDom: any = (props: any) => {
                       const { value } = e.target;
                       !!updateTimer?.current && clearTimeout(updateTimer?.current);
                       updateTimer.current = setTimeout(() => {
-                        const result = options.map((tag: any) => {
+                        const result = options?.map?.((tag: any) => {
                           if (tag.id === id) {
                             return Object.assign({}, tag, {
                               value: value,

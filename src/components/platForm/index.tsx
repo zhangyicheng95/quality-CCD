@@ -31,8 +31,8 @@ const PlatFormModal: React.FC<Props> = (props) => {
           return;
         }
         const { feat, pen, zoom, value } = getDataFun;
-        const data1 = ((feat && feat().map((item: any) => _.omit(item, 'layer'))) || [])
-          .map((item: any) => {
+        const data1 = ((feat && feat()?.map?.((item: any) => _.omit(item, 'layer'))) || [])
+          ?.map?.((item: any) => {
             const { id, props, type, shape } = item;
             if (type === 'LINE') {
               if (!_.isNumber(shape?.start?.x) || !_.isNumber(shape?.end?.x)) {
@@ -88,7 +88,7 @@ const PlatFormModal: React.FC<Props> = (props) => {
           platFormValue: _.uniqBy(data1, 'id').concat(data2),
           value: _.uniqBy(data1, 'id')
             .concat(data2)
-            .map((item: any) => {
+            ?.map?.((item: any) => {
               const { props, shape, type, id } = item;
               const { initParams = {} } = props;
               const initValue = Object.entries(initParams)?.reduce((pre: any, cen: any) => {

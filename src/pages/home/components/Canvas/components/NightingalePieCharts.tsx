@@ -82,7 +82,7 @@ const NightingalePieCharts: React.FC<Props> = (props: any) => {
           label: {
             show: false,
           },
-          data: (dataValue || []).map((item: any) => {
+          data: (dataValue || [])?.map?.((item: any) => {
             const { name, value, color } = item;
             return {
               name,

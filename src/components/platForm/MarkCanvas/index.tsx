@@ -1051,8 +1051,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       const pen = getRle;
       const zoom = gMap.current.zoom;
       const value = featureListRef.current || {};
-      const data1 = ((feat && feat().map((item: any) => _.omit(item, 'layer'))) || [])
-        .map((item: any) => {
+      const data1 = ((feat && feat()?.map?.((item: any) => _.omit(item, 'layer'))) || [])
+        ?.map?.((item: any) => {
           const { id, props, type, shape, style } = item;
           if (type === 'LINE') {
             if (!_.isNumber(shape?.start?.x) || !_.isNumber(shape?.end?.x)) {
@@ -1113,7 +1113,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         platFormValue: _.uniqBy(data1, 'id').concat(data2),
         value: _.uniqBy(data1, 'id')
           .concat(data2)
-          .map((item: any) => {
+          ?.map?.((item: any) => {
             const { props, shape, type, id } = item;
             const { initParams = {} } = props;
             const initValue = Object.entries(initParams)?.reduce((pre: any, cen: any) => {
@@ -1393,7 +1393,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   }, [gFirstFeatureLayer.current, selectedFeature]);
   // 导出数据
   const exportData = () => {
-    const data1 = (getFeatures().map((item: any) => _.omit(item, 'layer')) || []).map(
+    const data1 = (getFeatures()?.map?.((item: any) => _.omit(item, 'layer')) || [])?.map?.(
       (item: any) => {
         return Object.assign({}, item, {
           props: Object.assign(
@@ -1414,7 +1414,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     const data2 = getRle() || [];
     const params = _.uniqBy(data1, 'id')
       .concat(data2)
-      .map((item: any) => {
+      ?.map?.((item: any) => {
         const { props, shape, type, id } = item;
         const { initParams = {} } = props;
         const initValue = Object.entries(initParams)?.reduce((pre: any, cen: any) => {
@@ -1709,7 +1709,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         style={{ width: '100%' }}
                         options={
                           _.isObject(options)
-                            ? Object.entries(options)?.map((res: any) => {
+                            ? Object.entries(options)?.map?.((res: any) => {
                                 return { key: res[0], label: res[0], value: res[0] };
                               })
                             : []
@@ -1740,7 +1740,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                             { label: '上到下', value: 180 },
                             { label: '右到左', value: 270 },
                             // { label: '', value: 360 }
-                          ].map((res: any) => {
+                          ]?.map?.((res: any) => {
                             const { label, value } = res;
                             return { key: value, label: label, value: value };
                           })}
@@ -1750,7 +1750,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                     ) : null}
                     {_.isEmpty(selectedOptionType)
                       ? !!featureList?.[selectedFeature]
-                        ? Object.entries(featureList?.[selectedFeature])?.map((item: any) => {
+                        ? Object.entries(featureList?.[selectedFeature])?.map?.((item: any) => {
                             if (
                               item[0] === 'roi' &&
                               (!!item?.[1]?.value || !!item?.[1]?.realValue)
@@ -1876,7 +1876,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                             );
                           })
                         : null
-                      : Object.entries(selectedOptionType)?.map((item: any) => {
+                      : Object.entries(selectedOptionType)?.map?.((item: any) => {
                           if (item[0] === 'roi') {
                             let value = {};
                             if (!_.isEmpty(item[1])) {

@@ -18,10 +18,53 @@ const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 
 const TimeSelectCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  const { fontSize = 14, yName, xName = '', fetchType } = data;
+  const { fontSize = 14, yName, xName = '', fetchType, timeSelectDefault = 'day' } = data;
 
   useEffect(() => {
-    btnFetch(fetchType, xName, {}).then((res: any) => {
+    console.log(timeSelectDefault);
+    btnFetch(
+      fetchType,
+      xName,
+      timeSelectDefault === 'month'
+        ? {
+            start: moment(
+              new Date(
+                new Date(new Date().toLocaleDateString()).getTime() - 29 * 24 * 60 * 60 * 1000,
+              ),
+              dateFormat,
+            ),
+            end: moment(
+              new Date(
+                new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1,
+              ),
+              dateFormat,
+            ),
+          }
+        : timeSelectDefault === 'week'
+        ? {
+            start: moment(
+              new Date(
+                new Date(new Date().toLocaleDateString()).getTime() - 6 * 24 * 60 * 60 * 1000,
+              ),
+              dateFormat,
+            ),
+            end: moment(
+              new Date(
+                new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1,
+              ),
+              dateFormat,
+            ),
+          }
+        : {
+            start: moment(new Date().toLocaleDateString(), dateFormat),
+            end: moment(
+              new Date(
+                new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1,
+              ),
+              dateFormat,
+            ),
+          },
+    ).then((res: any) => {
       if (!!res && res.code === 'SUCCESS') {
         message.success('success');
       } else {
@@ -59,7 +102,18 @@ const TimeSelectCharts: React.FC<Props> = (props: any) => {
         // @ts-ignore
         <RangePicker
           defaultValue={[
-            moment(new Date().toLocaleDateString(), dateFormat),
+            moment(
+              timeSelectDefault === 'month'
+                ? new Date(
+                    new Date(new Date().toLocaleDateString()).getTime() - 29 * 24 * 60 * 60 * 1000,
+                  )
+                : timeSelectDefault === 'week'
+                ? new Date(
+                    new Date(new Date().toLocaleDateString()).getTime() - 6 * 24 * 60 * 60 * 1000,
+                  )
+                : new Date().toLocaleDateString(),
+              dateFormat,
+            ),
             moment(
               new Date(
                 new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1,
@@ -68,9 +122,33 @@ const TimeSelectCharts: React.FC<Props> = (props: any) => {
             ),
           ]}
           ranges={{
-            今日: [moment(), moment()],
-            本周: [moment().startOf('week'), moment().endOf('week')],
-            本月: [moment().startOf('month'), moment().endOf('month')],
+            今日: [
+              moment(new Date().toLocaleDateString(), dateFormat),
+              moment(
+                new Date(
+                  new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1,
+                ),
+                dateFormat,
+              ),
+            ],
+            过去一周: [
+              moment(
+                new Date(
+                  new Date(new Date().toLocaleDateString()).getTime() - 6 * 24 * 60 * 60 * 1000,
+                ),
+                dateFormat,
+              ),
+              moment(new Date().toLocaleDateString(), dateFormat),
+            ],
+            过去一个月: [
+              moment(
+                new Date(
+                  new Date(new Date().toLocaleDateString()).getTime() - 29 * 24 * 60 * 60 * 1000,
+                ),
+                dateFormat,
+              ),
+              moment(new Date().toLocaleDateString(), dateFormat),
+            ],
           }}
           showTime
           format="YYYY/MM/DD HH:mm:ss"

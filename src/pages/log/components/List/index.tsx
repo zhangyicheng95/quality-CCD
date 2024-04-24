@@ -20,7 +20,7 @@ const LogList: React.FC<any> = (props: any) => {
     totals: 2,
     keywords: [],
     startTime: new Date().getTime() - 3 * 24 * 60 * 60 * 1000,
-    endTime: new Date().getTime()
+    endTime: new Date().getTime(),
   });
 
   const getLog = (params: any) => {
@@ -43,7 +43,7 @@ const LogList: React.FC<any> = (props: any) => {
       } else {
         message.error(res?.msg || res?.message || '接口异常');
       }
-    })
+    });
   };
   useEffect(() => {
     getLog(params);
@@ -61,25 +61,40 @@ const LogList: React.FC<any> = (props: any) => {
             initialValues={{}}
             onFinish={(values) => {
               const { timeRange, ...rest } = values;
-              const result = Object.assign({}, params, rest, !!timeRange ? {
-                startTime: new Date(timeRange[0]).getTime(),
-                endTime: new Date(timeRange[1]).getTime(),
-              } : {});
+              const result = Object.assign(
+                {},
+                params,
+                rest,
+                !!timeRange
+                  ? {
+                      startTime: new Date(timeRange[0]).getTime(),
+                      endTime: new Date(timeRange[1]).getTime(),
+                    }
+                  : {},
+              );
               setParams(result);
               getLog(result);
             }}
           >
-            <Form.Item label="时间段" name="timeRange" initialValue={[
-              moment(new Date().getTime() - 3 * 24 * 60 * 60 * 1000),
-              moment(new Date().getTime())
-            ]}>
+            <Form.Item
+              label="时间段"
+              name="timeRange"
+              initialValue={[
+                moment(new Date().getTime() - 3 * 24 * 60 * 60 * 1000),
+                moment(new Date().getTime()),
+              ]}
+            >
               <RangePicker showTime style={{ width: 370 }} />
             </Form.Item>
             <Form.Item label="关键词" name="keywords">
-              <Select mode="tags" options={(paramsData?.flowData?.nodes).map((option: any) => {
-                const { alias, name, id } = option;
-                return { label: alias || name, value: alias || name, key: id }
-              })} style={{ width: 400 }} />
+              <Select
+                mode="tags"
+                options={paramsData?.flowData?.nodes?.map?.((option: any) => {
+                  const { alias, name, id } = option;
+                  return { label: alias || name, value: alias || name, key: id };
+                })}
+                style={{ width: 400 }}
+              />
             </Form.Item>
             <Button type="primary" htmlType="submit">
               搜索
@@ -88,14 +103,14 @@ const LogList: React.FC<any> = (props: any) => {
           </Form>
         </div>
         <div className="table-box">
-          {
-            (logStr || [])?.map((item: any, index: number) => {
-              const { createdAt, message } = item;
-              return <div className="content-item-span" key={`keyword-${index}-${createdAt}`}>
+          {(logStr || [])?.map?.((item: any, index: number) => {
+            const { createdAt, message } = item;
+            return (
+              <div className="content-item-span" key={`keyword-${index}-${createdAt}`}>
                 {`${message}`}
               </div>
-            })
-          }
+            );
+          })}
         </div>
         <div className="flex-box-center log-footer">
           <Button

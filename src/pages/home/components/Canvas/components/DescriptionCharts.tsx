@@ -34,7 +34,7 @@ const DescriptionCharts: React.FC<Props> = (props: any) => {
         size={des_size || 'default'}
         style={{ height: '100%', width: '100%', overflowY: 'auto' }}
       >
-        {basicInfoData.concat(dataValue).map((item: any, index: number) => {
+        {basicInfoData.concat(dataValue)?.map?.((item: any, index: number) => {
           const { id = guid(), name, value, color } = item;
           if (!_.isObject(value?.[0])) {
             return (

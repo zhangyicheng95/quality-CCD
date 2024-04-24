@@ -23,26 +23,14 @@ const OutputAreaCharts: React.FC<Props> = (props: any) => {
       '2': { name: '缺角\n隐裂', isReady: true, value: 88, status: 'ERROR' },
       '3': { name: '崩边3', isReady: true, value: 88, status: 'WARNNING' },
       '4': { name: '崩边4', isReady: true, value: 88, status: 'INFO' },
-      '5': { name: '崩边5', isReady: false, value: 88, status: 'WARNNING' },
+      '5': { name: '崩边5', isReady: false, value: 88, status: 'SUCCESS' },
     };
   }
 
   const dom = useRef<any>();
-  const [centerHeight, setCenerHeight] = useState(0);
 
-  useEffect(() => {
-    setCenerHeight(dom?.current?.clientHeight);
-  }, [dom?.current?.clientHeight]);
-  const onDelete = (val: any) => {
-    btnFetch(fetchType, xName, { data: val }).then((res: any) => {
-      if (!!res && res.code === 'SUCCESS') {
-      } else {
-        message.error(res?.msg || res?.message || '接口异常');
-      }
-    });
-  };
   const onClear = (val: any) => {
-    btnFetch(fetchType, xName, { data: val }).then((res: any) => {
+    btnFetch(fetchType, xName, { type: 'outputArea', value: val }).then((res: any) => {
       if (!!res && res.code === 'SUCCESS') {
       } else {
         message.error(res?.msg || res?.message || '接口异常');
@@ -58,12 +46,12 @@ const OutputAreaCharts: React.FC<Props> = (props: any) => {
     >
       <CustomWindowBody title="出料区" style={{ fontSize }}>
         <div className="flex-box output-area-item-box">
-          {Array.from({ length: 9 })?.map((item: any, index: number) => {
+          {Array.from({ length: 9 })?.map?.((item: any, index: number) => {
             const id = 1 + index * 2;
             return (
               <ItemBox
                 id={id}
-                item={dataValue[id]}
+                item={dataValue?.[id]}
                 fontSize={fontSize}
                 key={`output-area-item-box-item-${id}`}
               />
@@ -73,19 +61,19 @@ const OutputAreaCharts: React.FC<Props> = (props: any) => {
         <div className="flex-box-justify-end output-area-center">
           <div
             className="flex-box-center output-area-center-line"
-            style={{ marginTop: `-${centerHeight / 2}px`, fontSize: titleFontSize }}
+            style={{ fontSize: titleFontSize }}
             ref={dom}
           >
             出料区
           </div>
-          {[19, 20].map((item: any) => {
+          {[19, 20]?.map?.((item: any) => {
             return (
               <div
                 className="flex-box-justify-between output-area-center-item"
                 key={`output-area-center-item${item}`}
               >
-                <div className="output-area-center-item-btn-top" onClick={() => onDelete(item)}>
-                  删除
+                <div className="output-area-center-item-btn-top">
+                  {item === 19 ? '剔除' : '直流'}
                 </div>
                 <div className="output-area-center-item-center">
                   {_.isNumber(dataValue?.[item]?.value) || _.isString(dataValue?.[item]?.value)
@@ -100,12 +88,12 @@ const OutputAreaCharts: React.FC<Props> = (props: any) => {
           })}
         </div>
         <div className="flex-box output-area-item-box">
-          {Array.from({ length: 9 })?.map((item: any, index: number) => {
+          {Array.from({ length: 9 })?.map?.((item: any, index: number) => {
             const id = (index + 1) * 2;
             return (
               <ItemBox
                 id={id}
-                item={dataValue[id]}
+                item={dataValue?.[id]}
                 fontSize={fontSize}
                 key={`output-area-item-box-${id}`}
               />

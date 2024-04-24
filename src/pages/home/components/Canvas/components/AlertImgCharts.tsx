@@ -41,7 +41,7 @@ const AlertImgCharts: React.FC<Props> = (props: any) => {
       // @ts-ignore
       ref={dom}
     >
-      {Array.from({ length: lineNumber * columnNumber }).map((item: any, index: number) => {
+      {Array.from({ length: lineNumber * columnNumber })?.map?.((item: any, index: number) => {
         return (
           <div
             className="flex-box alert-img-item-box"
