@@ -30,52 +30,119 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     bodyPaddingSize,
   } = data;
   if (process.env.NODE_ENV === 'development') {
-    reverse = true;
+    reverse = false;
     dataValue = [
       {
         name: '产品型号',
-        value: [{ value: '123456789', color: '' }],
-        color: null,
+        value: [
+          { value: 'V214' },
+          { value: 'V254' },
+          { value: 'V214' },
+          { value: 'V214' },
+          { value: 'V254' },
+          { value: 'V214' },
+          { value: 'V214' },
+          { value: 'V254' },
+          { value: 'V214' },
+        ],
       },
       {
-        name: '物料编码',
-        value: [{ value: '987654321', color: '' }],
-        color: null,
+        name: '生产号',
+        value: [
+          { value: '2882381' },
+          { value: '2882383' },
+          { value: '2882384' },
+          { value: '2882387' },
+          { value: '2882389' },
+          { value: '2882392' },
+          { value: '2882394' },
+          { value: '2882396' },
+          { value: '2882399' },
+        ],
       },
       {
-        name: '物料名称',
-        value: [{ value: '车前门', color: '' }],
-        color: null,
-      },
-      {
-        name: '检测量',
-        value: [{ value: '201', color: '' }],
-        color: null,
-      },
-      {
-        name: '单位',
-        value: [{ value: '件', color: '' }],
-        color: null,
+        name: '点位名称',
+        value: [
+          { value: '前门音响' },
+          { value: '左前门把手' },
+          { value: '后门' },
+          { value: '前门音响' },
+          { value: '左前门把手' },
+          { value: '前门音响' },
+          { value: '后门' },
+          { value: '左前门把手' },
+          { value: '后门' },
+        ],
       },
       {
         name: '检测时间',
-        value: [{ value: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), color: '' }],
-        color: null,
+        value: [
+          {
+            value: moment(
+              new Date(new Date(new Date().toLocaleDateString()).getTime() + 1 * 60 * 1000),
+            ).format('YYYY-MM-DD HH:mm:ss'),
+          },
+          {
+            value: moment(
+              new Date(new Date(new Date().toLocaleDateString()).getTime() + 30 * 60 * 1000),
+            ).format('YYYY-MM-DD HH:mm:ss'),
+          },
+          {
+            value: moment(
+              new Date(new Date(new Date().toLocaleDateString()).getTime() + 2 * 52 * 60 * 1000),
+            ).format('YYYY-MM-DD HH:mm:ss'),
+          },
+          {
+            value: moment(
+              new Date(new Date(new Date().toLocaleDateString()).getTime() + 3 * 51 * 60 * 1000),
+            ).format('YYYY-MM-DD HH:mm:ss'),
+          },
+          {
+            value: moment(
+              new Date(new Date(new Date().toLocaleDateString()).getTime() + 4 * 51 * 60 * 1000),
+            ).format('YYYY-MM-DD HH:mm:ss'),
+          },
+          {
+            value: moment(
+              new Date(new Date(new Date().toLocaleDateString()).getTime() + 5 * 51 * 60 * 1000),
+            ).format('YYYY-MM-DD HH:mm:ss'),
+          },
+          {
+            value: moment(
+              new Date(new Date(new Date().toLocaleDateString()).getTime() + 6 * 53 * 60 * 1000),
+            ).format('YYYY-MM-DD HH:mm:ss'),
+          },
+          {
+            value: moment(
+              new Date(new Date(new Date().toLocaleDateString()).getTime() + 7 * 54 * 60 * 1000),
+            ).format('YYYY-MM-DD HH:mm:ss'),
+          },
+          {
+            value: moment(
+              new Date(new Date(new Date().toLocaleDateString()).getTime() + 8 * 50 * 60 * 1000),
+            ).format('YYYY-MM-DD HH:mm:ss'),
+          },
+        ],
       },
       {
         name: '缺陷类型',
-        value: [{ value: '缺陷类型1', color: '' }],
-        color: null,
-      },
-      {
-        name: '缺陷位置',
-        value: [{ value: '门把', color: '' }],
-        color: null,
+        value: [
+          { value: '错装' },
+          { value: '配合不良' },
+          { value: '配合不良' },
+          { value: '错装' },
+          { value: '配合不良' },
+          { value: '错装' },
+          { value: '配合不良' },
+          { value: '配合不良' },
+          { value: '错装' },
+        ],
       },
     ];
   }
+  reverse = false;
   const ifCanEdit = useMemo(() => {
-    return location.hash.indexOf('edit') > -1;
+    return location.hash?.indexOf('edit') > -1;
   }, [location.hash]);
   const { initialState, setInitialState } = useModel<any>('@@initialState');
   const { params } = initialState;
@@ -215,7 +282,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                     className="charts-header-item-border"
                     style={ifCanEdit ? { width: 10 } : {}}
                     onMouseDown={(e: any) => {
-                      if (location.hash.indexOf('edit') > -1) {
+                      if (location.hash?.indexOf('edit') > -1) {
                         onMoveIconMouseDown(e, index);
                       }
                     }}

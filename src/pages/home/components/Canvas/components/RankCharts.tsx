@@ -19,11 +19,11 @@ const RankCharts: React.FC<Props> = (props: any) => {
   let { dataValue, fontSize = 20, yName = 'verse' } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
-      { title: '缺陷名称1', value: 1234 },
-      { title: '缺陷名称2', value: 1000 },
-      { title: '缺陷名称3', value: 904 },
-      { title: '缺陷名称4', value: 400 },
-      { title: '缺陷名称5', value: 234 },
+      { name: '缺陷名称1', value: 1234 },
+      { name: '缺陷名称2', value: 1000 },
+      { name: '缺陷名称3', value: 904 },
+      { name: '缺陷名称4', value: 400 },
+      { name: '缺陷名称5', value: 234 },
     ];
   }
 
@@ -42,7 +42,7 @@ const RankCharts: React.FC<Props> = (props: any) => {
       {(dataValue || [])
         ?.sort((a: any, b: any) => (yName === 'verse' ? b.value - a.value : a.value - b.value))
         ?.map?.((item: any, index: number) => {
-          const { title, value } = item;
+          const { name, value } = item;
           return (
             <div
               className="flex-box rank-charts-item-box"
@@ -62,8 +62,8 @@ const RankCharts: React.FC<Props> = (props: any) => {
                 {index + 1}
               </div>
               <div className="rank-charts-item-box-right">
-                <div className="flex-box-justify-between rank-charts-item-box-right-title">
-                  <div> {title}</div>
+                <div className="flex-box-justify-between rank-charts-item-box-right-name">
+                  <div> {name}</div>
                   {value}
                 </div>
                 <Progress
@@ -75,10 +75,10 @@ const RankCharts: React.FC<Props> = (props: any) => {
                           to: 'rgba(56,200,234,0.8)',
                         }
                   }
-                  percent={(value / maxValue) * 100}
+                  percent={(value / maxValue || 0) * 100}
                   showInfo={false}
                   trailColor="rgba(144,144,144,0.5)"
-                  status="active"
+                  // status="active"
                 />
               </div>
             </div>

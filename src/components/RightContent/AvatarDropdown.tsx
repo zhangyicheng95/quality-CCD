@@ -20,28 +20,31 @@ const loginOut = async () => {
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const { initialState, setInitialState } = useModel('@@initialState');
   const userData = getUserData();
-  const onMenuClick = useCallback((event: MenuInfo) => {
-    const { key } = event;
-    let hash = '';
-    if (location.href?.indexOf('?') > -1) {
-      hash = location.href.split('?')[1];
-    }
-    if (key === 'logout') {
-      setInitialState((s: any) => ({ ...s, currentUser: undefined }));
-      loginOut();
-      location.href = `${location.href?.split('#/')?.[0]}#/home${!!hash ? `?${hash}` : ''}`;
-      window.location.reload();
-      return;
-    }
-    if (key === 'toLogin') {
-      setInitialState((s: any) => ({ ...s, currentUser: undefined }));
-      loginOut();
-      location.href = `${location.href?.split('#/')?.[0]}#/user/login${!!hash ? `?${hash}` : ''}`;
-      window.location.reload();
-      return;
-    }
-    history.push(`/account/${key}`);
-  }, [setInitialState]);
+  const onMenuClick = useCallback(
+    (event: MenuInfo) => {
+      const { key } = event;
+      let hash = '';
+      if (location.href?.indexOf('?') > -1) {
+        hash = location.href.split('?')[1];
+      }
+      if (key === 'logout') {
+        setInitialState((s: any) => ({ ...s, currentUser: undefined }));
+        loginOut();
+        location.href = `${location.href?.split('#/')?.[0]}#/home${!!hash ? `?${hash}` : ''}`;
+        window.location.reload();
+        return;
+      }
+      if (key === 'toLogin') {
+        setInitialState((s: any) => ({ ...s, currentUser: undefined }));
+        loginOut();
+        location.href = `${location.href?.split('#/')?.[0]}#/user/login${!!hash ? `?${hash}` : ''}`;
+        window.location.reload();
+        return;
+      }
+      history.push(`/account/${key}`);
+    },
+    [setInitialState],
+  );
 
   const loading = (
     <span className={`action account`}>
@@ -57,25 +60,24 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
 
   const menuHeaderDropdown = (
     <Menu className={'menu'} selectedKeys={[]} onClick={onMenuClick}>
-      {
-        !!userData?.loginTime ?
-          <Fragment>
-            <Menu.Item key="toLogin">
-              <UserSwitchOutlined />
-              切换用户
-            </Menu.Item>
-            <Menu.Divider />
-            <Menu.Item key="logout">
-              <LogoutOutlined />
-              退出登录
-            </Menu.Item>
-          </Fragment>
-          :
+      {!!userData?.loginTime ? (
+        <Fragment>
           <Menu.Item key="toLogin">
-            <LogoutOutlined />
-            登录
+            <UserSwitchOutlined />
+            切换用户
           </Menu.Item>
-      }
+          <Menu.Divider />
+          <Menu.Item key="logout">
+            <LogoutOutlined />
+            退出登录
+          </Menu.Item>
+        </Fragment>
+      ) : (
+        <Menu.Item key="toLogin">
+          <LogoutOutlined />
+          登录
+        </Menu.Item>
+      )}
     </Menu>
   );
   return (

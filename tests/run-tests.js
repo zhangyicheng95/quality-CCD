@@ -27,7 +27,7 @@ console.log('Starting development server for e2e tests...');
 startServer.stdout.on('data', (data) => {
   console.log(data.toString());
   // hack code , wait umi
-  if (!once && data.toString().indexOf('Serving your umi project!') >= 0) {
+  if (!once && data.toString()?.indexOf('Serving your umi project!') >= 0) {
     // eslint-disable-next-line
     once = true;
     console.log('Development server is started, ready to run tests.');

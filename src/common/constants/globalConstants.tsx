@@ -293,6 +293,10 @@ export const customWindowList: any = [
     value: 'outputArea',
     label: '出料区',
   },
+  {
+    value: 'equipmentInfo',
+    label: '设备信息',
+  },
 ];
 // 仿真涂层-背景图
 export const simulatedCoatingList: any = [

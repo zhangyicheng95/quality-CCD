@@ -1,9 +1,19 @@
 import { Space } from 'antd';
-import { CompressOutlined, ExpandOutlined, SettingOutlined, ClearOutlined } from '@ant-design/icons';
+import {
+  CompressOutlined,
+  ExpandOutlined,
+  SettingOutlined,
+  ClearOutlined,
+} from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useModel, SelectLang } from 'umi';
 import styles from './index.less';
-import { exitFullScreen, getAllLocalStorageKeys, isFullscreenElement, requestFullScreen } from '@/utils/utils';
+import {
+  exitFullScreen,
+  getAllLocalStorageKeys,
+  isFullscreenElement,
+  requestFullScreen,
+} from '@/utils/utils';
 import Avatar from './AvatarDropdown';
 
 const { version } = require('../../../package.json');
@@ -29,11 +39,11 @@ const GlobalHeaderRight: React.FC = () => {
     setFull(isFullscreenElement());
   };
   useEffect(() => {
-    window.addEventListener("resize", onEscCancelFull, false);
+    window.addEventListener('resize', onEscCancelFull, false);
 
     return () => {
-      window.removeEventListener("resize", onEscCancelFull, false);
-    }
+      window.removeEventListener('resize', onEscCancelFull, false);
+    };
   }, []);
   useEffect(() => {
     let href = location.href || '';
@@ -46,46 +56,47 @@ const GlobalHeaderRight: React.FC = () => {
 
   return (
     <Space className={className}>
-      <span className='version'>v{version}</span>
+      <span className="version">v{version}</span>
       <Avatar menu={false} />
-      <ClearOutlined style={{ marginRight: 12 }} onClick={() => {
-        if (!!localStorage.getItem(`localGridContentList-${params.id}`)) {
-          const localStorageKeys = getAllLocalStorageKeys();
-          (localStorageKeys || []).forEach((key: any) => {
-            if (key?.indexOf(params.id) > -1) {
-              localStorage.removeItem(key);
-            }
-          });
-          window.location.reload();
-        }
-      }} />
+      <ClearOutlined
+        style={{ marginRight: 12 }}
+        onClick={() => {
+          if (!!localStorage.getItem(`localGridContentList-${params.id}`)) {
+            const localStorageKeys = getAllLocalStorageKeys();
+            (localStorageKeys || []).forEach((key: any) => {
+              if (key?.indexOf(params.id) > -1) {
+                localStorage.removeItem(key);
+              }
+            });
+            window.location.reload();
+          }
+        }}
+      />
       <SettingOutlined />
       <SelectLang
         className={styles.action}
         postLocalesData={(list: any) => {
-          return list.filter((i: any) => ["en-US", "zh-CN", "zh-TW"].includes(i.lang)) || [];
+          return list.filter((i: any) => ['en-US', 'zh-CN', 'zh-TW'].includes(i.lang)) || [];
         }}
       />
-      {
-        location.href?.indexOf('&id=') > -1 ?
-          <div className="full-screen-box"></div>
-          :
-          full ?
-            <CompressOutlined
-              onClick={() => {
-                setFull(false);
-                exitFullScreen();
-              }}
-            />
-            :
-            <ExpandOutlined
-              id="full-screen-icon"
-              onClick={() => {
-                setFull(true);
-                requestFullScreen();
-              }}
-            />
-      }
+      {location.href?.indexOf('&id=') > -1 ? (
+        <div className="full-screen-box"></div>
+      ) : full ? (
+        <CompressOutlined
+          onClick={() => {
+            setFull(false);
+            exitFullScreen();
+          }}
+        />
+      ) : (
+        <ExpandOutlined
+          id="full-screen-icon"
+          onClick={() => {
+            setFull(true);
+            requestFullScreen();
+          }}
+        />
+      )}
     </Space>
   );
 };

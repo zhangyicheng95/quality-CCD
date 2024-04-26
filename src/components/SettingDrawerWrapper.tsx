@@ -15,11 +15,11 @@ const themeList = [
     key: '--multi-player-children-background-color',
     light: 'rgb(235, 234, 234)',
     dark: '#273142',
-  }
-]
+  },
+];
 
 const SettingDrawerWrapper: React.FC<any> = (props: any) => {
-  const { initialState = {}, setInitialState, dispatch, } = props;
+  const { initialState = {}, setInitialState, dispatch } = props;
   const { params, settings } = initialState;
   const [paramData, setParamData] = useState<any>({});
   useEffect(() => {
@@ -29,7 +29,10 @@ const SettingDrawerWrapper: React.FC<any> = (props: any) => {
       if (!!contentData && !!contentData.theme) {
         themeList.forEach((theme) => {
           const { key, light, dark } = theme;
-          document.documentElement.style.setProperty(key, contentData.theme === 'realDark' ? dark : light);
+          document.documentElement.style.setProperty(
+            key,
+            contentData.theme === 'realDark' ? dark : light,
+          );
         });
         dispatch({
           type: 'themeStore/themeAction',
@@ -38,7 +41,7 @@ const SettingDrawerWrapper: React.FC<any> = (props: any) => {
         setInitialState((preInitialState: any) => ({
           ...preInitialState,
           settings: Object.assign({}, settings, {
-            navTheme: contentData.theme
+            navTheme: contentData.theme,
           }),
         }));
       }
@@ -60,17 +63,23 @@ const SettingDrawerWrapper: React.FC<any> = (props: any) => {
           const { key, light, dark } = theme;
           document.documentElement.style.setProperty(key, navTheme === 'realDark' ? dark : light);
         });
-        const params = Object.assign({}, paramData, paramData.id ? {
-          contentData: {
-            ...paramData.contentData,
-            theme: navTheme,
-            inIframe: location.hash?.indexOf('inIframe') > -1
-          }
-        } : {});
+        const params = Object.assign(
+          {},
+          paramData,
+          paramData.id
+            ? {
+                contentData: {
+                  ...paramData.contentData,
+                  theme: navTheme,
+                  inIframe: location.hash?.indexOf('inIframe') > -1,
+                },
+              }
+            : {},
+        );
         setInitialState((preInitialState: any) => ({
           ...preInitialState,
           settings: _settings,
-          params
+          params,
         }));
         // 把主题色存到接口中
         if (!!paramData.id) {
@@ -79,12 +88,11 @@ const SettingDrawerWrapper: React.FC<any> = (props: any) => {
             data: params,
           }).then((res: any) => {
             if (res && res.code === 'SUCCESS') {
-
             } else {
               message.error(res?.msg || res?.message || '接口异常');
             }
           });
-        };
+        }
       }}
     />
   );

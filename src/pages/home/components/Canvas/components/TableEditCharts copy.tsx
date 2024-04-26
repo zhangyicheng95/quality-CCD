@@ -23,7 +23,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
   const [dataSource, setDataSource] = useState<any>([]);
 
   const ifCanEdit = useMemo(() => {
-    return location.hash.indexOf('edit') > -1;
+    return location.hash?.indexOf('edit') > -1;
   }, [location.hash]);
   useEffect(() => {
     if (!_.isArray(xColumns) || !_.isArray(yColumns)) {

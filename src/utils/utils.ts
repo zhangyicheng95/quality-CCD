@@ -60,6 +60,19 @@ export interface IObjMap {
   [propName: number | string]: boolean;
 }
 
+export function formatTimeToDate(date = 0) {
+  let newDate = date / 1000;
+  if (newDate < 60) {
+    return newDate + '秒';
+  } else if (newDate >= 60 && newDate < 60 * 60) {
+    return newDate / 60 + '分钟';
+  } else if (newDate >= 60 * 60 && newDate < 60 * 60 * 24) {
+    return newDate / (60 * 60) + '小时';
+  } else {
+    return newDate / (60 * 60 * 24) + '天';
+  }
+}
+
 /** *
  * 将params转为 a=b&c=d 格式
  * @param params

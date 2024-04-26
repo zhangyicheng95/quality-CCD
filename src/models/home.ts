@@ -71,7 +71,7 @@ export default {
     *dataMessage({ payload }: any, { put, select }: any) {
       yield put({ type: 'setGridContentList', payload });
       // const imgData = Object.entries(payload).filter((res: any) => {
-      //   return _.isString(res[1]) ? res[1].indexOf('http') > -1 : false;
+      //   return _.isString(res[1]) ? res[1]?.indexOf('http') > -1 : false;
       // });
       // if (imgData[0] && imgData[0][1]) {
       //   yield put({ type: 'setGridContentList', payload: { uid: payload.uid, imgData } });

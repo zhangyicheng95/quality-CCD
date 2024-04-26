@@ -275,7 +275,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     return params?.contentData?.theme || 'realDark';
   }, [params?.contentData?.theme]);
   const ifCanEdit = useMemo(() => {
-    return location.hash.indexOf('edit') > -1;
+    return location.hash?.indexOf('edit') > -1;
   }, [location.hash]);
   useEffect(() => {
     if (!_.isString(name)) {
@@ -1220,7 +1220,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
 
     const manager = new THREE.LoadingManager();
     manager.addHandler(/\.dds$/i, new DDSLoader());
-    if (name.indexOf('.glb') > -1) {
+    if (name?.indexOf('.glb') > -1) {
       new GLTFLoader().load(
         name,
         function (gltf) {
@@ -1229,7 +1229,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         (xhr) => processFun(xhr),
         (error) => processError(error),
       );
-    } else if (name.indexOf('.ply') > -1) {
+    } else if (name?.indexOf('.ply') > -1) {
       new PLYLoader().load(
         name,
         function (geometry: any) {
@@ -1275,7 +1275,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         (xhr) => processFun(xhr),
         (error) => processError(error),
       );
-    } else if (name.indexOf('.stl') > -1) {
+    } else if (name?.indexOf('.stl') > -1) {
       new STLLoader().load(
         name,
         function (geometry) {
@@ -1290,7 +1290,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         (xhr) => processFun(xhr),
         (error) => processError(error),
       );
-    } else if (name.indexOf('.obj') > -1) {
+    } else if (name?.indexOf('.obj') > -1) {
       new OBJLoader().load(
         name,
         function (object) {
@@ -1299,7 +1299,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         (xhr) => processFun(xhr),
         (error) => processError(error),
       );
-    } else if (name.indexOf('.json') > -1) {
+    } else if (name?.indexOf('.json') > -1) {
       sprite = new THREE.Sprite(
         new THREE.SpriteMaterial({
           map: new THREE.CanvasTexture(lut.createCanvas()),
@@ -1349,7 +1349,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         (xhr) => processFun(xhr),
         (error) => processError(error),
       );
-    } else if (name.indexOf('.mtl') > -1) {
+    } else if (name?.indexOf('.mtl') > -1) {
       // new MTLLoader(manager).load(
       //     myobj.mtl,
       //     function (materials) {

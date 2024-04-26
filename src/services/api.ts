@@ -69,7 +69,7 @@ export async function touchFlowService() {
 
 // 选择文件路径
 export async function selectFilePathService(path: string) {
-  return fetchGet(`${BASE_IP}file_browser${path.indexOf('\\') === 0 ? '' : '\\'}${path}`);
+  return fetchGet(`${BASE_IP}file_browser${path?.indexOf('\\') === 0 ? '' : '\\'}${path}`);
 }
 
 // 根据id获取缓存
@@ -101,13 +101,13 @@ export async function login(params: any) {
 export async function outLogin() {}
 
 export async function btnFetch(type: string, url: string, params = {}, options?: any) {
-  if (url.indexOf('/') === 0) {
+  if (url?.indexOf('/') === 0) {
     url = url.slice(1);
   }
-  if (url.indexOf(':') < 0) {
+  if (url?.indexOf(':') < 0) {
     url = BASE_IP + url;
   }
-  if (url.indexOf('http') < 0) {
+  if (url?.indexOf('http') < 0) {
     url = 'http://' + url;
   }
   if (type === 'get') {

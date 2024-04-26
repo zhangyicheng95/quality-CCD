@@ -109,7 +109,9 @@ axiosInstance.interceptors.response.use(
 
 // axios发起请求
 function axiosRequest(config) {
-  config.url = `${config.url}${config.url.indexOf('?') > -1 ? '&' : '?'}__timestamp=${+new Date()}`;
+  config.url = `${config.url}${
+    config.url?.indexOf('?') > -1 ? '&' : '?'
+  }__timestamp=${+new Date()}`;
   return axiosInstance
     .request(config)
     .then((response) => {

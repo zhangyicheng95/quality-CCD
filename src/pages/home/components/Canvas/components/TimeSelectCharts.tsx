@@ -21,7 +21,6 @@ const TimeSelectCharts: React.FC<Props> = (props: any) => {
   const { fontSize = 14, yName, xName = '', fetchType, timeSelectDefault = 'day' } = data;
 
   useEffect(() => {
-    console.log(timeSelectDefault);
     btnFetch(
       fetchType,
       xName,

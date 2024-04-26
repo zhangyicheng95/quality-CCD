@@ -159,7 +159,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     return params?.contentData?.theme || 'realDark';
   }, [params?.contentData?.theme]);
   const ifCanEdit = useMemo(() => {
-    return location.hash.indexOf('edit') > -1;
+    return location.hash?.indexOf('edit') > -1;
   }, [location.hash]);
   const valueCardRef = useRef(value);
   let renderer = useRef<any>();
@@ -1726,7 +1726,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
 
     const manager = new THREE.LoadingManager();
     manager.addHandler(/\.dds$/i, new DDSLoader());
-    if (name.indexOf('.glb') > -1) {
+    if (name?.indexOf('.glb') > -1) {
       new GLTFLoader().load(
         name,
         function (gltf) {
@@ -1735,7 +1735,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         (xhr) => processFun(xhr),
         (error) => processError(error),
       );
-    } else if (name.indexOf('.ply') > -1) {
+    } else if (name?.indexOf('.ply') > -1) {
       new PLYLoader().load(
         name,
         function (geometry: any) {
@@ -1771,7 +1771,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         (xhr) => processFun(xhr),
         (error) => processError(error),
       );
-    } else if (name.indexOf('.stl') > -1) {
+    } else if (name?.indexOf('.stl') > -1) {
       new STLLoader().load(
         name,
         function (geometry) {
@@ -1786,7 +1786,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         (xhr) => processFun(xhr),
         (error) => processError(error),
       );
-    } else if (name.indexOf('.obj') > -1) {
+    } else if (name?.indexOf('.obj') > -1) {
       new OBJLoader().load(
         name,
         function (object) {
@@ -1795,7 +1795,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         (xhr) => processFun(xhr),
         (error) => processError(error),
       );
-    } else if (name.indexOf('.json') > -1) {
+    } else if (name?.indexOf('.json') > -1) {
       sprite = new THREE.Sprite(
         new THREE.SpriteMaterial({
           map: new THREE.CanvasTexture(lut.createCanvas()),
@@ -1845,7 +1845,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         (xhr: any) => processFun(xhr),
         (error: any) => processError(error),
       );
-    } else if (name.indexOf('.mtl') > -1) {
+    } else if (name?.indexOf('.mtl') > -1) {
       // new MTLLoader(manager).load(
       //     myobj.mtl,
       //     function (materials) {
@@ -1928,13 +1928,13 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       if ([1, 3].includes(index)) {
         Object.entries(measurementLabels).forEach((label: any, index: number) => {
           if (
-            (label[0].indexOf('bottom') > -1 || label[0].indexOf('right') > -1) &&
+            (label[0]?.indexOf('bottom') > -1 || label[0]?.indexOf('right') > -1) &&
             !!label[1]?.element?.firstElementChild
           ) {
             label[1].element.firstElementChild.style.display = 'none';
             // 将射线隐藏
             (measurements || []).forEach((line: any) => {
-              if (label[0].indexOf?.(line.name) > -1) {
+              if (label[0]?.indexOf?.(line.name) > -1) {
                 scene.current?.remove?.(line);
                 hideLines.push(line);
               }
@@ -1944,8 +1944,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       } else if ([2, 5].includes(index)) {
         Object.entries(measurementLabels).forEach((label: any) => {
           if (
-            (label[0].indexOf('top') > -1 ||
-              label[0].indexOf('left') > -1 ||
+            (label[0]?.indexOf('top') > -1 ||
+              label[0]?.indexOf('left') > -1 ||
               label[1].element.firstElementChild
                 .querySelector('.item-title')
                 ?.innerText?.indexOf('止口凸台') > -1) &&
@@ -1954,7 +1954,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             label[1].element.firstElementChild.style.display = 'none';
             // 将射线隐藏
             (measurements || []).forEach((line: any) => {
-              if (label[0].indexOf?.(line.name) > -1) {
+              if (label[0]?.indexOf?.(line.name) > -1) {
                 scene.current?.remove?.(line);
                 hideLines.push(line);
               }

@@ -26,7 +26,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
     fileFetch,
   } = data;
   const ifCanEdit = useMemo(() => {
-    return location.hash.indexOf('edit') > -1;
+    return location.hash?.indexOf('edit') > -1;
   }, [location.hash]);
   const itemClicked = useRef(0); //记录按键次数，下一次数据来了之后清空
   const [visible, setVisible] = useState(false);

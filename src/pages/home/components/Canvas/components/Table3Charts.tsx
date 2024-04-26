@@ -241,7 +241,7 @@ const Table3Charts: React.FC<Props> = (props: any) => {
                     id={`charts-header-item-move-${index}`}
                     className="charts-header-item-border"
                     onMouseDown={(e: any) => {
-                      if (location.hash.indexOf('edit') > -1) {
+                      if (location.hash?.indexOf('edit') > -1) {
                         onMoveIconMouseDown(e, index);
                       }
                     }}

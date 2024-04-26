@@ -140,7 +140,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
         {
           type: direction === 'rows' ? 'category' : 'value',
           name: direction === 'rows' ? xName : yName,
-          // boundaryGap: ['5%', '5%'],
+          boundaryGap: 0,
           splitNumber: 3,
           scale: false,
           position: align || 'left',
@@ -198,7 +198,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 : labelDirection === 'bottom'
                 ? 'insideBottom'
                 : 'inside',
-            formatter: (params: any) => params?.value?.toFixed?.(2) || params?.value,
+            formatter: (params: any) => params?.value?.toFixed?.(0) || params?.value,
             fontSize,
           },
           stack: 'total',

@@ -16,12 +16,16 @@ const HeatMapCharts: React.FC<Props> = (props: any) => {
   let { dataValue = [], backgroundColor } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
-      { x: '0.5', y: '0.25', value: 100 },
-      { x: '0.3', y: '0.3', value: 110 },
-      { x: '0.4', y: '0.4', value: 130 },
+      { x: '0.48', y: '0.45', value: 100 },
+      { x: '0.4', y: '0.5', value: 110 },
+      { x: '0.5', y: '0.55', value: 130 },
     ];
   }
-
+  dataValue = [
+    { x: '0.49', y: '0.45', value: 2 },
+    { x: '0.51', y: '0.5', value: 2 },
+    { x: '0.61', y: '0.55', value: 4 },
+  ];
   const [chartSize, setChartSize] = useState(false);
   const dom = useRef<any>();
   const heatmapInstance = useRef<any>(null);
@@ -80,7 +84,7 @@ const HeatMapCharts: React.FC<Props> = (props: any) => {
   }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight]);
 
   return (
-    <div className={`${styles.heatMapCharts}`} ref={dom}>
+    <div className={`flex-box-center ${styles.heatMapCharts}`} ref={dom}>
       <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} />
       <img
         className="heat-map-bg-box"

@@ -3,6 +3,8 @@ const options = {
   color: [
     '#5470c6',
     '#91cc75',
+    '#73c0de',
+    '#3ba272',
     '#fc8452',
     '#AFEEEE',
     '#FA8072',
@@ -12,8 +14,6 @@ const options = {
     '#ea7ccc',
     '#fac858',
     '#ee6666',
-    '#73c0de',
-    '#3ba272',
     '#FF00FF',
     '#FFA07A',
     '#FAFAD2',

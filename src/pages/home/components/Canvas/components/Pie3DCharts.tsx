@@ -1,11 +1,13 @@
 import React, { Fragment, useEffect } from 'react';
 import * as echarts from 'echarts';
 import 'echarts-gl';
-import _ from 'lodash';
+import _, { forEach } from 'lodash';
 import { message } from 'antd';
 import { connect, useModel } from 'umi';
 import { CompressOutlined } from '@ant-design/icons';
 import { getPie3D, getParametricEquation } from './pie3DOption';
+import options from './commonOptions';
+import styles from '../index.module.less';
 
 interface Props {
   data: any;
@@ -17,84 +19,59 @@ interface Props {
 const PieCharts: React.FC<Props> = (props: any) => {
   let myChart: any = null;
   let { data = {}, id, legend, dispatch, setMyChartVisible } = props;
-  let { dataValue = [], fontSize } = data;
+  let { dataValue = [], fontSize, xName = 180 } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
       {
-        name: '频率',
-        value: 30,
-        itemStyle: {
-          color: '#2A71FF',
-        },
+        name: '单日能耗',
+        value: 10,
       },
       {
-        name: '三相相电压平均值',
-        value: 50,
-        itemStyle: {
-          color: '#00EDFE',
-        },
+        name: '7日能耗',
+        value: 70,
       },
       {
-        name: '三相线电压平均值',
-        value: 80,
-        itemStyle: {
-          color: '#FEDB4B',
-        },
-      },
-      {
-        name: '三相电流平均值',
-        value: 110,
-        itemStyle: {
-          color: '#1E7C2F',
-        },
-      },
-      {
-        name: '总视在功率',
-        value: 130,
-        itemStyle: {
-          color: '#FA71FF',
-        },
-      },
-      {
-        name: '总有功功率',
-        value: 150,
-        itemStyle: {
-          color: '#F0EDFE',
-        },
-      },
-      {
-        name: '总无功功率',
-        value: 180,
-        itemStyle: {
-          color: '#7EDB4B',
-        },
-      },
-      {
-        name: '总功率因数',
-        value: 210,
-        itemStyle: {
-          color: '#AE7C2F',
-        },
+        name: '30日能耗',
+        value: 380,
       },
     ];
   }
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
-
   useEffect(() => {
     if (!_.isArray(dataValue)) {
       message.error('3D饼状图数据格式不正确，请检查');
       console.log('PieCharts:', dataValue);
       return;
     }
-
-    dataValue = dataValue.sort((a: any, b: any) => a.value - b.value);
+    let max = 0;
+    let gap = 1;
+    let dataSource = [];
+    (dataValue || [])?.forEach((item: any) => {
+      if (max < item?.value) {
+        max = item.value;
+      }
+    });
+    if (max > xName) {
+      gap = max / (xName || 180);
+      dataSource = dataValue
+        .map((item: any) => {
+          return {
+            ...item,
+            value: (item?.value || 0) / gap,
+          };
+        })
+        .sort((a: any, b: any) => a.value - b.value);
+    } else {
+      dataSource = dataValue.sort((a: any, b: any) => a.value - b.value);
+    }
     const dom: any = document.getElementById(`echart-${id}`);
     myChart = echarts.init(dom);
     // 传入数据生成 option
-    const series: any = getPie3D(dataValue, 0.5, false);
+    const series: any = getPie3D(dataSource, 0.5, false);
     // 准备待返回的配置项，把准备好的 legendData、series 传入。
     let option = {
+      color: options.color,
       legend: {
         show: true,
         tooltip: {
@@ -104,7 +81,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
         orient: 'vertical',
         top: 'center',
         itemGap: 14,
-        right: '2%',
+        right: 8,
         textStyle: {
           color: '#fff',
           fontSize,
@@ -136,14 +113,14 @@ const PieCharts: React.FC<Props> = (props: any) => {
         show: false, //网格地图
         boxHeight: 0.5, // 设置立体柱状图的高度
         boxWidth: 100, // 设置立体柱状图的宽度
-        bottom: '20%',
-        left: 0,
+        bottom: 0,
+        left: `-${dom.clientWidth / 6}px`,
         // environment: "rgba(255,255,255,0)",
         viewControl: {
-          distance: 150, // 视角距离
+          distance: xName || 180, // 视角距离
           alpha: 30, // 倾斜角度
           beta: 110, // 开始角度
-          autoRotate: true, // 自动旋转
+          autoRotate: false, // 自动旋转
           rotateSensitivity: 0, // 禁止旋转
           zoomSensitivity: 0, // 禁止缩放
         },
@@ -292,7 +269,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
   }, [dataValue, fontSize, legend]);
 
   return (
-    <Fragment>
+    <div className={styles.pieCharts}>
       <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} />
       <div className="preview-box flex-box-center">
         <CompressOutlined
@@ -305,7 +282,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
           }}
         />
       </div>
-    </Fragment>
+    </div>
   );
 };
 

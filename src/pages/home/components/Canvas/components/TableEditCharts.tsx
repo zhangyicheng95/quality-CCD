@@ -24,7 +24,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
   const [dataSource, setDataSource] = useState<any>([]);
 
   const ifCanEdit = useMemo(() => {
-    return location.hash.indexOf('edit') > -1;
+    return location.hash?.indexOf('edit') > -1;
   }, [location.hash]);
 
   useEffect(() => {
@@ -173,12 +173,21 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
             <Upload {...onUploadExcel}>
               <Button type="default">上传 Excel / CSV</Button>
             </Upload>
-            {
+            {sourceName?.indexOf('csv') > -1 ? (
               // @ts-ignore
               <CSVLink data={dataSource} filename={sourceName}>
                 <Button type="primary">导出</Button>
               </CSVLink>
-            }
+            ) : (
+              <Button
+                type="primary"
+                onClick={() => {
+                  downFileFun(JSON.stringify(dataSource), sourceName);
+                }}
+              >
+                导出
+              </Button>
+            )}
             {!!sourceName ? (
               <Button
                 type="default"

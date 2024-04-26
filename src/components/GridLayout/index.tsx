@@ -35,7 +35,7 @@ const GridLayout: React.FC<Props> = (props: any) => {
   } = props;
 
   const ifCanEdit = useMemo(() => {
-    return location.hash.indexOf('edit') > -1;
+    return location.hash?.indexOf('edit') > -1;
   }, [location.hash]);
 
   //存储拖拽移动的位置到缓存

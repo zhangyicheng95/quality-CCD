@@ -116,6 +116,7 @@ import FastFunctionCharts from './components/customComponents/FastFunctionCharts
 import OutputAreaCharts from './components/customComponents/OutputAreaCharts';
 import EquipmentControlCharts from './components/customComponents/EquipmentControlCharts';
 import OrderInformationCharts from './components/customComponents/OrderInformationCharts';
+import EquipmentInfoCharts from './components/customComponents/EquipmentInfoCharts';
 
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -208,7 +209,7 @@ const Home: React.FC<any> = (props: any) => {
   ]);
   const [tabNum, setTabNum] = useState(0);
   const ifCanEdit = useMemo(() => {
-    return location.hash.indexOf('edit') > -1;
+    return location.hash?.indexOf('edit') > -1;
   }, [location.hash, paramData]);
   // 迁移描述信息组件
   useEffect(() => {
@@ -1288,6 +1289,7 @@ const Home: React.FC<any> = (props: any) => {
                     data={{
                       dataValue: dataValue || [],
                       fontSize,
+                      xName,
                     }}
                   />
                 ) : type === 'nightingalePie' ? (
@@ -1760,13 +1762,22 @@ const Home: React.FC<any> = (props: any) => {
                       xName,
                     }}
                   />
+                ) : type === 'equipmentInfo' ? (
+                  <EquipmentInfoCharts
+                    id={key}
+                    data={{
+                      dataValue,
+                      fontSize,
+                      xName,
+                    }}
+                  />
                 ) : (
                   <ImgCharts
                     id={key}
                     data={{
                       defaultImg: !!defaultImg
                         ? `${BASE_IP}file${
-                            defaultImg.indexOf('\\') === 0 || defaultImg.indexOf('/') === 0
+                            defaultImg?.indexOf('\\') === 0 || defaultImg?.indexOf('/') === 0
                               ? ''
                               : '\\'
                           }${defaultImg}`
@@ -3828,15 +3839,15 @@ const Home: React.FC<any> = (props: any) => {
                         };
                       })}
                       onChange={(value) => {
-                        if (value.indexOf('default') > 0) {
+                        if (value?.indexOf('default') > 0) {
                           setFieldsValue({
                             barColor: ['default'],
                           });
-                        } else if (value.indexOf('line1') > 0) {
+                        } else if (value?.indexOf('line1') > 0) {
                           setFieldsValue({
                             barColor: ['line1'],
                           });
-                        } else if (value.indexOf('line2') > 0) {
+                        } else if (value?.indexOf('line2') > 0) {
                           setFieldsValue({
                             barColor: ['line2'],
                           });
@@ -5096,6 +5107,28 @@ const Home: React.FC<any> = (props: any) => {
                       rules={[{ required: false, message: '接口地址' }]}
                     >
                       <Input placeholder="接口地址" size="large" />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
+                {['equipmentInfo'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`xName`}
+                      label={'缩放大小'}
+                      rules={[{ required: false, message: '缩放大小' }]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
+                {['pie3D'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`xName`}
+                      label={'缩放大小'}
+                      rules={[{ required: false, message: '缩放大小' }]}
+                    >
+                      <InputNumber />
                     </Form.Item>
                   </Fragment>
                 ) : null}

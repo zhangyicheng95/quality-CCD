@@ -437,11 +437,11 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
           data={{ ...platFormValue, ifFetch: false }}
           onOk={(val: any) => {
             const { id, ...rest } = val;
-            if (!!ifFetch) {
-              btnFetch('post', xName, rest.value).then((res) => {
-                console.log(res);
-              });
-            }
+            // if (!!ifFetch) {
+            //   btnFetch('post', xName, rest.value).then((res) => {
+            //     console.log(res);
+            //   });
+            // }
             widgetChange(id, rest);
             setPlatFormValue({});
             setPlatFormVisible(false);
