@@ -294,7 +294,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             selectedOption={selectedOption}
             setSelectedOption={setSelectedOption}
             form={form}
-            disabled={!started || locked}
+            disabled={(!started || locked) && process.env.NODE_ENV !== 'development'}
             setEditorVisible={setEditorVisible}
             setEditorValue={setEditorValue}
             setPlatFormVisible={setPlatFormVisible}
@@ -383,7 +383,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
       <div className="operation-footer flex-box-center">
         <Button
           type="primary"
-          disabled={!started}
+          disabled={!started && process.env.NODE_ENV !== 'development'}
           onClick={() => {
             setLocked((prev) => !prev);
           }}
@@ -400,12 +400,19 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             okText="确认"
             cancelText="取消"
           >
-            <Button type="primary" disabled={!started || locked}>
+            <Button
+              type="primary"
+              disabled={(!started || locked) && process.env.NODE_ENV !== 'development'}
+            >
               修改
             </Button>
           </Popconfirm>
         ) : (
-          <Button type="primary" onClick={() => onOk()} disabled={!started || locked}>
+          <Button
+            type="primary"
+            onClick={() => onOk()}
+            disabled={(!started || locked) && process.env.NODE_ENV !== 'development'}
+          >
             修改
           </Button>
         )}

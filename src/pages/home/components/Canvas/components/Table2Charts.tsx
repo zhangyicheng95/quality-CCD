@@ -207,7 +207,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     let width = 0;
     if (!domRef.current) return;
     domRef.current.onmousemove = (e: any) => {
-      width = Math.abs(clientWidth - (ev.pageX - e.pageX));
+      width = Math.min(Math.abs(clientWidth - (ev.pageX - e.pageX)), 0.9);
       parent.style.width = width + 'px';
       parent.style.minWidth = width + 'px';
     };
@@ -217,11 +217,11 @@ const Table2Charts: React.FC<Props> = (props: any) => {
       const tableSizes = _.isArray(tableSize) ? _.cloneDeep(tableSize) : [];
 
       if (!!tableSizes?.length) {
-        tableSizes[index] = (width / clientWidth) * 100 + '%';
+        tableSizes[index] = Math.max((width / clientWidth) * 100, 10) + '%';
       } else {
         dataValue.forEach((item: any, ind: number) => {
           if (ind === index) {
-            tableSizes[index] = (width / clientWidth) * 100 + '%';
+            tableSizes[index] = Math.max((width / clientWidth) * 100, 10) + '%';
           } else {
             tableSizes[ind] = !!tableSizes[ind] ? tableSizes[ind] : 0;
           }

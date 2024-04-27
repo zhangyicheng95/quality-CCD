@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { connect } from 'umi';
-import { Button, Form, Input, message, Spin, Switch, Upload } from 'antd';
+import { Button, Form, Input, message, Select, Spin, Switch, Upload } from 'antd';
 import _ from 'lodash';
 import * as XLSX from 'xlsx';
 import styles from '../index.module.less';
 import { downFileFun } from '@/utils/utils';
 import Papa from 'papaparse';
 import { CSVLink } from 'react-csv';
+import { btnFetch } from '@/services/api';
 
 interface Props {
   data: any;
@@ -16,16 +17,29 @@ interface Props {
 
 const TableEditCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id, started } = props;
-  let { dataValue = '', fontSize, xColumns = [], yColumns = [] } = data;
+  let { dataValue = '', fontSize, fetchType, xName, yName, ifFetch } = data;
   const [form] = Form.useForm();
   const domRef = useRef<any>(null);
   const [loading, setLoading] = useState<any>(false);
+  const [options, setOptions] = useState([]);
   const [sourceName, setSourceName] = useState<any>('');
   const [dataSource, setDataSource] = useState<any>([]);
 
   const ifCanEdit = useMemo(() => {
     return location.hash?.indexOf('edit') > -1;
   }, [location.hash]);
+
+  useEffect(() => {
+    if (!!ifFetch && !!yName) {
+      btnFetch(fetchType, xName, { type: yName, method: 'read' }).then((res: any) => {
+        if (!!res && res.code === 'SUCCESS') {
+          setOptions(res.data);
+        } else {
+          message.error(res?.msg || res?.message || '接口异常');
+        }
+      });
+    }
+  }, [ifFetch, yName]);
 
   useEffect(() => {
     if (!!dataValue && !!localStorage.getItem('parentOrigin')) {
@@ -60,18 +74,25 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
           const sheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[sheetName];
           const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-          const result = jsonData?.map?.((item: any) => {
-            return item
-              .join('$@$')
-              .split('$@$')
-              ?.map?.((i: any) => {
-                if (!!i) {
-                  return i;
-                } else {
-                  return '';
-                }
-              });
+          let maxLength = 0;
+          jsonData.forEach((i: any) => {
+            if (maxLength < i?.length) {
+              maxLength = i.length;
+            }
           });
+          const result: any = jsonData?.map?.((item: any) => {
+            if (item?.length < maxLength) {
+              item = item.concat(Array.from({ length: maxLength - item?.length }));
+            }
+            return Array.from(item)?.map?.((i: any) => {
+              if (!!i) {
+                return i;
+              } else {
+                return ` `;
+              }
+            });
+          });
+          console.log('格式化的', result);
           if (file?.name?.indexOf('csv') > -1) {
             Papa.parse(file, {
               header: true, //包含第一行
@@ -123,6 +144,25 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
   const onSubmit = () => {
     downFileFun(dataSource, sourceName);
   };
+  const onFileChange = (val: string) => {
+    console.log(val);
+    if (!!val && !!localStorage.getItem('parentOrigin')) {
+      const messageFun = (e: any) => {
+        if (e.data.from === 'read' && e.data.name === 'tableEditReadFile') {
+          console.log('TableEditCharts收到消息', e.data.payload);
+          setDataSource(JSON.parse(e.data.payload || '[]'));
+        }
+      };
+      window?.addEventListener?.('message', messageFun);
+
+      window?.parent?.postMessage?.(
+        { type: 'readFile', name: 'tableEditReadFile', path: val },
+        localStorage.getItem('parentOrigin') || '',
+      );
+    } else {
+      setDataSource([]);
+    }
+  };
 
   return (
     <div id={`echart-${id}`} className={styles.tableEditCharts} ref={domRef} style={{ fontSize }}>
@@ -137,28 +177,26 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
                   style={{ height: (fontSize / 2) * 7 }}
                 >
                   {(item || [])?.map?.((itemSec: string, indexSec: number) => {
+                    if (!itemSec) {
+                      itemSec = ` `;
+                    }
                     return (
                       <div
-                        className="table-edit-item-box-td"
+                        className="flex-box table-edit-item-box-td"
                         key={`table-edit-item-box-td-${indexSec}`}
                       >
-                        {!!itemSec ? (
-                          [0, 1].includes(index) ||
-                          (item?.length > 5 && [0, 1].includes(indexSec)) ? (
-                            <div className="flex-box table-edit-item-box-td-title">{itemSec}</div>
-                          ) : ['true', 'false'].includes(_.lowerCase(itemSec)) ? (
-                            <Switch
-                              defaultChecked={JSON.parse(itemSec)}
-                              onChange={(val) => onChange(JSON.stringify(val), [index, indexSec])}
-                            />
-                          ) : (
-                            <Input
-                              defaultValue={itemSec}
-                              onChange={(e: any) => onChange(e?.target?.value, [index, indexSec])}
-                            />
-                          )
+                        {[0].includes(index) || (item?.length > 5 && [0, 1].includes(indexSec)) ? (
+                          <div className="flex-box table-edit-item-box-td-title">{itemSec}</div>
+                        ) : ['true', 'false'].includes(_.lowerCase(itemSec)) ? (
+                          <Switch
+                            defaultChecked={JSON.parse(itemSec)}
+                            onChange={(val) => onChange(JSON.stringify(val), [index, indexSec])}
+                          />
                         ) : (
-                          <div className="table-edit-item-box-td-title"></div>
+                          <Input
+                            defaultValue={itemSec}
+                            onChange={(e: any) => onChange(e?.target?.value, [index, indexSec])}
+                          />
                         )}
                       </div>
                     );
@@ -170,25 +208,44 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
         </div>
         {ifCanEdit ? null : (
           <div className="flex-box-center edit-table-footer">
+            {ifFetch ? (
+              <Select
+                options={options || []}
+                style={{ width: 200 }}
+                onChange={(e) => onFileChange(e)}
+              />
+            ) : null}
             <Upload {...onUploadExcel}>
               <Button type="default">上传 Excel / CSV</Button>
             </Upload>
             {sourceName?.indexOf('csv') > -1 ? (
               // @ts-ignore
               <CSVLink data={dataSource} filename={sourceName}>
-                <Button type="primary">导出</Button>
+                <Button type="primary">保存</Button>
               </CSVLink>
             ) : (
               <Button
                 type="primary"
                 onClick={() => {
-                  downFileFun(JSON.stringify(dataSource), sourceName);
+                  // 构造要导出的数据结构,不需要表头
+                  // const header = dataSource[0];
+                  // const body = dataSource?.slice(1);
+                  // const exportData = dataSource.map((item) => {
+                  //   return [item[0], item[1]];
+                  // });
+                  // 将数据转换为 worksheet 对象
+                  const worksheet = XLSX.utils.aoa_to_sheet(dataSource, { sheetStubs: false }); // 将 worksheet 对象添加到 workbook 中
+                  const workbook = XLSX.utils.book_new();
+                  XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+                  // 导出 Excel 文件
+                  XLSX.writeFile(workbook, sourceName);
+                  // downFileFun(JSON.stringify(dataSource), sourceName);
                 }}
               >
-                导出
+                保存
               </Button>
             )}
-            {!!sourceName ? (
+            {/* {!!sourceName ? (
               <Button
                 type="default"
                 danger
@@ -199,7 +256,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
               >
                 清理
               </Button>
-            ) : null}
+            ) : null} */}
           </div>
         )}
       </Spin>

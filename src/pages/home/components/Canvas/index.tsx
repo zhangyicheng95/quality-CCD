@@ -1227,7 +1227,7 @@ const Home: React.FC<any> = (props: any) => {
               )}
             >
               <div className="flex-box-center" style={{ height: '100%' }}>
-                {!parent?.[0] ? (
+                {!parent?.[0] && type !== 'button' ? (
                   '请重新绑定数据节点'
                 ) : type === 'line' ? (
                   <LineCharts
@@ -1380,10 +1380,10 @@ const Home: React.FC<any> = (props: any) => {
                     data={{
                       dataValue: dataValue || [],
                       fontSize,
-                      xColumns,
-                      yColumns,
+                      fetchType,
+                      xName,
                       yName,
-                      des_bordered,
+                      ifFetch,
                     }}
                   />
                 ) : type === 'tree' ? (
@@ -1729,6 +1729,7 @@ const Home: React.FC<any> = (props: any) => {
                       titleFontSize,
                       fetchType,
                       xName,
+                      yName,
                     }}
                   />
                 ) : type === 'connectStatus' ? (
@@ -3103,17 +3104,17 @@ const Home: React.FC<any> = (props: any) => {
                                   ? {
                                       width: `${
                                         (paramData?.contentData?.tabList?.length || 1) * 100
-                                      }%`,
+                                      }vw`,
                                       maxWidth: `${
                                         (paramData?.contentData?.tabList?.length || 1) * 100
-                                      }%`,
+                                      }vw`,
                                       height: '100%',
                                     }
                                   : {},
                                 paramData?.contentData?.tabList?.length > 1
                                   ? { height: 'calc(100% - 28px)' }
                                   : {},
-                                { marginLeft: `${-1 * tabNum * 100}%` },
+                                { marginLeft: `${-1 * tabNum * 100}vw` },
                               )}
                             >
                               {!_.isEmpty(gridHomeList) ? (
@@ -3246,15 +3247,15 @@ const Home: React.FC<any> = (props: any) => {
                         !!paramData?.contentData?.autoSize ||
                           !_.isBoolean(paramData?.contentData?.autoSize)
                           ? {
-                              width: `${(paramData?.contentData?.tabList?.length || 1) * 100}%`,
-                              maxWidth: `${(paramData?.contentData?.tabList?.length || 1) * 100}%`,
+                              width: `${(paramData?.contentData?.tabList?.length || 1) * 100}vw`,
+                              maxWidth: `${(paramData?.contentData?.tabList?.length || 1) * 100}vw`,
                               height: '100%',
                             }
                           : {},
                         paramData?.contentData?.tabList?.length > 1
                           ? { height: 'calc(100% - 28px)' }
                           : {},
-                        { marginLeft: `${-1 * tabNum * 100}%` },
+                        { marginLeft: `${-1 * tabNum * 100}vw` },
                       )}
                     >
                       {!_.isEmpty(gridHomeList) ? (
@@ -4044,7 +4045,40 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                   </Fragment>
                 ) : null}
-                {['table5'].includes(windowType) ? <Fragment></Fragment> : null}
+                {['table5'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`fetchType`}
+                      label={'http类型'}
+                      rules={[{ required: false, message: 'http类型' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
+                          value: item,
+                          label: _.toUpper(item),
+                        }))}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={`xName`}
+                      label={'接口地址'}
+                      rules={[{ required: false, message: '接口地址' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      name={`yName`}
+                      label={'获取类型'}
+                      rules={[{ required: false, message: '获取类型' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                    <Form.Item name="ifFetch" label="是否拉取列表" valuePropName="checked">
+                      <Switch />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
                 {['imgs'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item
@@ -5107,6 +5141,17 @@ const Home: React.FC<any> = (props: any) => {
                       rules={[{ required: false, message: '接口地址' }]}
                     >
                       <Input placeholder="接口地址" size="large" />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
+                {['paramControl'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`yName`}
+                      label={'列数'}
+                      rules={[{ required: false, message: '列数' }]}
+                    >
+                      <InputNumber />
                     </Form.Item>
                   </Fragment>
                 ) : null}

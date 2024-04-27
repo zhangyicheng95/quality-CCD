@@ -1682,7 +1682,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       }}
                       rules={[{ required: true, message: '位置信息' }]}
                     >
-                      <Measurement />
+                      <Measurement style={{ gap: 8 }} />
                     </Form.Item>
                     <Form.Item
                       name={`rotation`}
@@ -1859,7 +1859,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                   }
                                   rules={[{ required: true, message: '位置信息' }]}
                                 >
-                                  <Measurement />
+                                  <Measurement style={{ gap: 8 }} />
                                 </Form.Item>
                               );
                             }
@@ -1900,7 +1900,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                     value: item[1]?.height,
                                   },
                                 };
-                              } else if (_.isNumber(item[1]?.start)) {
+                              } else if (_.isObject(item[1]?.start) && _.isObject(item[1]?.end)) {
                                 // 线
                                 value = {
                                   x1: { alias: '起点x', value: item[1]?.start?.x },
@@ -1957,7 +1957,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                 }
                                 rules={[{ required: true, message: '位置信息' }]}
                               >
-                                <Measurement />
+                                <Measurement style={{ gap: 8 }} />
                               </Form.Item>
                             );
                           }

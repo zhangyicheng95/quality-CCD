@@ -32,7 +32,7 @@ const FastFunctionCharts: React.FC<Props> = (props: any) => {
       className={`${styles.fastFunctionCharts}`}
       style={{ fontSize: titleFontSize }}
     >
-      <CustomWindowBody title="便捷功能" style={{ fontSize }}>
+      <CustomWindowBody title="便捷功能" style={{ fontSize }} titleFontSize={titleFontSize}>
         <div className="fast-function-box">
           {[
             { title: '机械手取消', type: '1', color: 'success' },

@@ -56,7 +56,7 @@ const ModuleStatusCharts: React.FC<Props> = (props: any) => {
       className={`${styles.connectStatusCharts}`}
       style={{ fontSize: titleFontSize }}
     >
-      <CustomWindowBody title="模块状态" style={{ fontSize }}>
+      <CustomWindowBody title="模块状态" style={{ fontSize }} titleFontSize={titleFontSize}>
         {(dataValue || [])?.map?.((item: any, index: number) => {
           const { title, value } = item;
           return (

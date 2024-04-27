@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '../../index.module.less';
 import * as _ from 'lodash';
 import { Form, message, Select } from 'antd';
@@ -14,33 +14,44 @@ interface Props {
 const FormulaCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let { dataValue, titleFontSize = 24, fontSize = 24, fetchType, xName } = data;
-  if (process.env.NODE_ENV === 'development') {
-    dataValue = {
-      testFormula: [
-        { label: '文件1', value: 'D:/data.file' },
-        { label: '文件2', value: 'D:/data.file' },
-      ],
-      sortingFormula: [
-        { label: '文件1', value: 'D:/data.file' },
-        { label: '文件2', value: 'D:/data.file' },
-      ],
-    };
-  }
+
   const [form] = Form.useForm();
-  useEffect(() => {}, []);
+  const [options, setOptions] = useState({
+    testFormula: [],
+    sortingFormula: [],
+  });
+  useEffect(() => {
+    btnFetch(fetchType, xName, { type: 'formula', method: 'read' }).then((res: any) => {
+      if (!!res && res.code === 'SUCCESS') {
+        setOptions(res.data);
+      } else {
+        message.error(res?.msg || res?.message || '接口异常');
+      }
+    });
+  }, []);
+  useEffect(() => {
+    console.log(123123123);
+    form?.setFieldsValue({
+      testFormula: undefined,
+      sortingFormula: undefined,
+      ...(!!dataValue ? dataValue : {}),
+    });
+  }, []);
   const onChange = () => {
     form
       .validateFields()
       .then((values: any) => {
         if (Object.values(values).filter(Boolean)?.length > 1) {
-          btnFetch(fetchType, xName, { data: { type: 'formula', value: values } }).then(
-            (res: any) => {
-              if (!!res && res.code === 'SUCCESS') {
-              } else {
-                message.error(res?.msg || res?.message || '接口异常');
-              }
-            },
-          );
+          btnFetch(fetchType, xName, {
+            type: 'formula',
+            method: 'write',
+            value: values,
+          }).then((res: any) => {
+            if (!!res && res.code === 'SUCCESS') {
+            } else {
+              message.error(res?.msg || res?.message || '接口异常');
+            }
+          });
         }
       })
       .catch((err: any) => {
@@ -55,7 +66,7 @@ const FormulaCharts: React.FC<Props> = (props: any) => {
       className={`${styles.formulaCharts}`}
       style={{ fontSize: titleFontSize }}
     >
-      <CustomWindowBody title="配方" style={{ fontSize }}>
+      <CustomWindowBody title="配方" style={{ fontSize }} titleFontSize={titleFontSize}>
         <Form form={form} scrollToFirstError>
           <Form.Item
             name={`testFormula`}
@@ -63,7 +74,7 @@ const FormulaCharts: React.FC<Props> = (props: any) => {
             rules={[{ required: false, message: '检测配方' }]}
           >
             <Select
-              options={dataValue?.testFormula || []}
+              options={options?.testFormula || []}
               style={{ width: '100%' }}
               onChange={(e) => onChange()}
             />
@@ -75,7 +86,7 @@ const FormulaCharts: React.FC<Props> = (props: any) => {
             style={{ marginBottom: 0 }}
           >
             <Select
-              options={dataValue?.sortingFormula || []}
+              options={options?.sortingFormula || []}
               style={{ width: '100%' }}
               onChange={(e) => onChange()}
             />

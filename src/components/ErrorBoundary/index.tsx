@@ -12,13 +12,11 @@ export default class ErrorBoundary extends React.PureComponent {
   }
 
   static getDerivedStateFromError(error: any) {
-    window.location.reload();
     return { hasError: true };
   }
 
   componentDidCatch(error: any, info: any) {
     console.error(error);
-    window.location.reload();
     if (String(error).includes('Loading chunk')) {
       window.location.reload();
     }

@@ -50,6 +50,29 @@ const OrderInformationCharts: React.FC<Props> = (props: any) => {
       dataIndex: 'theoreticalNumber',
       key: 'theoreticalNumber',
     },
+    {
+      title: '操作',
+      dataIndex: 'operation',
+      key: 'operation',
+      width: '150px',
+      render: (text: any, record: any, index: number) => {
+        return (
+          <Button
+            type="link"
+            onClick={() => {
+              const centerList = JSON.parse(
+                localStorage.getItem(`${id}-orderInformationList`) || '[]',
+              );
+              _.pullAt(centerList, index);
+              localStorage.setItem(`${id}-orderInformationList`, JSON.stringify(centerList));
+              setTableDataSource(centerList);
+            }}
+          >
+            删除
+          </Button>
+        );
+      },
+    },
   ];
   const onCancel = () => {
     form.resetFields();
@@ -58,20 +81,18 @@ const OrderInformationCharts: React.FC<Props> = (props: any) => {
   const onChange = () => {
     const list = JSON.parse(localStorage.getItem(`${id}-orderInformationList`) || '[]');
     const nextInfo = list?.[0] || undefined;
-    console.log(list);
-    console.log(nextInfo);
-    _.pullAt(list, 0);
-    setFormData(nextInfo);
-    localStorage.setItem(`${id}-orderInformationList`, JSON.stringify(list));
     if (!!nextInfo) {
       btnFetch(fetchType, xName, { type: 'orderInfo', value: nextInfo }).then((res: any) => {
         if (!!res && res.code === 'SUCCESS') {
+          _.pullAt(list, 0);
+          setFormData(nextInfo);
+          localStorage.setItem(`${id}-orderInformationList`, JSON.stringify(list));
         } else {
           message.error(res?.msg || res?.message || '接口异常');
         }
       });
     } else {
-      message.error('已经是最后一个了');
+      message.error('无预设单号');
     }
   };
 
@@ -84,6 +105,7 @@ const OrderInformationCharts: React.FC<Props> = (props: any) => {
       <CustomWindowBody
         title="单号信息"
         style={{ fontSize }}
+        titleFontSize={titleFontSize}
         headerRight={
           <div className="flex-box">
             <Button
@@ -94,7 +116,7 @@ const OrderInformationCharts: React.FC<Props> = (props: any) => {
                 setTableDataSource(list);
               }}
             >
-              单号预输入
+              预设单号
             </Button>
             <Button
               type="link"
@@ -102,7 +124,7 @@ const OrderInformationCharts: React.FC<Props> = (props: any) => {
                 onChange();
               }}
             >
-              启用下一单号
+              切换订单
             </Button>
           </div>
         }
@@ -142,18 +164,19 @@ const OrderInformationCharts: React.FC<Props> = (props: any) => {
                   label={'晶棒编号'}
                   rules={[{ required: true, message: '晶棒编号' }]}
                 >
-                  <InputNumber min={0} />
+                  <Input />
                 </Form.Item>
                 <Form.Item
                   name={`cuttingNumber`}
                   label={'切割编号'}
                   rules={[{ required: true, message: '切割编号' }]}
                 >
-                  <InputNumber min={0} />
+                  <Input />
                 </Form.Item>
                 <Form.Item
                   name={`theoreticalNumber`}
                   label={'理论片数'}
+                  initialValue={5000}
                   rules={[{ required: true, message: '理论片数' }]}
                 >
                   <InputNumber min={0} />

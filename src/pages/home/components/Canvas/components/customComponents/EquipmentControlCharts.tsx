@@ -24,6 +24,7 @@ const EquipmentControlCharts: React.FC<Props> = (props: any) => {
     loading,
     start,
     stop,
+    reStart,
     fetchType,
     xName,
   } = data;
@@ -41,7 +42,7 @@ const EquipmentControlCharts: React.FC<Props> = (props: any) => {
       className={`${styles.equipmentControlCharts}`}
       style={{ fontSize: titleFontSize }}
     >
-      <CustomWindowBody title="设备控制" loading={loading}>
+      <CustomWindowBody title="设备控制" loading={loading} titleFontSize={titleFontSize}>
         <div ref={dom} className="flex-box equipment-btn-box" style={{ fontSize }}>
           <div
             className="flex-box-center equipment-btn-box-item"
@@ -64,12 +65,13 @@ const EquipmentControlCharts: React.FC<Props> = (props: any) => {
           <div
             className="flex-box-center equipment-btn-box-item"
             onClick={() => {
-              btnFetch(fetchType, xName, { type: 'control', value: 0 }).then((res: any) => {
-                if (!!res && res.code === 'SUCCESS') {
-                } else {
-                  message.error(res?.msg || res?.message || '接口异常');
-                }
-              });
+              !!reStart && reStart?.();
+              // btnFetch(fetchType, xName, { type: 'control', value: 0 }).then((res: any) => {
+              //   if (!!res && res.code === 'SUCCESS') {
+              //   } else {
+              //     message.error(res?.msg || res?.message || '接口异常');
+              //   }
+              // });
             }}
           >
             <div

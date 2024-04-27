@@ -15,6 +15,7 @@ interface Props {
   max?: number;
   min?: number;
   lineNum?: number;
+  style?: any;
 }
 
 const Measurement: React.FC<Props> = (props: any) => {
@@ -30,6 +31,7 @@ const Measurement: React.FC<Props> = (props: any) => {
     max = 100000,
     min = -100000,
     lineNum = 4,
+    style = null,
   } = props;
   const refnum_0 = useRef();
   const refnum_1 = useRef();
@@ -101,9 +103,9 @@ const Measurement: React.FC<Props> = (props: any) => {
       }
     }
   };
-
+  console.log(style);
   return (
-    <div className={`flex-box ${styles['roi-mark']}`}>
+    <div className={`flex-box ${styles['roi-mark']}`} style={style ? { ...style } : {}}>
       {Object.entries(selfValue)?.map?.((item: any, index: number) => {
         if (!item[1]) return null;
         const { alias, value } = item[1];
@@ -111,7 +113,10 @@ const Measurement: React.FC<Props> = (props: any) => {
           <div
             key={index}
             className="flex-box-center item-input-box"
-            style={{ minWidth: `calc(${100 / lineNum}% - 24px)` }}
+            style={{
+              minWidth: `calc(${100 / lineNum}% - 24px)`,
+              width: index % 4 === 3 ? '25%' : `calc(${100 / lineNum}% - 24px)`,
+            }}
           >
             <div
               className={`input-name ${focus[`refnum_${index}`] ? 'focus' : ''} ${
