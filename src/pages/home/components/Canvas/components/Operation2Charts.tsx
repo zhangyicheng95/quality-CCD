@@ -44,13 +44,17 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     xName = '',
     fontSize,
     ifUpdateProject,
+    ifUpdatetoInitParams,
     ifFetch,
     listType,
     blockType,
     blockTypeLines = 2,
     ifPopconfirm,
-    showLabel = true,
+    showLabel,
   } = data;
+  if (!_.isBoolean(showLabel)) {
+    showLabel = true;
+  }
   // if (process.env.NODE_ENV === 'development') {
   //     started = true;
   // }
@@ -124,7 +128,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
   const widgetChange = (key: string, value: any) => {
     setConfigList((prev: any) =>
       (prev || [])?.map?.((item: any) => {
-        if (item.name === key) {
+        if ((item.name || item.id) === key) {
           if (!!value?.widget?.type || item?.widget?.type === 'codeEditor') {
             setFieldsValue({ [key]: value?.value });
             return {
@@ -213,9 +217,14 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                   };
                 });
                 return Object.assign({}, node, {
-                  config: Object.assign({}, config, {
-                    execParams: obj,
-                  }),
+                  config: Object.assign(
+                    {},
+                    config,
+                    {
+                      execParams: obj,
+                    },
+                    ifUpdatetoInitParams ? { initParams: obj } : {},
+                  ),
                 });
               }
               return node;
@@ -252,8 +261,11 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     init();
   };
   const initItem = (item: any) => {
-    const { name, alias, widget = {}, addType, show, locked } = item;
+    let { name, alias, widget = {}, addType, show, locked } = item;
     const { type } = widget;
+    if (!name) {
+      name = item?.id;
+    }
     // let optionList: any = [];
     // Object.values(selectedOption)?.forEach(option => {
     //     optionList = optionList.concat(option);
@@ -261,7 +273,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     // if (optionList?.filter((i: any) => i.name === name)?.length) return null;
     return (
       <div
-        className={`${type === 'TagRadio' ? '' : 'flex-box'} param-item ${
+        className={`${type === 'TagRadio' ? '' : 'flex-box-start'} param-item ${
           blockType === 'waterafall' ? '' : listType
         }`}
         key={`${id}@$@${name}`}
@@ -288,8 +300,8 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
           style={type === 'TagRadio' ? { width: 'calc(100% - 16px)' } : {}}
         >
           <FormatWidgetToDom
-            key={item?.name}
-            id={item?.name}
+            key={name}
+            id={name}
             config={[item?.name, item]}
             selectedOption={selectedOption}
             setSelectedOption={setSelectedOption}

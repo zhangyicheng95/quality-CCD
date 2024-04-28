@@ -4,7 +4,7 @@ import { Button, Form, Input, message, Select, Spin, Switch, Upload } from 'antd
 import _ from 'lodash';
 import * as XLSX from 'xlsx';
 import styles from '../index.module.less';
-import { downFileFun } from '@/utils/utils';
+import { downFileFun, readTextFile, stringToNum } from '@/utils/utils';
 import Papa from 'papaparse';
 import { CSVLink } from 'react-csv';
 import { btnFetch } from '@/services/api';
@@ -42,7 +42,13 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
   }, [ifFetch, yName]);
 
   useEffect(() => {
-    if (!!dataValue && !!localStorage.getItem('parentOrigin')) {
+    if (!!dataValue && dataValue?.length > 5 && !!localStorage.getItem('parentOrigin')) {
+      fetch(`file://${dataValue}`)
+        .then((response) => {
+          response.text();
+        })
+        .then((data) => console.log('50:', data));
+
       const messageFun = (e: any) => {
         if (e.data.from === 'read' && e.data.name === 'tableEditReadFile') {
           console.log('TableEditCharts收到消息', e.data.payload);
@@ -65,9 +71,11 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
     showUploadList: false,
     multiple: false,
     beforeUpload(file: any) {
+      console.log('file', file);
       setLoading(true);
       const reader = new FileReader();
       reader.onload = (res: any) => {
+        console.log('78', res);
         try {
           /****************解析excel******************/
           const workbook = XLSX.read(res.target.result, { type: 'binary' });
@@ -145,20 +153,251 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
     downFileFun(dataSource, sourceName);
   };
   const onFileChange = (val: string) => {
-    console.log(val);
     if (!!val && !!localStorage.getItem('parentOrigin')) {
-      const messageFun = (e: any) => {
-        if (e.data.from === 'read' && e.data.name === 'tableEditReadFile') {
-          console.log('TableEditCharts收到消息', e.data.payload);
-          setDataSource(JSON.parse(e.data.payload || '[]'));
-        }
-      };
-      window?.addEventListener?.('message', messageFun);
+      readTextFile(val, (text: any) => {
+        const list = text.Sheets?.Sheet1;
+        let maxRow = 0;
+        let maxCol = 0;
+        (Object.entries(list) || [])?.forEach((item: any) => {
+          if (item[0]?.indexOf('A') > -1) {
+            const num = item[0]?.split('A')?.[1];
+            if (maxRow < num) {
+              maxRow = num;
+            }
+          }
+          if (item[0]?.indexOf('A') > -1) {
+            maxCol = 1;
+          } else if (item[0]?.indexOf('B') > -1) {
+            maxCol = 2;
+          } else if (item[0]?.indexOf('C') > -1) {
+            maxCol = 3;
+          } else if (item[0]?.indexOf('D') > -1) {
+            maxCol = 4;
+          } else if (item[0]?.indexOf('E') > -1) {
+            maxCol = 5;
+          } else if (item[0]?.indexOf('F') > -1) {
+            maxCol = 6;
+          } else if (item[0]?.indexOf('G') > -1) {
+            maxCol = 7;
+          } else if (item[0]?.indexOf('H') > -1) {
+            maxCol = 8;
+          } else if (item[0]?.indexOf('I') > -1) {
+            maxCol = 9;
+          } else if (item[0]?.indexOf('J') > -1) {
+            maxCol = 10;
+          } else if (item[0]?.indexOf('K') > -1) {
+            maxCol = 11;
+          } else if (item[0]?.indexOf('L') > -1) {
+            maxCol = 12;
+          } else if (item[0]?.indexOf('M') > -1) {
+            maxCol = 13;
+          } else if (item[0]?.indexOf('N') > -1) {
+            maxCol = 14;
+          } else if (item[0]?.indexOf('O') > -1) {
+            maxCol = 15;
+          } else if (item[0]?.indexOf('P') > -1) {
+            maxCol = 16;
+          } else if (item[0]?.indexOf('Q') > -1) {
+            maxCol = 17;
+          } else if (item[0]?.indexOf('R') > -1) {
+            maxCol = 18;
+          } else if (item[0]?.indexOf('S') > -1) {
+            maxCol = 19;
+          } else if (item[0]?.indexOf('T') > -1) {
+            maxCol = 20;
+          } else if (item[0]?.indexOf('U') > -1) {
+            maxCol = 21;
+          } else if (item[0]?.indexOf('V') > -1) {
+            maxCol = 22;
+          } else if (item[0]?.indexOf('W') > -1) {
+            maxCol = 23;
+          } else if (item[0]?.indexOf('X') > -1) {
+            maxCol = 24;
+          } else if (item[0]?.indexOf('Y') > -1) {
+            maxCol = 25;
+          } else if (item[0]?.indexOf('Z') > -1) {
+            maxCol = 26;
+          }
+        });
+        let jsonData: any = new Array(maxRow).fill(new Array(maxCol).fill(undefined));
+        (Object.entries(list) || [])?.forEach((item: any) => {
+          if (item[0]?.indexOf('A') > -1) {
+            const rowNum = item[0]?.split('A')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('A') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('B') > -1) {
+            const rowNum = item[0]?.split('B')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('B') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('C') > -1) {
+            const rowNum = item[0]?.split('C')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('C') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('D') > -1) {
+            const rowNum = item[0]?.split('D')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('D') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('E') > -1) {
+            const rowNum = item[0]?.split('E')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('E') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('F') > -1) {
+            const rowNum = item[0]?.split('F')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('F') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('G') > -1) {
+            const rowNum = item[0]?.split('G')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('G') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('H') > -1) {
+            const rowNum = item[0]?.split('H')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('H') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('I') > -1) {
+            const rowNum = item[0]?.split('I')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('I') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('J') > -1) {
+            const rowNum = item[0]?.split('J')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('J') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('K') > -1) {
+            const rowNum = item[0]?.split('K')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('K') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('L') > -1) {
+            const rowNum = item[0]?.split('L')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('L') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('M') > -1) {
+            const rowNum = item[0]?.split('M')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('M') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('N') > -1) {
+            const rowNum = item[0]?.split('N')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('N') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('O') > -1) {
+            const rowNum = item[0]?.split('O')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('O') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('P') > -1) {
+            const rowNum = item[0]?.split('P')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('P') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('Q') > -1) {
+            const rowNum = item[0]?.split('Q')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('Q') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('R') > -1) {
+            const rowNum = item[0]?.split('R')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('R') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('S') > -1) {
+            const rowNum = item[0]?.split('S')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('S') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('T') > -1) {
+            const rowNum = item[0]?.split('T')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('T') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('U') > -1) {
+            const rowNum = item[0]?.split('U')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('U') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('V') > -1) {
+            const rowNum = item[0]?.split('V')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('V') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('W') > -1) {
+            const rowNum = item[0]?.split('W')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('W') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('X') > -1) {
+            const rowNum = item[0]?.split('X')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('X') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('Y') > -1) {
+            const rowNum = item[0]?.split('Y')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('Y') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          } else if (item[0]?.indexOf('Z') > -1) {
+            const rowNum = item[0]?.split('Z')[1];
+            if (!jsonData[rowNum - 1]) {
+              jsonData[rowNum - 1] = [];
+            }
+            jsonData[rowNum - 1][stringToNum('Z') - 1] = [!!item[1]?.v ? item[1]?.v : ` `];
+          }
+        });
+        jsonData = jsonData.filter(Boolean);
+        console.log('格式化的', jsonData);
+        setDataSource(jsonData);
+        setSourceName(val);
+        setLoading(false);
+      });
 
-      window?.parent?.postMessage?.(
-        { type: 'readFile', name: 'tableEditReadFile', path: val },
-        localStorage.getItem('parentOrigin') || '',
-      );
+      // const messageFun = (e: any) => {
+      //   if (e.data.from === 'read' && e.data.name === 'tableEditReadFile') {
+      //     console.log('TableEditCharts收到消息', e.data.payload);
+      //     setDataSource(JSON.parse(e.data.payload || '[]'));
+      //   }
+      // };
+      // window?.addEventListener?.('message', messageFun);
+
+      // window?.parent?.postMessage?.(
+      //   { type: 'readFile', name: 'tableEditReadFile', path: val },
+      //   localStorage.getItem('parentOrigin') || '',
+      // );
     } else {
       setDataSource([]);
     }

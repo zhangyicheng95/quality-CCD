@@ -1,5 +1,6 @@
 import { message } from 'antd';
 import * as _ from 'lodash';
+import * as XLSX from 'xlsx';
 const Base64 = require('base-64');
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
@@ -71,6 +72,30 @@ export function formatTimeToDate(date = 0) {
   } else {
     return newDate / (60 * 60 * 24) + '天';
   }
+}
+
+/**
+ * XMLHttpRequest.open() 初始化请求参数
+ * XMLHttpRequest.send() 发送网络请求
+ * XMLHttpRequest.onload() 监听请求结果
+ * XMLHttpRequest.responseType 对响应结果进行声明，来对结果自动进行处理(text,json,blob,document)
+ * XMLHttpRequest.onerror() 请求中断等错误发生时的处理
+ * XMLHttpRequest.status 为HTTP状态码 如 404/422/403等，当为200时为正确响应
+ * XMLHttpRequest.statusText HTTP状态码内容，200时为ok,404 为Not Found
+ * XMLHttpRequest.response 服务器端响应的内容
+ */
+export function readTextFile(filePath: string, callback?: any) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('get', filePath, true);
+  xhr.responseType = 'arraybuffer';
+  xhr.onload = function (e) {
+    if (xhr.status == 200) {
+      var data = new Uint8Array(xhr.response);
+      var workbook = XLSX.read(data, { type: 'array' });
+      if (callback) callback(workbook);
+    }
+  };
+  xhr.send();
 }
 
 /** *

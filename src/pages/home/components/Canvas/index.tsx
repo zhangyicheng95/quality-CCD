@@ -1125,6 +1125,7 @@ const Home: React.FC<any> = (props: any) => {
           basicInfoData = [{ id: guid(), name: '', value: '' }],
           ifNeedClear,
           ifUpdateProject,
+          ifUpdatetoInitParams,
           magnifierSize,
           listType,
           valueColor,
@@ -1582,6 +1583,7 @@ const Home: React.FC<any> = (props: any) => {
                       fontSize,
                       xName,
                       ifUpdateProject,
+                      ifUpdatetoInitParams,
                       ifFetch,
                       listType,
                       blockType,
@@ -2361,6 +2363,7 @@ const Home: React.FC<any> = (props: any) => {
       headerBackgroundColor = 'default',
       ifNeedClear,
       ifUpdateProject,
+      ifUpdatetoInitParams,
       magnifierSize,
       logSize,
       listType,
@@ -2477,6 +2480,7 @@ const Home: React.FC<any> = (props: any) => {
             headerBackgroundColor,
             ifNeedClear,
             ifUpdateProject,
+            ifUpdatetoInitParams,
             magnifierSize,
             logSize,
             listType,
@@ -2572,6 +2576,7 @@ const Home: React.FC<any> = (props: any) => {
               headerBackgroundColor,
               ifNeedClear,
               ifUpdateProject,
+              ifUpdatetoInitParams,
               magnifierSize,
               logSize,
               listType,
@@ -2672,6 +2677,7 @@ const Home: React.FC<any> = (props: any) => {
       headerBackgroundColor: 'default',
       ifNeedClear: false,
       ifUpdateProject: false,
+      ifUpdatetoInitParams: false,
       magnifierSize: 4,
       logSize: 50,
       listType: 'line',
@@ -4628,7 +4634,15 @@ const Home: React.FC<any> = (props: any) => {
                         ) : null}
                         <Form.Item
                           name="ifUpdateProject"
-                          label="是否同步方案"
+                          label="同步方案"
+                          initialValue={false}
+                          valuePropName="checked"
+                        >
+                          <Switch />
+                        </Form.Item>
+                        <Form.Item
+                          name="ifUpdatetoInitParams"
+                          label="同步初始化参数"
                           initialValue={false}
                           valuePropName="checked"
                         >

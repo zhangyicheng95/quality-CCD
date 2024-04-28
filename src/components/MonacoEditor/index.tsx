@@ -118,10 +118,9 @@ const MonacoEditor: React.FC<Props> = (props) => {
       open={visible}
       onOk={() => {
         try {
-          JSON.parse(editorValue);
           onOk({
             id,
-            value: editorValue,
+            value: editorLanguage === 'json' ? JSON.parse(editorValue) : editorValue,
             language: editorLanguage,
           });
         } catch (err) {

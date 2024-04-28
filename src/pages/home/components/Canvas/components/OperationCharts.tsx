@@ -19,7 +19,10 @@ interface Props {
 
 const OperationCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id, started } = props;
-  const { operationList, dataValue, fontSize, showLabel = true, ifPopconfirm } = data;
+  let { operationList, dataValue, fontSize, showLabel, ifPopconfirm } = data;
+  if (!_.isBoolean(showLabel)) {
+    showLabel = true;
+  }
   const [form] = Form.useForm();
   const { validateFields, resetFields } = form;
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -188,7 +191,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
               const { name, alias, widget = {} } = item;
               const { type } = widget;
               return (
-                <div className="flex-box param-item" key={`${id}@$@${name}`}>
+                <div className="flex-box-start param-item" key={`${id}@$@${name}`}>
                   {showLabel ? (
                     <div className="title-box">
                       <TooltipDiv
