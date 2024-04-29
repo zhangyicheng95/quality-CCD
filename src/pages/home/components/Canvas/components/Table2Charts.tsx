@@ -30,7 +30,6 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     bodyPaddingSize,
   } = data;
   if (process.env.NODE_ENV === 'development') {
-    reverse = false;
     dataValue = [
       {
         name: '产品型号',
@@ -140,7 +139,6 @@ const Table2Charts: React.FC<Props> = (props: any) => {
       },
     ];
   }
-  reverse = false;
   const ifCanEdit = useMemo(() => {
     return location.hash?.indexOf('edit') > -1;
   }, [location.hash]);
