@@ -8,9 +8,11 @@ import {
   DownloadOutlined,
   ExpandOutlined,
   LeftCircleOutlined,
+  LockOutlined,
   RightCircleOutlined,
   SwapOutlined,
   SyncOutlined,
+  UnlockOutlined,
 } from '@ant-design/icons';
 import html2canvas from 'html2canvas';
 import TooltipDiv from '@/components/TooltipDiv';
@@ -37,7 +39,9 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     magnifierWidth,
     magnifierHeight,
     notLocalStorage,
-    onImgChange,
+    onImgChange = null,
+    onLockImgChange = null,
+    lockImg = false,
   } = data;
 
   if (process.env.NODE_ENV === 'development' && !dataValue) {
@@ -377,139 +381,147 @@ const ImgCharts: React.FC<Props> = (props: any) => {
   };
   return (
     <div id={`echart-${id}`} className={`flex-box ${styles.imgCharts}`} style={{ fontSize }}>
-      {dataValue?.status == 'NG' || dataValue?.status?.value == 'NG' ? null : (
+      <div
+        className="flex-box img-box-mark-body"
+        style={showImgList ? { height: 'calc(100% - 50px)' } : { height: '100%' }}
+        ref={dom}
+      >
         <div
-          className="flex-box img-box-mark-body"
-          style={showImgList ? { height: 'calc(100% - 50px)' } : { height: '100%' }}
-          ref={dom}
+          className={`flex-box-center img-box-mark-right`}
+          style={markNumber ? { width: 'calc(100% - 20px)' } : { width: '100%' }}
         >
-          <div
-            className={`flex-box-center img-box-mark-right`}
-            style={markNumber ? { width: 'calc(100% - 20px)' } : { width: '100%' }}
-          >
-            {!!source || !!defaultImg ? (
-              <Fragment>
+          {!!source || !!defaultImg ? (
+            <Fragment>
+              <div
+                className="img-box"
+                style={
+                  chartSize ? { width: '100%', height: 'auto' } : { width: 'auto', height: '100%' }
+                }
+                ref={imgBoxRef}
+              >
                 <div
-                  className="img-box"
+                  className="ant-image-mask"
                   style={
                     chartSize
                       ? { width: '100%', height: 'auto' }
                       : { width: 'auto', height: '100%' }
                   }
-                  ref={imgBoxRef}
-                >
-                  <div
-                    className="ant-image-mask"
-                    style={
-                      chartSize
-                        ? { width: '100%', height: 'auto' }
-                        : { width: 'auto', height: '100%' }
-                    }
-                  />
-                  <Image
-                    src={_.isString(source) ? source : source?.url || defaultImg}
-                    alt="logo"
-                    style={
-                      chartSize
-                        ? { width: '100%', height: 'auto' }
-                        : { width: 'auto', height: '100%' }
-                    }
-                    preview={false}
-                  />
-                  <div
-                    className="mask"
-                    style={
-                      !!magnifierWidth && !!magnifierHeight
-                        ? {
-                            width: magnifierWidth,
-                            height: magnifierHeight,
-                          }
-                        : {}
-                    }
-                  />
-                </div>
+                />
+                <Image
+                  src={_.isString(source) ? source : source?.url || defaultImg}
+                  alt="logo"
+                  style={
+                    chartSize
+                      ? { width: '100%', height: 'auto' }
+                      : { width: 'auto', height: '100%' }
+                  }
+                  preview={false}
+                />
                 <div
-                  className="flex-box img-box-btn-box"
-                  style={!!ifShowHeader ? { display: 'flex', top: '-26px' } : {}}
-                >
-                  {notLocalStorage ? (
-                    !!onImgChange ? (
-                      <Button
-                        className="img-box-btn-item"
-                        // className="flex-box"
-                        // style={{ gap: 4 }}
-                        type={'link'}
-                        icon={<SwapOutlined />}
-                        onClick={() => {
-                          onImgChange && onImgChange?.();
-                        }}
-                      >
-                        切换
-                      </Button>
-                    ) : null
-                  ) : (
-                    <Fragment>
-                      <div
-                        className={`${selectedNum === 0 ? 'greyColorStyle' : ''} prev-btn`}
-                        onClick={() => onPrev()}
-                      >
-                        {'< '}
-                      </div>
-                      {`${selectedNum + 1}/${urlList.current?.length}`}
-                      <div
-                        className={`next-btn ${
-                          selectedNum + 1 === urlList.current.length ? 'greyColorStyle' : ''
-                        }`}
-                        onClick={() => onNext()}
-                      >
-                        {' >'}
-                      </div>
-                    </Fragment>
-                  )}
-                  <DownloadOutlined
+                  className="mask"
+                  style={
+                    !!magnifierWidth && !!magnifierHeight
+                      ? {
+                          width: magnifierWidth,
+                          height: magnifierHeight,
+                        }
+                      : {}
+                  }
+                />
+              </div>
+              <div
+                className="flex-box img-box-btn-box"
+                style={!!ifShowHeader ? { display: 'flex', top: '-26px' } : {}}
+              >
+                {!!onLockImgChange ? (
+                  <Button
                     className="img-box-btn-item"
+                    type={'link'}
+                    icon={lockImg ? <UnlockOutlined /> : <LockOutlined />}
                     onClick={() => {
-                      const imgBox = dom?.current?.querySelector('.ant-image-img');
-                      html2canvas(imgBox, {
-                        scale: 1,
-                        useCORS: true, // 是否尝试使⽤CORS从服务器加载图像
-                        allowTaint: false, // 是否允许跨域图像。会污染画布，导致⽆法使⽤canvas.toDataURL ⽅法
-                      }).then((canvas: any) => {
-                        let imageDataURL = canvas.toDataURL('image/png', { quality: 1 });
-                        var link = document.createElement('a');
-                        link.href = imageDataURL;
-                        link.download = `output.png`;
-                        link.click();
-                      });
+                      onLockImgChange?.();
                     }}
-                  />
-                  <ExpandOutlined className="img-box-btn-item" onClick={() => setVisible(true)} />
-                </div>
-              </Fragment>
-            ) : (
-              <Skeleton.Image active={true} />
-            )}
-          </div>
-          <div style={{ display: 'none' }}>
-            <Image.PreviewGroup
-              preview={{
-                visible,
-                current: urlList.current.length - 1,
-                onVisibleChange: (vis) => setVisible(vis),
-              }}
-            >
-              {(urlList.current || [])?.map?.((item: any, index: number) => {
-                if (_.isString(item)) {
-                  return <Image src={item} alt={item} key={`${id}-${item}-${index}`} />;
-                } else if (!!item.url) {
-                  return <Image src={item.url} alt={item.url} key={`${id}-${item.url}-${index}`} />;
-                }
-                return null;
-              })}
-            </Image.PreviewGroup>
-          </div>
+                  >
+                    {lockImg ? '解冻图片' : '冻结图片'}
+                  </Button>
+                ) : null}
+                {notLocalStorage ? (
+                  !!onImgChange ? (
+                    <Button
+                      className="img-box-btn-item"
+                      // className="flex-box"
+                      // style={{ gap: 4 }}
+                      type={'link'}
+                      icon={<SwapOutlined />}
+                      onClick={() => {
+                        onImgChange && onImgChange?.();
+                      }}
+                    >
+                      切换
+                    </Button>
+                  ) : null
+                ) : (
+                  <Fragment>
+                    <div
+                      className={`${selectedNum === 0 ? 'greyColorStyle' : ''} prev-btn`}
+                      onClick={() => onPrev()}
+                    >
+                      {'< '}
+                    </div>
+                    {`${selectedNum + 1}/${urlList.current?.length}`}
+                    <div
+                      className={`next-btn ${
+                        selectedNum + 1 === urlList.current.length ? 'greyColorStyle' : ''
+                      }`}
+                      onClick={() => onNext()}
+                    >
+                      {' >'}
+                    </div>
+                  </Fragment>
+                )}
+                <DownloadOutlined
+                  className="img-box-btn-item"
+                  onClick={() => {
+                    const imgBox = dom?.current?.querySelector('.ant-image-img');
+                    html2canvas(imgBox, {
+                      scale: 1,
+                      useCORS: true, // 是否尝试使⽤CORS从服务器加载图像
+                      allowTaint: false, // 是否允许跨域图像。会污染画布，导致⽆法使⽤canvas.toDataURL ⽅法
+                    }).then((canvas: any) => {
+                      let imageDataURL = canvas.toDataURL('image/png', { quality: 1 });
+                      var link = document.createElement('a');
+                      link.href = imageDataURL;
+                      link.download = `output.png`;
+                      link.click();
+                    });
+                  }}
+                />
+                <ExpandOutlined className="img-box-btn-item" onClick={() => setVisible(true)} />
+              </div>
+            </Fragment>
+          ) : (
+            <Skeleton.Image active={true} />
+          )}
         </div>
-      )}
+        <div style={{ display: 'none' }}>
+          <Image.PreviewGroup
+            preview={{
+              visible,
+              current: urlList.current.length - 1,
+              onVisibleChange: (vis) => setVisible(vis),
+            }}
+          >
+            {(urlList.current || [])?.map?.((item: any, index: number) => {
+              if (_.isString(item)) {
+                return <Image src={item} alt={item} key={`${id}-${item}-${index}`} />;
+              } else if (!!item.url) {
+                return <Image src={item.url} alt={item.url} key={`${id}-${item.url}-${index}`} />;
+              }
+              return null;
+            })}
+          </Image.PreviewGroup>
+        </div>
+      </div>
       {showImgList ? (
         <div className="flex-box-center img-box-footer-list">
           {(urlList.current.slice(!!imgListNum ? -imgListNum : -6) || [])?.map?.(

@@ -29,8 +29,10 @@ import {
   ExclamationCircleOutlined,
   LoadingOutlined,
   MinusOutlined,
+  MinusSquareOutlined,
   PlayCircleOutlined,
   PlusOutlined,
+  PlusSquareOutlined,
   ReloadOutlined,
   SaveOutlined,
   SettingOutlined,
@@ -117,7 +119,34 @@ import OutputAreaCharts from './components/customComponents/OutputAreaCharts';
 import EquipmentControlCharts from './components/customComponents/EquipmentControlCharts';
 import OrderInformationCharts from './components/customComponents/OrderInformationCharts';
 import EquipmentInfoCharts from './components/customComponents/EquipmentInfoCharts';
+import SegmentSwitchCharts from './components/SegmentSwitchCharts';
 
+const leftPanelDataLocal = [
+  {
+    key: 'main',
+    title: '监控窗口',
+    open: true,
+    children: windowTypeList,
+  },
+  {
+    key: 'basic',
+    title: '基础窗口',
+    open: true,
+    children: basicWindowList,
+  },
+  {
+    key: 'coating',
+    title: '背景涂层',
+    open: true,
+    children: simulatedCoatingList,
+  },
+  {
+    key: 'custom',
+    title: '定制窗口',
+    open: true,
+    children: customWindowList,
+  },
+];
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
   const { params: paramsData } = initialState;
@@ -129,6 +158,7 @@ const Home: React.FC<any> = (props: any) => {
   const ipString: any = localStorage.getItem('ipString') || '';
   const updateTimer = useRef<any>();
   const logReloadTimer = useRef<any>();
+  const editBoxDom = useRef<any>(null);
   const [loading, setLoading] = useState(false);
   const [colorSelector, setColorSelector] = useState<any>({
     fontColor: '#FFFFFF',
@@ -181,33 +211,10 @@ const Home: React.FC<any> = (props: any) => {
     direction: 'column',
   });
   const [leftPanelVisible, setLeftPanelVisible] = useState(true);
-  const [leftPanelData, setLeftPanelData] = useState<any>([
-    {
-      key: 'main',
-      title: '监控窗口',
-      open: true,
-      children: windowTypeList,
-    },
-    {
-      key: 'basic',
-      title: '基础窗口',
-      open: true,
-      children: basicWindowList,
-    },
-    {
-      key: 'coating',
-      title: '背景涂层',
-      open: true,
-      children: simulatedCoatingList,
-    },
-    {
-      key: 'custom',
-      title: '定制窗口',
-      open: true,
-      children: customWindowList,
-    },
-  ]);
+  const [leftPanelData, setLeftPanelData] = useState<any>(leftPanelDataLocal || []);
   const [tabNum, setTabNum] = useState(0);
+  const [commonSettingList, setCommonSettingList] = useState<any>([]);
+
   const ifCanEdit = useMemo(() => {
     return location.hash?.indexOf('edit') > -1;
   }, [location.hash, paramData]);
@@ -1178,8 +1185,10 @@ const Home: React.FC<any> = (props: any) => {
               {},
               ['imgButton', 'heatMap'].includes(type)
                 ? { backgroundColor: 'transparent' }
-                : backgroundColor === 'default'
+                : ['default'].includes(backgroundColor)
                 ? {}
+                : backgroundColor === 'border'
+                ? { paddingTop: (titleFontSize / 4) * 3, backgroundColor: 'transparent' }
                 : backgroundColor === 'transparent'
                 ? { backgroundColor: 'transparent' }
                 : {
@@ -1195,13 +1204,23 @@ const Home: React.FC<any> = (props: any) => {
           >
             {!['default', 'transparent'].includes(backgroundColor) ? (
               <div
-                className="flex-box data-screen-card-title-box"
-                style={{
-                  fontSize: titleFontSize,
-                  backgroundImage: `url(${titleBackgroundColor})`,
-                  padding: titlePaddingSize,
-                }}
+                className={`flex-box data-screen-card-title-box ${
+                  ['border'].includes(backgroundColor) ? 'data-screen-card-title-box-border' : ''
+                }`}
+                style={Object.assign(
+                  {},
+                  { fontSize: titleFontSize, padding: titlePaddingSize },
+                  ['border'].includes(backgroundColor)
+                    ? { padding: 0 }
+                    : { backgroundImage: `url(${titleBackgroundColor})` },
+                )}
               >
+                {['border'].includes(backgroundColor) ? (
+                  <div
+                    className="data-screen-card-title-box-border-bg"
+                    style={{ top: (titleFontSize / 4) * 3 }}
+                  />
+                ) : null}
                 <div className="data-screen-card-title">{CCDName}</div>
               </div>
             ) : null}
@@ -1216,7 +1235,7 @@ const Home: React.FC<any> = (props: any) => {
               </div>
             ) : null}
             <div
-              className="card-body-box"
+              className={`card-body-box ${backgroundColor === 'border' ? 'background-ubv' : ''}`}
               style={Object.assign(
                 {},
                 ifShowHeader
@@ -1225,10 +1244,18 @@ const Home: React.FC<any> = (props: any) => {
                   ? { height: `calc(100% - ${(titleFontSize / 2) * 3 + titlePaddingSize * 2}px)` }
                   : { height: '100%' },
                 { padding: bodyPaddingSize },
+                backgroundColor === 'border'
+                  ? {
+                      border: '2px solid rgba(144,144,144,0.6)',
+                      borderRadius: 8,
+                      height: '100%',
+                      paddingTop: titleFontSize / 2,
+                    }
+                  : {},
               )}
             >
               <div className="flex-box-center" style={{ height: '100%' }}>
-                {!parent?.[0] && type !== 'button' ? (
+                {!parent?.[0] && type?.indexOf('button') < 0 ? (
                   '请重新绑定数据节点'
                 ) : type === 'line' ? (
                   <LineCharts
@@ -1409,6 +1436,7 @@ const Home: React.FC<any> = (props: any) => {
                       xName,
                       ifShowColorList,
                       modelUpload,
+                      yName,
                     }}
                   />
                 ) : type === 'alert' ? (
@@ -1561,6 +1589,22 @@ const Home: React.FC<any> = (props: any) => {
                       fetchType,
                       fetchParams,
                       valueColor,
+                      ifNeedAllow,
+                    }}
+                  />
+                ) : type === 'segmentSwitch' ? (
+                  <SegmentSwitchCharts
+                    id={key}
+                    data={{
+                      fontSize,
+                      yName,
+                      des_layout,
+                      des_bordered,
+                      timeSelectDefault,
+                      xName,
+                      fetchType,
+                      start: () => start(),
+                      end: () => end(),
                     }}
                   />
                 ) : type === 'operation' ? (
@@ -1828,6 +1872,7 @@ const Home: React.FC<any> = (props: any) => {
                       !!item?.yColumns?.length ? {} : {},
                     ),
                   );
+                  setCommonSettingList(timeSelectDefault);
                   setFieldsValue(
                     Object.assign(
                       {},
@@ -2720,6 +2765,36 @@ const Home: React.FC<any> = (props: any) => {
       yColumns: editWindowData.yColumns,
     });
   }, [editWindowData.xColumns, editWindowData.yColumns]);
+  // 分段开关增加选项
+  const onSegmentSwitchChange = (value: any, index: number, type: string) => {
+    let list = [];
+    if (type === 'remove') {
+      list = commonSettingList
+        ?.map((cen: any, cIndex: number) => {
+          if (cIndex === index) {
+            return null;
+          }
+          return cen;
+        })
+        .filter(Boolean);
+    } else if (type === 'add') {
+      list = (commonSettingList || [])?.concat({});
+    } else {
+      list = commonSettingList?.map((cen: any, cIndex: number) => {
+        if (cIndex === index) {
+          return {
+            ...cen,
+            [type]: value,
+          };
+        }
+        return cen;
+      });
+    }
+    setCommonSettingList(list);
+    form.setFieldsValue({
+      timeSelectDefault: list,
+    });
+  };
 
   return (
     <div className={`${styles.home}`}>
@@ -2737,9 +2812,31 @@ const Home: React.FC<any> = (props: any) => {
                 <img src={leftIcon} alt="icon" />
               </div>
               <div className="left-panel-body">
-                <div className="flex-box-justify-between left-panel-search">
-                  全部
-                  <span>Plugins</span>
+                <div className="left-panel-search-box">
+                  <div className="flex-box-justify-between left-panel-search">
+                    全部
+                    <span>Plugins</span>
+                  </div>
+                  <Input.Search
+                    onSearch={(val) => {
+                      if (!!val) {
+                        setLeftPanelData((prev: any) => {
+                          return (leftPanelDataLocal || [])?.map((box: any) => {
+                            return {
+                              ...box,
+                              children: box?.children?.filter(
+                                (child: any) =>
+                                  child?.label?.indexOf?.(val) > -1 ||
+                                  child?.value?.indexOf?.(val) > -1,
+                              ),
+                            };
+                          });
+                        });
+                      } else {
+                        setLeftPanelData(leftPanelDataLocal);
+                      }
+                    }}
+                  />
                 </div>
                 <div className="left-panel-list">
                   {(leftPanelData || [])?.map?.((panel: any, sIndex: number) => {
@@ -2803,6 +2900,7 @@ const Home: React.FC<any> = (props: any) => {
                 <DropSortableItem
                   // @ts-ignore
                   moveCard={(dragIndex: any, hoverIndex: any, e: any) => {
+                    e.y -= 37;
                     const item = JSON.parse(dragIndex);
                     const { key, value, icon } = item;
                     if (
@@ -2817,17 +2915,15 @@ const Home: React.FC<any> = (props: any) => {
                       !!paramData?.contentData?.autoSize ||
                       !_.isBoolean(paramData?.contentData?.autoSize)
                     ) {
-                      width = window.screen.width;
-                      height = window.screen.height;
+                      width = editBoxDom.current.clientWidth;
+                      height = editBoxDom.current.scrollHeight;
                     }
-                    height = height - 77 - (paramData?.contentData?.tabList?.length > 1 ? 28 : 0);
+                    height -= paramData?.contentData?.tabList?.length > 1 ? 28 : 0;
                     // 画布与实际屏幕的宽度差值
-                    const diffWidth = (window.screen.width - width) / 2;
-                    console.log(e.x, tabNum, width, diffWidth);
+                    const diffWidth = (editBoxDom.current.clientWidth - width) / 2;
                     // 计算实际的x,y坐标
                     const x = ((e.x + tabNum * width - diffWidth) / width) * 96;
-                    const y = (e.y / height) * ((height / 300) * 14);
-                    console.log('x:', x, 'y:', y);
+                    const y = (e.y * 14) / 300;
                     if (['main', 'custom'].includes(key)) {
                       // 添加监控窗口
                       const uuid32 = getuid();
@@ -2876,16 +2972,18 @@ const Home: React.FC<any> = (props: any) => {
                           className="toolbar-btn"
                           type="primary"
                           onClick={() => {
+                            const params = {
+                              ...paramData,
+                              contentData: {
+                                ...paramData?.contentData,
+                                pageIconPosition,
+                                homeSetting: homeSettingData,
+                              },
+                            };
+                            console.log(JSON.stringify(params));
                             updateParams({
                               id: paramData.id,
-                              data: {
-                                ...paramData,
-                                contentData: {
-                                  ...paramData?.contentData,
-                                  pageIconPosition,
-                                  homeSetting: homeSettingData,
-                                },
-                              },
+                              data: params,
                             }).then((res: any) => {
                               if (res && res.code === 'SUCCESS') {
                                 let hash = '';
@@ -3086,6 +3184,7 @@ const Home: React.FC<any> = (props: any) => {
                             ) : null}
                             <div
                               className="right-canvas-body-grid-body"
+                              ref={editBoxDom}
                               style={Object.assign(
                                 {},
                                 !paramData?.contentData?.autoSize &&
@@ -3507,15 +3606,19 @@ const Home: React.FC<any> = (props: any) => {
                       },
                       {
                         value: dataItemImage5,
-                        label: '背景图5',
+                        label: '车门内',
                       },
                       {
                         value: dataItemImage6,
-                        label: '背景图6',
+                        label: '车门外',
                       },
                       {
                         value: dataItemImage7,
-                        label: '背景图7',
+                        label: '数量展示',
+                      },
+                      {
+                        value: 'border',
+                        label: '圆角边框',
                       },
                     ]}
                   />
@@ -4003,8 +4106,24 @@ const Home: React.FC<any> = (props: any) => {
                         ]}
                       />
                     </Form.Item>
-                    <Form.Item name="interlacing" label="隔行换色" valuePropName="checked">
-                      <Switch />
+                    <Form.Item name={`interlacing`} label={'隔行换色'} initialValue={'default'}>
+                      <Select
+                        style={{ width: '100%' }}
+                        options={[
+                          {
+                            value: 'default',
+                            label: '不变色',
+                          },
+                          {
+                            value: '1',
+                            label: '灰色',
+                          },
+                          {
+                            value: '2',
+                            label: '蓝色渐变',
+                          },
+                        ]}
+                      />
                     </Form.Item>
                     <Form.Item name="des_bordered" label="是否展示边框" valuePropName="checked">
                       <Switch />
@@ -4240,6 +4359,9 @@ const Home: React.FC<any> = (props: any) => {
                     >
                       <Input size="large" />
                     </Form.Item>
+                    <Form.Item name="ifNeedAllow" label="前端执行打开路径" valuePropName="checked">
+                      <Switch />
+                    </Form.Item>
                     <Form.Item
                       name={`fetchType`}
                       label={'http类型'}
@@ -4383,6 +4505,98 @@ const Home: React.FC<any> = (props: any) => {
                     ) : null}
                   </Fragment>
                 ) : null}
+                {['segmentSwitch'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`yName`}
+                      label={'名称'}
+                      rules={[{ required: false, message: '名称' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      name={`timeSelectDefault`}
+                      label={'按钮参数'}
+                      rules={[{ required: true, message: '按钮参数' }]}
+                    >
+                      {(commonSettingList || [{}])?.map((item: any, index: number) => {
+                        const { label, value } = item;
+                        return (
+                          <div className="flex-box" key={`segmentSwitch-item-${index}`}>
+                            <div style={{ flex: 1 }}>
+                              <Input
+                                defaultValue={label}
+                                placeholder="label"
+                                style={{ height: 28 }}
+                                onChange={(e) => {
+                                  const val = e?.target?.value;
+                                  onSegmentSwitchChange(val, index, 'label');
+                                }}
+                              />
+                            </div>
+                            <div style={{ flex: 1, padding: 8 }}>
+                              <Input
+                                defaultValue={value}
+                                placeholder="value"
+                                style={{ height: 28 }}
+                                onChange={(e) => {
+                                  const val = e?.target?.value;
+                                  onSegmentSwitchChange(val, index, 'value');
+                                }}
+                              />
+                            </div>
+                            <div>
+                              <Button
+                                icon={<MinusSquareOutlined />}
+                                style={{ height: 28 }}
+                                onClick={() => {
+                                  onSegmentSwitchChange('', index, 'remove');
+                                }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                      <Button
+                        icon={<PlusSquareOutlined />}
+                        onClick={() => {
+                          onSegmentSwitchChange('', 0, 'add');
+                        }}
+                      />
+                    </Form.Item>
+                    <Form.Item name="des_layout" label="布局方向">
+                      <Select
+                        options={[
+                          { label: '横向', value: 'horizontal' },
+                          { label: '纵向', value: 'vertical' },
+                        ]}
+                      />
+                    </Form.Item>
+                    <Form.Item name="des_bordered" label="是否展示边框" valuePropName="checked">
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name={`fetchType`}
+                      label={'http类型'}
+                      rules={[{ required: false, message: 'http类型' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
+                          value: item,
+                          label: _.toUpper(item),
+                        }))}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={`xName`}
+                      label={'接口地址'}
+                      rules={[{ required: false, message: '接口地址' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
                 {['description'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item label="静态数据">
@@ -4505,6 +4719,14 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name="modelScale"
                       label="开启模型缩放"
+                      initialValue={false}
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name="yName"
+                      label="默认显示坐标轴"
                       initialValue={false}
                       valuePropName="checked"
                     >

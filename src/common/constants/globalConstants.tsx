@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import headerIcon from '@/assets/dashboard-imgs/header.png';
 import imgIcon from '@/assets/dashboard-imgs/img.png';
 import alertImgIcon from '@/assets/dashboard-imgs/alert-img.png';
 import imgsIcon from '@/assets/dashboard-imgs/imgs.png';
@@ -10,6 +9,7 @@ import barIcon from '@/assets/dashboard-imgs/bar.png';
 import pieIcon from '@/assets/dashboard-imgs/pie.png';
 import pie3DIcon from '@/assets/dashboard-imgs/pie3D.png';
 import nightingalePieIcon from '@/assets/dashboard-imgs/nightingale.png';
+import heatMapIcon from '@/assets/dashboard-imgs/heat-map.png';
 import tableIcon from '@/assets/dashboard-imgs/table.png';
 import table2Icon from '@/assets/dashboard-imgs/table2.png';
 import table3Icon from '@/assets/dashboard-imgs/table3.png';
@@ -31,7 +31,6 @@ import slider1Icon from '@/assets/dashboard-imgs/slider1.png';
 import slider4Icon from '@/assets/dashboard-imgs/slider4.png';
 import footer1Icon from '@/assets/dashboard-imgs/slider1.png';
 import footer2Icon from '@/assets/dashboard-imgs/slider1.png';
-import gunyaIcon from '@/assets/dashboard-imgs/gunya_background.png';
 import platFormIcon from '@/assets/dashboard-imgs/platForm.png';
 import modalIcon from '@/assets/dashboard-imgs/modal.png';
 import imgButtonIcon from '@/assets/dashboard-imgs/img_button.png';
@@ -112,7 +111,7 @@ export const windowTypeList: any = [
   {
     value: 'heatMap',
     label: '热力图窗口',
-    icon: lineIcon,
+    icon: heatMapIcon,
   },
   {
     value: 'table',
@@ -176,7 +175,12 @@ export const windowTypeList: any = [
   },
   {
     value: 'buttonUpload',
-    label: '文件按钮组件',
+    label: '文件路径选择组件',
+    icon: buttonIcon,
+  },
+  {
+    value: 'segmentSwitch',
+    label: '开关组件',
     icon: buttonIcon,
   },
   {
@@ -213,16 +217,6 @@ export const windowTypeList: any = [
     value: 'modal',
     label: '弹窗组件窗口',
     icon: modalIcon,
-  },
-  {
-    value: 'imgButton',
-    label: '图片按钮组件',
-    icon: imgButtonIcon,
-  },
-  {
-    value: 'buttonImages',
-    label: '缺陷按钮组件',
-    icon: buttonImagesIcon,
   },
   {
     value: 'iframe',
@@ -296,6 +290,16 @@ export const customWindowList: any = [
   {
     value: 'equipmentInfo',
     label: '设备信息',
+  },
+  {
+    value: 'imgButton',
+    label: '图片按钮组件',
+    icon: imgButtonIcon,
+  },
+  {
+    value: 'buttonImages',
+    label: '缺陷按钮组件',
+    icon: buttonImagesIcon,
   },
 ];
 // 仿真涂层-背景图

@@ -240,15 +240,13 @@ const Table2Charts: React.FC<Props> = (props: any) => {
         className="charts-header-box flex-box"
         style={Object.assign(
           {},
-          tableScroll
-            ? { width: `calc(100% - 6px - ${bodyPaddingSize * 2}px)` }
-            : { width: `calc(100% - 0px - ${bodyPaddingSize * 2}px)` },
           headerBackgroundColor === 'transparent'
             ? { backgroundColor: 'transparent' }
             : headerBackgroundColor === 'line1'
             ? {
+                backgroundColor: 'transparent',
                 backgroundImage:
-                  'linear-gradient(to right, rgba(39,90,235,0.8), rgba(41,100,200,1))',
+                  'linear-gradient(to right, rgba(39,90,235,0.8), rgba(140,210,220,1))',
               }
             : {},
           { left: bodyPaddingSize },
@@ -341,11 +339,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                         return (
                           <div
                             key={`echart-${id}-tr-td-${sIndex}-${value}`}
-                            className={`flex-box charts-body-td ${
-                              (_.isBoolean(interlacing) ? interlacing : true)
-                                ? 'charts-body-td-interlacing'
-                                : ''
-                            }`}
+                            className={`flex-box charts-body-td charts-body-td-interlacing-${interlacing}`}
                           >
                             <TooltipDiv
                               className={`charts-body-td-title`}
@@ -384,11 +378,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                       return (
                         <div
                           key={`echart-${id}-tr-td-${sIndex}-${val}`}
-                          className={`flex-box charts-body-td ${
-                            (_.isBoolean(interlacing) ? interlacing : true)
-                              ? 'charts-body-td-interlacing'
-                              : ''
-                          }`}
+                          className={`flex-box charts-body-td charts-body-td-interlacing-${interlacing}`}
                         >
                           <TooltipDiv
                             className={`charts-body-td-title`}

@@ -347,7 +347,7 @@
         left: 0;
         z-index: 10;
         width: 260px;
-        height: calc(100% - 34px);
+        height: calc(100% - 25px);
         background-color: @background-color-base;
         border-right: 1px solid rgb(240, 242, 245);
         transition: all 0.5s;
@@ -370,16 +370,27 @@
           height: 100%;
           padding-top: 40px;
 
-          .left-panel-search {
+          .left-panel-search-box {
             padding: 8px 20px 2px;
-            font-weight: 600;
-            font-size: 14px;
-            line-height: 48px;
-            white-space: nowrap;
+
+            .left-panel-search {
+              font-weight: 600;
+              font-size: 14px;
+              line-height: 48px;
+              white-space: nowrap;
+            }
+
+            .ant-input-search {
+              height: 32px;
+
+              .ant-input-group .ant-input {
+                height: 32px;
+              }
+            }
           }
 
           .left-panel-list {
-            height: calc(100% - 65px);
+            height: calc(100% - 96px);
             padding: 0 4px 80px 8px;
             overflow-x: hidden;
             overflow-y: auto;
@@ -545,6 +556,23 @@
             // background-clip: text;
             // -webkit-background-clip: text;
             // -webkit-text-fill-color: transparent;
+          }
+        }
+
+        .data-screen-card-title-box-border {
+          margin-left: 24px;
+          z-index: 1;
+          position: absolute;
+          top: 0;
+          left: 0;
+
+          &-bg {
+            position: absolute;
+            left: 24;
+            width: 100%;
+            height: 4px;
+            z-index: -1;
+            background-color: @body-background;
           }
         }
 
@@ -738,8 +766,12 @@
         }
       }
 
-      .charts-body-tr-interlacing:nth-child(even) {
+      .charts-body-tr-interlacing-1:nth-child(even) {
         background-color: rgba(144, 144, 144, 0.6);
+      }
+
+      .charts-body-tr-interlacing-2:nth-child(even) {
+        background-color: rgba(6, 171, 247, 0.5);
       }
     }
   }
@@ -758,8 +790,9 @@
       // position: fixed;
       // right: 0;
       // left: 0;
-      width: calc(100% - 6px);
+      width: 100%;
       border-left: 1px solid @border-color-base;
+      background-color: @background-color-base;
 
       .reset-table-size {
         position: absolute;
@@ -778,7 +811,6 @@
         min-width: 7%;
         height: 38px;
         overflow: hidden;
-        background-color: @background-color-base;
 
         .charts-header-item-title {
           width: 100%;
@@ -827,7 +859,11 @@
           }
         }
 
-        .charts-body-td-interlacing:nth-child(even) {
+        .charts-body-td-interlacing-1:nth-child(even) {
+          background-color: rgba(144, 144, 144, 0.6);
+        }
+
+        .charts-body-td-interlacing-2:nth-child(even) {
           background-color: rgba(6, 171, 247, 0.5);
         }
       }
@@ -938,8 +974,12 @@
           }
         }
 
-        .charts-body-td-interlacing:nth-child(even) {
+        .charts-body-td-interlacing-1:nth-child(even) {
           background-color: rgba(144, 144, 144, 0.6);
+        }
+
+        .charts-body-td-interlacing-2:nth-child(even) {
+          background-color: rgba(6, 171, 247, 0.5);
         }
       }
     }
@@ -1298,6 +1338,7 @@
       display: none;
       gap: 4px;
       font-size: 14px;
+      // background-color: @body-background;
 
       .prev-btn,
       .next-btn {
@@ -1317,6 +1358,8 @@
         cursor: pointer;
         // color: @primary-color;
         // background-color: rgba(154, 154, 154, 0.35);
+        font-weight: bold;
+        -webkit-text-stroke: 0.5px @body-background;
 
         &:hover {
           color: @primary-color;
@@ -1671,6 +1714,7 @@
       bottom: 8px;
       margin: 0 auto;
       opacity: 0;
+      -webkit-text-stroke: 0.5px @body-background;
     }
 
     .ant-image {
@@ -1795,6 +1839,16 @@
         }
       }
     }
+  }
+}
+
+.segmentSwitchCharts {
+  width: 100%;
+  height: 100%;
+  padding: 4px;
+
+  :global {
+    // 
   }
 }
 
@@ -2112,6 +2166,7 @@
         .title-box {
           width: 150px;
           text-align: right;
+          padding-top: 8px;
 
           .first {
             margin-bottom: -6px;

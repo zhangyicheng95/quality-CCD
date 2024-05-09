@@ -1059,7 +1059,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     ? (width / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
                     : index * 2 + 1 === count[1].length
                     ? 0
-                    : (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                    : (width / 2 / (parseFloat(count[1].length / 2) + 1)) *
                       (index + 1 > count[1].length / 2
                         ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
                           ? count[1].length / 2 - index - 1
@@ -1087,7 +1087,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     ? (width / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
                     : index * 2 + 1 === count[1].length
                     ? 0
-                    : (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                    : (width / 2 / (parseFloat(count[1].length / 2) + 1)) *
                       (index + 1 > count[1].length / 2
                         ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
                           ? count[1].length / 2 - index - 1
@@ -1113,7 +1113,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     ? (length / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
                     : index * 2 + 1 === count[1].length
                     ? 0
-                    : (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                    : (length / 2 / (parseFloat(count[1].length / 2) + 1)) *
                       (index + 1 > count[1].length / 2
                         ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
                           ? count[1].length / 2 - index - 1
@@ -1141,7 +1141,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     ? (length / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
                     : index * 2 + 1 === count[1].length
                     ? 0
-                    : (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                    : (length / 2 / (parseFloat(count[1].length / 2) + 1)) *
                       (index + 1 > count[1].length / 2
                         ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
                           ? count[1].length / 2 - index - 1

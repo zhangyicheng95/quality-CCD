@@ -30,14 +30,11 @@ const TimeSelectCharts: React.FC<Props> = (props: any) => {
               new Date(
                 new Date(new Date().toLocaleDateString()).getTime() - 29 * 24 * 60 * 60 * 1000,
               ),
-              dateFormat,
-            ),
+            ).format(dateFormat),
             end: moment(
-              new Date(
-                new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1,
-              ),
-              dateFormat,
-            ),
+              new Date(),
+              // new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1,
+            ).format(dateFormat),
           }
         : timeSelectDefault === 'week'
         ? {
@@ -45,23 +42,12 @@ const TimeSelectCharts: React.FC<Props> = (props: any) => {
               new Date(
                 new Date(new Date().toLocaleDateString()).getTime() - 6 * 24 * 60 * 60 * 1000,
               ),
-              dateFormat,
-            ),
-            end: moment(
-              new Date(
-                new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1,
-              ),
-              dateFormat,
-            ),
+            ).format(dateFormat),
+            end: moment(new Date()).format(dateFormat),
           }
         : {
-            start: moment(new Date().toLocaleDateString(), dateFormat),
-            end: moment(
-              new Date(
-                new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1,
-              ),
-              dateFormat,
-            ),
+            start: moment(new Date().toLocaleDateString()).format(dateFormat),
+            end: moment(new Date()).format(dateFormat),
           },
     ).then((res: any) => {
       if (!!res && res.code === 'SUCCESS') {
@@ -113,22 +99,12 @@ const TimeSelectCharts: React.FC<Props> = (props: any) => {
                 : new Date().toLocaleDateString(),
               dateFormat,
             ),
-            moment(
-              new Date(
-                new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1,
-              ),
-              dateFormat,
-            ),
+            moment(new Date(), dateFormat),
           ]}
           ranges={{
             今日: [
               moment(new Date().toLocaleDateString(), dateFormat),
-              moment(
-                new Date(
-                  new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1,
-                ),
-                dateFormat,
-              ),
+              moment(new Date(), dateFormat),
             ],
             过去一周: [
               moment(
@@ -137,7 +113,7 @@ const TimeSelectCharts: React.FC<Props> = (props: any) => {
                 ),
                 dateFormat,
               ),
-              moment(new Date().toLocaleDateString(), dateFormat),
+              moment(new Date(), dateFormat),
             ],
             过去一个月: [
               moment(
@@ -146,7 +122,7 @@ const TimeSelectCharts: React.FC<Props> = (props: any) => {
                 ),
                 dateFormat,
               ),
-              moment(new Date().toLocaleDateString(), dateFormat),
+              moment(new Date(), dateFormat),
             ],
           }}
           showTime

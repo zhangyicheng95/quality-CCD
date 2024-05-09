@@ -1032,6 +1032,7 @@ function FormatWidgetToDom(props: any) {
             step={step}
             max={max}
             min={min}
+            type={type}
           />
         </Form.Item>
       );

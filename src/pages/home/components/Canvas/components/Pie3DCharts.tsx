@@ -36,14 +36,13 @@ const PieCharts: React.FC<Props> = (props: any) => {
       },
     ];
   }
-  const { initialState } = useModel<any>('@@initialState');
-  const { params } = initialState;
   useEffect(() => {
     if (!_.isArray(dataValue)) {
       message.error('3D饼状图数据格式不正确，请检查');
       console.log('PieCharts:', dataValue);
       return;
     }
+
     let max = 0;
     let gap = 1;
     let dataSource = [];

@@ -296,11 +296,7 @@ const Table3Charts: React.FC<Props> = (props: any) => {
                         return (
                           <div
                             key={`echart-${id}-tr-td-${sIndex}-${value}`}
-                            className={`flex-box charts-body-td ${
-                              (_.isBoolean(interlacing) ? interlacing : true)
-                                ? 'charts-body-td-interlacing'
-                                : ''
-                            }`}
+                            className={`flex-box charts-body-td charts-body-td-interlacing-${interlacing}`}
                           >
                             <TooltipDiv
                               className={`charts-body-td-title`}
@@ -340,11 +336,7 @@ const Table3Charts: React.FC<Props> = (props: any) => {
                       return (
                         <div
                           key={`echart-${id}-tr-td-${sIndex}-${val}`}
-                          className={`flex-box charts-body-td ${
-                            (_.isBoolean(interlacing) ? interlacing : true)
-                              ? 'charts-body-td-interlacing'
-                              : ''
-                          }`}
+                          className={`flex-box charts-body-td charts-body-td-interlacing-${interlacing}`}
                         >
                           <TooltipDiv
                             className={`charts-body-td-title`}

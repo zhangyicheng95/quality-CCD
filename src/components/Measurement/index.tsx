@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { InputNumber } from 'antd';
+import { Input, InputNumber, Switch } from 'antd';
 import * as _ from 'lodash';
 import styles from './index.less';
+import SegmentSwitch from '../SegmentSwitch';
 
 interface Props {
   disabled?: Boolean;
@@ -16,6 +17,7 @@ interface Props {
   min?: number;
   lineNum?: number;
   style?: any;
+  type?: any;
 }
 
 const Measurement: React.FC<Props> = (props: any) => {
@@ -32,7 +34,9 @@ const Measurement: React.FC<Props> = (props: any) => {
     min = -100000,
     lineNum = 4,
     style = null,
+    type = 'float',
   } = props;
+  const dom = useRef<any>();
   const refnum_0 = useRef();
   const refnum_1 = useRef();
   const refnum_2 = useRef();
@@ -63,17 +67,25 @@ const Measurement: React.FC<Props> = (props: any) => {
       setFocus(() => {
         return Object.entries(value).reduce((pre: any, cen: any, index: number) => {
           return Object.assign({}, pre, {
-            [`refnum_${index}`]: !!cen[1]?.value || _.isNumber(cen[1]?.value) || _.isNumber(cen[1]),
+            [`refnum_${index}`]:
+              !!cen[1]?.value || _.isNumber(cen[1]?.value) || _.isBoolean(cen[1]?.value),
           });
         }, {});
       });
     }
   }, [value]);
-  const handleNumberChange = (number: any, type: any, index: number) => {
+  const handleNumberChange = (number: any, name: any, index: number) => {
     let Obj: any = selfValue;
-    Obj[`${type}`] = {
-      ...Obj[`${type}`],
-      value: _.isNaN(number) || _.isNull(number) || _.isUndefined(number) ? 0 : Number(number),
+    Obj[`${name}`] = {
+      ...Obj[`${name}`],
+      value:
+        _.isNaN(number) || _.isNull(number) || _.isUndefined(number)
+          ? type === 'string'
+            ? ''
+            : type === 'bool'
+            ? false
+            : 0
+          : number,
     };
     setSelfValue(Obj);
     triggerChange(Obj);
@@ -85,27 +97,9 @@ const Measurement: React.FC<Props> = (props: any) => {
       onChange(changedValue);
     }
   };
-  const turnIpPOS = (e: any, type: number) => {
-    //左箭头向左跳转，左一不做任何措施
-    if (e.keyCode === 37) {
-      if (type === 0) {
-        return;
-      } else {
-        refList[type - 1]?.current?.focus();
-      }
-    }
-    //右箭头、回车键、空格键、冒号均向右跳转，右一不做任何措施
-    if (e.keyCode === 39 || e.keyCode === 13 || e.keyCode === 32) {
-      if (type === 3) {
-        return;
-      } else {
-        refList[type + 1]?.current?.focus();
-      }
-    }
-  };
-  console.log(style);
+
   return (
-    <div className={`flex-box ${styles['roi-mark']}`} style={style ? { ...style } : {}}>
+    <div className={`flex-box ${styles['roi-mark']}`} ref={dom} style={style ? { ...style } : {}}>
       {Object.entries(selfValue)?.map?.((item: any, index: number) => {
         if (!item[1]) return null;
         const { alias, value } = item[1];
@@ -126,46 +120,109 @@ const Measurement: React.FC<Props> = (props: any) => {
             >
               {alias || item[0]}
             </div>
-            <InputNumber
-              disabled={disabled}
-              className={`self_input ${className}`}
-              ref={refList[index]}
-              value={!!value || _.isNumber(value) ? value : JSON.stringify(item[1])}
-              precision={precision}
-              step={step}
-              max={max}
-              min={min}
-              // onChange={(e) => { handleNumberChange(e, `num_${index}`, index) }}
-              // onKeyUp={(e) => turnIpPOS(e, index)}
-              onFocus={() =>
-                setFocus((prev: any) => Object.assign({}, prev, { [`refnum_${index}`]: true }))
-              }
-              onBlur={(e) => {
-                if (!onOpenChange) {
-                  const val =
-                    precision === 0
-                      ? Math.floor(Number(e?.target?.value))
-                      : Number(e?.target?.value);
+            {type === 'string' ? (
+              <Input
+                disabled={disabled}
+                className={`self_input ${className}`}
+                ref={refList[index]}
+                defaultValue={!!value ? value : ''}
+                onFocus={() =>
+                  setFocus((prev: any) => Object.assign({}, prev, { [`refnum_${index}`]: true }))
+                }
+                onBlur={(e) => {
+                  if (!onOpenChange) {
+                    const val = e?.target?.value;
+                    setFocus((prev: any) =>
+                      Object.assign({}, prev, {
+                        [`refnum_${index}`]: !(_.isUndefined(val) || _.isNull(val)),
+                      }),
+                    );
+                    handleNumberChange(val, item[0], index);
+                  }
+                }}
+                onChange={(e) => {
+                  if (!!onOpenChange) {
+                    const val = e.target.value;
+                    setFocus((prev: any) =>
+                      Object.assign({}, prev, {
+                        [`refnum_${index}`]: !!val,
+                      }),
+                    );
+                    handleNumberChange(val, item[0], index);
+                  }
+                }}
+              />
+            ) : type === 'bool' ? (
+              <SegmentSwitch
+                disabled={disabled}
+                className={`self_input ${className}`}
+                ref={refList[index]}
+                defaultValue={!!value}
+                fontInBody={[
+                  { label: '', value: false },
+                  { label: '', value: true },
+                ]}
+                onChange={(checked: any) => {
+                  const val = !!checked;
                   setFocus((prev: any) =>
                     Object.assign({}, prev, {
                       [`refnum_${index}`]: !(_.isUndefined(val) || _.isNull(val)),
                     }),
                   );
                   handleNumberChange(val, item[0], index);
+                }}
+              />
+            ) : (
+              <Input
+                disabled={disabled}
+                className={`self_input ${className}`}
+                ref={refList[index]}
+                defaultValue={value}
+                // precision={type === 'float' ? precision : 0}
+                step={step}
+                max={max}
+                min={min}
+                // onChange={(e) => { handleNumberChange(e, `num_${index}`, index) }}
+                // onKeyUp={(e) => turnIpPOS(e, index)}
+                onFocus={() =>
+                  setFocus((prev: any) => Object.assign({}, prev, { [`refnum_${index}`]: true }))
                 }
-              }}
-              onChange={(e) => {
-                if (!!onOpenChange) {
-                  const val = precision === 0 ? Math.floor(Number(e)) : Number(e);
-                  setFocus((prev: any) =>
-                    Object.assign({}, prev, {
-                      [`refnum_${index}`]: !(_.isUndefined(val) || _.isNull(val)),
-                    }),
-                  );
-                  handleNumberChange(val, item[0], index);
-                }
-              }}
-            />
+                onBlur={(e: any) => {
+                  const valu = Number(e?.target?.value);
+                  if (!_.isNaN(valu)) {
+                    if (!onOpenChange) {
+                      const val =
+                        type === 'float'
+                          ? parseFloat(e?.target?.value)
+                          : parseInt(e?.target?.value);
+                      setFocus((prev: any) =>
+                        Object.assign({}, prev, {
+                          [`refnum_${index}`]: !(_.isUndefined(val) || _.isNull(val)),
+                        }),
+                      );
+                      handleNumberChange(val, item[0], index);
+                    }
+                  }
+                }}
+                onChange={(e: any) => {
+                  if (!!onOpenChange) {
+                    const valu = Number(e?.target?.value);
+                    if (!_.isNaN(valu)) {
+                      const val =
+                        type === 'float'
+                          ? parseFloat(e?.target?.value)
+                          : parseInt(e?.target?.value);
+                      setFocus((prev: any) =>
+                        Object.assign({}, prev, {
+                          [`refnum_${index}`]: !(_.isUndefined(val) || _.isNull(val)),
+                        }),
+                      );
+                      handleNumberChange(val, item[0], index);
+                    }
+                  }
+                }}
+              />
+            )}
           </div>
         );
       })}

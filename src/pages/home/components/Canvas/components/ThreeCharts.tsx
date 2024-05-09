@@ -127,6 +127,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     modelScale = false,
     modelRotateScreenshot = false,
     modelUpload,
+    yName = false,
   } = data;
   let { name, value = [], action = '', guid: uuid, addType } = dataValue;
   if (process.env.NODE_ENV === 'development') {
@@ -1184,7 +1185,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       // 坐标轴（右手定则，大拇指是x）
       const axesHelper = new THREE.AxesHelper((max * 7) / 6);
       axesHelper.name = 'axis';
-      axesHelper.visible = true;
+      axesHelper.visible = yName;
       scene.current.add(axesHelper);
 
       let scale = (1.3 * mdwid) / dom.current.clientHeight;
@@ -1381,7 +1382,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     ? (width / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
                     : index * 2 + 1 === count[1].length
                     ? 0
-                    : (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                    : (width / 2 / (parseFloat(count[1].length / 2) + 1)) *
                       (index + 1 > count[1].length / 2
                         ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
                           ? count[1].length / 2 - index - 1
@@ -1413,7 +1414,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     ? (width / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
                     : index * 2 + 1 === count[1].length
                     ? 0
-                    : (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                    : (width / 2 / (parseFloat(count[1].length / 2) + 1)) *
                       (index + 1 > count[1].length / 2
                         ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
                           ? count[1].length / 2 - index - 1
@@ -1443,7 +1444,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     ? (length / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
                     : index * 2 + 1 === count[1].length
                     ? 0
-                    : (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                    : (length / 2 / (parseFloat(count[1].length / 2) + 1)) *
                       (index + 1 > count[1].length / 2
                         ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
                           ? count[1].length / 2 - index - 1
@@ -1475,7 +1476,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     ? (length / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
                     : index * 2 + 1 === count[1].length
                     ? 0
-                    : (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                    : (length / 2 / (parseFloat(count[1].length / 2) + 1)) *
                       (index + 1 > count[1].length / 2
                         ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
                           ? count[1].length / 2 - index - 1
@@ -1533,7 +1534,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                       ? (width / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
                       : index * 2 + 1 === count[1].length
                       ? position[0].z
-                      : (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                      : (width / 2 / (parseFloat(count[1].length / 2) + 1)) *
                         (index + 1 > count[1].length / 2
                           ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
                             ? count[1].length / 2 - index - 1
@@ -1560,7 +1561,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                       ? (width / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
                       : index * 2 + 1 === count[1].length
                       ? position[0].z
-                      : (width / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                      : (width / 2 / (parseFloat(count[1].length / 2) + 1)) *
                         (index + 1 > count[1].length / 2
                           ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
                             ? count[1].length / 2 - index - 1
@@ -1586,7 +1587,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                       ? (length / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
                       : index * 2 + 1 === count[1].length
                       ? position[0].x
-                      : (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                      : (length / 2 / (parseFloat(count[1].length / 2) + 1)) *
                         (index + 1 > count[1].length / 2
                           ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
                             ? count[1].length / 2 - index - 1
@@ -1613,7 +1614,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                       ? (length / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
                       : index * 2 + 1 === count[1].length
                       ? position[0].x
-                      : (length / 2 / (Math.floor(count[1].length / 2) + 1)) *
+                      : (length / 2 / (parseFloat(count[1].length / 2) + 1)) *
                         (index + 1 > count[1].length / 2
                           ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
                             ? count[1].length / 2 - index - 1

@@ -402,7 +402,6 @@ const Control: React.FC<any> = (props: any) => {
             listType: listType || 'line',
           }),
         };
-        debugger;
         setInitialState({ ...initialState, params: params.data });
         updateParams(params).then((res: any) => {
           if (res && res.code === 'SUCCESS') {
@@ -1628,6 +1627,7 @@ export const FormatWidgetToDom: any = (props: any) => {
             step={step}
             max={max}
             min={min}
+            type={type}
           />
         </Form.Item>
       );

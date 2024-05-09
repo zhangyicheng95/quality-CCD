@@ -102,11 +102,7 @@ const TableCharts: React.FC<Props> = (props: any) => {
                   const text = _.isArray(value) ? value.join(',') : value;
                   return (
                     <div
-                      className={`charts-body-tr flex-box ${
-                        (_.isBoolean(interlacing) ? interlacing : true)
-                          ? 'charts-body-tr-interlacing'
-                          : ''
-                      }`}
+                      className={`charts-body-tr flex-box charts-body-tr-interlacing-${interlacing}`}
                       key={`echart-${id}-tr-${index}`}
                     >
                       <TooltipDiv
@@ -145,11 +141,7 @@ const TableCharts: React.FC<Props> = (props: any) => {
                 const text = _.isArray(value) ? value.join(',') : value;
                 return (
                   <div
-                    className={`charts-body-tr flex-box ${
-                      (_.isBoolean(interlacing) ? interlacing : true)
-                        ? 'charts-body-tr-interlacing'
-                        : ''
-                    }`}
+                    className={`charts-body-tr flex-box charts-body-tr-interlacing-${interlacing}`}
                     key={`echart-${id}-tr-${index}`}
                   >
                     <div

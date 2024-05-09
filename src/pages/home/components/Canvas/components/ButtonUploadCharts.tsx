@@ -14,7 +14,14 @@ interface Props {
 
 const ButtonUploadCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  const { fontSize = 14, yName = '按钮', xName = '', fetchType, valueColor = 'primary' } = data;
+  const {
+    fontSize = 14,
+    yName = '按钮',
+    xName = '',
+    fetchType,
+    valueColor = 'primary',
+    ifNeedAllow = false,
+  } = data;
   const [selectAreaPathVisible, setSelectAreaPathVisible] = useState(false);
 
   return (
@@ -39,14 +46,22 @@ const ButtonUploadCharts: React.FC<Props> = (props: any) => {
           }
         }}
         onOk={(value: any) => {
-          btnFetch(fetchType, xName, { data: value }).then((res: any) => {
-            if (res && res.code === 'SUCCESS') {
-              message.success('success');
-              setSelectAreaPathVisible(false);
-            } else {
-              message.error(res?.msg || res?.message || '接口异常');
-            }
-          });
+          if (ifNeedAllow) {
+            window?.parent?.postMessage?.(
+              { type: '__cmd__', name: '__cmd__', value: `explorer file:\\${value}` },
+              localStorage.getItem('parentOrigin') || '',
+            );
+          }
+          if (!!fetchType && !!xName) {
+            btnFetch(fetchType, xName, { data: value }).then((res: any) => {
+              if (res && res.code === 'SUCCESS') {
+                message.success('success');
+                setSelectAreaPathVisible(false);
+              } else {
+                message.error(res?.msg || res?.message || '接口异常');
+              }
+            });
+          }
         }}
       >
         {yName}

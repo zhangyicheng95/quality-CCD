@@ -14,16 +14,36 @@
   :global {
     .item-input-box {
       position: relative;
-      // flex: 1;
-      width: 25%;
-      // float: left;
+      height: 32px;
 
       .self_input {
         border-radius: 4px;
+        height: 100%;
 
         .ant-input-number-handler-wrap {
           display: none;
         }
+      }
+
+      .ant-input-number-input-wrap {
+        height: 100%;
+        width: 100%;
+      }
+
+      .ant-switch,
+      .ant-input,
+      .ant-input-number-input {
+        height: 32px;
+        width: 100%;
+
+        .ant-switch-handle {
+          top: 7px;
+        }
+      }
+
+      .ant-switch {
+        transform: scale(1);
+        margin-left: 0 !important;
       }
 
       .input-name {
