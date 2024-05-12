@@ -5,8 +5,8 @@ import styles from './index.less';
 
 interface Props {
   disabled?: Boolean;
-  value?: boolean;
-  defaultValue: boolean;
+  value?: any;
+  defaultValue?: any;
   className?: any;
   onChange?: any;
   style?: any;
@@ -21,7 +21,7 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
   const {
     onChange = null,
     value = false,
-    defaultValue = false,
+    defaultValue,
     disabled,
     className = '',
     style,
@@ -34,7 +34,13 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
   const [lock, setLock] = useState(0);
 
   useEffect(() => {
-    setLock(value || defaultValue);
+    let index = 0;
+    fontInBody.forEach((item: any, cIndex: number) => {
+      if (item.value === (value || defaultValue || fontInBody?.[0]?.value)) {
+        index = cIndex;
+      }
+    });
+    setLock(index);
   }, [value, defaultValue]);
 
   return (
@@ -74,10 +80,14 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
           return (
             <div
               className="flex-box-center segment-switch-box-item"
-              style={!border ? { border: 0 } : {}}
+              style={Object.assign(
+                {},
+                !border ? { border: 0 } : {},
+                lock === index ? { color: 'rgb(240,240,240)' } : {},
+              )}
               key={`segment-switch-box-item-${index}`}
               onClick={() => {
-                if (lock !== index) {
+                if (lock !== index && !disabled) {
                   setLock(index);
                   !!onChange && onChange?.(value);
                 }

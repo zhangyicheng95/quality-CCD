@@ -338,7 +338,7 @@ const Control: React.FC<any> = (props: any) => {
           if (res && res.code === 'SUCCESS') {
             message.success('修改成功');
           } else {
-            message.error(res?.msg || res?.message || '接口异常');
+            message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
           }
         });
       })
@@ -407,7 +407,7 @@ const Control: React.FC<any> = (props: any) => {
           if (res && res.code === 'SUCCESS') {
             message.success('修改成功');
           } else {
-            message.error(res?.msg || res?.message || '接口异常');
+            message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
           }
         });
       })
@@ -447,7 +447,7 @@ const Control: React.FC<any> = (props: any) => {
         message.success('修改成功');
         window.location.reload();
       } else {
-        message.error(res?.msg || res?.message || '接口异常');
+        message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
       }
     });
   };
@@ -464,7 +464,7 @@ const Control: React.FC<any> = (props: any) => {
         setInitialState({ ...initialState, params: params.data });
         message.success('修改成功');
       } else {
-        message.error(res?.msg || res?.message || '接口异常');
+        message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
       }
     });
   };

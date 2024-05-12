@@ -1219,7 +1219,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
               img.current.src = res?.data?.img;
             }
           } else {
-            message.error(res?.msg || res?.message || '接口异常');
+            message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
           }
         });
       }
@@ -2409,7 +2409,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                     img.current.src = res?.data?.img;
                   }
                 } else {
-                  message.error(res?.msg || res?.message || '接口异常');
+                  message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
                 }
               });
             }}

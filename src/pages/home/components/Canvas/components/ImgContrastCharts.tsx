@@ -12,7 +12,7 @@ interface Props {
 //对比图组件
 const ImgContrastCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  let { dataValue, fontSize = 16 } = data;
+  let { dataValue, fontSize = 16, modelRotateScreenshot = false } = data;
   const dom = useRef<any>();
   const [selected, setSelected] = useState(0);
   const [dataSource, setDataSource] = useState<any>([]);
@@ -54,7 +54,7 @@ const ImgContrastCharts: React.FC<Props> = (props: any) => {
   return (
     <div
       id={`echart-${id}`}
-      className={`flex-box-center ${styles.ImgContrastCharts}`}
+      className={`flex-box-center ${styles.imgContrastCharts}`}
       style={{ fontSize }}
       ref={dom}
     >
@@ -67,6 +67,7 @@ const ImgContrastCharts: React.FC<Props> = (props: any) => {
           magnifier: true,
           magnifierSize: 4,
           lockImg,
+          modelRotateScreenshot,
           onLockImgChange: () => {
             setLockImg((prev) => !prev);
           },
@@ -90,7 +91,9 @@ const ImgContrastCharts: React.FC<Props> = (props: any) => {
           />
         ) : null}
       </div>
-      <div className="img-contrast-title-box">{dataSource?.[selected]?.title}</div>
+      <div className="img-contrast-title-box" style={modelRotateScreenshot ? { opacity: 1 } : {}}>
+        {dataSource?.[selected]?.title}
+      </div>
     </div>
   );
 };

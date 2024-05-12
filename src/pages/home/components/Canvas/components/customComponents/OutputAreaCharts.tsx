@@ -33,7 +33,7 @@ const OutputAreaCharts: React.FC<Props> = (props: any) => {
     btnFetch(fetchType, xName, { type: 'outputArea', value: val }).then((res: any) => {
       if (!!res && res.code === 'SUCCESS') {
       } else {
-        message.error(res?.msg || res?.message || '接口异常');
+        message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
       }
     });
   };

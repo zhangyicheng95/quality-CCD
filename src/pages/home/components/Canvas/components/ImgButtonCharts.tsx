@@ -54,7 +54,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
         setDefect(xColumns?.[0]?.value);
         setVisible(true);
       } else {
-        message.error(res?.msg || res?.message || '接口异常');
+        message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
         itemClicked.current = 0;
       }
     });
@@ -68,7 +68,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
           message.success('上传成功');
           onCancel();
         } else {
-          message.error(res?.msg || res?.message || '接口异常');
+          message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
           itemClicked.current = 0;
         }
       });
@@ -88,7 +88,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
         message.success('上传成功');
         onCancel();
       } else {
-        message.error(res?.msg || res?.message || '接口异常');
+        message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
         itemClicked.current = 0;
       }
     });
@@ -107,7 +107,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
         if (res && res.code === 'SUCCESS') {
           message.success('上传成功');
         } else {
-          message.error(res?.msg || res?.message || '接口异常');
+          message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
           itemClicked.current = 0;
         }
       });
@@ -162,7 +162,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
           destroyOnClose
           onCancel={() => onCancel()}
           footer={
-            <div className="flex-box-end" style={{ gap: 8 }}>
+            <div className="flex-box-justify-end" style={{ gap: 8 }}>
               <Button
                 type="link"
                 onClick={() => {

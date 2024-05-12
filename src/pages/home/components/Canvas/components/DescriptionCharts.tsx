@@ -12,10 +12,17 @@ interface Props {
 
 const DescriptionCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  const { dataValue, basicInfoData, des_bordered, des_column, des_layout, des_size, fontSize } =
-    data;
-  const { initialState } = useModel<any>('@@initialState');
-  const { params } = initialState;
+  let { dataValue, basicInfoData, des_bordered, des_column, des_layout, des_size, fontSize } = data;
+  if (process.env.NODE_ENV === 'development') {
+    dataValue = [
+      {
+        id: guid(),
+        name: 'asdasd',
+        value: '22222',
+        color: '',
+      },
+    ];
+  }
 
   useEffect(() => {
     if (!!dataValue && !_.isArray(dataValue)) {

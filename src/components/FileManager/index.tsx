@@ -33,7 +33,7 @@ const FileManager: React.FC<Props> = (props) => {
         const { items } = res;
         setList(items || []);
       } else {
-        !_.isUndefined(res) && message.error('接口异常');
+        !_.isUndefined(res) && message.error('后台服务异常，请重启服务');
       }
       setLoading(false);
     });

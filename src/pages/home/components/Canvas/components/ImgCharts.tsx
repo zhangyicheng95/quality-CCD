@@ -42,6 +42,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     onImgChange = null,
     onLockImgChange = null,
     lockImg = false,
+    modelRotateScreenshot = false,
   } = data;
 
   if (process.env.NODE_ENV === 'development' && !dataValue) {
@@ -431,7 +432,11 @@ const ImgCharts: React.FC<Props> = (props: any) => {
               </div>
               <div
                 className="flex-box img-box-btn-box"
-                style={!!ifShowHeader ? { display: 'flex', top: '-26px' } : {}}
+                style={Object.assign(
+                  {},
+                  !!ifShowHeader ? { display: 'flex', top: '-26px' } : {},
+                  modelRotateScreenshot ? { display: 'flex' } : {},
+                )}
               >
                 {!!onLockImgChange ? (
                   <Button
@@ -442,7 +447,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                       onLockImgChange?.();
                     }}
                   >
-                    {lockImg ? '解冻图片' : '冻结图片'}
+                    {lockImg ? '解锁图片' : '锁定图片'}
                   </Button>
                 ) : null}
                 {notLocalStorage ? (

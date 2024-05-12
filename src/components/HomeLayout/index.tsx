@@ -76,7 +76,7 @@ const HomeLayout: React.FC<any> = (props) => {
           payload: { label: data.name, options: result },
         });
       } else {
-        message.error(res?.msg || res?.message || '接口异常');
+        message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
       }
       loopGetProjects(index + 1, list[index + 1], list);
     });
@@ -106,7 +106,7 @@ const HomeLayout: React.FC<any> = (props) => {
           payload: result,
         });
       } else {
-        message.error(res?.message || '接口异常');
+        message.error(res?.message || '后台服务异常，请重启服务');
         setList(list);
         dispatch({
           type: 'themeStore/statusAction',

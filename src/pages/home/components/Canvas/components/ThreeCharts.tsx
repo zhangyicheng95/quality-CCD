@@ -2616,7 +2616,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                       if (res && res.code === 'SUCCESS') {
                         message.success('轨迹上传成功');
                       } else {
-                        message.error(res?.msg || res?.message || '接口异常');
+                        message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
                       }
                     });
                   }
@@ -2651,7 +2651,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                       if (res && res.code === 'SUCCESS') {
                         message.success('分区上传成功');
                       } else {
-                        message.error(res?.msg || res?.message || '接口异常');
+                        message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
                       }
                     });
                   }
@@ -2861,7 +2861,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     setModelUploadVisible(false);
                     // setSelectedPath(`http://localhost:5001/files/${values?.modelfilename}`);
                   } else {
-                    message.error(res?.msg || res?.message || '接口异常');
+                    message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
                   }
                 });
               } else {

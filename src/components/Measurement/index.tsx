@@ -159,9 +159,10 @@ const Measurement: React.FC<Props> = (props: any) => {
                 ref={refList[index]}
                 defaultValue={!!value}
                 fontInBody={[
-                  { label: '', value: false },
-                  { label: '', value: true },
+                  { label: '关', value: false },
+                  { label: '开', value: true },
                 ]}
+                style={{ fontSize: 16 }}
                 onChange={(checked: any) => {
                   const val = !!checked;
                   setFocus((prev: any) =>

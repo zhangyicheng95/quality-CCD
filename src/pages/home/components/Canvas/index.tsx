@@ -21,6 +21,7 @@ import * as _ from 'lodash';
 import { BASE_IP, btnFetch, startFlowService, stopFlowService, updateParams } from '@/services/api';
 import GridLayout from '@/components/GridLayout';
 import {
+  ArrowUpOutlined,
   CaretDownOutlined,
   CaretRightOutlined,
   CompressOutlined,
@@ -120,6 +121,11 @@ import EquipmentControlCharts from './components/customComponents/EquipmentContr
 import OrderInformationCharts from './components/customComponents/OrderInformationCharts';
 import EquipmentInfoCharts from './components/customComponents/EquipmentInfoCharts';
 import SegmentSwitchCharts from './components/SegmentSwitchCharts';
+import BasicButton from '@/components/BasicButton';
+import BodyBoxCharts from './components/BodyBoxCharts';
+import RangeDomainCharts from './components/RangeDomainCharts';
+import RectRangeCharts from './components/customComponents/RectRangeCharts';
+import ModelSwitchCharts from './components/customComponents/ModelSwitchCharts';
 
 const leftPanelDataLocal = [
   {
@@ -150,10 +156,11 @@ const leftPanelDataLocal = [
 const Home: React.FC<any> = (props: any) => {
   const { initialState, setInitialState } = useModel<any>('@@initialState');
   const { params: paramsData } = initialState;
-  const { dispatch, started, taskDataConnect, snapshot, activeTab, projectStatus } = props;
+  const { dispatch, started, bodyBoxTab, taskDataConnect, snapshot, projectStatus } = props;
   const { logStr, gridContentList, footerData, errorData } = snapshot;
   const [form] = Form.useForm();
   const [form2] = Form.useForm();
+  const [formCustom] = Form.useForm();
   const { validateFields, setFieldsValue, getFieldValue } = form;
   const ipString: any = localStorage.getItem('ipString') || '';
   const updateTimer = useRef<any>();
@@ -194,7 +201,14 @@ const Home: React.FC<any> = (props: any) => {
       headerTitleFontSize: 16,
       backgroundColor: 'default',
     },
-    'slider-1': { des_column: 1, ifShowHeader: false, backgroundColor: 'default' },
+    'slider-1': {
+      des_column: 1,
+      titleAlign: 'horizational',
+      iconSize: 24,
+      controlList: [],
+      ifShowHeader: false,
+      backgroundColor: 'default',
+    },
     'slider-4': {
       fontSize: 20,
       ifShowHeader: false,
@@ -333,51 +347,46 @@ const Home: React.FC<any> = (props: any) => {
               ...(homeSettingData?.['slider-1']?.des_column === 3 ? { overflow: 'hidden' } : {}),
             }}
           >
-            <Button
-              className="flex-box btn"
-              style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
+            <BasicButton
+              title={started ? '检测' : '启动'}
               icon={
                 started ? (
-                  <div className="btn-icon btn-self-icon flex-box-center success"></div>
+                  <div className="btn-self-icon flex-box-center success"></div>
                 ) : (
-                  <PlayCircleOutlined className="btn-icon" />
+                  <PlayCircleOutlined />
                 )
               }
-              type="link"
-              onClick={() => start()}
+              iconSize={homeSettingData['slider-1']?.iconSize || 40}
+              direction={homeSettingData['slider-1']?.titleAlign}
+              style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
               disabled={started || ifCanEdit}
               loading={!started && loading}
-            >
-              {started ? '检测' : '启动'}
-            </Button>
-            <Button
-              className="flex-box btn"
-              style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
-              danger
+              onClick={() => start()}
+            />
+            <BasicButton
+              title={'停止'}
               icon={
-                <div className="btn-icon btn-self-icon flex-box-center">
+                <div className="btn-self-icon flex-box-center">
                   <div className={`btn-self-icon-rect ${started ? 'active' : 'disabled'}`} />
                 </div>
               }
-              type="text"
-              onClick={() => end()}
+              iconSize={homeSettingData['slider-1']?.iconSize || 40}
+              direction={homeSettingData['slider-1']?.titleAlign}
+              style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
               disabled={!started || ifCanEdit}
               loading={started && loading}
-            >
-              停止
-            </Button>
-            <Button
-              className="flex-box btn"
+              onClick={() => end()}
+            />
+            <BasicButton
+              title={'重启'}
+              icon={<ReloadOutlined />}
+              iconSize={homeSettingData['slider-1']?.iconSize || 40}
+              direction={homeSettingData['slider-1']?.titleAlign}
               style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
-              danger
-              icon={<ReloadOutlined className="btn-icon" />}
-              type="text"
-              onClick={() => reStart()}
-              disabled={!started}
+              disabled={!started || ifCanEdit}
               loading={started && loading}
-            >
-              重启
-            </Button>
+              onClick={() => reStart()}
+            />
           </div>
           {ifCanEdit ? (
             <div
@@ -389,6 +398,12 @@ const Home: React.FC<any> = (props: any) => {
                   setHomeSettingVisible('');
                 }
                 setFieldsValue(homeSettingData?.['slider-1']);
+                setCommonSettingList(
+                  (!!homeSettingData?.['slider-1']?.controlList?.length
+                    ? homeSettingData?.['slider-1']?.controlList
+                    : [{}]
+                  )?.map((item: any) => ({ ...item, id: guid() })),
+                );
                 setHomeSettingVisible('slider-1');
               }}
             >
@@ -509,7 +524,7 @@ const Home: React.FC<any> = (props: any) => {
                                 localStorage.setItem('ipUrl-realtime', statusItem?.realIp);
                               window.location.reload();
                             } else {
-                              message.error(res?.msg || res?.message || '接口异常');
+                              message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
                             }
                             setLoading(false);
                           });
@@ -1165,6 +1180,9 @@ const Home: React.FC<any> = (props: any) => {
           titleFontSize = 20,
           valueOnTop = false,
           timeSelectDefault,
+          iconSize,
+          parentBodyBox,
+          parentBodyBoxTab,
         } = item;
         // const id = key?.split('$$')[0];
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
@@ -1181,6 +1199,7 @@ const Home: React.FC<any> = (props: any) => {
           <div
             key={key}
             className={`drag-item-content-box background-ubv`}
+            // @ts-ignore
             style={Object.assign(
               {},
               ['imgButton', 'heatMap'].includes(type)
@@ -1200,6 +1219,7 @@ const Home: React.FC<any> = (props: any) => {
                     })`,
                     backgroundColor: 'transparent',
                   },
+              !!parentBodyBox && parentBodyBoxTab != bodyBoxTab ? { visibility: 'hidden' } : {},
             )}
           >
             {!['default', 'transparent'].includes(backgroundColor) ? (
@@ -1243,19 +1263,24 @@ const Home: React.FC<any> = (props: any) => {
                   : !['default', 'transparent'].includes(backgroundColor)
                   ? { height: `calc(100% - ${(titleFontSize / 2) * 3 + titlePaddingSize * 2}px)` }
                   : { height: '100%' },
-                { padding: bodyPaddingSize },
                 backgroundColor === 'border'
                   ? {
                       border: '2px solid rgba(144,144,144,0.6)',
-                      borderRadius: 8,
+                      borderRadius: 6,
                       height: '100%',
-                      paddingTop: titleFontSize / 2,
+                      padding: `${
+                        titleFontSize / 2 + bodyPaddingSize
+                      }px ${bodyPaddingSize}px ${bodyPaddingSize}px`,
                     }
-                  : {},
+                  : { padding: bodyPaddingSize },
               )}
             >
               <div className="flex-box-center" style={{ height: '100%' }}>
-                {!parent?.[0] && type?.indexOf('button') < 0 ? (
+                {!parent?.[0] &&
+                type?.indexOf('button') < 0 &&
+                !['bodyBox', 'segmentSwitch', 'rangeDomain', 'rectRange', 'modelSwitch'].includes(
+                  type,
+                ) ? (
                   '请重新绑定数据节点'
                 ) : type === 'line' ? (
                   <LineCharts
@@ -1414,6 +1439,48 @@ const Home: React.FC<any> = (props: any) => {
                       ifFetch,
                     }}
                   />
+                ) : type === 'rangeDomain' ? (
+                  <RangeDomainCharts
+                    id={key}
+                    data={{
+                      dataValue: dataValue || [],
+                      fontSize,
+                      des_column,
+                      hiddenAxis,
+                      labelInxAxis,
+                      fetchType,
+                      xName,
+                      ifFetch,
+                      barRadius,
+                      timeSelectDefault,
+                      parentBodyBoxTab,
+                      formCustom,
+                    }}
+                  />
+                ) : type === 'rectRange' ? (
+                  <RectRangeCharts
+                    id={key}
+                    data={{
+                      dataValue: dataValue || [],
+                      fontSize,
+                      fetchType,
+                      xName,
+                    }}
+                  />
+                ) : type === 'modelSwitch' ? (
+                  <ModelSwitchCharts
+                    id={key}
+                    data={{
+                      dataValue: dataValue || [],
+                      fontSize,
+                      fetchType,
+                      xName,
+                      parentBodyBoxTab,
+                      formCustom,
+                      addContentList,
+                      dispatch,
+                    }}
+                  />
                 ) : type === 'tree' ? (
                   <TreeCharts
                     id={key}
@@ -1489,6 +1556,18 @@ const Home: React.FC<any> = (props: any) => {
                       yName,
                     }}
                   />
+                ) : type === 'bodyBox' ? (
+                  <BodyBoxCharts
+                    id={key}
+                    data={{
+                      fontSize,
+                      timeSelectDefault,
+                      yName,
+                      iconSize,
+                      fetchParams,
+                      dispatch,
+                    }}
+                  />
                 ) : type === 'button' ? (
                   <Button
                     type={['primary', 'link', 'ghost'].includes(valueColor) ? valueColor : ''}
@@ -1504,13 +1583,13 @@ const Home: React.FC<any> = (props: any) => {
                       const func = () => {
                         let params = '';
                         if (
-                          !_.isUndefined(value) &&
-                          !_.isNull(value) &&
-                          _.isString(value) &&
-                          !!value
+                          !_.isUndefined(fetchParams) &&
+                          !_.isNull(fetchParams) &&
+                          _.isString(fetchParams) &&
+                          !!fetchParams
                         ) {
                           try {
-                            params = JSON.parse(value);
+                            params = JSON.parse(fetchParams);
                           } catch (e) {
                             console.log('按钮传递参数格式不对:', e);
                             params = '';
@@ -1520,7 +1599,7 @@ const Home: React.FC<any> = (props: any) => {
                           if (!!res && res.code === 'SUCCESS') {
                             message.success('success');
                           } else {
-                            message.error(res?.message || '接口异常');
+                            message.error(res?.message || '后台服务异常，请重启服务');
                           }
                         });
                       };
@@ -1596,6 +1675,8 @@ const Home: React.FC<any> = (props: any) => {
                   <SegmentSwitchCharts
                     id={key}
                     data={{
+                      dataValue,
+                      dispatch,
                       fontSize,
                       yName,
                       des_layout,
@@ -1603,8 +1684,6 @@ const Home: React.FC<any> = (props: any) => {
                       timeSelectDefault,
                       xName,
                       fetchType,
-                      start: () => start(),
-                      end: () => end(),
                     }}
                   />
                 ) : type === 'operation' ? (
@@ -1727,6 +1806,7 @@ const Home: React.FC<any> = (props: any) => {
                     data={{
                       dataValue,
                       fontSize,
+                      modelRotateScreenshot,
                     }}
                   />
                 ) : type === 'formula' ? (
@@ -1755,15 +1835,10 @@ const Home: React.FC<any> = (props: any) => {
                   <EquipmentControlCharts
                     id={key}
                     data={{
+                      dispatch,
                       dataValue,
                       fontSize,
                       titleFontSize,
-                      loading,
-                      start: () => start(),
-                      stop: () => end(),
-                      reStart: () => reStart(),
-                      fetchType,
-                      xName,
                     }}
                   />
                 ) : type === 'paramControl' ? (
@@ -1847,14 +1922,20 @@ const Home: React.FC<any> = (props: any) => {
             </div>
             {ifCanEdit ? (
               <div
-                style={
+                style={Object.assign(
+                  {},
                   type === 'table2'
                     ? {
                         height: `calc(100% - 80px - ${bodyPaddingSize}px)`,
                         marginTop: 80 + bodyPaddingSize,
                       }
-                    : {}
-                }
+                    : {},
+                  type === 'bodyBox'
+                    ? {
+                        top: 'auto',
+                      }
+                    : {},
+                )}
                 className="flex-box-center drag-item-content-mask common-card-title"
                 onDoubleClick={() => {
                   // 双击事件触发的操作
@@ -1872,7 +1953,12 @@ const Home: React.FC<any> = (props: any) => {
                       !!item?.yColumns?.length ? {} : {},
                     ),
                   );
-                  setCommonSettingList(timeSelectDefault);
+                  setCommonSettingList(
+                    (!!timeSelectDefault?.length ? timeSelectDefault : [{}])?.map((item: any) => ({
+                      ...item,
+                      id: guid(),
+                    })),
+                  );
                   setFieldsValue(
                     Object.assign(
                       {},
@@ -2071,7 +2157,7 @@ const Home: React.FC<any> = (props: any) => {
                     // 复制监控窗口
                     const uuid32 = getuid();
                     addWindow({
-                      ...item,
+                      ..._.omit(item, 'id'),
                       value: [uuid32],
                       type,
                       size: {
@@ -2138,7 +2224,7 @@ const Home: React.FC<any> = (props: any) => {
     } else {
       setContentList([]);
     }
-  }, [gridContentList, addContentList, addWindowVisible, loading]);
+  }, [gridContentList, addContentList, addWindowVisible, bodyBoxTab]);
   // 批量启动任务
   const startProjects = (item: any, list: any, index: number, projectStatus: any) => {
     const data = projectStatus?.filter((i: any) => i.value === item.key)?.[0] || {};
@@ -2201,74 +2287,130 @@ const Home: React.FC<any> = (props: any) => {
   };
   // 启动任务
   const start = () => {
-    if (!ipString) return;
-    setLoading(true);
-    const params = Object.assign({}, _.omit(paramsData, 'edges'), {
-      flowData: Object.assign({}, paramsData?.flowData, {
-        edges: (paramsData?.flowData?.edges || []).filter((edge: any) => {
-          return (paramsData?.flowData?.nodes || []).filter(
-            (node: any) => node.id === edge?.source?.cell || node.id === edge?.target?.cell,
-          ).length;
+    debugger;
+    if (!ipString) {
+      return;
+    } else {
+      setLoading(true);
+      const params = Object.assign({}, _.omit(paramsData, 'edges'), {
+        flowData: Object.assign({}, paramsData?.flowData, {
+          edges: (paramsData?.flowData?.edges || []).filter((edge: any) => {
+            return (paramsData?.flowData?.nodes || []).filter(
+              (node: any) => node.id === edge?.source?.cell || node.id === edge?.target?.cell,
+            ).length;
+          }),
         }),
-      }),
-    });
-    updateParams({
-      id: params.id,
-      data: params,
-    }).then((res: any) => {
-      if (res && res.code === 'SUCCESS') {
-        startFlowService(ipString || '', '', params).then((res: any) => {
+      });
+      updateParams({
+        id: params.id,
+        data: params,
+      }).then((res: any) => {
+        if (res && res.code === 'SUCCESS') {
+          startFlowService(ipString || '', '', params).then((res: any) => {
+            if (res && res.code === 'SUCCESS') {
+              message.success('任务启动成功');
+              dispatch({
+                type: 'home/set',
+                payload: {
+                  started: true,
+                },
+              });
+            } else {
+              message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
+            }
+            if (
+              !homeSettingData?.['slider-1']?.controlList ||
+              homeSettingData?.['slider-1']?.controlList?.length === 0
+            ) {
+              setLoading(false);
+            }
+          });
+        } else {
+          message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
+          if (
+            !homeSettingData?.['slider-1']?.controlList ||
+            homeSettingData?.['slider-1']?.controlList?.length === 0
+          ) {
+            setLoading(false);
+          }
+        }
+      });
+      homeSettingData?.['slider-1']?.controlList?.forEach((item: any, index: number) => {
+        const { ip, url } = item;
+        startFlowService(ip || '', url, params).then((res: any) => {
           if (res && res.code === 'SUCCESS') {
             message.success('任务启动成功');
-            dispatch({
-              type: 'home/set',
-              payload: {
-                started: true,
-              },
-            });
           } else {
-            message.error(res?.msg || res?.message || '接口异常');
+            message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
           }
-          setLoading(false);
+          if (index + 1 === homeSettingData?.['slider-1']?.controlList?.length) {
+            setTimeout(() => {
+              setLoading(false);
+            }, 2000);
+          }
         });
-      } else {
-        message.error(res?.msg || res?.message || '接口异常');
-        setLoading(false);
-      }
-    });
+      });
+    }
   };
   // 停止任务
   const end = () => {
-    if (!ipString) return;
-    setLoading(true);
-    stopFlowService(ipString || '').then((res: any) => {
-      if (res && res.code === 'SUCCESS') {
-        message.success('任务停止成功');
-        dispatch({
-          type: 'home/set',
-          payload: {
-            started: false,
-          },
-        });
+    return new Promise((resolve: any, reject: any) => {
+      if (!ipString) {
+        reject(false);
       } else {
-        message.error(res?.msg || res?.message || '接口异常');
+        setLoading(true);
+        stopFlowService(ipString || '').then((res: any) => {
+          if (res && res.code === 'SUCCESS') {
+            message.success('任务停止成功');
+            dispatch({
+              type: 'home/set',
+              payload: {
+                started: false,
+              },
+            });
+          } else {
+            message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
+          }
+          if (
+            !homeSettingData?.['slider-1']?.controlList ||
+            homeSettingData?.['slider-1']?.controlList?.length === 0
+          ) {
+            setLoading(false);
+            resolve(true);
+          }
+        });
+        homeSettingData?.['slider-1']?.controlList?.forEach((item: any, index: number) => {
+          const { ip, url } = item;
+          stopFlowService(ip || '', url).then((res: any) => {
+            if (res && res.code === 'SUCCESS') {
+              message.success('任务停止成功');
+            } else {
+              message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
+            }
+            if (index + 1 === homeSettingData?.['slider-1']?.controlList?.length) {
+              setTimeout(() => {
+                resolve(true);
+                setLoading(false);
+              }, 2000);
+            }
+          });
+        });
       }
-      setLoading(false);
     });
   };
   // 重启任务
   const reStart = () => {
     if (!ipString) return;
     setLoading(true);
-    stopFlowService(ipString || '').then((res: any) => {
-      if (res && res.code === 'SUCCESS') {
-        setTimeout(() => {
-          start();
-        }, 3000);
-      } else {
-        message.error(res?.msg || res?.message || '接口异常');
-      }
-    });
+    end()
+      .then((res) => {
+        if (res) {
+          setTimeout(() => {
+            start();
+          }, 3000);
+        }
+      })
+      .catch((err) => console.log(err));
   };
   // 关闭
   const onclose = () => {
@@ -2357,93 +2499,8 @@ const Home: React.FC<any> = (props: any) => {
     };
   }, [started, dispatch]);
   // 添加监控窗口
-  const addWindow = (values?: any) => {
-    const {
-      value,
-      type,
-      size,
-      yName,
-      xName,
-      fontSize,
-      defaultImg,
-      reverse,
-      direction,
-      symbol,
-      fetchType,
-      ifFetch,
-      fetchParams,
-      align,
-      hiddenAxis,
-      labelInxAxis,
-      labelDirection,
-      barRadius,
-      showBackground,
-      showWithLine,
-      backgroundColor,
-      barColor,
-      progressType,
-      progressSize,
-      progressSteps,
-      des_bordered,
-      des_column,
-      des_layout,
-      des_size,
-      ifLocalStorage,
-      CCDName,
-      imgs_width,
-      imgs_height,
-      magnifier,
-      comparison = false,
-      operationList,
-      dataZoom,
-      fontColor,
-      interlacing = false,
-      modelRotate = false,
-      modelScale = false,
-      modelRotateScreenshot = false,
-      password = '',
-      passwordHelp = '',
-      ifShowHeader = false,
-      ifShowColorList = false,
-      headerBackgroundColor = 'default',
-      ifNeedClear,
-      ifUpdateProject,
-      ifUpdatetoInitParams,
-      magnifierSize,
-      logSize,
-      listType,
-      valueColor,
-      markNumber = false,
-      markNumberLeft,
-      markNumberTop,
-      blockType,
-      blockTypeLines,
-      modelUpload,
-      xColumns,
-      yColumns,
-      platFormOptions,
-      ifFetchParams,
-      ifNeedAllow,
-      lineNumber,
-      columnNumber,
-      magnifierWidth,
-      magnifierHeight,
-      ifPopconfirm,
-      showImgList,
-      imgListNum,
-      showFooter,
-      line_height,
-      staticHeight,
-      fileTypes,
-      fileFetch,
-      titlePaddingSize,
-      bodyPaddingSize,
-      showLabel,
-      titleBackgroundColor,
-      titleFontSize,
-      valueOnTop,
-      timeSelectDefault,
-    } = values;
+  const addWindow = (values: any) => {
+    const { value, size, type, fetchParams, ...rest } = values;
     if (['button', 'buttonInp', 'buttonPassword', 'buttonUpload'].includes(type) && !!fetchParams) {
       try {
         JSON.parse(fetchParams);
@@ -2478,88 +2535,8 @@ const Home: React.FC<any> = (props: any) => {
               ...size,
             },
             type,
-            tab: activeTab,
-            yName,
-            xName,
-            defaultImg,
-            fontSize,
-            reverse,
-            direction,
-            symbol,
-            fetchType,
-            ifFetch,
             fetchParams,
-            align,
-            hiddenAxis,
-            labelInxAxis,
-            labelDirection,
-            barRadius,
-            showBackground,
-            showWithLine,
-            backgroundColor,
-            barColor,
-            progressType,
-            progressSize,
-            progressSteps,
-            des_bordered,
-            des_column,
-            des_layout,
-            des_size,
-            ifLocalStorage,
-            CCDName,
-            imgs_width,
-            imgs_height,
-            magnifier,
-            comparison,
-            operationList,
-            dataZoom,
-            fontColor,
-            interlacing,
-            modelRotate,
-            modelScale,
-            modelRotateScreenshot,
-            password,
-            passwordHelp,
-            ifShowHeader,
-            ifShowColorList,
-            headerBackgroundColor,
-            ifNeedClear,
-            ifUpdateProject,
-            ifUpdatetoInitParams,
-            magnifierSize,
-            logSize,
-            listType,
-            valueColor,
-            markNumber,
-            markNumberLeft,
-            markNumberTop,
-            blockType,
-            blockTypeLines,
-            modelUpload,
-            xColumns,
-            yColumns,
-            platFormOptions,
-            ifFetchParams,
-            ifNeedAllow,
-            lineNumber,
-            columnNumber,
-            magnifierWidth,
-            magnifierHeight,
-            ifPopconfirm,
-            showImgList,
-            imgListNum,
-            showFooter,
-            line_height,
-            staticHeight,
-            fileTypes,
-            fileFetch,
-            titlePaddingSize,
-            bodyPaddingSize,
-            showLabel,
-            titleBackgroundColor,
-            titleFontSize,
-            valueOnTop,
-            timeSelectDefault,
+            ...rest,
           },
           ['description'].includes(windowType) ? { basicInfoData } : {},
         ),
@@ -2574,88 +2551,8 @@ const Home: React.FC<any> = (props: any) => {
               value,
               size: Object.assign({}, editWindowData.size, { i: id }),
               type,
-              tab: activeTab,
-              yName,
-              xName,
-              defaultImg,
-              fontSize,
-              reverse,
-              direction,
-              symbol,
-              fetchType,
-              ifFetch,
               fetchParams,
-              align,
-              hiddenAxis,
-              labelInxAxis,
-              labelDirection,
-              barRadius,
-              showBackground,
-              showWithLine,
-              backgroundColor,
-              barColor,
-              progressType,
-              progressSize,
-              progressSteps,
-              des_bordered,
-              des_column,
-              des_layout,
-              des_size,
-              ifLocalStorage,
-              CCDName,
-              imgs_width,
-              imgs_height,
-              magnifier,
-              comparison,
-              operationList,
-              dataZoom,
-              fontColor,
-              interlacing,
-              modelRotate,
-              modelScale,
-              modelRotateScreenshot,
-              password,
-              passwordHelp,
-              ifShowHeader,
-              ifShowColorList,
-              headerBackgroundColor,
-              ifNeedClear,
-              ifUpdateProject,
-              ifUpdatetoInitParams,
-              magnifierSize,
-              logSize,
-              listType,
-              valueColor,
-              markNumber,
-              markNumberLeft,
-              markNumberTop,
-              blockType,
-              blockTypeLines,
-              modelUpload,
-              xColumns,
-              yColumns,
-              platFormOptions,
-              ifFetchParams,
-              ifNeedAllow,
-              lineNumber,
-              columnNumber,
-              magnifierWidth,
-              magnifierHeight,
-              ifPopconfirm,
-              showImgList,
-              imgListNum,
-              showFooter,
-              line_height,
-              staticHeight,
-              fileTypes,
-              fileFetch,
-              titlePaddingSize,
-              bodyPaddingSize,
-              showLabel,
-              titleBackgroundColor,
-              titleFontSize,
-              valueOnTop,
-              timeSelectDefault,
+              ...rest,
             },
             ['description'].includes(windowType) ? { basicInfoData } : {},
           );
@@ -2752,6 +2649,7 @@ const Home: React.FC<any> = (props: any) => {
       titleFontSize: 20,
       valueOnTop: false,
       timeSelectDefault: 'day',
+      iconSize: 24,
     });
     setWindowType('img');
     setAddWindowVisible('');
@@ -2765,18 +2663,20 @@ const Home: React.FC<any> = (props: any) => {
       yColumns: editWindowData.yColumns,
     });
   }, [editWindowData.xColumns, editWindowData.yColumns]);
-  // 分段开关增加选项
+  // 分段开关选项
   const onSegmentSwitchChange = (value: any, index: number, type: string) => {
-    let list = [];
+    let list: any = [];
     if (type === 'remove') {
+      setCommonSettingList([]);
       list = commonSettingList
         ?.map((cen: any, cIndex: number) => {
-          if (cIndex === index) {
+          if (cen.id === index) {
             return null;
           }
           return cen;
         })
         .filter(Boolean);
+      console.log(list);
     } else if (type === 'add') {
       list = (commonSettingList || [])?.concat({});
     } else {
@@ -2790,9 +2690,93 @@ const Home: React.FC<any> = (props: any) => {
         return cen;
       });
     }
-    setCommonSettingList(list);
-    form.setFieldsValue({
-      timeSelectDefault: list,
+    setTimeout(() => {
+      setCommonSettingList(list?.map((item: any) => ({ ...item, id: guid() })));
+      form.setFieldsValue({
+        timeSelectDefault: list,
+      });
+    });
+  };
+  // slider-1控制列表
+  const onSliderControlChange = (value: any, index: number, type: string) => {
+    let list: any = [];
+    if (type === 'remove') {
+      setCommonSettingList([]);
+      list = commonSettingList
+        ?.map((cen: any, cIndex: number) => {
+          if (cen.id === index) {
+            return null;
+          }
+          return cen;
+        })
+        .filter(Boolean);
+    } else if (type === 'add') {
+      list = (commonSettingList || [])?.concat('');
+    } else {
+      list = commonSettingList?.map((cen: any, cIndex: number) => {
+        if (cIndex === index) {
+          return {
+            ...cen,
+            [type]: value,
+          };
+        }
+        return cen;
+      });
+    }
+    setTimeout(() => {
+      setCommonSettingList(list?.map((item: any) => ({ ...item, id: guid() })));
+      form.setFieldsValue({
+        controlList: list,
+      });
+    });
+  };
+  // 盒子窗口
+  const onBodyBoxhChange = (value: any, index: number, type: string) => {
+    let list = [].concat(commonSettingList);
+    if (type === 'remove') {
+      setCommonSettingList([]);
+      list = commonSettingList
+        ?.map((cen: any, cIndex: number) => {
+          if (cen.id === index) {
+            return null;
+          }
+          return cen;
+        })
+        .filter(Boolean);
+    } else if (type === 'add') {
+      list = (commonSettingList || [])?.concat({ sort: commonSettingList.length });
+    } else if (type === 'up') {
+      setCommonSettingList([]);
+      list = commonSettingList?.map((cen: any, cIndex: number) => {
+        if (cIndex === index - 1) {
+          return {
+            ...cen,
+            sort: index,
+          };
+        } else if (cIndex === index) {
+          return {
+            ...cen,
+            sort: index - 1,
+          };
+        }
+        return cen;
+      });
+    } else {
+      list = commonSettingList?.map((cen: any, cIndex: number) => {
+        if (cIndex === index) {
+          return {
+            ...cen,
+            [type]: value,
+          };
+        }
+        return cen;
+      });
+    }
+    setTimeout(() => {
+      setCommonSettingList(list?.map((item: any) => ({ ...item, id: guid() })));
+      form.setFieldsValue({
+        timeSelectDefault: list,
+      });
     });
   };
 
@@ -2925,9 +2909,40 @@ const Home: React.FC<any> = (props: any) => {
                     const x = ((e.x + tabNum * width - diffWidth) / width) * 96;
                     const y = (e.y * 14) / 300;
                     if (['main', 'custom'].includes(key)) {
+                      const parentBodyBox = addContentList?.filter((i: any) => {
+                        return (
+                          i.type === 'bodyBox' &&
+                          x > i.size.x &&
+                          x < i.size.x + i.size.w &&
+                          y > i.size.y &&
+                          y < i.size.y + i.size.h
+                        );
+                      })?.[0]?.id;
+                      if (
+                        !!addContentList?.filter((i: any) => i.type === 'bodyBox')?.[0] &&
+                        value === 'bodyBox'
+                      ) {
+                        message.error('只能添加一个盒子窗口');
+                        return;
+                      }
                       // 添加监控窗口
                       const uuid32 = getuid();
-                      addWindow({ value: [uuid32], type: value, size: { x, y } });
+                      addWindow(
+                        Object.assign(
+                          {},
+                          {
+                            value: [uuid32],
+                            type: value,
+                            size: { x, y },
+                          },
+                          !!parentBodyBox
+                            ? {
+                                parentBodyBox: parentBodyBox,
+                                parentBodyBoxTab: bodyBoxTab,
+                              }
+                            : {},
+                        ),
+                      );
                     } else if (key === 'basic') {
                       // 添加基础窗口
                       setGridHomeList((prev: any) => {
@@ -2980,7 +2995,6 @@ const Home: React.FC<any> = (props: any) => {
                                 homeSetting: homeSettingData,
                               },
                             };
-                            console.log(JSON.stringify(params));
                             updateParams({
                               id: paramData.id,
                               data: params,
@@ -2999,7 +3013,9 @@ const Home: React.FC<any> = (props: any) => {
                                 }
                                 window.location.reload();
                               } else {
-                                message.error(res?.msg || res?.message || '接口异常');
+                                message.error(
+                                  res?.msg || res?.message || '后台服务异常，请重启服务',
+                                );
                               }
                             });
                           }}
@@ -3061,7 +3077,9 @@ const Home: React.FC<any> = (props: any) => {
                                 if (res && res.code === 'SUCCESS') {
                                   window.location.reload();
                                 } else {
-                                  message.error(res?.msg || res?.message || '接口异常');
+                                  message.error(
+                                    res?.msg || res?.message || '后台服务异常，请重启服务',
+                                  );
                                 }
                               });
                             });
@@ -3412,7 +3430,14 @@ const Home: React.FC<any> = (props: any) => {
               .validateFields()
               .then((values) => {
                 if (!!addWindowVisible) {
-                  addWindow(values);
+                  const id = `${values.value.join('$$')}$$${values.type}`;
+                  const params = {
+                    ..._.omit(_.omit(_.omit(editWindowData, 'id'), 'size'), 'value'),
+                    id,
+                    size: { ...editWindowData.size, i: id },
+                    ...values,
+                  };
+                  addWindow(params);
                 } else if (!!homeSettingVisible) {
                   setHomeSettingData((prev: any) => ({
                     ...prev,
@@ -3444,7 +3469,7 @@ const Home: React.FC<any> = (props: any) => {
                       // });
                       window.location.reload();
                     } else {
-                      message.error(res?.msg || res?.message || '接口异常');
+                      message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
                     }
                   });
                 }
@@ -4204,6 +4229,155 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                   </Fragment>
                 ) : null}
+                {['rangeDomain'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item name="des_column" label="列数">
+                      <InputNumber />
+                    </Form.Item>
+                    <Form.Item name="labelInxAxis" label="显示名称" valuePropName="checked">
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item name="hiddenAxis" label="显示表头" valuePropName="checked">
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name={`fetchType`}
+                      label={'http类型'}
+                      rules={[{ required: false, message: 'http类型' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
+                          value: item,
+                          label: _.toUpper(item),
+                        }))}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={`xName`}
+                      label={'接口地址'}
+                      rules={[{ required: false, message: '接口地址' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                    <Form.Item name="ifFetch" label="是否实时触发" valuePropName="checked">
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item name="barRadius" label="是否可修改" valuePropName="checked">
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name={`timeSelectDefault`}
+                      label={'切换按钮'}
+                      rules={[{ required: false, message: '切换按钮' }]}
+                    >
+                      {commonSettingList
+                        ?.sort((a: any, b: any) => a.sort - b.sort)
+                        ?.map((item: any, index: number) => {
+                          const { label, value, id } = item;
+                          return (
+                            <div
+                              className="flex-box"
+                              key={`segmentSwitch-item-${index}`}
+                              style={{ marginBottom: 8, gap: 8 }}
+                            >
+                              <div style={{ flex: 1 }}>
+                                <Input
+                                  defaultValue={label}
+                                  placeholder="label"
+                                  style={{ height: 28 }}
+                                  onChange={(e) => {
+                                    const val = e?.target?.value;
+                                    onBodyBoxhChange(val, index, 'label');
+                                  }}
+                                />
+                              </div>
+                              <div style={{ flex: 1 }}>
+                                <Input
+                                  defaultValue={value}
+                                  placeholder="value"
+                                  style={{ height: 28 }}
+                                  onChange={(e) => {
+                                    const val = e?.target?.value;
+                                    onBodyBoxhChange(val, index, 'value');
+                                  }}
+                                />
+                              </div>
+                              <Button
+                                icon={<MinusSquareOutlined />}
+                                style={{ height: 28 }}
+                                onClick={() => {
+                                  onBodyBoxhChange('', id, 'remove');
+                                }}
+                              />
+                              <Button
+                                icon={<ArrowUpOutlined />}
+                                style={{ height: 28 }}
+                                disabled={index === 0}
+                                onClick={() => {
+                                  onBodyBoxhChange('', index, 'up');
+                                }}
+                              />
+                            </div>
+                          );
+                        })}
+                      <Button
+                        icon={<PlusSquareOutlined />}
+                        onClick={() => {
+                          onBodyBoxhChange('', 0, 'add');
+                        }}
+                      />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
+                {['modelSwitch'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`fetchType`}
+                      label={'http类型'}
+                      rules={[{ required: false, message: 'http类型' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
+                          value: item,
+                          label: _.toUpper(item),
+                        }))}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={`xName`}
+                      label={'接口地址'}
+                      rules={[{ required: false, message: '接口地址' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
+                {['rectRange'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`fetchType`}
+                      label={'http类型'}
+                      rules={[{ required: false, message: 'http类型' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
+                          value: item,
+                          label: _.toUpper(item),
+                        }))}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={`xName`}
+                      label={'接口地址'}
+                      rules={[{ required: false, message: '接口地址' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
                 {['imgs'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item
@@ -4245,6 +4419,86 @@ const Home: React.FC<any> = (props: any) => {
                           },
                         ]}
                       />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
+                {['bodyBox'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`timeSelectDefault`}
+                      label={'切换按钮'}
+                      rules={[{ required: true, message: '切换按钮' }]}
+                    >
+                      {commonSettingList
+                        ?.sort((a: any, b: any) => a.sort - b.sort)
+                        ?.map((item: any, index: number) => {
+                          const { label, value, id } = item;
+                          return (
+                            <div
+                              className="flex-box"
+                              key={`segmentSwitch-item-${index}`}
+                              style={{ marginBottom: 8, gap: 8 }}
+                            >
+                              <div style={{ flex: 1 }}>
+                                <Input
+                                  defaultValue={label}
+                                  placeholder="label"
+                                  style={{ height: 28 }}
+                                  onChange={(e) => {
+                                    const val = e?.target?.value;
+                                    onBodyBoxhChange(val, index, 'label');
+                                  }}
+                                />
+                              </div>
+                              <div style={{ flex: 1 }}>
+                                <Input
+                                  defaultValue={value}
+                                  placeholder="value"
+                                  style={{ height: 28 }}
+                                  onChange={(e) => {
+                                    const val = e?.target?.value;
+                                    onBodyBoxhChange(val, index, 'value');
+                                  }}
+                                />
+                              </div>
+                              <Button
+                                icon={<MinusSquareOutlined />}
+                                style={{ height: 28 }}
+                                onClick={() => {
+                                  onBodyBoxhChange('', id, 'remove');
+                                }}
+                              />
+                              <Button
+                                icon={<ArrowUpOutlined />}
+                                style={{ height: 28 }}
+                                disabled={index === 0}
+                                onClick={() => {
+                                  onBodyBoxhChange('', index, 'up');
+                                }}
+                              />
+                            </div>
+                          );
+                        })}
+                      <Button
+                        icon={<PlusSquareOutlined />}
+                        onClick={() => {
+                          onBodyBoxhChange('', 0, 'add');
+                        }}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={'iconSize'}
+                      label="图标大小"
+                      initialValue={24}
+                      rules={[{ required: true, message: '图标大小' }]}
+                    >
+                      <InputNumber min={12} />
+                    </Form.Item>
+                    <Form.Item name={'yName'} label="按钮距离左边距" initialValue={0}>
+                      <InputNumber min={0} />
+                    </Form.Item>
+                    <Form.Item name={'fetchParams'} label="按钮距离上边距" initialValue={0}>
+                      <InputNumber min={0} />
                     </Form.Item>
                   </Fragment>
                 ) : null}
@@ -4519,10 +4773,14 @@ const Home: React.FC<any> = (props: any) => {
                       label={'按钮参数'}
                       rules={[{ required: true, message: '按钮参数' }]}
                     >
-                      {(commonSettingList || [{}])?.map((item: any, index: number) => {
-                        const { label, value } = item;
+                      {commonSettingList?.map((item: any, index: number) => {
+                        const { label, value, id } = item;
                         return (
-                          <div className="flex-box" key={`segmentSwitch-item-${index}`}>
+                          <div
+                            className="flex-box"
+                            key={`segmentSwitch-item-${index}`}
+                            style={{ marginBottom: 8 }}
+                          >
                             <div style={{ flex: 1 }}>
                               <Input
                                 defaultValue={label}
@@ -4534,7 +4792,7 @@ const Home: React.FC<any> = (props: any) => {
                                 }}
                               />
                             </div>
-                            <div style={{ flex: 1, padding: 8 }}>
+                            <div style={{ flex: 1, padding: '0 8px' }}>
                               <Input
                                 defaultValue={value}
                                 placeholder="value"
@@ -4550,7 +4808,7 @@ const Home: React.FC<any> = (props: any) => {
                                 icon={<MinusSquareOutlined />}
                                 style={{ height: 28 }}
                                 onClick={() => {
-                                  onSegmentSwitchChange('', index, 'remove');
+                                  onSegmentSwitchChange('', id, 'remove');
                                 }}
                               />
                             </div>
@@ -4842,7 +5100,7 @@ const Home: React.FC<any> = (props: any) => {
                             <InputNumber min={2} placeholder="瀑布流列数" />
                           </Form.Item>
                         ) : null}
-                        <Form.Item name="ifFetch" label="是否实时反馈" valuePropName="checked">
+                        <Form.Item name="ifFetch" label="是否实时提交" valuePropName="checked">
                           <Switch />
                         </Form.Item>
                         {!!getFieldValue('ifFetch') ? (
@@ -5096,14 +5354,14 @@ const Home: React.FC<any> = (props: any) => {
                         className="scrollbar-style"
                       />
                     </Form.Item>
-                    <Form.Item name="ifFetch" label="是否实时反馈" valuePropName="checked">
+                    <Form.Item name="ifFetch" label="是否实时提交" valuePropName="checked">
                       <Switch />
                     </Form.Item>
                   </Fragment>
                 ) : null}
                 {['modal'].includes(windowType) ? (
                   <Fragment>
-                    <Form.Item name="ifFetch" label="是否实时反馈" valuePropName="checked">
+                    <Form.Item name="ifFetch" label="是否实时提交" valuePropName="checked">
                       <Switch />
                     </Form.Item>
                     <Form.Item
@@ -5337,6 +5595,17 @@ const Home: React.FC<any> = (props: any) => {
                     ) : null}
                   </Fragment>
                 ) : null}
+                {['imgContrast'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name="modelRotateScreenshot"
+                      label="按钮长显示"
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
                 {['iframe'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item
@@ -5422,9 +5691,87 @@ const Home: React.FC<any> = (props: any) => {
               initialValues={homeSettingData[homeSettingVisible]}
             >
               {homeSettingVisible === 'slider-1' ? (
-                <Form.Item name="des_column" label="列数">
-                  <InputNumber />
-                </Form.Item>
+                <Fragment>
+                  <Form.Item name="des_column" label="列数">
+                    <InputNumber />
+                  </Form.Item>
+                  <Form.Item
+                    name={`titleAlign`}
+                    label={'对齐方式'}
+                    initialValue={'horizational'}
+                    rules={[{ required: false, message: '对齐方式' }]}
+                  >
+                    <Select
+                      style={{ width: '100%' }}
+                      options={[
+                        {
+                          value: 'horizational',
+                          label: '横向',
+                        },
+                        {
+                          value: 'vertical',
+                          label: '纵向',
+                        },
+                      ]}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name={'iconSize'}
+                    label="图标大小"
+                    initialValue={24}
+                    rules={[{ required: true, message: '图标大小' }]}
+                  >
+                    <InputNumber min={12} />
+                  </Form.Item>
+                  <Form.Item name={'controlList'} label="控制从机">
+                    {commonSettingList?.map((item: any, index: number) => {
+                      const { ip, url, id } = item;
+                      return (
+                        <div
+                          className="flex-box"
+                          key={`control-list-${index}`}
+                          style={{ marginBottom: 8 }}
+                        >
+                          <div style={{ flex: 1 }}>
+                            <Input
+                              defaultValue={url}
+                              placeholder="127.0.0.1:8888"
+                              style={{ height: 28 }}
+                              onChange={(e) => {
+                                const val = e?.target?.value;
+                                onSliderControlChange(val, index, 'url');
+                              }}
+                            />
+                          </div>
+                          <div style={{ flex: 1, padding: '0 8px' }}>
+                            <Input
+                              defaultValue={ip}
+                              placeholder="方案id"
+                              style={{ height: 28 }}
+                              onChange={(e) => {
+                                const val = e?.target?.value;
+                                onSliderControlChange(val, index, 'ip');
+                              }}
+                            />
+                          </div>
+                          <Button
+                            icon={<MinusSquareOutlined />}
+                            style={{ height: 28 }}
+                            onClick={() => {
+                              onSliderControlChange('', id, 'remove');
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                    <Button
+                      icon={<PlusSquareOutlined />}
+                      onClick={() => {
+                        onSliderControlChange('', 0, 'add');
+                      }}
+                    />
+                  </Form.Item>
+                </Fragment>
               ) : (
                 <Form.Item
                   name={'fontSize'}
@@ -5799,7 +6146,7 @@ const Home: React.FC<any> = (props: any) => {
                       params: res?.data,
                     }));
                   } else {
-                    message.error(res?.msg || res?.message || '接口异常');
+                    message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
                   }
                 });
                 setAddItemsVisible(false);
@@ -5862,7 +6209,7 @@ Home.displayName = 'Home';
 export default connect(({ home, themeStore }) => ({
   snapshot: home.snapshot || {},
   started: home.started || false,
-  activeTab: home.activeTab || '1',
+  bodyBoxTab: home.bodyBoxTab,
   taskDataConnect: home.taskDataConnect || false,
   projectStatus: themeStore.projectStatus,
 }))(Home);

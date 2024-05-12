@@ -51,7 +51,7 @@ const ButtonPWCharts: React.FC<Props> = (props: any) => {
         setPasswordvalidate({});
         form.resetFields();
       } else {
-        message.error(res?.message || '接口异常');
+        message.error(res?.message || '后台服务异常，请重启服务');
       }
     });
   };

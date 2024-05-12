@@ -15,6 +15,7 @@ import table2Icon from '@/assets/dashboard-imgs/table2.png';
 import table3Icon from '@/assets/dashboard-imgs/table3.png';
 import table4Icon from '@/assets/dashboard-imgs/table4.png';
 import table5Icon from '@/assets/dashboard-imgs/table4.png';
+import rangeDomainIcon from '@/assets/dashboard-imgs/range-domain.png';
 import treeIcon from '@/assets/dashboard-imgs/tree.png';
 import threeIcon from '@/assets/dashboard-imgs/three.png';
 import alertIcon from '@/assets/dashboard-imgs/alert.png';
@@ -109,11 +110,6 @@ export const windowTypeList: any = [
     icon: nightingalePieIcon,
   },
   {
-    value: 'heatMap',
-    label: '热力图窗口',
-    icon: heatMapIcon,
-  },
-  {
     value: 'table',
     label: '双列表格窗口',
     icon: tableIcon,
@@ -137,6 +133,11 @@ export const windowTypeList: any = [
     value: 'table5',
     label: '可编辑表格窗口',
     icon: table5Icon,
+  },
+  {
+    value: 'rangeDomain',
+    label: '区域功能窗口',
+    icon: rangeDomainIcon,
   },
   {
     value: 'tree',
@@ -228,6 +229,10 @@ export const windowTypeList: any = [
     label: '排行榜窗口',
     icon: rankIcon,
   },
+  {
+    value: 'bodyBox',
+    label: '盒子窗口',
+  },
 ];
 // 默认基础组件
 export const basicWindowList: any = [
@@ -300,6 +305,19 @@ export const customWindowList: any = [
     value: 'buttonImages',
     label: '缺陷按钮组件',
     icon: buttonImagesIcon,
+  },
+  {
+    value: 'heatMap',
+    label: '热力图窗口',
+    icon: heatMapIcon,
+  },
+  {
+    value: 'rectRange',
+    label: '区域分块窗口',
+  },
+  {
+    value: 'modelSwitch',
+    label: '型号切换窗口',
   },
 ];
 // 仿真涂层-背景图

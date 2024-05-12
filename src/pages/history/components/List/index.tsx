@@ -35,7 +35,7 @@ const HistoryList: React.FC<any> = (props: any) => {
       setData(list);
       setParams((prev: any) => Object.assign({}, prev, { pageNum, pageSize, total }));
     } else {
-      message.error(res?.msg || res?.message || '接口异常');
+      message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
     }
   };
 

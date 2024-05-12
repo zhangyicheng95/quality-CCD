@@ -58,7 +58,7 @@ const ButtonUploadCharts: React.FC<Props> = (props: any) => {
                 message.success('success');
                 setSelectAreaPathVisible(false);
               } else {
-                message.error(res?.msg || res?.message || '接口异常');
+                message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
               }
             });
           }
@@ -78,7 +78,7 @@ const ButtonUploadCharts: React.FC<Props> = (props: any) => {
                   message.success('success');
                   setSelectAreaPathVisible(false);
                 } else {
-                  message.error(res?.msg || res?.message || '接口异常');
+                  message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
                 }
               });
             }}

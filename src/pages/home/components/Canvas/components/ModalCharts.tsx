@@ -133,7 +133,7 @@ const ModalCharts: React.FC<Props> = (props: any) => {
                       if (res && res.code === 'SUCCESS') {
                         message.success('上传成功');
                       } else {
-                        message.error(res?.msg || res?.message || '接口异常');
+                        message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
                       }
                       form.resetFields();
                       close();
@@ -149,7 +149,7 @@ const ModalCharts: React.FC<Props> = (props: any) => {
                     if (res && res.code === 'SUCCESS') {
                       message.success('上传成功');
                     } else {
-                      message.error(res?.msg || res?.message || '接口异常');
+                      message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
                     }
                     close();
                   });
