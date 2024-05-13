@@ -283,8 +283,8 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
               }
             : {},
           configList?.length % des_column === 1
-            ? { marginBottom: index + 1 === configList.length ? 0 : 8 }
-            : { marginBottom: index + des_column >= configList.length ? 0 : 8 },
+            ? { marginBottom: index + 1 === configList.length ? 0 : 16 }
+            : { marginBottom: index + des_column >= configList.length ? 0 : 16 },
         )}
       >
         {/* <div className="flex-box"> */}

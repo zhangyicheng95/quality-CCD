@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { Button, Form, Input, InputNumber, message } from 'antd';
@@ -28,6 +28,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
     formCustom,
   } = data;
   const [dataSource, setDataSource] = useState<any>([]);
+  const inputDom = useRef<any>(null);
 
   const init = () => {
     if (!!xName) {
@@ -122,7 +123,6 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
             }),
           };
         });
-        console.log(params);
         btnFetch(fetchType, xName, params).then((res: any) => {
           if (res && res.code === 'SUCCESS') {
             message.success('success');
@@ -236,19 +236,27 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                         >
                           {['int', 'float', 'number'].includes(_.lowerCase(type)) ? (
                             <InputNumber
+                              ref={inputDom}
                               min={0}
                               stringMode
                               step={JSON.parse(`0.${(value + '')?.split('.')?.[1]?.length || 0}`)}
                               onBlur={(e) => {
                                 const val = e.target.value;
-                                onValueChange(name, key, val);
+                                onValueChange(name, key, Number(val));
+                              }}
+                              onPressEnter={(e: any) => {
+                                inputDom.current.blur();
                               }}
                             />
                           ) : (
                             <Input
+                              ref={inputDom}
                               onBlur={(e) => {
                                 const val = e.target.value;
                                 onValueChange(name, key, val);
+                              }}
+                              onPressEnter={(e: any) => {
+                                inputDom.current.blur();
                               }}
                             />
                           )}
