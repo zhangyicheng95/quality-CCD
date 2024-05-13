@@ -15,6 +15,7 @@ interface Props {
   fontInBody?: any;
   layout?: string;
   border?: boolean;
+  buttonColor?: any;
 }
 
 const SegmentSwitch: React.FC<Props> = (props: any) => {
@@ -30,6 +31,7 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
     fontInBody = [],
     layout,
     border = false,
+    buttonColor,
   } = props;
   const [lock, setLock] = useState(0);
 
@@ -73,6 +75,7 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
                   width: `calc(${100 / fontInBody?.length}% - 4px)`,
                   left: `calc(${(100 / fontInBody?.length) * lock}% + 2px)`,
                 },
+            !!buttonColor ? { backgroundColor: buttonColor } : {},
           )}
         />
         {(fontInBody || [])?.map((item: any, index: number) => {

@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { Button, Form, Input, InputNumber, message } from 'antd';
+import { Button, Form, Input, InputNumber, message, Switch } from 'antd';
 import { btnFetch } from '@/services/api';
 import { connect } from 'umi';
+import SegmentSwitch from '@/components/SegmentSwitch';
 
 interface Props {
   data: any;
@@ -27,7 +28,118 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
     parentBodyBoxTab,
     formCustom,
   } = data;
-  const [dataSource, setDataSource] = useState<any>([]);
+  const [dataSource, setDataSource] = useState<any>([
+    {
+      alias: '灰尘',
+      name: 'point_defect',
+      data: [
+        { key: 'length', value: '1.00', type: 'float' },
+        { key: 'width', value: '5.00', type: 'float' },
+        { key: 'edge_switch', value: false, type: 'bool' },
+        { key: 'global_switch', value: false, type: 'bool' },
+      ],
+    },
+    {
+      alias: '划痕',
+      name: 'scratch',
+      data: [
+        { key: 'length', value: '1.00', type: 'float' },
+        { key: 'width', value: '5.00', type: 'float' },
+        { key: 'edge_switch', value: false, type: 'bool' },
+        { key: 'global_switch', value: false, type: 'bool' },
+      ],
+    },
+    {
+      alias: '手印',
+      name: 'handprint',
+      data: [
+        { key: 'length', value: '1.00', type: 'float' },
+        { key: 'width', value: '5.00', type: 'float' },
+        { key: 'edge_switch', value: false, type: 'bool' },
+        { key: 'global_switch', value: false, type: 'bool' },
+      ],
+    },
+    {
+      alias: '崩边',
+      name: 'broken_edge',
+      data: [
+        { key: 'length', value: '1.00', type: 'float' },
+        { key: 'width', value: '5.00', type: 'float' },
+        { key: 'edge_switch', value: false, type: 'bool' },
+        { key: 'global_switch', value: false, type: 'bool' },
+      ],
+    },
+    {
+      alias: '气泡',
+      name: 'bubble',
+      data: [
+        { key: 'length', value: '1.00', type: 'float' },
+        { key: 'width', value: '5.00', type: 'float' },
+        { key: 'edge_switch', value: false, type: 'bool' },
+        { key: 'global_switch', value: false, type: 'bool' },
+      ],
+    },
+    {
+      alias: '脏污',
+      name: 'dirty',
+      data: [
+        { key: 'length', value: '1.00', type: 'float' },
+        { key: 'width', value: '5.00', type: 'float' },
+        { key: 'edge_switch', value: false, type: 'bool' },
+        { key: 'global_switch', value: false, type: 'bool' },
+      ],
+    },
+    {
+      alias: '叠片',
+      name: 'fold_flat',
+      data: [
+        { key: 'length', value: '1.00', type: 'float' },
+        { key: 'width', value: '5.00', type: 'float' },
+        { key: 'edge_switch', value: false, type: 'bool' },
+        { key: 'global_switch', value: false, type: 'bool' },
+      ],
+    },
+    {
+      alias: '裂纹',
+      name: 'flaw',
+      data: [
+        { key: 'length', value: '1.00', type: 'float' },
+        { key: 'width', value: '5.00', type: 'float' },
+        { key: 'edge_switch', value: false, type: 'bool' },
+        { key: 'global_switch', value: false, type: 'bool' },
+      ],
+    },
+    {
+      alias: '毛条',
+      name: 'woolen',
+      data: [
+        { key: 'length', value: '1.00', type: 'float' },
+        { key: 'width', value: '5.00', type: 'float' },
+        { key: 'edge_switch', value: false, type: 'bool' },
+        { key: 'global_switch', value: false, type: 'bool' },
+      ],
+    },
+    {
+      alias: '点缺陷',
+      name: 'point_defect_real',
+      data: [
+        { key: 'length', value: '1.00', type: 'float' },
+        { key: 'width', value: '5.00', type: 'float' },
+        { key: 'edge_switch', value: false, type: 'bool' },
+        { key: 'global_switch', value: false, type: 'bool' },
+      ],
+    },
+    {
+      alias: '疑似划伤',
+      name: 'suspected_ws',
+      data: [
+        { key: 'length', value: '1.00', type: 'float' },
+        { key: 'width', value: '5.00', type: 'float' },
+        { key: 'edge_switch', value: false, type: 'bool' },
+        { key: 'global_switch', value: false, type: 'bool' },
+      ],
+    },
+  ]);
   const inputDom = useRef<any>(null);
 
   const init = () => {
@@ -211,20 +323,21 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                         <Form.Item
                           name={`${parentBodyBoxTab}$$${key}$$${name}`}
                           label={''}
-                          style={{ marginBottom: 0, height: fontSize + 8 }}
+                          style={{ marginBottom: 0, height: fontSize + 8, width: 60 }}
                           initialValue={value}
-                          valuePropName="checked"
                           rules={[{ required: false, message: alias }]}
                         >
-                          <Button
-                            size="small"
+                          <SegmentSwitch
+                            fontInBody={[
+                              { label: '', value: false },
+                              { label: '', value: true },
+                            ]}
                             className={value ? 'OK' : 'NG'}
-                            onClick={() => {
+                            buttonColor="white"
+                            onChange={() => {
                               onValueChange(name, key, !value);
                             }}
-                          >
-                            {value ? '屏蔽' : '开启'}
-                          </Button>
+                          />
                         </Form.Item>
                       ) : barRadius ? (
                         <Form.Item

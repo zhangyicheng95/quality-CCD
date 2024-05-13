@@ -23,7 +23,7 @@ const rectList = [
 ];
 const RectRangeCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  let { fontSize = 14, fetchType, xName } = data;
+  let { dataValue, fontSize = 14, fetchType, xName } = data;
   const [dataSource, setDataSource] = useState<any>([]);
   useEffect(() => {
     if (!!xName) {
@@ -36,6 +36,22 @@ const RectRangeCharts: React.FC<Props> = (props: any) => {
       });
     }
   }, []);
+
+  useEffect(() => {
+    if (!_.isEmpty(dataValue)) {
+      setDataSource((prev: any) => {
+        return Object.entries(prev)?.reduce((pre: any, cen: any) => {
+          return {
+            ...pre,
+            [cen[0]]: {
+              ...cen[1],
+              status: dataValue[cen[0]].status || '',
+            },
+          };
+        }, {});
+      });
+    }
+  }, [dataValue]);
 
   return (
     <div id={`echart-${id}`} className={`${styles.rectRangeCharts}`} style={{ fontSize }}>
@@ -56,14 +72,20 @@ const RectRangeCharts: React.FC<Props> = (props: any) => {
               )}
               onClick={() => {
                 if (!fetchType || !xName || !value) return;
-                const params = {
+                const result = {
                   ...dataSource,
                   [value]: { ...dataSource[value], disabled: !disabled },
                 };
+                const params = Object.entries(result).reduce((pre: any, cen: any) => {
+                  return {
+                    ...pre,
+                    [cen[0]]: { disabled: cen[1]?.disabled || false },
+                  };
+                }, {});
                 btnFetch(fetchType, xName, params).then((res: any) => {
                   if (res && res.code === 'SUCCESS') {
                     message.success('上传成功');
-                    setDataSource(res?.data);
+                    setDataSource(result);
                   } else {
                     message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
                   }

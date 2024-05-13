@@ -1445,7 +1445,7 @@ const Home: React.FC<any> = (props: any) => {
                   <RangeDomainCharts
                     id={key}
                     data={{
-                      dataValue: dataValue || [],
+                      dataValue,
                       fontSize,
                       des_column,
                       hiddenAxis,
@@ -1463,7 +1463,7 @@ const Home: React.FC<any> = (props: any) => {
                   <RectRangeCharts
                     id={key}
                     data={{
-                      dataValue: dataValue || [],
+                      dataValue,
                       fontSize,
                       fetchType,
                       xName,
@@ -1473,7 +1473,7 @@ const Home: React.FC<any> = (props: any) => {
                   <ModelSwitchCharts
                     id={key}
                     data={{
-                      dataValue: dataValue || [],
+                      dataValue,
                       fontSize,
                       fetchType,
                       xName,
