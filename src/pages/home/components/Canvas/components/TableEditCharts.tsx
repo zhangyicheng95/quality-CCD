@@ -431,6 +431,11 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
                             defaultChecked={JSON.parse(itemSec)}
                             onChange={(val) => onChange(JSON.stringify(val), [index, indexSec])}
                           />
+                        ) : ['开启', '关闭'].includes(_.lowerCase(itemSec)) ? (
+                          <Switch
+                            defaultChecked={_.lowerCase(itemSec) === '开启' ? true : false}
+                            onChange={(val) => onChange(JSON.stringify(val), [index, indexSec])}
+                          />
                         ) : (
                           <Input
                             defaultValue={itemSec}

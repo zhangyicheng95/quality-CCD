@@ -29,116 +29,6 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     line_height,
     bodyPaddingSize,
   } = data;
-  if (process.env.NODE_ENV === 'development') {
-    dataValue = [
-      {
-        name: '产品型号',
-        value: [
-          { value: 'V214' },
-          { value: 'V254' },
-          { value: 'V214' },
-          { value: 'V214' },
-          { value: 'V254' },
-          { value: 'V214' },
-          { value: 'V214' },
-          { value: 'V254' },
-          { value: 'V214' },
-        ],
-      },
-      {
-        name: '生产号',
-        value: [
-          { value: '2882381' },
-          { value: '2882383' },
-          { value: '2882384' },
-          { value: '2882387' },
-          { value: '2882389' },
-          { value: '2882392' },
-          { value: '2882394' },
-          { value: '2882396' },
-          { value: '2882399' },
-        ],
-      },
-      {
-        name: '点位名称',
-        value: [
-          { value: '前门音响' },
-          { value: '左前门把手' },
-          { value: '后门' },
-          { value: '前门音响' },
-          { value: '左前门把手' },
-          { value: '前门音响' },
-          { value: '后门' },
-          { value: '左前门把手' },
-          { value: '后门' },
-        ],
-      },
-      {
-        name: '检测时间',
-        value: [
-          {
-            value: moment(
-              new Date(new Date(new Date().toLocaleDateString()).getTime() + 1 * 60 * 1000),
-            ).format('YYYY-MM-DD HH:mm:ss'),
-          },
-          {
-            value: moment(
-              new Date(new Date(new Date().toLocaleDateString()).getTime() + 30 * 60 * 1000),
-            ).format('YYYY-MM-DD HH:mm:ss'),
-          },
-          {
-            value: moment(
-              new Date(new Date(new Date().toLocaleDateString()).getTime() + 2 * 52 * 60 * 1000),
-            ).format('YYYY-MM-DD HH:mm:ss'),
-          },
-          {
-            value: moment(
-              new Date(new Date(new Date().toLocaleDateString()).getTime() + 3 * 51 * 60 * 1000),
-            ).format('YYYY-MM-DD HH:mm:ss'),
-          },
-          {
-            value: moment(
-              new Date(new Date(new Date().toLocaleDateString()).getTime() + 4 * 51 * 60 * 1000),
-            ).format('YYYY-MM-DD HH:mm:ss'),
-          },
-          {
-            value: moment(
-              new Date(new Date(new Date().toLocaleDateString()).getTime() + 5 * 51 * 60 * 1000),
-            ).format('YYYY-MM-DD HH:mm:ss'),
-          },
-          {
-            value: moment(
-              new Date(new Date(new Date().toLocaleDateString()).getTime() + 6 * 53 * 60 * 1000),
-            ).format('YYYY-MM-DD HH:mm:ss'),
-          },
-          {
-            value: moment(
-              new Date(new Date(new Date().toLocaleDateString()).getTime() + 7 * 54 * 60 * 1000),
-            ).format('YYYY-MM-DD HH:mm:ss'),
-          },
-          {
-            value: moment(
-              new Date(new Date(new Date().toLocaleDateString()).getTime() + 8 * 50 * 60 * 1000),
-            ).format('YYYY-MM-DD HH:mm:ss'),
-          },
-        ],
-      },
-      {
-        name: '缺陷类型',
-        value: [
-          { value: '错装' },
-          { value: '配合不良' },
-          { value: '配合不良' },
-          { value: '错装' },
-          { value: '配合不良' },
-          { value: '错装' },
-          { value: '配合不良' },
-          { value: '配合不良' },
-          { value: '错装' },
-        ],
-      },
-    ];
-  }
   const ifCanEdit = useMemo(() => {
     return location.hash?.indexOf('edit') > -1;
   }, [location.hash]);
@@ -147,24 +37,247 @@ const Table2Charts: React.FC<Props> = (props: any) => {
   const { flowData } = params;
   const { nodes } = flowData;
   const domRef = useRef<any>(null);
-  const [tableSizeSelf, setTableSizeSelf] = useState(tableSize);
-  const [tableScroll, setTableScroll] = useState(false);
+  const [boxSizeSelf, setBoxSizeSelf] = useState<any>(0);
+  const [tableSizeSelf, setTableSizeSelf] = useState<any>([]);
 
   useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      dataValue = [
+        {
+          name: '灰尘',
+          value: [
+            { value: 1 },
+            { value: 1 },
+            { value: 1 },
+            { value: 1 },
+            { value: 1 },
+            { value: 1 },
+            { value: 1 },
+            { value: 1 },
+            { value: 1 },
+          ],
+        },
+        {
+          name: '生产号',
+          value: [
+            { value: '2882381' },
+            { value: '2882383' },
+            { value: '2882384' },
+            { value: '2882387' },
+            { value: '2882389' },
+            { value: '2882392' },
+            { value: '2882394' },
+            { value: '2882396' },
+            { value: '2882399' },
+          ],
+        },
+        {
+          name: '点位名称',
+          value: [
+            { value: '前门音响' },
+            { value: '左前门把手' },
+            { value: '后门' },
+            { value: '前门音响' },
+            { value: '左前门把手' },
+            { value: '前门音响' },
+            { value: '后门' },
+            { value: '左前门把手' },
+            { value: '后门' },
+          ],
+        },
+        {
+          name: '生产号',
+          value: [
+            { value: '2882381' },
+            { value: '2882383' },
+            { value: '2882384' },
+            { value: '2882387' },
+            { value: '2882389' },
+            { value: '2882392' },
+            { value: '2882394' },
+            { value: '2882396' },
+            { value: '2882399' },
+          ],
+        },
+        {
+          name: '点位名称',
+          value: [
+            { value: '前门音响' },
+            { value: '左前门把手' },
+            { value: '后门' },
+            { value: '前门音响' },
+            { value: '左前门把手' },
+            { value: '前门音响' },
+            { value: '后门' },
+            { value: '左前门把手' },
+            { value: '后门' },
+          ],
+        },
+        {
+          name: '生产号',
+          value: [
+            { value: '2882381' },
+            { value: '2882383' },
+            { value: '2882384' },
+            { value: '2882387' },
+            { value: '2882389' },
+            { value: '2882392' },
+            { value: '2882394' },
+            { value: '2882396' },
+            { value: '2882399' },
+          ],
+        },
+        {
+          name: '点位名称',
+          value: [
+            { value: '前门音响' },
+            { value: '左前门把手' },
+            { value: '后门' },
+            { value: '前门音响' },
+            { value: '左前门把手' },
+            { value: '前门音响' },
+            { value: '后门' },
+            { value: '左前门把手' },
+            { value: '后门' },
+          ],
+        },
+        {
+          name: '生产号',
+          value: [
+            { value: '2882381' },
+            { value: '2882383' },
+            { value: '2882384' },
+            { value: '2882387' },
+            { value: '2882389' },
+            { value: '2882392' },
+            { value: '2882394' },
+            { value: '2882396' },
+            { value: '2882399' },
+          ],
+        },
+        {
+          name: '点位名称',
+          value: [
+            { value: '前门音响' },
+            { value: '左前门把手' },
+            { value: '后门' },
+            { value: '前门音响' },
+            { value: '左前门把手' },
+            { value: '前门音响' },
+            { value: '后门' },
+            { value: '左前门把手' },
+            { value: '后门' },
+          ],
+        },
+        {
+          name: '检测时间',
+          value: [
+            {
+              value: moment(
+                new Date(new Date(new Date().toLocaleDateString()).getTime() + 1 * 60 * 1000),
+              ).format('YYYY-MM-DD HH:mm:ss'),
+            },
+            {
+              value: moment(
+                new Date(new Date(new Date().toLocaleDateString()).getTime() + 30 * 60 * 1000),
+              ).format('YYYY-MM-DD HH:mm:ss'),
+            },
+            {
+              value: moment(
+                new Date(new Date(new Date().toLocaleDateString()).getTime() + 2 * 52 * 60 * 1000),
+              ).format('YYYY-MM-DD HH:mm:ss'),
+            },
+            {
+              value: moment(
+                new Date(new Date(new Date().toLocaleDateString()).getTime() + 3 * 51 * 60 * 1000),
+              ).format('YYYY-MM-DD HH:mm:ss'),
+            },
+            {
+              value: moment(
+                new Date(new Date(new Date().toLocaleDateString()).getTime() + 4 * 51 * 60 * 1000),
+              ).format('YYYY-MM-DD HH:mm:ss'),
+            },
+            {
+              value: moment(
+                new Date(new Date(new Date().toLocaleDateString()).getTime() + 5 * 51 * 60 * 1000),
+              ).format('YYYY-MM-DD HH:mm:ss'),
+            },
+            {
+              value: moment(
+                new Date(new Date(new Date().toLocaleDateString()).getTime() + 6 * 53 * 60 * 1000),
+              ).format('YYYY-MM-DD HH:mm:ss'),
+            },
+            {
+              value: moment(
+                new Date(new Date(new Date().toLocaleDateString()).getTime() + 7 * 54 * 60 * 1000),
+              ).format('YYYY-MM-DD HH:mm:ss'),
+            },
+            {
+              value: moment(
+                new Date(new Date(new Date().toLocaleDateString()).getTime() + 8 * 50 * 60 * 1000),
+              ).format('YYYY-MM-DD HH:mm:ss'),
+            },
+          ],
+        },
+        {
+          name: '缺陷类型',
+          value: [
+            { value: '错装' },
+            { value: '配合不良' },
+            { value: '配合不良' },
+            { value: '错装' },
+            { value: '配合不良' },
+            { value: '错装' },
+            { value: '配合不良' },
+            { value: '配合不良' },
+            { value: '错装' },
+          ],
+        },
+      ];
+    }
     if (!_.isArray(dataValue)) {
       message.error('通用表格组件数据格式不正确，请检查');
       console.log('Table2Charts:', dataValue);
       return;
     }
-
-    const height = domRef?.current?.clientHeight;
-    const valueLength = dataValue[0]?.value?.length;
-    if (height > valueLength * 38) {
-      setTableScroll(false);
-    } else {
-      setTableScroll(true);
-    }
-  }, [dataValue]);
+    let list: any = [];
+    let boxSize = 0;
+    (dataValue || [])?.forEach((item: any, index: number) => {
+      const { name, value } = item;
+      let isNum = false;
+      try {
+        const number = JSON.parse(
+          !_.isUndefined(value?.[0]?.value) ? value?.[0]?.value + '' : value?.[0] + '',
+        );
+        if ((number + '')?.length > name.length) {
+          isNum = true;
+        }
+      } catch (err) {
+        isNum = false;
+      }
+      const number =
+        Math.max(
+          !_.isUndefined(value?.[0]?.value)
+            ? (value?.[0]?.value + '')?.length
+            : (value?.[0] + '')?.length,
+          name.length,
+        ) *
+          fontSize *
+          (isNum || name?.indexOf('时间') > -1 ? 0.6 : 1) +
+        18;
+      list[index] = number;
+      boxSize += number;
+    });
+    setTableSizeSelf((prev: any) => {
+      return (!!prev.length ? prev : list).map((item: any, index: number) => {
+        return {
+          ...item,
+          minWidth: list[index],
+        };
+      });
+    });
+    setBoxSizeSelf(Math.max(boxSize, domRef.current?.clientWidth));
+  }, [dataValue, fontSize, domRef?.current?.clientWidth]);
   const updateCanvas = (tableSizes: any) => {
     const updateParam = {
       ...params,
@@ -239,7 +352,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
       <div
         className="charts-header-box flex-box"
         style={Object.assign(
-          {},
+          { width: boxSizeSelf },
           headerBackgroundColor === 'transparent'
             ? { backgroundColor: 'transparent' }
             : headerBackgroundColor === 'line1'
@@ -262,9 +375,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                 style={Object.assign(
                   !!tableSizeSelf?.[index]
                     ? {
-                        width: tableSizeSelf?.[index],
-                        minWidth: tableSizeSelf?.[index],
-                        maxWidth: tableSizeSelf?.[index],
+                        width: tableSizeSelf?.[index]?.width,
+                        minWidth: tableSizeSelf?.[index]?.minWidth,
+                        maxWidth: '50%',
                       }
                     : {},
                 )}
@@ -324,9 +437,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                   style={Object.assign(
                     !!tableSizeSelf?.[index]
                       ? {
-                          width: tableSizeSelf?.[index],
-                          minWidth: tableSizeSelf?.[index],
-                          maxWidth: tableSizeSelf?.[index],
+                          width: tableSizeSelf?.[index]?.width,
+                          minWidth: tableSizeSelf?.[index]?.minWidth,
+                          maxWidth: '50%',
                         }
                       : {},
                   )}

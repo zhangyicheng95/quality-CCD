@@ -46,11 +46,9 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     ifUpdateProject,
     ifUpdatetoInitParams,
     ifFetch,
-    listType,
-    blockType,
-    blockTypeLines = 2,
     ifPopconfirm,
     showLabel,
+    des_column,
   } = data;
   if (!_.isBoolean(showLabel)) {
     showLabel = true;
@@ -260,7 +258,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     resetFields();
     init();
   };
-  const initItem = (item: any) => {
+  const initItem = (item: any, index: number) => {
     let { name, alias, widget = {}, addType, show, locked } = item;
     const { type } = widget;
     if (!name) {
@@ -273,11 +271,21 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     // if (optionList?.filter((i: any) => i.name === name)?.length) return null;
     return (
       <div
-        className={`${type === 'TagRadio' ? '' : 'flex-box-start'} param-item ${
-          blockType === 'waterafall' ? '' : listType
-        }`}
+        className={`${type === 'TagRadio' ? '' : 'flex-box-start'} param-item`}
         key={`${id}@$@${name}`}
-        style={show ? {} : { height: 0, padding: 0 }}
+        style={Object.assign(
+          {},
+          show ? {} : { height: 0, padding: 0 },
+          des_column > 1
+            ? {
+                width: `calc(${100 / des_column}% - 8px)`,
+                marginRight: configList?.length % des_column === des_column - 1 ? 0 : 8,
+              }
+            : {},
+          configList?.length % des_column === 1
+            ? { marginBottom: index + 1 === configList.length ? 0 : 8 }
+            : { marginBottom: index + des_column >= configList.length ? 0 : 8 },
+        )}
       >
         {/* <div className="flex-box"> */}
         {/* <div className="icon-box flex-box">
@@ -321,24 +329,18 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
 
   return (
     <div id={`echart-${id}`} className={`${styles.operationCharts} flex-box`} style={{ fontSize }}>
-      <div
-        className={`operation-body ${blockType}`}
-        style={blockType === 'waterfall' ? { columnCount: blockTypeLines } : {}}
-      >
+      <div className={`operation-body`}>
         <Form form={form} scrollToFirstError>
           {useMemo(() => {
             return (
               <Fragment>
-                {configList?.map?.((item: any, index: number) => initItem({ ...item, locked }))}
+                {configList?.map?.((item: any, index: number) =>
+                  initItem({ ...item, locked }, index),
+                )}
                 {configGroup?.map?.((group: any, index: number) => {
                   const { name, id, children, show } = group;
                   return (
-                    <div
-                      className={`param-item param-group-item ${
-                        blockType === 'waterfall' ? '' : listType
-                      }`}
-                      key={id}
-                    >
+                    <div className={`param-item param-group-item`} key={id}>
                       <div
                         className="flex-box param-group-item-title"
                         onClick={() =>
@@ -364,7 +366,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                           return (
                             <div className="flex-box param-group-item-body-box">
                               {/* <div className="param-line-row" >--</div> */}
-                              {initItem({ ...item, show, locked })}
+                              {initItem({ ...item, show, locked }, index)}
                             </div>
                           );
                         })}
@@ -380,10 +382,9 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             configGroup,
             started,
             locked,
-            listType,
-            blockType,
             fontSize,
             showLabel,
+            des_column,
           ])}
         </Form>
       </div>

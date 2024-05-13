@@ -21,6 +21,7 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
     fetchType,
     ifNeedClear,
     valueColor = 'primary',
+    des_bordered,
   } = data;
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
@@ -85,6 +86,7 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
             ? { backgroundColor: valueColor, color: '#fff' }
             : {},
         )}
+        className={`${des_bordered ? 'text-break' : ''}`}
         onClick={() => {
           let param1: any = null;
           if (!_.isUndefined(value) && !_.isNull(value) && _.isString(value) && !!value) {

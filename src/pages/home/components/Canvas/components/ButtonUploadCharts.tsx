@@ -21,6 +21,7 @@ const ButtonUploadCharts: React.FC<Props> = (props: any) => {
     fetchType,
     valueColor = 'primary',
     ifNeedAllow = false,
+    des_bordered,
   } = data;
   const [selectAreaPathVisible, setSelectAreaPathVisible] = useState(false);
 
@@ -35,6 +36,7 @@ const ButtonUploadCharts: React.FC<Props> = (props: any) => {
             ? { backgroundColor: valueColor, color: '#fff' }
             : {},
         )}
+        className={`${des_bordered ? 'text-break' : ''}`}
         onClick={() => {
           if (!!localStorage.getItem('parentOrigin')) {
             window?.parent?.postMessage?.(

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../../index.module.less';
 import * as _ from 'lodash';
-import { Button, Form, Input, InputNumber, message, Modal, Select } from 'antd';
+import { Button, Form, Input, InputNumber, message, Modal, Popconfirm, Select } from 'antd';
 import { btnFetch } from '@/services/api';
 
 interface Props {
@@ -168,6 +168,7 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
               <Form.Item
                 name={`${parentBodyBoxTab}$$length`}
                 label={'产品长度'}
+                style={{ width: '50%', marginBottom: 0 }}
                 rules={[{ required: false, message: '产品长度' }]}
               >
                 <InputNumber style={{ width: '100%' }} disabled addonAfter="mm" />
@@ -175,6 +176,7 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
               <Form.Item
                 name={`${parentBodyBoxTab}$$width`}
                 label={'产品宽度'}
+                style={{ width: '50%', marginBottom: 0 }}
                 rules={[{ required: false, message: '产品宽度' }]}
               >
                 <InputNumber style={{ width: '100%' }} disabled addonAfter="mm" />
@@ -217,9 +219,15 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
           >
             保存
           </Button>
-          <Button className="model-switch-right-btn" size="middle" onClick={() => onDelete()}>
-            删除
-          </Button>
+          <Popconfirm
+            title="确认删除?"
+            className="model-switch-right-btn"
+            onConfirm={() => onDelete()}
+            okText="确认"
+            cancelText="取消"
+          >
+            <Button size="middle">删除</Button>
+          </Popconfirm>
         </div>
       </Form>
 

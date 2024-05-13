@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { connect } from 'umi';
@@ -118,7 +118,15 @@ const BodyBoxCharts: React.FC<Props> = (props: any) => {
             <div
               className="flex-box-center body-box-change-btn-item"
               key={`body-box-change-btn-item-${index}`}
-              style={{ width: iconSize, minWidth: iconSize }}
+              style={Object.assign(
+                {},
+                { width: iconSize, minWidth: iconSize },
+                (['stop', 'end'].includes(value) &&
+                  !timeSelectDefault.filter((i: any) => i.value === 'restart')?.[0]) ||
+                  ['restart'].includes(value)
+                  ? { marginRight: 24 }
+                  : {},
+              )}
             >
               <BasicButton
                 title={_.lowerCase(value) === 'start' && started ? '检测' : label}

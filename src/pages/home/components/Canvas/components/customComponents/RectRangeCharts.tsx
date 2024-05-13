@@ -41,7 +41,7 @@ const RectRangeCharts: React.FC<Props> = (props: any) => {
     <div id={`echart-${id}`} className={`${styles.rectRangeCharts}`} style={{ fontSize }}>
       <div className="rect-range-box">
         {(rectList || [])?.map((item: any, index: number) => {
-          const { label, value } = item;
+          const { value } = item;
           const disabled = dataSource[value]?.disabled;
           const status = dataSource[value]?.status;
           return (

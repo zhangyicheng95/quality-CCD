@@ -1,18 +1,18 @@
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
-import { Form, Input, message, Button, Tree, Select, Row, Col, Modal } from 'antd';
+import { Form, Input, message, Button, Tree, Select, Row, Col } from 'antd';
 import * as _ from 'lodash';
 import styles from './index.module.less';
 import { updateParams } from '@/services/api';
 import PrimaryTitle from '@/components/PrimaryTitle';
 import FileManager from '@/components/FileManager';
 import TooltipDiv from '@/components/TooltipDiv';
-import { connect, useHistory, useModel } from 'umi';
+import { connect, useModel } from 'umi';
 import { DeleteOutlined, EditOutlined, FormOutlined } from '@ant-design/icons';
 
 const Setting: React.FC<any> = (props) => {
   const { initialState } = useModel<any>('@@initialState');
   const { params: paramsData } = initialState;
-  const { projectStatus, projectListStore } = props;
+  const { projectListStore } = props;
   const [form] = Form.useForm();
   const { validateFields, setFieldsValue, getFieldValue } = form;
   const [paramData, setParamData] = useState<any>({});
@@ -44,7 +44,7 @@ const Setting: React.FC<any> = (props) => {
               children: Object.entries(initParams)?.map?.((param: any) => {
                 const { alias, name, onHidden } = param[1];
                 const key = `${id}@$@${param[0]}`;
-                if (!onHidden) {
+                if (_.isBoolean(onHidden) && !onHidden) {
                   checkedList = checkedList.concat(key);
                 }
                 return {

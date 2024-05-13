@@ -19,7 +19,7 @@ interface Props {
 
 const OperationCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id, started } = props;
-  let { operationList, dataValue, fontSize, showLabel, ifPopconfirm } = data;
+  let { operationList, dataValue, fontSize, showLabel, ifPopconfirm, des_column } = data;
   if (!_.isBoolean(showLabel)) {
     showLabel = true;
   }
@@ -191,11 +191,26 @@ const OperationCharts: React.FC<Props> = (props: any) => {
               const { name, alias, widget = {} } = item;
               const { type } = widget;
               return (
-                <div className="flex-box-start param-item" key={`${id}@$@${name}`}>
+                <div
+                  className="flex-box-start param-item"
+                  key={`${id}@$@${name}`}
+                  style={Object.assign(
+                    {},
+                    des_column > 1
+                      ? {
+                          width: `calc(${100 / des_column}% - 8px)`,
+                          marginRight: configList?.length % des_column === des_column - 1 ? 0 : 8,
+                        }
+                      : {},
+                    configList?.length % des_column === 1
+                      ? { marginBottom: index + 1 === configList.length ? 0 : 8 }
+                      : { marginBottom: index + des_column >= configList.length ? 0 : 8 },
+                  )}
+                >
                   {showLabel ? (
                     <div className="title-box">
                       <TooltipDiv
-                        style={{ fontSize: fontSize + 4 }}
+                        style={{ fontSize: fontSize + 2 }}
                         className="first"
                         title={alias || name}
                       >

@@ -1210,6 +1210,8 @@ const Home: React.FC<any> = (props: any) => {
                 ? { paddingTop: (titleFontSize / 4) * 3, backgroundColor: 'transparent' }
                 : backgroundColor === 'transparent'
                 ? { backgroundColor: 'transparent' }
+                : backgroundColor === 'black'
+                ? { backgroundColor: 'black' }
                 : {
                     backgroundImage: `url(${
                       type === 'img' &&
@@ -1579,6 +1581,7 @@ const Home: React.FC<any> = (props: any) => {
                         ? { backgroundColor: valueColor, color: '#fff' }
                         : {},
                     )}
+                    className={`${des_bordered ? 'text-break' : ''}`}
                     onClick={() => {
                       const func = () => {
                         let params = '';
@@ -1642,6 +1645,7 @@ const Home: React.FC<any> = (props: any) => {
                       fetchType,
                       ifNeedClear,
                       valueColor,
+                      des_bordered,
                     }}
                   />
                 ) : type === 'buttonPassword' ? (
@@ -1656,6 +1660,7 @@ const Home: React.FC<any> = (props: any) => {
                       passwordHelp,
                       fetchParams,
                       valueColor,
+                      des_bordered,
                     }}
                   />
                 ) : type === 'buttonUpload' ? (
@@ -1669,6 +1674,7 @@ const Home: React.FC<any> = (props: any) => {
                       fetchParams,
                       valueColor,
                       ifNeedAllow,
+                      des_bordered,
                     }}
                   />
                 ) : type === 'segmentSwitch' ? (
@@ -1695,6 +1701,7 @@ const Home: React.FC<any> = (props: any) => {
                       fontSize,
                       showLabel,
                       ifPopconfirm,
+                      des_column,
                     }}
                   />
                 ) : type === 'operation2' ? (
@@ -1708,11 +1715,9 @@ const Home: React.FC<any> = (props: any) => {
                       ifUpdateProject,
                       ifUpdatetoInitParams,
                       ifFetch,
-                      listType,
-                      blockType,
-                      blockTypeLines,
                       ifPopconfirm,
                       showLabel,
+                      des_column,
                     }}
                   />
                 ) : type === 'statistic' ? (
@@ -3614,6 +3619,10 @@ const Home: React.FC<any> = (props: any) => {
                         label: '透明色',
                       },
                       {
+                        value: 'black',
+                        label: '黑色背景',
+                      },
+                      {
                         value: dataItemImage1,
                         label: '背景图1',
                       },
@@ -4683,6 +4692,9 @@ const Home: React.FC<any> = (props: any) => {
                         ]}
                       />
                     </Form.Item>
+                    <Form.Item name="des_bordered" label="是否自动换行" valuePropName="checked">
+                      <Switch />
+                    </Form.Item>
                   </Fragment>
                 ) : null}
                 {['timeSelect'].includes(windowType) ? (
@@ -4774,7 +4786,7 @@ const Home: React.FC<any> = (props: any) => {
                       rules={[{ required: true, message: '按钮参数' }]}
                     >
                       {commonSettingList?.map((item: any, index: number) => {
-                        const { label, value, id } = item;
+                        const { label, value, color, id } = item;
                         return (
                           <div
                             className="flex-box"
@@ -4800,6 +4812,33 @@ const Home: React.FC<any> = (props: any) => {
                                 onChange={(e) => {
                                   const val = e?.target?.value;
                                   onSegmentSwitchChange(val, index, 'value');
+                                }}
+                              />
+                            </div>
+                            <div style={{ flex: 1, padding: '0 8px' }}>
+                              <Select
+                                style={{ width: '100%' }}
+                                defaultValue={color}
+                                options={[
+                                  {
+                                    value: 'default-font',
+                                    label: '默认',
+                                  },
+                                  {
+                                    value: 'OK-font',
+                                    label: '绿色',
+                                  },
+                                  {
+                                    value: 'NG-font',
+                                    label: '红色',
+                                  },
+                                  {
+                                    value: 'warning-font',
+                                    label: '黄色',
+                                  },
+                                ]}
+                                onChange={(val) => {
+                                  onSegmentSwitchChange(val, index, 'color');
                                 }}
                               />
                             </div>
@@ -5035,6 +5074,9 @@ const Home: React.FC<any> = (props: any) => {
                 ) : null}
                 {['operation', 'operation2'].includes(windowType) ? (
                   <Fragment>
+                    <Form.Item name="des_column" label="列数" initialValue={1}>
+                      <InputNumber />
+                    </Form.Item>
                     <Form.Item
                       name={`operationList`}
                       label={'操作项'}
@@ -5048,58 +5090,6 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                     {['operation2'].includes(windowType) ? (
                       <Fragment>
-                        <Form.Item
-                          name={`listType`}
-                          label={'布局方式'}
-                          initialValue={'line'}
-                          rules={[{ required: true, message: '布局方式' }]}
-                        >
-                          <Select
-                            style={{ width: '100%' }}
-                            options={[
-                              {
-                                value: 'line',
-                                label: '线形布局',
-                              },
-                              {
-                                value: 'block',
-                                label: '块状布局',
-                              },
-                            ]}
-                          />
-                        </Form.Item>
-                        {getFieldValue('listType') === 'block' ? (
-                          <Form.Item
-                            name={`blockType`}
-                            label={'块状布局'}
-                            initialValue={'normal'}
-                            rules={[{ required: true, message: '块状布局' }]}
-                          >
-                            <Select
-                              style={{ width: '100%' }}
-                              options={[
-                                {
-                                  value: 'normal',
-                                  label: '默认',
-                                },
-                                {
-                                  value: 'waterfall',
-                                  label: '瀑布流',
-                                },
-                              ]}
-                            />
-                          </Form.Item>
-                        ) : null}
-                        {getFieldValue('blockType') === 'waterfall' ? (
-                          <Form.Item
-                            name={'blockTypeLines'}
-                            label="瀑布流列数"
-                            initialValue={2}
-                            rules={[{ required: true, message: '瀑布流列数' }]}
-                          >
-                            <InputNumber min={2} placeholder="瀑布流列数" />
-                          </Form.Item>
-                        ) : null}
                         <Form.Item name="ifFetch" label="是否实时提交" valuePropName="checked">
                           <Switch />
                         </Form.Item>

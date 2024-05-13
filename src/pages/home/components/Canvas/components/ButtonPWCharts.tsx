@@ -21,6 +21,7 @@ const ButtonPWCharts: React.FC<Props> = (props: any) => {
     password,
     passwordHelp,
     valueColor = 'primary',
+    des_bordered,
   } = data;
   const [form] = Form.useForm();
   const { validateFields } = form;
@@ -67,6 +68,7 @@ const ButtonPWCharts: React.FC<Props> = (props: any) => {
             ? { backgroundColor: valueColor, color: '#fff' }
             : {},
         )}
+        className={`${des_bordered ? 'text-break' : ''}`}
         onClick={() => setPasswordVisible(true)}
       >
         {yName}

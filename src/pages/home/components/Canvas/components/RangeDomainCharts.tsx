@@ -195,14 +195,14 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                     <div
                       className="flex-box-column range-domain-box-item-td"
                       key={`range-domain-box-item-td-${cIndex}`}
-                      style={type !== 'bool' ? { width: '100%' } : {}}
+                      style={Object.assign({}, type !== 'bool' ? { width: '100%' } : {}, {
+                        height: hiddenAxis && index < des_column ? fontSize + 8 + 38 : fontSize + 8,
+                      })}
                     >
                       {hiddenAxis ? (
                         <div
                           className="flex-box-center range-domain-box-item-td-th"
-                          style={
-                            index < des_column ? {} : { visibility: 'hidden', marginTop: '-38px' }
-                          }
+                          style={index < des_column ? {} : { height: 0 }}
                         >
                           {timeSelectDefault[cIndex]?.label}
                         </div>
@@ -211,13 +211,14 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                         <Form.Item
                           name={`${parentBodyBoxTab}$$${key}$$${name}`}
                           label={''}
-                          style={{ marginBottom: 0 }}
+                          style={{ marginBottom: 0, height: fontSize + 8 }}
                           initialValue={value}
                           valuePropName="checked"
                           rules={[{ required: false, message: alias }]}
                         >
                           <Button
                             size="small"
+                            className={value ? 'OK' : 'NG'}
                             onClick={() => {
                               onValueChange(name, key, !value);
                             }}
@@ -229,7 +230,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                         <Form.Item
                           name={`${parentBodyBoxTab}$$${key}$$${name}`}
                           label={''}
-                          style={{ marginBottom: 0 }}
+                          style={{ marginBottom: 0, height: fontSize + 8 }}
                           initialValue={value}
                           rules={[{ required: false, message: alias }]}
                         >
@@ -255,7 +256,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                       ) : (
                         <div
                           className="flex-box range-domain-box-item-td-read"
-                          style={{ width: '100%' }}
+                          style={{ width: '100%', height: fontSize + 8 }}
                         >
                           {value}
                         </div>

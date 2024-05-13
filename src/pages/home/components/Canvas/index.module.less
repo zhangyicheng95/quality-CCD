@@ -788,7 +788,7 @@
       // position: fixed;
       // right: 0;
       // left: 0;
-      width: 100%;
+      // width: 100%;
       border-left: 1px solid @border-color-base;
       background-color: @background-color-base;
 
@@ -1410,7 +1410,7 @@
         border-radius: 4px;
         cursor: pointer;
         font-weight: bolder;
-        -webkit-text-stroke: 1px @body-background;
+        // -webkit-text-stroke: 1px @body-background;
 
         &:hover {
           color: @primary-color;
@@ -1475,26 +1475,58 @@
 
           &-title {
             height: 100%;
+            line-height: 1;
           }
 
           &-td {
+            height: 32px;
 
             &-th {
               height: 38px;
               white-space: nowrap;
+              line-height: 1;
+              overflow: hidden;
               // background-color: @background-color-base;
             }
 
             &-read {
-              height: 32px;
+              height: 100%;
               border: 1px solid rgba(144, 144, 144, .6);
               padding: 4px 11px;
             }
 
-            .ant-btn,
-            .ant-input {
-              height: 32px;
+            .ant-form-item {
+              height: 100%;
               font-size: inherit;
+
+              .ant-row {
+                height: 100%;
+                font-size: inherit;
+
+                .ant-form-item-control {
+                  height: 100%;
+                  font-size: inherit;
+
+                  .ant-form-item-control-input {
+                    height: 100%;
+                    min-height: auto;
+                    font-size: inherit;
+
+                    .ant-form-item-control-input-content {
+                      height: 100%;
+                      font-size: inherit;
+
+                      .ant-btn,
+                      .ant-input,
+                      .ant-input-number-input {
+                        height: 100%;
+                        width: 100%;
+                        font-size: inherit;
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -1552,6 +1584,7 @@
     }
 
     .model-switch-right {
+      width: 220px;
 
       &-btn {
         float: left;
@@ -1879,7 +1912,7 @@
       bottom: 8px;
       margin: 0 auto;
       opacity: 0;
-      -webkit-text-stroke: 0.5px @body-background;
+      // -webkit-text-stroke: 0.5px @body-background;
     }
 
     .ant-image {
@@ -2309,6 +2342,8 @@
         flex: 1;
         padding-bottom: 24px;
         overflow: hidden;
+        width: 100%;
+        float: left;
 
         &-underline {
           text-decoration: underline;

@@ -555,7 +555,11 @@ const Control: React.FC<any> = (props: any) => {
                 }, []);
 
                 if (!!initParams && !_.isEmpty(initParams)) {
-                  if (Object.entries(initParams).filter((i: any) => !i[1].onHidden).length === 0)
+                  if (
+                    Object.entries(initParams).filter(
+                      (i: any) => _.isBoolean(i[1].onHidden) && !i[1].onHidden,
+                    ).length === 0
+                  )
                     return null;
                   const TagRadioList = Object.entries(initParams).reduce((pre: any, cen: any) => {
                     const { widget } = cen[1] || {};
@@ -613,6 +617,7 @@ const Control: React.FC<any> = (props: any) => {
                               const { type } = widget || {};
                               if (
                                 !widget ||
+                                !_.isBoolean(onHidden) ||
                                 onHidden ||
                                 TagRadioList.includes(item[0]) ||
                                 ifInGroup?.includes(item[0])
