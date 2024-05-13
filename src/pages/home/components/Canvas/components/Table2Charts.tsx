@@ -4,7 +4,7 @@ import styles from '../index.module.less';
 import TooltipDiv from '@/components/TooltipDiv';
 import { Button, message } from 'antd';
 import { useModel } from 'umi';
-import { guid } from '@/utils/utils';
+import { ifHasChinese } from '@/utils/utils';
 import { updateParams } from '@/services/api';
 import { UndoOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -44,9 +44,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     if (process.env.NODE_ENV === 'development') {
       dataValue = [
         {
-          name: '灰尘',
+          name: '结果',
           value: [
-            { value: 1 },
+            { value: 'OK' },
             { value: 1 },
             { value: 1 },
             { value: 1 },
@@ -244,26 +244,24 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     let boxSize = 0;
     (dataValue || [])?.forEach((item: any, index: number) => {
       const { name, value } = item;
+      const text = !_.isUndefined(value?.[0]?.value) ? value?.[0]?.value + '' : value?.[0] + '';
       let isNum = false;
       try {
-        const number = JSON.parse(
-          !_.isUndefined(value?.[0]?.value) ? value?.[0]?.value + '' : value?.[0] + '',
-        );
+        const number = JSON.parse(text);
         if ((number + '')?.length > name.length) {
           isNum = true;
         }
       } catch (err) {
-        isNum = false;
+        if (!ifHasChinese(text)) {
+          isNum = true;
+        } else {
+          isNum = false;
+        }
       }
       const number =
-        Math.max(
-          !_.isUndefined(value?.[0]?.value)
-            ? (value?.[0]?.value + '')?.length
-            : (value?.[0] + '')?.length,
-          name.length,
-        ) *
+        Math.max(text?.length, name.length) *
           fontSize *
-          (isNum || name?.indexOf('时间') > -1 ? 0.6 : 1) +
+          (isNum || name?.indexOf('时间') > -1 ? 0.57 : 1) +
         18;
       list[index] = number;
       boxSize += number;

@@ -27,9 +27,9 @@ export const isAntDesignProOrDev = (): boolean => {
 
 export const random = {
   key: (num = -1): string => `${Math.random()}`.slice(2, num),
-  pick: (arr: any[]) => arr[parseFloat(Math.random() * arr.length)],
+  pick: (arr: any[]) => arr[parseFloat(Math.random() * arr.length + '')],
   multiple: (arr: any[]) => {
-    const times = parseFloat(Math.random() * arr.length);
+    const times = parseFloat(Math.random() * arr.length + '');
     const res = [];
     for (let i = 0; i < times; i += 1) {
       res.push(random.pick(arr));
@@ -266,7 +266,7 @@ export const getuid = () => {
   var s: any = [];
   var hexDigits = '0123456789abcdef';
   for (var i = 0; i < 36; i++) {
-    s[i] = hexDigits.substr(parseFloat(Math.random() * 0x10), 1);
+    s[i] = hexDigits.substr(parseFloat(Math.random() * 0x10 + ''), 1);
   }
   s[14] = '4';
   s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);
@@ -677,4 +677,15 @@ export function getNewPoint(pointB: { x: number; y: number }, angle: number, bev
   var xMargin: number = Math.cos(radian) * bevel;
   var yMargin: number = Math.sin(radian) * bevel;
   return { x: pointB.x + xMargin, y: pointB.y + yMargin };
+}
+// 检测字符串中是否包含汉字
+export function ifHasChinese(str: string) {
+  var filter = /[\u4E00-\u9FA5\uF900-\uFA2D]{1,}/;
+  if (filter.test(str)) {
+    return true;
+  } else if (/[a-zA-Z]/.test(str) && _.lowerCase(str)?.indexOf('x') < 0) {
+    return true;
+  } else {
+    return false;
+  }
 }
