@@ -1400,6 +1400,7 @@ const Home: React.FC<any> = (props: any) => {
                       valueColor,
                       line_height,
                       bodyPaddingSize,
+                      des_layout,
                     }}
                   />
                 ) : type === 'table3' ? (
@@ -4109,6 +4110,14 @@ const Home: React.FC<any> = (props: any) => {
                 ) : null}
                 {['table3', 'table2', 'table'].includes(windowType) ? (
                   <Fragment>
+                    <Form.Item name="des_layout" label="布局方向" initialValue={'vertical'}>
+                      <Select
+                        options={[
+                          { label: '横向', value: 'horizontal' },
+                          { label: '纵向', value: 'vertical' },
+                        ]}
+                      />
+                    </Form.Item>
                     <Form.Item
                       name={`reverse`}
                       label={'数据倒序'}

@@ -58,7 +58,7 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
     initList();
     let ids: any = [];
     addContentList.forEach((i: any) => {
-      if (i.parentBodyBoxTab + '' === parentBodyBoxTab + '' && i.type === 'rangeDomain') {
+      if (i.type === 'rangeDomain') {
         ids.push(i.id);
       }
     });

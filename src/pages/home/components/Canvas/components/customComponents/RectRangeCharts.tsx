@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from '../../index.module.less';
 import * as _ from 'lodash';
-import { message } from 'antd';
+import { Form, message } from 'antd';
 import { btnFetch } from '@/services/api';
 import SegmentSwitch from '@/components/SegmentSwitch';
 
@@ -25,7 +25,11 @@ const rectList = [
 const RectRangeCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let { dataValue, fontSize = 14, fetchType, xName } = data;
+  const [form] = Form.useForm();
+  const dom = useRef<any>(null);
+
   const [dataSource, setDataSource] = useState<any>([]);
+
   useEffect(() => {
     if (!!xName) {
       btnFetch('get', xName).then((res: any) => {
@@ -55,8 +59,8 @@ const RectRangeCharts: React.FC<Props> = (props: any) => {
   }, [dataValue]);
 
   return (
-    <div id={`echart-${id}`} className={`${styles.rectRangeCharts}`} style={{ fontSize }}>
-      <div className="rect-range-box">
+    <div id={`echart-${id}`} ref={dom} className={`${styles.rectRangeCharts}`} style={{ fontSize }}>
+      <Form form={form} scrollToFirstError className="rect-range-box">
         {(rectList || [])?.map((item: any, index: number) => {
           const { value } = item;
           const disabled = dataSource[value]?.disabled;
@@ -87,27 +91,34 @@ const RectRangeCharts: React.FC<Props> = (props: any) => {
                   if (res && res.code === 'SUCCESS') {
                     message.success('上传成功');
                     setDataSource(result);
+                    form.setFieldsValue({ [`disabled-${value}`]: !disabled });
                   } else {
                     message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
+                    form.setFieldsValue({ [`disabled-${value}`]: disabled });
                   }
                 });
               }}
             >
               {!value ? null : (
-                <SegmentSwitch
-                  fontInBody={[
-                    { label: '', value: false },
-                    { label: '', value: true },
-                  ]}
-                  value={disabled}
-                  buttonColor={disabled ? '#88db57' : 'grey'}
-                  style={{ height: '50%', width: '50%' }}
-                />
+                <Form.Item
+                  name={`disabled-${value}`}
+                  label={''}
+                  style={{ height: '50%', width: '50%', marginBottom: 0 }}
+                  initialValue={disabled}
+                >
+                  <SegmentSwitch
+                    fontInBody={[
+                      { label: '', value: false },
+                      { label: '', value: true },
+                    ]}
+                    buttonColor={disabled ? 'rgba(24, 144, 255, 1)' : 'grey'}
+                  />
+                </Form.Item>
               )}
             </div>
           );
         })}
-      </div>
+      </Form>
     </div>
   );
 };
