@@ -180,6 +180,10 @@ export const windowTypeList: any = [
     icon: buttonIcon,
   },
   {
+    value: 'switchBox',
+    label: '启停列表窗口',
+  },
+  {
     value: 'segmentSwitch',
     label: '开关组件',
     icon: buttonIcon,

@@ -86,20 +86,6 @@ const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
       }
     });
   };
-  // 重启任务
-  const reStart = () => {
-    if (!ipString) return;
-    setLoading(true);
-    end()
-      .then((res) => {
-        if (res) {
-          setTimeout(() => {
-            start();
-          }, 3000);
-        }
-      })
-      .catch((err) => console.log(err));
-  };
 
   return (
     <div
@@ -113,6 +99,7 @@ const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
         border={des_bordered}
         fontInBody={timeSelectDefault}
         value={selected}
+        disabled={loading}
         onChange={(e: any) => {
           if (e === 'start') {
             start();

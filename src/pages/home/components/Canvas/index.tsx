@@ -31,6 +31,7 @@ import {
   LoadingOutlined,
   MinusOutlined,
   MinusSquareOutlined,
+  PauseCircleOutlined,
   PlayCircleOutlined,
   PlusOutlined,
   PlusSquareOutlined,
@@ -126,6 +127,7 @@ import BodyBoxCharts from './components/BodyBoxCharts';
 import RangeDomainCharts from './components/RangeDomainCharts';
 import RectRangeCharts from './components/customComponents/RectRangeCharts';
 import ModelSwitchCharts from './components/customComponents/ModelSwitchCharts';
+import SwitchBoxCharts from './components/SwitchBoxCharts';
 
 const leftPanelDataLocal = [
   {
@@ -353,7 +355,7 @@ const Home: React.FC<any> = (props: any) => {
                 started ? (
                   <div className="btn-self-icon flex-box-center success"></div>
                 ) : (
-                  <PlayCircleOutlined />
+                  <PlayCircleOutlined className="success-font" />
                 )
               }
               iconSize={homeSettingData['slider-1']?.iconSize || 40}
@@ -365,11 +367,7 @@ const Home: React.FC<any> = (props: any) => {
             />
             <BasicButton
               title={'停止'}
-              icon={
-                <div className="btn-self-icon flex-box-center">
-                  <div className={`btn-self-icon-rect ${started ? 'active' : 'disabled'}`} />
-                </div>
-              }
+              icon={<PauseCircleOutlined className={started ? 'error-font' : ''} />}
               iconSize={homeSettingData['slider-1']?.iconSize || 40}
               direction={homeSettingData['slider-1']?.titleAlign}
               style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
@@ -1280,9 +1278,14 @@ const Home: React.FC<any> = (props: any) => {
               <div className="flex-box-center" style={{ height: '100%' }}>
                 {!parent?.[0] &&
                 type?.indexOf('button') < 0 &&
-                !['bodyBox', 'segmentSwitch', 'rangeDomain', 'rectRange', 'modelSwitch'].includes(
-                  type,
-                ) ? (
+                ![
+                  'bodyBox',
+                  'switchBox',
+                  'segmentSwitch',
+                  'rangeDomain',
+                  'rectRange',
+                  'modelSwitch',
+                ].includes(type) ? (
                   '请重新绑定数据节点'
                 ) : type === 'line' ? (
                   <LineCharts
@@ -1675,6 +1678,17 @@ const Home: React.FC<any> = (props: any) => {
                       valueColor,
                       ifNeedAllow,
                       des_bordered,
+                    }}
+                  />
+                ) : type === 'switchBox' ? (
+                  <SwitchBoxCharts
+                    id={key}
+                    data={{
+                      dataValue,
+                      dispatch,
+                      fontSize,
+                      yName,
+                      timeSelectDefault,
                     }}
                   />
                 ) : type === 'segmentSwitch' ? (
@@ -2292,7 +2306,6 @@ const Home: React.FC<any> = (props: any) => {
   };
   // 启动任务
   const start = () => {
-    debugger;
     if (!ipString) {
       return;
     } else {
@@ -4769,6 +4782,82 @@ const Home: React.FC<any> = (props: any) => {
                         />
                       </Form.Item>
                     ) : null}
+                  </Fragment>
+                ) : null}
+                {['switchBox'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`yName`}
+                      label={'总开关名称'}
+                      rules={[{ required: false, message: '名称' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      name={`timeSelectDefault`}
+                      label={'按钮参数'}
+                      rules={[{ required: true, message: '按钮参数' }]}
+                    >
+                      {commonSettingList?.map((item: any, index: number) => {
+                        const { id, label, ip, projectId } = item;
+                        return (
+                          <div
+                            className="flex-box"
+                            key={`segmentSwitch-item-${index}`}
+                            style={{ marginBottom: 8 }}
+                          >
+                            <div style={{ flex: 1 }}>
+                              <Input
+                                defaultValue={label}
+                                placeholder="label"
+                                style={{ height: 28 }}
+                                onChange={(e) => {
+                                  const val = e?.target?.value;
+                                  onSegmentSwitchChange(val, index, 'label');
+                                }}
+                              />
+                            </div>
+                            <div style={{ flex: 1, padding: '0 8px' }}>
+                              <Input
+                                defaultValue={ip}
+                                placeholder="ip"
+                                style={{ height: 28 }}
+                                onChange={(e) => {
+                                  const val = e?.target?.value;
+                                  onSegmentSwitchChange(val, index, 'ip');
+                                }}
+                              />
+                            </div>
+                            <div style={{ flex: 1, padding: '0 8px' }}>
+                              <Input
+                                defaultValue={projectId}
+                                placeholder="id"
+                                style={{ height: 28 }}
+                                onChange={(e) => {
+                                  const val = e?.target?.value;
+                                  onSegmentSwitchChange(val, index, 'projectId');
+                                }}
+                              />
+                            </div>
+                            <div>
+                              <Button
+                                icon={<MinusSquareOutlined />}
+                                style={{ height: 28 }}
+                                onClick={() => {
+                                  onSegmentSwitchChange('', id, 'remove');
+                                }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                      <Button
+                        icon={<PlusSquareOutlined />}
+                        onClick={() => {
+                          onSegmentSwitchChange('', 0, 'add');
+                        }}
+                      />
+                    </Form.Item>
                   </Fragment>
                 ) : null}
                 {['segmentSwitch'].includes(windowType) ? (

@@ -114,6 +114,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
     } else if (key === '4') {
       onDefectClick();
     } else if (key === '9') {
+      // 反档
       setFileVisible(true);
     } else if (key === 'Enter') {
       setVisible((prev) => {

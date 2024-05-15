@@ -28,118 +28,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
     parentBodyBoxTab,
     formCustom,
   } = data;
-  const [dataSource, setDataSource] = useState<any>([
-    {
-      alias: '灰尘',
-      name: 'point_defect',
-      data: [
-        { key: 'length', value: '1.00', type: 'float' },
-        { key: 'width', value: '5.00', type: 'float' },
-        { key: 'edge_switch', value: false, type: 'bool' },
-        { key: 'global_switch', value: false, type: 'bool' },
-      ],
-    },
-    {
-      alias: '划痕',
-      name: 'scratch',
-      data: [
-        { key: 'length', value: '1.00', type: 'float' },
-        { key: 'width', value: '5.00', type: 'float' },
-        { key: 'edge_switch', value: false, type: 'bool' },
-        { key: 'global_switch', value: false, type: 'bool' },
-      ],
-    },
-    {
-      alias: '手印',
-      name: 'handprint',
-      data: [
-        { key: 'length', value: '1.00', type: 'float' },
-        { key: 'width', value: '5.00', type: 'float' },
-        { key: 'edge_switch', value: false, type: 'bool' },
-        { key: 'global_switch', value: false, type: 'bool' },
-      ],
-    },
-    {
-      alias: '崩边',
-      name: 'broken_edge',
-      data: [
-        { key: 'length', value: '1.00', type: 'float' },
-        { key: 'width', value: '5.00', type: 'float' },
-        { key: 'edge_switch', value: false, type: 'bool' },
-        { key: 'global_switch', value: false, type: 'bool' },
-      ],
-    },
-    {
-      alias: '气泡',
-      name: 'bubble',
-      data: [
-        { key: 'length', value: '1.00', type: 'float' },
-        { key: 'width', value: '5.00', type: 'float' },
-        { key: 'edge_switch', value: false, type: 'bool' },
-        { key: 'global_switch', value: false, type: 'bool' },
-      ],
-    },
-    {
-      alias: '脏污',
-      name: 'dirty',
-      data: [
-        { key: 'length', value: '1.00', type: 'float' },
-        { key: 'width', value: '5.00', type: 'float' },
-        { key: 'edge_switch', value: false, type: 'bool' },
-        { key: 'global_switch', value: false, type: 'bool' },
-      ],
-    },
-    {
-      alias: '叠片',
-      name: 'fold_flat',
-      data: [
-        { key: 'length', value: '1.00', type: 'float' },
-        { key: 'width', value: '5.00', type: 'float' },
-        { key: 'edge_switch', value: false, type: 'bool' },
-        { key: 'global_switch', value: false, type: 'bool' },
-      ],
-    },
-    {
-      alias: '裂纹',
-      name: 'flaw',
-      data: [
-        { key: 'length', value: '1.00', type: 'float' },
-        { key: 'width', value: '5.00', type: 'float' },
-        { key: 'edge_switch', value: false, type: 'bool' },
-        { key: 'global_switch', value: false, type: 'bool' },
-      ],
-    },
-    {
-      alias: '毛条',
-      name: 'woolen',
-      data: [
-        { key: 'length', value: '1.00', type: 'float' },
-        { key: 'width', value: '5.00', type: 'float' },
-        { key: 'edge_switch', value: false, type: 'bool' },
-        { key: 'global_switch', value: false, type: 'bool' },
-      ],
-    },
-    {
-      alias: '点缺陷',
-      name: 'point_defect_real',
-      data: [
-        { key: 'length', value: '1.00', type: 'float' },
-        { key: 'width', value: '5.00', type: 'float' },
-        { key: 'edge_switch', value: false, type: 'bool' },
-        { key: 'global_switch', value: false, type: 'bool' },
-      ],
-    },
-    {
-      alias: '疑似划伤',
-      name: 'suspected_ws',
-      data: [
-        { key: 'length', value: '1.00', type: 'float' },
-        { key: 'width', value: '5.00', type: 'float' },
-        { key: 'edge_switch', value: false, type: 'bool' },
-        { key: 'global_switch', value: false, type: 'bool' },
-      ],
-    },
-  ]);
+  const [dataSource, setDataSource] = useState<any>([]);
   const inputDom = useRef<any>(null);
 
   const init = () => {
@@ -332,7 +221,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                               { label: '', value: false },
                               { label: '', value: true },
                             ]}
-                            className={value ? 'OK' : 'NG'}
+                            className={!value ? 'OK' : 'NG'}
                             buttonColor="white"
                             onChange={() => {
                               onValueChange(name, key, !value);

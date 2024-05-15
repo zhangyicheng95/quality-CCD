@@ -2,8 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Input, InputNumber, Switch } from 'antd';
 import * as _ from 'lodash';
 import styles from './index.less';
+import { LoadingOutlined } from '@ant-design/icons';
 
 interface Props {
+  loading?: Boolean;
   disabled?: Boolean;
   value?: any;
   defaultValue?: any;
@@ -23,7 +25,8 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
     onChange = null,
     value = false,
     defaultValue,
-    disabled,
+    disabled = false,
+    loading = false,
     className = '',
     style,
     title,
@@ -47,13 +50,13 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
 
   return (
     <div
-      className={`flex-box ${styles['segment-switch']} ${className}`}
+      className={`flex-box ${styles['segment-switch']}`}
       ref={ref}
       style={style ? { ...style } : {}}
     >
       {!!title ? <div className="segment-switch-title">{title}</div> : null}
       <div
-        className="flex-box segment-switch-box"
+        className={`flex-box segment-switch-box ${className}`}
         style={
           layout === 'vertical'
             ? {
@@ -86,13 +89,13 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
               style={Object.assign({}, !border ? { border: 0 } : {})}
               key={`segment-switch-box-item-${index}`}
               onClick={() => {
-                if (lock !== index && !disabled) {
+                if (lock !== index && !disabled && !loading) {
                   setLock(index);
                   !!onChange && onChange?.(value);
                 }
               }}
             >
-              {label}
+              {loading ? <LoadingOutlined /> : label}
             </div>
           );
         })}
