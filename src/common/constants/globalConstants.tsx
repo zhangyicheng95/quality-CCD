@@ -22,6 +22,7 @@ import alertIcon from '@/assets/dashboard-imgs/alert.png';
 import timeSelectIcon from '@/assets/dashboard-imgs/time-select.png';
 import buttonIcon from '@/assets/dashboard-imgs/button.png';
 import buttonIpIcon from '@/assets/dashboard-imgs/button2.png';
+import batchStartButtonIcon from '@/assets/dashboard-imgs/batch-start-end.png';
 import processIcon from '@/assets/dashboard-imgs/process.png';
 import descriptionIcon from '@/assets/dashboard-imgs/description.png';
 import operationIcon from '@/assets/dashboard-imgs/operation.png';
@@ -181,7 +182,8 @@ export const windowTypeList: any = [
   },
   {
     value: 'switchBox',
-    label: '启停列表窗口',
+    label: '批量启停窗口',
+    icon: batchStartButtonIcon,
   },
   {
     value: 'segmentSwitch',

@@ -13,8 +13,8 @@ interface Props {
 }
 
 const SwitchBoxCharts: React.FC<Props> = (props: any) => {
-  const { data = {}, id, started } = props;
-  const { dataValue, dispatch, fontSize = 14, yName = '', timeSelectDefault = [] } = data;
+  const { data = {}, id } = props;
+  const { dispatch, fontSize = 14, yName = '', timeSelectDefault = [] } = data;
   const ipString: any = localStorage.getItem('ipString') || '';
 
   const statusListRef = useRef<any>({});
@@ -33,6 +33,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
           ...statusListRef.current,
           [`${item.ip}_${item.projectId}`]: !!Object.keys?.(res?.data || {})?.length,
         };
+        setStatusList(statusListRef.current);
         if (res && res.code === 'SUCCESS') {
         } else {
           message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
@@ -40,10 +41,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
         initStatus(list, index + 1);
       });
     } else {
-      setTimeout(() => {
-        setStatusList(statusListRef.current);
-      }, 200);
-      setLocalhostLoading(false);
+      initStatus(list, 0);
     }
   };
   useEffect(() => {
@@ -57,7 +55,6 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
       setLoading(statusListRef.current);
       setStatusList(statusListRef.current);
       setTimeout(() => {
-        setLocalhostLoading(true);
         initStatus(timeSelectDefault, 0);
       }, 500);
     }

@@ -221,8 +221,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                               { label: '', value: false },
                               { label: '', value: true },
                             ]}
-                            className={!value ? 'OK' : 'NG'}
-                            buttonColor="white"
+                            buttonColor={value ? '#88db57' : 'grey'}
                             onChange={() => {
                               onValueChange(name, key, !value);
                             }}

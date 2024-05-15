@@ -3,6 +3,7 @@ import styles from '../../index.module.less';
 import * as _ from 'lodash';
 import { message } from 'antd';
 import { btnFetch } from '@/services/api';
+import SegmentSwitch from '@/components/SegmentSwitch';
 
 interface Props {
   data: any;
@@ -92,7 +93,17 @@ const RectRangeCharts: React.FC<Props> = (props: any) => {
                 });
               }}
             >
-              {!value ? '' : disabled ? '开启' : '屏蔽'}
+              {!value ? null : (
+                <SegmentSwitch
+                  fontInBody={[
+                    { label: '', value: false },
+                    { label: '', value: true },
+                  ]}
+                  value={disabled}
+                  buttonColor={disabled ? '#88db57' : 'grey'}
+                  style={{ height: '50%', width: '50%' }}
+                />
+              )}
             </div>
           );
         })}
