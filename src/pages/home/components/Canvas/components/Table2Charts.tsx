@@ -248,8 +248,8 @@ const Table2Charts: React.FC<Props> = (props: any) => {
           const number = text?.length * fontSize * (isNum ? 0.57 : 1) + 18;
           if (number > (numberList[i] || 0)) {
             numberList[i] = number;
+            boxSize += number;
           }
-          boxSize += number;
         }
       });
       numberList.unshift(nameListLength * fontSize + 18);
@@ -372,16 +372,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
   return (
     <div id={`echart-${id}`} className={styles.table2Charts} ref={domRef} style={{ fontSize }}>
       {des_layout === 'horizontal' ? (
-        <div
-          className="charts-body-box charts-horizontal"
-          style={
-            des_bordered
-              ? {
-                  borderWidth: '1px',
-                }
-              : {}
-          }
-        >
+        <div className="charts-body-box charts-horizontal">
           {(dataValue || [])?.map?.((item: any, index: number) => {
             const { name, value } = item;
             return (
@@ -395,12 +386,16 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                   style={Object.assign(
                     !!tableSizeSelf?.[0]
                       ? {
-                          width: tableSizeSelf?.[0]?.width,
                           minWidth: tableSizeSelf?.[0]?.minWidth,
                           maxWidth: '50%',
                         }
                       : {},
                     line_height ? { lineHeight: `${line_height - 4}px`, height: line_height } : {},
+                    des_bordered
+                      ? {
+                          borderWidth: '1px',
+                        }
+                      : {},
                   )}
                 >
                   {name}
@@ -416,7 +411,6 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                         style={Object.assign(
                           !!tableSizeSelf?.[sIndex + 1]
                             ? {
-                                width: tableSizeSelf?.[sIndex + 1]?.width,
                                 minWidth: tableSizeSelf?.[sIndex + 1]?.minWidth,
                                 maxWidth: '50%',
                               }
@@ -464,7 +458,6 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                       style={Object.assign(
                         !!tableSizeSelf?.[sIndex + 1]
                           ? {
-                              width: tableSizeSelf?.[sIndex + 1]?.width,
                               minWidth: tableSizeSelf?.[sIndex + 1]?.minWidth,
                               maxWidth: '50%',
                             }
