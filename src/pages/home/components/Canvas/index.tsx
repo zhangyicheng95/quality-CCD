@@ -1452,6 +1452,7 @@ const Home: React.FC<any> = (props: any) => {
                       dataValue,
                       fontSize,
                       des_column,
+                      line_height,
                       hiddenAxis,
                       labelInxAxis,
                       fetchType,
@@ -1776,7 +1777,7 @@ const Home: React.FC<any> = (props: any) => {
                   <ButtonImagesCharts
                     id={key}
                     data={{
-                      dataValue,
+                      dataValue: { ...dataValue, guid: guid() },
                       fontSize,
                       reverse,
                       modelRotateScreenshot,
@@ -4264,6 +4265,14 @@ const Home: React.FC<any> = (props: any) => {
                   <Fragment>
                     <Form.Item name="des_column" label="列数">
                       <InputNumber />
+                    </Form.Item>
+                    <Form.Item
+                      name={`line_height`}
+                      label={'内容行高'}
+                      rules={[{ required: true, message: '内容行高' }]}
+                      initialValue={24}
+                    >
+                      <InputNumber min={10} />
                     </Form.Item>
                     <Form.Item name="labelInxAxis" label="显示名称" valuePropName="checked">
                       <Switch />

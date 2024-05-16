@@ -17,6 +17,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
   const { dispatch, fontSize = 14, yName = '', timeSelectDefault = [] } = data;
   const ipString: any = localStorage.getItem('ipString') || '';
   const [form] = Form.useForm();
+  const timeRef = useRef<any>();
   const statusListRef = useRef<any>({});
   const [localhostLoading, setLocalhostLoading] = useState(false);
   const [loading, setLoading] = useState({});
@@ -43,7 +44,9 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
       });
     } else {
       setTimeout(() => {
-        initStatus(list, 0);
+        if (timeRef.current) {
+          initStatus(list, 0);
+        }
       }, 5000);
     }
   };
@@ -57,10 +60,15 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
       }, {});
       setLoading(statusListRef.current);
       setStatusList(statusListRef.current);
+      timeRef.current = true;
       setTimeout(() => {
         initStatus(timeSelectDefault, 0);
       }, 500);
     }
+
+    return () => {
+      timeRef.current = false;
+    };
   }, [timeSelectDefault]);
 
   const titleLength = useMemo(() => {

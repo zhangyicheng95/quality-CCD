@@ -2062,7 +2062,7 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
         });
       }, 500);
     }
-  }, [dataValue?.action]);
+  }, [dataValue?.action, dataValue?.guid]);
 
   const downLoad = (type?: string) => {
     return new Promise((resolve, reject) => {

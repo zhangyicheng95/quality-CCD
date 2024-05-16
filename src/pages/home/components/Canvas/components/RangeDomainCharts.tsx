@@ -18,6 +18,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
     dataValue,
     fontSize = 14,
     des_column = 1,
+    line_height = 24,
     hiddenAxis,
     labelInxAxis,
     fetchType,
@@ -169,13 +170,14 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                   {},
                   des_column > 1
                     ? {
-                        width: `calc(${100 / des_column}% - 8px)`,
-                        marginRight: dataSource?.length % des_column === des_column - 1 ? 0 : 8,
+                        width: `${100 / des_column}%`,
+                        // marginRight: index % index === 1 ? 0 : 8,
                       }
                     : {},
-                  dataSource?.length % des_column === 1
-                    ? { marginBottom: index + 1 === dataSource.length ? 0 : 8 }
-                    : { marginBottom: index + des_column >= dataSource.length ? 0 : 8 },
+                  { gap: 4 },
+                  // dataSource?.length % des_column === 1
+                  // ? { marginBottom: index + 1 === dataSource.length ? 0 : 8 }
+                  // : { marginBottom: index + des_column >= dataSource.length ? 0 : 8 },
                 )}
                 key={`range-domain-box-item-${index}`}
               >
@@ -185,6 +187,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                     style={{
                       width: titleLength * fontSize,
                       minWidth: titleLength * fontSize,
+                      height: line_height,
                     }}
                   >
                     {alias}
@@ -197,13 +200,14 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                       className="flex-box-column range-domain-box-item-td"
                       key={`range-domain-box-item-td-${cIndex}`}
                       style={Object.assign({}, type !== 'bool' ? { width: '100%' } : {}, {
-                        height: hiddenAxis && index < des_column ? fontSize + 8 + 38 : fontSize + 8,
+                        height: hiddenAxis && index < des_column ? line_height + 38 : line_height,
+                        marginBottom: 4,
                       })}
                     >
                       {hiddenAxis ? (
                         <div
                           className="flex-box-center range-domain-box-item-td-th"
-                          style={index < des_column ? {} : { height: 0 }}
+                          style={index < des_column ? {} : { height: 0, minHeight: 0 }}
                         >
                           {timeSelectDefault[cIndex]?.label}
                         </div>
@@ -212,7 +216,13 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                         <Form.Item
                           name={`${parentBodyBoxTab}$$${key}$$${name}`}
                           label={''}
-                          style={{ marginBottom: 0, height: fontSize + 8, width: 60 }}
+                          style={Object.assign(
+                            {},
+                            {
+                              marginBottom: 0,
+                              minWidth: 60,
+                            },
+                          )}
                           initialValue={value}
                           rules={[{ required: false, message: alias }]}
                         >
@@ -231,7 +241,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                         <Form.Item
                           name={`${parentBodyBoxTab}$$${key}$$${name}`}
                           label={''}
-                          style={{ marginBottom: 0, height: fontSize + 8 }}
+                          style={{ marginBottom: 0 }}
                           initialValue={value}
                           rules={[{ required: false, message: alias }]}
                         >
@@ -265,7 +275,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                       ) : (
                         <div
                           className="flex-box range-domain-box-item-td-read"
-                          style={{ width: '100%', height: fontSize + 8 }}
+                          style={{ width: '100%' }}
                         >
                           {value}
                         </div>
