@@ -19,8 +19,8 @@ const localData = [
   {
     name: '结果',
     value: [
-      { value: 'OK' },
       { value: 1 },
+      { value: 'OK' },
       { value: 1 },
       { value: 1 },
       { value: 1 },
@@ -267,25 +267,39 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     } else {
       (dataValue || [])?.forEach((item: any, index: number) => {
         const { name, value } = item;
-        const text = !_.isUndefined(value?.[0]?.value) ? value?.[0]?.value + '' : value?.[0] + '';
+        let text = '';
         let isNum = false;
-        try {
-          const number = JSON.parse(text);
-          if ((number + '')?.length > name.length) {
-            isNum = true;
+        let number = 0;
+        (value || [])?.forEach((val: any) => {
+          text = !_.isUndefined(val?.value) ? val?.value + '' : val + '';
+
+          try {
+            const number = JSON.parse(text);
+            if ((number + '')?.length > name.length) {
+              isNum = true;
+            }
+          } catch (err) {
+            if (!ifHasChinese(text)) {
+              isNum = true;
+            } else {
+              isNum = false;
+            }
           }
-        } catch (err) {
-          if (!ifHasChinese(text)) {
-            isNum = true;
-          } else {
-            isNum = false;
+          if (
+            Math.max(text?.length, name.length) *
+              fontSize *
+              (isNum || name?.indexOf('时间') > -1 ? 0.59 : 1) +
+              18 >
+            number
+          ) {
+            number =
+              Math.max(text?.length, name.length) *
+                fontSize *
+                (isNum || name?.indexOf('时间') > -1 ? 0.59 : 1) +
+              18;
           }
-        }
-        const number =
-          Math.max(text?.length, name.length) *
-            fontSize *
-            (isNum || name?.indexOf('时间') > -1 ? 0.57 : 1) +
-          18;
+        });
+
         list[index] = number;
         boxSize += number;
       });

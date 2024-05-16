@@ -84,8 +84,8 @@ export async function getInitialState(): Promise<{
   if (!localStorage.getItem('ipUrl-history')) {
     localStorage.setItem('ipUrl-history', 'localhost:8867');
   }
-  if (!localStorage.getItem('ipUrl-realtime')) {
-    localStorage.setItem('ipUrl-realtime', ipUrl);
+  if (!localStorage.getItem('ipUrl-realtime') && !!ipUrl) {
+    localStorage.setItem('ipUrl-realtime', ipUrl || '');
     window.location.reload();
   } else {
     if (ipString) {

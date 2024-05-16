@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { Badge, message } from 'antd';
+import { Badge, Form, message } from 'antd';
 import { getFlowStatusService, startFlowService, stopFlowService } from '@/services/api';
 import SegmentSwitch from '@/components/SegmentSwitch';
 import { connect } from 'umi';
@@ -16,7 +16,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   const { dispatch, fontSize = 14, yName = '', timeSelectDefault = [] } = data;
   const ipString: any = localStorage.getItem('ipString') || '';
-
+  const [form] = Form.useForm();
   const statusListRef = useRef<any>({});
   const [localhostLoading, setLocalhostLoading] = useState(false);
   const [loading, setLoading] = useState({});
@@ -31,7 +31,8 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
       getFlowStatusService(item.projectId, url).then((res) => {
         statusListRef.current = {
           ...statusListRef.current,
-          [`${item.ip}_${item.projectId}`]: !!Object.keys?.(res?.data || {})?.length,
+          [`${item.ip}_${item.projectId}`]:
+            res && res.code === 'SUCCESS' && !!Object.keys?.(res?.data || {})?.length,
         };
         setStatusList(statusListRef.current);
         if (res && res.code === 'SUCCESS') {
@@ -41,7 +42,9 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
         initStatus(list, index + 1);
       });
     } else {
-      initStatus(list, 0);
+      setTimeout(() => {
+        initStatus(list, 0);
+      }, 5000);
     }
   };
   useEffect(() => {
@@ -169,6 +172,9 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
       setLocalhostLoading(false);
       setTimeout(() => {
         setStatusList(statusListRef.current);
+        form.setFieldsValue({
+          all: Object.values(statusListRef.current)?.includes(true),
+        });
       }, 200);
     }
   };
@@ -193,110 +199,135 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
       setLocalhostLoading(false);
       setTimeout(() => {
         setStatusList(statusListRef.current);
+        form.setFieldsValue({
+          all: Object.values(statusListRef.current)?.includes(true),
+        });
       }, 200);
     }
   };
 
   return (
-    <div
-      id={`echart-${id}`}
-      className={`flex-box-column ${styles.switchBoxCharts}`}
-      style={{ fontSize }}
-    >
-      <div className="switch-box-item">
-        {useMemo(() => {
-          let values = Object.values(statusList);
-          if (!values.length) {
-            values = [false];
-          }
-          return (
-            <SegmentSwitch
-              title={<div style={{ minWidth: titleLength, textAlign: 'right' }}>{yName}</div>}
-              fontInBody={[
-                { label: '停止', value: false },
-                { label: '启动', value: true },
-              ]}
-              buttonColor={
-                !values?.includes(false) ? '#88db57' : !values?.includes(true) ? 'grey' : '#b8831b'
-              }
-              value={values?.includes(true)}
-              loading={localhostLoading}
-              onChange={(e: any) => {
-                setLocalhostLoading(true);
-                setLoading((prev: any) =>
-                  Object.entries(prev)?.reduce((pre: any, cen: any) => {
-                    return {
-                      ...pre,
-                      [cen[0]]: true,
-                    };
-                  }, {}),
-                );
-                if (e) {
-                  startList(timeSelectDefault, 0);
-                } else {
-                  stopList(timeSelectDefault, 0);
-                }
-              }}
-            />
-          );
-        }, [timeSelectDefault, localhostLoading, statusList])}
-      </div>
-      {useMemo(
-        () =>
-          (timeSelectDefault || [])?.map((item: any, index: number) => {
-            const { label, ip, projectId } = item;
+    <div id={`echart-${id}`} className={`${styles.switchBoxCharts}`} style={{ fontSize }}>
+      <Form form={form} scrollToFirstError className="flex-box-column switch-box-form">
+        <div className="switch-box-item">
+          {useMemo(() => {
+            let values = Object.values(statusList);
+            if (!values.length) {
+              values = [false];
+            }
             return (
-              <div className="switch-box-item" key={`switch-box-item-${index}`}>
+              <Form.Item
+                name={`all`}
+                label=""
+                initialValue={values?.includes(true)}
+                style={{ marginBottom: 0 }}
+              >
                 <SegmentSwitch
-                  title={
-                    <div
-                      className="flex-box-justify-end"
-                      style={{ minWidth: titleLength, alignItems: 'center', gap: 8 }}
-                    >
-                      {!!statusList?.[`${item.ip}_${item.projectId}`] ? (
-                        <Badge color={'green'} />
-                      ) : null}
-                      {label}
-                    </div>
-                  }
+                  title={<div style={{ minWidth: titleLength, textAlign: 'right' }}>{yName}</div>}
                   fontInBody={[
                     { label: '停止', value: false },
                     { label: '启动', value: true },
                   ]}
-                  buttonColor={!!statusList?.[`${item.ip}_${item.projectId}`] ? '#88db57' : 'grey'}
-                  value={!!statusList?.[`${item.ip}_${item.projectId}`]}
-                  loading={loading?.[`${item.ip}_${item.projectId}`]}
-                  onChange={(e: any) => {
+                  buttonColor={
+                    !values?.includes(false)
+                      ? '#88db57'
+                      : !values?.includes(true)
+                      ? 'grey'
+                      : '#b8831b'
+                  }
+                  loading={localhostLoading}
+                  onClick={(e: any) => {
+                    setLocalhostLoading(true);
+                    setLoading((prev: any) =>
+                      Object.entries(prev)?.reduce((pre: any, cen: any) => {
+                        return {
+                          ...pre,
+                          [cen[0]]: true,
+                        };
+                      }, {}),
+                    );
                     if (e) {
-                      start(projectId, ip).then((res) => {
-                        setTimeout(() => {
-                          setStatusList((prev: any) => {
-                            return {
-                              ...prev,
-                              [`${item.ip}_${item.projectId}`]: !!res,
-                            };
-                          });
-                        }, 200);
-                      });
+                      startList(timeSelectDefault, 0);
                     } else {
-                      end(projectId, ip).then((res) => {
-                        setTimeout(() => {
-                          setStatusList((prev: any) => {
-                            return {
-                              ...prev,
-                              [`${item.ip}_${item.projectId}`]: !res,
-                            };
-                          });
-                        }, 200);
-                      });
+                      stopList(timeSelectDefault, 0);
                     }
                   }}
                 />
-              </div>
+              </Form.Item>
             );
-          }),
-        [timeSelectDefault, loading, statusList],
-      )}
+          }, [timeSelectDefault, localhostLoading, statusList])}
+        </div>
+        {useMemo(
+          () =>
+            (timeSelectDefault || [])?.map((item: any, index: number) => {
+              const { label, ip, projectId } = item;
+              return (
+                <div className="switch-box-item" key={`switch-box-item-${index}`}>
+                  <Form.Item
+                    name={`${item.ip}_${item.projectId}`}
+                    label=""
+                    initialValue={!!statusList?.[`${item.ip}_${item.projectId}`]}
+                    style={{ marginBottom: 0 }}
+                  >
+                    <SegmentSwitch
+                      title={
+                        <div
+                          className="flex-box-justify-end"
+                          style={{ minWidth: titleLength, alignItems: 'center', gap: 8 }}
+                        >
+                          {!!statusList?.[`${item.ip}_${item.projectId}`] ? (
+                            <Badge color={'green'} />
+                          ) : null}
+                          {label}
+                        </div>
+                      }
+                      fontInBody={[
+                        { label: '停止', value: false },
+                        { label: '启动', value: true },
+                      ]}
+                      buttonColor={
+                        !!statusList?.[`${item.ip}_${item.projectId}`] ? '#88db57' : 'grey'
+                      }
+                      loading={loading?.[`${item.ip}_${item.projectId}`]}
+                      onClick={(e: any) => {
+                        if (e) {
+                          start(projectId, ip).then((res) => {
+                            setTimeout(() => {
+                              setStatusList((prev: any) => {
+                                return {
+                                  ...prev,
+                                  [`${item.ip}_${item.projectId}`]: !!res,
+                                };
+                              });
+                              form.setFieldsValue({
+                                [`${item.ip}_${item.projectId}`]: !!res,
+                              });
+                            }, 200);
+                          });
+                        } else {
+                          end(projectId, ip).then((res) => {
+                            setTimeout(() => {
+                              setStatusList((prev: any) => {
+                                return {
+                                  ...prev,
+                                  [`${item.ip}_${item.projectId}`]: !res,
+                                };
+                              });
+                              form.setFieldsValue({
+                                [`${item.ip}_${item.projectId}`]: !!res,
+                              });
+                            }, 200);
+                          });
+                        }
+                      }}
+                    />
+                  </Form.Item>
+                </div>
+              );
+            }),
+          [timeSelectDefault, loading, statusList],
+        )}
+      </Form>
     </div>
   );
 };

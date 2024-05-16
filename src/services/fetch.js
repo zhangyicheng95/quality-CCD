@@ -116,7 +116,18 @@ function axiosRequest(config) {
     .request(config)
     .then((response) => {
       if (response instanceof Object) {
-        return response.data;
+        if (!_.isString(response?.data) || response?.data?.indexOf?.('<body>') < 0) {
+          return response.data;
+        } else {
+          return {
+            code: 'ERROR',
+            data: null,
+            msg:
+              response.data?.indexOf('<body>') > -1
+                ? response.data.split('<body>')[1].split('</body>')[0]
+                : response.data,
+          };
+        }
       }
       return response;
     })
@@ -132,6 +143,7 @@ function axiosRequest(config) {
           status === 400 ||
           status === 403 ||
           status === 404 ||
+          status === 405 ||
           status === 500
         ) {
           if (status === 500) {

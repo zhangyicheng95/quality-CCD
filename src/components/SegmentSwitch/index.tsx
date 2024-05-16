@@ -11,6 +11,7 @@ interface Props {
   defaultValue?: any;
   className?: any;
   onChange?: any;
+  onClick?: any;
   style?: any;
   title?: any;
   ref?: any;
@@ -23,6 +24,7 @@ interface Props {
 const SegmentSwitch: React.FC<Props> = (props: any) => {
   const {
     onChange = null,
+    onClick = null,
     value = false,
     defaultValue,
     disabled = false,
@@ -63,6 +65,19 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
                 flexDirection: 'column',
               }
             : {}
+        }
+        onClick={
+          !!onClick
+            ? () => {
+                if (lock + 1 < fontInBody.length) {
+                  setLock((prev) => prev + 1);
+                  onClick?.(fontInBody[lock + 1]?.value);
+                } else {
+                  setLock(0);
+                  onClick?.(fontInBody[0]?.value);
+                }
+              }
+            : () => {}
         }
       >
         <div
