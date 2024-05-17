@@ -29,7 +29,8 @@ const EquipmentInfoCharts: React.FC<Props> = (props: any) => {
 
   const timeLength = useMemo(() => {
     const length = new Date(time).getTime() - new Date('2024-04-24 00:00:00').getTime();
-    const h = parseInt(length / (60 * 60 * 1000) + '');
+    const d = parseInt(length / (24 * 60 * 60 * 1000) + '');
+    const h = parseInt((length - d * 24 * 60 * 60 * 1000) / (60 * 60 * 1000) + '');
     const m = parseInt((length - h * 60 * 60 * 1000) / (60 * 1000) + '');
     const s = parseInt((length - h * 60 * 60 * 1000 - m * 60 * 1000) / 1000 + '');
     return `${h}小时 ${m}分 ${s}秒`;

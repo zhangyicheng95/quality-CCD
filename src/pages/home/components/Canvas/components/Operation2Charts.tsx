@@ -49,6 +49,8 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     ifPopconfirm,
     showLabel,
     des_column,
+    des_bordered,
+    yName = 150,
   } = data;
   if (!_.isBoolean(showLabel)) {
     showLabel = true;
@@ -74,6 +76,24 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
   const [selectedOption, setSelectedOption] = useState<any>({});
   const [locked, setLocked] = useState(true);
 
+  const measurementLineNum = useMemo(() => {
+    const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
+    const { config = {} } = node;
+    let { initParams = {}, execParams = {} } = config;
+    if (!execParams || _.isEmpty(execParams)) {
+      execParams = initParams;
+    }
+    let num = 1;
+    (operationList || []).forEach((item: any) => {
+      if (execParams?.[item] && execParams?.[item]?.widget?.type === 'Measurement') {
+        const length = Object?.keys?.(execParams?.[item]?.value)?.length || 1;
+        if (length > num) {
+          num = length;
+        }
+      }
+    });
+    return num;
+  }, [operationList]);
   // 初始化
   const init = (data?: any) => {
     const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
@@ -271,7 +291,9 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     // if (optionList?.filter((i: any) => i.name === name)?.length) return null;
     return (
       <div
-        className={`${type === 'TagRadio' ? '' : 'flex-box-start'} param-item`}
+        className={`${type === 'TagRadio' ? '' : 'flex-box-start'} param-item ${
+          des_bordered ? 'item-border' : ''
+        }`}
         key={`${id}@$@${name}`}
         style={Object.assign(
           {},
@@ -293,7 +315,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         {/* <BlockOutlined className="item-icon" /> */}
         {/* </div> */}
         {showLabel ? (
-          <div className="title-box">
+          <div className="title-box" style={{ width: yName, maxWidth: yName }}>
             <TooltipDiv style={{ fontSize }} className="first" title={alias || name}>
               {alias || name}
             </TooltipDiv>
@@ -321,6 +343,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             setPlatFormValue={setPlatFormValue}
             setSelectPathVisible={setSelectPathVisible}
             setSelectedPath={setSelectedPath}
+            measurementLineNum={measurementLineNum}
           />
         </div>
       </div>
@@ -385,6 +408,9 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             fontSize,
             showLabel,
             des_column,
+            des_bordered,
+            yName,
+            measurementLineNum,
           ])}
         </Form>
       </div>
@@ -496,7 +522,7 @@ export default connect(({ home, themeStore }) => ({
   started: home.started || false,
 }))(Operation2Charts);
 
-function FormatWidgetToDom(props: any) {
+export function FormatWidgetToDom(props: any) {
   const {
     form,
     id,
@@ -514,6 +540,7 @@ function FormatWidgetToDom(props: any) {
     setPlatFormValue,
     setSelectPathVisible,
     setSelectedPath,
+    measurementLineNum = 4,
   } = props;
   const { setFieldsValue, getFieldValue } = form;
   const {
@@ -1031,6 +1058,8 @@ function FormatWidgetToDom(props: any) {
             }}
             precision={precision}
             step={step}
+            gap={8}
+            lineNum={measurementLineNum}
             max={max}
             min={min}
             type={type}

@@ -3,7 +3,7 @@ import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { connect, useModel } from 'umi';
 import { Button, Form, message } from 'antd';
-import { FormatWidgetToDom } from '@/pages/control';
+import { FormatWidgetToDom } from '@/pages/home/components/Canvas/components/Operation2Charts';
 import MonacoEditor from '@/components/MonacoEditor';
 import PlatFormModal from '@/components/platForm';
 import FileManager from '@/components/FileManager';
@@ -19,7 +19,16 @@ interface Props {
 
 const OperationCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id, started } = props;
-  let { operationList, dataValue, fontSize, showLabel, ifPopconfirm, des_column } = data;
+  let {
+    operationList,
+    dataValue,
+    fontSize,
+    showLabel,
+    ifPopconfirm,
+    des_column,
+    des_bordered,
+    yName = 150,
+  } = data;
   if (!_.isBoolean(showLabel)) {
     showLabel = true;
   }
@@ -56,7 +65,23 @@ const OperationCharts: React.FC<Props> = (props: any) => {
       setConfigList(resConfig);
     }
   }, [operationList, params]);
-
+  const measurementLineNum = useMemo(() => {
+    const { flowData } = params;
+    const { nodes } = flowData;
+    const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0];
+    const { config = {} } = node;
+    let { initParams = {} } = config;
+    let num = 1;
+    (operationList || []).forEach((item: any) => {
+      if (initParams?.[item] && initParams?.[item]?.widget?.type === 'Measurement') {
+        const length = Object?.keys?.(initParams?.[item]?.value)?.length || 1;
+        if (length > num) {
+          num = length;
+        }
+      }
+    });
+    return num;
+  }, [operationList]);
   const widgetChange = (key: any, value: any) => {
     validateFields()
       .then((values) => {
@@ -192,7 +217,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
               const { type } = widget;
               return (
                 <div
-                  className="flex-box-start param-item"
+                  className={`flex-box-start param-item ${des_bordered ? 'item-border' : ''}`}
                   key={`${id}@$@${name}`}
                   style={Object.assign(
                     {},
@@ -208,7 +233,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
                   )}
                 >
                   {showLabel ? (
-                    <div className="title-box">
+                    <div className="title-box" style={{ width: yName, maxWidth: yName }}>
                       <TooltipDiv
                         style={{ fontSize: fontSize + 2 }}
                         className="first"
@@ -236,12 +261,13 @@ const OperationCharts: React.FC<Props> = (props: any) => {
                       setPlatFormValue={setPlatFormValue}
                       setSelectPathVisible={setSelectPathVisible}
                       setSelectedPath={setSelectedPath}
+                      measurementLineNum={measurementLineNum}
                     />
                   </div>
                 </div>
               );
             });
-          }, [configList, started, showLabel])}
+          }, [configList, started, showLabel, des_bordered, yName, measurementLineNum])}
         </Form>
       </div>
       {!!ifPopconfirm ? (

@@ -1718,6 +1718,8 @@ const Home: React.FC<any> = (props: any) => {
                       showLabel,
                       ifPopconfirm,
                       des_column,
+                      des_bordered,
+                      yName,
                     }}
                   />
                 ) : type === 'operation2' ? (
@@ -1734,6 +1736,8 @@ const Home: React.FC<any> = (props: any) => {
                       ifPopconfirm,
                       showLabel,
                       des_column,
+                      des_bordered,
+                      yName,
                     }}
                   />
                 ) : type === 'statistic' ? (
@@ -1777,7 +1781,7 @@ const Home: React.FC<any> = (props: any) => {
                   <ButtonImagesCharts
                     id={key}
                     data={{
-                      dataValue: { ...dataValue, guid: guid() },
+                      dataValue,
                       fontSize,
                       reverse,
                       modelRotateScreenshot,
@@ -5184,6 +5188,9 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item name="des_column" label="列数" initialValue={1}>
                       <InputNumber />
                     </Form.Item>
+                    <Form.Item name="des_bordered" label="是否展示边框" valuePropName="checked">
+                      <Switch />
+                    </Form.Item>
                     <Form.Item
                       name={`operationList`}
                       label={'操作项'}
@@ -5194,6 +5201,14 @@ const Home: React.FC<any> = (props: any) => {
                         mode="multiple"
                         options={selectedNodeConfig}
                       />
+                    </Form.Item>
+                    <Form.Item
+                      name={`yName`}
+                      label={'label宽度'}
+                      initialValue={150}
+                      rules={[{ required: false, message: 'label宽度' }]}
+                    >
+                      <InputNumber />
                     </Form.Item>
                     {['operation2'].includes(windowType) ? (
                       <Fragment>

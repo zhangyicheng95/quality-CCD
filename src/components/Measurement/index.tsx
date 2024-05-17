@@ -18,6 +18,7 @@ interface Props {
   lineNum?: number;
   style?: any;
   type?: any;
+  gap?: any;
 }
 
 const Measurement: React.FC<Props> = (props: any) => {
@@ -35,6 +36,7 @@ const Measurement: React.FC<Props> = (props: any) => {
     lineNum = 4,
     style = null,
     type = 'float',
+    gap = 0,
   } = props;
   const dom = useRef<any>();
   const refnum_0 = useRef();
@@ -99,7 +101,11 @@ const Measurement: React.FC<Props> = (props: any) => {
   };
 
   return (
-    <div className={`flex-box ${styles['roi-mark']}`} ref={dom} style={style ? { ...style } : {}}>
+    <div
+      className={`flex-box ${styles['roi-mark']}`}
+      ref={dom}
+      style={Object.assign({}, style ? { ...style } : {}, !!gap ? { gap } : {})}
+    >
       {Object.entries(selfValue)?.map?.((item: any, index: number) => {
         if (!item[1]) return null;
         const { alias, value } = item[1];
@@ -108,8 +114,8 @@ const Measurement: React.FC<Props> = (props: any) => {
             key={index}
             className="flex-box-center item-input-box"
             style={{
-              minWidth: `calc(${100 / lineNum}% - 24px)`,
-              width: index % 4 === 3 ? '25%' : `calc(${100 / lineNum}% - 24px)`,
+              minWidth: `calc(${100 / lineNum}% - ${!!gap ? gap : 24}px)`,
+              width: `calc(${100 / lineNum}% - ${!!gap ? gap : 24}px)`,
             }}
           >
             <div
