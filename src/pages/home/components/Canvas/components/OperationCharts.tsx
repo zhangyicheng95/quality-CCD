@@ -267,7 +267,15 @@ const OperationCharts: React.FC<Props> = (props: any) => {
                 </div>
               );
             });
-          }, [configList, started, showLabel, des_bordered, yName, measurementLineNum])}
+          }, [
+            configList,
+            operationList,
+            started,
+            showLabel,
+            des_bordered,
+            yName,
+            measurementLineNum,
+          ])}
         </Form>
       </div>
       {!!ifPopconfirm ? (

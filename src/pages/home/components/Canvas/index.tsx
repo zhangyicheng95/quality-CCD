@@ -16,6 +16,7 @@ import {
   Switch,
   Image,
   Divider,
+  Checkbox,
 } from 'antd';
 import * as _ from 'lodash';
 import { BASE_IP, btnFetch, startFlowService, stopFlowService, updateParams } from '@/services/api';
@@ -5200,6 +5201,36 @@ const Home: React.FC<any> = (props: any) => {
                         style={{ width: '100%' }}
                         mode="multiple"
                         options={selectedNodeConfig}
+                        dropdownRender={(allSelectValue) => (
+                          <div>
+                            <div style={{ padding: '4px 8px 8px 8px', cursor: 'pointer' }}>
+                              <Checkbox
+                                defaultChecked={
+                                  selectedNodeConfig.length ===
+                                  form.getFieldValue('operationList')?.length
+                                }
+                                onChange={(e) => {
+                                  if (e.target.checked === true) {
+                                    form.setFieldsValue({
+                                      operationList: selectedNodeConfig?.map(
+                                        (item: any) => item.value,
+                                      ),
+                                    });
+                                  } else {
+                                    form.setFieldsValue({
+                                      operationList: [],
+                                    });
+                                  }
+                                }}
+                              >
+                                全选
+                              </Checkbox>
+                            </div>
+                            <Divider style={{ margin: '0' }} />
+                            {/* Option 标签值 */}
+                            {allSelectValue}
+                          </div>
+                        )}
                       />
                     </Form.Item>
                     <Form.Item

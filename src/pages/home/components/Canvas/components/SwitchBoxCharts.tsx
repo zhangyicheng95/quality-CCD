@@ -36,6 +36,10 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
             res && res.code === 'SUCCESS' && !!Object.keys?.(res?.data || {})?.length,
         };
         setStatusList(statusListRef.current);
+        form.setFieldsValue({
+          ...statusListRef.current,
+          all: Object.values(statusListRef.current)?.includes(true),
+        });
         if (res && res.code === 'SUCCESS') {
         } else {
           message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
@@ -181,6 +185,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
       setTimeout(() => {
         setStatusList(statusListRef.current);
         form.setFieldsValue({
+          ...statusListRef.current,
           all: Object.values(statusListRef.current)?.includes(true),
         });
       }, 200);
@@ -208,6 +213,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
       setTimeout(() => {
         setStatusList(statusListRef.current);
         form.setFieldsValue({
+          ...statusListRef.current,
           all: Object.values(statusListRef.current)?.includes(true),
         });
       }, 200);
@@ -308,6 +314,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
                                 };
                               });
                               form.setFieldsValue({
+                                all: Object.values(statusListRef.current)?.includes(true),
                                 [`${item.ip}_${item.projectId}`]: !!res,
                               });
                             }, 200);
@@ -322,7 +329,8 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
                                 };
                               });
                               form.setFieldsValue({
-                                [`${item.ip}_${item.projectId}`]: !!res,
+                                all: Object.values(statusListRef.current)?.includes(true),
+                                [`${item.ip}_${item.projectId}`]: !res,
                               });
                             }, 200);
                           });
