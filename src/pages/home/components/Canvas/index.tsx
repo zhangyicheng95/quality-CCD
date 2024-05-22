@@ -206,6 +206,7 @@ const Home: React.FC<any> = (props: any) => {
     },
     'slider-1': {
       des_column: 1,
+      delay: 1000,
       titleAlign: 'horizational',
       iconSize: 24,
       controlList: [],
@@ -363,7 +364,7 @@ const Home: React.FC<any> = (props: any) => {
               direction={homeSettingData['slider-1']?.titleAlign}
               style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
               disabled={started || ifCanEdit}
-              loading={!started && loading}
+              loading={loading}
               onClick={() => start()}
             />
             <BasicButton
@@ -373,7 +374,7 @@ const Home: React.FC<any> = (props: any) => {
               direction={homeSettingData['slider-1']?.titleAlign}
               style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
               disabled={!started || ifCanEdit}
-              loading={started && loading}
+              loading={loading}
               onClick={() => end()}
             />
             <BasicButton
@@ -383,7 +384,7 @@ const Home: React.FC<any> = (props: any) => {
               direction={homeSettingData['slider-1']?.titleAlign}
               style={{ width: `${100 / (homeSettingData?.['slider-1']?.des_column || 1)}%` }}
               disabled={!started || ifCanEdit}
-              loading={started && loading}
+              loading={loading}
               onClick={() => reStart()}
             />
           </div>
@@ -2269,7 +2270,9 @@ const Home: React.FC<any> = (props: any) => {
           message.error(`${label} ${res?.msg || res?.message || '启动失败'}`);
         }
         if (index + 1 === list?.length) {
-          setLoading(false);
+          setTimeout(() => {
+            setLoading(false);
+          }, homeSettingData?.['slider-1']?.delay || 0);
         } else {
           setTimeout(() => {
             startProjects(list[index + 1], list, index + 1, projectStatus);
@@ -2278,7 +2281,9 @@ const Home: React.FC<any> = (props: any) => {
       });
     } else {
       if (index + 1 === list?.length) {
-        setLoading(false);
+        setTimeout(() => {
+          setLoading(false);
+        }, homeSettingData?.['slider-1']?.delay || 0);
       } else {
         setTimeout(() => {
           startProjects(list[index + 1], list, index + 1, projectStatus);
@@ -2304,7 +2309,9 @@ const Home: React.FC<any> = (props: any) => {
           message.error(`${label} ${res?.msg || res?.message || '停止失败'}`);
         }
         if (index + 1 === list?.length) {
-          setLoading(false);
+          setTimeout(() => {
+            setLoading(false);
+          }, homeSettingData?.['slider-1']?.delay || 0);
         } else {
           endProjects(list[index + 1], list, index + 1, projectStatus);
         }
@@ -2347,7 +2354,9 @@ const Home: React.FC<any> = (props: any) => {
               !homeSettingData?.['slider-1']?.controlList ||
               homeSettingData?.['slider-1']?.controlList?.length === 0
             ) {
-              setLoading(false);
+              setTimeout(() => {
+                setLoading(false);
+              }, homeSettingData?.['slider-1']?.delay || 0);
             }
           });
         } else {
@@ -2356,7 +2365,9 @@ const Home: React.FC<any> = (props: any) => {
             !homeSettingData?.['slider-1']?.controlList ||
             homeSettingData?.['slider-1']?.controlList?.length === 0
           ) {
-            setLoading(false);
+            setTimeout(() => {
+              setLoading(false);
+            }, homeSettingData?.['slider-1']?.delay || 0);
           }
         }
       });
@@ -2371,7 +2382,7 @@ const Home: React.FC<any> = (props: any) => {
           if (index + 1 === homeSettingData?.['slider-1']?.controlList?.length) {
             setTimeout(() => {
               setLoading(false);
-            }, 2000);
+            }, (homeSettingData?.['slider-1']?.delay || 0) + 2000);
           }
         });
       });
@@ -2400,8 +2411,10 @@ const Home: React.FC<any> = (props: any) => {
             !homeSettingData?.['slider-1']?.controlList ||
             homeSettingData?.['slider-1']?.controlList?.length === 0
           ) {
-            setLoading(false);
-            resolve(true);
+            setTimeout(() => {
+              setLoading(false);
+              resolve(true);
+            }, homeSettingData?.['slider-1']?.delay || 0);
           }
         });
         homeSettingData?.['slider-1']?.controlList?.forEach((item: any, index: number) => {
@@ -2416,7 +2429,7 @@ const Home: React.FC<any> = (props: any) => {
               setTimeout(() => {
                 resolve(true);
                 setLoading(false);
-              }, 2000);
+              }, (homeSettingData?.['slider-1']?.delay || 0) + 2000);
             }
           });
         });
@@ -5836,6 +5849,14 @@ const Home: React.FC<any> = (props: any) => {
               {homeSettingVisible === 'slider-1' ? (
                 <Fragment>
                   <Form.Item name="des_column" label="列数">
+                    <InputNumber />
+                  </Form.Item>
+                  <Form.Item
+                    name="delay"
+                    tooltip="启动/停止后，loading延迟时间"
+                    label="启动延迟(ms)"
+                    initialValue={1000}
+                  >
                     <InputNumber />
                   </Form.Item>
                   <Form.Item

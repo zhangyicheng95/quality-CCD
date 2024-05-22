@@ -16,7 +16,7 @@ const ChooseFileButton = (props: any) => {
     };
   }, []);
   return (
-    <Button className={`${className}`} {...rest} onClick={onClick}>
+    <Button className={`${className}`} {...rest} onClick={onClick} style={{ fontSize: 'inherit' }}>
       {children}
     </Button>
   );

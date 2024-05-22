@@ -97,7 +97,7 @@ const IpInput: React.FC<Props> = (props: any) => {
               }}
               // onKeyUp={(e) => turnIpPOS(e, index)}
             />
-            {index !== 3 ? <span className={'dot'} /> : null}
+            {index !== 3 ? <div className={'dot'} /> : null}
           </Fragment>
         );
       })}

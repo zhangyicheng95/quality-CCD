@@ -27,6 +27,7 @@ import IpInput from '@/components/IpInputGroup';
 import moment from 'moment';
 import ChooseFileButton from '@/components/ChooseFileButton';
 import ChooseDirButton from '@/components/ChooseDirButton';
+import SegmentSwitch from '@/components/SegmentSwitch';
 
 const FormItem = Form.Item;
 interface Props {
@@ -332,11 +333,12 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
           <FormatWidgetToDom
             key={name}
             id={name}
+            fontSize={fontSize}
             config={[item?.name, item]}
             selectedOption={selectedOption}
             setSelectedOption={setSelectedOption}
             form={form}
-            disabled={(!started || locked) && process.env.NODE_ENV !== 'development'}
+            disabled={locked}
             setEditorVisible={setEditorVisible}
             setEditorValue={setEditorValue}
             setPlatFormVisible={setPlatFormVisible}
@@ -422,7 +424,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
       <div className="operation-footer flex-box-center">
         <Button
           type="primary"
-          disabled={!started && process.env.NODE_ENV !== 'development'}
+          disabled={!started}
           onClick={() => {
             setLocked((prev) => !prev);
           }}
@@ -439,19 +441,12 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             okText="确认"
             cancelText="取消"
           >
-            <Button
-              type="primary"
-              disabled={(!started || locked) && process.env.NODE_ENV !== 'development'}
-            >
+            <Button type="primary" disabled={!started || locked}>
               修改
             </Button>
           </Popconfirm>
         ) : (
-          <Button
-            type="primary"
-            onClick={() => onOk()}
-            disabled={(!started || locked) && process.env.NODE_ENV !== 'development'}
-          >
+          <Button type="primary" onClick={() => onOk()} disabled={!started || locked}>
             修改
           </Button>
         )}
@@ -527,6 +522,7 @@ export function FormatWidgetToDom(props: any) {
     form,
     id,
     label = '',
+    fontSize = 12,
     node,
     config = [],
     parent = undefined,
@@ -710,6 +706,7 @@ export function FormatWidgetToDom(props: any) {
             //         <FormatWidgetToDom
             //             key={item.name || guid()}
             //             id={node?.id ? `${node.id}@$@${item?.name}` : item?.name}
+            //             fontSize={fontSize}
             //             config={[item.name, item]}
             //             label={item?.alias || item?.name}
             //             parent={name}
@@ -862,9 +859,15 @@ export function FormatWidgetToDom(props: any) {
           valuePropName="checked"
           rules={[{ required: require, message: `${alias}` }]}
         >
-          <Switch
+          <SegmentSwitch
+            style={{ height: fontSize * 2 }}
+            defaultValue={value || false}
+            fontInBody={[
+              { label: '', value: false, backgroundColor: 'grey' },
+              { label: '', value: true, backgroundColor: '' },
+            ]}
             disabled={disabled}
-            onChange={(e) => {
+            onClick={(e: boolean) => {
               widgetChange?.(name, e, parent);
             }}
           />
@@ -966,6 +969,7 @@ export function FormatWidgetToDom(props: any) {
             />
           ) : null}
           <Button
+            style={{ fontSize: 'inherit' }}
             onClick={() => {
               setEditorValue({
                 id: name,
@@ -1023,6 +1027,7 @@ export function FormatWidgetToDom(props: any) {
             </ChooseFileButton>
             <Button
               type="primary"
+              style={{ fontSize: 'inherit' }}
               onClick={() => {
                 setPlatFormValue({ ...config[1], id: name, nodeName: node?.alias || node?.name });
                 setPlatFormVisible(true);

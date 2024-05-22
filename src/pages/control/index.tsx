@@ -49,6 +49,7 @@ import { formatJson, guid } from '@/utils/utils';
 import moment from 'moment';
 import ChooseFileButton from '@/components/ChooseFileButton';
 import ChooseDirButton from '@/components/ChooseDirButton';
+import SegmentSwitch from '@/components/SegmentSwitch';
 
 const FormItem = Form.Item;
 const { confirm } = Modal;
@@ -1409,9 +1410,15 @@ export const FormatWidgetToDom: any = (props: any) => {
           valuePropName="checked"
           rules={[{ required: require, message: `${alias}` }]}
         >
-          <Switch
+          <SegmentSwitch
+            defaultValue={value || false}
+            style={{ height: 40 }}
+            fontInBody={[
+              { label: '', value: false, backgroundColor: 'grey' },
+              { label: '', value: true, backgroundColor: '' },
+            ]}
             disabled={disabled}
-            onChange={(e) => {
+            onClick={(e: boolean) => {
               widgetChange?.(name, e, parent);
             }}
           />

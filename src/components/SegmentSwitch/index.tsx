@@ -54,23 +54,19 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
     <div
       className={`flex-box ${styles['segment-switch']}`}
       ref={ref}
-      style={style ? { ...style } : {}}
+      style={Object.assign({}, style ? { ...style } : {})}
     >
       {!!title ? <div className="segment-switch-title">{title}</div> : null}
       <div
-        className={`flex-box segment-switch-box ${className}`}
-        style={
-          layout === 'vertical'
-            ? {
-                flexDirection: 'column',
-              }
-            : {}
-        }
+        className={`${
+          layout === 'vertical' ? 'flex-box-column' : 'flex-box'
+        } segment-switch-box ${className}`}
+        style={Object.assign({}, disabled ? { cursor: 'not-allowed' } : {})}
         onClick={
-          !!onClick
+          !!onClick && !disabled
             ? () => {
                 if (lock + 1 < fontInBody.length) {
-                  setLock((prev) => prev + 1);
+                  setLock(lock + 1);
                   onClick?.(fontInBody[lock + 1]?.value);
                 } else {
                   setLock(0);
@@ -93,7 +89,9 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
                   width: `calc(${100 / fontInBody?.length}% - 4px)`,
                   left: `calc(${(100 / fontInBody?.length) * lock}% + 2px)`,
                 },
-            !!buttonColor ? { backgroundColor: buttonColor } : {},
+            !!buttonColor
+              ? { backgroundColor: buttonColor }
+              : { backgroundColor: fontInBody?.[lock]?.backgroundColor },
           )}
         />
         {(fontInBody || [])?.map((item: any, index: number) => {

@@ -9,6 +9,7 @@ import hexagonIcon from '@/assets/benchi/hexagon.png';
 import mechanicalIcon from '@/assets/benchi/mechanical.png';
 import timeLengthIcon from '@/assets/benchi/time-length.png';
 import useClock from '@/hooks/useClock';
+import { timeToString } from '@/utils/utils';
 
 interface Props {
   data: any;
@@ -29,11 +30,8 @@ const EquipmentInfoCharts: React.FC<Props> = (props: any) => {
 
   const timeLength = useMemo(() => {
     const length = new Date(time).getTime() - new Date('2024-04-24 00:00:00').getTime();
-    const d = parseInt(length / (24 * 60 * 60 * 1000) + '');
-    const h = parseInt((length - d * 24 * 60 * 60 * 1000) / (60 * 60 * 1000) + '');
-    const m = parseInt((length - h * 60 * 60 * 1000) / (60 * 1000) + '');
-    const s = parseInt((length - h * 60 * 60 * 1000 - m * 60 * 1000) / 1000 + '');
-    return `${h}小时 ${m}分 ${s}秒`;
+    const { d, h, m, s } = timeToString(length);
+    return `${d}天 ${h}小时 ${m}分 ${s}秒`;
   }, [time]);
 
   return (

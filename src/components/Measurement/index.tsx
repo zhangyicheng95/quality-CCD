@@ -164,9 +164,10 @@ const Measurement: React.FC<Props> = (props: any) => {
                 className={`self_input ${className}`}
                 ref={refList[index]}
                 defaultValue={!!value}
+                buttonColor={value ? '' : 'grey'}
                 fontInBody={[
-                  { label: '关', value: false },
-                  { label: '开', value: true },
+                  { label: '', value: false },
+                  { label: '', value: true },
                 ]}
                 style={{ fontSize: 16 }}
                 onChange={(checked: any) => {
@@ -180,11 +181,12 @@ const Measurement: React.FC<Props> = (props: any) => {
                 }}
               />
             ) : (
-              <Input
+              <InputNumber
                 disabled={disabled}
                 className={`self_input ${className}`}
                 ref={refList[index]}
                 defaultValue={value}
+                stringMode
                 // precision={type === 'float' ? precision : 0}
                 step={step}
                 max={max}
@@ -209,6 +211,8 @@ const Measurement: React.FC<Props> = (props: any) => {
                       );
                       handleNumberChange(val, item[0], index);
                     }
+                  } else {
+                    handleNumberChange(0, item[0], index);
                   }
                 }}
                 onChange={(e: any) => {
@@ -225,6 +229,8 @@ const Measurement: React.FC<Props> = (props: any) => {
                         }),
                       );
                       handleNumberChange(val, item[0], index);
+                    } else {
+                      handleNumberChange(0, item[0], index);
                     }
                   }
                 }}

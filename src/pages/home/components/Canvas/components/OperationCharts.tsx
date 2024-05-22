@@ -250,6 +250,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
                     <FormatWidgetToDom
                       key={item?.name}
                       id={item?.name}
+                      fontSize={fontSize}
                       // label={item?.alias || item?.name}
                       config={[item?.name, item]}
                       widgetChange={widgetChange}
