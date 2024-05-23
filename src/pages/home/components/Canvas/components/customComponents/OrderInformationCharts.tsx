@@ -107,9 +107,10 @@ const OrderInformationCharts: React.FC<Props> = (props: any) => {
         style={{ fontSize }}
         titleFontSize={titleFontSize}
         headerRight={
-          <div className="flex-box">
+          <div className="flex-box" style={{ fontSize: titleFontSize }}>
             <Button
               type="link"
+              style={{ fontSize: 'inherit' }}
               onClick={() => {
                 setVisible(true);
                 const list = JSON.parse(localStorage.getItem(`${id}-orderInformationList`) || '[]');
@@ -120,6 +121,7 @@ const OrderInformationCharts: React.FC<Props> = (props: any) => {
             </Button>
             <Button
               type="link"
+              style={{ fontSize: 'inherit' }}
               onClick={() => {
                 onChange();
               }}

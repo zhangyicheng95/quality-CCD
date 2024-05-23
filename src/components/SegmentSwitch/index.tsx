@@ -39,14 +39,16 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
     buttonColor,
   } = props;
   const [lock, setLock] = useState(0);
-
   useEffect(() => {
     let index = 0;
-    fontInBody.forEach((item: any, cIndex: number) => {
-      if (item.value === (value || defaultValue || fontInBody?.[0]?.value)) {
-        index = cIndex;
-      }
-    });
+    try {
+      fontInBody.forEach((item: any, cIndex: number) => {
+        if ([value, defaultValue, fontInBody?.[0]?.value].includes(item.value)) {
+          index = cIndex;
+          throw new Error();
+        }
+      });
+    } catch (err) {}
     setLock(index);
   }, [value, defaultValue]);
 

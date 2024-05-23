@@ -129,6 +129,7 @@ import RangeDomainCharts from './components/RangeDomainCharts';
 import RectRangeCharts from './components/customComponents/RectRangeCharts';
 import ModelSwitchCharts from './components/customComponents/ModelSwitchCharts';
 import SwitchBoxCharts from './components/SwitchBoxCharts';
+import FormCharts from './components/FormCharts';
 
 const leftPanelDataLocal = [
   {
@@ -1282,6 +1283,7 @@ const Home: React.FC<any> = (props: any) => {
                 type?.indexOf('button') < 0 &&
                 ![
                   'bodyBox',
+                  'form',
                   'switchBox',
                   'segmentSwitch',
                   'rangeDomain',
@@ -1575,6 +1577,20 @@ const Home: React.FC<any> = (props: any) => {
                       iconSize,
                       fetchParams,
                       dispatch,
+                    }}
+                  />
+                ) : type === 'form' ? (
+                  <FormCharts
+                    id={key}
+                    data={{
+                      titleFontSize,
+                      fontSize,
+                      timeSelectDefault,
+                      yName,
+                      xName,
+                      fetchType,
+                      modelUpload,
+                      ifNeedAllow,
                     }}
                   />
                 ) : type === 'button' ? (
@@ -2769,7 +2785,7 @@ const Home: React.FC<any> = (props: any) => {
     });
   };
   // 盒子窗口
-  const onBodyBoxhChange = (value: any, index: number, type: string) => {
+  const onBodyBoxChange = (value: any, index: number, type: string) => {
     let list = [].concat(commonSettingList);
     if (type === 'remove') {
       setCommonSettingList([]);
@@ -2798,6 +2814,55 @@ const Home: React.FC<any> = (props: any) => {
           };
         }
         return cen;
+      });
+    } else {
+      list = commonSettingList?.map((cen: any, cIndex: number) => {
+        if (cIndex === index) {
+          return {
+            ...cen,
+            [type]: value,
+          };
+        }
+        return cen;
+      });
+    }
+    setTimeout(() => {
+      setCommonSettingList(list?.map((item: any) => ({ ...item, id: guid() })));
+      form.setFieldsValue({
+        timeSelectDefault: list,
+      });
+    });
+  };
+  // 表单窗口
+  const onFormChartsChange = (value: any, index: number, type: string) => {
+    let list = [].concat(commonSettingList);
+    if (type === 'remove') {
+      setCommonSettingList([]);
+      list = commonSettingList
+        ?.map((cen: any, cIndex: number) => {
+          if (cen.id === index) {
+            return null;
+          }
+          return cen;
+        })
+        .filter(Boolean);
+    } else if (type === 'add') {
+      list = (commonSettingList || [])?.concat({ sort: commonSettingList.length });
+    } else if (type === 'up') {
+      setCommonSettingList([]);
+      list = commonSettingList?.map((cen: any, cIndex: number) => {
+        if (cIndex === index - 1) {
+          return {
+            ...cen,
+            sort: index,
+          };
+        } else if (cIndex === index) {
+          return {
+            ...cen,
+            sort: index - 1,
+          };
+        }
+        return { sort: cIndex, ...cen };
       });
     } else {
       list = commonSettingList?.map((cen: any, cIndex: number) => {
@@ -2937,12 +3002,12 @@ const Home: React.FC<any> = (props: any) => {
                       !!paramData?.contentData?.autoSize ||
                       !_.isBoolean(paramData?.contentData?.autoSize)
                     ) {
-                      width = editBoxDom.current.clientWidth;
-                      height = editBoxDom.current.scrollHeight;
+                      width = window.screen.width;
+                      height = window.screen.height;
                     }
                     height -= paramData?.contentData?.tabList?.length > 1 ? 28 : 0;
                     // 画布与实际屏幕的宽度差值
-                    const diffWidth = (editBoxDom.current.clientWidth - width) / 2;
+                    const diffWidth = (window.screen.width - width) / 2;
                     // 计算实际的x,y坐标
                     const x = ((e.x + tabNum * width - diffWidth) / width) * 96;
                     const y = (e.y * 14) / 300;
@@ -3460,7 +3525,7 @@ const Home: React.FC<any> = (props: any) => {
           style={
             !!addWindowVisible || !!homeSettingVisible || !!overallVisible
               ? {}
-              : { right: '-450px' }
+              : { right: '-500px' }
           }
           title={'插件配置 PluginConfig '}
           onSave={() => {
@@ -4346,7 +4411,7 @@ const Home: React.FC<any> = (props: any) => {
                                   style={{ height: 28 }}
                                   onChange={(e) => {
                                     const val = e?.target?.value;
-                                    onBodyBoxhChange(val, index, 'label');
+                                    onBodyBoxChange(val, index, 'label');
                                   }}
                                 />
                               </div>
@@ -4357,7 +4422,7 @@ const Home: React.FC<any> = (props: any) => {
                                   style={{ height: 28 }}
                                   onChange={(e) => {
                                     const val = e?.target?.value;
-                                    onBodyBoxhChange(val, index, 'value');
+                                    onBodyBoxChange(val, index, 'value');
                                   }}
                                 />
                               </div>
@@ -4365,7 +4430,7 @@ const Home: React.FC<any> = (props: any) => {
                                 icon={<MinusSquareOutlined />}
                                 style={{ height: 28 }}
                                 onClick={() => {
-                                  onBodyBoxhChange('', id, 'remove');
+                                  onBodyBoxChange('', id, 'remove');
                                 }}
                               />
                               <Button
@@ -4373,7 +4438,7 @@ const Home: React.FC<any> = (props: any) => {
                                 style={{ height: 28 }}
                                 disabled={index === 0}
                                 onClick={() => {
-                                  onBodyBoxhChange('', index, 'up');
+                                  onBodyBoxChange('', index, 'up');
                                 }}
                               />
                             </div>
@@ -4382,7 +4447,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Button
                         icon={<PlusSquareOutlined />}
                         onClick={() => {
-                          onBodyBoxhChange('', 0, 'add');
+                          onBodyBoxChange('', 0, 'add');
                         }}
                       />
                     </Form.Item>
@@ -4504,7 +4569,7 @@ const Home: React.FC<any> = (props: any) => {
                                   style={{ height: 28 }}
                                   onChange={(e) => {
                                     const val = e?.target?.value;
-                                    onBodyBoxhChange(val, index, 'label');
+                                    onBodyBoxChange(val, index, 'label');
                                   }}
                                 />
                               </div>
@@ -4515,7 +4580,7 @@ const Home: React.FC<any> = (props: any) => {
                                   style={{ height: 28 }}
                                   onChange={(e) => {
                                     const val = e?.target?.value;
-                                    onBodyBoxhChange(val, index, 'value');
+                                    onBodyBoxChange(val, index, 'value');
                                   }}
                                 />
                               </div>
@@ -4523,7 +4588,7 @@ const Home: React.FC<any> = (props: any) => {
                                 icon={<MinusSquareOutlined />}
                                 style={{ height: 28 }}
                                 onClick={() => {
-                                  onBodyBoxhChange('', id, 'remove');
+                                  onBodyBoxChange('', id, 'remove');
                                 }}
                               />
                               <Button
@@ -4531,7 +4596,7 @@ const Home: React.FC<any> = (props: any) => {
                                 style={{ height: 28 }}
                                 disabled={index === 0}
                                 onClick={() => {
-                                  onBodyBoxhChange('', index, 'up');
+                                  onBodyBoxChange('', index, 'up');
                                 }}
                               />
                             </div>
@@ -4540,7 +4605,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Button
                         icon={<PlusSquareOutlined />}
                         onClick={() => {
-                          onBodyBoxhChange('', 0, 'add');
+                          onBodyBoxChange('', 0, 'add');
                         }}
                       />
                     </Form.Item>
@@ -4557,6 +4622,193 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                     <Form.Item name={'fetchParams'} label="按钮距离上边距" initialValue={0}>
                       <InputNumber min={0} />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
+                {['form'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`yName`}
+                      label={'标题名称'}
+                      rules={[{ required: false, message: '标题名称' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      name={`fetchType`}
+                      label={'http类型'}
+                      rules={[{ required: false, message: 'http类型' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
+                          value: item,
+                          label: _.toUpper(item),
+                        }))}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={`xName`}
+                      label={'接口地址'}
+                      rules={[{ required: false, message: '接口地址' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      name="modelUpload"
+                      label="自动获取下拉内容"
+                      initialValue={false}
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name="ifNeedAllow"
+                      label="是否需要确认按钮"
+                      initialValue={false}
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name={`timeSelectDefault`}
+                      label={'表单项'}
+                      rules={[{ required: false, message: '表单项' }]}
+                    >
+                      {commonSettingList
+                        ?.sort((a: any, b: any) => a.sort - b.sort)
+                        ?.map((item: any, index: number) => {
+                          const { name, alias, type, className = '', id } = item;
+                          return (
+                            <div
+                              className="flex-box form-time-select-item"
+                              key={`segmentSwitch-item-${index}`}
+                              style={{ marginBottom: 8, gap: 8 }}
+                            >
+                              <div style={{ flex: 1 }}>
+                                <Input
+                                  defaultValue={name}
+                                  placeholder="name"
+                                  style={{ height: 28 }}
+                                  onChange={(e) => {
+                                    const val = e?.target?.value;
+                                    onFormChartsChange(val, index, 'name');
+                                  }}
+                                />
+                              </div>
+                              <div style={{ flex: 1 }}>
+                                <Input
+                                  defaultValue={alias}
+                                  placeholder="alias"
+                                  style={{ height: 28 }}
+                                  onChange={(e) => {
+                                    const val = e?.target?.value;
+                                    onFormChartsChange(val, index, 'alias');
+                                  }}
+                                />
+                              </div>
+                              <div style={{ flex: 1 }}>
+                                <Select
+                                  defaultValue={type}
+                                  placeholder="type"
+                                  style={{ width: '100%', height: 28 }}
+                                  options={[
+                                    {
+                                      value: 'Input',
+                                      label: '普通输入框',
+                                    },
+                                    {
+                                      value: 'InputNumber',
+                                      label: '数字输入框',
+                                    },
+                                    {
+                                      value: 'MultiSelect',
+                                      label: '复选框',
+                                    },
+                                    {
+                                      value: 'Select',
+                                      label: '单选框',
+                                    },
+                                    {
+                                      value: 'Switch',
+                                      label: '开关',
+                                    },
+                                    {
+                                      value: 'Button',
+                                      label: '按钮',
+                                    },
+                                    {
+                                      value: 'DatePicker',
+                                      label: '时间选择器',
+                                    },
+                                    {
+                                      value: 'IpInput',
+                                      label: 'ip输入框',
+                                    },
+                                  ]}
+                                  onChange={(val) => {
+                                    onFormChartsChange(val, index, 'type');
+                                  }}
+                                />
+                              </div>
+                              {type === 'Button' ? (
+                                <div style={{ flex: 1 }}>
+                                  <Select
+                                    defaultValue={className}
+                                    placeholder="颜色"
+                                    style={{ width: '100%', height: 28 }}
+                                    options={[
+                                      {
+                                        value: '',
+                                        label: '默认',
+                                      },
+                                      {
+                                        value: 'success',
+                                        label: '绿色',
+                                      },
+                                      {
+                                        value: 'error',
+                                        label: '红色',
+                                      },
+                                      {
+                                        value: 'warning',
+                                        label: '黄色',
+                                      },
+                                      {
+                                        value: 'greyBackground',
+                                        label: '灰色',
+                                      },
+                                    ]}
+                                    onChange={(val) => {
+                                      onFormChartsChange(val, index, 'className');
+                                    }}
+                                  />
+                                </div>
+                              ) : null}
+                              <Button
+                                icon={<MinusSquareOutlined />}
+                                style={{ height: 28 }}
+                                onClick={() => {
+                                  onFormChartsChange('', id, 'remove');
+                                }}
+                              />
+                              <Button
+                                icon={<ArrowUpOutlined />}
+                                style={{ height: 28 }}
+                                disabled={index === 0}
+                                onClick={() => {
+                                  onFormChartsChange('', index, 'up');
+                                }}
+                              />
+                            </div>
+                          );
+                        })}
+                      <Button
+                        icon={<PlusSquareOutlined />}
+                        onClick={() => {
+                          onFormChartsChange('', 0, 'add');
+                        }}
+                      />
                     </Form.Item>
                   </Fragment>
                 ) : null}

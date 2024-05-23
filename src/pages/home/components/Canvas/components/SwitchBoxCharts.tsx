@@ -56,12 +56,14 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
   };
   useEffect(() => {
     if (timeSelectDefault.length) {
-      statusListRef.current = (timeSelectDefault || []).reduce((pre: any, cen: any) => {
-        return {
-          ...pre,
-          [`${cen.ip}_${cen.projectId}`]: false,
-        };
-      }, {});
+      statusListRef.current = (timeSelectDefault || [])
+        ?.sort((a: any, b: any) => a.sort - b.sort)
+        .reduce((pre: any, cen: any) => {
+          return {
+            ...pre,
+            [`${cen.ip}_${cen.projectId}`]: false,
+          };
+        }, {});
       setLoading(statusListRef.current);
       setStatusList(statusListRef.current);
       timeRef.current = true;
@@ -77,12 +79,14 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
 
   const titleLength = useMemo(() => {
     let length = yName.length;
-    (timeSelectDefault || [])?.forEach((item: any) => {
-      const { label } = item;
-      if (label?.length > length) {
-        length = label?.length;
-      }
-    });
+    (timeSelectDefault || [])
+      ?.sort((a: any, b: any) => a.sort - b.sort)
+      ?.forEach((item: any) => {
+        const { label } = item;
+        if (label?.length > length) {
+          length = label?.length;
+        }
+      });
     return length * fontSize + 16;
   }, [timeSelectDefault, fontSize, yName]);
   // 启动任务
@@ -273,74 +277,76 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
         </div>
         {useMemo(
           () =>
-            (timeSelectDefault || [])?.map((item: any, index: number) => {
-              const { label, ip, projectId } = item;
-              return (
-                <div className="switch-box-item" key={`switch-box-item-${index}`}>
-                  <Form.Item
-                    name={`${item.ip}_${item.projectId}`}
-                    label=""
-                    initialValue={!!statusList?.[`${item.ip}_${item.projectId}`]}
-                    style={{ marginBottom: 0 }}
-                  >
-                    <SegmentSwitch
-                      title={
-                        <div
-                          className="flex-box-justify-end"
-                          style={{ minWidth: titleLength, alignItems: 'center', gap: 8 }}
-                        >
-                          {!!statusList?.[`${item.ip}_${item.projectId}`] ? (
-                            <Badge color={'green'} />
-                          ) : null}
-                          {label}
-                        </div>
-                      }
-                      fontInBody={[
-                        { label: '停止', value: false },
-                        { label: '启动', value: true },
-                      ]}
-                      buttonColor={
-                        !!statusList?.[`${item.ip}_${item.projectId}`] ? '#88db57' : 'grey'
-                      }
-                      loading={loading?.[`${item.ip}_${item.projectId}`]}
-                      onClick={(e: any) => {
-                        if (e) {
-                          start(projectId, ip).then((res) => {
-                            setTimeout(() => {
-                              setStatusList((prev: any) => {
-                                return {
-                                  ...prev,
-                                  [`${item.ip}_${item.projectId}`]: !!res,
-                                };
-                              });
-                              form.setFieldsValue({
-                                all: Object.values(statusListRef.current)?.includes(true),
-                                [`${item.ip}_${item.projectId}`]: !!res,
-                              });
-                            }, 200);
-                          });
-                        } else {
-                          end(projectId, ip).then((res) => {
-                            setTimeout(() => {
-                              setStatusList((prev: any) => {
-                                return {
-                                  ...prev,
-                                  [`${item.ip}_${item.projectId}`]: !res,
-                                };
-                              });
-                              form.setFieldsValue({
-                                all: Object.values(statusListRef.current)?.includes(true),
-                                [`${item.ip}_${item.projectId}`]: !res,
-                              });
-                            }, 200);
-                          });
+            (timeSelectDefault || [])
+              ?.sort((a: any, b: any) => a.sort - b.sort)
+              ?.map((item: any, index: number) => {
+                const { label, ip, projectId } = item;
+                return (
+                  <div className="switch-box-item" key={`switch-box-item-${index}`}>
+                    <Form.Item
+                      name={`${item.ip}_${item.projectId}`}
+                      label=""
+                      initialValue={!!statusList?.[`${item.ip}_${item.projectId}`]}
+                      style={{ marginBottom: 0 }}
+                    >
+                      <SegmentSwitch
+                        title={
+                          <div
+                            className="flex-box-justify-end"
+                            style={{ minWidth: titleLength, alignItems: 'center', gap: 8 }}
+                          >
+                            {!!statusList?.[`${item.ip}_${item.projectId}`] ? (
+                              <Badge color={'green'} />
+                            ) : null}
+                            {label}
+                          </div>
                         }
-                      }}
-                    />
-                  </Form.Item>
-                </div>
-              );
-            }),
+                        fontInBody={[
+                          { label: '停止', value: false },
+                          { label: '启动', value: true },
+                        ]}
+                        buttonColor={
+                          !!statusList?.[`${item.ip}_${item.projectId}`] ? '#88db57' : 'grey'
+                        }
+                        loading={loading?.[`${item.ip}_${item.projectId}`]}
+                        onClick={(e: any) => {
+                          if (e) {
+                            start(projectId, ip).then((res) => {
+                              setTimeout(() => {
+                                setStatusList((prev: any) => {
+                                  return {
+                                    ...prev,
+                                    [`${item.ip}_${item.projectId}`]: !!res,
+                                  };
+                                });
+                                form.setFieldsValue({
+                                  all: Object.values(statusListRef.current)?.includes(true),
+                                  [`${item.ip}_${item.projectId}`]: !!res,
+                                });
+                              }, 200);
+                            });
+                          } else {
+                            end(projectId, ip).then((res) => {
+                              setTimeout(() => {
+                                setStatusList((prev: any) => {
+                                  return {
+                                    ...prev,
+                                    [`${item.ip}_${item.projectId}`]: !res,
+                                  };
+                                });
+                                form.setFieldsValue({
+                                  all: Object.values(statusListRef.current)?.includes(true),
+                                  [`${item.ip}_${item.projectId}`]: !res,
+                                });
+                              }, 200);
+                            });
+                          }
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
+                );
+              }),
           [timeSelectDefault, loading, statusList],
         )}
       </Form>

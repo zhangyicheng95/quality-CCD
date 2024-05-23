@@ -30,7 +30,6 @@ const FormulaCharts: React.FC<Props> = (props: any) => {
     });
   }, []);
   useEffect(() => {
-    console.log(123123123);
     form?.setFieldsValue({
       testFormula: undefined,
       sortingFormula: undefined,

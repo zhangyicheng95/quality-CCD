@@ -1407,11 +1407,9 @@ export const FormatWidgetToDom: any = (props: any) => {
           style={display ? { display: 'none' } : {}}
           tooltip={description}
           initialValue={value || false}
-          valuePropName="checked"
           rules={[{ required: require, message: `${alias}` }]}
         >
           <SegmentSwitch
-            defaultValue={value || false}
             style={{ height: 40 }}
             fontInBody={[
               { label: '', value: false, backgroundColor: 'grey' },

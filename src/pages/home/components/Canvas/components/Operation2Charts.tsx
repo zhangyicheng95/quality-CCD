@@ -584,7 +584,10 @@ export function FormatWidgetToDom(props: any) {
           <Input
             placeholder={`请输入${alias}`}
             disabled={disabled}
-            onBlur={(e) => {
+            onBlur={(e: any) => {
+              widgetChange?.(name, e.target.value, parent);
+            }}
+            onPressEnter={(e: any) => {
               widgetChange?.(name, e.target.value, parent);
             }}
           />
@@ -821,6 +824,10 @@ export function FormatWidgetToDom(props: any) {
                 const value = e.target.value;
                 widgetChange?.(name, Number(value < max ? value : max), parent);
               }}
+              onPressEnter={(e: any) => {
+                const value = e.target.value;
+                widgetChange?.(name, Number(value < max ? value : max), parent);
+              }}
             />
           </FormItem>
         </Fragment>
@@ -856,12 +863,10 @@ export function FormatWidgetToDom(props: any) {
           label={label}
           tooltip={description}
           initialValue={value || false}
-          valuePropName="checked"
           rules={[{ required: require, message: `${alias}` }]}
         >
           <SegmentSwitch
             style={{ height: fontSize * 2 }}
-            defaultValue={value || false}
             fontInBody={[
               { label: '', value: false, backgroundColor: 'grey' },
               { label: '', value: true, backgroundColor: '' },

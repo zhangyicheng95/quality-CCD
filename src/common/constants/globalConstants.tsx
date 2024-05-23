@@ -239,6 +239,10 @@ export const windowTypeList: any = [
     value: 'bodyBox',
     label: '盒子窗口',
   },
+  {
+    value: 'form',
+    label: '自定义表单',
+  },
 ];
 // 默认基础组件
 export const basicWindowList: any = [

@@ -112,80 +112,82 @@ const BodyBoxCharts: React.FC<Props> = (props: any) => {
         className="flex-box-start body-box-change-btn"
         style={{ marginLeft: yName, marginTop: fetchParams }}
       >
-        {(timeSelectDefault || [])?.map((item: any, index: number) => {
-          const { label, value } = item;
-          return (
-            <div
-              className="flex-box-center body-box-change-btn-item"
-              key={`body-box-change-btn-item-${index}`}
-              style={Object.assign(
-                {},
-                { width: iconSize, minWidth: iconSize },
-                (['stop', 'end'].includes(value) &&
-                  !timeSelectDefault.filter((i: any) => i.value === 'restart')?.[0]) ||
-                  ['restart'].includes(value)
-                  ? { marginRight: 24 }
-                  : {},
-              )}
-            >
-              <BasicButton
-                title={_.lowerCase(value) === 'start' && started ? '检测' : label}
-                icon={
-                  _.lowerCase(value) === 'start' ? (
-                    started ? (
-                      <div className="btn-self-icon flex-box-center success"></div>
+        {(timeSelectDefault || [])
+          ?.sort((a: any, b: any) => a.sort - b.sort)
+          ?.map((item: any, index: number) => {
+            const { label, value } = item;
+            return (
+              <div
+                className="flex-box-center body-box-change-btn-item"
+                key={`body-box-change-btn-item-${index}`}
+                style={Object.assign(
+                  {},
+                  { width: iconSize, minWidth: iconSize },
+                  (['stop', 'end'].includes(value) &&
+                    !timeSelectDefault.filter((i: any) => i.value === 'restart')?.[0]) ||
+                    ['restart'].includes(value)
+                    ? { marginRight: 24 }
+                    : {},
+                )}
+              >
+                <BasicButton
+                  title={_.lowerCase(value) === 'start' && started ? '检测' : label}
+                  icon={
+                    _.lowerCase(value) === 'start' ? (
+                      started ? (
+                        <div className="btn-self-icon flex-box-center success"></div>
+                      ) : (
+                        <PlayCircleOutlined className="OK-font" />
+                      )
+                    ) : ['stop', 'end'].includes(value) ? (
+                      <PauseCircleOutlined className={started ? 'error-font' : ''} />
+                    ) : _.lowerCase(value) === 'restart' ? (
+                      <ReloadOutlined />
                     ) : (
-                      <PlayCircleOutlined className="OK-font" />
+                      <div
+                        className="flex-box-center body-box-change-btn-item-icon"
+                        style={{ height: iconSize, width: iconSize }}
+                      >
+                        <img
+                          src={
+                            label.indexOf('实时') > -1
+                              ? icon1
+                              : label.indexOf('缺陷') > -1
+                              ? icon2
+                              : icon3
+                          }
+                          alt=""
+                        />
+                      </div>
                     )
-                  ) : ['stop', 'end'].includes(value) ? (
-                    <PauseCircleOutlined className={started ? 'error-font' : ''} />
-                  ) : _.lowerCase(value) === 'restart' ? (
-                    <ReloadOutlined />
-                  ) : (
-                    <div
-                      className="flex-box-center body-box-change-btn-item-icon"
-                      style={{ height: iconSize, width: iconSize }}
-                    >
-                      <img
-                        src={
-                          label.indexOf('实时') > -1
-                            ? icon1
-                            : label.indexOf('缺陷') > -1
-                            ? icon2
-                            : icon3
-                        }
-                        alt=""
-                      />
-                    </div>
-                  )
-                }
-                iconSize={iconSize || 40}
-                direction={'vertical'}
-                disabled={
-                  _.lowerCase(value) === 'start'
-                    ? started
-                    : ['stop', 'end', 'restart'].includes(value)
-                    ? !started
-                    : false
-                }
-                loading={['start', 'stop', 'end', 'restart'].includes(value) ? loading : false}
-                hover={!['start', 'stop', 'end', 'restart'].includes(value)}
-                selected={selected === value}
-                onClick={() => {
-                  if (_.lowerCase(value) === 'start') {
-                    start();
-                  } else if (['stop', 'end'].includes(value)) {
-                    end();
-                  } else if (_.lowerCase(value) === 'restart') {
-                    reStart();
-                  } else {
-                    onTabChange(value);
                   }
-                }}
-              />
-            </div>
-          );
-        })}
+                  iconSize={iconSize || 40}
+                  direction={'vertical'}
+                  disabled={
+                    _.lowerCase(value) === 'start'
+                      ? started
+                      : ['stop', 'end', 'restart'].includes(value)
+                      ? !started
+                      : false
+                  }
+                  loading={['start', 'stop', 'end', 'restart'].includes(value) ? loading : false}
+                  hover={!['start', 'stop', 'end', 'restart'].includes(value)}
+                  selected={selected === value}
+                  onClick={() => {
+                    if (_.lowerCase(value) === 'start') {
+                      start();
+                    } else if (['stop', 'end'].includes(value)) {
+                      end();
+                    } else if (_.lowerCase(value) === 'restart') {
+                      reStart();
+                    } else {
+                      onTabChange(value);
+                    }
+                  }}
+                />
+              </div>
+            );
+          })}
       </div>
     </div>
   );

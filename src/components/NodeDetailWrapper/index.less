@@ -3,7 +3,7 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: 450px;
+  width: 500px;
   background-color: @background-color-base;
   border-left: 1px solid rgb(240, 242, 245);
   transition: all 0.5s;
@@ -33,6 +33,20 @@
       width: 100%;
       font-size: 14px;
       padding: 8px 16px;
+
+      .form-time-select-item {
+        .ant-select-selector {
+          height: 100%;
+
+          .ant-select-selection-search-input {
+            height: 100%;
+          }
+
+          .ant-select-selection-item {
+            line-height: 26px;
+          }
+        }
+      }
     }
 
     .node-sider-footer {

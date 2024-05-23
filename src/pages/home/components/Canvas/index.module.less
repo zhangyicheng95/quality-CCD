@@ -2823,6 +2823,26 @@
   }
 }
 
+.formCharts {
+  height: 100%;
+  width: 100%;
+
+  :global {
+    .form-charts-needAllow {
+      height: calc(100% - 40px);
+      padding-bottom: 16px;
+    }
+
+    .form-charts-ant-btn {
+      height: auto;
+      border-radius: 4px;
+      padding: 8px 24px;
+      margin: 0 16px 16px 0;
+      font-size: inherit;
+    }
+  }
+}
+
 .paramControlCharts {
   height: 100%;
   width: 100%;
@@ -2896,7 +2916,7 @@
       .ant-btn {
         height: auto;
         width: 31%;
-        border-radius: 8px;
+        border-radius: 4px;
         padding: 8px 16px;
         margin: 0 2% 16px 0;
         float: left;

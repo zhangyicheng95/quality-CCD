@@ -9,6 +9,7 @@ interface Props {
   value?: string;
   className?: any;
   onChange?: any;
+  onPressEnter?: any;
   onOpenChange?: any;
   titleColor?: Boolean;
   precision?: number;
@@ -24,6 +25,7 @@ interface Props {
 const Measurement: React.FC<Props> = (props: any) => {
   const {
     onChange = null,
+    onPressEnter = null,
     onOpenChange = null,
     value = '',
     disabled,
@@ -157,6 +159,17 @@ const Measurement: React.FC<Props> = (props: any) => {
                     handleNumberChange(val, item[0], index);
                   }
                 }}
+                onPressEnter={(e: any) => {
+                  if (!onOpenChange) {
+                    const val = e?.target?.value;
+                    setFocus((prev: any) =>
+                      Object.assign({}, prev, {
+                        [`refnum_${index}`]: !(_.isUndefined(val) || _.isNull(val)),
+                      }),
+                    );
+                    handleNumberChange(val, item[0], index);
+                  }
+                }}
               />
             ) : type === 'bool' ? (
               <SegmentSwitch
@@ -197,6 +210,25 @@ const Measurement: React.FC<Props> = (props: any) => {
                   setFocus((prev: any) => Object.assign({}, prev, { [`refnum_${index}`]: true }))
                 }
                 onBlur={(e: any) => {
+                  const valu = Number(e?.target?.value);
+                  if (!_.isNaN(valu)) {
+                    if (!onOpenChange) {
+                      const val =
+                        type === 'float'
+                          ? parseFloat(e?.target?.value)
+                          : parseInt(e?.target?.value);
+                      setFocus((prev: any) =>
+                        Object.assign({}, prev, {
+                          [`refnum_${index}`]: !(_.isUndefined(val) || _.isNull(val)),
+                        }),
+                      );
+                      handleNumberChange(val, item[0], index);
+                    }
+                  } else {
+                    handleNumberChange(0, item[0], index);
+                  }
+                }}
+                onPressEnter={(e: any) => {
                   const valu = Number(e?.target?.value);
                   if (!_.isNaN(valu)) {
                     if (!onOpenChange) {
