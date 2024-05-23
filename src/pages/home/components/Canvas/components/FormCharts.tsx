@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import _ from 'lodash';
-import { Button, Form, message } from 'antd';
+import { Button, Form, message, Modal } from 'antd';
 import styles from '../index.module.less';
 import { btnFetch } from '@/services/api';
 import CustomWindowBody from '@/components/CustomWindowBody';
@@ -15,6 +15,7 @@ interface Props {
 
 const FormCharts: React.FC<Props> = (props: any) => {
   const [form] = Form.useForm();
+  const [form1] = Form.useForm();
   let { data = {}, id } = props;
   let {
     dataValue = [],
@@ -30,6 +31,8 @@ const FormCharts: React.FC<Props> = (props: any) => {
   const [selectOptions, setSelectOptions] = useState({
     name1: [{ label: 'aaa', value: 'aaa' }],
   });
+  const [formModalEdit, setFormModalEdit] = useState('');
+  const [formModalValue, setFormModalValue] = useState({});
 
   useEffect(() => {
     if (modelUpload) {
@@ -37,25 +40,54 @@ const FormCharts: React.FC<Props> = (props: any) => {
         if (!!res && res.code === 'SUCCESS') {
           message.success('success');
           setSelectOptions(res.data || {});
+          form.setFieldsValue(res?.dat?.__default || {});
+          form1.setFieldsValue(res?.dat?.__default || {});
+
+          let list: any = {};
+          (timeSelectDefault || []).forEach((item: any) => {
+            const { name, parent } = item;
+            if (!!parent) {
+              list = {
+                ...list,
+                [parent]: list?.[parent]
+                  ? list[parent].concat({ [name]: res?.dat?.__default?.[name] })
+                  : { [name]: res?.dat?.__default?.[name] },
+              };
+            }
+          });
+          setFormModalValue(list);
         } else {
           message.error(res?.message || '后台服务异常，请重启服务');
         }
       });
     }
-  }, [modelUpload]);
+  }, []);
 
   const onSubmit = () => {
     form.validateFields().then((values) => {
-      console.log(values);
-      // const params = {};
-      // btnFetch(fetchType, xName, params).then((res: any) => {
-      //   if (!!res && res.code === 'SUCCESS') {
-      //     message.success('success');
-      //   } else {
-      //     message.error(res?.message || '后台服务异常，请重启服务');
-      //   }
-      // });
+      const child = Object.entries(formModalValue || {})?.reduce((pre: any, cen: any) => {
+        return {
+          ...pre,
+          ...cen[1],
+        };
+      }, {});
+      const params = {
+        ...values,
+        ...child,
+      };
+      btnFetch(fetchType, xName, params).then((res: any) => {
+        if (!!res && res.code === 'SUCCESS') {
+          message.success('success');
+        } else {
+          message.error(res?.message || '后台服务异常，请重启服务');
+        }
+      });
     });
+  };
+
+  const onModalCancel = () => {
+    form1.resetFields();
+    setFormModalEdit('');
   };
 
   return (
@@ -70,21 +102,29 @@ const FormCharts: React.FC<Props> = (props: any) => {
           {(timeSelectDefault || [])
             ?.sort((a: any, b: any) => a.sort - b.sort)
             ?.map((item: any, index: number) => {
-              const { name, alias, sort = 0, type, className } = item;
-              if (type === 'Button') {
+              const { name, alias, sort = 0, type, className, parent } = item;
+              if (!!parent) {
+                return null;
+              }
+              if (['Button', 'ModalButton'].includes(type)) {
                 return (
                   <Button
-                    type={!!className ? 'default' : 'primary'}
+                    type={className}
                     className={`form-charts-ant-btn ${className}`}
                     key={name}
                     onClick={() => {
-                      btnFetch(fetchType, xName, { value: name }).then((res: any) => {
-                        if (!!res && res.code === 'SUCCESS') {
-                          message.success('success');
-                        } else {
-                          message.error(res?.message || '后台服务异常，请重启服务');
-                        }
-                      });
+                      if (type === 'ModalButton') {
+                        setFormModalEdit(name);
+                        form1.setFieldsValue(formModalValue?.[name] || {});
+                      } else {
+                        btnFetch(fetchType, xName, { value: name }).then((res: any) => {
+                          if (!!res && res.code === 'SUCCESS') {
+                            message.success('success');
+                          } else {
+                            message.error(res?.message || '后台服务异常，请重启服务');
+                          }
+                        });
+                      }
                     }}
                   >
                     {alias}
@@ -140,6 +180,74 @@ const FormCharts: React.FC<Props> = (props: any) => {
           </Button>
         </div>
       ) : null}
+
+      {
+        // 自定义表单-二级窗口
+        !!formModalEdit ? (
+          <Modal
+            title={'表单弹窗'}
+            centered
+            open={!!formModalEdit}
+            onOk={() => {
+              form1.validateFields().then((values) => {
+                setFormModalValue((prev: any) => {
+                  return {
+                    ...prev,
+                    [formModalEdit]: values,
+                  };
+                });
+                onModalCancel();
+              });
+            }}
+            onCancel={() => onModalCancel()}
+            maskClosable={false}
+          >
+            <Form form={form1} scrollToFirstError>
+              {timeSelectDefault
+                ?.sort((a: any, b: any) => a.sort - b.sort)
+                ?.map((item: any, index: number) => {
+                  const { name, alias, sort = 0, type, className, parent } = item;
+                  if (formModalEdit === parent) {
+                    item = {
+                      alias,
+                      name,
+                      onHidden: false,
+                      orderId: sort,
+                      require: true,
+                      type: 'string',
+                      value: ['MultiSelect', 'Select'].includes(type) ? [] : undefined,
+                      widget: Object.assign(
+                        {},
+                        { type },
+                        ['MultiSelect', 'Select'].includes(type)
+                          ? {
+                              options: selectOptions?.[name] || [],
+                            }
+                          : {},
+                      ),
+                    };
+                    return (
+                      <FormatWidgetToDom
+                        key={item?.name}
+                        form={form1}
+                        id={item?.name}
+                        fontSize={fontSize}
+                        label={item?.alias || item?.name}
+                        config={[item?.name, item]}
+                        widgetChange={() => {
+                          if (!ifNeedAllow) {
+                            onSubmit();
+                          }
+                        }}
+                      />
+                    );
+                  }
+                  return null;
+                })}
+            </Form>
+          </Modal>
+        ) : null
+      }
     </div>
   );
 };

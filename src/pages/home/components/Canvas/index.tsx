@@ -29,6 +29,7 @@ import {
   CopyOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
+  FormOutlined,
   LoadingOutlined,
   MinusOutlined,
   MinusSquareOutlined,
@@ -233,6 +234,7 @@ const Home: React.FC<any> = (props: any) => {
   const [leftPanelData, setLeftPanelData] = useState<any>(leftPanelDataLocal || []);
   const [tabNum, setTabNum] = useState(0);
   const [commonSettingList, setCommonSettingList] = useState<any>([]);
+  const [formModalEdit, setFormModalEdit] = useState('');
 
   const ifCanEdit = useMemo(() => {
     return location.hash?.indexOf('edit') > -1;
@@ -289,9 +291,12 @@ const Home: React.FC<any> = (props: any) => {
                 if (!!addWindowVisible || !!homeSettingVisible) {
                   setAddWindowVisible('');
                   setHomeSettingVisible('');
+                  setFieldsValue({});
                 }
-                setFieldsValue(homeSettingData?.['header']);
-                setHomeSettingVisible('header');
+                setTimeout(() => {
+                  setFieldsValue(homeSettingData?.['header']);
+                  setHomeSettingVisible('header');
+                }, 500);
               }}
             >
               <Popconfirm
@@ -397,15 +402,18 @@ const Home: React.FC<any> = (props: any) => {
                 if (!!addWindowVisible || !!homeSettingVisible) {
                   setAddWindowVisible('');
                   setHomeSettingVisible('');
+                  setFieldsValue({});
                 }
-                setFieldsValue(homeSettingData?.['slider-1']);
-                setCommonSettingList(
-                  (!!homeSettingData?.['slider-1']?.controlList?.length
-                    ? homeSettingData?.['slider-1']?.controlList
-                    : [{}]
-                  )?.map((item: any) => ({ ...item, id: guid() })),
-                );
-                setHomeSettingVisible('slider-1');
+                setTimeout(() => {
+                  setFieldsValue(homeSettingData?.['slider-1']);
+                  setCommonSettingList(
+                    (!!homeSettingData?.['slider-1']?.controlList?.length
+                      ? homeSettingData?.['slider-1']?.controlList
+                      : [{}]
+                    )?.map((item: any) => ({ ...item, id: guid() })),
+                  );
+                  setHomeSettingVisible('slider-1');
+                }, 500);
               }}
             >
               <Popconfirm
@@ -560,9 +568,12 @@ const Home: React.FC<any> = (props: any) => {
                 if (!!addWindowVisible || !!homeSettingVisible) {
                   setAddWindowVisible('');
                   setHomeSettingVisible('');
+                  setFieldsValue({});
                 }
-                setFieldsValue(homeSettingData?.['slider-4']);
-                setHomeSettingVisible('slider-4');
+                setTimeout(() => {
+                  setFieldsValue(homeSettingData?.['slider-4']);
+                  setHomeSettingVisible('slider-4');
+                }, 500);
               }}
             >
               <Popconfirm
@@ -623,9 +634,12 @@ const Home: React.FC<any> = (props: any) => {
                 if (!!addWindowVisible || !!homeSettingVisible) {
                   setAddWindowVisible('');
                   setHomeSettingVisible('');
+                  setFieldsValue({});
                 }
-                setFieldsValue(homeSettingData?.['footer-1']);
-                setHomeSettingVisible('footer-1');
+                setTimeout(() => {
+                  setFieldsValue(homeSettingData?.['footer-1']);
+                  setHomeSettingVisible('footer-1');
+                }, 500);
               }}
             >
               <Popconfirm
@@ -707,9 +721,12 @@ const Home: React.FC<any> = (props: any) => {
                 if (!!addWindowVisible || !!homeSettingVisible) {
                   setAddWindowVisible('');
                   setHomeSettingVisible('');
+                  setFieldsValue({});
                 }
-                setFieldsValue(homeSettingData?.['footer-2']);
-                setHomeSettingVisible('footer-2');
+                setTimeout(() => {
+                  setFieldsValue(homeSettingData?.['footer-2']);
+                  setHomeSettingVisible('footer-2');
+                }, 500);
               }}
             >
               <Popconfirm
@@ -1985,213 +2002,219 @@ const Home: React.FC<any> = (props: any) => {
                   if (!!addWindowVisible || !!homeSettingVisible) {
                     setAddWindowVisible('');
                     setHomeSettingVisible('');
+                    setFieldsValue({});
                   }
-                  !!defaultImg && setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
-                  setBasicInfoData(basicInfoData);
-                  setEditWindowData(
-                    Object.assign(
-                      {},
-                      item,
-                      !!item?.xColumns?.length ? {} : {},
-                      !!item?.yColumns?.length ? {} : {},
-                    ),
-                  );
-                  setCommonSettingList(
-                    (!!timeSelectDefault?.length ? timeSelectDefault : [{}])?.map((item: any) => ({
-                      ...item,
-                      id: guid(),
-                    })),
-                  );
-                  setFieldsValue(
-                    Object.assign(
-                      {},
-                      item,
-                      !fontSize ? { fontSize: 12 } : {},
-                      !!backgroundColor && !!backgroundColor?.rgb
-                        ? { backgroundColor: backgroundColor }
-                        : {},
-                      type === 'platForm'
-                        ? {
-                            platFormOptions: !!platFormOptions
-                              ? platFormOptions
-                              : JSON.stringify({
-                                  左上水平隔膜: {
-                                    灰度差: {
-                                      name: '灰度差',
-                                      alias: '灰度差',
-                                      require: true,
-                                      default: 15,
-                                      value: 15,
-                                      type: 'int',
-                                      description: '边界变化的灰度差',
-                                      widget: { type: 'InputNumber', max: 255, min: 0, step: 1 },
-                                    },
-                                    灰度合并像素: {
-                                      name: '灰度合并像素',
-                                      alias: '灰度合并像素',
-                                      require: true,
-                                      default: 2,
-                                      value: 2,
-                                      type: 'int',
-                                      description: '边界变化的灰度合并像素',
-                                      widget: { type: 'InputNumber', max: 5, min: 1, step: 1 },
-                                    },
-                                    亮度变化方向: {
-                                      name: '亮度变化方向',
-                                      alias: '亮度变化方向',
-                                      require: true,
-                                      default: 2,
-                                      value: 2,
-                                      type: 'List[string]',
-                                      description: '边界找线亮度变化方向, 1为亮到暗, 2为暗到亮',
-                                      widget: {
-                                        type: 'Select',
-                                        options: [
-                                          { label: '1-亮到暗', value: 1 },
-                                          { label: '2-暗到亮', value: 2 },
-                                        ],
+                  setTimeout(() => {
+                    !!defaultImg &&
+                      setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
+                    setBasicInfoData(basicInfoData);
+                    setEditWindowData(
+                      Object.assign(
+                        {},
+                        item,
+                        !!item?.xColumns?.length ? {} : {},
+                        !!item?.yColumns?.length ? {} : {},
+                      ),
+                    );
+                    setCommonSettingList(
+                      (!!timeSelectDefault?.length ? timeSelectDefault : [{}])?.map(
+                        (item: any) => ({
+                          ...item,
+                          id: guid(),
+                        }),
+                      ),
+                    );
+                    setFieldsValue(
+                      Object.assign(
+                        {},
+                        item,
+                        !fontSize ? { fontSize: 12 } : {},
+                        !!backgroundColor && !!backgroundColor?.rgb
+                          ? { backgroundColor: backgroundColor }
+                          : {},
+                        type === 'platForm'
+                          ? {
+                              platFormOptions: !!platFormOptions
+                                ? platFormOptions
+                                : JSON.stringify({
+                                    左上水平隔膜: {
+                                      灰度差: {
+                                        name: '灰度差',
+                                        alias: '灰度差',
+                                        require: true,
+                                        default: 15,
+                                        value: 15,
+                                        type: 'int',
+                                        description: '边界变化的灰度差',
+                                        widget: { type: 'InputNumber', max: 255, min: 0, step: 1 },
+                                      },
+                                      灰度合并像素: {
+                                        name: '灰度合并像素',
+                                        alias: '灰度合并像素',
+                                        require: true,
+                                        default: 2,
+                                        value: 2,
+                                        type: 'int',
+                                        description: '边界变化的灰度合并像素',
+                                        widget: { type: 'InputNumber', max: 5, min: 1, step: 1 },
+                                      },
+                                      亮度变化方向: {
+                                        name: '亮度变化方向',
+                                        alias: '亮度变化方向',
+                                        require: true,
+                                        default: 2,
+                                        value: 2,
+                                        type: 'List[string]',
+                                        description: '边界找线亮度变化方向, 1为亮到暗, 2为暗到亮',
+                                        widget: {
+                                          type: 'Select',
+                                          options: [
+                                            { label: '1-亮到暗', value: 1 },
+                                            { label: '2-暗到亮', value: 2 },
+                                          ],
+                                        },
+                                      },
+                                      直线度: {
+                                        name: '直线度',
+                                        alias: '直线度',
+                                        require: true,
+                                        default: 3,
+                                        value: 3,
+                                        type: 'int',
+                                        description: '直线度要求，值越小，线越直',
+                                        widget: { type: 'InputNumber', max: 100, min: 1, step: 1 },
+                                      },
+                                      降噪滤波核: {
+                                        name: '降噪滤波核',
+                                        alias: '降噪滤波核',
+                                        require: true,
+                                        default: 5,
+                                        value: 5,
+                                        type: 'int',
+                                        description: '去噪滤波核大小',
+                                        widget: { type: 'InputNumber', max: 21, min: 1, step: 1 },
+                                      },
+                                      找线方向下采样倍数: {
+                                        name: '找线方向下采样倍数',
+                                        alias: '找线方向下采样倍数',
+                                        require: true,
+                                        default: 8,
+                                        value: 8,
+                                        type: 'int',
+                                        description: '区域下采样倍数，提高计算速度',
+                                        widget: { type: 'InputNumber', max: 16, min: 2, step: 2 },
+                                      },
+                                      垂直找线方向下采样倍数: {
+                                        name: '垂直找线方向下采样倍数',
+                                        alias: '垂直找线方向下采样倍数',
+                                        require: true,
+                                        default: 2,
+                                        value: 2,
+                                        type: 'int',
+                                        description: '区域下采样倍数，提高计算速度',
+                                        widget: { type: 'InputNumber', max: 16, min: 2, step: 2 },
+                                      },
+                                      搜索框个数: {
+                                        name: '搜索框个数',
+                                        alias: '搜索框个数',
+                                        require: true,
+                                        default: 15,
+                                        value: 15,
+                                        type: 'int',
+                                        description: '搜索框个数',
+                                        widget: { type: 'InputNumber', max: 1000, min: 3, step: 1 },
+                                      },
+                                      搜索框宽度: {
+                                        name: '搜索框宽度',
+                                        alias: '搜索框宽度',
+                                        require: true,
+                                        default: 6,
+                                        value: 6,
+                                        type: 'int',
+                                        description: '搜索框宽度',
+                                        widget: { type: 'InputNumber', max: 1000, min: 3, step: 1 },
+                                      },
+                                      找线方法: {
+                                        name: '找线方法',
+                                        alias: '找线方法',
+                                        require: true,
+                                        default: '卡尺找线',
+                                        value: '卡尺找线',
+                                        type: 'List[string]',
+                                        description: '找线方法，1-卡尺找线，2-EDLines找线',
+                                        widget: {
+                                          type: 'Select',
+                                          options: [
+                                            { label: '卡尺找线', value: '卡尺找线' },
+                                            { label: 'EDLine找线', value: 'EDLine找线' },
+                                          ],
+                                        },
                                       },
                                     },
-                                    直线度: {
-                                      name: '直线度',
-                                      alias: '直线度',
-                                      require: true,
-                                      default: 3,
-                                      value: 3,
-                                      type: 'int',
-                                      description: '直线度要求，值越小，线越直',
-                                      widget: { type: 'InputNumber', max: 100, min: 1, step: 1 },
-                                    },
-                                    降噪滤波核: {
-                                      name: '降噪滤波核',
-                                      alias: '降噪滤波核',
-                                      require: true,
-                                      default: 5,
-                                      value: 5,
-                                      type: 'int',
-                                      description: '去噪滤波核大小',
-                                      widget: { type: 'InputNumber', max: 21, min: 1, step: 1 },
-                                    },
-                                    找线方向下采样倍数: {
-                                      name: '找线方向下采样倍数',
-                                      alias: '找线方向下采样倍数',
-                                      require: true,
-                                      default: 8,
-                                      value: 8,
-                                      type: 'int',
-                                      description: '区域下采样倍数，提高计算速度',
-                                      widget: { type: 'InputNumber', max: 16, min: 2, step: 2 },
-                                    },
-                                    垂直找线方向下采样倍数: {
-                                      name: '垂直找线方向下采样倍数',
-                                      alias: '垂直找线方向下采样倍数',
-                                      require: true,
-                                      default: 2,
-                                      value: 2,
-                                      type: 'int',
-                                      description: '区域下采样倍数，提高计算速度',
-                                      widget: { type: 'InputNumber', max: 16, min: 2, step: 2 },
-                                    },
-                                    搜索框个数: {
-                                      name: '搜索框个数',
-                                      alias: '搜索框个数',
-                                      require: true,
-                                      default: 15,
-                                      value: 15,
-                                      type: 'int',
-                                      description: '搜索框个数',
-                                      widget: { type: 'InputNumber', max: 1000, min: 3, step: 1 },
-                                    },
-                                    搜索框宽度: {
-                                      name: '搜索框宽度',
-                                      alias: '搜索框宽度',
-                                      require: true,
-                                      default: 6,
-                                      value: 6,
-                                      type: 'int',
-                                      description: '搜索框宽度',
-                                      widget: { type: 'InputNumber', max: 1000, min: 3, step: 1 },
-                                    },
-                                    找线方法: {
-                                      name: '找线方法',
-                                      alias: '找线方法',
-                                      require: true,
-                                      default: '卡尺找线',
-                                      value: '卡尺找线',
-                                      type: 'List[string]',
-                                      description: '找线方法，1-卡尺找线，2-EDLines找线',
-                                      widget: {
-                                        type: 'Select',
-                                        options: [
-                                          { label: '卡尺找线', value: '卡尺找线' },
-                                          { label: 'EDLine找线', value: 'EDLine找线' },
-                                        ],
-                                      },
-                                    },
-                                  },
-                                }),
-                          }
-                        : {},
-                    ),
-                  );
-                  setShowPanels({
-                    common: true,
-                    custom: true,
-                  });
-                  setColorSelector((prev: any) => ({
-                    ...prev,
-                    ...(!!fontColor && !!fontColor?.rgb ? { fontColor: fontColor.rgb } : {}),
-                    ...(!!backgroundColor && !!backgroundColor?.rgb
-                      ? { backgroundColor: backgroundColor?.rgb }
-                      : {}),
-                  }));
+                                  }),
+                            }
+                          : {},
+                      ),
+                    );
+                    setShowPanels({
+                      common: true,
+                      custom: true,
+                    });
+                    setColorSelector((prev: any) => ({
+                      ...prev,
+                      ...(!!fontColor && !!fontColor?.rgb ? { fontColor: fontColor.rgb } : {}),
+                      ...(!!backgroundColor && !!backgroundColor?.rgb
+                        ? { backgroundColor: backgroundColor?.rgb }
+                        : {}),
+                    }));
 
-                  setWindowType(type);
-                  if (type === 'operation2') {
-                    const res = paramsData?.flowData?.nodes.filter(
-                      (i: any) => i.id === value[0],
-                    )?.[0];
-                    if (!!res) {
-                      const { config = {} } = res;
-                      if (!!config?.execParams && _.isObject(config?.execParams)) {
-                        setSelectedNodeConfig(() =>
-                          Object.entries(config.execParams)?.map?.((item: any) => {
-                            return {
-                              label: item[1]?.alias,
-                              value: item[0],
-                            };
-                          }),
-                        );
-                      } else if (!!config?.initParams && _.isObject(config?.initParams)) {
-                        setSelectedNodeConfig(() =>
-                          Object.entries(config.initParams)?.map?.((item: any) => {
-                            return {
-                              label: item[1]?.alias,
-                              value: item[0],
-                            };
-                          }),
-                        );
+                    setWindowType(type);
+                    if (type === 'operation2') {
+                      const res = paramsData?.flowData?.nodes.filter(
+                        (i: any) => i.id === value[0],
+                      )?.[0];
+                      if (!!res) {
+                        const { config = {} } = res;
+                        if (!!config?.execParams && _.isObject(config?.execParams)) {
+                          setSelectedNodeConfig(() =>
+                            Object.entries(config.execParams)?.map?.((item: any) => {
+                              return {
+                                label: item[1]?.alias,
+                                value: item[0],
+                              };
+                            }),
+                          );
+                        } else if (!!config?.initParams && _.isObject(config?.initParams)) {
+                          setSelectedNodeConfig(() =>
+                            Object.entries(config.initParams)?.map?.((item: any) => {
+                              return {
+                                label: item[1]?.alias,
+                                value: item[0],
+                              };
+                            }),
+                          );
+                        }
+                      }
+                    } else {
+                      const res = paramsData?.flowData?.nodes.filter(
+                        (i: any) => i.id === value[0],
+                      )?.[0];
+                      if (!!res) {
+                        const { config = {} } = res;
+                        if (!!config?.initParams && _.isObject(config?.initParams)) {
+                          setSelectedNodeConfig(() =>
+                            Object.entries(config.initParams)?.map?.((item: any) => {
+                              return {
+                                label: item[1]?.alias,
+                                value: item[0],
+                              };
+                            }),
+                          );
+                        }
                       }
                     }
-                  } else {
-                    const res = paramsData?.flowData?.nodes.filter(
-                      (i: any) => i.id === value[0],
-                    )?.[0];
-                    if (!!res) {
-                      const { config = {} } = res;
-                      if (!!config?.initParams && _.isObject(config?.initParams)) {
-                        setSelectedNodeConfig(() =>
-                          Object.entries(config.initParams)?.map?.((item: any) => {
-                            return {
-                              label: item[1]?.alias,
-                              value: item[0],
-                            };
-                          }),
-                        );
-                      }
-                    }
-                  }
-                  setAddWindowVisible(key);
+                    setAddWindowVisible(key);
+                  }, 500);
                 }}
               >
                 <Popconfirm
@@ -2834,7 +2857,7 @@ const Home: React.FC<any> = (props: any) => {
     });
   };
   // 表单窗口
-  const onFormChartsChange = (value: any, index: number, type: string) => {
+  const onFormChartsChange = (value: any, index: number, type: string, parent?: string) => {
     let list = [].concat(commonSettingList);
     if (type === 'remove') {
       setCommonSettingList([]);
@@ -2848,6 +2871,8 @@ const Home: React.FC<any> = (props: any) => {
         .filter(Boolean);
     } else if (type === 'add') {
       list = (commonSettingList || [])?.concat({ sort: commonSettingList.length });
+    } else if (type === 'addChild') {
+      list = (commonSettingList || [])?.concat({ sort: commonSettingList.length, parent });
     } else if (type === 'up') {
       setCommonSettingList([]);
       list = commonSettingList?.map((cen: any, cIndex: number) => {
@@ -2876,7 +2901,7 @@ const Home: React.FC<any> = (props: any) => {
       });
     }
     setTimeout(() => {
-      setCommonSettingList(list?.map((item: any) => ({ ...item, id: guid() })));
+      setCommonSettingList(list?.map((item: any) => ({ id: guid(), ...item })));
       form.setFieldsValue({
         timeSelectDefault: list,
       });
@@ -3525,7 +3550,7 @@ const Home: React.FC<any> = (props: any) => {
           style={
             !!addWindowVisible || !!homeSettingVisible || !!overallVisible
               ? {}
-              : { right: '-500px' }
+              : { right: '-700px' }
           }
           title={'插件配置 PluginConfig '}
           onSave={() => {
@@ -4656,7 +4681,7 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                     <Form.Item
                       name="modelUpload"
-                      label="自动获取下拉内容"
+                      label="自动获取内容"
                       initialValue={false}
                       valuePropName="checked"
                     >
@@ -4678,7 +4703,10 @@ const Home: React.FC<any> = (props: any) => {
                       {commonSettingList
                         ?.sort((a: any, b: any) => a.sort - b.sort)
                         ?.map((item: any, index: number) => {
-                          const { name, alias, type, className = '', id } = item;
+                          const { name, alias, type, className = '', id, parent } = item;
+                          if (!!parent) {
+                            return null;
+                          }
                           return (
                             <div
                               className="flex-box form-time-select-item"
@@ -4738,6 +4766,10 @@ const Home: React.FC<any> = (props: any) => {
                                       label: '按钮',
                                     },
                                     {
+                                      value: 'ModalButton',
+                                      label: '弹框按钮',
+                                    },
+                                    {
                                       value: 'DatePicker',
                                       label: '时间选择器',
                                     },
@@ -4751,7 +4783,7 @@ const Home: React.FC<any> = (props: any) => {
                                   }}
                                 />
                               </div>
-                              {type === 'Button' ? (
+                              {type?.indexOf('Button') > -1 ? (
                                 <div style={{ flex: 1 }}>
                                   <Select
                                     defaultValue={className}
@@ -4759,8 +4791,12 @@ const Home: React.FC<any> = (props: any) => {
                                     style={{ width: '100%', height: 28 }}
                                     options={[
                                       {
-                                        value: '',
+                                        value: 'default',
                                         label: '默认',
+                                      },
+                                      {
+                                        value: 'primary',
+                                        label: '蓝色',
                                       },
                                       {
                                         value: 'success',
@@ -4774,16 +4810,21 @@ const Home: React.FC<any> = (props: any) => {
                                         value: 'warning',
                                         label: '黄色',
                                       },
-                                      {
-                                        value: 'greyBackground',
-                                        label: '灰色',
-                                      },
                                     ]}
                                     onChange={(val) => {
                                       onFormChartsChange(val, index, 'className');
                                     }}
                                   />
                                 </div>
+                              ) : null}
+                              {type?.indexOf('ModalButton') > -1 ? (
+                                <Button
+                                  icon={<FormOutlined />}
+                                  style={{ height: 28 }}
+                                  onClick={() => {
+                                    setFormModalEdit(name);
+                                  }}
+                                />
                               ) : null}
                               <Button
                                 icon={<MinusSquareOutlined />}
@@ -4805,10 +4846,13 @@ const Home: React.FC<any> = (props: any) => {
                         })}
                       <Button
                         icon={<PlusSquareOutlined />}
+                        type="primary"
                         onClick={() => {
                           onFormChartsChange('', 0, 'add');
                         }}
-                      />
+                      >
+                        新增
+                      </Button>
                     </Form.Item>
                   </Fragment>
                 ) : null}
@@ -6614,6 +6658,162 @@ const Home: React.FC<any> = (props: any) => {
         // 日志放大预览
         !!logDataVisible ? (
           <LogPreviewModal type={logDataVisible} onCancel={() => setLogDataVisible('')} />
+        ) : null
+      }
+      {
+        // 自定义表单-二级窗口
+        !!formModalEdit ? (
+          <Modal
+            title={'自定义表单弹窗'}
+            centered
+            open={!!formModalEdit}
+            onOk={() => {
+              setFormModalEdit('');
+            }}
+            onCancel={() => setFormModalEdit('')}
+            maskClosable={false}
+          >
+            {commonSettingList
+              ?.sort((a: any, b: any) => a.sort - b.sort)
+              ?.map((item: any, index: number) => {
+                const { name, alias, type, className = '', id, parent } = item;
+                if (formModalEdit === parent) {
+                  return (
+                    <div
+                      className="flex-box form-time-select-item"
+                      key={`segmentSwitch-item-${index}`}
+                      style={{ marginBottom: 8, gap: 8 }}
+                    >
+                      <div style={{ flex: 1 }}>
+                        <Input
+                          defaultValue={name}
+                          placeholder="name"
+                          style={{ height: 32 }}
+                          onChange={(e) => {
+                            const val = e?.target?.value;
+                            onFormChartsChange(val, index, 'name');
+                          }}
+                        />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <Input
+                          defaultValue={alias}
+                          placeholder="alias"
+                          style={{ height: 32 }}
+                          onChange={(e) => {
+                            const val = e?.target?.value;
+                            onFormChartsChange(val, index, 'alias');
+                          }}
+                        />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <Select
+                          defaultValue={type}
+                          placeholder="type"
+                          style={{ width: '100%', height: 28 }}
+                          options={[
+                            {
+                              value: 'Input',
+                              label: '普通输入框',
+                            },
+                            {
+                              value: 'InputNumber',
+                              label: '数字输入框',
+                            },
+                            {
+                              value: 'MultiSelect',
+                              label: '复选框',
+                            },
+                            {
+                              value: 'Select',
+                              label: '单选框',
+                            },
+                            {
+                              value: 'Switch',
+                              label: '开关',
+                            },
+                            {
+                              value: 'Button',
+                              label: '按钮',
+                            },
+                            {
+                              value: 'DatePicker',
+                              label: '时间选择器',
+                            },
+                            {
+                              value: 'IpInput',
+                              label: 'ip输入框',
+                            },
+                          ]}
+                          onChange={(val) => {
+                            onFormChartsChange(val, index, 'type');
+                          }}
+                        />
+                      </div>
+                      {type?.indexOf('Button') > -1 ? (
+                        <div style={{ flex: 1 }}>
+                          <Select
+                            defaultValue={className}
+                            placeholder="颜色"
+                            style={{ width: '100%', height: 28 }}
+                            options={[
+                              {
+                                value: 'default',
+                                label: '默认',
+                              },
+                              {
+                                value: 'primary',
+                                label: '蓝色',
+                              },
+                              {
+                                value: 'success',
+                                label: '绿色',
+                              },
+                              {
+                                value: 'error',
+                                label: '红色',
+                              },
+                              {
+                                value: 'warning',
+                                label: '黄色',
+                              },
+                            ]}
+                            onChange={(val) => {
+                              onFormChartsChange(val, index, 'className');
+                            }}
+                          />
+                        </div>
+                      ) : null}
+                      <Button
+                        icon={<MinusSquareOutlined />}
+                        style={{ height: 28 }}
+                        onClick={() => {
+                          onFormChartsChange('', id, 'remove');
+                        }}
+                      />
+                      <Button
+                        icon={<ArrowUpOutlined />}
+                        style={{ height: 28 }}
+                        disabled={index === 0}
+                        onClick={() => {
+                          onFormChartsChange('', index, 'up');
+                        }}
+                      />
+                    </div>
+                  );
+                }
+                return null;
+              })}
+            <Button
+              icon={<PlusSquareOutlined />}
+              type="primary"
+              onClick={() => {
+                onFormChartsChange('', 0, 'addChild', formModalEdit);
+              }}
+            >
+              新增
+            </Button>
+          </Modal>
         ) : null
       }
     </div>
