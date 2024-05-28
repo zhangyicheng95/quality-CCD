@@ -25,7 +25,7 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
   const {
     onChange = null,
     onClick = null,
-    value = false,
+    value,
     defaultValue,
     disabled = false,
     loading = false,
@@ -41,14 +41,11 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
   const [lock, setLock] = useState(0);
   useEffect(() => {
     let index = 0;
-    try {
-      fontInBody.forEach((item: any, cIndex: number) => {
-        if ([value, defaultValue, fontInBody?.[0]?.value].includes(item.value)) {
-          index = cIndex;
-          throw new Error();
-        }
-      });
-    } catch (err) {}
+    fontInBody.forEach((item: any, cIndex: number) => {
+      if (item.value === (value || defaultValue || fontInBody?.[0]?.value)) {
+        index = cIndex;
+      }
+    });
     setLock(index);
   }, [value, defaultValue]);
 

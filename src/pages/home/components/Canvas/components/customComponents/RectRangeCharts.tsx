@@ -35,6 +35,14 @@ const RectRangeCharts: React.FC<Props> = (props: any) => {
       btnFetch('get', xName).then((res: any) => {
         if (!!res && res.code === 'SUCCESS') {
           setDataSource(res?.data || []);
+          form.setFieldsValue(
+            Object.entries(res?.data || {})?.reduce((pre: any, cen: any) => {
+              return {
+                ...pre,
+                [`disabled-${cen[0]}`]: !!cen[1]?.disabled,
+              };
+            }, {}),
+          );
         } else {
           message.error(res?.message || '后台服务异常，请重启服务');
         }
@@ -63,7 +71,7 @@ const RectRangeCharts: React.FC<Props> = (props: any) => {
       <Form form={form} scrollToFirstError className="rect-range-box">
         {(rectList || [])?.map((item: any, index: number) => {
           const { value } = item;
-          const disabled = dataSource[value]?.disabled;
+          const disabled = !!dataSource[value]?.disabled;
           const status = dataSource[value]?.status;
           return (
             <div
@@ -104,14 +112,16 @@ const RectRangeCharts: React.FC<Props> = (props: any) => {
                   name={`disabled-${value}`}
                   label={''}
                   style={{ height: '50%', width: '50%', marginBottom: 0 }}
-                  initialValue={disabled}
                 >
                   <SegmentSwitch
                     fontInBody={[
-                      { label: '', value: false },
-                      { label: '', value: true },
+                      { label: '', value: false, backgroundColor: 'grey' },
+                      {
+                        label: '',
+                        value: true,
+                        backgroundColor: 'rgba(24, 144, 255, 1)',
+                      },
                     ]}
-                    buttonColor={disabled ? 'rgba(24, 144, 255, 1)' : 'grey'}
                   />
                 </Form.Item>
               )}

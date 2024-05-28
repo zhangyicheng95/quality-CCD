@@ -190,12 +190,15 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             id: params.id,
             data: result,
           };
-          btnFetch('post', xName, requestParams).then((res) => {
-            setTimeout(() => {
-              setFieldsValue(result);
-            }, 500);
-            setLocked(true);
-          });
+          if (started) {
+            // 如果没启动，就不发送
+            btnFetch('post', xName, requestParams).then((res) => {
+              setTimeout(() => {
+                setFieldsValue(result);
+              }, 500);
+              setLocked(true);
+            });
+          }
           if (ifUpdateProject) {
             // 2.保存数据到节点中
             const { flowData } = params;
@@ -424,7 +427,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
       <div className="operation-footer flex-box-center">
         <Button
           type="primary"
-          disabled={!started}
+          // disabled={!started}
           onClick={() => {
             setLocked((prev) => !prev);
           }}
@@ -433,7 +436,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         </Button>
         {ifPopconfirm ? (
           <Popconfirm
-            disabled={!started || locked}
+            disabled={locked} //{!started || locked}
             title="确认修改吗?"
             onConfirm={() => {
               onOk();
@@ -441,16 +444,26 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             okText="确认"
             cancelText="取消"
           >
-            <Button type="primary" disabled={!started || locked}>
+            <Button
+              type="primary"
+              disabled={locked} //{!started || locked}
+            >
               修改
             </Button>
           </Popconfirm>
         ) : (
-          <Button type="primary" onClick={() => onOk()} disabled={!started || locked}>
+          <Button
+            type="primary"
+            onClick={() => onOk()}
+            disabled={locked} //{!started || locked}
+          >
             修改
           </Button>
         )}
-        <Button disabled={!started || locked} onClick={() => onCancel()}>
+        <Button
+          disabled={locked} //{!started || locked}
+          onClick={() => onCancel()}
+        >
           重置
         </Button>
       </div>

@@ -26,6 +26,9 @@ const Table3Charts: React.FC<Props> = (props: any) => {
     valueColor = 'value',
     line_height,
   } = data;
+  const ifCanEdit = useMemo(() => {
+    return location.hash?.indexOf('edit') > -1;
+  }, [location.hash]);
   if (process.env.NODE_ENV === 'development') {
     reverse = true;
     dataValue = [
@@ -104,21 +107,12 @@ const Table3Charts: React.FC<Props> = (props: any) => {
   const domRef = useRef<any>(null);
   const [tabSelected, setTabSelected] = useState(0);
   const [tableSizeSelf, setTableSizeSelf] = useState(tableSize);
-  const [tableScroll, setTableScroll] = useState(false);
 
   useEffect(() => {
     if (!_.isArray(dataValue)) {
       message.error('tab切换表格组件数据格式不正确，请检查');
       console.log('Table3Charts:', dataValue);
       return;
-    }
-
-    const height = domRef?.current?.clientHeight;
-    const valueLength = dataValue[0]?.value?.length;
-    if (height > valueLength * 38) {
-      setTableScroll(false);
-    } else {
-      setTableScroll(true);
     }
   }, [dataValue]);
 
@@ -212,7 +206,6 @@ const Table3Charts: React.FC<Props> = (props: any) => {
         className="charts-header-box flex-box"
         style={Object.assign(
           {},
-          tableScroll ? { width: 'calc(100% - 6px)' } : { width: 'calc(100% - 1px)' },
           headerBackgroundColor === 'transparent' ? { backgroundColor: 'transparent' } : {},
         )}
       >
@@ -233,13 +226,14 @@ const Table3Charts: React.FC<Props> = (props: any) => {
                     : {},
                 )}
               >
-                <TooltipDiv title={name} className="charts-header-item-title">
+                <TooltipDiv placement="top" title={name} className="charts-header-item-title">
                   {name}
                 </TooltipDiv>
                 {index + 1 === dataValue[tabSelected]?.children?.length ? null : (
                   <div
                     id={`charts-header-item-move-${index}`}
                     className="charts-header-item-border"
+                    style={ifCanEdit ? { width: 10 } : {}}
                     onMouseDown={(e: any) => {
                       if (location.hash?.indexOf('edit') > -1) {
                         onMoveIconMouseDown(e, index);

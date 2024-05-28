@@ -700,3 +700,17 @@ export function ifHasChinese(str: string) {
     return false;
   }
 }
+/**
+ * parse csv to univer data
+ * @param csv
+ * @returns { v: string }[][]
+ */
+export const parseCSV2UniverData = (csv: string[][]) => {
+  return csv.map((row) => {
+    return row.map((cell) => {
+      return {
+        v: cell || '',
+      };
+    });
+  });
+};

@@ -102,7 +102,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
           {(timeSelectDefault || [])
             ?.sort((a: any, b: any) => a.sort - b.sort)
             ?.map((item: any, index: number) => {
-              const { name, alias, sort = 0, type, className, parent } = item;
+              const { name, alias, sort = 0, type, className, parent, disabled = false } = item;
               if (!!parent) {
                 return null;
               }
@@ -110,6 +110,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
                 return (
                   <Button
                     type={className}
+                    disabled={disabled}
                     className={`form-charts-ant-btn ${className}`}
                     key={name}
                     onClick={() => {
@@ -157,6 +158,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
                   fontSize={fontSize}
                   label={item?.alias || item?.name}
                   config={[item?.name, item]}
+                  disabled={disabled}
                   widgetChange={() => {
                     if (!ifNeedAllow) {
                       onSubmit();

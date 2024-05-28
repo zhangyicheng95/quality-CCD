@@ -929,10 +929,10 @@
     }
 
     .charts-header-box {
-      position: fixed;
-      right: 0;
-      left: 0;
-      width: calc(100% - 6px);
+      // position: fixed;
+      // right: 0;
+      // left: 0;
+      // width: calc(100% - 6px);
       background-color: @background-color-base;
       border-left: 1px solid @border-color-base;
 
@@ -959,7 +959,6 @@
     .charts-body-box {
       align-items: normal;
       width: 100%; //calc(100% - 8px);
-      margin-top: 38px;
       border-right: 0 solid @border-color-base;
       border-bottom: 0 solid @border-color-base;
       border-left: 0 solid @border-color-base;
@@ -2101,6 +2100,8 @@
     .switch-box-form {
       width: 100%;
       height: 100%;
+      overflow: auto;
+      gap: 8px;
 
       .switch-box-item {
         flex: 1;

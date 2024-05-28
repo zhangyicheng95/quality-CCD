@@ -1,33 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PrimaryTitle from '@/components/PrimaryTitle';
 import styles from './index.less';
-import CSVReader from 'react-csv-reader';
+import { Button, Upload } from 'antd';
+import UniverExcel from '@/components/UniverExcel';
 
 const MarkList: React.FC = (props: any) => {
-  useEffect(() => {}, []);
-  const papaparseOptions = {
-    header: true,
-    dynamicTyping: true,
-    skipEmptyLines: true,
-    transformHeader: (header: any) => header.toLowerCase().replace(/\W/g, '_'),
-  };
   return (
     <div className={`${styles.markList} page-size background-ubv`}>
-      <PrimaryTitle title={'测试专用'} />
-      <CSVReader
-        cssClass="csv-reader-input"
-        label="Select CSV with secret Death Star statistics"
-        onFileLoaded={(data: any, fileInfo: any, originalFile: any) => {
-          console.log(data, fileInfo, originalFile);
-        }}
-        onError={(error: any) => {
-          console.log(error);
-        }}
-        parserOptions={papaparseOptions}
-        inputId="ObiWan"
-        inputName="ObiWan"
-        inputStyle={{ color: 'red' }}
-      />
+      <PrimaryTitle title={'测试专用'}>
+        <div
+          style={{ height: '100%', width: '100%', gap: 8 }}
+          className="flex-box-justify-end"
+        ></div>
+      </PrimaryTitle>
+      <UniverExcel />
     </div>
   );
 };

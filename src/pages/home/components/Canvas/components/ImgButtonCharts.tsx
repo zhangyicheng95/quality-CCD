@@ -154,7 +154,18 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
       </div>
       {!!visible ? (
         <Modal
-          title="缺陷上报"
+          title={
+            <div className="flex-box" style={{ gap: 16 }}>
+              缺陷上报
+              <Button
+                onClick={() => {
+                  setDefectSelect({});
+                }}
+              >
+                全部取消
+              </Button>
+            </div>
+          }
           wrapClassName="defect-modal"
           centered
           width="99vw"

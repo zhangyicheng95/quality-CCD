@@ -235,6 +235,7 @@ const Home: React.FC<any> = (props: any) => {
   const [tabNum, setTabNum] = useState(0);
   const [commonSettingList, setCommonSettingList] = useState<any>([]);
   const [formModalEdit, setFormModalEdit] = useState('');
+  const [tabPasswordVisible, setTabPasswordVisible] = useState<any>({});
 
   const ifCanEdit = useMemo(() => {
     return location.hash?.indexOf('edit') > -1;
@@ -1726,6 +1727,7 @@ const Home: React.FC<any> = (props: any) => {
                       fontSize,
                       yName,
                       timeSelectDefault,
+                      des_column,
                     }}
                   />
                 ) : type === 'segmentSwitch' ? (
@@ -1984,7 +1986,7 @@ const Home: React.FC<any> = (props: any) => {
               <div
                 style={Object.assign(
                   {},
-                  type === 'table2'
+                  ['table2', 'table3'].includes(type)
                     ? {
                         height: `calc(100% - 80px - ${bodyPaddingSize}px)`,
                         marginTop: 80 + bodyPaddingSize,
@@ -2412,7 +2414,7 @@ const Home: React.FC<any> = (props: any) => {
       });
       homeSettingData?.['slider-1']?.controlList?.forEach((item: any, index: number) => {
         const { ip, url } = item;
-        startFlowService(ip || '', url, params).then((res: any) => {
+        startFlowService(ip || '', url).then((res: any) => {
           if (res && res.code === 'SUCCESS') {
             message.success('任务启动成功');
           } else {
@@ -2906,6 +2908,11 @@ const Home: React.FC<any> = (props: any) => {
         timeSelectDefault: list,
       });
     });
+  };
+  // tab切换
+  const onTabChange = (index: number) => {
+    localStorage.setItem(`localGridContent-tab-${paramData.id}`, index + '');
+    setTabNum(index);
   };
 
   return (
@@ -3452,7 +3459,7 @@ const Home: React.FC<any> = (props: any) => {
                       <div className="flex-box right-canvas-body-grid-tab">
                         {(paramData?.contentData?.tabList || [])?.map?.(
                           (tab: any, index: number) => {
-                            const { name, id } = tab;
+                            const { name, password, id } = tab;
                             return (
                               <div
                                 className={`right-canvas-body-grid-tab-item ${
@@ -3460,11 +3467,11 @@ const Home: React.FC<any> = (props: any) => {
                                 }`}
                                 key={id}
                                 onClick={() => {
-                                  localStorage.setItem(
-                                    `localGridContent-tab-${paramData.id}`,
-                                    index + '',
-                                  );
-                                  setTabNum(index);
+                                  if (!!password) {
+                                    setTabPasswordVisible({ password, index });
+                                  } else {
+                                    onTabChange(index);
+                                  }
                                 }}
                               >
                                 {name}
@@ -4681,7 +4688,7 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                     <Form.Item
                       name="modelUpload"
-                      label="自动获取内容"
+                      label="首次加载默认获取内容"
                       initialValue={false}
                       valuePropName="checked"
                     >
@@ -4703,7 +4710,15 @@ const Home: React.FC<any> = (props: any) => {
                       {commonSettingList
                         ?.sort((a: any, b: any) => a.sort - b.sort)
                         ?.map((item: any, index: number) => {
-                          const { name, alias, type, className = '', id, parent } = item;
+                          const {
+                            name,
+                            alias,
+                            type,
+                            className = '',
+                            id,
+                            parent,
+                            disabled = false,
+                          } = item;
                           if (!!parent) {
                             return null;
                           }
@@ -4826,6 +4841,15 @@ const Home: React.FC<any> = (props: any) => {
                                   }}
                                 />
                               ) : null}
+                              <Checkbox
+                                defaultChecked={disabled}
+                                onChange={(e) => {
+                                  const val = e.target.checked;
+                                  onFormChartsChange(val, index, 'disabled');
+                                }}
+                              >
+                                disabled
+                              </Checkbox>
                               <Button
                                 icon={<MinusSquareOutlined />}
                                 style={{ height: 28 }}
@@ -5124,6 +5148,9 @@ const Home: React.FC<any> = (props: any) => {
                       rules={[{ required: false, message: '名称' }]}
                     >
                       <Input size="large" />
+                    </Form.Item>
+                    <Form.Item name="des_column" label="列数">
+                      <InputNumber />
                     </Form.Item>
                     <Form.Item
                       name={`timeSelectDefault`}
@@ -5567,6 +5594,7 @@ const Home: React.FC<any> = (props: any) => {
                         <Form.Item
                           name="ifUpdateProject"
                           label="同步方案"
+                          tooltip="修改内容保存到方案中，同步到execParams里面"
                           initialValue={false}
                           valuePropName="checked"
                         >
@@ -5575,6 +5603,7 @@ const Home: React.FC<any> = (props: any) => {
                         <Form.Item
                           name="ifUpdatetoInitParams"
                           label="同步初始化参数"
+                          tooltip="同步到initParams里面（必须把上面的“同步方案”打开）"
                           initialValue={false}
                           valuePropName="checked"
                         >
@@ -6195,7 +6224,7 @@ const Home: React.FC<any> = (props: any) => {
                           <div style={{ flex: 1 }}>
                             <Input
                               defaultValue={url}
-                              placeholder="127.0.0.1:8888"
+                              placeholder="127.0.0.1:8866"
                               style={{ height: 28 }}
                               onChange={(e) => {
                                 const val = e?.target?.value;
@@ -6382,12 +6411,14 @@ const Home: React.FC<any> = (props: any) => {
               <Form.Item name="gridMargin" label="边距">
                 <InputNumber />
               </Form.Item>
-              <Form.Item label="标签页">
+              <Form.Item
+                label="标签页"
+                tooltip="设置密码后，在切换时需要校验，不设置密码则直接切换"
+              >
                 {_.isArray(basicInfoData)
                   ? basicInfoData?.map?.((item: any, index: number) => {
                       if (!item || _.isEmpty(item)) return null;
-
-                      const { id, name } = item;
+                      const { id, name, password } = item;
                       return (
                         <div
                           key={`commonInfo-${id || index}`}
@@ -6396,7 +6427,7 @@ const Home: React.FC<any> = (props: any) => {
                         >
                           <div style={{ flex: 1 }}>
                             <Input
-                              placeholder="key"
+                              placeholder="tab页名称"
                               value={name}
                               onChange={(e) => {
                                 const val = e?.target?.value;
@@ -6404,6 +6435,23 @@ const Home: React.FC<any> = (props: any) => {
                                   return prev?.map?.((info: any) => {
                                     if (info.id === id) {
                                       return { ...info, name: val };
+                                    }
+                                    return info;
+                                  });
+                                });
+                              }}
+                            />
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <Input
+                              placeholder="tab页密码"
+                              value={password}
+                              onChange={(e) => {
+                                const val = e?.target?.value;
+                                setBasicInfoData((prev: any) => {
+                                  return prev?.map?.((info: any) => {
+                                    if (info.id === id) {
+                                      return { ...info, password: val };
                                     }
                                     return info;
                                   });
@@ -6813,6 +6861,43 @@ const Home: React.FC<any> = (props: any) => {
             >
               新增
             </Button>
+          </Modal>
+        ) : null
+      }
+      {
+        // tab切换-密码框
+        !!Object.keys?.(tabPasswordVisible)?.length ? (
+          <Modal
+            title={'tab切换密码校验'}
+            open={!!Object.keys?.(tabPasswordVisible)?.length}
+            onOk={() => {
+              validateFields().then((values) => {
+                const { pass } = values;
+                const { password, index } = tabPasswordVisible;
+                if (pass == password) {
+                  onTabChange(index);
+                  form.resetFields();
+                  setTabPasswordVisible({});
+                } else {
+                  message.error('密码错误');
+                }
+              });
+            }}
+            onCancel={() => {
+              form.resetFields();
+              setTabPasswordVisible({});
+            }}
+            maskClosable={false}
+          >
+            <Form form={form} scrollToFirstError>
+              <Form.Item
+                name={'pass'}
+                label={'密码校验'}
+                rules={[{ required: true, message: '密码' }]}
+              >
+                <Input />
+              </Form.Item>
+            </Form>
           </Modal>
         ) : null
       }

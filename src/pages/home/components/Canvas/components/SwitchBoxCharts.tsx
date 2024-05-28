@@ -14,7 +14,7 @@ interface Props {
 
 const SwitchBoxCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  const { dispatch, fontSize = 14, yName = '', timeSelectDefault = [] } = data;
+  const { dispatch, fontSize = 14, yName = '', timeSelectDefault = [], des_column = 1 } = data;
   const ipString: any = localStorage.getItem('ipString') || '';
   const [form] = Form.useForm();
   const timeRef = useRef<any>();
@@ -170,7 +170,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
   // 批量启动
   const startList = (list: any, index: number) => {
     const item = list?.[index];
-    if (!!item) {
+    if (!!item && !!item.projectId) {
       start(item.projectId, item.ip).then((res: any) => {
         statusListRef.current = {
           ...statusListRef.current,
@@ -186,6 +186,14 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
       });
     } else {
       setLocalhostLoading(false);
+      setLoading((prev: any) =>
+        Object.entries(prev)?.reduce((pre: any, cen: any) => {
+          return {
+            ...pre,
+            [cen[0]]: false,
+          };
+        }, {}),
+      );
       setTimeout(() => {
         setStatusList(statusListRef.current);
         form.setFieldsValue({
@@ -198,7 +206,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
   // 批量停止
   const stopList = (list: any, index: number) => {
     const item = list?.[index];
-    if (!!item) {
+    if (!!item && !!item.projectId) {
       end(item.projectId, item.ip).then((res: any) => {
         statusListRef.current = {
           ...statusListRef.current,
@@ -214,6 +222,14 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
       });
     } else {
       setLocalhostLoading(false);
+      setLoading((prev: any) =>
+        Object.entries(prev)?.reduce((pre: any, cen: any) => {
+          return {
+            ...pre,
+            [cen[0]]: false,
+          };
+        }, {}),
+      );
       setTimeout(() => {
         setStatusList(statusListRef.current);
         form.setFieldsValue({
@@ -226,8 +242,20 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
 
   return (
     <div id={`echart-${id}`} className={`${styles.switchBoxCharts}`} style={{ fontSize }}>
-      <Form form={form} scrollToFirstError className="flex-box-column switch-box-form">
-        <div className="switch-box-item">
+      <Form
+        form={form}
+        scrollToFirstError
+        className={`${des_column > 1 ? 'flex-box' : 'flex-box-column'} switch-box-form`}
+        style={des_column > 1 ? { flexWrap: 'wrap' } : {}}
+      >
+        <div
+          className="switch-box-item"
+          style={{
+            width: `calc(${100 / des_column}% - 4px)`,
+            minWidth: `calc(${100 / des_column}% - 4px)`,
+            maxWidth: `calc(${100 / des_column}% - 4px)`,
+          }}
+        >
           {useMemo(() => {
             let values = Object.values(statusList);
             if (!values.length) {
@@ -282,7 +310,15 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
               ?.map((item: any, index: number) => {
                 const { label, ip, projectId } = item;
                 return (
-                  <div className="switch-box-item" key={`switch-box-item-${index}`}>
+                  <div
+                    className="switch-box-item"
+                    style={{
+                      width: `calc(${100 / des_column}% - 4px)`,
+                      minWidth: `calc(${100 / des_column}% - 4px)`,
+                      maxWidth: `calc(${100 / des_column}% - 4px)`,
+                    }}
+                    key={`switch-box-item-${index}`}
+                  >
                     <Form.Item
                       name={`${item.ip}_${item.projectId}`}
                       label=""

@@ -128,27 +128,28 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
         btnFetch(fetchType, xName, params).then((res: any) => {
           if (res && res.code === 'SUCCESS') {
             message.success('success');
-            setDataSource(res?.data);
-            const valData = (res.data || [])?.reduce((pre: any, cen: any) => {
-              const { name, data } = cen;
-              let list = {};
-              data.forEach((item: any) => {
-                const { key, value } = item;
-                const listName =
-                  key == name
-                    ? `${parentBodyBoxTab}$$${key}`
-                    : `${parentBodyBoxTab}$$${key}$$${name}`;
-                list[listName] = value;
-              });
-              return {
-                ...pre,
-                ...list,
-              };
-            }, {});
-            formCustom.setFieldsValue({
-              // ...formCustom.getFieldValue(),
-              ...valData,
-            });
+            init();
+            // setDataSource(res?.data);
+            // const valData = (res.data || [])?.reduce((pre: any, cen: any) => {
+            //   const { name, data } = cen;
+            //   let list = {};
+            //   data.forEach((item: any) => {
+            //     const { key, value } = item;
+            //     const listName =
+            //       key == name
+            //         ? `${parentBodyBoxTab}$$${key}`
+            //         : `${parentBodyBoxTab}$$${key}$$${name}`;
+            //     list[listName] = value;
+            //   });
+            //   return {
+            //     ...pre,
+            //     ...list,
+            //   };
+            // }, {});
+            // formCustom.setFieldsValue({
+            //   // ...formCustom.getFieldValue(),
+            //   ...valData,
+            // });
           } else {
             message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
           }
@@ -222,18 +223,21 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                               marginBottom: 0,
                               minWidth: 60,
                             },
+                            hiddenAxis && index < des_column ? { height: 'calc(100% - 38px)' } : {},
                           )}
-                          initialValue={value}
                           rules={[{ required: false, message: alias }]}
                         >
                           <SegmentSwitch
                             fontInBody={[
-                              { label: '', value: false },
-                              { label: '', value: true },
+                              { label: '', value: false, backgroundColor: 'grey' },
+                              {
+                                label: '',
+                                value: true,
+                                backgroundColor: 'rgba(24, 144, 255, 1)',
+                              },
                             ]}
-                            buttonColor={value ? 'rgba(24, 144, 255, 1)' : 'grey'}
-                            onChange={() => {
-                              onValueChange(name, key, !value);
+                            onChange={(val: boolean) => {
+                              onValueChange(name, key, val);
                             }}
                           />
                         </Form.Item>
@@ -241,8 +245,10 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                         <Form.Item
                           name={`${parentBodyBoxTab}$$${key}$$${name}`}
                           label={''}
-                          style={{ marginBottom: 0 }}
-                          initialValue={value}
+                          style={Object.assign(
+                            { width: '100%', marginBottom: 0 },
+                            hiddenAxis && index < des_column ? { height: 'calc(100% - 38px)' } : {},
+                          )}
                           rules={[{ required: false, message: alias }]}
                         >
                           {['int', 'float', 'number'].includes(_.lowerCase(type)) ? (
@@ -275,7 +281,10 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                       ) : (
                         <div
                           className="flex-box range-domain-box-item-td-read"
-                          style={{ width: '100%' }}
+                          style={Object.assign(
+                            { width: '100%' },
+                            hiddenAxis && index < des_column ? { height: 'calc(100% - 38px)' } : {},
+                          )}
                         >
                           {value}
                         </div>
