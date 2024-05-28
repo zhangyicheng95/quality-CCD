@@ -9,6 +9,7 @@ import PlatFormModal from '@/components/platForm';
 import FileManager from '@/components/FileManager';
 import TooltipDiv from '@/components/TooltipDiv';
 import { updateParams } from '@/services/api';
+import SegmentSwitch from '@/components/SegmentSwitch';
 
 interface Props {
   data: any;
@@ -28,6 +29,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
     des_column,
     des_bordered,
     yName = 150,
+    valueOnTop = false,
   } = data;
   if (!_.isBoolean(showLabel)) {
     showLabel = true;
@@ -59,7 +61,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
       let resConfig: any = [];
       operationList?.forEach((item: any) => {
         if (initParams[item]) {
-          resConfig = resConfig.concat(initParams[item]);
+          resConfig = resConfig.concat(Object.assign({ enabled: true }, initParams[item]));
         }
       });
       setConfigList(resConfig);
@@ -168,7 +170,9 @@ const OperationCharts: React.FC<Props> = (props: any) => {
             const { initParams = {} } = config;
             let obj = Object.assign({}, initParams);
             configList.forEach((item: any, index: number) => {
-              obj[item?.id || item?.name] = item;
+              if (!!item.enabled) {
+                obj[item?.id || item?.name] = item;
+              }
             });
             return Object.assign({}, node, {
               config: Object.assign({}, config, {
@@ -213,7 +217,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
         <Form form={form} scrollToFirstError>
           {useMemo(() => {
             return configList?.map?.((item: any, index: number) => {
-              const { name, alias, widget = {} } = item;
+              const { name, alias, widget = {}, enabled } = item;
               const { type } = widget;
               return (
                 <div
@@ -246,24 +250,55 @@ const OperationCharts: React.FC<Props> = (props: any) => {
                       </TooltipDiv>
                     </div>
                   ) : null}
-                  <div className="value-box">
-                    <FormatWidgetToDom
-                      key={item?.name}
-                      id={item?.name}
-                      fontSize={fontSize}
-                      // label={item?.alias || item?.name}
-                      config={[item?.name, item]}
-                      widgetChange={widgetChange}
-                      form={form}
-                      disabled={!!started}
-                      setEditorVisible={setEditorVisible}
-                      setEditorValue={setEditorValue}
-                      setPlatFormVisible={setPlatFormVisible}
-                      setPlatFormValue={setPlatFormValue}
-                      setSelectPathVisible={setSelectPathVisible}
-                      setSelectedPath={setSelectedPath}
-                      measurementLineNum={measurementLineNum}
-                    />
+                  <div className="flex-box-start value-box">
+                    <div style={{ flex: 1 }}>
+                      <FormatWidgetToDom
+                        key={item?.name}
+                        id={item?.name}
+                        fontSize={fontSize}
+                        // label={item?.alias || item?.name}
+                        config={[item?.name, item]}
+                        widgetChange={widgetChange}
+                        form={form}
+                        disabled={!!started}
+                        setEditorVisible={setEditorVisible}
+                        setEditorValue={setEditorValue}
+                        setPlatFormVisible={setPlatFormVisible}
+                        setPlatFormValue={setPlatFormValue}
+                        setSelectPathVisible={setSelectPathVisible}
+                        setSelectedPath={setSelectedPath}
+                        measurementLineNum={measurementLineNum}
+                      />
+                    </div>
+                    {valueOnTop ? (
+                      <div style={{ height: fontSize * 2, width: 60, minWidth: 60, marginLeft: 8 }}>
+                        <SegmentSwitch
+                          style={{ fontSize: 12 }}
+                          defaultValue={enabled}
+                          fontInBody={[
+                            { label: '禁', value: false, backgroundColor: 'grey' },
+                            {
+                              label: '启',
+                              value: true,
+                              backgroundColor: 'rgba(24, 144, 255, 1)',
+                            },
+                          ]}
+                          onChange={(val: boolean) => {
+                            setConfigList((prev: any) =>
+                              (prev || [])?.map?.((item: any) => {
+                                if ((item.name || item.id) === name) {
+                                  return {
+                                    ...item,
+                                    enabled: val,
+                                  };
+                                }
+                                return item;
+                              }),
+                            );
+                          }}
+                        />
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               );

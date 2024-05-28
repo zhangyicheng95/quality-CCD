@@ -14,7 +14,14 @@ interface Props {
 
 const SwitchBoxCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  const { dispatch, fontSize = 14, yName = '', timeSelectDefault = [], des_column = 1 } = data;
+  const {
+    dispatch,
+    fontSize = 14,
+    yName = '',
+    timeSelectDefault = [],
+    des_column = 1,
+    direction = 1000,
+  } = data;
   const ipString: any = localStorage.getItem('ipString') || '';
   const [form] = Form.useForm();
   const timeRef = useRef<any>();
@@ -182,7 +189,9 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
             [`${item.ip}_${item.projectId}`]: false,
           };
         });
-        startList(list, index + 1);
+        setTimeout(() => {
+          startList(list, index + 1);
+        }, direction || 1000);
       });
     } else {
       setLocalhostLoading(false);
@@ -258,6 +267,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
         >
           {useMemo(() => {
             let values = Object.values(statusList);
+            values = values.filter((i: any) => !_.isUndefined(i));
             if (!values.length) {
               values = [false];
             }
@@ -275,7 +285,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
                     { label: '启动', value: true },
                   ]}
                   buttonColor={
-                    !values?.includes(false)
+                    !values?.includes(false) && values?.includes(true)
                       ? '#88db57'
                       : !values?.includes(true)
                       ? 'grey'

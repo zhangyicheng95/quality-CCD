@@ -90,7 +90,9 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
                 },
             !!buttonColor
               ? { backgroundColor: buttonColor }
-              : { backgroundColor: fontInBody?.[lock]?.backgroundColor },
+              : {
+                  backgroundColor: fontInBody?.[lock]?.backgroundColor,
+                },
           )}
         />
         {(fontInBody || [])?.map((item: any, index: number) => {
@@ -98,7 +100,11 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
           return (
             <div
               className={`flex-box-center segment-switch-box-item ${color}`}
-              style={Object.assign({}, !border ? { border: 0 } : {})}
+              style={Object.assign(
+                {},
+                !border ? { border: 0 } : {},
+                lock === index ? { color: '#fff' } : {},
+              )}
               key={`segment-switch-box-item-${index}`}
               onClick={() => {
                 if (lock !== index && !disabled && !loading) {

@@ -1609,6 +1609,7 @@ const Home: React.FC<any> = (props: any) => {
                       fetchType,
                       modelUpload,
                       ifNeedAllow,
+                      modelRotate,
                     }}
                   />
                 ) : type === 'button' ? (
@@ -1728,6 +1729,7 @@ const Home: React.FC<any> = (props: any) => {
                       yName,
                       timeSelectDefault,
                       des_column,
+                      direction,
                     }}
                   />
                 ) : type === 'segmentSwitch' ? (
@@ -1757,6 +1759,7 @@ const Home: React.FC<any> = (props: any) => {
                       des_column,
                       des_bordered,
                       yName,
+                      valueOnTop,
                     }}
                   />
                 ) : type === 'operation2' ? (
@@ -1775,6 +1778,7 @@ const Home: React.FC<any> = (props: any) => {
                       des_column,
                       des_bordered,
                       yName,
+                      valueOnTop,
                     }}
                   />
                 ) : type === 'statistic' ? (
@@ -4703,6 +4707,14 @@ const Home: React.FC<any> = (props: any) => {
                       <Switch />
                     </Form.Item>
                     <Form.Item
+                      name="modelRotate"
+                      label="是否需要右侧按钮"
+                      initialValue={false}
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item
                       name={`timeSelectDefault`}
                       label={'表单项'}
                       rules={[{ required: false, message: '表单项' }]}
@@ -5153,6 +5165,14 @@ const Home: React.FC<any> = (props: any) => {
                       <InputNumber />
                     </Form.Item>
                     <Form.Item
+                      name="direction"
+                      tooltip="启动/停止后，loading延迟时间"
+                      label="启动延迟(毫秒)"
+                      initialValue={1000}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                    <Form.Item
                       name={`timeSelectDefault`}
                       label={'按钮参数'}
                       rules={[{ required: true, message: '按钮参数' }]}
@@ -5576,6 +5596,15 @@ const Home: React.FC<any> = (props: any) => {
                       rules={[{ required: false, message: 'label宽度' }]}
                     >
                       <InputNumber />
+                    </Form.Item>
+                    <Form.Item
+                      name="valueOnTop"
+                      label="是否单独控制"
+                      tooltip="如果每个属性需要单独控制是否开启，则打开"
+                      initialValue={false}
+                      valuePropName="checked"
+                    >
+                      <Switch />
                     </Form.Item>
                     {['operation2'].includes(windowType) ? (
                       <Fragment>

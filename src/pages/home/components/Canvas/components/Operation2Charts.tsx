@@ -52,6 +52,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     des_column,
     des_bordered,
     yName = 150,
+    valueOnTop = false,
   } = data;
   if (!_.isBoolean(showLabel)) {
     showLabel = true;
@@ -110,6 +111,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
       if (execParams?.[item]) {
         resConfig = resConfig.concat(
           Object.assign(
+            { enabled: true },
             execParams[item],
             { show: !itemGroup },
             !!data && !_.isEmpty(data) ? { value: data[item] } : {},
@@ -177,15 +179,34 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         setConfigList((pre: any) => {
           // 1.直接发送动态数据
           let result = {};
+          let resultEnabled = {};
           (Object.entries(values) || []).forEach((res: any, index: number) => {
             const name = res[0]?.split('$$')?.[0];
             const value: any =
               !_.isUndefined(res[1]) && !_.isNull(res[1])
                 ? res[1]
                 : pre?.filter((i: any) => i.name === name)?.[0]?.value;
-            // @ts-ignore
-            result[name] = value instanceof moment ? new Date(value).getTime() : value;
+            if (!!pre?.filter((i: any) => i.name === name)?.[0]?.enabled) {
+              // @ts-ignore
+              result[name] = value instanceof moment ? new Date(value).getTime() : value;
+            }
+            resultEnabled[name] = _.isBoolean(
+              pre?.filter((i: any) => i.name === name)?.[0]?.enabled,
+            )
+              ? pre?.filter((i: any) => i.name === name)?.[0]?.enabled
+              : true;
           });
+          // let valueRes = {};
+          // if (valueOnTop) {
+          //   Object.entries(resultEnabled).forEach((item: any) => {
+          //     valueRes[item[0]] = {
+          //       value: result[item[0]],
+          //       enabled: item[1],
+          //     };
+          //   });
+          // } else {
+          //   valueRes = Object.assign({}, result);
+          // }
           const requestParams = {
             id: params.id,
             data: result,
@@ -212,31 +233,33 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                 }
                 let obj = Object.assign({}, execParams);
                 pre.forEach((item: any, index: number) => {
-                  obj[item?.name] = {
-                    ...item,
-                    value: result[item?.name],
-                    ...(item?.widget?.type === 'TagRadio'
-                      ? {
-                          widget: {
-                            ...item?.widget,
-                            options: (item?.widget?.options || [])?.map?.((option: any) => {
-                              if (option.name === item?.value) {
-                                return {
-                                  ...option,
-                                  children: (option?.children || [])?.map?.((child: any) => {
-                                    return {
-                                      ...child,
-                                      value: result[child?.name],
-                                    };
-                                  }),
-                                };
-                              }
-                              return option;
-                            }),
-                          },
-                        }
-                      : {}),
-                  };
+                  if (resultEnabled[item?.name]) {
+                    obj[item?.name] = {
+                      value: result[item?.name],
+                      ...{ enabled: resultEnabled[item?.name] },
+                      ...(item?.widget?.type === 'TagRadio'
+                        ? {
+                            widget: {
+                              ...item?.widget,
+                              options: (item?.widget?.options || [])?.map?.((option: any) => {
+                                if (option.name === item?.value) {
+                                  return {
+                                    ...option,
+                                    children: (option?.children || [])?.map?.((child: any) => {
+                                      return {
+                                        ...child,
+                                        value: result[child?.name],
+                                      };
+                                    }),
+                                  };
+                                }
+                                return option;
+                              }),
+                            },
+                          }
+                        : {}),
+                    };
+                  }
                 });
                 return Object.assign({}, node, {
                   config: Object.assign(
@@ -283,7 +306,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     init();
   };
   const initItem = (item: any, index: number) => {
-    let { name, alias, widget = {}, addType, show, locked } = item;
+    let { name, alias, widget = {}, addType, show, locked, enabled } = item;
     const { type } = widget;
     if (!name) {
       name = item?.id;
@@ -330,26 +353,57 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         ) : null}
         {/* </div> */}
         <div
-          className="value-box"
+          className="flex-box-start value-box"
           style={type === 'TagRadio' ? { width: 'calc(100% - 16px)' } : {}}
         >
-          <FormatWidgetToDom
-            key={name}
-            id={name}
-            fontSize={fontSize}
-            config={[item?.name, item]}
-            selectedOption={selectedOption}
-            setSelectedOption={setSelectedOption}
-            form={form}
-            disabled={locked}
-            setEditorVisible={setEditorVisible}
-            setEditorValue={setEditorValue}
-            setPlatFormVisible={setPlatFormVisible}
-            setPlatFormValue={setPlatFormValue}
-            setSelectPathVisible={setSelectPathVisible}
-            setSelectedPath={setSelectedPath}
-            measurementLineNum={measurementLineNum}
-          />
+          <div style={{ flex: 1 }}>
+            <FormatWidgetToDom
+              key={name}
+              id={name}
+              fontSize={fontSize}
+              config={[item?.name, item]}
+              selectedOption={selectedOption}
+              setSelectedOption={setSelectedOption}
+              form={form}
+              disabled={locked}
+              setEditorVisible={setEditorVisible}
+              setEditorValue={setEditorValue}
+              setPlatFormVisible={setPlatFormVisible}
+              setPlatFormValue={setPlatFormValue}
+              setSelectPathVisible={setSelectPathVisible}
+              setSelectedPath={setSelectedPath}
+              measurementLineNum={measurementLineNum}
+            />
+          </div>
+          {valueOnTop ? (
+            <div style={{ height: fontSize * 2, width: 60, minWidth: 60, marginLeft: 8 }}>
+              <SegmentSwitch
+                style={{ fontSize: 12 }}
+                defaultValue={enabled}
+                fontInBody={[
+                  { label: '禁', value: false, backgroundColor: 'grey' },
+                  {
+                    label: '启',
+                    value: true,
+                    backgroundColor: 'rgba(24, 144, 255, 1)',
+                  },
+                ]}
+                onChange={(val: boolean) => {
+                  setConfigList((prev: any) =>
+                    (prev || [])?.map?.((item: any) => {
+                      if ((item.name || item.id) === name) {
+                        return {
+                          ...item,
+                          enabled: val,
+                        };
+                      }
+                      return item;
+                    }),
+                  );
+                }}
+              />
+            </div>
+          ) : null}
         </div>
       </div>
     );
