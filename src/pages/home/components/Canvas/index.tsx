@@ -131,6 +131,8 @@ import RectRangeCharts from './components/customComponents/RectRangeCharts';
 import ModelSwitchCharts from './components/customComponents/ModelSwitchCharts';
 import SwitchBoxCharts from './components/SwitchBoxCharts';
 import FormCharts from './components/FormCharts';
+import NestFormCharts from './components/NestFormCharts';
+import TableAntdCharts from './components/TableAntdCharts';
 
 const leftPanelDataLocal = [
   {
@@ -208,9 +210,9 @@ const Home: React.FC<any> = (props: any) => {
     },
     'slider-1': {
       des_column: 1,
-      delay: 1000,
+      delay: 0,
       titleAlign: 'horizational',
-      iconSize: 24,
+      iconSize: 40,
       controlList: [],
       ifShowHeader: false,
       backgroundColor: 'default',
@@ -1467,6 +1469,25 @@ const Home: React.FC<any> = (props: any) => {
                       ifFetch,
                     }}
                   />
+                ) : type === 'tableAntd' ? (
+                  <TableAntdCharts
+                    id={key}
+                    data={{
+                      dataValue: dataValue || [],
+                      fontSize,
+                      fetchType,
+                      xName,
+                      yName,
+                      ifFetch,
+                      reverse,
+                      interlacing,
+                      des_bordered,
+                      headerBackgroundColor,
+                      valueColor,
+                      timeSelectDefault,
+                      staticHeight,
+                    }}
+                  />
                 ) : type === 'rangeDomain' ? (
                   <RangeDomainCharts
                     id={key}
@@ -1595,6 +1616,8 @@ const Home: React.FC<any> = (props: any) => {
                       iconSize,
                       fetchParams,
                       dispatch,
+                      direction,
+                      addContentList,
                     }}
                   />
                 ) : type === 'form' ? (
@@ -1610,6 +1633,16 @@ const Home: React.FC<any> = (props: any) => {
                       modelUpload,
                       ifNeedAllow,
                       modelRotate,
+                    }}
+                  />
+                ) : type === 'nestForm' ? (
+                  <NestFormCharts
+                    id={key}
+                    data={{
+                      fontSize,
+                      des_column,
+                      des_bordered,
+                      yName,
                     }}
                   />
                 ) : type === 'button' ? (
@@ -1730,6 +1763,7 @@ const Home: React.FC<any> = (props: any) => {
                       timeSelectDefault,
                       des_column,
                       direction,
+                      modelRotate,
                     }}
                   />
                 ) : type === 'segmentSwitch' ? (
@@ -2317,7 +2351,7 @@ const Home: React.FC<any> = (props: any) => {
         if (index + 1 === list?.length) {
           setTimeout(() => {
             setLoading(false);
-          }, homeSettingData?.['slider-1']?.delay || 0);
+          }, homeSettingData?.['slider-1']?.delay * 1000 || 0);
         } else {
           setTimeout(() => {
             startProjects(list[index + 1], list, index + 1, projectStatus);
@@ -2328,7 +2362,7 @@ const Home: React.FC<any> = (props: any) => {
       if (index + 1 === list?.length) {
         setTimeout(() => {
           setLoading(false);
-        }, homeSettingData?.['slider-1']?.delay || 0);
+        }, homeSettingData?.['slider-1']?.delay * 1000 || 0);
       } else {
         setTimeout(() => {
           startProjects(list[index + 1], list, index + 1, projectStatus);
@@ -2356,7 +2390,7 @@ const Home: React.FC<any> = (props: any) => {
         if (index + 1 === list?.length) {
           setTimeout(() => {
             setLoading(false);
-          }, homeSettingData?.['slider-1']?.delay || 0);
+          }, homeSettingData?.['slider-1']?.delay * 1000 || 0);
         } else {
           endProjects(list[index + 1], list, index + 1, projectStatus);
         }
@@ -2401,7 +2435,7 @@ const Home: React.FC<any> = (props: any) => {
             ) {
               setTimeout(() => {
                 setLoading(false);
-              }, homeSettingData?.['slider-1']?.delay || 0);
+              }, homeSettingData?.['slider-1']?.delay * 1000 || 0);
             }
           });
         } else {
@@ -2412,7 +2446,7 @@ const Home: React.FC<any> = (props: any) => {
           ) {
             setTimeout(() => {
               setLoading(false);
-            }, homeSettingData?.['slider-1']?.delay || 0);
+            }, homeSettingData?.['slider-1']?.delay * 1000 || 0);
           }
         }
       });
@@ -2427,7 +2461,7 @@ const Home: React.FC<any> = (props: any) => {
           if (index + 1 === homeSettingData?.['slider-1']?.controlList?.length) {
             setTimeout(() => {
               setLoading(false);
-            }, (homeSettingData?.['slider-1']?.delay || 0) + 2000);
+            }, (homeSettingData?.['slider-1']?.delay || 0) * 1000 + 2000);
           }
         });
       });
@@ -2459,7 +2493,7 @@ const Home: React.FC<any> = (props: any) => {
             setTimeout(() => {
               setLoading(false);
               resolve(true);
-            }, homeSettingData?.['slider-1']?.delay || 0);
+            }, homeSettingData?.['slider-1']?.delay * 1000 || 0);
           }
         });
         homeSettingData?.['slider-1']?.controlList?.forEach((item: any, index: number) => {
@@ -2474,7 +2508,7 @@ const Home: React.FC<any> = (props: any) => {
               setTimeout(() => {
                 resolve(true);
                 setLoading(false);
-              }, (homeSettingData?.['slider-1']?.delay || 0) + 2000);
+              }, (homeSettingData?.['slider-1']?.delay || 0) * 1000 + 2000);
             }
           });
         });
@@ -4228,7 +4262,7 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                   </Fragment>
                 ) : null}
-                {['table3', 'table2', 'table'].includes(windowType) ? (
+                {['tableAntd', 'table3', 'table2', 'table'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item name="des_layout" label="布局方向" initialValue={'vertical'}>
                       <Select
@@ -4304,34 +4338,147 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item name="des_bordered" label="是否展示边框" valuePropName="checked">
                       <Switch />
                     </Form.Item>
-                    <Form.Item
-                      name={`valueColor`}
-                      label={'颜色渲染'}
-                      initialValue={'value'}
-                      rules={[{ required: false, message: '颜色渲染' }]}
-                    >
-                      <Select
-                        style={{ width: '100%' }}
-                        options={[
-                          {
-                            value: 'value',
-                            label: '数据颜色渲染到文字上',
-                          },
-                          {
-                            value: 'background',
-                            label: '数据颜色渲染到背景',
-                          },
-                        ]}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name={`line_height`}
-                      label={'内容行高'}
-                      rules={[{ required: true, message: '内容行高' }]}
-                      initialValue={38}
-                    >
-                      <InputNumber min={10} />
-                    </Form.Item>
+                    {!['tableAntd'].includes(windowType) ? (
+                      <Fragment>
+                        <Form.Item
+                          name={`valueColor`}
+                          label={'颜色渲染'}
+                          initialValue={'value'}
+                          rules={[{ required: false, message: '颜色渲染' }]}
+                        >
+                          <Select
+                            style={{ width: '100%' }}
+                            options={[
+                              {
+                                value: 'value',
+                                label: '数据颜色渲染到文字上',
+                              },
+                              {
+                                value: 'background',
+                                label: '数据颜色渲染到背景',
+                              },
+                            ]}
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          name={`line_height`}
+                          label={'内容行高'}
+                          rules={[{ required: true, message: '内容行高' }]}
+                          initialValue={38}
+                        >
+                          <InputNumber min={10} />
+                        </Form.Item>
+                      </Fragment>
+                    ) : (
+                      <Fragment>
+                        <Form.Item
+                          name={`fetchType`}
+                          label={'http类型'}
+                          rules={[{ required: false, message: 'http类型' }]}
+                        >
+                          <Select
+                            style={{ width: '100%' }}
+                            options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
+                              value: item,
+                              label: _.toUpper(item),
+                            }))}
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          name={`xName`}
+                          label={'接口地址'}
+                          rules={[{ required: false, message: '接口地址' }]}
+                        >
+                          <Input size="large" />
+                        </Form.Item>
+                        <Form.Item
+                          name={`staticHeight`}
+                          label={'表格大小'}
+                          rules={[{ required: true, message: '表格大小' }]}
+                          initialValue={'small'}
+                        >
+                          <Select
+                            style={{ width: '100%' }}
+                            options={[
+                              {
+                                value: 'small',
+                                label: '小',
+                              },
+                              {
+                                value: 'middle',
+                                label: '中',
+                              },
+                              {
+                                value: 'default',
+                                label: '大',
+                              },
+                            ]}
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          name={`timeSelectDefault`}
+                          label={'操作项'}
+                          rules={[{ required: false, message: '操作项' }]}
+                        >
+                          {commonSettingList
+                            ?.sort((a: any, b: any) => a.sort - b.sort)
+                            ?.map((item: any, index: number) => {
+                              const { label, value, id } = item;
+                              return (
+                                <div
+                                  className="flex-box"
+                                  key={`segmentSwitch-item-${index}`}
+                                  style={{ marginBottom: 8, gap: 8 }}
+                                >
+                                  <div style={{ flex: 1 }}>
+                                    <Input
+                                      defaultValue={label}
+                                      placeholder="label"
+                                      style={{ height: 28 }}
+                                      onChange={(e) => {
+                                        const val = e?.target?.value;
+                                        onBodyBoxChange(val, index, 'label');
+                                      }}
+                                    />
+                                  </div>
+                                  <div style={{ flex: 1 }}>
+                                    <Input
+                                      defaultValue={value}
+                                      placeholder="value"
+                                      style={{ height: 28 }}
+                                      onChange={(e) => {
+                                        const val = e?.target?.value;
+                                        onBodyBoxChange(val, index, 'value');
+                                      }}
+                                    />
+                                  </div>
+                                  <Button
+                                    icon={<MinusSquareOutlined />}
+                                    style={{ height: 28 }}
+                                    onClick={() => {
+                                      onBodyBoxChange('', id, 'remove');
+                                    }}
+                                  />
+                                  <Button
+                                    icon={<ArrowUpOutlined />}
+                                    style={{ height: 28 }}
+                                    disabled={index === 0}
+                                    onClick={() => {
+                                      onBodyBoxChange('', index, 'up');
+                                    }}
+                                  />
+                                </div>
+                              );
+                            })}
+                          <Button
+                            icon={<PlusSquareOutlined />}
+                            onClick={() => {
+                              onBodyBoxChange('', 0, 'add');
+                            }}
+                          />
+                        </Form.Item>
+                      </Fragment>
+                    )}
                   </Fragment>
                 ) : null}
                 {['table4'].includes(windowType) ? (
@@ -4340,6 +4487,7 @@ const Home: React.FC<any> = (props: any) => {
                       name={`staticHeight`}
                       label={'紧凑行高'}
                       rules={[{ required: true, message: '紧凑行高' }]}
+                      valuePropName="checked"
                       initialValue={false}
                     >
                       <Switch />
@@ -4659,6 +4807,9 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item name={'fetchParams'} label="按钮距离上边距" initialValue={0}>
                       <InputNumber min={0} />
                     </Form.Item>
+                    <Form.Item name="direction" label="按钮之间间距" initialValue={16}>
+                      <InputNumber />
+                    </Form.Item>
                   </Fragment>
                 ) : null}
                 {['form'].includes(windowType) ? (
@@ -4889,6 +5040,24 @@ const Home: React.FC<any> = (props: any) => {
                       >
                         新增
                       </Button>
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
+                {['nestForm'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item name="des_column" label="列数">
+                      <InputNumber />
+                    </Form.Item>
+                    <Form.Item name="des_bordered" label="是否展示边框" valuePropName="checked">
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name={`yName`}
+                      label={'label宽度'}
+                      initialValue={150}
+                      rules={[{ required: false, message: 'label宽度' }]}
+                    >
+                      <InputNumber />
                     </Form.Item>
                   </Fragment>
                 ) : null}
@@ -5161,14 +5330,22 @@ const Home: React.FC<any> = (props: any) => {
                     >
                       <Input size="large" />
                     </Form.Item>
+                    <Form.Item
+                      name="modelRotate"
+                      label="开关在前"
+                      initialValue={false}
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
                     <Form.Item name="des_column" label="列数">
                       <InputNumber />
                     </Form.Item>
                     <Form.Item
                       name="direction"
                       tooltip="启动/停止后，loading延迟时间"
-                      label="启动延迟(毫秒)"
-                      initialValue={1000}
+                      label="启动延迟(秒)"
+                      initialValue={0}
                     >
                       <InputNumber />
                     </Form.Item>
@@ -6208,8 +6385,8 @@ const Home: React.FC<any> = (props: any) => {
                   <Form.Item
                     name="delay"
                     tooltip="启动/停止后，loading延迟时间"
-                    label="启动延迟(ms)"
-                    initialValue={1000}
+                    label="启动延迟(秒)"
+                    initialValue={0}
                   >
                     <InputNumber />
                   </Form.Item>
@@ -6236,7 +6413,7 @@ const Home: React.FC<any> = (props: any) => {
                   <Form.Item
                     name={'iconSize'}
                     label="图标大小"
-                    initialValue={24}
+                    initialValue={40}
                     rules={[{ required: true, message: '图标大小' }]}
                   >
                     <InputNumber min={12} />

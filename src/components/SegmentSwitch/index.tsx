@@ -19,6 +19,7 @@ interface Props {
   layout?: string;
   border?: boolean;
   buttonColor?: any;
+  reverse?: boolean;
 }
 
 const SegmentSwitch: React.FC<Props> = (props: any) => {
@@ -37,6 +38,7 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
     layout,
     border = false,
     buttonColor,
+    reverse = false,
   } = props;
   const [lock, setLock] = useState(0);
   useEffect(() => {
@@ -53,9 +55,17 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
     <div
       className={`flex-box ${styles['segment-switch']}`}
       ref={ref}
-      style={Object.assign({}, style ? { ...style } : {})}
+      style={Object.assign(
+        {},
+        style ? { ...style } : {},
+        reverse ? { flexDirection: 'row-reverse' } : {},
+      )}
     >
-      {!!title ? <div className="segment-switch-title">{title}</div> : null}
+      {!!title ? (
+        <div className="segment-switch-title" style={{ textAlign: reverse ? 'left' : 'right' }}>
+          {title}
+        </div>
+      ) : null}
       <div
         className={`${
           layout === 'vertical' ? 'flex-box-column' : 'flex-box'

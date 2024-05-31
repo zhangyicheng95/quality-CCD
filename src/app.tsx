@@ -114,11 +114,13 @@ export async function getInitialState(): Promise<{
           (iframeTheme === 'dark' ? 'realDark' : iframeTheme) || theme || 'realDark';
       } else {
         console.log('appjs中方案信息报错: ', res);
-        localStorage.setItem('ipString', query?.id);
-        message.error('获取方案信息接口报错，5秒钟后自动刷新');
-        setTimeout(() => {
-          window.location.reload();
-        }, 5000);
+        if (!!query?.id) {
+          localStorage.setItem('ipString', query?.id);
+          message.error('获取方案信息接口报错，5秒钟后自动刷新');
+          setTimeout(() => {
+            window.location.reload();
+          }, 5000);
+        }
       }
     }
   }

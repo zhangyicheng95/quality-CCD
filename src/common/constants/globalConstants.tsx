@@ -136,6 +136,11 @@ export const windowTypeList: any = [
     icon: table5Icon,
   },
   {
+    value: 'tableAntd',
+    label: 'antd表格',
+    icon: table5Icon,
+  },
+  {
     value: 'rangeDomain',
     label: '区域功能窗口',
     icon: rangeDomainIcon,
@@ -242,6 +247,10 @@ export const windowTypeList: any = [
   {
     value: 'form',
     label: '自定义表单',
+  },
+  {
+    value: 'nestForm',
+    label: '嵌套表单',
   },
 ];
 // 默认基础组件

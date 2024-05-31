@@ -1410,7 +1410,7 @@ export const FormatWidgetToDom: any = (props: any) => {
           rules={[{ required: require, message: `${alias}` }]}
         >
           <SegmentSwitch
-            style={{ height: 40 }}
+            style={{ height: 40, width: '40%', maxWidth: 300 }}
             fontInBody={[
               { label: '', value: false, backgroundColor: 'grey' },
               { label: '', value: true, backgroundColor: '' },

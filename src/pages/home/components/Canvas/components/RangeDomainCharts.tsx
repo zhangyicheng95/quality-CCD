@@ -12,6 +12,119 @@ interface Props {
   onClick?: any;
 }
 
+const sourceList = [
+  {
+    alias: '灰尘',
+    name: 'point_defect',
+    data: [
+      { key: 'length', value: '1.00', type: 'float' },
+      { key: 'width', value: '5.00', type: 'float' },
+      { key: 'edge_switch', value: false, type: 'bool' },
+      { key: 'global_switch', value: false, type: 'bool' },
+    ],
+  },
+  {
+    alias: '划痕',
+    name: 'scratch',
+    data: [
+      { key: 'length', value: '1.00', type: 'float' },
+      { key: 'width', value: '5.00', type: 'float' },
+      { key: 'edge_switch', value: false, type: 'bool' },
+      { key: 'global_switch', value: false, type: 'bool' },
+    ],
+  },
+  {
+    alias: '手印',
+    name: 'handprint',
+    data: [
+      { key: 'length', value: '1.00', type: 'float' },
+      { key: 'width', value: '5.00', type: 'float' },
+      { key: 'edge_switch', value: false, type: 'bool' },
+      { key: 'global_switch', value: false, type: 'bool' },
+    ],
+  },
+  {
+    alias: '崩边',
+    name: 'broken_edge',
+    data: [
+      { key: 'length', value: '1.00', type: 'float' },
+      { key: 'width', value: '5.00', type: 'float' },
+      { key: 'edge_switch', value: false, type: 'bool' },
+      { key: 'global_switch', value: false, type: 'bool' },
+    ],
+  },
+  {
+    alias: '气泡',
+    name: 'bubble',
+    data: [
+      { key: 'length', value: '1.00', type: 'float' },
+      { key: 'width', value: '5.00', type: 'float' },
+      { key: 'edge_switch', value: false, type: 'bool' },
+      { key: 'global_switch', value: false, type: 'bool' },
+    ],
+  },
+  {
+    alias: '脏污',
+    name: 'dirty',
+    data: [
+      { key: 'length', value: '1.00', type: 'float' },
+      { key: 'width', value: '5.00', type: 'float' },
+      { key: 'edge_switch', value: false, type: 'bool' },
+      { key: 'global_switch', value: false, type: 'bool' },
+    ],
+  },
+  {
+    alias: '叠片',
+    name: 'fold_flat',
+    data: [
+      { key: 'length', value: '1.00', type: 'float' },
+      { key: 'width', value: '5.00', type: 'float' },
+      { key: 'edge_switch', value: false, type: 'bool' },
+      { key: 'global_switch', value: false, type: 'bool' },
+    ],
+  },
+  {
+    alias: '裂纹',
+    name: 'flaw',
+    data: [
+      { key: 'length', value: '1.00', type: 'float' },
+      { key: 'width', value: '5.00', type: 'float' },
+      { key: 'edge_switch', value: false, type: 'bool' },
+      { key: 'global_switch', value: false, type: 'bool' },
+    ],
+  },
+  {
+    alias: '毛条',
+    name: 'woolen',
+    data: [
+      { key: 'length', value: '1.00', type: 'float' },
+      { key: 'width', value: '5.00', type: 'float' },
+      { key: 'edge_switch', value: false, type: 'bool' },
+      { key: 'global_switch', value: false, type: 'bool' },
+    ],
+  },
+  {
+    alias: '点缺陷',
+    name: 'point_defect_real',
+    data: [
+      { key: 'length', value: '1.00', type: 'float' },
+      { key: 'width', value: '5.00', type: 'float' },
+      { key: 'edge_switch', value: false, type: 'bool' },
+      { key: 'global_switch', value: false, type: 'bool' },
+    ],
+  },
+  {
+    alias: '疑似划伤',
+    name: 'suspected_ws',
+    data: [
+      { key: 'length', value: '1.00', type: 'float' },
+      { key: 'width', value: '5.00', type: 'float' },
+      { key: 'edge_switch', value: false, type: 'bool' },
+      { key: 'global_switch', value: false, type: 'bool' },
+    ],
+  },
+];
+
 const RangeDomainCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id, updateTabs } = props;
   let {
@@ -29,7 +142,9 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
     parentBodyBoxTab,
     formCustom,
   } = data;
-  const [dataSource, setDataSource] = useState<any>([]);
+  const [dataSource, setDataSource] = useState<any>(
+    process.env.NODE_ENV === 'development' ? sourceList : [],
+  );
   const inputDom = useRef<any>(null);
 
   const init = () => {
@@ -172,6 +287,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                   des_column > 1
                     ? {
                         width: `${100 / des_column}%`,
+                        paddingRight: 8,
                         // marginRight: index % index === 1 ? 0 : 8,
                       }
                     : {},
@@ -200,10 +316,14 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                     <div
                       className="flex-box-column range-domain-box-item-td"
                       key={`range-domain-box-item-td-${cIndex}`}
-                      style={Object.assign({}, type !== 'bool' ? { width: '100%' } : {}, {
-                        height: hiddenAxis && index < des_column ? line_height + 38 : line_height,
-                        marginBottom: 4,
-                      })}
+                      style={Object.assign(
+                        {},
+                        type !== 'bool' ? { width: '100%', height: '100%' } : {},
+                        {
+                          height: hiddenAxis && index < des_column ? line_height + 38 : line_height,
+                          marginBottom: 4,
+                        },
+                      )}
                     >
                       {hiddenAxis ? (
                         <div
@@ -246,7 +366,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                           name={`${parentBodyBoxTab}$$${key}$$${name}`}
                           label={''}
                           style={Object.assign(
-                            { width: '100%', marginBottom: 0 },
+                            { width: '100%', height: '100%', marginBottom: 0 },
                             hiddenAxis && index < des_column ? { height: 'calc(100% - 38px)' } : {},
                           )}
                           rules={[{ required: false, message: alias }]}
@@ -282,7 +402,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                         <div
                           className="flex-box range-domain-box-item-td-read"
                           style={Object.assign(
-                            { width: '100%' },
+                            { width: '100%', height: '100%' },
                             hiddenAxis && index < des_column ? { height: 'calc(100% - 38px)' } : {},
                           )}
                         >

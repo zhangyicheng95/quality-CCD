@@ -1,11 +1,10 @@
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
-import { Button, Form, Input, InputNumber, message, Modal } from 'antd';
+import { Button, Form, message, Modal } from 'antd';
 import styles from '../index.module.less';
 import { btnFetch } from '@/services/api';
 import CustomWindowBody from '@/components/CustomWindowBody';
 import { FormatWidgetToDom } from './Operation2Charts';
-import { init } from '@umijs/deps/compiled/webpack';
 import BasicTable from '@/components/BasicTable';
 import { guid } from '@/utils/utils';
 
@@ -340,7 +339,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
               {timeSelectDefault
                 ?.sort((a: any, b: any) => a.sort - b.sort)
                 ?.map((item: any, index: number) => {
-                  const { name, alias, sort = 0, type, disabled, className, parent } = item;
+                  const { name, alias, sort = 0, type, disabled, parent } = item;
                   if (formModalEdit === parent) {
                     item = {
                       alias,
@@ -398,7 +397,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
             <div className="order-information-modal-body-top-form-box">
               <Form form={form}>
                 {timeSelectDefault?.map((item: any) => {
-                  const { name, alias, sort = 0, type, className, parent, disabled = false } = item;
+                  const { name, alias, sort = 0, type, parent, disabled = false } = item;
                   if (!!parent || ['Button', 'ModalButton'].includes(type)) {
                     return null;
                   }

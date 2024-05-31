@@ -17,7 +17,16 @@ interface Props {
 
 const BodyBoxCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id, started } = props;
-  let { dispatch, timeSelectDefault, fontSize, yName = 0, iconSize, fetchParams = 0 } = data;
+  let {
+    dispatch,
+    timeSelectDefault,
+    fontSize,
+    yName = 0,
+    iconSize,
+    fetchParams = 0,
+    direction = 16,
+    addContentList,
+  } = data;
   const ipString: any = localStorage.getItem('ipString') || '';
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState();
@@ -103,6 +112,18 @@ const BodyBoxCharts: React.FC<Props> = (props: any) => {
         bodyBoxTab: value,
       },
     });
+    let ids: any = [];
+    addContentList.forEach((i: any) => {
+      if (i.type === 'rangeDomain') {
+        ids.push(i.id);
+      }
+    });
+    dispatch({
+      type: 'home/set',
+      payload: {
+        updateTabs: ids,
+      },
+    });
     setSelected(value);
   };
 
@@ -110,7 +131,7 @@ const BodyBoxCharts: React.FC<Props> = (props: any) => {
     <div id={`echart-${id}`} className={`${styles.bodyBoxCharts}`} style={{ fontSize }}>
       <div
         className="flex-box-start body-box-change-btn"
-        style={{ marginLeft: yName, marginTop: fetchParams }}
+        style={{ marginLeft: yName, marginTop: fetchParams, gap: direction }}
       >
         {(timeSelectDefault || [])
           ?.sort((a: any, b: any) => a.sort - b.sort)

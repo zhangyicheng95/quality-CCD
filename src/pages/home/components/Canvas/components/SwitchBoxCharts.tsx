@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { Badge, Form, message } from 'antd';
 import { getFlowStatusService, startFlowService, stopFlowService } from '@/services/api';
 import SegmentSwitch from '@/components/SegmentSwitch';
-import { connect } from 'umi';
+import openNotificationWithIcon from '@/components/openNotificationWithIcon';
 
 interface Props {
   data: any;
@@ -20,16 +20,45 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
     yName = '',
     timeSelectDefault = [],
     des_column = 1,
-    direction = 1000,
+    direction = 0,
+    modelRotate = false,
   } = data;
   const ipString: any = localStorage.getItem('ipString') || '';
   const [form] = Form.useForm();
   const timeRef = useRef<any>();
   const statusListRef = useRef<any>({});
+  const socketRef = useRef<any>({});
   const [localhostLoading, setLocalhostLoading] = useState(false);
   const [loading, setLoading] = useState({});
   const [statusList, setStatusList] = useState<any>({});
 
+  const socketListen = (ip: string, id: string) => {
+    socketRef.current[id] = new WebSocket(`ws://${ip}:8866/task-error/${id}`);
+    socketRef.current[id].onopen = () => {
+      console.log(`开关中的task-error ws:open`);
+    };
+    socketRef.current[id].onmessage = (msg: any) => {
+      try {
+        const result = JSON.parse(msg.data);
+        const currentData = {
+          time: new Date().getTime(),
+          ...result,
+          level: _.toLower(result.level),
+          message: `（机器${ip}） ${
+            _.isArray(result?.message) ? result.message.join(',') : result.message
+          }`,
+        };
+        openNotificationWithIcon(currentData);
+      } catch (err) {
+        // console.log(err);
+      }
+    };
+    socketRef.current[id].onclose = function () {
+      console.log(`开关中的task-error ws:close`);
+      socketRef.current[id] = null;
+    };
+  };
+  // 轮训查询状态
   const initStatus = (list: any, index: number) => {
     const item = list?.[index];
     if (!!item) {
@@ -40,7 +69,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
         statusListRef.current = {
           ...statusListRef.current,
           [`${item.ip}_${item.projectId}`]:
-            res && res.code === 'SUCCESS' && !!Object.keys?.(res?.data || {})?.length,
+            !!res && res.code === 'SUCCESS' && !!Object.keys?.(res?.data || {})?.length,
         };
         setStatusList(statusListRef.current);
         form.setFieldsValue({
@@ -48,6 +77,9 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
           all: Object.values(statusListRef.current)?.includes(true),
         });
         if (res && res.code === 'SUCCESS') {
+          if (!socketRef.current?.[item.projectId] && item.projectId !== ipString) {
+            socketListen(item?.ip, item?.projectId);
+          }
         } else {
           message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
         }
@@ -81,9 +113,11 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
 
     return () => {
       timeRef.current = false;
+      Object.entries(socketRef.current).forEach((item: any) => {
+        item[1]?.close();
+      });
     };
   }, [timeSelectDefault]);
-
   const titleLength = useMemo(() => {
     let length = yName.length;
     (timeSelectDefault || [])
@@ -183,15 +217,15 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
           ...statusListRef.current,
           [`${item.ip}_${item.projectId}`]: !!res,
         };
-        setLoading((prev: any) => {
-          return {
-            ...prev,
-            [`${item.ip}_${item.projectId}`]: false,
-          };
-        });
         setTimeout(() => {
-          startList(list, index + 1);
-        }, direction || 1000);
+          setLoading((prev: any) => {
+            return {
+              ...prev,
+              [`${item.ip}_${item.projectId}`]: false,
+            };
+          });
+        }, direction * 1000 || 1000);
+        startList(list, index + 1);
       });
     } else {
       setLocalhostLoading(false);
@@ -279,7 +313,13 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
                 style={{ marginBottom: 0 }}
               >
                 <SegmentSwitch
-                  title={<div style={{ minWidth: titleLength, textAlign: 'right' }}>{yName}</div>}
+                  title={
+                    <div
+                      style={{ minWidth: titleLength, textAlign: !!modelRotate ? 'left' : 'right' }}
+                    >
+                      {yName}
+                    </div>
+                  }
                   fontInBody={[
                     { label: '停止', value: false },
                     { label: '启动', value: true },
@@ -291,6 +331,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
                       ? 'grey'
                       : '#b8831b'
                   }
+                  reverse={!!modelRotate}
                   loading={localhostLoading}
                   onClick={(e: any) => {
                     setLocalhostLoading(true);
@@ -338,8 +379,12 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
                       <SegmentSwitch
                         title={
                           <div
-                            className="flex-box-justify-end"
-                            style={{ minWidth: titleLength, alignItems: 'center', gap: 8 }}
+                            className={`${!!modelRotate ? 'flex-box' : 'flex-box-justify-end'}`}
+                            style={{
+                              minWidth: titleLength,
+                              alignItems: 'center',
+                              gap: 8,
+                            }}
                           >
                             {!!statusList?.[`${item.ip}_${item.projectId}`] ? (
                               <Badge color={'green'} />
@@ -354,6 +399,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
                         buttonColor={
                           !!statusList?.[`${item.ip}_${item.projectId}`] ? '#88db57' : 'grey'
                         }
+                        reverse={!!modelRotate}
                         loading={loading?.[`${item.ip}_${item.projectId}`]}
                         onClick={(e: any) => {
                           if (e) {
@@ -400,6 +446,4 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default connect(({ home, themeStore }) => ({
-  started: home.started || false,
-}))(SwitchBoxCharts);
+export default SwitchBoxCharts;

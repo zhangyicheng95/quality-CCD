@@ -4,11 +4,11 @@ import _ from 'lodash';
 let socket: any = null;
 const type = 'error';
 
-const listen = (action: any, throttleAndMerge: any) => {
+const listen = (action: any, throttleAndMerge: any, ip?: string, id?: string) => {
   if (!socket) {
     try {
       const ipString: string = localStorage.getItem('ipString') || '';
-      const path = `${website.socket}task-${type}/${ipString}`;
+      const path = `${ip || website.socket}task-${type}/${id || ipString}`;
       socket = new WebSocket(path);
       socket.onopen = () => {
         console.log(`${type} ws:open`);
@@ -23,7 +23,7 @@ const listen = (action: any, throttleAndMerge: any) => {
             level: _.toLower(result.level),
             message: _.isArray(result?.message) ? result.message.join(',') : result.message,
           };
-          action({ type: `home/${type}Message`, payload: currentData });
+          action?.({ type: `home/${type}Message`, payload: currentData });
         } catch (err) {
           // console.log(err);
         }
@@ -33,12 +33,12 @@ const listen = (action: any, throttleAndMerge: any) => {
         socket = undefined;
       };
       socket.onerror = () => reconnect(action, throttleAndMerge);
-      action({
+      action?.({
         type: `home/${type}Connect`,
         payload: { [`${type}Status`]: 'success' },
       });
     } catch (e) {
-      action({
+      action?.({
         type: `home/${type}Connect`,
         payload: { [`${type}Status`]: 'failed' },
       });
@@ -56,7 +56,7 @@ function reconnect(action: any, throttleAndMerge: any) {
   }, 2000);
 }
 
-const close = (action: any) => {
+const close = (action?: any) => {
   if (socket) {
     socket.onclose();
   }

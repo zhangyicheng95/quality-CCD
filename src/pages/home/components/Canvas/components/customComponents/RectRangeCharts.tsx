@@ -34,15 +34,17 @@ const RectRangeCharts: React.FC<Props> = (props: any) => {
     if (!!xName) {
       btnFetch('get', xName).then((res: any) => {
         if (!!res && res.code === 'SUCCESS') {
-          setDataSource(res?.data || []);
-          form.setFieldsValue(
-            Object.entries(res?.data || {})?.reduce((pre: any, cen: any) => {
-              return {
-                ...pre,
-                [`disabled-${cen[0]}`]: !!cen[1]?.disabled,
-              };
-            }, {}),
-          );
+          setTimeout(() => {
+            setDataSource(res?.data || []);
+            form.setFieldsValue(
+              Object.entries(res?.data || {})?.reduce((pre: any, cen: any) => {
+                return {
+                  ...pre,
+                  [`disabled-${cen[0]}`]: !!cen[1]?.disabled,
+                };
+              }, {}),
+            );
+          }, 500);
         } else {
           message.error(res?.message || '后台服务异常，请重启服务');
         }

@@ -57,9 +57,6 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
   if (!_.isBoolean(showLabel)) {
     showLabel = true;
   }
-  // if (process.env.NODE_ENV === 'development') {
-  //     started = true;
-  // }
   const [form] = Form.useForm();
   const { validateFields, resetFields, setFieldsValue } = form;
   const { initialState, setInitialState } = useModel<any>('@@initialState');
@@ -88,7 +85,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     let num = 1;
     (operationList || []).forEach((item: any) => {
       if (execParams?.[item] && execParams?.[item]?.widget?.type === 'Measurement') {
-        const length = Object?.keys?.(execParams?.[item]?.value)?.length || 1;
+        const length = Object?.keys?.(execParams?.[item]?.value || {})?.length || 1;
         if (length > num) {
           num = length;
         }
@@ -186,27 +183,14 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
               !_.isUndefined(res[1]) && !_.isNull(res[1])
                 ? res[1]
                 : pre?.filter((i: any) => i.name === name)?.[0]?.value;
-            if (!!pre?.filter((i: any) => i.name === name)?.[0]?.enabled) {
-              // @ts-ignore
-              result[name] = value instanceof moment ? new Date(value).getTime() : value;
-            }
+            // @ts-ignore
+            result[name] = value instanceof moment ? new Date(value).getTime() : value;
             resultEnabled[name] = _.isBoolean(
               pre?.filter((i: any) => i.name === name)?.[0]?.enabled,
             )
               ? pre?.filter((i: any) => i.name === name)?.[0]?.enabled
               : true;
           });
-          // let valueRes = {};
-          // if (valueOnTop) {
-          //   Object.entries(resultEnabled).forEach((item: any) => {
-          //     valueRes[item[0]] = {
-          //       value: result[item[0]],
-          //       enabled: item[1],
-          //     };
-          //   });
-          // } else {
-          //   valueRes = Object.assign({}, result);
-          // }
           const requestParams = {
             id: params.id,
             data: result,
@@ -233,8 +217,9 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                 }
                 let obj = Object.assign({}, execParams);
                 pre.forEach((item: any, index: number) => {
-                  if (resultEnabled[item?.name]) {
+                  if (!!item?.name && item?.name !== 'undefined') {
                     obj[item?.name] = {
+                      ...item,
                       value: result[item?.name],
                       ...{ enabled: resultEnabled[item?.name] },
                       ...(item?.widget?.type === 'TagRadio'
@@ -311,20 +296,18 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     if (!name) {
       name = item?.id;
     }
-    // let optionList: any = [];
-    // Object.values(selectedOption)?.forEach(option => {
-    //     optionList = optionList.concat(option);
-    // });
-    // if (optionList?.filter((i: any) => i.name === name)?.length) return null;
     return (
       <div
-        className={`${type === 'TagRadio' ? '' : 'flex-box-start'} param-item ${
-          des_bordered ? 'item-border' : ''
-        }`}
+        className={`${
+          type === 'TagRadio'
+            ? ''
+            : ['codeEditor', 'ImageLabelField'].includes(type)
+            ? 'flex-box-start'
+            : 'flex-box'
+        } param-item ${des_bordered ? 'item-border' : ''}`}
         key={`${id}@$@${name}`}
         style={Object.assign(
           {},
-          show ? {} : { height: 0, padding: 0 },
           des_column > 1
             ? {
                 width: `calc(${100 / des_column}% - 8px)`,
@@ -333,14 +316,10 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             : {},
           configList?.length % des_column === 1
             ? { marginBottom: index + 1 === configList.length ? 0 : 16 }
-            : { marginBottom: index + des_column >= configList.length ? 0 : 16 },
+            : { marginBottom: 8 }, //index + des_column >= configList.length ? 0 : 16 },
+          !_.isBoolean(show) || show ? {} : { height: 0, marginBottom: 0, padding: 0 },
         )}
       >
-        {/* <div className="flex-box"> */}
-        {/* <div className="icon-box flex-box">
-                                            {_.toUpper(type.slice(0, 1))} */}
-        {/* <BlockOutlined className="item-icon" /> */}
-        {/* </div> */}
         {showLabel ? (
           <div className="title-box" style={{ width: yName, maxWidth: yName }}>
             <TooltipDiv style={{ fontSize }} className="first" title={alias || name}>
@@ -353,7 +332,9 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         ) : null}
         {/* </div> */}
         <div
-          className="flex-box-start value-box"
+          className={`${
+            ['codeEditor', 'ImageLabelField'].includes(type) ? 'flex-box-start' : 'flex-box'
+          } value-box`}
           style={type === 'TagRadio' ? { width: 'calc(100% - 16px)' } : {}}
         >
           <div style={{ flex: 1 }}>
@@ -380,6 +361,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
               <SegmentSwitch
                 style={{ fontSize: 12 }}
                 defaultValue={enabled}
+                disabled={locked}
                 fontInBody={[
                   { label: '禁', value: false, backgroundColor: 'grey' },
                   {
@@ -446,7 +428,10 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                           const item = configList.filter((i: any) => i?.name === child)?.[0];
                           if (!item) return null;
                           return (
-                            <div className="flex-box param-group-item-body-box">
+                            <div
+                              className="flex-box param-group-item-body-box"
+                              key={`param-group-item-body-box-${index}`}
+                            >
                               {/* <div className="param-line-row" >--</div> */}
                               {initItem({ ...item, show, locked }, index)}
                             </div>
@@ -1070,7 +1055,7 @@ export function FormatWidgetToDom(props: any) {
           >
             <TooltipDiv title={localPath}>{localPath}</TooltipDiv>
           </FormItem>
-          <div className="flex-box">
+          <div className="flex-box" style={{ gap: 8 }}>
             <ChooseFileButton
               name={name}
               onClick={() => {
@@ -1121,9 +1106,6 @@ export function FormatWidgetToDom(props: any) {
             value ||
             defaultValue || {
               num_0: { alias: 'num_0', value: undefined },
-              num_1: { alias: 'num_1', value: undefined },
-              num_2: { alias: 'num_2', value: undefined },
-              num_3: { alias: 'num_3', value: undefined },
             }
           }
           rules={[{ required: require, message: `${alias}` }]}

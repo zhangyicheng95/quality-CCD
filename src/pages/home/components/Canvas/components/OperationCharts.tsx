@@ -61,7 +61,9 @@ const OperationCharts: React.FC<Props> = (props: any) => {
       let resConfig: any = [];
       operationList?.forEach((item: any) => {
         if (initParams[item]) {
-          resConfig = resConfig.concat(Object.assign({ enabled: true }, initParams[item]));
+          resConfig = resConfig.concat(
+            Object.assign({ enabled: true }, _.omit(initParams[item], 'show')),
+          );
         }
       });
       setConfigList(resConfig);

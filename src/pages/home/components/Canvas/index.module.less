@@ -1096,6 +1096,119 @@
   }
 }
 
+.tableAntdCharts {
+  width: 100%;
+  height: 100%;
+  user-select: text;
+
+  :global {
+    .static-height {
+      .ant-table-tbody>tr>td {
+        padding: 2px 8px;
+      }
+    }
+
+    .ant-table {
+      font-size: inherit !important;
+
+      .ant-table-container {
+        border-left: 0 !important;
+        border-right: 0 !important;
+
+        .ant-table-header>table {
+          border-top: 0 !important;
+        }
+      }
+
+      .ant-table-header {
+        height: auto !important;
+        max-height: 100px !important;
+
+        table>thead>tr>th {
+          padding: 8px;
+        }
+      }
+    }
+
+    .header-color-default {
+      .ant-table {
+        .ant-table-thead>tr>th {
+          background-color: #f2f3f4;
+        }
+      }
+    }
+
+    .header-color-transparent {
+      .ant-table {
+        .ant-table-thead>tr>th {
+          background-color: transparent;
+        }
+      }
+    }
+
+    .header-color-line1 {
+      .ant-table {
+        .ant-table-thead>tr {
+          background-image:
+            linear-gradient(to right, rgba(39, 90, 235, 0.8), rgba(140, 210, 220, 1));
+        }
+
+        .ant-table-thead>tr>th {
+          background-color: transparent;
+        }
+      }
+    }
+
+    .body-color-1 {
+      .ant-table-body {
+        .ant-table-row:nth-child(odd) {
+          background-color: #fafafa;
+        }
+      }
+    }
+
+    .body-color-2 {
+      .ant-table-body {
+        .ant-table-row:nth-child(odd) {
+          background-color: rgba(6, 171, 247, 0.5);
+        }
+      }
+    }
+
+    .expand-icon-size-20 {
+      .ant-table-row-expand-icon {
+        margin-top: 6px;
+        width: 20px;
+        height: 20px;
+
+        &::after {
+          left: 9px;
+        }
+
+        &::before {
+          top: 9px;
+        }
+      }
+    }
+
+    .expand-icon-size-24 {
+      .ant-table-row-expand-icon {
+        margin-top: 7px;
+        width: 24px;
+        height: 24px;
+
+        &::after {
+          left: 11px;
+        }
+
+        &::before {
+          top: 11px;
+        }
+      }
+    }
+  }
+}
+
 .alertCharts {
   flex-wrap: wrap;
   align-items: normal;
@@ -2932,53 +3045,59 @@
 
   :global {
     .output-area-item-box {
-      gap: 1%;
+      gap: 8px;
 
       .output-area-item {
         width: 10%;
-        border: 1px solid rgba(144, 144, 144, .6);
+        max-width: 10%;
+        border: 2px solid rgba(144, 144, 144, .6);
         border-radius: 8px;
 
         &-top {
-          padding: 4px 8px;
-          border-bottom: 3px solid rgba(144, 144, 144, .6);
+          padding: 2px 8px;
+          border-bottom: 0.5px solid rgba(144, 144, 144, .2);
+          opacity: .6;
 
           &-left {
-            padding: 0 12px;
-            border-radius: 8px;
-            background-color: @primary-color;
+            padding-right: 8px;
+            font-size: inherit;
+            // background-color: @primary-color;
+            // color: #fafafa;
           }
 
           &-right {
-            // opacity: 0;
-            padding: 0 8px;
-            background-color: rgba(144, 144, 144, .6);
+            padding-left: 8px;
+            gap: 4px;
           }
         }
 
         &-bottom {
-          padding: 8px;
           height: 60px;
           min-height: 60px;
 
           &-left {
             height: 100%;
+            padding: 8px 0 8px 8px;
 
             &-item {
-              text-align: right;
-              padding: 0 8px;
-              background-color: #000;
-              color: rgb(42, 145, 144);
-              margin-bottom: 4px;
+              flex-direction: column;
+              background-color: #fafafa;
+              border-radius: 4px;
+              padding: 2px 4px 0 4px;
+              opacity: .5;
               height: 100%;
+              cursor: pointer;
             }
           }
 
           &-right {
             flex: 1;
+            padding: 0 4px;
             height: 100%;
-            overflow: auto;
-            margin-left: 8px;
+            line-height: 1;
+            overflow: hidden;
+            text-align: center;
+            font-weight: bolder;
           }
         }
       }
