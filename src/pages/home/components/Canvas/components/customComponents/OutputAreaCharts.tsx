@@ -56,7 +56,7 @@ const OutputAreaCharts: React.FC<Props> = (props: any) => {
       className={`${styles.outputAreaCharts}`}
       style={{ fontSize: titleFontSize }}
     >
-      <CustomWindowBody title="出料区" style={{ fontSize }} titleFontSize={titleFontSize}>
+      <CustomWindowBody title="" style={{ fontSize }} titleFontSize={titleFontSize}>
         <div className="flex-box output-area-item-box" style={{ marginBottom: 24 }}>
           {Array.from({ length: 10 })?.map?.((item: any, index: number) => {
             const id = 1 + index * 2;

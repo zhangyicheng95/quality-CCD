@@ -18,7 +18,7 @@ interface Props {
 }
 let timer: NodeJS.Timeout | null = null;
 const MonacoEditor: React.FC<Props> = (props) => {
-  const { id = '', defaultValue = '', language = 'json', visible, onOk, onCancel } = props;
+  const { id = '', defaultValue = '', language = '', visible, onOk, onCancel } = props;
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
   const editorRef = useRef<any>({
@@ -52,7 +52,7 @@ const MonacoEditor: React.FC<Props> = (props) => {
     editorRef.current.editorValue = defaultValue;
   }, [defaultValue]);
   useEffect(() => {
-    setEditorLanguage(language);
+    setEditorLanguage(language || 'json');
   }, [language]);
 
   // 导入项目
@@ -84,27 +84,30 @@ const MonacoEditor: React.FC<Props> = (props) => {
       title={
         <div className="flex-box">
           编辑器
-          <Select
-            style={{ width: 200, margin: '0 24px' }}
-            onChange={(val) => {
-              return setEditorLanguage(val);
-            }}
-            value={editorLanguage}
-          >
-            <Option value="javascript">javascript</Option>
-            <Option value="typescript">typescript</Option>
-            <Option value="scss">scss</Option>
-            <Option value="html">html</Option>
-            <Option value="python">python</Option>
-            <Option value="json">json</Option>
-            <Option value="sql">sql</Option>
-            <Option value="redis">redis</Option>
-            <Option value="shell">shell</Option>
-            <Option value="java">java</Option>
-          </Select>
+          {!!language ? (
+            <Select
+              style={{ width: 200, marginLeft: 24 }}
+              onChange={(val) => {
+                return setEditorLanguage(val);
+              }}
+              value={editorLanguage}
+            >
+              <Option value="javascript">javascript</Option>
+              <Option value="typescript">typescript</Option>
+              <Option value="scss">scss</Option>
+              <Option value="html">html</Option>
+              <Option value="python">python</Option>
+              <Option value="json">json</Option>
+              <Option value="sql">sql</Option>
+              <Option value="redis">redis</Option>
+              <Option value="shell">shell</Option>
+              <Option value="java">java</Option>
+            </Select>
+          ) : null}
           <Upload {...uploadProps}>
             <Button
               icon={<UploadOutlined />}
+              style={{ marginLeft: 24 }}
               // type="primary"
             >
               导入本地json
@@ -145,30 +148,6 @@ const MonacoEditor: React.FC<Props> = (props) => {
         }}
         value={_.isObject(editorValue) ? formatJson(editorValue) : editorValue}
       />
-      {/* <Monaco
-        width="100%"
-        height="calc(100vh - 216px)"
-        language={editorLanguage}
-        theme={theme === 'realDark' ? "vs-dark" : "vs-light"}
-        value={editorValue}
-        onChange={(value: any) => {
-          timer && clearTimeout(timer);
-          timer = setTimeout(() => {
-            editorRef.current.editorValue = value;
-            setEditorValue(value);
-          }, 300);
-        }}
-        options={{
-          selectOnLineNumbers: true,
-          roundedSelection: false,
-          readOnly: false,
-          cursorStyle: 'line',
-          automaticLayout: false,
-        }}
-        editorDidMount={(editor: any, monaco: any) => {
-          editorRef.current.editor = editor;
-        }}
-      /> */}
     </Modal>
   );
 };

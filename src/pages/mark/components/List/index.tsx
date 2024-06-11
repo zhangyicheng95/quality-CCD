@@ -1,7 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import PrimaryTitle from '@/components/PrimaryTitle';
 import styles from './index.less';
-import { Button, Upload } from 'antd';
 import UniverExcel from '@/components/UniverExcel';
 
 const MarkList: React.FC = (props: any) => {

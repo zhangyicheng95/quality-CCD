@@ -529,17 +529,31 @@ const Home: React.FC<any> = (props: any) => {
                       if (localStorage.getItem('ipString') !== key) {
                         if (!!started && !!homeSettingData?.['slider-4']?.self_stop_other) {
                           setLoading(true);
-                          stopFlowService(ipString || '').then((res: any) => {
-                            if (res && res.code === 'SUCCESS') {
-                              !!key && localStorage.setItem('ipString', key);
-                              !!statusItem?.realIp &&
-                                localStorage.setItem('ipUrl-realtime', statusItem?.realIp);
-                              window.location.reload();
-                            } else {
-                              message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
-                            }
-                            setLoading(false);
-                          });
+                          // 先停止当前方案
+                          stopFlowService(localStorage.getItem('ipString') || '').then(
+                            (res: any) => {
+                              if (res && res.code === 'SUCCESS') {
+                                // 启动目标方案
+                                startFlowService(key).then((res: any) => {
+                                  if (res && res.code === 'SUCCESS') {
+                                    !!key && localStorage.setItem('ipString', key);
+                                    !!statusItem?.realIp &&
+                                      localStorage.setItem('ipUrl-realtime', statusItem?.realIp);
+                                    window.location.reload();
+                                  } else {
+                                    message.error(
+                                      res?.msg || res?.message || '后台服务异常，请重启服务',
+                                    );
+                                  }
+                                });
+                              } else {
+                                message.error(
+                                  res?.msg || res?.message || '后台服务异常，请重启服务',
+                                );
+                              }
+                              setLoading(false);
+                            },
+                          );
                         } else {
                           !!key && localStorage.setItem('ipString', key);
                           !!statusItem?.realIp &&
@@ -610,7 +624,11 @@ const Home: React.FC<any> = (props: any) => {
           <div className="card-body-box">
             <div
               className="content-item-span"
-              style={homeSettingData['footer-1']}
+              style={Object.assign(
+                {},
+                homeSettingData['footer-1'],
+                homeSettingData['footer-1']?.ifShowHeader ? {} : { height: '100%' },
+              )}
               dangerouslySetInnerHTML={{
                 // 此处需要处理
                 __html: _.isString(logStr)
@@ -1309,6 +1327,8 @@ const Home: React.FC<any> = (props: any) => {
                   'rangeDomain',
                   'rectRange',
                   'modelSwitch',
+                  'iframe',
+                  'timeSelect',
                 ].includes(type) ? (
                   '请重新绑定数据节点'
                 ) : type === 'line' ? (
@@ -1708,6 +1728,7 @@ const Home: React.FC<any> = (props: any) => {
                       xName,
                       fetchType,
                       timeSelectDefault,
+                      modelRotate,
                     }}
                   />
                 ) : type === 'buttonInp' ? (
@@ -2317,6 +2338,8 @@ const Home: React.FC<any> = (props: any) => {
                   ...item,
                   [value[1]]: ['three', 'buttonImages', 'imgButton'].includes(type)
                     ? _.omit(dataValue, 'action')
+                    : ['modelSwitch'].includes(type)
+                    ? _.omit(dataValue, '_str')
                     : dataValue,
                 }
               : item,
@@ -5292,6 +5315,15 @@ const Home: React.FC<any> = (props: any) => {
                       rules={[{ required: false, message: '接口地址' }]}
                     >
                       <Input size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      name="modelRotate"
+                      label="默认初始化"
+                      tooltip="每次刷新后，都传递当前时间给http插件"
+                      initialValue={false}
+                      valuePropName="checked"
+                    >
+                      <Switch />
                     </Form.Item>
                     {form.getFieldValue('yName') === 'rangePicker' ? (
                       <Form.Item

@@ -199,7 +199,7 @@ const Measurement: React.FC<Props> = (props: any) => {
                 className={`self_input ${className}`}
                 ref={refList[index]}
                 defaultValue={value}
-                stringMode
+                stringMode //高精度
                 // precision={type === 'float' ? precision : 0}
                 step={step}
                 max={max}
@@ -249,12 +249,9 @@ const Measurement: React.FC<Props> = (props: any) => {
                 }}
                 onChange={(e: any) => {
                   if (!!onOpenChange) {
-                    const valu = Number(e?.target?.value);
+                    const valu = Number(e);
                     if (!_.isNaN(valu)) {
-                      const val =
-                        type === 'float'
-                          ? parseFloat(e?.target?.value)
-                          : parseInt(e?.target?.value);
+                      const val = type === 'float' ? parseFloat(e) : parseInt(e);
                       setFocus((prev: any) =>
                         Object.assign({}, prev, {
                           [`refnum_${index}`]: !(_.isUndefined(val) || _.isNull(val)),

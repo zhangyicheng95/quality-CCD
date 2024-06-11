@@ -61,7 +61,13 @@ const NestFormCharts: React.FC<Props> = (props: any) => {
       (i: any) => i[1]?.widget?.type === 'NestMap',
     )?.[0];
     const options = Object.entries(nestMapItem?.[1]?.widget?.options || {})?.map((item: any) => {
-      return item[1];
+      const initValue = nestMapItem?.[1]?.value || {};
+      return {
+        ...item[1],
+        ...(!_.isUndefined(initValue?.[item[0]]?.value)
+          ? { value: initValue?.[item[0]]?.value }
+          : {}),
+      };
     });
     setConfigList(options);
   };
@@ -177,6 +183,9 @@ const NestFormCharts: React.FC<Props> = (props: any) => {
               message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
             }
           });
+          setTimeout(() => {
+            setLocked(true);
+          }, 1000);
           return pre;
         });
       })
@@ -194,7 +203,7 @@ const NestFormCharts: React.FC<Props> = (props: any) => {
       <div className={`operation-body`}>
         <Form form={form} scrollToFirstError>
           {configList?.map?.((item: any, index: number) => {
-            const { name, alias, widget = {}, addType, show, locked, enabled } = item;
+            const { name, alias, widget = {}, addType, show, enabled } = item;
             return (
               <div
                 className={`${
@@ -213,7 +222,7 @@ const NestFormCharts: React.FC<Props> = (props: any) => {
                     : {},
                   configList?.length % des_column === 1
                     ? { marginBottom: index + 1 === configList.length ? 0 : 16 }
-                    : { marginBottom: index + des_column >= configList.length ? 0 : 16 },
+                    : { marginBottom: 8 }, //index + des_column >= configList.length ? 0 : 16 },
                 )}
               >
                 <div className="title-box" style={{ width: yName, maxWidth: yName }}>
@@ -244,6 +253,7 @@ const NestFormCharts: React.FC<Props> = (props: any) => {
                       config={[item?.name, item]}
                       widgetChange={widgetChange}
                       form={form}
+                      disabled={locked}
                       // setEditorVisible={setEditorVisible}
                       // setEditorValue={setEditorValue}
                       // setPlatFormVisible={setPlatFormVisible}
@@ -265,6 +275,7 @@ const NestFormCharts: React.FC<Props> = (props: any) => {
                           backgroundColor: 'rgba(24, 144, 255, 1)',
                         },
                       ]}
+                      disabled={locked}
                       onChange={(val: boolean) => {
                         setConfigList((prev: any) =>
                           (prev || [])?.map?.((item: any) => {

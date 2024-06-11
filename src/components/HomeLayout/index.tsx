@@ -49,6 +49,17 @@ const HomeLayout: React.FC<any> = (props) => {
       localStorage.removeItem('ipUrlList');
     }
 
+    var time = 0;
+    window.addEventListener('beforeunload', function (e) {
+      time = new Date().getTime();
+    });
+    window.addEventListener('unload', function (e) {
+      const nowTime = new Date().getTime();
+      if (nowTime - time < 5) {
+        localStorage.removeItem('ipString');
+      }
+    });
+
     return () => {
       window.removeEventListener('message', messageFun);
       timerRef.current && clearTimeout(timerRef.current);

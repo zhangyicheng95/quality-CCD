@@ -305,6 +305,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                       width: titleLength * fontSize,
                       minWidth: titleLength * fontSize,
                       height: line_height,
+                      marginBottom: 4,
                     }}
                   >
                     {alias}

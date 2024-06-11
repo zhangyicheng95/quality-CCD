@@ -3,6 +3,8 @@ import styles from '../../index.module.less';
 import * as _ from 'lodash';
 import { Button, Form, Input, InputNumber, message, Modal, Popconfirm, Select } from 'antd';
 import { btnFetch } from '@/services/api';
+import { formatJson, guid } from '@/utils/utils';
+import MonacoEditor from '@/components/MonacoEditor';
 
 interface Props {
   data: any;
@@ -13,6 +15,7 @@ interface Props {
 const ModelSwitchCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
+    dataValue,
     dispatch,
     fontSize = 14,
     fetchType,
@@ -24,10 +27,16 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [options, setOptions] = useState([]);
+  const [editorVisible, setEditorVisible] = useState(false);
+  const [editorValue, setEditorValue] = useState<any>({});
 
   useEffect(() => {
-    initList();
-  }, []);
+    if (!_.isUndefined(dataValue?._str) && !_.isNull(dataValue?._str)) {
+      triggerUpdate();
+    } else {
+      initList();
+    }
+  }, [dataValue?._str]);
   const initList = () => {
     if (!!xName) {
       btnFetch('get', xName).then((res: any) => {
@@ -40,6 +49,9 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
           }, {});
           formCustom.setFieldsValue({
             ...valData,
+            [`${parentBodyBoxTab}$$roi_pts`]: _.isObject(res.data['roi_pts'])
+              ? formatJson(res.data['roi_pts'])
+              : res.data['roi_pts'],
           });
           setOptions(
             res.data?.list?.map((item: any) => ({
@@ -65,7 +77,7 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
     dispatch({
       type: 'home/set',
       payload: {
-        updateTabs: ids,
+        updateTabs: ids?.concat(guid()),
       },
     });
   };
@@ -168,7 +180,7 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
               <Form.Item
                 name={`${parentBodyBoxTab}$$length`}
                 label={'产品长度'}
-                style={{ width: '50%', marginBottom: 0 }}
+                style={{ width: '50%' }}
                 rules={[{ required: false, message: '产品长度' }]}
               >
                 <InputNumber style={{ width: '100%' }} disabled addonAfter="mm" />
@@ -176,22 +188,48 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
               <Form.Item
                 name={`${parentBodyBoxTab}$$width`}
                 label={'产品宽度'}
-                style={{ width: '50%', marginBottom: 0 }}
+                style={{ width: '50%' }}
                 rules={[{ required: false, message: '产品宽度' }]}
               >
                 <InputNumber style={{ width: '100%' }} disabled addonAfter="mm" />
               </Form.Item>
             </div>
-            {/* <div className="model-switch-left-body-item flex-box">
+            <div className="model-switch-left-body-item flex-box">
               <Form.Item
-                name={`${parentBodyBoxTab}$$speed`}
-                label={'流水线速度'}
-                style={{ width: '50%', marginBottom: 0 }}
-                rules={[{ required: false, message: '流水线速度' }]}
+                name={`${parentBodyBoxTab}$$cam_num`}
+                label={'相机个数'}
+                style={{ width: '50%' }}
+                rules={[{ required: false, message: '相机数' }]}
               >
-                <InputNumber style={{ width: '100%' }} disabled addonAfter="mm" />
+                <InputNumber style={{ width: '100%' }} disabled addonAfter="个" />
               </Form.Item>
-            </div> */}
+              <Form.Item
+                name={`${parentBodyBoxTab}$$frame_num`}
+                label={'相机帧数'}
+                style={{ width: '50%' }}
+                rules={[{ required: false, message: '相机帧数' }]}
+              >
+                <InputNumber style={{ width: '100%' }} disabled addonAfter="帧" />
+              </Form.Item>
+            </div>
+            <div className="model-switch-left-body-item flex-box" style={{ marginBottom: '-24px' }}>
+              <Form.Item
+                name={`${parentBodyBoxTab}$$roi_pts`}
+                label={'roi信息'}
+                className="codeEditor"
+              >
+                <Input.TextArea
+                  autoSize={{ maxRows: 5 }}
+                  style={{ marginBottom: 8 }}
+                  disabled
+                  value={
+                    _.isObject(form.getFieldValue(`${parentBodyBoxTab}$$roi_pts`))
+                      ? formatJson(form.getFieldValue(`${parentBodyBoxTab}$$roi_pts`))
+                      : form.getFieldValue(`${parentBodyBoxTab}$$roi_pts`)
+                  }
+                />
+              </Form.Item>
+            </div>
           </div>
           <div className="model-switch-left-control"></div>
         </div>
@@ -201,11 +239,16 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
             size="middle"
             type="primary"
             onClick={() => {
-              form.setFieldsValue({
-                model: formCustom.getFieldValue(`${parentBodyBoxTab}$$model`),
-                length: formCustom.getFieldValue(`${parentBodyBoxTab}$$length`),
-                width: formCustom.getFieldValue(`${parentBodyBoxTab}$$width`),
-              });
+              const values = Object.entries(formCustom.getFieldsValue() || {})?.reduce(
+                (pre: any, cen: any) => {
+                  return {
+                    ...pre,
+                    [cen[0].split('$$')?.[1]]: cen[1],
+                  };
+                },
+                {},
+              );
+              form.setFieldsValue(values);
               setVisible(true);
             }}
           >
@@ -267,16 +310,109 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
             >
               <InputNumber style={{ width: '100%' }} addonAfter="mm" />
             </Form.Item>
-            {/* <Form.Item
-              name={'speed'}
-              label={'流水线速度'}
-              style={{ width: '50%', marginBottom: 0 }}
-              rules={[{ required: false, message: '流水线速度' }]}
+            <Form.Item
+              name={'cam_num'}
+              label={'相机个数'}
+              rules={[{ required: false, message: '相机数' }]}
             >
-              <InputNumber style={{ width: '100%' }} addonAfter="mm" />
-            </Form.Item> */}
+              <InputNumber style={{ width: '100%' }} addonAfter="个" />
+            </Form.Item>
+            <Form.Item
+              name={'frame_num'}
+              label={'相机帧数'}
+              rules={[{ required: false, message: '相机帧数' }]}
+            >
+              <InputNumber style={{ width: '100%' }} addonAfter="帧" />
+            </Form.Item>
+            <Form.Item name={'roi_pts'} label={'roi信息'} className="codeEditor">
+              <Input.TextArea
+                autoSize={{ maxRows: 5 }}
+                style={{ marginBottom: 8 }}
+                disabled
+                value={
+                  _.isObject(form.getFieldValue('roi_pts'))
+                    ? formatJson(form.getFieldValue('roi_pts'))
+                    : form.getFieldValue('roi_pts')
+                }
+              />
+              <Button
+                style={{ fontSize: 'inherit' }}
+                onClick={() => {
+                  const value = form.getFieldValue('roi_pts');
+                  setEditorValue({
+                    value: !!value
+                      ? _.isObject(value)
+                        ? formatJson(value)
+                        : value
+                      : formatJson([
+                          {
+                            x1_min: 1500,
+                            y1_min: 1,
+                            x1_max: 2500,
+                            y1_max: 999,
+                            x2_min: 6500,
+                            y2_min: 1,
+                            x2_max: 7500,
+                            y2_max: 999,
+                          },
+                          {
+                            x1_min: 1500,
+                            y1_min: 1,
+                            x1_max: 2500,
+                            y1_max: 999,
+                            x2_min: 6500,
+                            y2_min: 1,
+                            x2_max: 7500,
+                            y2_max: 999,
+                          },
+                          {
+                            x1_min: 6000,
+                            y1_min: 1,
+                            x1_max: 7000,
+                            y1_max: 999,
+                            x2_min: 300,
+                            y2_min: 1,
+                            x2_max: 1500,
+                            y2_max: 999,
+                          },
+                          {
+                            x1_min: 6000,
+                            y1_min: 1,
+                            x1_max: 7000,
+                            y1_max: 999,
+                            x2_min: 300,
+                            y2_min: 1,
+                            x2_max: 1500,
+                            y2_max: 999,
+                          },
+                        ]),
+                    language: 'json',
+                  });
+                  setEditorVisible(true);
+                }}
+              >
+                打开编辑器
+              </Button>
+            </Form.Item>
           </Form>
         </Modal>
+      ) : null}
+
+      {editorVisible ? (
+        <MonacoEditor
+          id={editorValue.id}
+          defaultValue={editorValue.value}
+          visible={editorVisible}
+          onOk={(val: any) => {
+            const { id, value, language } = val;
+            form.setFieldsValue({ roi_pts: value });
+            setEditorValue?.({});
+            setEditorVisible?.(false);
+          }}
+          onCancel={() => {
+            setEditorVisible?.(false);
+          }}
+        />
       ) : null}
     </div>
   );

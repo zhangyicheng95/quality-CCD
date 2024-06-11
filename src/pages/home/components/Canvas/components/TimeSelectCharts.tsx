@@ -18,44 +18,53 @@ const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 
 const TimeSelectCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  const { fontSize = 14, yName, xName = '', fetchType, timeSelectDefault = 'day' } = data;
+  const {
+    fontSize = 14,
+    yName,
+    xName = '',
+    fetchType,
+    timeSelectDefault = 'day',
+    modelRotate,
+  } = data;
 
   useEffect(() => {
-    btnFetch(
-      fetchType,
-      xName,
-      timeSelectDefault === 'month'
-        ? {
-            start: moment(
-              new Date(
-                new Date(new Date().toLocaleDateString()).getTime() - 29 * 24 * 60 * 60 * 1000,
-              ),
-            ).format(dateFormat),
-            end: moment(
-              new Date(),
-              // new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1,
-            ).format(dateFormat),
-          }
-        : timeSelectDefault === 'week'
-        ? {
-            start: moment(
-              new Date(
-                new Date(new Date().toLocaleDateString()).getTime() - 6 * 24 * 60 * 60 * 1000,
-              ),
-            ).format(dateFormat),
-            end: moment(new Date()).format(dateFormat),
-          }
-        : {
-            start: moment(new Date().toLocaleDateString()).format(dateFormat),
-            end: moment(new Date()).format(dateFormat),
-          },
-    ).then((res: any) => {
-      if (!!res && res.code === 'SUCCESS') {
-        message.success('success');
-      } else {
-        message.error(res?.message || '后台服务异常，请重启服务');
-      }
-    });
+    if (!!modelRotate) {
+      btnFetch(
+        fetchType,
+        xName,
+        timeSelectDefault === 'month'
+          ? {
+              start: moment(
+                new Date(
+                  new Date(new Date().toLocaleDateString()).getTime() - 29 * 24 * 60 * 60 * 1000,
+                ),
+              ).format(dateFormat),
+              end: moment(
+                new Date(),
+                // new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1,
+              ).format(dateFormat),
+            }
+          : timeSelectDefault === 'week'
+          ? {
+              start: moment(
+                new Date(
+                  new Date(new Date().toLocaleDateString()).getTime() - 6 * 24 * 60 * 60 * 1000,
+                ),
+              ).format(dateFormat),
+              end: moment(new Date()).format(dateFormat),
+            }
+          : {
+              start: moment(new Date().toLocaleDateString()).format(dateFormat),
+              end: moment(new Date()).format(dateFormat),
+            },
+      ).then((res: any) => {
+        if (!!res && res.code === 'SUCCESS') {
+          message.success('success');
+        } else {
+          message.error(res?.message || '后台服务异常，请重启服务');
+        }
+      });
+    }
   }, []);
 
   const onChange = (dates: any, dateStrings: any) => {

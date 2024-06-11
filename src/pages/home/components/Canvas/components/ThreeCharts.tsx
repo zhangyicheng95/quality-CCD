@@ -177,13 +177,13 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     sprite: any = null;
 
   // 定义常变量
+  let intersects;
   let ctrlDown = false;
   let moveDown = false;
   let lineId = 'measure_0';
   let line: any;
   let drawingLine = false;
   const raycaster = new THREE.Raycaster();
-  let intersects;
   const mouse = new THREE.Vector2();
   let measurementLabels: any = {},
     measurements: any = [];
@@ -480,7 +480,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       models.forEach((mesh: any) => {
         if (!!mesh.material) {
           setSelectedBtn((prev: any) => {
-            if (mesh?.name?.indexOf('editArea') > -1) {
+            if (mesh?.name?.indexOf('editArea') < 0) {
               mesh.visible = !prev?.includes('bzBtn04');
             }
             return prev;
@@ -604,6 +604,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     window.addEventListener('keyup', onKeyUp);
     const positions: any = [];
     function onMouseDown(event: any) {
+      event.preventDefault();
+      mouse.x = (event.offsetX / renderer.current?.domElement.offsetWidth) * 2 - 1;
+      mouse.y = -(event.offsetY / renderer.current?.domElement.offsetHeight) * 2 + 1;
       setCameraSwitch(false);
       if (ctrlDown) {
         raycaster.setFromCamera(mouse, camera.current);
@@ -621,6 +624,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             positions[4] = intersects[0].point.y;
             positions[5] = intersects[0].point.z;
             addRectArea({ positions }).then((cube) => {
+              intersects = [];
               editableObjects.current?.push?.(cube);
             });
           }
@@ -650,20 +654,17 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
           }
         }
       } else {
-        event.preventDefault();
-        mouse.x = (event.offsetX / renderer.current?.domElement.offsetWidth) * 2 - 1;
-        mouse.y = -(event.offsetY / renderer.current?.domElement.offsetHeight) * 2 + 1;
-        raycaster.setFromCamera(mouse, camera.current);
-        intersects = raycaster.intersectObjects(pickableObjects, false);
         // 显示边框
         const models = getAllModelsFromScene(scene.current);
         const axis: any = scene?.current?.getObjectByName?.('axis');
         models.forEach((mesh: any) => {
-          (mesh.children || [])
-            .filter((i: any) => i.name === 'border')
-            .forEach((child: any) => {
-              child.visible = true;
-            });
+          if (mesh.name?.indexOf('editArea-') < 0) {
+            (mesh.children || [])
+              .filter((i: any) => i.name === 'border')
+              .forEach((child: any) => {
+                child.visible = true;
+              });
+          }
         });
         // 显示坐标轴
         if (!!axis) {
@@ -2397,7 +2398,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 (i: any) => i?.name?.indexOf('editPoint') > -1,
               );
               const params = (points || [])?.map?.((item: any) => item?.__props);
-              console.log(params);
               downFileFun(JSON.stringify(params), `轨迹点.json`);
             }}
           >
@@ -2535,7 +2535,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     }
                   }}
                   onOk={(value: any) => {
-                    console.log(value);
                     const path = `http://localhost:5001/files/${value}`;
                     if (modelUploadVisible) {
                       form2.setFieldsValue({ modelfilename: value });
@@ -2611,7 +2610,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     });
                   }, []);
                   if (!!fetchType && !!xName) {
-                    console.log(params);
                     btnFetch(fetchType, xName, { data: params }).then((res: any) => {
                       if (res && res.code === 'SUCCESS') {
                         message.success('轨迹上传成功');
@@ -2645,7 +2643,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                       };
                     }),
                   };
-                  console.log(params);
                   if (!!fetchType && !!xName) {
                     btnFetch(fetchType, xName, params).then((res: any) => {
                       if (res && res.code === 'SUCCESS') {
@@ -2850,7 +2847,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
           centered
           onOk={() => {
             form2.validateFields().then((values) => {
-              console.log(values);
               if (!!fetchType && !!xName) {
                 btnFetch(fetchType, xName, {
                   action: 0,
@@ -2987,7 +2983,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                       editableObjects.current?.push?.(cube);
                       scene.current?.add?.(cube);
                     }
-                    console.log(editableObjects.current);
                     form.resetFields();
                     selectedPoint.object.material.color = colorTran[selectedPoint.object.areaIndex];
                     setSelectedPoint(null);
@@ -3172,6 +3167,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
           <Form form={form1} scrollToFirstError>
             <Form.Item name="position" label="坐标" rules={[{ required: true, message: '坐标' }]}>
               <Measurement
+                type="float"
                 lineNum={3}
                 onOpenChange={(e: any) => {
                   const cut_direction = form1.getFieldValue('cut_direction')?.length

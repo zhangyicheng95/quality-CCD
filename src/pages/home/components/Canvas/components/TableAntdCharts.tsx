@@ -4,7 +4,7 @@ import styles from '../index.module.less';
 import BasicTable from '@/components/BasicTable';
 import { useModel } from 'umi';
 import { btnFetch } from '@/services/api';
-import { message } from 'antd';
+import { Button, Divider, Form, Input, message } from 'antd';
 
 interface Props {
   data: any;
@@ -15,6 +15,9 @@ const localData = [
   {
     key: 1,
     name: 'John Brown sr.',
+    name1: 'John Brown sr.',
+    age2: '',
+    address2: '',
     age: '',
     address: '',
     children: [
@@ -92,6 +95,9 @@ const TableAntdCharts: React.FC<Props> = (props: any) => {
     timeSelectDefault,
     staticHeight,
   } = data;
+  const [form] = Form.useForm();
+  const { validateFields, setFieldsValue, resetFields } = form;
+
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
   if (process.env.NODE_ENV === 'development') {
@@ -103,6 +109,19 @@ const TableAntdCharts: React.FC<Props> = (props: any) => {
   }
   const domRef = useRef<any>(null);
   const [expandedRowKeys, setExpandedRowKeys] = useState<any>([]);
+  const [dataSource, setDataSource] = useState<any>([]);
+  const searchBox = useMemo(() => {
+    let result: any = [];
+    if (!!dataValue?.[0] && !!Object.keys(dataValue?.[0])?.length) {
+      let obj = Object.keys(_.omit(_.omit(dataValue?.[0], 'key'), 'children'));
+      obj.forEach((item: string, index: number) => {
+        if (_.isString(item)) {
+          result.push(item);
+        }
+      });
+    }
+    return result;
+  }, [dataValue]);
   const columns: any = useMemo(() => {
     let result: any = [];
     if (!!dataValue?.[0] && !!Object.keys(dataValue?.[0])?.length) {
@@ -118,48 +137,65 @@ const TableAntdCharts: React.FC<Props> = (props: any) => {
       });
     }
     let length = 0;
-    timeSelectDefault.forEach((item: any) => {
+    (timeSelectDefault || [])?.forEach((item: any) => {
       const { label } = item;
       length += label?.length;
     });
-    return result.concat({
-      title: '操作项',
-      dataIndex: 'operation',
-      key: 'operation',
-      width: length * fontSize + 16 + 40,
-      render: (text: any, record: any) => {
-        return (
-          <div className="flex-box">
-            {(timeSelectDefault || [])?.map((item: any, index: number) => {
-              const { value, label } = item;
-              return (
-                <div className="flex-box" key={`operation-${value}`}>
-                  <a
-                    onClick={() => {
-                      if (!!fetchType && !!xName) {
-                        btnFetch(fetchType, xName, { value }).then((res: any) => {
-                          if (res && res.code === 'SUCCESS') {
-                            message.success('success');
-                          } else {
-                            message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
+    return timeSelectDefault?.length
+      ? result.concat({
+          title: '操作项',
+          dataIndex: 'operation',
+          key: 'operation',
+          width: length * fontSize + 16 + 40,
+          render: (text: any, record: any) => {
+            return (
+              <div className="flex-box">
+                {(timeSelectDefault || [])?.map((item: any, index: number) => {
+                  const { value, label } = item;
+                  return (
+                    <div className="flex-box" key={`operation-${value}`}>
+                      <a
+                        onClick={() => {
+                          if (!!fetchType && !!xName) {
+                            btnFetch(fetchType, xName, { value }).then((res: any) => {
+                              if (res && res.code === 'SUCCESS') {
+                                message.success('success');
+                              } else {
+                                message.error(
+                                  res?.msg || res?.message || '后台服务异常，请重启服务',
+                                );
+                              }
+                            });
                           }
-                        });
-                      }
-                    }}
-                  >
-                    {label}
-                  </a>
-                  {index + 1 === timeSelectDefault?.length ? null : (
-                    <span className="operation-line">|</span>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        );
-      },
-    });
-  }, [dataValue]);
+                        }}
+                      >
+                        {label}
+                      </a>
+                      {index + 1 === timeSelectDefault?.length ? null : (
+                        <span className="operation-line">|</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          },
+        })
+      : result;
+  }, [dataValue, timeSelectDefault]);
+  const onSearch = (params?: any) => {
+    if (!!fetchType && !!xName) {
+      btnFetch(fetchType, xName, params).then((res: any) => {
+        if (!!res && res.code === 'SUCCESS') {
+        } else {
+          message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
+        }
+      });
+    }
+  };
+  useEffect(() => {
+    onSearch();
+  }, []);
   useEffect(() => {
     if (!!localStorage.getItem(`table4-${params.id}-${id}`)) {
       setExpandedRowKeys(JSON.parse(localStorage.getItem(`table4-${params.id}-${id}`) || '[]'));
@@ -182,26 +218,73 @@ const TableAntdCharts: React.FC<Props> = (props: any) => {
   }, [dataValue]);
 
   return (
-    <div id={`echart-${id}`} className={styles.tableAntdCharts} ref={domRef} style={{ fontSize }}>
-      <BasicTable
-        columns={columns}
-        dataSource={dataValue}
-        bordered={des_bordered}
-        size={staticHeight}
-        defaultExpandAllRows={true}
-        defaultExpandedRowKeys={expandedRowKeys}
-        expandedRowKeys={expandedRowKeys}
-        onExpandedRowsChange={(e: any) => {
-          const value = Array.from(new Set(e));
-          localStorage.setItem(`table4-${params.id}-${id}`, JSON.stringify(value));
-          setExpandedRowKeys(value);
-        }}
-        pagination={null}
-        className={`expand-icon-size-${
-          fontSize < 24 ? (fontSize > 16 ? '20' : '16') : '24'
-        } header-color-${headerBackgroundColor}
+    <div
+      id={`echart-${id}`}
+      className={`flex-box-column ${styles.tableAntdCharts}`}
+      ref={domRef}
+      style={{ fontSize }}
+    >
+      {searchBox?.length ? (
+        <div className="table-antd-search-box">
+          <Form form={form} scrollToFirstError>
+            {(searchBox || [])?.map((item: any, index: number) => {
+              return (
+                <Form.Item
+                  name={item}
+                  label={item}
+                  style={{
+                    width: 300,
+                    maxHeight: (fontSize / 2) * 3,
+                    float: 'left',
+                    marginRight: 16,
+                  }}
+                  rules={[{ required: false, message: item }]}
+                >
+                  <Input />
+                </Form.Item>
+              );
+            })}
+          </Form>
+          <Button
+            type="primary"
+            style={{
+              fontSize: 'inherit',
+              float: 'left',
+              height: (fontSize / 2) * 3 + 2,
+              marginTop: 3,
+            }}
+            onClick={() => {
+              validateFields().then((values: any) => {
+                console.log(values);
+                onSearch(values);
+              });
+            }}
+          >
+            查询
+          </Button>
+        </div>
+      ) : null}
+      <div className="table-antd-body-box">
+        <BasicTable
+          columns={columns}
+          dataSource={dataValue}
+          bordered={des_bordered}
+          size={staticHeight}
+          defaultExpandAllRows={true}
+          defaultExpandedRowKeys={expandedRowKeys}
+          expandedRowKeys={expandedRowKeys}
+          onExpandedRowsChange={(e: any) => {
+            const value = Array.from(new Set(e));
+            localStorage.setItem(`table4-${params.id}-${id}`, JSON.stringify(value));
+            setExpandedRowKeys(value);
+          }}
+          pagination={null}
+          className={`expand-icon-size-${
+            fontSize < 24 ? (fontSize > 16 ? '20' : '16') : '24'
+          } header-color-${headerBackgroundColor}
         body-color-${interlacing}`}
-      />
+        />
+      </div>
     </div>
   );
 };

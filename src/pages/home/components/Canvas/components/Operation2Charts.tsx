@@ -13,7 +13,6 @@ import {
   Popconfirm,
   Radio,
   Select,
-  Switch,
 } from 'antd';
 import MonacoEditor from '@/components/MonacoEditor';
 import PlatFormModal from '@/components/platForm';
@@ -201,7 +200,6 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
               setTimeout(() => {
                 setFieldsValue(result);
               }, 500);
-              setLocked(true);
             });
           }
           if (ifUpdateProject) {
@@ -279,6 +277,9 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
               }
             });
           }
+          setTimeout(() => {
+            setLocked(true);
+          }, 1000);
           return pre;
         });
       })
