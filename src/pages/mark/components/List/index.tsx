@@ -1,7 +1,7 @@
 import React from 'react';
 import PrimaryTitle from '@/components/PrimaryTitle';
 import styles from './index.less';
-import UniverExcel from '@/components/UniverExcel';
+import UniverExcel from '@/components/ReactRuler';
 
 const MarkList: React.FC = (props: any) => {
   return (
