@@ -5,7 +5,7 @@ import UniverExcel from '@/components/ReactRuler';
 
 const MarkList: React.FC = (props: any) => {
   return (
-    <div className={`${styles.markList} page-size background-ubv`}>
+    <div className={`${styles.markList}  background-ubv`}>
       <PrimaryTitle title={'测试专用'}>
         <div
           style={{ height: '100%', width: '100%', gap: 8 }}

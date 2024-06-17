@@ -17,6 +17,8 @@ import {
   Image,
   Divider,
   Checkbox,
+  Dropdown,
+  Menu,
 } from 'antd';
 import * as _ from 'lodash';
 import { BASE_IP, btnFetch, startFlowService, stopFlowService, updateParams } from '@/services/api';
@@ -28,6 +30,7 @@ import {
   CompressOutlined,
   CopyOutlined,
   DeleteOutlined,
+  EditOutlined,
   ExclamationCircleOutlined,
   FormOutlined,
   LoadingOutlined,
@@ -287,30 +290,46 @@ const Home: React.FC<any> = (props: any) => {
             <HeaderCharts homeSettingData={homeSettingData} started={started} />
           </div>
           {ifCanEdit ? (
-            <div
-              className="flex-box-center drag-item-content-mask common-card-title"
-              onDoubleClick={() => {
-                // 双击事件触发的操作
-                if (!!addWindowVisible || !!homeSettingVisible) {
-                  setAddWindowVisible('');
-                  setHomeSettingVisible('');
-                  setFieldsValue({});
-                }
-                setTimeout(() => {
-                  setFieldsValue(homeSettingData?.['header']);
-                  setHomeSettingVisible('header');
-                }, 500);
-              }}
+            <Dropdown
+              overlayClassName="edit-canvas-dropdown"
+              overlay={
+                <Menu
+                  items={[
+                    {
+                      key: '1',
+                      icon: <EditOutlined />,
+                      label: '编辑',
+                      onClick: () => {
+                        // 双击事件触发的操作
+                        if (!!addWindowVisible || !!homeSettingVisible) {
+                          setAddWindowVisible('');
+                          setHomeSettingVisible('');
+                          setFieldsValue({});
+                        }
+                        setTimeout(() => {
+                          setFieldsValue(homeSettingData?.['header']);
+                          setHomeSettingVisible('header');
+                        }, 500);
+                      },
+                    },
+                    {
+                      type: 'divider',
+                    },
+                    {
+                      key: '2',
+                      icon: <DeleteOutlined />,
+                      label: '删除',
+                      onClick: () => {
+                        deleteBasic('header');
+                      },
+                    },
+                  ]}
+                />
+              }
+              trigger={['contextMenu']}
             >
-              <Popconfirm
-                title="确认删除监控窗口吗?"
-                onConfirm={() => deleteBasic('header')}
-                okText="确认"
-                cancelText="取消"
-              >
-                <DeleteOutlined className="drag-item-content-mask-icon" />
-              </Popconfirm>
-            </div>
+              <div className="flex-box-center drag-item-content-mask common-card-title"></div>
+            </Dropdown>
           ) : null}
         </div>
       </div>,
@@ -398,36 +417,52 @@ const Home: React.FC<any> = (props: any) => {
             />
           </div>
           {ifCanEdit ? (
-            <div
-              className="flex-box-center drag-item-content-mask common-card-title"
-              onDoubleClick={() => {
-                // 双击事件触发的操作
-                if (!!addWindowVisible || !!homeSettingVisible) {
-                  setAddWindowVisible('');
-                  setHomeSettingVisible('');
-                  setFieldsValue({});
-                }
-                setTimeout(() => {
-                  setFieldsValue(homeSettingData?.['slider-1']);
-                  setCommonSettingList(
-                    (!!homeSettingData?.['slider-1']?.controlList?.length
-                      ? homeSettingData?.['slider-1']?.controlList
-                      : [{}]
-                    )?.map((item: any) => ({ ...item, id: guid() })),
-                  );
-                  setHomeSettingVisible('slider-1');
-                }, 500);
-              }}
+            <Dropdown
+              overlayClassName="edit-canvas-dropdown"
+              overlay={
+                <Menu
+                  items={[
+                    {
+                      key: '1',
+                      icon: <EditOutlined />,
+                      label: '编辑',
+                      onClick: () => {
+                        // 双击事件触发的操作
+                        if (!!addWindowVisible || !!homeSettingVisible) {
+                          setAddWindowVisible('');
+                          setHomeSettingVisible('');
+                          setFieldsValue({});
+                        }
+                        setTimeout(() => {
+                          setFieldsValue(homeSettingData?.['slider-1']);
+                          setCommonSettingList(
+                            (!!homeSettingData?.['slider-1']?.controlList?.length
+                              ? homeSettingData?.['slider-1']?.controlList
+                              : [{}]
+                            )?.map((item: any) => ({ ...item, id: guid() })),
+                          );
+                          setHomeSettingVisible('slider-1');
+                        }, 500);
+                      },
+                    },
+                    {
+                      type: 'divider',
+                    },
+                    {
+                      key: '2',
+                      icon: <DeleteOutlined />,
+                      label: '删除',
+                      onClick: () => {
+                        deleteBasic('slider-1');
+                      },
+                    },
+                  ]}
+                />
+              }
+              trigger={['contextMenu']}
             >
-              <Popconfirm
-                title="确认删除监控窗口吗?"
-                onConfirm={() => deleteBasic('slider-1')}
-                okText="确认"
-                cancelText="取消"
-              >
-                <DeleteOutlined className="drag-item-content-mask-icon" />
-              </Popconfirm>
-            </div>
+              <div className="flex-box-center drag-item-content-mask common-card-title"></div>
+            </Dropdown>
           ) : null}
         </div>
       </div>,
@@ -578,30 +613,46 @@ const Home: React.FC<any> = (props: any) => {
             })}
           </div>
           {ifCanEdit ? (
-            <div
-              className="flex-box-center drag-item-content-mask common-card-title"
-              onDoubleClick={() => {
-                // 双击事件触发的操作
-                if (!!addWindowVisible || !!homeSettingVisible) {
-                  setAddWindowVisible('');
-                  setHomeSettingVisible('');
-                  setFieldsValue({});
-                }
-                setTimeout(() => {
-                  setFieldsValue(homeSettingData?.['slider-4']);
-                  setHomeSettingVisible('slider-4');
-                }, 500);
-              }}
+            <Dropdown
+              overlayClassName="edit-canvas-dropdown"
+              overlay={
+                <Menu
+                  items={[
+                    {
+                      key: '1',
+                      icon: <EditOutlined />,
+                      label: '编辑',
+                      onClick: () => {
+                        // 双击事件触发的操作
+                        if (!!addWindowVisible || !!homeSettingVisible) {
+                          setAddWindowVisible('');
+                          setHomeSettingVisible('');
+                          setFieldsValue({});
+                        }
+                        setTimeout(() => {
+                          setFieldsValue(homeSettingData?.['slider-4']);
+                          setHomeSettingVisible('slider-4');
+                        }, 500);
+                      },
+                    },
+                    {
+                      type: 'divider',
+                    },
+                    {
+                      key: '2',
+                      icon: <DeleteOutlined />,
+                      label: '删除',
+                      onClick: () => {
+                        deleteBasic('slider-4');
+                      },
+                    },
+                  ]}
+                />
+              }
+              trigger={['contextMenu']}
             >
-              <Popconfirm
-                title="确认删除监控窗口吗?"
-                onConfirm={() => deleteBasic('slider-4')}
-                okText="确认"
-                cancelText="取消"
-              >
-                <DeleteOutlined className="drag-item-content-mask-icon" />
-              </Popconfirm>
-            </div>
+              <div className="flex-box-center drag-item-content-mask common-card-title"></div>
+            </Dropdown>
           ) : null}
         </div>
       </div>,
@@ -648,30 +699,46 @@ const Home: React.FC<any> = (props: any) => {
             </div>
           </div>
           {ifCanEdit ? (
-            <div
-              className="flex-box-center drag-item-content-mask common-card-title"
-              onDoubleClick={() => {
-                // 双击事件触发的操作
-                if (!!addWindowVisible || !!homeSettingVisible) {
-                  setAddWindowVisible('');
-                  setHomeSettingVisible('');
-                  setFieldsValue({});
-                }
-                setTimeout(() => {
-                  setFieldsValue(homeSettingData?.['footer-1']);
-                  setHomeSettingVisible('footer-1');
-                }, 500);
-              }}
+            <Dropdown
+              overlayClassName="edit-canvas-dropdown"
+              overlay={
+                <Menu
+                  items={[
+                    {
+                      key: '1',
+                      icon: <EditOutlined />,
+                      label: '编辑',
+                      onClick: () => {
+                        // 双击事件触发的操作
+                        if (!!addWindowVisible || !!homeSettingVisible) {
+                          setAddWindowVisible('');
+                          setHomeSettingVisible('');
+                          setFieldsValue({});
+                        }
+                        setTimeout(() => {
+                          setFieldsValue(homeSettingData?.['footer-1']);
+                          setHomeSettingVisible('footer-1');
+                        }, 500);
+                      },
+                    },
+                    {
+                      type: 'divider',
+                    },
+                    {
+                      key: '2',
+                      icon: <DeleteOutlined />,
+                      label: '删除',
+                      onClick: () => {
+                        deleteBasic('footer-1');
+                      },
+                    },
+                  ]}
+                />
+              }
+              trigger={['contextMenu']}
             >
-              <Popconfirm
-                title="确认删除监控窗口吗?"
-                onConfirm={() => deleteBasic('footer-1')}
-                okText="确认"
-                cancelText="取消"
-              >
-                <DeleteOutlined className="drag-item-content-mask-icon" />
-              </Popconfirm>
-            </div>
+              <div className="flex-box-center drag-item-content-mask common-card-title"></div>
+            </Dropdown>
           ) : null}
         </div>
       </div>,
@@ -735,30 +802,46 @@ const Home: React.FC<any> = (props: any) => {
             </div>
           </div>
           {ifCanEdit ? (
-            <div
-              className="flex-box-center drag-item-content-mask common-card-title"
-              onDoubleClick={() => {
-                // 双击事件触发的操作
-                if (!!addWindowVisible || !!homeSettingVisible) {
-                  setAddWindowVisible('');
-                  setHomeSettingVisible('');
-                  setFieldsValue({});
-                }
-                setTimeout(() => {
-                  setFieldsValue(homeSettingData?.['footer-2']);
-                  setHomeSettingVisible('footer-2');
-                }, 500);
-              }}
+            <Dropdown
+              overlayClassName="edit-canvas-dropdown"
+              overlay={
+                <Menu
+                  items={[
+                    {
+                      key: '1',
+                      icon: <EditOutlined />,
+                      label: '编辑',
+                      onClick: () => {
+                        // 双击事件触发的操作
+                        if (!!addWindowVisible || !!homeSettingVisible) {
+                          setAddWindowVisible('');
+                          setHomeSettingVisible('');
+                          setFieldsValue({});
+                        }
+                        setTimeout(() => {
+                          setFieldsValue(homeSettingData?.['footer-2']);
+                          setHomeSettingVisible('footer-2');
+                        }, 500);
+                      },
+                    },
+                    {
+                      type: 'divider',
+                    },
+                    {
+                      key: '2',
+                      icon: <DeleteOutlined />,
+                      label: '删除',
+                      onClick: () => {
+                        deleteBasic('footer-2');
+                      },
+                    },
+                  ]}
+                />
+              }
+              trigger={['contextMenu']}
             >
-              <Popconfirm
-                title="确认删除监控窗口吗?"
-                onConfirm={() => deleteBasic('footer-2')}
-                okText="确认"
-                cancelText="取消"
-              >
-                <DeleteOutlined className="drag-item-content-mask-icon" />
-              </Popconfirm>
-            </div>
+              <div className="flex-box-center drag-item-content-mask common-card-title"></div>
+            </Dropdown>
           ) : null}
         </div>
       </div>,
@@ -2042,288 +2125,345 @@ const Home: React.FC<any> = (props: any) => {
               </div>
             </div>
             {ifCanEdit ? (
-              <div
-                style={Object.assign(
-                  {},
-                  ['table2', 'table3'].includes(type)
-                    ? {
-                        height: `calc(100% - 80px - ${bodyPaddingSize}px)`,
-                        marginTop: 80 + bodyPaddingSize,
-                      }
-                    : {},
-                  type === 'bodyBox'
-                    ? {
-                        top: 'auto',
-                      }
-                    : {},
-                )}
-                className="flex-box-center drag-item-content-mask common-card-title"
-                onDoubleClick={() => {
-                  // 双击事件触发的操作
-                  if (!!addWindowVisible || !!homeSettingVisible) {
-                    setAddWindowVisible('');
-                    setHomeSettingVisible('');
-                    setFieldsValue({});
-                  }
-                  setTimeout(() => {
-                    !!defaultImg &&
-                      setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
-                    setBasicInfoData(basicInfoData);
-                    setEditWindowData(
-                      Object.assign(
-                        {},
-                        item,
-                        !!item?.xColumns?.length ? {} : {},
-                        !!item?.yColumns?.length ? {} : {},
-                      ),
-                    );
-                    setCommonSettingList(
-                      (!!timeSelectDefault?.length ? timeSelectDefault : [{}])?.map(
-                        (item: any) => ({
-                          ...item,
-                          id: guid(),
-                        }),
-                      ),
-                    );
-                    setFieldsValue(
-                      Object.assign(
-                        {},
-                        item,
-                        !fontSize ? { fontSize: 12 } : {},
-                        !!backgroundColor && !!backgroundColor?.rgb
-                          ? { backgroundColor: backgroundColor }
-                          : {},
-                        type === 'platForm'
-                          ? {
-                              platFormOptions: !!platFormOptions
-                                ? platFormOptions
-                                : JSON.stringify({
-                                    左上水平隔膜: {
-                                      灰度差: {
-                                        name: '灰度差',
-                                        alias: '灰度差',
-                                        require: true,
-                                        default: 15,
-                                        value: 15,
-                                        type: 'int',
-                                        description: '边界变化的灰度差',
-                                        widget: { type: 'InputNumber', max: 255, min: 0, step: 1 },
-                                      },
-                                      灰度合并像素: {
-                                        name: '灰度合并像素',
-                                        alias: '灰度合并像素',
-                                        require: true,
-                                        default: 2,
-                                        value: 2,
-                                        type: 'int',
-                                        description: '边界变化的灰度合并像素',
-                                        widget: { type: 'InputNumber', max: 5, min: 1, step: 1 },
-                                      },
-                                      亮度变化方向: {
-                                        name: '亮度变化方向',
-                                        alias: '亮度变化方向',
-                                        require: true,
-                                        default: 2,
-                                        value: 2,
-                                        type: 'List[string]',
-                                        description: '边界找线亮度变化方向, 1为亮到暗, 2为暗到亮',
-                                        widget: {
-                                          type: 'Select',
-                                          options: [
-                                            { label: '1-亮到暗', value: 1 },
-                                            { label: '2-暗到亮', value: 2 },
-                                          ],
-                                        },
-                                      },
-                                      直线度: {
-                                        name: '直线度',
-                                        alias: '直线度',
-                                        require: true,
-                                        default: 3,
-                                        value: 3,
-                                        type: 'int',
-                                        description: '直线度要求，值越小，线越直',
-                                        widget: { type: 'InputNumber', max: 100, min: 1, step: 1 },
-                                      },
-                                      降噪滤波核: {
-                                        name: '降噪滤波核',
-                                        alias: '降噪滤波核',
-                                        require: true,
-                                        default: 5,
-                                        value: 5,
-                                        type: 'int',
-                                        description: '去噪滤波核大小',
-                                        widget: { type: 'InputNumber', max: 21, min: 1, step: 1 },
-                                      },
-                                      找线方向下采样倍数: {
-                                        name: '找线方向下采样倍数',
-                                        alias: '找线方向下采样倍数',
-                                        require: true,
-                                        default: 8,
-                                        value: 8,
-                                        type: 'int',
-                                        description: '区域下采样倍数，提高计算速度',
-                                        widget: { type: 'InputNumber', max: 16, min: 2, step: 2 },
-                                      },
-                                      垂直找线方向下采样倍数: {
-                                        name: '垂直找线方向下采样倍数',
-                                        alias: '垂直找线方向下采样倍数',
-                                        require: true,
-                                        default: 2,
-                                        value: 2,
-                                        type: 'int',
-                                        description: '区域下采样倍数，提高计算速度',
-                                        widget: { type: 'InputNumber', max: 16, min: 2, step: 2 },
-                                      },
-                                      搜索框个数: {
-                                        name: '搜索框个数',
-                                        alias: '搜索框个数',
-                                        require: true,
-                                        default: 15,
-                                        value: 15,
-                                        type: 'int',
-                                        description: '搜索框个数',
-                                        widget: { type: 'InputNumber', max: 1000, min: 3, step: 1 },
-                                      },
-                                      搜索框宽度: {
-                                        name: '搜索框宽度',
-                                        alias: '搜索框宽度',
-                                        require: true,
-                                        default: 6,
-                                        value: 6,
-                                        type: 'int',
-                                        description: '搜索框宽度',
-                                        widget: { type: 'InputNumber', max: 1000, min: 3, step: 1 },
-                                      },
-                                      找线方法: {
-                                        name: '找线方法',
-                                        alias: '找线方法',
-                                        require: true,
-                                        default: '卡尺找线',
-                                        value: '卡尺找线',
-                                        type: 'List[string]',
-                                        description: '找线方法，1-卡尺找线，2-EDLines找线',
-                                        widget: {
-                                          type: 'Select',
-                                          options: [
-                                            { label: '卡尺找线', value: '卡尺找线' },
-                                            { label: 'EDLine找线', value: 'EDLine找线' },
-                                          ],
-                                        },
-                                      },
-                                    },
-                                  }),
-                            }
-                          : {},
-                      ),
-                    );
-                    setShowPanels({
-                      common: true,
-                      custom: true,
-                    });
-                    setColorSelector((prev: any) => ({
-                      ...prev,
-                      ...(!!fontColor && !!fontColor?.rgb ? { fontColor: fontColor.rgb } : {}),
-                      ...(!!backgroundColor && !!backgroundColor?.rgb
-                        ? { backgroundColor: backgroundColor?.rgb }
-                        : {}),
-                    }));
+              <Dropdown
+                overlayClassName="edit-canvas-dropdown"
+                overlay={
+                  <Menu
+                    items={[
+                      {
+                        key: '1',
+                        icon: <EditOutlined />,
+                        label: '编辑',
+                        onClick: () => {
+                          // 双击事件触发的操作
+                          if (!!addWindowVisible || !!homeSettingVisible) {
+                            setAddWindowVisible('');
+                            setHomeSettingVisible('');
+                            setFieldsValue({});
+                          }
+                          setTimeout(() => {
+                            !!defaultImg &&
+                              setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
+                            setBasicInfoData(basicInfoData);
+                            setEditWindowData(
+                              Object.assign(
+                                {},
+                                item,
+                                !!item?.xColumns?.length ? {} : {},
+                                !!item?.yColumns?.length ? {} : {},
+                              ),
+                            );
+                            setCommonSettingList(
+                              (!!timeSelectDefault?.length ? timeSelectDefault : [{}])?.map(
+                                (item: any) => ({
+                                  ...item,
+                                  id: guid(),
+                                }),
+                              ),
+                            );
+                            setFieldsValue(
+                              Object.assign(
+                                {},
+                                item,
+                                !fontSize ? { fontSize: 12 } : {},
+                                !!backgroundColor && !!backgroundColor?.rgb
+                                  ? { backgroundColor: backgroundColor }
+                                  : {},
+                                type === 'platForm'
+                                  ? {
+                                      platFormOptions: !!platFormOptions
+                                        ? platFormOptions
+                                        : JSON.stringify({
+                                            左上水平隔膜: {
+                                              灰度差: {
+                                                name: '灰度差',
+                                                alias: '灰度差',
+                                                require: true,
+                                                default: 15,
+                                                value: 15,
+                                                type: 'int',
+                                                description: '边界变化的灰度差',
+                                                widget: {
+                                                  type: 'InputNumber',
+                                                  max: 255,
+                                                  min: 0,
+                                                  step: 1,
+                                                },
+                                              },
+                                              灰度合并像素: {
+                                                name: '灰度合并像素',
+                                                alias: '灰度合并像素',
+                                                require: true,
+                                                default: 2,
+                                                value: 2,
+                                                type: 'int',
+                                                description: '边界变化的灰度合并像素',
+                                                widget: {
+                                                  type: 'InputNumber',
+                                                  max: 5,
+                                                  min: 1,
+                                                  step: 1,
+                                                },
+                                              },
+                                              亮度变化方向: {
+                                                name: '亮度变化方向',
+                                                alias: '亮度变化方向',
+                                                require: true,
+                                                default: 2,
+                                                value: 2,
+                                                type: 'List[string]',
+                                                description:
+                                                  '边界找线亮度变化方向, 1为亮到暗, 2为暗到亮',
+                                                widget: {
+                                                  type: 'Select',
+                                                  options: [
+                                                    { label: '1-亮到暗', value: 1 },
+                                                    { label: '2-暗到亮', value: 2 },
+                                                  ],
+                                                },
+                                              },
+                                              直线度: {
+                                                name: '直线度',
+                                                alias: '直线度',
+                                                require: true,
+                                                default: 3,
+                                                value: 3,
+                                                type: 'int',
+                                                description: '直线度要求，值越小，线越直',
+                                                widget: {
+                                                  type: 'InputNumber',
+                                                  max: 100,
+                                                  min: 1,
+                                                  step: 1,
+                                                },
+                                              },
+                                              降噪滤波核: {
+                                                name: '降噪滤波核',
+                                                alias: '降噪滤波核',
+                                                require: true,
+                                                default: 5,
+                                                value: 5,
+                                                type: 'int',
+                                                description: '去噪滤波核大小',
+                                                widget: {
+                                                  type: 'InputNumber',
+                                                  max: 21,
+                                                  min: 1,
+                                                  step: 1,
+                                                },
+                                              },
+                                              找线方向下采样倍数: {
+                                                name: '找线方向下采样倍数',
+                                                alias: '找线方向下采样倍数',
+                                                require: true,
+                                                default: 8,
+                                                value: 8,
+                                                type: 'int',
+                                                description: '区域下采样倍数，提高计算速度',
+                                                widget: {
+                                                  type: 'InputNumber',
+                                                  max: 16,
+                                                  min: 2,
+                                                  step: 2,
+                                                },
+                                              },
+                                              垂直找线方向下采样倍数: {
+                                                name: '垂直找线方向下采样倍数',
+                                                alias: '垂直找线方向下采样倍数',
+                                                require: true,
+                                                default: 2,
+                                                value: 2,
+                                                type: 'int',
+                                                description: '区域下采样倍数，提高计算速度',
+                                                widget: {
+                                                  type: 'InputNumber',
+                                                  max: 16,
+                                                  min: 2,
+                                                  step: 2,
+                                                },
+                                              },
+                                              搜索框个数: {
+                                                name: '搜索框个数',
+                                                alias: '搜索框个数',
+                                                require: true,
+                                                default: 15,
+                                                value: 15,
+                                                type: 'int',
+                                                description: '搜索框个数',
+                                                widget: {
+                                                  type: 'InputNumber',
+                                                  max: 1000,
+                                                  min: 3,
+                                                  step: 1,
+                                                },
+                                              },
+                                              搜索框宽度: {
+                                                name: '搜索框宽度',
+                                                alias: '搜索框宽度',
+                                                require: true,
+                                                default: 6,
+                                                value: 6,
+                                                type: 'int',
+                                                description: '搜索框宽度',
+                                                widget: {
+                                                  type: 'InputNumber',
+                                                  max: 1000,
+                                                  min: 3,
+                                                  step: 1,
+                                                },
+                                              },
+                                              找线方法: {
+                                                name: '找线方法',
+                                                alias: '找线方法',
+                                                require: true,
+                                                default: '卡尺找线',
+                                                value: '卡尺找线',
+                                                type: 'List[string]',
+                                                description: '找线方法，1-卡尺找线，2-EDLines找线',
+                                                widget: {
+                                                  type: 'Select',
+                                                  options: [
+                                                    { label: '卡尺找线', value: '卡尺找线' },
+                                                    { label: 'EDLine找线', value: 'EDLine找线' },
+                                                  ],
+                                                },
+                                              },
+                                            },
+                                          }),
+                                    }
+                                  : {},
+                              ),
+                            );
+                            setShowPanels({
+                              common: true,
+                              custom: true,
+                            });
+                            setColorSelector((prev: any) => ({
+                              ...prev,
+                              ...(!!fontColor && !!fontColor?.rgb
+                                ? { fontColor: fontColor.rgb }
+                                : {}),
+                              ...(!!backgroundColor && !!backgroundColor?.rgb
+                                ? { backgroundColor: backgroundColor?.rgb }
+                                : {}),
+                            }));
 
-                    setWindowType(type);
-                    if (type === 'operation2') {
-                      const res = paramsData?.flowData?.nodes.filter(
-                        (i: any) => i.id === value[0],
-                      )?.[0];
-                      if (!!res) {
-                        const { config = {} } = res;
-                        if (!!config?.execParams && _.isObject(config?.execParams)) {
-                          setSelectedNodeConfig(() =>
-                            Object.entries(config.execParams)?.map?.((item: any) => {
-                              return {
-                                label: item[1]?.alias,
-                                value: item[0],
-                              };
+                            setWindowType(type);
+                            if (type === 'operation2') {
+                              const res = paramsData?.flowData?.nodes.filter(
+                                (i: any) => i.id === value[0],
+                              )?.[0];
+                              if (!!res) {
+                                const { config = {} } = res;
+                                if (!!config?.execParams && _.isObject(config?.execParams)) {
+                                  setSelectedNodeConfig(() =>
+                                    Object.entries(config.execParams)?.map?.((item: any) => {
+                                      return {
+                                        label: item[1]?.alias,
+                                        value: item[0],
+                                      };
+                                    }),
+                                  );
+                                } else if (!!config?.initParams && _.isObject(config?.initParams)) {
+                                  setSelectedNodeConfig(() =>
+                                    Object.entries(config.initParams)?.map?.((item: any) => {
+                                      return {
+                                        label: item[1]?.alias,
+                                        value: item[0],
+                                      };
+                                    }),
+                                  );
+                                }
+                              }
+                            } else {
+                              const res = paramsData?.flowData?.nodes.filter(
+                                (i: any) => i.id === value[0],
+                              )?.[0];
+                              if (!!res) {
+                                const { config = {} } = res;
+                                if (!!config?.initParams && _.isObject(config?.initParams)) {
+                                  setSelectedNodeConfig(() =>
+                                    Object.entries(config.initParams)?.map?.((item: any) => {
+                                      return {
+                                        label: item[1]?.alias,
+                                        value: item[0],
+                                      };
+                                    }),
+                                  );
+                                }
+                              }
+                            }
+                            setAddWindowVisible(key);
+                          }, 500);
+                        },
+                      },
+                      {
+                        type: 'divider',
+                      },
+                      {
+                        key: '2',
+                        icon: <CopyOutlined />,
+                        label: '复制',
+                        onClick: () => {
+                          // 复制监控窗口
+                          const uuid32 = getuid();
+                          addWindow({
+                            ..._.omit(item, 'id'),
+                            value: [uuid32],
+                            type,
+                            size: {
+                              x: size.x + size.w >= 96 ? size.x - size.w : size.x + size.w,
+                              y: size.y,
+                            },
+                          });
+                        },
+                      },
+                      {
+                        key: '3',
+                        icon: <DeleteOutlined />,
+                        label: '删除',
+                        onClick: () => {
+                          const result = addContentList?.filter((item: any) => item.id !== key);
+                          setAddContentList(result);
+                          dispatch({
+                            type: 'home/set',
+                            payload: {
+                              gridContentList: result,
+                            },
+                          });
+                          dispatch({ type: 'home/snapshot' });
+                          setParamData((prev: any) =>
+                            Object.assign({}, prev, {
+                              contentData: Object.assign({}, prev.contentData, { content: result }),
                             }),
                           );
-                        } else if (!!config?.initParams && _.isObject(config?.initParams)) {
-                          setSelectedNodeConfig(() =>
-                            Object.entries(config.initParams)?.map?.((item: any) => {
-                              return {
-                                label: item[1]?.alias,
-                                value: item[0],
-                              };
-                            }),
-                          );
-                        }
-                      }
-                    } else {
-                      const res = paramsData?.flowData?.nodes.filter(
-                        (i: any) => i.id === value[0],
-                      )?.[0];
-                      if (!!res) {
-                        const { config = {} } = res;
-                        if (!!config?.initParams && _.isObject(config?.initParams)) {
-                          setSelectedNodeConfig(() =>
-                            Object.entries(config.initParams)?.map?.((item: any) => {
-                              return {
-                                label: item[1]?.alias,
-                                value: item[0],
-                              };
-                            }),
-                          );
-                        }
-                      }
-                    }
-                    setAddWindowVisible(key);
-                  }, 500);
-                }}
+                          setAddWindowVisible('');
+                          setHomeSettingVisible('');
+                        },
+                      },
+                    ]}
+                  />
+                }
+                trigger={['contextMenu']}
               >
-                <Popconfirm
-                  title="复制此窗口?"
-                  onConfirm={() => {
-                    // 复制监控窗口
-                    const uuid32 = getuid();
-                    addWindow({
-                      ..._.omit(item, 'id'),
-                      value: [uuid32],
-                      type,
-                      size: {
-                        x: size.x + size.w >= 96 ? size.x - size.w : size.x + size.w,
-                        y: size.y,
-                      },
-                    });
-                  }}
-                  okText="确认"
-                  cancelText="取消"
-                >
-                  <CopyOutlined className="drag-item-content-mask-icon" />
-                </Popconfirm>
-                <Popconfirm
-                  title="确认删除监控窗口吗?"
-                  onConfirm={() => {
-                    const result = addContentList?.filter((item: any) => item.id !== key);
-                    setAddContentList(result);
-                    dispatch({
-                      type: 'home/set',
-                      payload: {
-                        gridContentList: result,
-                      },
-                    });
-                    dispatch({ type: 'home/snapshot' });
-                    setParamData((prev: any) =>
-                      Object.assign({}, prev, {
-                        contentData: Object.assign({}, prev.contentData, { content: result }),
-                      }),
-                    );
-                    setAddWindowVisible('');
-                    setHomeSettingVisible('');
-                  }}
-                  okText="确认"
-                  cancelText="取消"
-                >
-                  <DeleteOutlined className="drag-item-content-mask-icon" />
-                </Popconfirm>
-              </div>
+                <div
+                  style={Object.assign(
+                    {},
+                    ['table2', 'table3'].includes(type)
+                      ? {
+                          height: `calc(100% - 80px - ${bodyPaddingSize}px)`,
+                          marginTop: 80 + bodyPaddingSize,
+                        }
+                      : {},
+                    type === 'bodyBox'
+                      ? {
+                          top: 'auto',
+                        }
+                      : {},
+                  )}
+                  className="flex-box-center drag-item-content-mask common-card-title"
+                ></div>
+              </Dropdown>
             ) : null}
           </div>,
         );
@@ -3164,7 +3304,11 @@ const Home: React.FC<any> = (props: any) => {
                           Object.assign({}, prev, {
                             contentData: Object.assign({}, prev.contentData, {
                               contentBackground:
-                                prev?.contentData?.contentBackground === icon ? '' : icon,
+                                value === 'blackBg'
+                                  ? 'blackBg'
+                                  : prev?.contentData?.contentBackground === icon
+                                  ? ''
+                                  : icon,
                             }),
                           }),
                         );
@@ -3326,9 +3470,11 @@ const Home: React.FC<any> = (props: any) => {
                           style={Object.assign(
                             {},
                             !!paramData?.contentData?.contentBackground
-                              ? {
-                                  backgroundImage: `url(${paramData?.contentData?.contentBackground})`,
-                                }
+                              ? paramData?.contentData?.contentBackground === 'blackBg'
+                                ? { backgroundColor: 'black' }
+                                : {
+                                    backgroundImage: `url(${paramData?.contentData?.contentBackground})`,
+                                  }
                               : {},
                             !paramData?.contentData?.autoSize &&
                               paramData?.contentData?.contentSize?.width
@@ -3485,9 +3631,11 @@ const Home: React.FC<any> = (props: any) => {
                   style={Object.assign(
                     {},
                     !!paramData?.contentData?.contentBackground
-                      ? {
-                          backgroundImage: `url(${paramData?.contentData?.contentBackground})`,
-                        }
+                      ? paramData?.contentData?.contentBackground === 'blackBg'
+                        ? { backgroundColor: 'black' }
+                        : {
+                            backgroundImage: `url(${paramData?.contentData?.contentBackground})`,
+                          }
                       : {},
                     !paramData?.contentData?.autoSize && paramData?.contentData?.contentSize?.width
                       ? {

@@ -201,6 +201,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       const list = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || '[]');
       dataValue = list?.[list?.length - 1] || '';
     }
+    if (ifCanEdit) return;
     const size = magnifierSize || 4;
     const eventDom: any = dom?.current?.querySelector('.ant-image-mask');
     const ImageDom: any = dom?.current?.querySelector('.ant-image-img');

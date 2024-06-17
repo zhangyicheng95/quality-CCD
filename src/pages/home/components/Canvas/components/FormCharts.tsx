@@ -7,6 +7,7 @@ import CustomWindowBody from '@/components/CustomWindowBody';
 import { FormatWidgetToDom } from './Operation2Charts';
 import BasicTable from '@/components/BasicTable';
 import { guid } from '@/utils/utils';
+import { connect } from 'umi';
 
 interface Props {
   data: any;
@@ -18,7 +19,7 @@ interface Props {
 const FormCharts: React.FC<Props> = (props: any) => {
   const [form] = Form.useForm();
   const [form1] = Form.useForm();
-  let { data = {}, id } = props;
+  let { data = {}, id, started } = props;
   let {
     dataValue = [],
     titleFontSize = 24,
@@ -69,7 +70,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
   };
   // 初始化进入
   useEffect(() => {
-    if (modelUpload) {
+    if (modelUpload && started) {
       btnFetch('get', xName).then((res: any) => {
         if (!!res && res.code === 'SUCCESS') {
           message.success('success');
@@ -79,7 +80,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
         }
       });
     }
-  }, []);
+  }, [started]);
   // socket监听dataValue
   useEffect(() => {
     if (!_.isEmpty(dataValue)) {
@@ -484,4 +485,6 @@ const FormCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default FormCharts;
+export default connect(({ home, themeStore }) => ({
+  started: home.started || false,
+}))(FormCharts);

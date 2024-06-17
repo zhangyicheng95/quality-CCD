@@ -346,6 +346,10 @@ export const simulatedCoatingList: any = [
     label: '大屏背景图',
     icon: dataHomeImage,
   },
+  {
+    value: 'blackBg',
+    label: '纯黑背景图',
+  },
 ];
 export const logColors = {
   warning: 'rgba(245,160,49,1)',

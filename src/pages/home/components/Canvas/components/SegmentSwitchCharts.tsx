@@ -29,16 +29,18 @@ const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
   const [selected, setSelected] = useState('');
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-    btnFetch('get', xName).then((res: any) => {
-      if (!!res && res.code === 'SUCCESS') {
-        setSelected(res?.data?.value);
-      } else {
-        message.error(res?.message || '后台服务异常，请重启服务');
-        const select = dataValue || timeSelectDefault?.[0]?.value;
-        setSelected(select);
-      }
-    });
-  }, [timeSelectDefault]);
+    if (started) {
+      btnFetch('get', xName).then((res: any) => {
+        if (!!res && res.code === 'SUCCESS') {
+          setSelected(res?.data?.value);
+        } else {
+          message.error(res?.message || '后台服务异常，请重启服务');
+          const select = dataValue || timeSelectDefault?.[0]?.value;
+          setSelected(select);
+        }
+      });
+    }
+  }, [timeSelectDefault, started]);
   // 启动任务
   const start = () => {
     if (!ipString) {

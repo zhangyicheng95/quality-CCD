@@ -115,7 +115,7 @@ export async function getInitialState(): Promise<{
       } else {
         console.log('appjs中方案信息报错: ', res);
         if (!!query?.id) {
-          localStorage.setItem('ipString', query?.id);
+          localStorage.removeItem('ipString');
           message.error('获取方案信息接口报错，5秒钟后自动刷新');
           setTimeout(() => {
             window.location.reload();

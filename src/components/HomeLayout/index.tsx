@@ -137,6 +137,10 @@ const HomeLayout: React.FC<any> = (props) => {
   };
   // 进来默认加载标签页
   useEffect(() => {
+    // 禁用右键默认行为
+    document.oncontextmenu = function (evt) {
+      evt.preventDefault();
+    };
     if (!!params?.contentData?.ipList) {
       try {
         const data = (params?.contentData?.ipList || [])?.map?.((item: any) => {

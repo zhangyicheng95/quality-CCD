@@ -126,7 +126,7 @@ const sourceList = [
 ];
 
 const RangeDomainCharts: React.FC<Props> = (props: any) => {
-  const { data = {}, id, updateTabs } = props;
+  const { data = {}, id, updateTabs, started } = props;
   let {
     dataValue,
     fontSize = 14,
@@ -148,7 +148,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
   const inputDom = useRef<any>(null);
 
   const init = () => {
-    if (!!xName) {
+    if (!!xName && started) {
       btnFetch('get', xName).then((res: any) => {
         if (!!res && res.code === 'SUCCESS') {
           setDataSource(res?.data || []);
@@ -179,7 +179,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
   };
   useEffect(() => {
     init();
-  }, []);
+  }, [started]);
   useEffect(() => {
     if (!!updateTabs?.length && updateTabs.includes(id)) {
       init();
@@ -424,4 +424,5 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
 
 export default connect(({ home, themeStore }) => ({
   updateTabs: home.updateTabs || [],
+  started: home.started || false,
 }))(RangeDomainCharts);

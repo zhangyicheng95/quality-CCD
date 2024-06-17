@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { Form, message } from 'antd';
 import { btnFetch } from '@/services/api';
 import SegmentSwitch from '@/components/SegmentSwitch';
+import { connect } from 'umi';
 
 interface Props {
   data: any;
@@ -23,7 +24,7 @@ const rectList = [
   { label: '右下角', value: 'rightBottom' },
 ];
 const RectRangeCharts: React.FC<Props> = (props: any) => {
-  const { data = {}, id } = props;
+  const { data = {}, id, started } = props;
   let { dataValue, fontSize = 14, fetchType, xName } = data;
   const [form] = Form.useForm();
   const dom = useRef<any>(null);
@@ -31,7 +32,7 @@ const RectRangeCharts: React.FC<Props> = (props: any) => {
   const [dataSource, setDataSource] = useState<any>([]);
 
   useEffect(() => {
-    if (!!xName) {
+    if (!!xName && started) {
       btnFetch('get', xName).then((res: any) => {
         if (!!res && res.code === 'SUCCESS') {
           setTimeout(() => {
@@ -50,7 +51,7 @@ const RectRangeCharts: React.FC<Props> = (props: any) => {
         }
       });
     }
-  }, []);
+  }, [started]);
 
   useEffect(() => {
     if (!_.isEmpty(dataValue)) {
@@ -135,4 +136,6 @@ const RectRangeCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default RectRangeCharts;
+export default connect(({ home, themeStore }) => ({
+  started: home.started || false,
+}))(RectRangeCharts);

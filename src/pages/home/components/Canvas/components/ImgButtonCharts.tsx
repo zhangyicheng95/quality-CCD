@@ -12,7 +12,7 @@ interface Props {
 }
 
 const ImgButtonCharts: React.FC<Props> = (props: any) => {
-  const { data = {}, id } = props;
+  const { data = {}, id, started } = props;
   const {
     dataValue,
     fontSize,

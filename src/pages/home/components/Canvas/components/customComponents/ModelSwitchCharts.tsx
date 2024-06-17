@@ -5,6 +5,7 @@ import { Button, Form, Input, InputNumber, message, Modal, Popconfirm, Select } 
 import { btnFetch } from '@/services/api';
 import { formatJson, guid } from '@/utils/utils';
 import MonacoEditor from '@/components/MonacoEditor';
+import { connect } from 'umi';
 
 interface Props {
   data: any;
@@ -13,7 +14,7 @@ interface Props {
 }
 
 const ModelSwitchCharts: React.FC<Props> = (props: any) => {
-  const { data = {}, id } = props;
+  const { data = {}, id, started } = props;
   let {
     dataValue,
     dispatch,
@@ -36,9 +37,9 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
     } else {
       initList();
     }
-  }, [dataValue?._str]);
+  }, [dataValue?._str, started]);
   const initList = () => {
-    if (!!xName) {
+    if (!!xName && started) {
       btnFetch('get', xName).then((res: any) => {
         if (!!res && res.code === 'SUCCESS') {
           const valData = Object.entries(res.data)?.reduce((pre: any, cen: any) => {
@@ -418,4 +419,6 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default ModelSwitchCharts;
+export default connect(({ home, themeStore }) => ({
+  started: home.started || false,
+}))(ModelSwitchCharts);
