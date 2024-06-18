@@ -13,6 +13,7 @@ export default {
     taskDataConnect: false, // 服务已连接
     canvasLock: false,
     bodyBoxTab: '',
+    editCardID: '',
     updateTabs: [],
     logStatus: 'failed',
     logData: [],

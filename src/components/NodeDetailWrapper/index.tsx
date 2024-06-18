@@ -9,17 +9,19 @@ const NodeDetailWrapper = (props: any) => {
 
   return (
     <div className={`${styles.nodeDetailWrapper} ${className}`} {...rest}>
-      <div className="nodeDetailWrapper_header flex-box">
-        <div className="label">{title}</div>
-      </div>
-      <div className="content">
+      {!!title ? (
+        <div className="nodeDetailWrapper_header flex-box">
+          <div className="label">{title}</div>
+        </div>
+      ) : null}
+      <div className="content" style={!title ? { height: 'calc(100% - 50px)' } : {}}>
         <BasicScrollBar>{children}</BasicScrollBar>
       </div>
       <div className="flex-box node-sider-footer">
         <Button
           className="sider-footer-btn"
           onClick={() => {
-            onCancel();
+            !!onCancel && onCancel?.();
           }}
         >
           取消
@@ -29,7 +31,7 @@ const NodeDetailWrapper = (props: any) => {
           type="primary"
           disabled={!onSave}
           onClick={() => {
-            onSave();
+            !!onSave && onSave?.();
           }}
         >
           确定

@@ -13,10 +13,9 @@ interface Props {
 }
 
 const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
-  const { data = {}, id, started } = props;
+  const { data = {}, id, started, dispatch } = props;
   const {
     dataValue,
-    dispatch,
     fontSize = 14,
     yName = '',
     des_layout,

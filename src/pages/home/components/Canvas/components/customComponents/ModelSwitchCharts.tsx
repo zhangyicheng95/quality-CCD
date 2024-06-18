@@ -14,10 +14,9 @@ interface Props {
 }
 
 const ModelSwitchCharts: React.FC<Props> = (props: any) => {
-  const { data = {}, id, started } = props;
+  const { data = {}, id, started, dispatch } = props;
   let {
     dataValue,
-    dispatch,
     fontSize = 14,
     fetchType,
     xName,
@@ -98,7 +97,10 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
   const onSaveAs = () => {
     form.validateFields().then((params: any) => {
       if (!fetchType || !xName) return;
-      btnFetch(fetchType, `${xName}SaveAs`, params).then((res: any) => {
+      btnFetch(fetchType, `${xName}SaveAs`, {
+        ...params,
+        roi_pts: _.isString(params.roi_pts) ? JSON.parse(params.roi_pts || '[]') : params.roi_pts,
+      }).then((res: any) => {
         if (res && res.code === 'SUCCESS') {
           message.success('success');
           initList();

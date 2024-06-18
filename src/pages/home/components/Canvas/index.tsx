@@ -1631,7 +1631,6 @@ const Home: React.FC<any> = (props: any) => {
                       parentBodyBoxTab,
                       formCustom,
                       addContentList,
-                      dispatch,
                     }}
                   />
                 ) : type === 'tree' ? (
@@ -1718,7 +1717,6 @@ const Home: React.FC<any> = (props: any) => {
                       yName,
                       iconSize,
                       fetchParams,
-                      dispatch,
                       direction,
                       addContentList,
                     }}
@@ -1875,7 +1873,6 @@ const Home: React.FC<any> = (props: any) => {
                     id={key}
                     data={{
                       dataValue,
-                      dispatch,
                       fontSize,
                       yName,
                       des_layout,
@@ -2039,7 +2036,6 @@ const Home: React.FC<any> = (props: any) => {
                   <EquipmentControlCharts
                     id={key}
                     data={{
-                      dispatch,
                       dataValue,
                       fontSize,
                       titleFontSize,

@@ -16,9 +16,8 @@ interface Props {
 }
 
 const BodyBoxCharts: React.FC<Props> = (props: any) => {
-  const { data = {}, id, started } = props;
+  const { data = {}, id, started, dispatch } = props;
   let {
-    dispatch,
     timeSelectDefault,
     fontSize,
     yName = 0,

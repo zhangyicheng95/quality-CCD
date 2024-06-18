@@ -16,8 +16,8 @@ interface Props {
 }
 
 const EquipmentControlCharts: React.FC<Props> = (props: any) => {
-  const { data = {}, id, started } = props;
-  const { dispatch, dataValue, titleFontSize = 24, fontSize = 24 } = data;
+  const { data = {}, id, started, dispatch } = props;
+  const { dataValue, titleFontSize = 24, fontSize = 24 } = data;
   const dom = useRef<any>();
   const [iconSize, setIconSize] = useState(0);
   useEffect(() => {
