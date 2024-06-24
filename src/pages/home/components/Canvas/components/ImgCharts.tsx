@@ -520,8 +520,10 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             {(urlList.current || [])?.map?.((item: any, index: number) => {
               if (_.isString(item)) {
                 return <Image src={item} alt={item} key={`${id}-${item}-${index}`} />;
-              } else if (!!item.url) {
-                return <Image src={item.url} alt={item.url} key={`${id}-${item.url}-${index}`} />;
+              } else if (!!item?.url) {
+                return (
+                  <Image src={item?.url} alt={item?.url} key={`${id}-${item?.url}-${index}`} />
+                );
               }
               return null;
             })}
@@ -541,7 +543,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                     : 'NG'
                   : ''
                 : item.type;
-              const url = _.isString(item) ? item : item.url;
+              const url = _.isString(item) ? item : item?.url;
               if (!!url) {
                 return (
                   <div

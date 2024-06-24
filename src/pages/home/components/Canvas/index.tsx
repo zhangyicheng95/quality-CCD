@@ -1287,6 +1287,7 @@ const Home: React.FC<any> = (props: any) => {
           magnifierHeight,
           ifPopconfirm,
           showImgList,
+          notLocalStorage,
           imgListNum,
           showFooter,
           markNumberLeft,
@@ -2107,6 +2108,7 @@ const Home: React.FC<any> = (props: any) => {
                       fontSize,
                       dataValue,
                       showImgList,
+                      notLocalStorage: _.isBoolean(notLocalStorage) ? !notLocalStorage : false,
                       imgListNum,
                       showFooter,
                       magnifier,
@@ -2475,7 +2477,7 @@ const Home: React.FC<any> = (props: any) => {
                   [value[1]]: ['three', 'buttonImages', 'imgButton'].includes(type)
                     ? _.omit(dataValue, 'action')
                     : ['modelSwitch'].includes(type)
-                    ? _.omit(dataValue, '_str')
+                    ? undefined
                     : dataValue,
                 }
               : item,
@@ -2667,7 +2669,7 @@ const Home: React.FC<any> = (props: any) => {
               setTimeout(() => {
                 resolve(true);
                 setLoading(false);
-              }, (homeSettingData?.['slider-1']?.delay || 0) * 1000 + 2000);
+              }, 3000); // (homeSettingData?.['slider-1']?.delay || 0) * 1000 + 2000);
             }
           });
         });
@@ -2916,6 +2918,7 @@ const Home: React.FC<any> = (props: any) => {
       magnifierHeight: undefined,
       ifPopconfirm: true,
       showImgList: false,
+      notLocalStorage: false,
       imgListNum: 6,
       showFooter: false,
       titlePaddingSize: 0,
@@ -4125,6 +4128,9 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item name="comparison" label="开启对比图" valuePropName="checked">
                       <Switch />
                     </Form.Item>
+                    <Form.Item name="notLocalStorage" label="开启图片缓存" valuePropName="checked">
+                      <Switch />
+                    </Form.Item>
                     <Form.Item name="showImgList" label="图片列表" valuePropName="checked">
                       <Switch />
                     </Form.Item>
@@ -4748,7 +4754,7 @@ const Home: React.FC<any> = (props: any) => {
                       {commonSettingList
                         ?.sort((a: any, b: any) => a.sort - b.sort)
                         ?.map((item: any, index: number) => {
-                          const { label, value, id } = item;
+                          const { label, value, type, number, id } = item;
                           return (
                             <div
                               className="flex-box"
@@ -4776,6 +4782,41 @@ const Home: React.FC<any> = (props: any) => {
                                     onBodyBoxChange(val, index, 'value');
                                   }}
                                 />
+                              </div>
+                              <div style={{ flex: 1 }}>
+                                <Select
+                                  defaultValue={type}
+                                  style={{ width: '100%', height: 28 }}
+                                  options={['string', 'number']?.map?.((item: any) => ({
+                                    value: item,
+                                    label: item,
+                                  }))}
+                                  onChange={(val) => {
+                                    onBodyBoxChange(val, index, 'type');
+                                  }}
+                                />
+                              </div>
+                              <div style={{ flex: 1 }}>
+                                {type === 'string' ? (
+                                  <Input
+                                    defaultValue={number}
+                                    placeholder="number"
+                                    style={{ height: 28 }}
+                                    onChange={(e) => {
+                                      const val = e?.target?.value;
+                                      onBodyBoxChange(val, index, 'number');
+                                    }}
+                                  />
+                                ) : (
+                                  <InputNumber
+                                    defaultValue={number}
+                                    placeholder="number"
+                                    style={{ height: 28 }}
+                                    onChange={(val) => {
+                                      onBodyBoxChange(val, index, 'number');
+                                    }}
+                                  />
+                                )}
                               </div>
                               <Button
                                 icon={<MinusSquareOutlined />}

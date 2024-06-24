@@ -3,6 +3,7 @@ import Moveable from 'react-moveable';
 import ImgCharts from '@/pages/home/components/Canvas/components/ImgCharts';
 import { guid } from '@/utils/utils';
 import { connect } from 'umi';
+import StatisticCharts from '@/pages/home/components/Canvas/components/StatisticCharts';
 
 interface Props {
   bounds?: any;
@@ -11,9 +12,9 @@ interface Props {
 const MoveItem: React.FC<Props> = (props: any) => {
   const { bounds, dispatch, editCardID } = props;
   const [dataList, setDataList] = useState([
-    { name: 'target', x: 100, y: 20, width: 300, height: 200 },
-    { name: 'target1', x: 100, y: 800, width: 620, height: 300 },
-    { name: 'target2', x: 620, y: 20, width: 300, height: 200 },
+    { name: 'target', x: 100, y: 20, width: 300, height: 200, type: '' },
+    { name: 'target1', x: 100, y: 800, width: 620, height: 300, type: 'statistic' },
+    { name: 'target2', x: 620, y: 20, width: 300, height: 200, type: '' },
   ]);
   let [snapContainer, setSnapContainer] = useState<any>(null);
 
@@ -78,7 +79,7 @@ const MoveItem: React.FC<Props> = (props: any) => {
       }}
     >
       {(dataList || [])?.map((item: any, index: number) => {
-        const { name, x, y, width, height } = item;
+        const { name, x, y, width, height, type } = item;
         const target = `.${name}`;
         return (
           <Fragment key={index}>
@@ -87,19 +88,32 @@ const MoveItem: React.FC<Props> = (props: any) => {
               style={{
                 height,
                 width,
-                background: 'red',
                 left: x,
                 top: y,
               }}
               onClick={(e) => handelClick(name, e)}
             >
-              <ImgCharts
-                id={guid()}
-                data={{
-                  dataValue: undefined,
-                  fontSize: 32,
-                }}
-              />
+              {type === 'statistic' ? (
+                <StatisticCharts
+                  id={guid()}
+                  data={{
+                    dataValue: undefined,
+                    fontSize: 32,
+                    yName: '标题啊啊啊',
+                    fontColor: '',
+                    direction: '',
+                    valueOnTop: '',
+                  }}
+                />
+              ) : (
+                <ImgCharts
+                  id={guid()}
+                  data={{
+                    dataValue: undefined,
+                    fontSize: 32,
+                  }}
+                />
+              )}
             </div>
             <Moveable
               target={target} // moveable的对象

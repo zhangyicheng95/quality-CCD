@@ -107,7 +107,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
       if (execParams?.[item]) {
         resConfig = resConfig.concat(
           Object.assign(
-            { enabled: true },
+            { enabled: true, name: item },
             execParams[item],
             { show: !itemGroup },
             !!data && !_.isEmpty(data) ? { value: data[item] } : {},
@@ -122,6 +122,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         }
       }
     });
+    console.log(resConfig);
     setConfigGroup(group?.map?.((i: any) => ({ ...i, show: true })));
     setSelectedOption(selectedOptions);
     setConfigList(resConfig);
@@ -400,7 +401,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
             return (
               <Fragment>
                 {configList?.map?.((item: any, index: number) =>
-                  initItem({ ...item, locked }, index),
+                  initItem({ ...item, locked, inGroup: false }, index),
                 )}
                 {configGroup?.map?.((group: any, index: number) => {
                   const { name, id, children, show } = group;
@@ -434,7 +435,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                               key={`param-group-item-body-box-${index}`}
                             >
                               {/* <div className="param-line-row" >--</div> */}
-                              {initItem({ ...item, show, locked }, index)}
+                              {initItem({ ...item, show, locked, inGroup: true }, index)}
                             </div>
                           );
                         })}
@@ -525,27 +526,29 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
           }}
         />
       ) : null}
-      {platFormVisible ? (
-        <PlatFormModal
-          visible={platFormVisible}
-          data={{ ...platFormValue, ifFetch: false }}
-          onOk={(val: any) => {
-            const { id, ...rest } = val;
-            // if (!!ifFetch) {
-            //   btnFetch('post', xName, rest.value).then((res) => {
-            //     console.log(res);
-            //   });
-            // }
-            widgetChange(id, rest);
-            setPlatFormValue({});
-            setPlatFormVisible(false);
-          }}
-          onCancel={() => {
-            setPlatFormValue({});
-            setPlatFormVisible(false);
-          }}
-        />
-      ) : null}
+      {useMemo(() => {
+        return platFormVisible ? (
+          <PlatFormModal
+            visible={platFormVisible}
+            data={{ ...platFormValue, ifFetch: false }}
+            onOk={(val: any) => {
+              const { id, ...rest } = val;
+              // if (!!ifFetch) {
+              //   btnFetch('post', xName, rest.value).then((res) => {
+              //     console.log(res);
+              //   });
+              // }
+              widgetChange(id, { ...rest, show: !platFormValue.inGroup });
+              setPlatFormValue({});
+              setPlatFormVisible(false);
+            }}
+            onCancel={() => {
+              setPlatFormValue({});
+              setPlatFormVisible(false);
+            }}
+          />
+        ) : null;
+      }, [platFormVisible, platFormValue])}
       {selectPathVisible ? (
         <FileManager
           fileType={selectedPath.fileType}
@@ -603,6 +606,7 @@ export function FormatWidgetToDom(props: any) {
     description,
     widget = {},
     default: defaultValue,
+    inGroup,
   } = config[1];
 
   let { max = 9999, min, options, precision, step, suffix, type: type1 } = widget;
@@ -1033,6 +1037,7 @@ export function FormatWidgetToDom(props: any) {
                 id: name,
                 value: language === 'json' && _.isObject(value) ? formatJson(value) : value,
                 language: language || 'json',
+                inGroup,
               });
               setEditorVisible(true);
             }}

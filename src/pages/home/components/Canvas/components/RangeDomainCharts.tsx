@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { Button, Form, Input, InputNumber, message, Switch } from 'antd';
+import { Form, Input, InputNumber, message } from 'antd';
 import { btnFetch } from '@/services/api';
 import { connect } from 'umi';
 import SegmentSwitch from '@/components/SegmentSwitch';
@@ -218,12 +218,21 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
         const params = dataSource?.map((dataItem: any) => {
           return {
             ...dataItem,
-            data: dataItem.data?.map((cDataItem: any) => {
+            data: (timeSelectDefault?.length > dataItem?.data?.length
+              ? dataItem?.data?.concat({
+                  key: timeSelectDefault?.[dataItem?.data?.length]?.value,
+                  value: timeSelectDefault?.[dataItem?.data?.length]?.number,
+                  type: timeSelectDefault?.[dataItem?.data?.length]?.type,
+                })
+              : dataItem?.data
+            )?.map((cDataItem: any) => {
               if (dataItem.name === name) {
                 if (cDataItem.key === key) {
                   return {
                     ...cDataItem,
-                    value: value,
+                    value: ['int', 'float', 'number'].includes(_.lowerCase(cDataItem.type))
+                      ? Number(value)
+                      : value,
                   };
                 }
               }
@@ -233,38 +242,20 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
               ) {
                 return {
                   ...cDataItem,
-                  value: range?.[dataItem.name]?.[cDataItem.key],
+                  value: ['int', 'float', 'number'].includes(_.lowerCase(cDataItem.type))
+                    ? Number(range?.[dataItem.name]?.[cDataItem.key])
+                    : range?.[dataItem.name]?.[cDataItem.key],
                 };
               }
               return cDataItem;
             }),
           };
         });
+
         btnFetch(fetchType, xName, params).then((res: any) => {
           if (res && res.code === 'SUCCESS') {
             message.success('success');
             init();
-            // setDataSource(res?.data);
-            // const valData = (res.data || [])?.reduce((pre: any, cen: any) => {
-            //   const { name, data } = cen;
-            //   let list = {};
-            //   data.forEach((item: any) => {
-            //     const { key, value } = item;
-            //     const listName =
-            //       key == name
-            //         ? `${parentBodyBoxTab}$$${key}`
-            //         : `${parentBodyBoxTab}$$${key}$$${name}`;
-            //     list[listName] = value;
-            //   });
-            //   return {
-            //     ...pre,
-            //     ...list,
-            //   };
-            // }, {});
-            // formCustom.setFieldsValue({
-            //   // ...formCustom.getFieldValue(),
-            //   ...valData,
-            // });
           } else {
             message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
           }
@@ -311,7 +302,14 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                     {alias}
                   </div>
                 ) : null}
-                {(data || [])?.map((cItem: any, cIndex: number) => {
+                {(timeSelectDefault?.length > data?.length
+                  ? data?.concat({
+                      key: timeSelectDefault?.[data?.length]?.value,
+                      value: timeSelectDefault?.[data?.length]?.number,
+                      type: timeSelectDefault?.[data?.length]?.type,
+                    })
+                  : data
+                )?.map((cItem: any, cIndex: number) => {
                   const { key, value, type } = cItem;
                   return (
                     <div
@@ -342,10 +340,11 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                             {},
                             {
                               marginBottom: 0,
-                              minWidth: 60,
+                              minWidth: 35,
                             },
                             hiddenAxis && index < des_column ? { height: 'calc(100% - 38px)' } : {},
                           )}
+                          initialValue={value}
                           rules={[{ required: false, message: alias }]}
                         >
                           <SegmentSwitch
@@ -370,6 +369,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                             { width: '100%', height: '100%', marginBottom: 0 },
                             hiddenAxis && index < des_column ? { height: 'calc(100% - 38px)' } : {},
                           )}
+                          initialValue={value}
                           rules={[{ required: false, message: alias }]}
                         >
                           {['int', 'float', 'number'].includes(_.lowerCase(type)) ? (

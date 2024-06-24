@@ -37,17 +37,19 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
     fontInBody = [],
     layout,
     border = false,
-    buttonColor,
+    buttonColor = '',
     reverse = false,
   } = props;
   const [lock, setLock] = useState(0);
   useEffect(() => {
     let index = 0;
     fontInBody.forEach((item: any, cIndex: number) => {
-      if (item.value === (value || defaultValue || fontInBody?.[0]?.value)) {
+      if (item.value === (value || defaultValue)) {
         index = cIndex;
       }
     });
+    console.log('wwwwwwwsssssssss', index);
+
     setLock(index);
   }, [value, defaultValue]);
 

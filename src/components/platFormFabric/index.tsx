@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { message, Modal } from 'antd';
 import * as _ from 'lodash';
 import styles from './index.less';
-import MarkCanvas from './MarkCanvas';
+import MarkCanvasFabric from './MarkCanvasFabric';
 
 interface Props {
   data?: any;
@@ -140,13 +140,7 @@ const PlatFormFabricModal: React.FC<Props> = (props) => {
         onCancel();
       }}
     >
-      <MarkCanvas
-        data={data}
-        setGetDataFun={setGetDataFun}
-        getDataFun={getDataFun}
-        selectedFeature={selectedFeature}
-        setSelectedFeature={setSelectedFeature}
-      />
+      <MarkCanvasFabric data={data} />
     </Modal>
   );
 };

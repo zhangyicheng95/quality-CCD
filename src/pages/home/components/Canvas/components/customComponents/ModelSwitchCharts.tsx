@@ -16,7 +16,7 @@ interface Props {
 const ModelSwitchCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id, started, dispatch } = props;
   let {
-    dataValue,
+    dataValue = undefined,
     fontSize = 14,
     fetchType,
     xName,
@@ -31,12 +31,12 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
   const [editorValue, setEditorValue] = useState<any>({});
 
   useEffect(() => {
-    if (!_.isUndefined(dataValue?._str) && !_.isNull(dataValue?._str)) {
+    if (!_.isUndefined(dataValue) && !_.isNull(dataValue)) {
       triggerUpdate();
     } else {
       initList();
     }
-  }, [dataValue?._str, started]);
+  }, [dataValue, started]);
   const initList = () => {
     if (!!xName && started) {
       btnFetch('get', xName).then((res: any) => {

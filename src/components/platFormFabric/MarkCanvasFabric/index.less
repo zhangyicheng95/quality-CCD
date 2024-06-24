@@ -1,0 +1,27 @@
+@import '~antd/es/style/themes/default.less';
+
+@liner: rgba(144, 144, 144, .1) 1px;
+
+.markCanvas {
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+
+    :global {
+        .mark-fabric-box {
+            height: 100%;
+            width: 100%;
+
+            .sample-canvas {
+                background-color: rgba(144, 144, 144, .3);
+                // background-image: url('https://ts1.cn.mm.bing.net/th/id/R-C.6195f97cbda5adc5c5a20bd54f8f1787?rik=DCKWcoAcSLKKLQ&riu=http%3a%2f%2fimg1.xcarimg.com%2fnews%2f3305%2f3308%2f4390%2f20110810232606712965.jpg-908x681.jpg&ehk=eHQs4fbLytZQlYDb9EngsqDxiiZ0VXw62bpt2YZS7jI%3d&risl=&pid=ImgRaw&r=0');
+                // background-size: auto 100%;
+                // background-repeat: no-repeat;
+                // background-position: center;
+                height: 100%;
+                width: 100%;
+                z-index: 0;
+            }
+        }
+    }
+}

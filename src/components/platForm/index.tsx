@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { message, Modal } from 'antd';
 import * as _ from 'lodash';
 import styles from './index.less';
@@ -194,13 +194,17 @@ const PlatFormModal: React.FC<Props> = (props) => {
       }}
       getContainer={inHome ? false : document.body}
     >
-      <MarkCanvas
-        data={data}
-        setGetDataFun={setGetDataFun}
-        getDataFun={getDataFun}
-        selectedFeature={selectedFeature}
-        setSelectedFeature={setSelectedFeature}
-      />
+      {useMemo(() => {
+        return (
+          <MarkCanvas
+            data={data}
+            setGetDataFun={setGetDataFun}
+            getDataFun={getDataFun}
+            selectedFeature={selectedFeature}
+            setSelectedFeature={setSelectedFeature}
+          />
+        );
+      }, [JSON.stringify(data), selectedFeature])}
     </Modal>
   );
 };

@@ -8,8 +8,49 @@
     overflow: hidden;
 
     :global {
+        .left-plugins-panel {
+            z-index: 9;
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 300px;
+            background-color: @background-color-base;
+
+            &-tabs-box {
+                height: 100%;
+                padding: 8px 2px;
+                border-right: 1px solid rgba(144, 144, 144, .3);
+                font-size: 16px;
+
+                &-item {
+                    flex-direction: column;
+                    padding: 4px;
+                    cursor: pointer;
+                    border-bottom: 1px solid rgba(144, 144, 144, .3);
+                    line-height: 1.4;
+
+                    &-icon {
+                        font-size: 18px;
+                    }
+                }
+            }
+
+            &-body {
+                flex: 1;
+                font-size: 14px;
+
+                &-describtion {
+                    padding: 2px 4px;
+                    gap: 8px;
+                    border-bottom: 1px solid rgba(144, 144, 144, .3);
+                }
+            }
+        }
+
         .moveable-ruler-left-box {
-            width: calc(100% - 501px);
+            width: calc(100% - 800px);
+            margin-left: 300px;
             height: 100%;
             position: relative;
             overflow: hidden;
@@ -53,7 +94,6 @@
             bottom: 0;
             width: 500px;
             background-color: @background-color-base;
-            border-left: 1px solid rgb(240, 242, 245);
             transition: all 0.5s;
 
             .content {
@@ -69,8 +109,9 @@
                     font-size: 16px;
                     flex: 1;
                     text-align: center;
-                    border-bottom: 1px solid rgba(144, 144, 144, .6);
+                    border-bottom: 1px solid rgba(144, 144, 144, .3);
                     transition: all .5s;
+                    cursor: pointer;
                 }
 
                 &-selected {
@@ -79,8 +120,18 @@
                     bottom: 0;
                     width: 25%;
                     height: 2px;
-                    background-color: #eab308;
+                    background-color: @primary-color;
                     transition: all .5s;
+                }
+            }
+
+            &-yemian-box {
+                &-title {
+                    padding: 4px 8px;
+                    font-size: 16px;
+                    width: 100%;
+                    text-align: center;
+                    border-bottom: 1px solid rgba(144, 144, 144, .3);
                 }
             }
         }

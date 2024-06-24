@@ -25,31 +25,29 @@ const StatisticCharts: React.FC<Props> = (props: any) => {
       }}
     >
       {valueOnTop ? null : <div className="statistic-title">{yName}</div>}
-      {useMemo(() => {
-        return (
-          <div
-            className="statistic-value"
-            style={Object.assign(
-              {
-                fontSize: Number(fontSize) + 10,
-              },
-              !!dataValue?.color
-                ? { color: dataValue?.color }
-                : !!fontColor && !!fontColor?.rgb
-                ? {
-                    color: `rgba(${fontColor.rgb.r},${fontColor.rgb.g},${fontColor.rgb.b},${fontColor.rgb.a})`,
-                  }
-                : {},
-            )}
-          >
-            {_.isString(dataValue)
-              ? dataValue
-              : !!dataValue?.value
-              ? dataValue?.value
-              : JSON.stringify(dataValue)}
-          </div>
-        );
-      }, [fontSize, fontColor?.rgb, dataValue, dataValue?.value, dataValue?.color])}
+      <div
+        className={`statistic-value ${
+          dataValue?.color === 'red' ? 'NG-font' : dataValue?.color === 'green' ? 'OK-font' : ''
+        }`}
+        style={Object.assign(
+          {
+            fontSize: Number(fontSize) + 10,
+          },
+          !!dataValue?.color
+            ? { color: dataValue?.color }
+            : !!fontColor && !!fontColor?.rgb
+            ? {
+                color: `rgba(${fontColor.rgb.r},${fontColor.rgb.g},${fontColor.rgb.b},${fontColor.rgb.a})`,
+              }
+            : {},
+        )}
+      >
+        {_.isString(dataValue)
+          ? dataValue
+          : !!dataValue?.value
+          ? dataValue?.value
+          : JSON.stringify(dataValue)}
+      </div>
       {valueOnTop ? (
         <div
           className="statistic-title"

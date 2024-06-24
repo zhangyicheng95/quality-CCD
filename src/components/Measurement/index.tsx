@@ -38,7 +38,7 @@ const Measurement: React.FC<Props> = (props: any) => {
     lineNum = 4,
     style = null,
     type = 'float',
-    gap = 0,
+    gap = 8,
   } = props;
   const dom = useRef<any>();
   const refnum_0 = useRef();

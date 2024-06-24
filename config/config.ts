@@ -10,12 +10,10 @@ const { version } = require('../package.json');
 
 function OutputPathName(env: string) {
   if (env) {
-    return `quality-${env}`
-
+    return `quality-${env}`;
   }
-  return 'quality'
-
-};
+  return 'quality';
+}
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const path = require('path');
 const APP_DIR = path.resolve(__dirname, '../src');
@@ -57,8 +55,8 @@ export default defineConfig({
     // 只有设置为 variable， 才能使用 configProvide 动态设置主色调
     // https://ant.design/docs/react/customize-theme-variable-cn
     'root-entry-name': 'variable',
-    "background-color-base": "var(--multi-player-background-color)",
-    "body-background": "var(--multi-player-children-background-color)"
+    'background-color-base': 'var(--multi-player-background-color)',
+    'body-background': 'var(--multi-player-children-background-color)',
   },
   // esbuild is father build tools
   // https://umijs.org/plugins/plugin-esbuild
@@ -90,37 +88,106 @@ export default defineConfig({
   chainWebpack: function (config, { webpack }) {
     config.merge({
       plugins: [
-        new MonacoWebpackPlugin(['apex', 'azcli', 'bat', 'clojure', 'coffee', 'cpp', 'csharp', 'csp', 'css', 'dockerfile', 'fsharp', 'go', 'handlebars', 'html', 'ini', 'java', 'javascript', 'json', 'less', 'lua', 'markdown', 'msdax', 'mysql', 'objective', 'perl', 'pgsql', 'php', 'postiats', 'powerquery', 'powershell', 'pug', 'python', 'r', 'razor', 'redis', 'redshift', 'ruby', 'rust', 'sb', 'scheme', 'scss', 'shell', 'solidity', 'sql', 'st', 'swift', 'typescript', 'vb', 'xml', 'yaml'])
+        new MonacoWebpackPlugin([
+          'apex',
+          'azcli',
+          'bat',
+          'clojure',
+          'coffee',
+          'cpp',
+          'csharp',
+          'csp',
+          'css',
+          'dockerfile',
+          'fsharp',
+          'go',
+          'handlebars',
+          'html',
+          'ini',
+          'java',
+          'javascript',
+          'json',
+          'less',
+          'lua',
+          'markdown',
+          'msdax',
+          'mysql',
+          'objective',
+          'perl',
+          'pgsql',
+          'php',
+          'postiats',
+          'powerquery',
+          'powershell',
+          'pug',
+          'python',
+          'r',
+          'razor',
+          'redis',
+          'redshift',
+          'ruby',
+          'rust',
+          'sb',
+          'scheme',
+          'scss',
+          'shell',
+          'solidity',
+          'sql',
+          'st',
+          'swift',
+          'typescript',
+          'vb',
+          'xml',
+          'yaml',
+        ]),
       ],
       module: {
         rules: [
           {
             test: /\.css$/,
             include: APP_DIR,
-            use: [{
-              loader: 'style-loader',
-            }, {
-              loader: 'css-loader',
-              options: {
-                modules: true,
-                namedExport: true,
+            use: [
+              {
+                loader: 'style-loader',
               },
-            }],
-          }, {
+              {
+                loader: 'css-loader',
+                options: {
+                  modules: true,
+                  namedExport: true,
+                },
+              },
+            ],
+          },
+          {
             test: /\.css$/,
             include: MONACO_DIR,
             use: ['style-loader', 'css-loader'],
-          }
-        ]
+          },
+        ],
       },
-    })
+    });
   },
   nodeModulesTransform: {
     type: 'none',
   },
+  metas: [
+    {
+      httpEquiv: 'Cache-Control',
+      content: 'no-cache',
+    },
+    {
+      httpEquiv: 'Pragma',
+      content: 'no-cache',
+    },
+    {
+      httpEquiv: 'Expires',
+      content: '0',
+    },
+  ],
   mfsu: {},
   webpack5: {},
   exportStatic: {},
   plugins: [],
-  outputPath: "quality"
+  outputPath: 'quality',
 });

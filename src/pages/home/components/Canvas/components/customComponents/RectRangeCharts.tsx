@@ -125,6 +125,7 @@ const RectRangeCharts: React.FC<Props> = (props: any) => {
                         backgroundColor: 'rgba(24, 144, 255, 1)',
                       },
                     ]}
+                    style={{ height: '50%' }}
                   />
                 </Form.Item>
               )}

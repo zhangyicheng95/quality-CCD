@@ -131,7 +131,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
   } = data;
   let { name, value = [], action = '', guid: uuid, addType } = dataValue;
   if (process.env.NODE_ENV === 'development') {
-    name = 'models/output.stl'; // models/pressure.json  models/tx.stl  output  sgz630_zbc_214
+    name = 'models/Pipes.obj'; // models/pressure.json  models/tx.stl  output  sgz630_zbc_214
     addType = 'rxptPoint';
     // value = [];
   }
@@ -814,7 +814,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         clearCanvas(value);
       }
     };
-  }, [name, uuid, selectedPath]);
+  }, [name, uuid, selectedPath, dom.current?.offsetWidth, dom.current?.offsetHeight]);
   useEffect(() => {
     if (!!scene.current && addType === 'rxptPoint') {
       /***************清理框选区域********************/

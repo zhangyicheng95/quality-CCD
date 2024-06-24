@@ -217,6 +217,9 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
           ...statusListRef.current,
           [`${item.ip}_${item.projectId}`]: !!res,
         };
+        form.setFieldsValue({
+          [`${item.ip}_${item.projectId}`]: !!res,
+        });
         setTimeout(() => {
           setLoading((prev: any) => {
             return {
@@ -255,6 +258,9 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
           ...statusListRef.current,
           [`${item.ip}_${item.projectId}`]: !res,
         };
+        form.setFieldsValue({
+          [`${item.ip}_${item.projectId}`]: false,
+        });
         setLoading((prev: any) => {
           return {
             ...prev,
@@ -301,6 +307,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
         >
           {useMemo(() => {
             let values = Object.values(statusList);
+            console.log('all', values);
             values = values.filter((i: any) => !_.isUndefined(i));
             if (!values.length) {
               values = [false];
@@ -321,16 +328,10 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
                     </div>
                   }
                   fontInBody={[
-                    { label: '停止', value: false },
-                    { label: '启动', value: true },
+                    { label: '停止', value: false, backgroundColor: 'grey' },
+                    { label: '启动', value: true, backgroundColor: '#88db57' },
                   ]}
-                  buttonColor={
-                    !values?.includes(false) && values?.includes(true)
-                      ? '#88db57'
-                      : !values?.includes(true)
-                      ? 'grey'
-                      : '#b8831b'
-                  }
+                  buttonColor={values?.includes(false) && values?.includes(true) ? '#b8831b' : ''}
                   reverse={!!modelRotate}
                   loading={localhostLoading}
                   onClick={(e: any) => {
@@ -393,12 +394,9 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
                           </div>
                         }
                         fontInBody={[
-                          { label: '停止', value: false },
-                          { label: '启动', value: true },
+                          { label: '停止', value: false, backgroundColor: 'grey' },
+                          { label: '启动', value: true, backgroundColor: '#88db57' },
                         ]}
-                        buttonColor={
-                          !!statusList?.[`${item.ip}_${item.projectId}`] ? '#88db57' : 'grey'
-                        }
                         reverse={!!modelRotate}
                         loading={loading?.[`${item.ip}_${item.projectId}`]}
                         onClick={(e: any) => {

@@ -1682,7 +1682,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                       }}
                       rules={[{ required: true, message: '位置信息' }]}
                     >
-                      <Measurement style={{ gap: 8 }} />
+                      <Measurement gap={8} />
                     </Form.Item>
                     <Form.Item
                       name={`rotation`}
@@ -1847,7 +1847,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                               return (
                                 <Form.Item
                                   key={`${item[0]}$$${guid()}`}
-                                  name={`${item[0]}$$${guid()}`}
+                                  name={`roi`}
                                   label={'位置信息'}
                                   initialValue={
                                     value || {
@@ -1859,7 +1859,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                   }
                                   rules={[{ required: true, message: '位置信息' }]}
                                 >
-                                  <Measurement style={{ gap: 8 }} />
+                                  <Measurement gap={8} />
                                 </Form.Item>
                               );
                             }
@@ -1945,7 +1945,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                             return (
                               <Form.Item
                                 key={`${item[0]}$$${guid()}`}
-                                name={`${item[0]}$$${guid()}`}
+                                name={`roi`}
                                 label={'位置信息'}
                                 initialValue={
                                   value || {
@@ -1957,7 +1957,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                 }
                                 rules={[{ required: true, message: '位置信息' }]}
                               >
-                                <Measurement style={{ gap: 8 }} />
+                                <Measurement gap={8} />
                               </Form.Item>
                             );
                           }
