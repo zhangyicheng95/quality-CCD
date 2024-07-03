@@ -136,6 +136,7 @@ import SwitchBoxCharts from './components/SwitchBoxCharts';
 import FormCharts from './components/FormCharts';
 import NestFormCharts from './components/NestFormCharts';
 import TableAntdCharts from './components/TableAntdCharts';
+import SegmentSwitch from '@/components/SegmentSwitch';
 
 const leftPanelDataLocal = [
   {
@@ -257,10 +258,10 @@ const Home: React.FC<any> = (props: any) => {
             res[0] === 'productionInfo'
               ? '产线信息'
               : res[0] === 'stationInfo'
-              ? '工位信息'
-              : res[0] === 'useInfo'
-              ? '功能信息'
-              : res[0],
+                ? '工位信息'
+                : res[0] === 'useInfo'
+                  ? '功能信息'
+                  : res[0],
           value: res[1],
         };
       });
@@ -279,8 +280,8 @@ const Home: React.FC<any> = (props: any) => {
             homeSettingData['header']?.backgroundColor === 'default'
               ? {}
               : homeSettingData['header']?.backgroundColor === 'transparent'
-              ? { backgroundColor: 'transparent' }
-              : {
+                ? { backgroundColor: 'transparent' }
+                : {
                   backgroundImage: `url(${homeSettingData['header']?.backgroundColor})`,
                   backgroundColor: 'transparent',
                 },
@@ -340,8 +341,8 @@ const Home: React.FC<any> = (props: any) => {
             homeSettingData['slider-1']?.backgroundColor === 'default'
               ? {}
               : homeSettingData['slider-1']?.backgroundColor === 'transparent'
-              ? { backgroundColor: 'transparent' }
-              : { backgroundImage: homeSettingData['slider-1']?.backgroundColor }
+                ? { backgroundColor: 'transparent' }
+                : { backgroundImage: homeSettingData['slider-1']?.backgroundColor }
           }
         >
           {homeSettingData['slider-1']?.ifShowHeader ? (
@@ -473,8 +474,8 @@ const Home: React.FC<any> = (props: any) => {
             homeSettingData['slider-4']?.backgroundColor === 'default'
               ? {}
               : homeSettingData['slider-4']?.backgroundColor === 'transparent'
-              ? { backgroundColor: 'transparent' }
-              : { backgroundImage: homeSettingData['slider-4']?.backgroundColor }
+                ? { backgroundColor: 'transparent' }
+                : { backgroundImage: homeSettingData['slider-4']?.backgroundColor }
           }
         >
           {homeSettingData['slider-4']?.ifShowHeader ? (
@@ -489,17 +490,16 @@ const Home: React.FC<any> = (props: any) => {
             }}
           >
             {!!paramData?.contentData?.ipList?.length &&
-            !!homeSettingData?.['slider-4']?.show_start_end ? (
+              !!homeSettingData?.['slider-4']?.show_start_end ? (
               <Fragment>
                 <Button
                   type="text"
                   disabled={loading}
                   loading={loading}
-                  className={`flex-box-center tabs-box-item-box ${
-                    gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 20
-                      ? 'tabs-box-item-box-rows'
-                      : ''
-                  }`}
+                  className={`flex-box-center tabs-box-item-box ${gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 20
+                    ? 'tabs-box-item-box-rows'
+                    : ''
+                    }`}
                   onClick={() => {
                     startProjects(
                       paramData?.contentData?.ipList?.[0],
@@ -515,11 +515,10 @@ const Home: React.FC<any> = (props: any) => {
                   type="text"
                   disabled={loading}
                   loading={loading}
-                  className={`flex-box-center tabs-box-item-box ${
-                    gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 20
-                      ? 'tabs-box-item-box-rows'
-                      : ''
-                  }`}
+                  className={`flex-box-center tabs-box-item-box ${gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 20
+                    ? 'tabs-box-item-box-rows'
+                    : ''
+                    }`}
                   onClick={() => {
                     endProjects(
                       paramData?.contentData?.ipList?.[0],
@@ -534,11 +533,10 @@ const Home: React.FC<any> = (props: any) => {
               </Fragment>
             ) : null}
             <div
-              className={`flex-box-center tabs-box-item-box ${
-                gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 20
-                  ? 'tabs-box-item-box-rows'
-                  : ''
-              }`}
+              className={`flex-box-center tabs-box-item-box ${gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 20
+                ? 'tabs-box-item-box-rows'
+                : ''
+                }`}
               onClick={() => {
                 setAddItemsVisible(true);
               }}
@@ -550,13 +548,11 @@ const Home: React.FC<any> = (props: any) => {
               const statusItem = projectStatus?.filter((i: any) => i.value === key)?.[0] || {};
               return (
                 <div
-                  className={`flex-box tabs-box-item-box ${
-                    localStorage.getItem('ipString') === key ? 'active' : ''
-                  } ${
-                    gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 3
+                  className={`flex-box tabs-box-item-box ${localStorage.getItem('ipString') === key ? 'active' : ''
+                    } ${gridHomeList?.filter((i: any) => i.i === 'slider-4')[0]?.w >= 3
                       ? 'tabs-box-item-box-rows'
                       : ''
-                  }`}
+                    }`}
                   key={`tabs-${key}`}
                 >
                   <div
@@ -663,8 +659,8 @@ const Home: React.FC<any> = (props: any) => {
             homeSettingData['footer-1']?.backgroundColor === 'default'
               ? {}
               : homeSettingData['footer-1']?.backgroundColor === 'transparent'
-              ? { backgroundColor: 'transparent' }
-              : { backgroundImage: homeSettingData['footer-1']?.backgroundColor }
+                ? { backgroundColor: 'transparent' }
+                : { backgroundImage: homeSettingData['footer-1']?.backgroundColor }
           }
         >
           {homeSettingData['footer-1']?.ifShowHeader ? (
@@ -685,8 +681,8 @@ const Home: React.FC<any> = (props: any) => {
                 __html: _.isString(logStr)
                   ? logStr
                   : logStr
-                      ?.slice(logStr?.length - (homeSettingData['footer-1']?.logSize || 50))
-                      .join('<br />'),
+                    ?.slice(logStr?.length - (homeSettingData['footer-1']?.logSize || 50))
+                    .join('<br />'),
               }}
             />
             <div className="preview-box flex-box-center">
@@ -749,8 +745,8 @@ const Home: React.FC<any> = (props: any) => {
             homeSettingData['footer-2']?.backgroundColor === 'default'
               ? {}
               : homeSettingData['footer-2']?.backgroundColor === 'transparent'
-              ? { backgroundColor: 'transparent' }
-              : { backgroundImage: homeSettingData['footer-2']?.backgroundColor }
+                ? { backgroundColor: 'transparent' }
+                : { backgroundImage: homeSettingData['footer-2']?.backgroundColor }
           }
         >
           {homeSettingData['footer-2']?.ifShowHeader ? (
@@ -909,13 +905,13 @@ const Home: React.FC<any> = (props: any) => {
             },
             item.w > 0
               ? {
-                  minW: 1,
-                  minH: 2,
-                }
+                minW: 1,
+                minH: 2,
+              }
               : {
-                  minW: 0,
-                  minH: 0,
-                },
+                minW: 0,
+                minH: 0,
+              },
           ),
         );
       } else {
@@ -1219,7 +1215,7 @@ const Home: React.FC<any> = (props: any) => {
         const {
           id: key,
           size,
-          value = [],
+          value: __value = [],
           type,
           yName,
           xName,
@@ -1311,12 +1307,12 @@ const Home: React.FC<any> = (props: any) => {
         const gridValue = gridContentList?.filter((i: any) => i?.id === key)?.[0];
         const newGridValue = newGridContentList?.filter((i: any) => i?.id === key)?.[0];
         // socket有数据就渲染新的，没有就渲染localStorage缓存的
-        const dataValue = gridValue?.[value[1]] || newGridValue?.[value[1]] || undefined;
-        const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === value[0]);
+        const dataValue = gridValue?.[__value[1]] || newGridValue?.[__value[1]] || undefined;
+        const parent = paramData?.flowData?.nodes?.filter((i: any) => i.id === __value[0]);
         const { alias, name, ports = {} } = parent?.[0] || {};
         const { items = [] } = ports;
         const SecLabel = items?.filter(
-          (i: any) => i.group === 'bottom' && i?.label?.name === value[1],
+          (i: any) => i.group === 'bottom' && i?.label?.name === __value[1],
         )[0];
         listData = listData.concat(
           <div
@@ -1328,30 +1324,28 @@ const Home: React.FC<any> = (props: any) => {
               ['imgButton', 'heatMap'].includes(type)
                 ? { backgroundColor: 'transparent' }
                 : ['default'].includes(backgroundColor)
-                ? {}
-                : backgroundColor === 'border'
-                ? { paddingTop: (titleFontSize / 4) * 3, backgroundColor: 'transparent' }
-                : backgroundColor === 'transparent'
-                ? { backgroundColor: 'transparent' }
-                : backgroundColor === 'black'
-                ? { backgroundColor: 'black' }
-                : {
-                    backgroundImage: `url(${
-                      type === 'img' &&
-                      (dataValue?.status == 'NG' || dataValue?.status?.value == 'NG')
-                        ? dataItemImageNG
-                        : backgroundColor
-                    })`,
-                    backgroundColor: 'transparent',
-                  },
+                  ? {}
+                  : backgroundColor === 'border'
+                    ? { paddingTop: (titleFontSize / 4) * 3, backgroundColor: 'transparent' }
+                    : backgroundColor === 'transparent'
+                      ? { backgroundColor: 'transparent' }
+                      : backgroundColor === 'black'
+                        ? { backgroundColor: 'black' }
+                        : {
+                          backgroundImage: `url(${type === 'img' &&
+                            (dataValue?.status == 'NG' || dataValue?.status?.value == 'NG')
+                            ? dataItemImageNG
+                            : backgroundColor
+                            })`,
+                          backgroundColor: 'transparent',
+                        },
               !!parentBodyBox && parentBodyBoxTab != bodyBoxTab ? { visibility: 'hidden' } : {},
             )}
           >
             {!['default', 'transparent'].includes(backgroundColor) ? (
               <div
-                className={`flex-box data-screen-card-title-box ${
-                  ['border'].includes(backgroundColor) ? 'data-screen-card-title-box-border' : ''
-                }`}
+                className={`flex-box data-screen-card-title-box ${['border'].includes(backgroundColor) ? 'data-screen-card-title-box-border' : ''
+                  }`}
                 style={Object.assign(
                   {},
                   { fontSize: titleFontSize, padding: titlePaddingSize },
@@ -1373,9 +1367,8 @@ const Home: React.FC<any> = (props: any) => {
               <div className="common-card-title-box flex-box">
                 <TooltipDiv className="flex-box common-card-title">
                   {`${CCDName || alias || name || '无效的节点'}`}
-                  <span className="title-span">{`- ${
-                    SecLabel?.label?.alias || value[1] || ''
-                  }`}</span>
+                  <span className="title-span">{`- ${SecLabel?.label?.alias || __value[1] || ''
+                    }`}</span>
                 </TooltipDiv>
               </div>
             ) : null}
@@ -1386,34 +1379,33 @@ const Home: React.FC<any> = (props: any) => {
                 ifShowHeader
                   ? { height: 'calc(100% - 28px)' }
                   : !['default', 'transparent'].includes(backgroundColor)
-                  ? { height: `calc(100% - ${(titleFontSize / 2) * 3 + titlePaddingSize * 2}px)` }
-                  : { height: '100%' },
+                    ? { height: `calc(100% - ${(titleFontSize / 2) * 3 + titlePaddingSize * 2}px)` }
+                    : { height: '100%' },
                 backgroundColor === 'border'
                   ? {
-                      border: '2px solid rgba(144,144,144,0.6)',
-                      borderRadius: 6,
-                      height: '100%',
-                      padding: `${
-                        titleFontSize / 2 + bodyPaddingSize
+                    border: '2px solid rgba(144,144,144,0.6)',
+                    borderRadius: 6,
+                    height: '100%',
+                    padding: `${titleFontSize / 2 + bodyPaddingSize
                       }px ${bodyPaddingSize}px ${bodyPaddingSize}px`,
-                    }
+                  }
                   : { padding: bodyPaddingSize },
               )}
             >
               <div className="flex-box-center" style={{ height: '100%' }}>
                 {!parent?.[0] &&
-                type?.indexOf('button') < 0 &&
-                ![
-                  'bodyBox',
-                  'form',
-                  'switchBox',
-                  'segmentSwitch',
-                  'rangeDomain',
-                  'rectRange',
-                  'modelSwitch',
-                  'iframe',
-                  'timeSelect',
-                ].includes(type) ? (
+                  type?.indexOf('button') < 0 &&
+                  ![
+                    'bodyBox',
+                    'form',
+                    'switchBox',
+                    'segmentSwitch',
+                    'rangeDomain',
+                    'rectRange',
+                    'modelSwitch',
+                    'iframe',
+                    'timeSelect',
+                  ].includes(type) ? (
                   '请重新绑定数据节点'
                 ) : type === 'line' ? (
                   <LineCharts
@@ -2099,11 +2091,10 @@ const Home: React.FC<any> = (props: any) => {
                     id={key}
                     data={{
                       defaultImg: !!defaultImg
-                        ? `${BASE_IP}file${
-                            defaultImg?.indexOf('\\') === 0 || defaultImg?.indexOf('/') === 0
-                              ? ''
-                              : '\\'
-                          }${defaultImg}`
+                        ? `${BASE_IP}file${defaultImg?.indexOf('\\') === 0 || defaultImg?.indexOf('/') === 0
+                          ? ''
+                          : '\\'
+                        }${defaultImg}`
                         : '',
                       fontSize,
                       dataValue,
@@ -2169,166 +2160,166 @@ const Home: React.FC<any> = (props: any) => {
                                   : {},
                                 type === 'platForm'
                                   ? {
-                                      platFormOptions: !!platFormOptions
-                                        ? platFormOptions
-                                        : JSON.stringify({
-                                            左上水平隔膜: {
-                                              灰度差: {
-                                                name: '灰度差',
-                                                alias: '灰度差',
-                                                require: true,
-                                                default: 15,
-                                                value: 15,
-                                                type: 'int',
-                                                description: '边界变化的灰度差',
-                                                widget: {
-                                                  type: 'InputNumber',
-                                                  max: 255,
-                                                  min: 0,
-                                                  step: 1,
-                                                },
-                                              },
-                                              灰度合并像素: {
-                                                name: '灰度合并像素',
-                                                alias: '灰度合并像素',
-                                                require: true,
-                                                default: 2,
-                                                value: 2,
-                                                type: 'int',
-                                                description: '边界变化的灰度合并像素',
-                                                widget: {
-                                                  type: 'InputNumber',
-                                                  max: 5,
-                                                  min: 1,
-                                                  step: 1,
-                                                },
-                                              },
-                                              亮度变化方向: {
-                                                name: '亮度变化方向',
-                                                alias: '亮度变化方向',
-                                                require: true,
-                                                default: 2,
-                                                value: 2,
-                                                type: 'List[string]',
-                                                description:
-                                                  '边界找线亮度变化方向, 1为亮到暗, 2为暗到亮',
-                                                widget: {
-                                                  type: 'Select',
-                                                  options: [
-                                                    { label: '1-亮到暗', value: 1 },
-                                                    { label: '2-暗到亮', value: 2 },
-                                                  ],
-                                                },
-                                              },
-                                              直线度: {
-                                                name: '直线度',
-                                                alias: '直线度',
-                                                require: true,
-                                                default: 3,
-                                                value: 3,
-                                                type: 'int',
-                                                description: '直线度要求，值越小，线越直',
-                                                widget: {
-                                                  type: 'InputNumber',
-                                                  max: 100,
-                                                  min: 1,
-                                                  step: 1,
-                                                },
-                                              },
-                                              降噪滤波核: {
-                                                name: '降噪滤波核',
-                                                alias: '降噪滤波核',
-                                                require: true,
-                                                default: 5,
-                                                value: 5,
-                                                type: 'int',
-                                                description: '去噪滤波核大小',
-                                                widget: {
-                                                  type: 'InputNumber',
-                                                  max: 21,
-                                                  min: 1,
-                                                  step: 1,
-                                                },
-                                              },
-                                              找线方向下采样倍数: {
-                                                name: '找线方向下采样倍数',
-                                                alias: '找线方向下采样倍数',
-                                                require: true,
-                                                default: 8,
-                                                value: 8,
-                                                type: 'int',
-                                                description: '区域下采样倍数，提高计算速度',
-                                                widget: {
-                                                  type: 'InputNumber',
-                                                  max: 16,
-                                                  min: 2,
-                                                  step: 2,
-                                                },
-                                              },
-                                              垂直找线方向下采样倍数: {
-                                                name: '垂直找线方向下采样倍数',
-                                                alias: '垂直找线方向下采样倍数',
-                                                require: true,
-                                                default: 2,
-                                                value: 2,
-                                                type: 'int',
-                                                description: '区域下采样倍数，提高计算速度',
-                                                widget: {
-                                                  type: 'InputNumber',
-                                                  max: 16,
-                                                  min: 2,
-                                                  step: 2,
-                                                },
-                                              },
-                                              搜索框个数: {
-                                                name: '搜索框个数',
-                                                alias: '搜索框个数',
-                                                require: true,
-                                                default: 15,
-                                                value: 15,
-                                                type: 'int',
-                                                description: '搜索框个数',
-                                                widget: {
-                                                  type: 'InputNumber',
-                                                  max: 1000,
-                                                  min: 3,
-                                                  step: 1,
-                                                },
-                                              },
-                                              搜索框宽度: {
-                                                name: '搜索框宽度',
-                                                alias: '搜索框宽度',
-                                                require: true,
-                                                default: 6,
-                                                value: 6,
-                                                type: 'int',
-                                                description: '搜索框宽度',
-                                                widget: {
-                                                  type: 'InputNumber',
-                                                  max: 1000,
-                                                  min: 3,
-                                                  step: 1,
-                                                },
-                                              },
-                                              找线方法: {
-                                                name: '找线方法',
-                                                alias: '找线方法',
-                                                require: true,
-                                                default: '卡尺找线',
-                                                value: '卡尺找线',
-                                                type: 'List[string]',
-                                                description: '找线方法，1-卡尺找线，2-EDLines找线',
-                                                widget: {
-                                                  type: 'Select',
-                                                  options: [
-                                                    { label: '卡尺找线', value: '卡尺找线' },
-                                                    { label: 'EDLine找线', value: 'EDLine找线' },
-                                                  ],
-                                                },
-                                              },
+                                    platFormOptions: !!platFormOptions
+                                      ? platFormOptions
+                                      : JSON.stringify({
+                                        左上水平隔膜: {
+                                          灰度差: {
+                                            name: '灰度差',
+                                            alias: '灰度差',
+                                            require: true,
+                                            default: 15,
+                                            value: 15,
+                                            type: 'int',
+                                            description: '边界变化的灰度差',
+                                            widget: {
+                                              type: 'InputNumber',
+                                              max: 255,
+                                              min: 0,
+                                              step: 1,
                                             },
-                                          }),
-                                    }
+                                          },
+                                          灰度合并像素: {
+                                            name: '灰度合并像素',
+                                            alias: '灰度合并像素',
+                                            require: true,
+                                            default: 2,
+                                            value: 2,
+                                            type: 'int',
+                                            description: '边界变化的灰度合并像素',
+                                            widget: {
+                                              type: 'InputNumber',
+                                              max: 5,
+                                              min: 1,
+                                              step: 1,
+                                            },
+                                          },
+                                          亮度变化方向: {
+                                            name: '亮度变化方向',
+                                            alias: '亮度变化方向',
+                                            require: true,
+                                            default: 2,
+                                            value: 2,
+                                            type: 'List[string]',
+                                            description:
+                                              '边界找线亮度变化方向, 1为亮到暗, 2为暗到亮',
+                                            widget: {
+                                              type: 'Select',
+                                              options: [
+                                                { label: '1-亮到暗', value: 1 },
+                                                { label: '2-暗到亮', value: 2 },
+                                              ],
+                                            },
+                                          },
+                                          直线度: {
+                                            name: '直线度',
+                                            alias: '直线度',
+                                            require: true,
+                                            default: 3,
+                                            value: 3,
+                                            type: 'int',
+                                            description: '直线度要求，值越小，线越直',
+                                            widget: {
+                                              type: 'InputNumber',
+                                              max: 100,
+                                              min: 1,
+                                              step: 1,
+                                            },
+                                          },
+                                          降噪滤波核: {
+                                            name: '降噪滤波核',
+                                            alias: '降噪滤波核',
+                                            require: true,
+                                            default: 5,
+                                            value: 5,
+                                            type: 'int',
+                                            description: '去噪滤波核大小',
+                                            widget: {
+                                              type: 'InputNumber',
+                                              max: 21,
+                                              min: 1,
+                                              step: 1,
+                                            },
+                                          },
+                                          找线方向下采样倍数: {
+                                            name: '找线方向下采样倍数',
+                                            alias: '找线方向下采样倍数',
+                                            require: true,
+                                            default: 8,
+                                            value: 8,
+                                            type: 'int',
+                                            description: '区域下采样倍数，提高计算速度',
+                                            widget: {
+                                              type: 'InputNumber',
+                                              max: 16,
+                                              min: 2,
+                                              step: 2,
+                                            },
+                                          },
+                                          垂直找线方向下采样倍数: {
+                                            name: '垂直找线方向下采样倍数',
+                                            alias: '垂直找线方向下采样倍数',
+                                            require: true,
+                                            default: 2,
+                                            value: 2,
+                                            type: 'int',
+                                            description: '区域下采样倍数，提高计算速度',
+                                            widget: {
+                                              type: 'InputNumber',
+                                              max: 16,
+                                              min: 2,
+                                              step: 2,
+                                            },
+                                          },
+                                          搜索框个数: {
+                                            name: '搜索框个数',
+                                            alias: '搜索框个数',
+                                            require: true,
+                                            default: 15,
+                                            value: 15,
+                                            type: 'int',
+                                            description: '搜索框个数',
+                                            widget: {
+                                              type: 'InputNumber',
+                                              max: 1000,
+                                              min: 3,
+                                              step: 1,
+                                            },
+                                          },
+                                          搜索框宽度: {
+                                            name: '搜索框宽度',
+                                            alias: '搜索框宽度',
+                                            require: true,
+                                            default: 6,
+                                            value: 6,
+                                            type: 'int',
+                                            description: '搜索框宽度',
+                                            widget: {
+                                              type: 'InputNumber',
+                                              max: 1000,
+                                              min: 3,
+                                              step: 1,
+                                            },
+                                          },
+                                          找线方法: {
+                                            name: '找线方法',
+                                            alias: '找线方法',
+                                            require: true,
+                                            default: '卡尺找线',
+                                            value: '卡尺找线',
+                                            type: 'List[string]',
+                                            description: '找线方法，1-卡尺找线，2-EDLines找线',
+                                            widget: {
+                                              type: 'Select',
+                                              options: [
+                                                { label: '卡尺找线', value: '卡尺找线' },
+                                                { label: 'EDLine找线', value: 'EDLine找线' },
+                                              ],
+                                            },
+                                          },
+                                        },
+                                      }),
+                                  }
                                   : {},
                               ),
                             );
@@ -2349,7 +2340,7 @@ const Home: React.FC<any> = (props: any) => {
                             setWindowType(type);
                             if (type === 'operation2') {
                               const res = paramsData?.flowData?.nodes.filter(
-                                (i: any) => i.id === value[0],
+                                (i: any) => i.id === __value[0],
                               )?.[0];
                               if (!!res) {
                                 const { config = {} } = res;
@@ -2375,7 +2366,7 @@ const Home: React.FC<any> = (props: any) => {
                               }
                             } else {
                               const res = paramsData?.flowData?.nodes.filter(
-                                (i: any) => i.id === value[0],
+                                (i: any) => i.id === __value[0],
                               )?.[0];
                               if (!!res) {
                                 const { config = {} } = res;
@@ -2449,14 +2440,14 @@ const Home: React.FC<any> = (props: any) => {
                     {},
                     ['table2', 'table3'].includes(type)
                       ? {
-                          height: `calc(100% - 80px - ${bodyPaddingSize}px)`,
-                          marginTop: 80 + bodyPaddingSize,
-                        }
+                        height: `calc(100% - 80px - ${bodyPaddingSize}px)`,
+                        marginTop: 80 + bodyPaddingSize,
+                      }
                       : {},
                     type === 'bodyBox'
                       ? {
-                          top: 'auto',
-                        }
+                        top: 'auto',
+                      }
                       : {},
                   )}
                   className="flex-box-center drag-item-content-mask common-card-title"
@@ -2473,13 +2464,13 @@ const Home: React.FC<any> = (props: any) => {
           resultData = resultData.concat(
             !!dataValue && !['operation2'].includes(type)
               ? {
-                  ...item,
-                  [value[1]]: ['three', 'buttonImages', 'imgButton'].includes(type)
-                    ? _.omit(dataValue, 'action')
-                    : ['modelSwitch'].includes(type)
+                ...item,
+                [__value[1]]: ['three', 'buttonImages', 'imgButton'].includes(type)
+                  ? _.omit(dataValue, 'action')
+                  : ['modelSwitch'].includes(type)
                     ? undefined
                     : dataValue,
-                }
+              }
               : item,
           );
         }
@@ -3189,23 +3180,23 @@ const Home: React.FC<any> = (props: any) => {
                         </div>
                         {open
                           ? (children || [])?.map?.((item: any, index: number) => {
-                              const { value, label, icon } = item;
-                              return (
-                                <div key={`panel-${value}-${index}`}>
-                                  {
-                                    // @ts-ignore
-                                    <DragSortableItem index={JSON.stringify({ ...item, key })}>
-                                      <div className="flex-box left-panel-item">
-                                        <div className="left-panel-item-icon">
-                                          {!!icon ? <Image src={icon} alt="logo" /> : null}
-                                        </div>
-                                        <div className="left-panel-item-title">{label}</div>
+                            const { value, label, icon } = item;
+                            return (
+                              <div key={`panel-${value}-${index}`}>
+                                {
+                                  // @ts-ignore
+                                  <DragSortableItem index={JSON.stringify({ ...item, key })}>
+                                    <div className="flex-box left-panel-item">
+                                      <div className="left-panel-item-icon">
+                                        {!!icon ? <Image src={icon} alt="logo" /> : null}
                                       </div>
-                                    </DragSortableItem>
-                                  }
-                                </div>
-                              );
-                            })
+                                      <div className="left-panel-item-title">{label}</div>
+                                    </div>
+                                  </DragSortableItem>
+                                }
+                              </div>
+                            );
+                          })
                           : null}
                       </div>
                     );
@@ -3272,9 +3263,9 @@ const Home: React.FC<any> = (props: any) => {
                           },
                           !!parentBodyBox
                             ? {
-                                parentBodyBox: parentBodyBox,
-                                parentBodyBoxTab: bodyBoxTab,
-                              }
+                              parentBodyBox: parentBodyBox,
+                              parentBodyBoxTab: bodyBoxTab,
+                            }
                             : {},
                         ),
                       );
@@ -3306,8 +3297,8 @@ const Home: React.FC<any> = (props: any) => {
                                 value === 'blackBg'
                                   ? 'blackBg'
                                   : prev?.contentData?.contentBackground === icon
-                                  ? ''
-                                  : icon,
+                                    ? ''
+                                    : icon,
                             }),
                           }),
                         );
@@ -3346,9 +3337,8 @@ const Home: React.FC<any> = (props: any) => {
                                 if (location.hash?.indexOf('inIframe') > -1) {
                                   window.history.go(-2); //返回上一页
                                 } else {
-                                  location.href = `${location.href?.split('#/')?.[0]}#/home${
-                                    !!hash ? `?${hash}` : ''
-                                  }`;
+                                  location.href = `${location.href?.split('#/')?.[0]}#/home${!!hash ? `?${hash}` : ''
+                                    }`;
                                 }
                                 window.location.reload();
                               } else {
@@ -3472,43 +3462,41 @@ const Home: React.FC<any> = (props: any) => {
                               ? paramData?.contentData?.contentBackground === 'blackBg'
                                 ? { backgroundColor: 'black' }
                                 : {
-                                    backgroundImage: `url(${paramData?.contentData?.contentBackground})`,
-                                  }
+                                  backgroundImage: `url(${paramData?.contentData?.contentBackground})`,
+                                }
                               : {},
                             !paramData?.contentData?.autoSize &&
                               paramData?.contentData?.contentSize?.width
                               ? {
-                                  width: `${paramData?.contentData?.contentSize?.width}px`,
-                                  minWidth: `${paramData?.contentData?.contentSize?.width}px`,
-                                  maxWidth: `${paramData?.contentData?.contentSize?.width}px`,
-                                }
+                                width: `${paramData?.contentData?.contentSize?.width}px`,
+                                minWidth: `${paramData?.contentData?.contentSize?.width}px`,
+                                maxWidth: `${paramData?.contentData?.contentSize?.width}px`,
+                              }
                               : {},
                             !paramData?.contentData?.autoSize &&
                               paramData?.contentData?.contentSize?.height
                               ? {
-                                  height: `${paramData?.contentData?.contentSize?.height - 93}px`,
-                                  minHeight: `${
-                                    paramData?.contentData?.contentSize?.height - 93
+                                height: `${paramData?.contentData?.contentSize?.height - 93}px`,
+                                minHeight: `${paramData?.contentData?.contentSize?.height - 93
                                   }px`,
-                                  maxHeight: `${
-                                    paramData?.contentData?.contentSize?.height - 93
+                                maxHeight: `${paramData?.contentData?.contentSize?.height - 93
                                   }px`,
-                                }
+                              }
                               : {},
                             paramData?.contentData?.overallBackgroundColor &&
                               paramData?.contentData?.overallBackgroundColor?.rgb
                               ? {
-                                  backgroundColor: `rgba(${paramData?.contentData?.overallBackgroundColor.rgb.r},${paramData?.contentData?.overallBackgroundColor.rgb.g},${paramData?.contentData?.overallBackgroundColor.rgb.b},${paramData?.contentData?.overallBackgroundColor.rgb.a})`,
-                                }
+                                backgroundColor: `rgba(${paramData?.contentData?.overallBackgroundColor.rgb.r},${paramData?.contentData?.overallBackgroundColor.rgb.g},${paramData?.contentData?.overallBackgroundColor.rgb.b},${paramData?.contentData?.overallBackgroundColor.rgb.a})`,
+                              }
                               : {},
                             !!paramData?.contentData?.autoSize ||
                               !_.isBoolean(paramData?.contentData?.autoSize)
                               ? {
-                                  width: '100%',
-                                  maxWidth: '100%',
-                                  height: '100%',
-                                  maxHeight: '100%',
-                                }
+                                width: '100%',
+                                maxWidth: '100%',
+                                height: '100%',
+                                maxHeight: '100%',
+                              }
                               : {},
                           )}
                         >
@@ -3520,11 +3508,10 @@ const Home: React.FC<any> = (props: any) => {
                                     const { name, id } = tab;
                                     return (
                                       <div
-                                        className={`right-canvas-body-grid-tab-item ${
-                                          tabNum == index
-                                            ? 'right-canvas-body-grid-tab-selected'
-                                            : ''
-                                        }`}
+                                        className={`right-canvas-body-grid-tab-item ${tabNum == index
+                                          ? 'right-canvas-body-grid-tab-selected'
+                                          : ''
+                                          }`}
                                         key={id}
                                         onClick={() => {
                                           localStorage.setItem(
@@ -3549,31 +3536,26 @@ const Home: React.FC<any> = (props: any) => {
                                 !paramData?.contentData?.autoSize &&
                                   paramData?.contentData?.contentSize?.width
                                   ? {
-                                      width: `${
-                                        (paramData?.contentData?.tabList?.length || 1) *
-                                        paramData?.contentData?.contentSize?.width
+                                    width: `${(paramData?.contentData?.tabList?.length || 1) *
+                                      paramData?.contentData?.contentSize?.width
                                       }px`,
-                                      minWidth: `${
-                                        (paramData?.contentData?.tabList?.length || 1) *
-                                        paramData?.contentData?.contentSize?.width
+                                    minWidth: `${(paramData?.contentData?.tabList?.length || 1) *
+                                      paramData?.contentData?.contentSize?.width
                                       }px`,
-                                      maxWidth: `${
-                                        (paramData?.contentData?.tabList?.length || 1) *
-                                        paramData?.contentData?.contentSize?.width
+                                    maxWidth: `${(paramData?.contentData?.tabList?.length || 1) *
+                                      paramData?.contentData?.contentSize?.width
                                       }px`,
-                                    }
+                                  }
                                   : {},
                                 !!paramData?.contentData?.autoSize ||
                                   !_.isBoolean(paramData?.contentData?.autoSize)
                                   ? {
-                                      width: `${
-                                        (paramData?.contentData?.tabList?.length || 1) * 100
+                                    width: `${(paramData?.contentData?.tabList?.length || 1) * 100
                                       }vw`,
-                                      maxWidth: `${
-                                        (paramData?.contentData?.tabList?.length || 1) * 100
+                                    maxWidth: `${(paramData?.contentData?.tabList?.length || 1) * 100
                                       }vw`,
-                                      height: '100%',
-                                    }
+                                    height: '100%',
+                                  }
                                   : {},
                                 paramData?.contentData?.tabList?.length > 1
                                   ? { height: 'calc(100% - 28px)' }
@@ -3590,9 +3572,9 @@ const Home: React.FC<any> = (props: any) => {
                                   margin={
                                     _.isNumber(paramData?.contentData?.gridMargin)
                                       ? [
-                                          paramData?.contentData?.gridMargin,
-                                          paramData?.contentData?.gridMargin,
-                                        ]
+                                        paramData?.contentData?.gridMargin,
+                                        paramData?.contentData?.gridMargin,
+                                      ]
                                       : [8, 8]
                                   }
                                   onChange={(data: any) => {
@@ -3633,28 +3615,28 @@ const Home: React.FC<any> = (props: any) => {
                       ? paramData?.contentData?.contentBackground === 'blackBg'
                         ? { backgroundColor: 'black' }
                         : {
-                            backgroundImage: `url(${paramData?.contentData?.contentBackground})`,
-                          }
+                          backgroundImage: `url(${paramData?.contentData?.contentBackground})`,
+                        }
                       : {},
                     !paramData?.contentData?.autoSize && paramData?.contentData?.contentSize?.width
                       ? {
-                          width: `${paramData?.contentData?.contentSize?.width}px`,
-                          minWidth: `${paramData?.contentData?.contentSize?.width}px`,
-                          maxWidth: `${paramData?.contentData?.contentSize?.width}px`,
-                        }
+                        width: `${paramData?.contentData?.contentSize?.width}px`,
+                        minWidth: `${paramData?.contentData?.contentSize?.width}px`,
+                        maxWidth: `${paramData?.contentData?.contentSize?.width}px`,
+                      }
                       : {},
                     !paramData?.contentData?.autoSize && paramData?.contentData?.contentSize?.height
                       ? {
-                          height: `${paramData?.contentData?.contentSize?.height - 93}px`,
-                          minHeight: `${paramData?.contentData?.contentSize?.height - 93}px`,
-                          maxHeight: `${paramData?.contentData?.contentSize?.height - 93}px`,
-                        }
+                        height: `${paramData?.contentData?.contentSize?.height - 93}px`,
+                        minHeight: `${paramData?.contentData?.contentSize?.height - 93}px`,
+                        maxHeight: `${paramData?.contentData?.contentSize?.height - 93}px`,
+                      }
                       : {},
                     paramData?.contentData?.overallBackgroundColor &&
                       paramData?.contentData?.overallBackgroundColor?.rgb
                       ? {
-                          backgroundColor: `rgba(${paramData?.contentData?.overallBackgroundColor.rgb.r},${paramData?.contentData?.overallBackgroundColor.rgb.g},${paramData?.contentData?.overallBackgroundColor.rgb.b},${paramData?.contentData?.overallBackgroundColor.rgb.a})`,
-                        }
+                        backgroundColor: `rgba(${paramData?.contentData?.overallBackgroundColor.rgb.r},${paramData?.contentData?.overallBackgroundColor.rgb.g},${paramData?.contentData?.overallBackgroundColor.rgb.b},${paramData?.contentData?.overallBackgroundColor.rgb.a})`,
+                      }
                       : {},
                     !!paramData?.contentData?.autoSize ||
                       !_.isBoolean(paramData?.contentData?.autoSize)
@@ -3670,9 +3652,8 @@ const Home: React.FC<any> = (props: any) => {
                             const { name, password, id } = tab;
                             return (
                               <div
-                                className={`right-canvas-body-grid-tab-item ${
-                                  tabNum == index ? 'right-canvas-body-grid-tab-selected' : ''
-                                }`}
+                                className={`right-canvas-body-grid-tab-item ${tabNum == index ? 'right-canvas-body-grid-tab-selected' : ''
+                                  }`}
                                 key={id}
                                 onClick={() => {
                                   if (!!password) {
@@ -3696,27 +3677,24 @@ const Home: React.FC<any> = (props: any) => {
                         !paramData?.contentData?.autoSize &&
                           paramData?.contentData?.contentSize?.width
                           ? {
-                              width: `${
-                                (paramData?.contentData?.tabList?.length || 1) *
-                                paramData?.contentData?.contentSize?.width
+                            width: `${(paramData?.contentData?.tabList?.length || 1) *
+                              paramData?.contentData?.contentSize?.width
                               }px`,
-                              minWidth: `${
-                                (paramData?.contentData?.tabList?.length || 1) *
-                                paramData?.contentData?.contentSize?.width
+                            minWidth: `${(paramData?.contentData?.tabList?.length || 1) *
+                              paramData?.contentData?.contentSize?.width
                               }px`,
-                              maxWidth: `${
-                                (paramData?.contentData?.tabList?.length || 1) *
-                                paramData?.contentData?.contentSize?.width
+                            maxWidth: `${(paramData?.contentData?.tabList?.length || 1) *
+                              paramData?.contentData?.contentSize?.width
                               }px`,
-                            }
+                          }
                           : {},
                         !!paramData?.contentData?.autoSize ||
                           !_.isBoolean(paramData?.contentData?.autoSize)
                           ? {
-                              width: `${(paramData?.contentData?.tabList?.length || 1) * 100}vw`,
-                              maxWidth: `${(paramData?.contentData?.tabList?.length || 1) * 100}vw`,
-                              height: '100%',
-                            }
+                            width: `${(paramData?.contentData?.tabList?.length || 1) * 100}vw`,
+                            maxWidth: `${(paramData?.contentData?.tabList?.length || 1) * 100}vw`,
+                            height: '100%',
+                          }
                           : {},
                         paramData?.contentData?.tabList?.length > 1
                           ? { height: 'calc(100% - 28px)' }
@@ -3733,9 +3711,9 @@ const Home: React.FC<any> = (props: any) => {
                           margin={
                             _.isNumber(paramData?.contentData?.gridMargin)
                               ? [
-                                  paramData?.contentData?.gridMargin,
-                                  paramData?.contentData?.gridMargin,
-                                ]
+                                paramData?.contentData?.gridMargin,
+                                paramData?.contentData?.gridMargin,
+                              ]
                               : [8, 8]
                           }
                           onChange={(data: any) => {
@@ -3869,10 +3847,10 @@ const Home: React.FC<any> = (props: any) => {
                         const params = ['operation', 'platForm', 'table5'].includes(windowType)
                           ? config?.initParams
                           : ['operation2'].includes(windowType)
-                          ? !_.isEmpty(config?.execParams)
-                            ? config?.execParams
-                            : config?.initParams
-                          : null;
+                            ? !_.isEmpty(config?.execParams)
+                              ? config?.execParams
+                              : config?.initParams
+                            : null;
                         if (!!params && _.isObject(params)) {
                           setSelectedNodeConfig(() =>
                             Object.entries(params)?.map?.((item: any) => {
@@ -3910,10 +3888,10 @@ const Home: React.FC<any> = (props: any) => {
                           val === 'operation'
                             ? config?.initParams
                             : val === 'operation2'
-                            ? !_.isEmpty(config?.execParams)
-                              ? config?.execParams
-                              : config?.initParams
-                            : null;
+                              ? !_.isEmpty(config?.execParams)
+                                ? config?.execParams
+                                : config?.initParams
+                              : null;
                         if (!!params && _.isObject(params)) {
                           setSelectedNodeConfig(() =>
                             Object.entries(params)?.map?.((item: any) => {
@@ -4787,7 +4765,7 @@ const Home: React.FC<any> = (props: any) => {
                                 <Select
                                   defaultValue={type}
                                   style={{ width: '100%', height: 28 }}
-                                  options={['string', 'number']?.map?.((item: any) => ({
+                                  options={['string', 'number', 'bool']?.map?.((item: any) => ({
                                     value: item,
                                     label: item,
                                   }))}
@@ -4797,10 +4775,25 @@ const Home: React.FC<any> = (props: any) => {
                                 />
                               </div>
                               <div style={{ flex: 1 }}>
-                                {type === 'string' ? (
+                                {type === 'bool' ? (
+                                  <SegmentSwitch
+                                    fontInBody={[
+                                      { label: '', value: false, backgroundColor: 'grey' },
+                                      {
+                                        label: '',
+                                        value: true,
+                                        backgroundColor: 'rgba(24, 144, 255, 1)',
+                                      },
+                                    ]}
+                                    defaultValue={number}
+                                    style={{ height: 28 }}
+                                    onChange={(val: boolean) => {
+                                      onBodyBoxChange(val, index, 'number');
+                                    }}
+                                  />
+                                ) : type === 'string' ? (
                                   <Input
                                     defaultValue={number}
-                                    placeholder="number"
                                     style={{ height: 28 }}
                                     onChange={(e) => {
                                       const val = e?.target?.value;
@@ -4810,7 +4803,6 @@ const Home: React.FC<any> = (props: any) => {
                                 ) : (
                                   <InputNumber
                                     defaultValue={number}
-                                    placeholder="number"
                                     style={{ height: 28 }}
                                     onChange={(val) => {
                                       onBodyBoxChange(val, index, 'number');
@@ -5761,65 +5753,65 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item label="静态数据">
                       {_.isArray(basicInfoData)
                         ? basicInfoData?.map?.((item: any, index: number) => {
-                            if (!item || _.isEmpty(item)) return null;
+                          if (!item || _.isEmpty(item)) return null;
 
-                            const { id, name, value } = item;
-                            return (
-                              <div
-                                key={`commonInfo-${id || index}`}
-                                className="flex-box"
-                                style={{ marginBottom: 8, height: '27px', gap: 8 }}
-                              >
-                                <div style={{ flex: 1 }}>
-                                  <Input
-                                    placeholder="key"
-                                    value={name}
-                                    onChange={(e) => {
-                                      const val = e?.target?.value;
-                                      setBasicInfoData((prev: any) => {
-                                        return prev?.map?.((info: any) => {
-                                          if (info.id === id) {
-                                            return { ...info, name: val };
-                                          }
-                                          return info;
-                                        });
+                          const { id, name, value } = item;
+                          return (
+                            <div
+                              key={`commonInfo-${id || index}`}
+                              className="flex-box"
+                              style={{ marginBottom: 8, height: '27px', gap: 8 }}
+                            >
+                              <div style={{ flex: 1 }}>
+                                <Input
+                                  placeholder="key"
+                                  value={name}
+                                  onChange={(e) => {
+                                    const val = e?.target?.value;
+                                    setBasicInfoData((prev: any) => {
+                                      return prev?.map?.((info: any) => {
+                                        if (info.id === id) {
+                                          return { ...info, name: val };
+                                        }
+                                        return info;
                                       });
-                                    }}
-                                  />
-                                </div>
-                                <div style={{ flex: 1 }}>
-                                  <Input
-                                    placeholder="value"
-                                    value={value}
-                                    onChange={(e) => {
-                                      const val = e?.target?.value;
-                                      setBasicInfoData((prev: any) => {
-                                        return prev?.map?.((info: any) => {
-                                          if (info.id === id) {
-                                            return { ...info, value: val };
-                                          }
-                                          return info;
-                                        });
-                                      });
-                                    }}
-                                  />
-                                </div>
-                                <div style={{ height: '100%' }}>
-                                  <Button
-                                    style={{ height: '100%' }}
-                                    icon={<MinusOutlined />}
-                                    onClick={() => {
-                                      setBasicInfoData((prev: any) => {
-                                        return prev.filter((i: any) => i.id !== id)?.length
-                                          ? prev.filter((i: any) => i.id !== id)
-                                          : [{ id: guid(), name: '', value: '' }];
-                                      });
-                                    }}
-                                  />
-                                </div>
+                                    });
+                                  }}
+                                />
                               </div>
-                            );
-                          })
+                              <div style={{ flex: 1 }}>
+                                <Input
+                                  placeholder="value"
+                                  value={value}
+                                  onChange={(e) => {
+                                    const val = e?.target?.value;
+                                    setBasicInfoData((prev: any) => {
+                                      return prev?.map?.((info: any) => {
+                                        if (info.id === id) {
+                                          return { ...info, value: val };
+                                        }
+                                        return info;
+                                      });
+                                    });
+                                  }}
+                                />
+                              </div>
+                              <div style={{ height: '100%' }}>
+                                <Button
+                                  style={{ height: '100%' }}
+                                  icon={<MinusOutlined />}
+                                  onClick={() => {
+                                    setBasicInfoData((prev: any) => {
+                                      return prev.filter((i: any) => i.id !== id)?.length
+                                        ? prev.filter((i: any) => i.id !== id)
+                                        : [{ id: guid(), name: '', value: '' }];
+                                    });
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })
                         : null}
                       <Button
                         icon={<PlusOutlined />}
@@ -5908,7 +5900,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Switch />
                     </Form.Item>
                     {!!form.getFieldValue('modelRotateScreenshot') ||
-                    !!form.getFieldValue('modelUpload') ? (
+                      !!form.getFieldValue('modelUpload') ? (
                       <Fragment>
                         <Form.Item
                           name={`fetchType`}
@@ -6471,7 +6463,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Switch />
                     </Form.Item>
                     {!!form.getFieldValue('modelRotateScreenshot') ||
-                    !!form.getFieldValue('modelUpload') ? (
+                      !!form.getFieldValue('modelUpload') ? (
                       <Fragment>
                         <Form.Item
                           name={`fetchType`}
@@ -6776,33 +6768,33 @@ const Home: React.FC<any> = (props: any) => {
                     },
                     ...(homeSettingVisible === 'header'
                       ? [
-                          {
-                            value: dataHeaderImage,
-                            label: '背景图1',
-                          },
-                          {
-                            value: dataHeaderImage2,
-                            label: '背景图2',
-                          },
-                        ]
+                        {
+                          value: dataHeaderImage,
+                          label: '背景图1',
+                        },
+                        {
+                          value: dataHeaderImage2,
+                          label: '背景图2',
+                        },
+                      ]
                       : [
-                          {
-                            value: dataItemImage1,
-                            label: '背景图1',
-                          },
-                          {
-                            value: dataItemImage2,
-                            label: '背景图2',
-                          },
-                          {
-                            value: dataItemImage3,
-                            label: '背景图3',
-                          },
-                          {
-                            value: dataItemImage4,
-                            label: '背景图4',
-                          },
-                        ]),
+                        {
+                          value: dataItemImage1,
+                          label: '背景图1',
+                        },
+                        {
+                          value: dataItemImage2,
+                          label: '背景图2',
+                        },
+                        {
+                          value: dataItemImage3,
+                          label: '背景图3',
+                        },
+                        {
+                          value: dataItemImage4,
+                          label: '背景图4',
+                        },
+                      ]),
                   ]}
                 />
               </Form.Item>
@@ -6840,64 +6832,64 @@ const Home: React.FC<any> = (props: any) => {
               >
                 {_.isArray(basicInfoData)
                   ? basicInfoData?.map?.((item: any, index: number) => {
-                      if (!item || _.isEmpty(item)) return null;
-                      const { id, name, password } = item;
-                      return (
-                        <div
-                          key={`commonInfo-${id || index}`}
-                          className="flex-box"
-                          style={{ marginBottom: 8, height: '27px', gap: 8 }}
-                        >
-                          <div style={{ flex: 1 }}>
-                            <Input
-                              placeholder="tab页名称"
-                              value={name}
-                              onChange={(e) => {
-                                const val = e?.target?.value;
-                                setBasicInfoData((prev: any) => {
-                                  return prev?.map?.((info: any) => {
-                                    if (info.id === id) {
-                                      return { ...info, name: val };
-                                    }
-                                    return info;
-                                  });
+                    if (!item || _.isEmpty(item)) return null;
+                    const { id, name, password } = item;
+                    return (
+                      <div
+                        key={`commonInfo-${id || index}`}
+                        className="flex-box"
+                        style={{ marginBottom: 8, height: '27px', gap: 8 }}
+                      >
+                        <div style={{ flex: 1 }}>
+                          <Input
+                            placeholder="tab页名称"
+                            value={name}
+                            onChange={(e) => {
+                              const val = e?.target?.value;
+                              setBasicInfoData((prev: any) => {
+                                return prev?.map?.((info: any) => {
+                                  if (info.id === id) {
+                                    return { ...info, name: val };
+                                  }
+                                  return info;
                                 });
-                              }}
-                            />
-                          </div>
-                          <div style={{ flex: 1 }}>
-                            <Input
-                              placeholder="tab页密码"
-                              value={password}
-                              onChange={(e) => {
-                                const val = e?.target?.value;
-                                setBasicInfoData((prev: any) => {
-                                  return prev?.map?.((info: any) => {
-                                    if (info.id === id) {
-                                      return { ...info, password: val };
-                                    }
-                                    return info;
-                                  });
-                                });
-                              }}
-                            />
-                          </div>
-                          <div style={{ height: '100%' }}>
-                            <Button
-                              style={{ height: '100%' }}
-                              icon={<MinusOutlined />}
-                              onClick={() => {
-                                setBasicInfoData((prev: any) => {
-                                  return prev.filter((i: any) => i.id !== id)?.length
-                                    ? prev.filter((i: any) => i.id !== id)
-                                    : [{ id: guid(), name: '' }];
-                                });
-                              }}
-                            />
-                          </div>
+                              });
+                            }}
+                          />
                         </div>
-                      );
-                    })
+                        <div style={{ flex: 1 }}>
+                          <Input
+                            placeholder="tab页密码"
+                            value={password}
+                            onChange={(e) => {
+                              const val = e?.target?.value;
+                              setBasicInfoData((prev: any) => {
+                                return prev?.map?.((info: any) => {
+                                  if (info.id === id) {
+                                    return { ...info, password: val };
+                                  }
+                                  return info;
+                                });
+                              });
+                            }}
+                          />
+                        </div>
+                        <div style={{ height: '100%' }}>
+                          <Button
+                            style={{ height: '100%' }}
+                            icon={<MinusOutlined />}
+                            onClick={() => {
+                              setBasicInfoData((prev: any) => {
+                                return prev.filter((i: any) => i.id !== id)?.length
+                                  ? prev.filter((i: any) => i.id !== id)
+                                  : [{ id: guid(), name: '' }];
+                              });
+                            }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })
                   : null}
                 <Button
                   icon={<PlusOutlined />}
@@ -6934,48 +6926,47 @@ const Home: React.FC<any> = (props: any) => {
               {
                 // 节点状态
                 !!footerSelectList?.length &&
-                  footerSelectList?.map?.((id: any, index: number) => {
-                    const item = footerData?.['state']?.[id] || footerData[id];
-                    if (!item) {
-                      return null;
-                    }
-                    const { Status, name } = item;
-                    return (
-                      <div
-                        key={id}
-                        className={`home-footer-item-box ${
-                          Status === 'running' ? 'success-font' : 'error-font'
+                footerSelectList?.map?.((id: any, index: number) => {
+                  const item = footerData?.['state']?.[id] || footerData[id];
+                  if (!item) {
+                    return null;
+                  }
+                  const { Status, name } = item;
+                  return (
+                    <div
+                      key={id}
+                      className={`home-footer-item-box ${Status === 'running' ? 'success-font' : 'error-font'
                         }`}
-                        onClick={() => {
-                          ifCanEdit && setFooterSelectVisible(true);
-                        }}
-                      >
-                        {name?.split('|')?.[1] ||
-                          nodeList?.filter((i: any) => i.value === id)[0]?.label}
-                        {index + 1 === footerSelectList?.length ? null : (
-                          <span className="operation-line">|</span>
-                        )}
-                      </div>
-                    );
-                  })
+                      onClick={() => {
+                        ifCanEdit && setFooterSelectVisible(true);
+                      }}
+                    >
+                      {name?.split('|')?.[1] ||
+                        nodeList?.filter((i: any) => i.value === id)[0]?.label}
+                      {index + 1 === footerSelectList?.length ? null : (
+                        <span className="operation-line">|</span>
+                      )}
+                    </div>
+                  );
+                })
               }
               {
                 // 内存状态
                 !!footerData?.['ram']
                   ? Object.entries(footerData?.['ram'])?.map?.((item: any) => {
-                      const { current, total } = item;
-                      return (
-                        <div
-                          key={item[0]}
-                          className={`home-footer-item-box`}
-                          onClick={() => {
-                            ifCanEdit && setFooterSelectVisible(true);
-                          }}
-                        >
-                          {`${item[0]} : ${current}/${total}`}
-                        </div>
-                      );
-                    })
+                    const { current, total } = item;
+                    return (
+                      <div
+                        key={item[0]}
+                        className={`home-footer-item-box`}
+                        onClick={() => {
+                          ifCanEdit && setFooterSelectVisible(true);
+                        }}
+                      >
+                        {`${item[0]} : ${current}/${total}`}
+                      </div>
+                    );
+                  })
                   : null
               }
               {

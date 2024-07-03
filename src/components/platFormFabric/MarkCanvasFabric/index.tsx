@@ -55,15 +55,15 @@ const MarkCanvasFabric: React.FC<DocumentReductionImageProps> = (props) => {
       selection: false,
     });
     fabric.Image.fromURL(url, {}).then((oImg) => {
-      const scale = oImg.width / oImg.height;
-      console.log(width, height, scale);
-      oImg.hasControls = false;
-      oImg.hasBorders = false;
-      oImg._setWidthHeight({ width: scale * height, height });
-      oImg.set({ left: width * 0.2, top: height * 0.3, angle: 0 }); //.scale(0.75);
-      console.log(oImg);
-
-      canvasRef.current.add(oImg);
+      // const scale = oImg.width / oImg.height;
+      // console.log(width, height, scale);
+      // oImg.hasControls = false;
+      // oImg.hasBorders = false;
+      // oImg._setWidthHeight({ width: scale * height, height });
+      // oImg.set({ left: width * 0.2, top: height * 0.3, angle: 0 }); //.scale(0.75);
+      // console.log(oImg);
+      // canvasRef.current.add(oImg);
+      canvasRef.current?.setBackgroundImage?.(oImg);
     });
 
     const handleWheel = (handle: any) => {

@@ -17,26 +17,38 @@ const NodeDetailWrapper = (props: any) => {
       <div className="content" style={!title ? { height: 'calc(100% - 50px)' } : {}}>
         <BasicScrollBar>{children}</BasicScrollBar>
       </div>
-      <div className="flex-box node-sider-footer">
-        <Button
-          className="sider-footer-btn"
-          onClick={() => {
-            !!onCancel && onCancel?.();
-          }}
-        >
-          取消
-        </Button>
-        <Button
-          className="sider-footer-btn"
-          type="primary"
-          disabled={!onSave}
-          onClick={() => {
-            !!onSave && onSave?.();
-          }}
-        >
-          确定
-        </Button>
-      </div>
+      {
+        !!onCancel && !!onSave ?
+          <div className="flex-box node-sider-footer">
+            {
+              !!onCancel ?
+                <Button
+                  className="sider-footer-btn"
+                  onClick={() => {
+                    onCancel?.();
+                  }}
+                >
+                  取消
+                </Button>
+                : null
+            }
+            {
+              !!onSave ?
+                <Button
+                  className="sider-footer-btn"
+                  type="primary"
+                  disabled={!onSave}
+                  onClick={() => {
+                    onSave?.();
+                  }}
+                >
+                  确定
+                </Button>
+                : null
+            }
+          </div>
+          : null
+      }
     </div>
   );
 };

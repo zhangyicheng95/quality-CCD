@@ -287,15 +287,15 @@ const Table2Charts: React.FC<Props> = (props: any) => {
           }
           if (
             Math.max(text?.length, name.length) *
-              fontSize *
-              (isNum || name?.indexOf('时间') > -1 ? 0.59 : 1) +
-              18 >
+            fontSize *
+            (isNum || name?.indexOf('时间') > -1 ? 0.59 : 1) +
+            18 >
             number
           ) {
             number =
               Math.max(text?.length, name.length) *
-                fontSize *
-                (isNum || name?.indexOf('时间') > -1 ? 0.59 : 1) +
+              fontSize *
+              (isNum || name?.indexOf('时间') > -1 ? 0.59 : 1) +
               18;
           }
         });
@@ -313,7 +313,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
       });
       setBoxSizeSelf(Math.max(boxSize, domRef.current?.clientWidth));
     }
-  }, [dataValue, fontSize, domRef?.current?.clientWidth]);
+  }, [dataValue, fontSize, domRef?.current?.clientWidth, window.screen.width]);
   const updateCanvas = (tableSizes: any) => {
     const updateParam = {
       ...params,
@@ -400,15 +400,15 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                   style={Object.assign(
                     !!tableSizeSelf?.[0]
                       ? {
-                          minWidth: tableSizeSelf?.[0]?.minWidth,
-                          maxWidth: '50%',
-                        }
+                        minWidth: tableSizeSelf?.[0]?.minWidth,
+                        maxWidth: '50%',
+                      }
                       : {},
                     line_height ? { lineHeight: `${line_height - 4}px`, height: line_height } : {},
                     des_bordered
                       ? {
-                          borderWidth: '1px',
-                        }
+                        borderWidth: '1px',
+                      }
                       : {},
                   )}
                 >
@@ -425,9 +425,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                         style={Object.assign(
                           !!tableSizeSelf?.[sIndex + 1]
                             ? {
-                                minWidth: tableSizeSelf?.[sIndex + 1]?.minWidth,
-                                maxWidth: '50%',
-                              }
+                              minWidth: tableSizeSelf?.[sIndex + 1]?.minWidth,
+                              maxWidth: '50%',
+                            }
                             : {},
                         )}
                       >
@@ -449,8 +449,8 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                           onClick={
                             value?.indexOf?.('http://') > -1
                               ? () => {
-                                  window.open(value, '_blank');
-                                }
+                                window.open(value, '_blank');
+                              }
                               : null
                           }
                         >
@@ -472,9 +472,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                       style={Object.assign(
                         !!tableSizeSelf?.[sIndex + 1]
                           ? {
-                              minWidth: tableSizeSelf?.[sIndex + 1]?.minWidth,
-                              maxWidth: '50%',
-                            }
+                            minWidth: tableSizeSelf?.[sIndex + 1]?.minWidth,
+                            maxWidth: '50%',
+                          }
                           : {},
                       )}
                     >
@@ -491,8 +491,8 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                         onClick={
                           val?.indexOf?.('http://') > -1
                             ? () => {
-                                window.open(val, '_blank');
-                              }
+                              window.open(val, '_blank');
+                            }
                             : null
                         }
                       >
@@ -516,16 +516,16 @@ const Table2Charts: React.FC<Props> = (props: any) => {
           <div
             className="charts-header-box flex-box"
             style={Object.assign(
-              { width: boxSizeSelf },
+              { width: boxSizeSelf > domRef?.current?.clientWidth + 20 ? boxSizeSelf : '100%' },
               headerBackgroundColor === 'transparent'
                 ? { backgroundColor: 'transparent' }
                 : headerBackgroundColor === 'line1'
-                ? {
+                  ? {
                     backgroundColor: 'transparent',
                     backgroundImage:
                       'linear-gradient(to right, rgba(39,90,235,0.8), rgba(140,210,220,1))',
                   }
-                : {},
+                  : {},
               { left: bodyPaddingSize },
             )}
           >
@@ -539,10 +539,10 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                     style={Object.assign(
                       !!tableSizeSelf?.[index]
                         ? {
-                            width: tableSizeSelf?.[index]?.width,
-                            minWidth: tableSizeSelf?.[index]?.minWidth,
-                            maxWidth: '50%',
-                          }
+                          width: tableSizeSelf?.[index]?.width,
+                          minWidth: tableSizeSelf?.[index]?.minWidth,
+                          maxWidth: '50%',
+                        }
                         : {},
                     )}
                   >
@@ -581,85 +581,46 @@ const Table2Charts: React.FC<Props> = (props: any) => {
             style={
               des_bordered
                 ? {
-                    borderWidth: '1px',
-                  }
+                  borderWidth: '1px',
+                }
                 : {}
             }
           >
             {_.isArray(dataValue)
               ? (dataValue || [])?.map?.((item: any, index: number) => {
-                  const { value = [], color } = item;
-                  if (!_.isArray(value)) {
-                    const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
-                    message.error(`${node.name}（${node.id}）推送信息错误，请检查`, 5);
-                    return null;
-                  }
-                  return (
-                    <div
-                      className={`charts-body-tr`}
-                      key={`echart-${id}-tr-${index}`}
-                      style={Object.assign(
-                        !!tableSizeSelf?.[index]
-                          ? {
-                              width: tableSizeSelf?.[index]?.width,
-                              minWidth: tableSizeSelf?.[index]?.minWidth,
-                              maxWidth: '50%',
-                            }
-                          : {},
-                      )}
-                    >
-                      {(!!reverse ? _.cloneDeep(value).reverse() : value)?.map?.(
-                        (val: any, sIndex: number) => {
-                          if (_.isObject(val)) {
-                            // @ts-ignore
-                            const { value, color } = val;
-                            return (
-                              <div
-                                key={`echart-${id}-tr-td-${sIndex}-${value}`}
-                                className={`flex-box charts-body-td charts-body-td-interlacing-${interlacing}`}
-                              >
-                                <TooltipDiv
-                                  className={`charts-body-td-title`}
-                                  title={value?.length > 15 ? value : ''}
-                                  style={Object.assign(
-                                    !!color
-                                      ? valueColor === 'value'
-                                        ? { color }
-                                        : { backgroundColor: color, color: '#fff' }
-                                      : {},
-                                    des_bordered ? { borderWidth: '1px' } : {},
-                                    line_height
-                                      ? { lineHeight: `${line_height - 4}px`, height: line_height }
-                                      : {},
-                                  )}
-                                  placement={'top'}
-                                  onClick={
-                                    value?.indexOf?.('http://') > -1
-                                      ? () => {
-                                          window.open(value, '_blank');
-                                        }
-                                      : null
-                                  }
-                                >
-                                  {value?.indexOf?.('http://') > -1 ? '查看' : value}
-                                </TooltipDiv>
-                                {!des_bordered || index + 1 === dataValue?.length ? null : (
-                                  <div
-                                    className="charts-body-item-border"
-                                    style={line_height ? { height: line_height } : {}}
-                                  />
-                                )}
-                              </div>
-                            );
-                          }
+                const { value = [], color } = item;
+                if (!_.isArray(value)) {
+                  const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
+                  message.error(`${node.name}（${node.id}）推送信息错误，请检查`, 5);
+                  return null;
+                }
+                return (
+                  <div
+                    className={`charts-body-tr`}
+                    key={`echart-${id}-tr-${index}`}
+                    style={Object.assign(
+                      !!tableSizeSelf?.[index]
+                        ? {
+                          width: tableSizeSelf?.[index]?.width,
+                          minWidth: tableSizeSelf?.[index]?.minWidth,
+                          maxWidth: '50%',
+                        }
+                        : {},
+                    )}
+                  >
+                    {(!!reverse ? _.cloneDeep(value).reverse() : value)?.map?.(
+                      (val: any, sIndex: number) => {
+                        if (_.isObject(val)) {
+                          // @ts-ignore
+                          const { value, color } = val;
                           return (
                             <div
-                              key={`echart-${id}-tr-td-${sIndex}-${val}`}
+                              key={`echart-${id}-tr-td-${sIndex}-${value}`}
                               className={`flex-box charts-body-td charts-body-td-interlacing-${interlacing}`}
                             >
                               <TooltipDiv
                                 className={`charts-body-td-title`}
-                                title={val?.length > 15 ? val : ''}
+                                title={value?.length > 15 ? value : ''}
                                 style={Object.assign(
                                   !!color
                                     ? valueColor === 'value'
@@ -673,14 +634,14 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                 )}
                                 placement={'top'}
                                 onClick={
-                                  val?.indexOf?.('http://') > -1
+                                  value?.indexOf?.('http://') > -1
                                     ? () => {
-                                        window.open(val, '_blank');
-                                      }
+                                      window.open(value, '_blank');
+                                    }
                                     : null
                                 }
                               >
-                                {val?.indexOf?.('http://') > -1 ? '查看' : val}
+                                {value?.indexOf?.('http://') > -1 ? '查看' : value}
                               </TooltipDiv>
                               {!des_bordered || index + 1 === dataValue?.length ? null : (
                                 <div
@@ -690,11 +651,50 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                               )}
                             </div>
                           );
-                        },
-                      )}
-                    </div>
-                  );
-                })
+                        }
+                        return (
+                          <div
+                            key={`echart-${id}-tr-td-${sIndex}-${val}`}
+                            className={`flex-box charts-body-td charts-body-td-interlacing-${interlacing}`}
+                          >
+                            <TooltipDiv
+                              className={`charts-body-td-title`}
+                              title={val?.length > 15 ? val : ''}
+                              style={Object.assign(
+                                !!color
+                                  ? valueColor === 'value'
+                                    ? { color }
+                                    : { backgroundColor: color, color: '#fff' }
+                                  : {},
+                                des_bordered ? { borderWidth: '1px' } : {},
+                                line_height
+                                  ? { lineHeight: `${line_height - 4}px`, height: line_height }
+                                  : {},
+                              )}
+                              placement={'top'}
+                              onClick={
+                                val?.indexOf?.('http://') > -1
+                                  ? () => {
+                                    window.open(val, '_blank');
+                                  }
+                                  : null
+                              }
+                            >
+                              {val?.indexOf?.('http://') > -1 ? '查看' : val}
+                            </TooltipDiv>
+                            {!des_bordered || index + 1 === dataValue?.length ? null : (
+                              <div
+                                className="charts-body-item-border"
+                                style={line_height ? { height: line_height } : {}}
+                              />
+                            )}
+                          </div>
+                        );
+                      },
+                    )}
+                  </div>
+                );
+              })
               : null}
           </div>
         </Fragment>

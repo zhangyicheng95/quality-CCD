@@ -307,7 +307,6 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
         >
           {useMemo(() => {
             let values = Object.values(statusList);
-            console.log('all', values);
             values = values.filter((i: any) => !_.isUndefined(i));
             if (!values.length) {
               values = [false];

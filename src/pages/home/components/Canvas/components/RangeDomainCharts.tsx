@@ -146,7 +146,23 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
     process.env.NODE_ENV === 'development' ? sourceList : [],
   );
   const inputDom = useRef<any>(null);
-
+  const differenceData = useMemo(() => {
+    let item: any = [];
+    if (timeSelectDefault?.length > dataSource?.[0]?.data?.length) {
+      (timeSelectDefault || [])?.forEach((e: any) => {
+        if (!dataSource?.[0]?.data?.filter((i: any) => i.key === e.value)?.length) {
+          // if (!_.isUndefined(e?.value)) {
+          item.push({
+            key: e?.value,
+            value: e?.number,
+            type: e?.type,
+          });
+          // }
+        }
+      });
+    }
+    return item;
+  }, [timeSelectDefault, dataSource]);
   const init = () => {
     if (!!xName && started) {
       btnFetch('get', xName).then((res: any) => {
@@ -214,16 +230,13 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
           return pre;
         }, {});
         const rangeKeys = Object.keys(range);
+        let dataResult = [].concat(dataSource);
 
-        const params = dataSource?.map((dataItem: any) => {
+        const params = dataResult?.map((dataItem: any) => {
           return {
             ...dataItem,
-            data: (timeSelectDefault?.length > dataItem?.data?.length
-              ? dataItem?.data?.concat({
-                  key: timeSelectDefault?.[dataItem?.data?.length]?.value,
-                  value: timeSelectDefault?.[dataItem?.data?.length]?.number,
-                  type: timeSelectDefault?.[dataItem?.data?.length]?.type,
-                })
+            data: (!!differenceData?.length
+              ? dataItem?.data?.concat(differenceData)
               : dataItem?.data
             )?.map((cDataItem: any) => {
               if (dataItem.name === name) {
@@ -302,117 +315,120 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                     {alias}
                   </div>
                 ) : null}
-                {(timeSelectDefault?.length > data?.length
-                  ? data?.concat({
-                      key: timeSelectDefault?.[data?.length]?.value,
-                      value: timeSelectDefault?.[data?.length]?.number,
-                      type: timeSelectDefault?.[data?.length]?.type,
-                    })
-                  : data
-                )?.map((cItem: any, cIndex: number) => {
-                  const { key, value, type } = cItem;
-                  return (
-                    <div
-                      className="flex-box-column range-domain-box-item-td"
-                      key={`range-domain-box-item-td-${cIndex}`}
-                      style={Object.assign(
-                        {},
-                        type !== 'bool' ? { width: '100%', height: '100%' } : {},
-                        {
-                          height: hiddenAxis && index < des_column ? line_height + 38 : line_height,
-                          marginBottom: 4,
-                        },
-                      )}
-                    >
-                      {hiddenAxis ? (
-                        <div
-                          className="flex-box-center range-domain-box-item-td-th"
-                          style={index < des_column ? {} : { height: 0, minHeight: 0 }}
-                        >
-                          {timeSelectDefault[cIndex]?.label}
-                        </div>
-                      ) : null}
-                      {type === 'bool' ? (
-                        <Form.Item
-                          name={`${parentBodyBoxTab}$$${key}$$${name}`}
-                          label={''}
-                          style={Object.assign(
-                            {},
-                            {
-                              marginBottom: 0,
-                              minWidth: 35,
-                            },
-                            hiddenAxis && index < des_column ? { height: 'calc(100% - 38px)' } : {},
-                          )}
-                          initialValue={value}
-                          rules={[{ required: false, message: alias }]}
-                        >
-                          <SegmentSwitch
-                            fontInBody={[
-                              { label: '', value: false, backgroundColor: 'grey' },
+                {(!!differenceData?.length ? data?.concat(differenceData) : data)?.map(
+                  (cItem: any, cIndex: number) => {
+                    const { key, value, type } = cItem;
+                    return (
+                      <div
+                        className="flex-box-column range-domain-box-item-td"
+                        key={`range-domain-box-item-td-${cIndex}`}
+                        style={Object.assign(
+                          {},
+                          type !== 'bool' ? { width: '100%', height: '100%' } : {},
+                          {
+                            height:
+                              hiddenAxis && index < des_column ? line_height + 38 : line_height,
+                            marginBottom: 4,
+                          },
+                        )}
+                      >
+                        {hiddenAxis ? (
+                          <div
+                            className="flex-box-center range-domain-box-item-td-th"
+                            style={index < des_column ? {} : { height: 0, minHeight: 0 }}
+                          >
+                            {timeSelectDefault?.filter((i: any) => i.value === key)?.[0]?.label ||
+                              timeSelectDefault?.[cIndex]?.label}
+                          </div>
+                        ) : null}
+                        {type === 'bool' ? (
+                          <Form.Item
+                            name={`${parentBodyBoxTab}$$${key}$$${name}`}
+                            label={''}
+                            style={Object.assign(
+                              {},
                               {
-                                label: '',
-                                value: true,
-                                backgroundColor: 'rgba(24, 144, 255, 1)',
+                                marginBottom: 0,
+                                minWidth: 35,
                               },
-                            ]}
-                            onChange={(val: boolean) => {
-                              onValueChange(name, key, val);
-                            }}
-                          />
-                        </Form.Item>
-                      ) : barRadius ? (
-                        <Form.Item
-                          name={`${parentBodyBoxTab}$$${key}$$${name}`}
-                          label={''}
-                          style={Object.assign(
-                            { width: '100%', height: '100%', marginBottom: 0 },
-                            hiddenAxis && index < des_column ? { height: 'calc(100% - 38px)' } : {},
-                          )}
-                          initialValue={value}
-                          rules={[{ required: false, message: alias }]}
-                        >
-                          {['int', 'float', 'number'].includes(_.lowerCase(type)) ? (
-                            <InputNumber
-                              ref={inputDom}
-                              min={0}
-                              stringMode
-                              step={JSON.parse(`0.${(value + '')?.split('.')?.[1]?.length || 0}`)}
-                              onBlur={(e) => {
-                                const val = e.target.value;
-                                onValueChange(name, key, Number(val));
-                              }}
-                              onPressEnter={(e: any) => {
-                                inputDom.current.blur();
-                              }}
-                            />
-                          ) : (
-                            <Input
-                              ref={inputDom}
-                              onBlur={(e) => {
-                                const val = e.target.value;
+                              hiddenAxis && index < des_column
+                                ? { height: 'calc(100% - 38px)' }
+                                : {},
+                            )}
+                            initialValue={value}
+                            rules={[{ required: false, message: alias }]}
+                          >
+                            <SegmentSwitch
+                              fontInBody={[
+                                { label: '', value: false, backgroundColor: 'grey' },
+                                {
+                                  label: '',
+                                  value: true,
+                                  backgroundColor: 'rgba(24, 144, 255, 1)',
+                                },
+                              ]}
+                              onChange={(val: boolean) => {
                                 onValueChange(name, key, val);
                               }}
-                              onPressEnter={(e: any) => {
-                                inputDom.current.blur();
-                              }}
                             />
-                          )}
-                        </Form.Item>
-                      ) : (
-                        <div
-                          className="flex-box range-domain-box-item-td-read"
-                          style={Object.assign(
-                            { width: '100%', height: '100%' },
-                            hiddenAxis && index < des_column ? { height: 'calc(100% - 38px)' } : {},
-                          )}
-                        >
-                          {value}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                          </Form.Item>
+                        ) : barRadius ? (
+                          <Form.Item
+                            name={`${parentBodyBoxTab}$$${key}$$${name}`}
+                            label={''}
+                            style={Object.assign(
+                              { width: '100%', height: '100%', marginBottom: 0 },
+                              hiddenAxis && index < des_column
+                                ? { height: 'calc(100% - 38px)' }
+                                : {},
+                            )}
+                            initialValue={value}
+                            rules={[{ required: false, message: alias }]}
+                          >
+                            {['int', 'float', 'number'].includes(_.lowerCase(type)) ? (
+                              <InputNumber
+                                ref={inputDom}
+                                min={0}
+                                stringMode
+                                step={JSON.parse(`0.${(value + '')?.split('.')?.[1]?.length || 0}`)}
+                                onBlur={(e) => {
+                                  const val = e.target.value;
+                                  onValueChange(name, key, Number(val));
+                                }}
+                                onPressEnter={(e: any) => {
+                                  inputDom.current.blur();
+                                }}
+                              />
+                            ) : (
+                              <Input
+                                ref={inputDom}
+                                onBlur={(e) => {
+                                  const val = e.target.value;
+                                  onValueChange(name, key, val);
+                                }}
+                                onPressEnter={(e: any) => {
+                                  inputDom.current.blur();
+                                }}
+                              />
+                            )}
+                          </Form.Item>
+                        ) : (
+                          <div
+                            className="flex-box range-domain-box-item-td-read"
+                            style={Object.assign(
+                              { width: '100%', height: '100%' },
+                              hiddenAxis && index < des_column
+                                ? { height: 'calc(100% - 38px)' }
+                                : {},
+                            )}
+                          >
+                            {value}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  },
+                )}
               </div>
             );
           })}

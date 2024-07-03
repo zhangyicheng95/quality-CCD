@@ -4,8 +4,8 @@ import Monaco from 'react-monaco-editor';
 import * as _ from 'lodash';
 import './index.less';
 import { useModel } from 'umi';
-import { formatJson } from '@/utils/utils';
-import { UploadOutlined } from '@ant-design/icons';
+import { downFileFun, formatJson } from '@/utils/utils';
+import { CloudDownloadOutlined, UploadOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 interface Props {
@@ -86,7 +86,7 @@ const MonacoEditor: React.FC<Props> = (props) => {
           编辑器
           {!!language ? (
             <Select
-              style={{ width: 200, marginLeft: 24 }}
+              style={{ width: 200, margin: '0 24px' }}
               onChange={(val) => {
                 return setEditorLanguage(val);
               }}
@@ -104,15 +104,28 @@ const MonacoEditor: React.FC<Props> = (props) => {
               <Option value="java">java</Option>
             </Select>
           ) : null}
-          <Upload {...uploadProps}>
-            <Button
-              icon={<UploadOutlined />}
-              style={{ marginLeft: 24 }}
-              // type="primary"
-            >
-              导入本地json
-            </Button>
-          </Upload>
+          {
+            editorLanguage === 'json' ?
+              <div className="flex-box" style={{ gap: 8 }}>
+                <Upload {...uploadProps}>
+                  <Button
+                    icon={<UploadOutlined />}
+                  // type="primary"
+                  >
+                    导入本地json
+                  </Button>
+                </Upload>
+                <Button
+                  icon={<CloudDownloadOutlined />}
+                  onClick={() => {
+                    downFileFun(editorValue, `json编辑器.json`);
+                  }}
+                >
+                  导出json文件
+                </Button>
+              </div>
+              : null
+          }
         </div>
       }
       width="calc(100vw - 48px)"
@@ -134,7 +147,7 @@ const MonacoEditor: React.FC<Props> = (props) => {
       onCancel={() => {
         onCancel();
       }}
-      // getContainer={false}
+    // getContainer={false}
     >
       <Input.TextArea
         style={{ height: '100%' }}

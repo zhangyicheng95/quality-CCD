@@ -1189,14 +1189,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       axesHelper.visible = yName;
       scene.current.add(axesHelper);
 
-      let scale = (1.3 * mdwid) / dom.current.clientHeight;
+      let scale = (1.3 * (mdwid || 1)) / dom.current.clientHeight;
       if (scale >= 2) {
         scale = mdwid / (dom.current.clientHeight - 50);
       } else if (scale <= 1.5) {
         scale = 1.5;
       }
       if (!!localStorage.getItem('cameraScale')) {
-        scale = Number(localStorage.getItem('cameraScale'));
+        scale = Number(localStorage.getItem('cameraScale')) || 1;
       }
       console.log('scale:', scale);
       const basicPosition = new THREE.Vector3(0, -scale * max, 0);

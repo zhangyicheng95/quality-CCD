@@ -122,7 +122,6 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         }
       }
     });
-    console.log(resConfig);
     setConfigGroup(group?.map?.((i: any) => ({ ...i, show: true })));
     setSelectedOption(selectedOptions);
     setConfigList(resConfig);
@@ -223,24 +222,24 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                       ...{ enabled: resultEnabled[item?.name] },
                       ...(item?.widget?.type === 'TagRadio'
                         ? {
-                            widget: {
-                              ...item?.widget,
-                              options: (item?.widget?.options || [])?.map?.((option: any) => {
-                                if (option.name === item?.value) {
-                                  return {
-                                    ...option,
-                                    children: (option?.children || [])?.map?.((child: any) => {
-                                      return {
-                                        ...child,
-                                        value: result[child?.name],
-                                      };
-                                    }),
-                                  };
-                                }
-                                return option;
-                              }),
-                            },
-                          }
+                          widget: {
+                            ...item?.widget,
+                            options: (item?.widget?.options || [])?.map?.((option: any) => {
+                              if (option.name === item?.value) {
+                                return {
+                                  ...option,
+                                  children: (option?.children || [])?.map?.((child: any) => {
+                                    return {
+                                      ...child,
+                                      value: result[child?.name],
+                                    };
+                                  }),
+                                };
+                              }
+                              return option;
+                            }),
+                          },
+                        }
                         : {}),
                     };
                   }
@@ -300,21 +299,20 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     }
     return (
       <div
-        className={`${
-          type === 'TagRadio'
-            ? ''
-            : ['codeEditor', 'ImageLabelField'].includes(type)
+        className={`${type === 'TagRadio'
+          ? ''
+          : ['codeEditor', 'ImageLabelField'].includes(type)
             ? 'flex-box-start'
             : 'flex-box'
-        } param-item ${des_bordered ? 'item-border' : ''}`}
+          } param-item ${des_bordered ? 'item-border' : ''}`}
         key={`${id}@$@${name}`}
         style={Object.assign(
           {},
           des_column > 1
             ? {
-                width: `calc(${100 / des_column}% - 8px)`,
-                marginRight: configList?.length % des_column === des_column - 1 ? 0 : 8,
-              }
+              width: `calc(${100 / des_column}% - 8px)`,
+              marginRight: configList?.length % des_column === des_column - 1 ? 0 : 8,
+            }
             : {},
           configList?.length % des_column === 1
             ? { marginBottom: index + 1 === configList.length ? 0 : 16 }
@@ -334,9 +332,8 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         ) : null}
         {/* </div> */}
         <div
-          className={`${
-            ['codeEditor', 'ImageLabelField'].includes(type) ? 'flex-box-start' : 'flex-box'
-          } value-box`}
+          className={`${['codeEditor', 'ImageLabelField'].includes(type) ? 'flex-box-start' : 'flex-box'
+            } value-box`}
           style={type === 'TagRadio' ? { width: 'calc(100% - 16px)' } : {}}
         >
           <div style={{ flex: 1 }}>
@@ -864,8 +861,8 @@ export function FormatWidgetToDom(props: any) {
               value || value == 0
                 ? value
                 : defaultValue || defaultValue == 0
-                ? defaultValue
-                : undefined
+                  ? defaultValue
+                  : undefined
             }
             rules={[{ required: require, message: `${alias}` }]}
           >

@@ -424,9 +424,9 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                   style={
                     !!magnifierWidth && !!magnifierHeight
                       ? {
-                          width: magnifierWidth,
-                          height: magnifierHeight,
-                        }
+                        width: magnifierWidth,
+                        height: magnifierHeight,
+                      }
                       : {}
                   }
                 />
@@ -476,9 +476,8 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                     </div>
                     {`${selectedNum + 1}/${urlList.current?.length}`}
                     <div
-                      className={`next-btn ${
-                        selectedNum + 1 === urlList.current.length ? 'greyColorStyle' : ''
-                      }`}
+                      className={`next-btn ${selectedNum + 1 === urlList.current.length ? 'greyColorStyle' : ''
+                        }`}
                       onClick={() => onNext()}
                     >
                       {' >'}
@@ -538,10 +537,10 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                 ? item?.indexOf('OK') > -1
                   ? 'OK'
                   : item?.indexOf('NG') > -1
-                  ? !!item.split('NG/')?.[1]?.split('/')?.[0]
-                    ? item.split('NG/')?.[1]?.split('/')?.[0]
-                    : 'NG'
-                  : ''
+                    ? !!item.split('NG/')?.[1]?.split('/')?.[0]
+                      ? item.split('NG/')?.[1]?.split('/')?.[0]
+                      : 'NG'
+                    : ''
                 : item.type;
               const url = _.isString(item) ? item : item?.url;
               if (!!url) {
@@ -555,9 +554,8 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                   >
                     <img src={url} alt={index + ''} />
                     <div
-                      className={`img-box-footer-list-item-type ${
-                        type === 'OK' ? 'OK-font' : 'NG-font'
-                      }`}
+                      className={`img-box-footer-list-item-type ${type === 'OK' ? 'OK-font' : 'NG-font'
+                        }`}
                     >
                       {type}
                     </div>

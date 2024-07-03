@@ -124,6 +124,15 @@ const BodyBoxCharts: React.FC<Props> = (props: any) => {
       },
     });
     setSelected(value);
+
+    setTimeout(() => {
+      dispatch({
+        type: 'home/set',
+        payload: {
+          updateTabs: [],
+        },
+      });
+    }, 2000);
   };
 
   return (

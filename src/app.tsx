@@ -72,7 +72,7 @@ export async function getInitialState(): Promise<{
   const ipUrl = !!Object.keys(query).length ? query?.ipUrl || 'localhost:8866' : 'localhost:8866';
   const ipString = query?.inIframe
     ? query?.id
-    : localStorage.getItem('ipString') || query?.id || '';
+    : (localStorage.getItem('ipString') || query?.id) || '';
   const iframeTheme = query?.theme;
 
   if (!localStorage.getItem('ipString')) {
@@ -116,11 +116,11 @@ export async function getInitialState(): Promise<{
         console.log('appjs中方案信息报错: ', res);
         if (!!query?.id) {
           localStorage.removeItem('ipString');
-          message.error('获取方案信息接口报错，5秒钟后自动刷新');
-          setTimeout(() => {
-            window.location.reload();
-          }, 5000);
         }
+        message.error('获取方案信息接口报错，5秒钟后自动刷新');
+        setTimeout(() => {
+          window.location.reload();
+        }, 5000);
       }
     }
   }
@@ -151,9 +151,8 @@ const iconDom = (
   <img
     src={
       !!localStorage.getItem('quality_icon')
-        ? `${BASE_IP}file_browser${
-            localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'
-          }${localStorage.getItem('quality_icon')}`
+        ? `${BASE_IP}file_browser${localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'
+        }${localStorage.getItem('quality_icon')}`
         : icon
     }
     alt="logo"
@@ -172,18 +171,18 @@ export const layout: RunTimeLayoutConfig = (props) => {
         content: initialState?.currentUser?.name,
       },
       footerRender: () => null,
-      onPageChange: () => {},
+      onPageChange: () => { },
       links: isDev
         ? [
-            <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-              <LinkOutlined />
-              <span>OpenAPI 文档</span>
-            </Link>,
-            <Link to="/~docs" key="docs">
-              <BookOutlined />
-              <span>业务组件文档</span>
-            </Link>,
-          ]
+          <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
+            <LinkOutlined />
+            <span>OpenAPI 文档</span>
+          </Link>,
+          <Link to="/~docs" key="docs">
+            <BookOutlined />
+            <span>业务组件文档</span>
+          </Link>,
+        ]
         : [],
       menuHeaderRender: undefined,
       // 自定义 403 页面
@@ -231,9 +230,9 @@ export const layout: RunTimeLayoutConfig = (props) => {
       (_.isBoolean(initialState?.params?.contentData?.showHeader) &&
         !initialState?.params?.contentData?.showHeader)
       ? {
-          headerRender: () => null,
-          headerHeight: 0,
-        }
+        headerRender: () => null,
+        headerHeight: 0,
+      }
       : {},
   );
 };

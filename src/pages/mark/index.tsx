@@ -10,6 +10,7 @@ const Mark = (props: any) => {
     <Router history={history}>
       <Switch>
         <Route exact path='/mark' component={List} />
+        <Route exact path='/mark/edit' component={List} />
         <Route exact path='/mark/detail' component={Detail} />
       </Switch>
     </Router>

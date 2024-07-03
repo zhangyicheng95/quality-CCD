@@ -48,7 +48,6 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
         index = cIndex;
       }
     });
-    console.log('wwwwwwwsssssssss', index);
 
     setLock(index);
   }, [value, defaultValue]);
@@ -100,11 +99,8 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
                   width: `calc(${100 / fontInBody?.length}% - 4px)`,
                   left: `calc(${(100 / fontInBody?.length) * lock}% + 2px)`,
                 },
-            !!buttonColor
-              ? { backgroundColor: buttonColor }
-              : {
-                  backgroundColor: fontInBody?.[lock]?.backgroundColor,
-                },
+            { backgroundColor: fontInBody?.[lock]?.backgroundColor },
+            !!buttonColor ? { backgroundColor: buttonColor } : {},
           )}
         />
         {(fontInBody || [])?.map((item: any, index: number) => {

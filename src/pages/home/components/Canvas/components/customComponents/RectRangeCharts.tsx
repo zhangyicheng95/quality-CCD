@@ -19,7 +19,7 @@ const rectList = [
   { label: '左边', value: 'left' },
   { label: '中间', value: '' },
   { label: '右边', value: 'right' },
-  { label: '左下角', value: 'bottomLeft' },
+  { label: '左下角', value: 'leftBottom' },
   { label: '下边', value: 'bottom' },
   { label: '右下角', value: 'rightBottom' },
 ];
@@ -125,7 +125,7 @@ const RectRangeCharts: React.FC<Props> = (props: any) => {
                         backgroundColor: 'rgba(24, 144, 255, 1)',
                       },
                     ]}
-                    style={{ height: '50%' }}
+                    style={[3, 5].includes(index) ? {} : { height: '50%' }}
                   />
                 </Form.Item>
               )}

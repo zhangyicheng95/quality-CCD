@@ -77,9 +77,18 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
     dispatch({
       type: 'home/set',
       payload: {
-        updateTabs: ids?.concat(guid()),
+        updateTabs: ids,
       },
     });
+
+    setTimeout(() => {
+      dispatch({
+        type: 'home/set',
+        payload: {
+          updateTabs: [],
+        },
+      });
+    }, 2000);
   };
   // 切换
   const onChange = (model: string) => {

@@ -5,11 +5,11 @@ import useClock from '@/hooks/useClock';
 
 interface Props {
   homeSettingData: any;
-  started: any;
+  started?: any;
 }
 
 const HeaderCharts: React.FC<Props> = (props: any) => {
-  const { homeSettingData, started } = props;
+  const { homeSettingData, started = false } = props;
   const { time } = useClock();
 
   if (!homeSettingData['header']?.fontSize) {

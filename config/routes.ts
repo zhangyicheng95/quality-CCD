@@ -60,6 +60,10 @@
         redirect: './mark/components/List',
       },
       {
+        path: '/mark/edit',
+        redirect: './mark/components/List',
+      },
+      {
         path: '/mark/detail',
         component: './mark/components/Details',
       },

@@ -87,76 +87,40 @@ const TableCharts: React.FC<Props> = (props: any) => {
         style={
           des_bordered
             ? {
-                borderWidth: '1px',
-              }
+              borderWidth: '1px',
+            }
             : {}
         }
       >
         {_.isArray(dataValue)
           ? (!!reverse ? _.cloneDeep(dataValue).reverse() : dataValue)?.map?.(
-              (item: any, index: number) => {
-                const { name, value, color } = item;
-                if (_.isObject(item?.value[0]) && !_.isArray(item?.value[0])) {
-                  // @ts-ignore
-                  const { value, color } = item?.value[0];
-                  const text = _.isArray(value) ? value.join(',') : value;
-                  return (
-                    <div
-                      className={`charts-body-tr flex-box charts-body-tr-interlacing-${interlacing}`}
-                      key={`echart-${id}-tr-${index}`}
-                    >
-                      <TooltipDiv
-                        className="charts-body-td flex-box-center"
-                        style={Object.assign(
-                          {},
-                          des_bordered ? { borderWidth: '1px' } : {},
-                          line_height
-                            ? { lineHeight: `${line_height - 4}px`, height: line_height }
-                            : {},
-                        )}
-                      >
-                        {name}
-                      </TooltipDiv>
-
-                      <TooltipDiv
-                        className="charts-body-td flex-box-center"
-                        title={text?.length > 10 ? text : ''}
-                        style={Object.assign(
-                          !!color
-                            ? valueColor === 'value'
-                              ? { color }
-                              : { backgroundColor: color, color: '#fff' }
-                            : {},
-                          des_bordered ? { borderWidth: '1px' } : {},
-                          line_height
-                            ? { lineHeight: `${line_height - 4}px`, height: line_height }
-                            : {},
-                        )}
-                      >
-                        {text}
-                      </TooltipDiv>
-                    </div>
-                  );
-                }
+            (item: any, index: number) => {
+              const { name, value, color } = item;
+              if (_.isObject(item?.value[0]) && !_.isArray(item?.value[0])) {
+                // @ts-ignore
+                const { value, color } = item?.value[0];
                 const text = _.isArray(value) ? value.join(',') : value;
                 return (
                   <div
                     className={`charts-body-tr flex-box charts-body-tr-interlacing-${interlacing}`}
                     key={`echart-${id}-tr-${index}`}
                   >
-                    <div
-                      className="charts-body-td flex-box-center"
-                      style={
-                        line_height
-                          ? { lineHeight: `${line_height - 4}px`, height: line_height }
-                          : {}
-                      }
-                    >
-                      {name}
-                    </div>
                     <TooltipDiv
                       className="charts-body-td flex-box-center"
-                      title={text.length > 10 ? text : ''}
+                      style={Object.assign(
+                        {},
+                        des_bordered ? { borderWidth: '1px' } : {},
+                        line_height
+                          ? { lineHeight: `${line_height - 4}px`, height: line_height }
+                          : {},
+                      )}
+                    >
+                      {name}
+                    </TooltipDiv>
+
+                    <TooltipDiv
+                      className="charts-body-td flex-box-center"
+                      title={text?.length > 10 ? text : ''}
                       style={Object.assign(
                         !!color
                           ? valueColor === 'value'
@@ -173,8 +137,44 @@ const TableCharts: React.FC<Props> = (props: any) => {
                     </TooltipDiv>
                   </div>
                 );
-              },
-            )
+              }
+              const text = _.isArray(value) ? value.join(',') : value;
+              return (
+                <div
+                  className={`charts-body-tr flex-box charts-body-tr-interlacing-${interlacing}`}
+                  key={`echart-${id}-tr-${index}`}
+                >
+                  <div
+                    className="charts-body-td flex-box-center"
+                    style={
+                      line_height
+                        ? { lineHeight: `${line_height - 4}px`, height: line_height }
+                        : {}
+                    }
+                  >
+                    {name}
+                  </div>
+                  <TooltipDiv
+                    className="charts-body-td flex-box-center"
+                    title={text.length > 10 ? text : ''}
+                    style={Object.assign(
+                      !!color
+                        ? valueColor === 'value'
+                          ? { color }
+                          : { backgroundColor: color, color: '#fff' }
+                        : {},
+                      des_bordered ? { borderWidth: '1px' } : {},
+                      line_height
+                        ? { lineHeight: `${line_height - 4}px`, height: line_height }
+                        : {},
+                    )}
+                  >
+                    {text}
+                  </TooltipDiv>
+                </div>
+              );
+            },
+          )
           : null}
       </div>
     </div>

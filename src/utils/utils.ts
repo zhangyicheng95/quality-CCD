@@ -714,3 +714,20 @@ export const parseCSV2UniverData = (csv: string[][]) => {
     });
   });
 };
+/**
+ * 防抖
+ * @param fn 
+ * @param delay 
+ * @returns 
+ */
+export const debounce = (fn: any, delay: number) => {
+  let timer: any = null;
+  return function () {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      fn();
+    }, delay);
+  }
+};
