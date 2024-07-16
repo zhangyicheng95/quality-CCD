@@ -19,7 +19,7 @@ export const hasOperate = (callback: () => void, config?: OperateConfig) => { //
 
   const intervalId = setInterval(function () {
     time = time - interval;
-    console.log('倒计时:', time);
+    console.log('ccd倒计时:', time);
     if (time <= 0) {
       clearInterval(intervalId);
       callback();

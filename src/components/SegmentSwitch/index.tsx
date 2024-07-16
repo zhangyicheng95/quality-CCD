@@ -48,7 +48,6 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
         index = cIndex;
       }
     });
-
     setLock(index);
   }, [value, defaultValue]);
 
@@ -68,22 +67,21 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
         </div>
       ) : null}
       <div
-        className={`${
-          layout === 'vertical' ? 'flex-box-column' : 'flex-box'
-        } segment-switch-box ${className}`}
+        className={`${layout === 'vertical' ? 'flex-box-column' : 'flex-box'
+          } segment-switch-box ${className}`}
         style={Object.assign({}, disabled ? { cursor: 'not-allowed' } : {})}
         onClick={
           !!onClick && !disabled
             ? () => {
-                if (lock + 1 < fontInBody.length) {
-                  setLock(lock + 1);
-                  onClick?.(fontInBody[lock + 1]?.value);
-                } else {
-                  setLock(0);
-                  onClick?.(fontInBody[0]?.value);
-                }
+              if (lock + 1 < fontInBody.length) {
+                setLock(lock + 1);
+                onClick?.(fontInBody[lock + 1]?.value);
+              } else {
+                setLock(0);
+                onClick?.(fontInBody[0]?.value);
               }
-            : () => {}
+            }
+            : () => { }
         }
       >
         <div
@@ -91,14 +89,14 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
           style={Object.assign(
             layout === 'vertical'
               ? {
-                  width: 'calc(100% - 4px)',
-                  height: `calc(${100 / fontInBody?.length}% - 4px)`,
-                  top: `calc(${(100 / fontInBody?.length) * lock}% + 2px)`,
-                }
+                width: 'calc(100% - 4px)',
+                height: `calc(${100 / fontInBody?.length}% - 4px)`,
+                top: `calc(${(100 / fontInBody?.length) * lock}% + 2px)`,
+              }
               : {
-                  width: `calc(${100 / fontInBody?.length}% - 4px)`,
-                  left: `calc(${(100 / fontInBody?.length) * lock}% + 2px)`,
-                },
+                width: `calc(${100 / fontInBody?.length}% - 4px)`,
+                left: `calc(${(100 / fontInBody?.length) * lock}% + 2px)`,
+              },
             { backgroundColor: fontInBody?.[lock]?.backgroundColor },
             !!buttonColor ? { backgroundColor: buttonColor } : {},
           )}

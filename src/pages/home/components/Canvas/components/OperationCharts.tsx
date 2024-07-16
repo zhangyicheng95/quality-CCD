@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { connect, useModel } from 'umi';
-import { Button, Form, message } from 'antd';
+import { Button, Form, Input, message, Modal } from 'antd';
 import { FormatWidgetToDom } from '@/pages/home/components/Canvas/components/Operation2Charts';
 import MonacoEditor from '@/components/MonacoEditor';
 import PlatFormModal from '@/components/platForm';
@@ -30,11 +30,14 @@ const OperationCharts: React.FC<Props> = (props: any) => {
     des_bordered,
     yName = 150,
     valueOnTop = false,
+    passwordHelp = false,
+    password
   } = data;
   if (!_.isBoolean(showLabel)) {
     showLabel = true;
   }
   const [form] = Form.useForm();
+  const [form1] = Form.useForm();
   const { validateFields, resetFields } = form;
   const { initialState, setInitialState } = useModel<any>('@@initialState');
   const { params } = initialState;
@@ -46,6 +49,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
   const [platFormValue, setPlatFormValue] = useState<any>({});
   const [selectPathVisible, setSelectPathVisible] = useState(false);
   const [selectedPath, setSelectedPath] = useState<any>({});
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   useEffect(() => {
     if (!_.isArray(operationList)) {
@@ -101,13 +105,13 @@ const OperationCharts: React.FC<Props> = (props: any) => {
                   : { value },
                 item?.widget?.type === 'codeEditor'
                   ? {
-                      value:
-                        value?.language === 'json'
-                          ? _.isString(value?.value)
-                            ? JSON.parse(value?.value)
-                            : value?.value
-                          : value?.value,
-                    }
+                    value:
+                      value?.language === 'json'
+                        ? _.isString(value?.value)
+                          ? JSON.parse(value?.value)
+                          : value?.value
+                        : value?.value,
+                  }
                   : {},
               );
             }
@@ -229,9 +233,9 @@ const OperationCharts: React.FC<Props> = (props: any) => {
                     {},
                     des_column > 1
                       ? {
-                          width: `calc(${100 / des_column}% - 8px)`,
-                          marginRight: configList?.length % des_column === des_column - 1 ? 0 : 8,
-                        }
+                        width: `calc(${100 / des_column}% - 8px)`,
+                        marginRight: configList?.length % des_column === des_column - 1 ? 0 : 8,
+                      }
                       : {},
                     configList?.length % des_column === 1
                       ? { marginBottom: index + 1 === configList.length ? 0 : 16 }
@@ -318,7 +322,13 @@ const OperationCharts: React.FC<Props> = (props: any) => {
       </div>
       {!!ifPopconfirm ? (
         <div className="operation-footer flex-box-center">
-          <Button type="primary" disabled={!!started} onClick={() => onOk()}>
+          <Button type="primary" disabled={!!started} onClick={() => {
+            if (passwordHelp) {
+              setPasswordVisible(true);
+            } else {
+              onOk();
+            }
+          }}>
             确认
           </Button>
           {/* <Button disabled={!!started} onClick={() => onCancel()}>
@@ -376,6 +386,41 @@ const OperationCharts: React.FC<Props> = (props: any) => {
           }}
         />
       ) : null}
+      {
+        !!passwordVisible ?
+          <Modal
+            title={'密码校验'}
+            open={!!passwordVisible}
+            onOk={() => {
+              form1.validateFields().then((values) => {
+                const { pass } = values;
+                if (pass == password) {
+                  form1.resetFields();
+                  setPasswordVisible(false);
+                  onOk();
+                } else {
+                  message.error('密码错误');
+                }
+              });
+            }}
+            onCancel={() => {
+              form1.resetFields();
+              setPasswordVisible(false);
+            }}
+            maskClosable={false}
+          >
+            <Form form={form1} scrollToFirstError>
+              <Form.Item
+                name={'pass'}
+                label={'密码校验'}
+                rules={[{ required: true, message: '密码' }]}
+              >
+                <Input />
+              </Form.Item>
+            </Form>
+          </Modal>
+          : null
+      }
     </div>
   );
 };

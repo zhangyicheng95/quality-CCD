@@ -1888,6 +1888,8 @@ const Home: React.FC<any> = (props: any) => {
                       des_bordered,
                       yName,
                       valueOnTop,
+                      passwordHelp,
+                      password
                     }}
                   />
                 ) : type === 'operation2' ? (
@@ -1907,6 +1909,8 @@ const Home: React.FC<any> = (props: any) => {
                       des_bordered,
                       yName,
                       valueOnTop,
+                      passwordHelp,
+                      password
                     }}
                   />
                 ) : type === 'statistic' ? (
@@ -6041,6 +6045,21 @@ const Home: React.FC<any> = (props: any) => {
                       initialValue={true}
                     >
                       <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name="passwordHelp"
+                      label="密码权限"
+                      valuePropName="checked"
+                      initialValue={false}
+                    >
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name={`password`}
+                      label={'密码'}
+                      rules={[{ required: false, message: '密码' }]}
+                    >
+                      <Input.Password visibilityToggle={true} allowClear size="large" />
                     </Form.Item>
                   </Fragment>
                 ) : null}

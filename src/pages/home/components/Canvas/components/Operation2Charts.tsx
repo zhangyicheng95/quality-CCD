@@ -10,6 +10,7 @@ import {
   Input,
   InputNumber,
   message,
+  Modal,
   Popconfirm,
   Radio,
   Select,
@@ -52,11 +53,14 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     des_bordered,
     yName = 150,
     valueOnTop = false,
+    passwordHelp = false,
+    password
   } = data;
   if (!_.isBoolean(showLabel)) {
     showLabel = true;
   }
   const [form] = Form.useForm();
+  const [form1] = Form.useForm();
   const { validateFields, resetFields, setFieldsValue } = form;
   const { initialState, setInitialState } = useModel<any>('@@initialState');
   const { params } = initialState;
@@ -73,6 +77,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
   const [selectedPath, setSelectedPath] = useState<any>({});
   const [selectedOption, setSelectedOption] = useState<any>({});
   const [locked, setLocked] = useState(true);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const measurementLineNum = useMemo(() => {
     const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
@@ -293,6 +298,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
   };
   const initItem = (item: any, index: number) => {
     let { name, alias, widget = {}, addType, show, locked, enabled } = item;
+    if (!widget) return null;
     const { type } = widget;
     if (!name) {
       name = item?.id;
@@ -467,7 +473,11 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
           type="primary"
           // disabled={!started}
           onClick={() => {
-            setLocked((prev) => !prev);
+            if (passwordHelp && locked) {
+              setPasswordVisible(true);
+            } else {
+              setLocked((prev) => !prev);
+            }
           }}
         >
           {locked ? '解锁' : '锁定'}
@@ -562,6 +572,41 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
           }}
         />
       ) : null}
+      {
+        !!passwordVisible ?
+          <Modal
+            title={'密码校验'}
+            open={!!passwordVisible}
+            onOk={() => {
+              form1.validateFields().then((values) => {
+                const { pass } = values;
+                if (pass == password) {
+                  form1.resetFields();
+                  setPasswordVisible(false);
+                  setLocked(false);
+                } else {
+                  message.error('密码错误');
+                }
+              });
+            }}
+            onCancel={() => {
+              form1.resetFields();
+              setPasswordVisible(false);
+            }}
+            maskClosable={false}
+          >
+            <Form form={form1} scrollToFirstError>
+              <Form.Item
+                name={'pass'}
+                label={'密码校验'}
+                rules={[{ required: true, message: '密码' }]}
+              >
+                <Input />
+              </Form.Item>
+            </Form>
+          </Modal>
+          : null
+      }
     </div>
   );
 };
@@ -1052,9 +1097,9 @@ export function FormatWidgetToDom(props: any) {
             name={name}
             label={label}
             tooltip={description}
-            initialValue={localPath || undefined}
+            initialValue={undefined}
             valuePropName="file"
-            rules={[{ required: require, message: `${alias}` }]}
+            rules={[{ required: false, message: `${alias}` }]}
           >
             <TooltipDiv title={localPath}>{localPath}</TooltipDiv>
           </FormItem>

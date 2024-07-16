@@ -26,7 +26,7 @@ import directionBottomIcon from '@/assets/imgs/direction-bottom.png';
 import directionLeftIcon from '@/assets/imgs/direction-left.png';
 import { BASE_IP, btnFetch } from '@/services/api';
 import { FormatWidgetToDom } from '@/pages/control';
-import { downFileFun, getNewPoint, guid, rotatePoint, twoPointDistance } from '@/utils/utils';
+import { downFileFun, getNewPoint, guid, hexToRGB, rotatePoint, twoPointDistance } from '@/utils/utils';
 import Measurement from '@/components/Measurement';
 import useEyeDropper from '@/hooks/useEyeDropper';
 
@@ -57,7 +57,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     data;
 
   const { options } = widget;
-  const [{ color }, open] = useEyeDropper();
+  const [{ color }, open] = useEyeDropper('rgb(0, 0, 0)');
   const dom = useRef<any>();
   let img = useRef<any>(null);
   let gMap = useRef<any>(null);
@@ -75,6 +75,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   const [featureList, setFeatureList] = useState({});
   const [selectedOptionType, setSelectedOptionType] = useState({});
   const [features, setFeatures] = useState([]);
+  // const [color, setColor] = useState('rgb(0, 0, 0)');
 
   const initDom = () => {
     img.current = new Image();
@@ -82,13 +83,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       img.current.src =
         'https://img95.699pic.com/xsj/0k/o5/ie.jpg%21/fw/700/watermark/url/L3hzai93YXRlcl9kZXRhaWwyLnBuZw/align/southeast';
     } else {
-      img.current.src = `${
-        localPath?.indexOf('http') === 0
-          ? localPath
-          : `${BASE_IP}file${
-              localPath?.indexOf('\\') === 0 || localPath?.indexOf('/') === 0 ? '' : '\\'
-            }${localPath}`
-      }?__timestamp=${+new Date()}`;
+      img.current.src = `${localPath?.indexOf('http') === 0
+        ? localPath
+        : `${BASE_IP}file${localPath?.indexOf('\\') === 0 || localPath?.indexOf('/') === 0 ? '' : '\\'
+        }${localPath}`
+        }?__timestamp=${+new Date()}`;
     }
     img.current.title = 'img.png';
     img.current.onload = (res: any) => {
@@ -96,8 +95,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       const scale = !!zoom
         ? zoom
         : dom?.current?.clientWidth / dom?.current?.clientHeight > width / height
-        ? height * (dom?.current?.clientWidth / dom?.current?.clientHeight)
-        : Math.max(width, height);
+          ? height * (dom?.current?.clientWidth / dom?.current?.clientHeight)
+          : Math.max(width, height);
 
       // img.current.width = width;
       // img.current.height = height;
@@ -457,16 +456,16 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                 type === 'RECT'
                   ? feature.getPoints()[1]
                   : type === 'CIRCLE'
-                  ? { x: shape.cx + shape.r, y: shape.cy - shape.r }
-                  : type === 'POLYGON'
-                  ? shape.location
-                  : type === 'LINE'
-                  ? shape.start
-                  : type === 'POLYLINE'
-                  ? shape.points[0]
-                  : type === 'POINT'
-                  ? shape
-                  : {},
+                    ? { x: shape.cx + shape.r, y: shape.cy - shape.r }
+                    : type === 'POLYGON'
+                      ? shape.location
+                      : type === 'LINE'
+                        ? shape.start
+                        : type === 'POLYLINE'
+                          ? shape.points[0]
+                          : type === 'POINT'
+                            ? shape
+                            : {},
               offset: {
                 x: -20,
                 y: -4,
@@ -506,16 +505,16 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           type === 'RECT'
             ? feature.getPoints()[0]
             : type === 'CIRCLE'
-            ? { x: shape.cx - shape.r, y: shape.cy - shape.r }
-            : type === 'POLYGON'
-            ? shape.location
-            : type === 'LINE'
-            ? shape.start
-            : type === 'POLYLINE'
-            ? shape.points[0]
-            : type === 'POINT'
-            ? shape
-            : {};
+              ? { x: shape.cx - shape.r, y: shape.cy - shape.r }
+              : type === 'POLYGON'
+                ? shape.location
+                : type === 'LINE'
+                  ? shape.start
+                  : type === 'POLYLINE'
+                    ? shape.points[0]
+                    : type === 'POINT'
+                      ? shape
+                      : {};
         const targetText = gFirstTextLayer.current.getTextById(props?.textId);
         targetText?.updatePosition(textPosition);
         gMap.current.markerLayer.removeMarkerById(props.deleteMarkerId);
@@ -576,34 +575,34 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                   cen[1],
                   cen[0] + '' === id + ''
                     ? {
-                        roi: {
-                          realValue: [90, 270].includes(range)
-                            ? {
-                                // 矩形，有旋转
-                                x: { alias: 'cx', value: shape.x + shape.width / 2 },
-                                y: { alias: 'cy', value: shape.y + shape.height / 2 },
-                                width: { alias: 'width', value: shape.height },
-                                height: { alias: 'height', value: shape.width },
-                              }
-                            : {
-                                x: { alias: 'cx', value: shape.x + shape.width / 2 },
-                                y: { alias: 'cy', value: shape.y + shape.height / 2 },
-                                width: { alias: 'width', value: shape.width },
-                                height: { alias: 'height', value: shape.height },
-                              },
-                          value: !!cen[1]?.roi?.value
-                            ? Object.entries(cen[1]?.roi?.value).reduce((p: any, c: any) => {
-                                return Object.assign({}, p, {
-                                  [c[0]]: { ...c[1], value: shape[c[0]] },
-                                });
-                              }, {})
-                            : Object.entries(shape).reduce((p: any, c: any) => {
-                                return Object.assign({}, p, {
-                                  [c[0]]: { alias: c[0], value: c[1] },
-                                });
-                              }, {}),
-                        },
-                      }
+                      roi: {
+                        realValue: [90, 270].includes(range)
+                          ? {
+                            // 矩形，有旋转
+                            x: { alias: 'cx', value: shape.x + shape.width / 2 },
+                            y: { alias: 'cy', value: shape.y + shape.height / 2 },
+                            width: { alias: 'width', value: shape.height },
+                            height: { alias: 'height', value: shape.width },
+                          }
+                          : {
+                            x: { alias: 'cx', value: shape.x + shape.width / 2 },
+                            y: { alias: 'cy', value: shape.y + shape.height / 2 },
+                            width: { alias: 'width', value: shape.width },
+                            height: { alias: 'height', value: shape.height },
+                          },
+                        value: !!cen[1]?.roi?.value
+                          ? Object.entries(cen[1]?.roi?.value).reduce((p: any, c: any) => {
+                            return Object.assign({}, p, {
+                              [c[0]]: { ...c[1], value: shape[c[0]] },
+                            });
+                          }, {})
+                          : Object.entries(shape).reduce((p: any, c: any) => {
+                            return Object.assign({}, p, {
+                              [c[0]]: { alias: c[0], value: c[1] },
+                            });
+                          }, {}),
+                      },
+                    }
                     : {},
                 ),
               });
@@ -709,32 +708,32 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           type === 'RECT'
             ? feature.getPoints()[1]
             : type === 'CIRCLE'
-            ? { x: shape.cx + shape.r, y: shape.cy - shape.r }
-            : type === 'POLYGON'
-            ? shape.location
-            : type === 'LINE'
-            ? shape.start
-            : type === 'POLYLINE'
-            ? shape.points[0]
-            : type === 'POINT'
-            ? shape
-            : {};
+              ? { x: shape.cx + shape.r, y: shape.cy - shape.r }
+              : type === 'POLYGON'
+                ? shape.location
+                : type === 'LINE'
+                  ? shape.start
+                  : type === 'POLYLINE'
+                    ? shape.points[0]
+                    : type === 'POINT'
+                      ? shape
+                      : {};
         targetMarker?.updatePosition?.(deleteMarkPosition);
         // 更新text位置
         const textPosition =
           type === 'RECT'
             ? feature.getPoints()[0]
             : type === 'CIRCLE'
-            ? { x: shape.cx - shape.r, y: shape.cy - shape.r }
-            : type === 'POLYGON'
-            ? shape.location
-            : type === 'LINE'
-            ? shape.start
-            : type === 'POLYLINE'
-            ? shape.points[0]
-            : type === 'POINT'
-            ? shape
-            : {};
+              ? { x: shape.cx - shape.r, y: shape.cy - shape.r }
+              : type === 'POLYGON'
+                ? shape.location
+                : type === 'LINE'
+                  ? shape.start
+                  : type === 'POLYLINE'
+                    ? shape.points[0]
+                    : type === 'POINT'
+                      ? shape
+                      : {};
         const targetText = gFirstTextLayer.current.getTextById(textId);
         targetText?.updatePosition(textPosition);
         directionMarker?.updatePosition?.(textPosition);
@@ -810,13 +809,24 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       }
     };
   };
+  const initColorSelector = async () => {
+    open();
+  }
+  const onMouseDown = (e: any) => {
+    console.log(e.x, e.y);
+
+  }
   useEffect(() => {
     // initDom();
+    // initColorSelector();
+    // window.addEventListener('mousemove', initColorSelector);
+    // dom.current.addEventListener('mousedown', onMouseDown);
 
     return () => {
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyup);
       window.removeEventListener('resize', () => gMap.current && gMap.current.resize());
+      // window.removeEventListener('mousemove', initColorSelector);
       destroy();
     };
   }, []);
@@ -869,33 +879,33 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                   realValue:
                     type === 'RECT'
                       ? {
-                          x: { alias: 'cx', value: shape.x + shape.width / 2 },
-                          y: { alias: 'cy', value: shape.y + shape.height / 2 },
-                          width: { alias: 'width', value: shape.width },
-                          height: { alias: 'height', value: shape.height },
-                        }
+                        x: { alias: 'cx', value: shape.x + shape.width / 2 },
+                        y: { alias: 'cy', value: shape.y + shape.height / 2 },
+                        width: { alias: 'width', value: shape.width },
+                        height: { alias: 'height', value: shape.height },
+                      }
                       : type === 'CIRCLE'
-                      ? {
+                        ? {
                           cx: { alias: 'cx', value: shape.cx },
                           cy: { alias: 'cy', value: shape.cy },
                           r: { alias: 'r', value: shape.r },
                         }
-                      : props?.initParams?.roi?.realValue,
+                        : props?.initParams?.roi?.realValue,
                   value:
                     type === 'RECT'
                       ? {
-                          x: { alias: 'cx', value: shape.x },
-                          y: { alias: 'cy', value: shape.y },
-                          width: { alias: 'width', value: shape.width },
-                          height: { alias: 'height', value: shape.height },
-                        }
+                        x: { alias: 'cx', value: shape.x },
+                        y: { alias: 'cy', value: shape.y },
+                        width: { alias: 'width', value: shape.width },
+                        height: { alias: 'height', value: shape.height },
+                      }
                       : type === 'CIRCLE'
-                      ? {
+                        ? {
                           cx: { alias: 'cx', value: shape.cx },
                           cy: { alias: 'cy', value: shape.cy },
                           r: { alias: 'r', value: shape.r },
                         }
-                      : props?.initParams?.roi?.value,
+                        : props?.initParams?.roi?.value,
                 },
                 ...props?.initParams,
               },
@@ -943,13 +953,13 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
       !!style
         ? style
         : {
-            fillStyle: 'rgba(1,1,1,.9)',
-            strokeStyle: '#D2691E',
-            background: true,
-            globalAlpha: 1,
-            fontWeight: 3,
-            fontColor: '#0f0',
-          }, // style
+          fillStyle: 'rgba(1,1,1,.9)',
+          strokeStyle: '#D2691E',
+          background: true,
+          globalAlpha: 1,
+          fontWeight: 3,
+          fontColor: '#0f0',
+        }, // style
     );
     gFirstTextLayer.current.addText(gFirstText);
   };
@@ -993,10 +1003,10 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
               style.direction === 90
                 ? directionRightIcon
                 : style.direction === 180
-                ? directionBottomIcon
-                : style.direction === 270
-                ? directionLeftIcon
-                : directionTopIcon,
+                  ? directionBottomIcon
+                  : style.direction === 270
+                    ? directionLeftIcon
+                    : directionTopIcon,
             position: { x: shape.x, y: shape.y },
             offset: {
               x: -20,
@@ -1033,13 +1043,11 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   };
   useEffect(() => {
     if (inHome && !!gMap.current && !!localPath) {
-      img.current.src = `${
-        localPath?.indexOf('http') === 0
-          ? localPath
-          : `${BASE_IP}file${
-              localPath?.indexOf('\\') === 0 || localPath?.indexOf('/') === 0 ? '' : '\\'
-            }${localPath}`
-      }?__timestamp=${+new Date()}`;
+      img.current.src = `${localPath?.indexOf('http') === 0
+        ? localPath
+        : `${BASE_IP}file${localPath?.indexOf('\\') === 0 || localPath?.indexOf('/') === 0 ? '' : '\\'
+        }${localPath}`
+        }?__timestamp=${+new Date()}`;
     } else {
       console.log(data);
       initDom();
@@ -1085,8 +1093,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
               },
               !!value?.[id]?.option_type
                 ? {
-                    label: inHome ? '' : value?.[id]?.option_type?.value,
-                  }
+                  label: inHome ? '' : value?.[id]?.option_type?.value,
+                }
                 : {},
             ),
           });
@@ -1102,7 +1110,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             throw new Error();
           }
         });
-      } catch (err) {}
+      } catch (err) { }
       if (!ifCangoOn && process.env.NODE_ENV !== 'development') {
         message.error('画框未进行标注，请返回标注');
         return;
@@ -1123,52 +1131,52 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                 cen[0] === 'roi'
                   ? !!cen[1]?.realValue?.x
                     ? {
-                        [cen[0]]: Object.assign(
-                          {},
-                          {
-                            cx: {
-                              alias: 'cx',
-                              value: Number(cen[1]?.realValue?.x?.value?.toFixed(2)),
-                            },
-                            cy: {
-                              alias: 'cy',
-                              value: Number(cen[1]?.realValue?.y?.value?.toFixed(2)),
-                            },
+                      [cen[0]]: Object.assign(
+                        {},
+                        {
+                          cx: {
+                            alias: 'cx',
+                            value: Number(cen[1]?.realValue?.x?.value?.toFixed(2)),
                           },
-                          type === 'RECT'
-                            ? Object.assign(
-                                {
-                                  width: {
-                                    alias: 'width',
-                                    value: Number(cen[1]?.realValue?.width?.value?.toFixed(2)),
-                                  },
-                                  height: {
-                                    alias: 'height',
-                                    value: Number(cen[1]?.realValue?.height?.value?.toFixed(2)),
-                                  },
-                                },
-                                props?.type === 'AXIS'
-                                  ? {
-                                      xLength: {
-                                        alias: 'xLength',
-                                        value: Number(
-                                          cen[1]?.realValue?.xLength?.value?.toFixed(2),
-                                        ),
-                                      },
-                                      yLength: {
-                                        alias: 'yLength',
-                                        value: Number(
-                                          cen[1]?.realValue?.yLength?.value?.toFixed(2),
-                                        ),
-                                      },
-                                    }
-                                  : {},
-                              )
-                            : {
-                                ..._.omit(_.omit(cen[1]?.realValue, 'x'), 'y'),
+                          cy: {
+                            alias: 'cy',
+                            value: Number(cen[1]?.realValue?.y?.value?.toFixed(2)),
+                          },
+                        },
+                        type === 'RECT'
+                          ? Object.assign(
+                            {
+                              width: {
+                                alias: 'width',
+                                value: Number(cen[1]?.realValue?.width?.value?.toFixed(2)),
                               },
-                        ),
-                      }
+                              height: {
+                                alias: 'height',
+                                value: Number(cen[1]?.realValue?.height?.value?.toFixed(2)),
+                              },
+                            },
+                            props?.type === 'AXIS'
+                              ? {
+                                xLength: {
+                                  alias: 'xLength',
+                                  value: Number(
+                                    cen[1]?.realValue?.xLength?.value?.toFixed(2),
+                                  ),
+                                },
+                                yLength: {
+                                  alias: 'yLength',
+                                  value: Number(
+                                    cen[1]?.realValue?.yLength?.value?.toFixed(2),
+                                  ),
+                                },
+                              }
+                              : {},
+                          )
+                          : {
+                            ..._.omit(_.omit(cen[1]?.realValue, 'x'), 'y'),
+                          },
+                      ),
+                    }
                     : {}
                   : { [cen[0]]: cen[1]?.value, localPath: img.current.src || data.localPath },
               );
@@ -1404,8 +1412,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             },
             !!getDataFun?.value?.[item.id]?.option_type
               ? {
-                  label: inHome ? '' : getDataFun?.value?.[item.id]?.option_type?.value,
-                }
+                label: inHome ? '' : getDataFun?.value?.[item.id]?.option_type?.value,
+              }
               : {},
           ),
         });
@@ -1520,7 +1528,9 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
   };
 
   return (
-    <div className={`${styles.markCanvas} flex-box`} ref={markRef}>
+    <div className={`${styles.markCanvas} flex-box`} ref={markRef}
+    // onClick={() => { initColorSelector() }}
+    >
       {/* <div className="canvas-header flex-box-justify-end">
       <Button onClick={() => getFeatures()} style={{ marginRight: 10 }} >获取标注数据</Button>
       <Button onClick={() => getRle()} style={{ marginRight: 10 }} >获取rle数据</Button>
@@ -1556,14 +1566,12 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             <StockOutlined
               onClick={() => setMode('LINE')}
               onDoubleClick={() => setMode('line')}
-              className={`img-icon flex-box-center ${
-                ['LINE', 'line'].includes(selectedBtn) ? 'selected' : ''
-              }`}
+              className={`img-icon flex-box-center ${['LINE', 'line'].includes(selectedBtn) ? 'selected' : ''
+                }`}
             />
             <div
-              className={`img-icon flex-box-center ${
-                ['DOUBLE_CIRCLE', 'double_circle'].includes(selectedBtn) ? 'selected' : ''
-              }`}
+              className={`img-icon flex-box-center ${['DOUBLE_CIRCLE', 'double_circle'].includes(selectedBtn) ? 'selected' : ''
+                }`}
               onClick={() => {
                 setMode('DOUBLE_CIRCLE');
               }}
@@ -1574,9 +1582,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
               </div>
             </div>
             <div
-              className={`img-icon flex-box-center ${
-                ['CIRCLE', 'circle'].includes(selectedBtn) ? 'selected' : ''
-              }`}
+              className={`img-icon flex-box-center ${['CIRCLE', 'circle'].includes(selectedBtn) ? 'selected' : ''
+                }`}
               onClick={() => {
                 setMode('CIRCLE');
               }}
@@ -1590,23 +1597,20 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
             onDoubleClick={() => setMode('polyline')}
           /> */}
             <BorderOutlined
-              className={`img-icon flex-box-center ${
-                ['RECT', 'rect'].includes(selectedBtn) ? 'selected' : ''
-              }`}
+              className={`img-icon flex-box-center ${['RECT', 'rect'].includes(selectedBtn) ? 'selected' : ''
+                }`}
               onClick={() => setMode('RECT')}
               onDoubleClick={() => setMode('rect')}
             />
             <AimOutlined
-              className={`img-icon flex-box-center ${
-                ['POINT', 'point'].includes(selectedBtn) ? 'selected' : ''
-              }`}
+              className={`img-icon flex-box-center ${['POINT', 'point'].includes(selectedBtn) ? 'selected' : ''
+                }`}
               onClick={() => setMode('POINT')}
               onDoubleClick={() => setMode('point')}
             />
             <BorderInnerOutlined
-              className={`img-icon flex-box-center ${
-                ['AXIS', 'axis'].includes(selectedBtn) ? 'selected' : ''
-              }`}
+              className={`img-icon flex-box-center ${['AXIS', 'axis'].includes(selectedBtn) ? 'selected' : ''
+                }`}
               onClick={() => setMode('AXIS')}
               onDoubleClick={() => setMode('axis')}
             />
@@ -1710,8 +1714,8 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         options={
                           _.isObject(options)
                             ? Object.entries(options)?.map?.((res: any) => {
-                                return { key: res[0], label: res[0], value: res[0] };
-                              })
+                              return { key: res[0], label: res[0], value: res[0] };
+                            })
                             : []
                         }
                         placeholder="参数类型"
@@ -1751,174 +1755,68 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                     {_.isEmpty(selectedOptionType)
                       ? !!featureList?.[selectedFeature]
                         ? Object.entries(featureList?.[selectedFeature])?.map?.((item: any) => {
-                            if (
-                              item[0] === 'roi' &&
-                              (!!item?.[1]?.value || !!item?.[1]?.realValue)
-                            ) {
-                              const feature =
-                                gFirstFeatureLayer.current.getFeatureById(selectedFeature);
-                              if (!feature) return;
-                              const { type } = feature;
-                              let value = {};
-                              if (_.isObject(item[1]?.realValue) && !_.isEmpty(item[1].realValue)) {
-                                if (type === 'RECT') {
-                                  // 矩形
-                                  value = {
-                                    ...item[1].realValue,
-                                    x: {
-                                      alias: 'cx',
-                                      value: item[1].realValue?.x?.value,
-                                    },
-                                    y: {
-                                      alias: 'cy',
-                                      value: item[1].realValue?.y?.value,
-                                    },
-                                  };
-                                } else if (type === 'LINE') {
-                                  // 线
-                                  value = {
-                                    x1: {
-                                      alias: '起点x',
-                                      value:
-                                        item[1]?.realValue?.x1?.value ||
-                                        item[1]?.realValue?.start?.value?.x,
-                                    },
-                                    y1: {
-                                      alias: '起点y',
-                                      value:
-                                        item[1]?.realValue?.y1?.value ||
-                                        item[1]?.realValue?.start?.value?.y,
-                                    },
-                                    x2: {
-                                      alias: '终点x',
-                                      value:
-                                        item[1]?.realValue?.x2?.value ||
-                                        item[1]?.realValue?.end?.value?.x,
-                                    },
-                                    y2: {
-                                      alias: '终点y',
-                                      value:
-                                        item[1]?.realValue?.y2?.value ||
-                                        item[1]?.realValue?.end?.value?.y,
-                                    },
-                                  };
-                                } else if (type === 'CIRCLE') {
-                                  // 圆
-                                  value = {
-                                    ...item[1].realValue,
-                                  };
-                                  // 圆环
-                                  if (feature?.props?.type === 'DOUBLE_CIRCLE') {
-                                    const feature2 =
-                                      gFirstFeatureLayer.current.getFeatureById(
-                                        feature?.id + 100,
-                                      ) ||
-                                      gFirstFeatureLayer.current.getFeatureById(feature?.id - 100);
-                                    value = {
-                                      ...value,
-                                      r2: {
-                                        alias: 'r2',
-                                        value: feature2?.shape?.r,
-                                      },
-                                    };
-                                  }
-                                } else if (type === 'POINT') {
-                                  // 点
-                                  value = {
-                                    x: { alias: 'x', value: item[1]?.realValue?.x?.value },
-                                    y: { alias: 'y', value: item[1]?.realValue?.y?.value },
-                                    sr: { alias: 'sr', value: item[1]?.realValue?.sr?.value },
-                                  };
-                                } else {
-                                  value = Object.entries(_.omit(item[1], 'value')).reduce(
-                                    (pre: any, cen: any) => {
-                                      return Object.assign({}, pre, {
-                                        [cen[0]]: {
-                                          alias: cen[0],
-                                          value: cen[1],
-                                        },
-                                      });
-                                    },
-                                    {},
-                                  );
-                                }
-                              }
-
-                              return (
-                                <Form.Item
-                                  key={`${item[0]}$$${guid()}`}
-                                  name={`roi`}
-                                  label={'位置信息'}
-                                  initialValue={
-                                    value || {
-                                      num_0: { alias: 'num_0', value: undefined },
-                                      num_1: { alias: 'num_1', value: undefined },
-                                      num_2: { alias: 'num_2', value: undefined },
-                                      num_3: { alias: 'num_3', value: undefined },
-                                    }
-                                  }
-                                  rules={[{ required: true, message: '位置信息' }]}
-                                >
-                                  <Measurement gap={8} />
-                                </Form.Item>
-                              );
-                            }
-                            return (
-                              <FormatWidgetToDom
-                                key={item[0]}
-                                id={item[0]}
-                                label={item?.[1]?.alias || item[0]}
-                                config={item}
-                                form={form}
-                                disabled={false}
-                                // display={['POINT', 'LINE'].includes(feature?.type)}
-                              />
-                            );
-                          })
-                        : null
-                      : Object.entries(selectedOptionType)?.map?.((item: any) => {
-                          if (item[0] === 'roi') {
+                          if (
+                            item[0] === 'roi' &&
+                            (!!item?.[1]?.value || !!item?.[1]?.realValue)
+                          ) {
+                            const feature =
+                              gFirstFeatureLayer.current.getFeatureById(selectedFeature);
+                            if (!feature) return;
+                            const { type } = feature;
                             let value = {};
-                            if (!_.isEmpty(item[1])) {
-                              if (_.isNumber(item[1]?.x) && !!item[1]?.width) {
+                            if (_.isObject(item[1]?.realValue) && !_.isEmpty(item[1].realValue)) {
+                              if (type === 'RECT') {
                                 // 矩形
                                 value = {
+                                  ...item[1].realValue,
                                   x: {
                                     alias: 'cx',
-                                    value: item[1]?.x + item[1]?.width / 2,
+                                    value: item[1].realValue?.x?.value,
                                   },
                                   y: {
                                     alias: 'cy',
-                                    value: item[1]?.y + item[1]?.height / 2,
-                                  },
-                                  width: {
-                                    alias: 'width',
-                                    value: item[1]?.width,
-                                  },
-                                  height: {
-                                    alias: 'height',
-                                    value: item[1]?.height,
+                                    value: item[1].realValue?.y?.value,
                                   },
                                 };
-                              } else if (_.isObject(item[1]?.start) && _.isObject(item[1]?.end)) {
+                              } else if (type === 'LINE') {
                                 // 线
                                 value = {
-                                  x1: { alias: '起点x', value: item[1]?.start?.x },
-                                  y1: { alias: '起点y', value: item[1]?.start?.y },
-                                  x2: { alias: '终点x', value: item[1]?.end?.x },
-                                  y2: { alias: '终点y', value: item[1]?.end?.y },
+                                  x1: {
+                                    alias: '起点x',
+                                    value:
+                                      item[1]?.realValue?.x1?.value ||
+                                      item[1]?.realValue?.start?.value?.x,
+                                  },
+                                  y1: {
+                                    alias: '起点y',
+                                    value:
+                                      item[1]?.realValue?.y1?.value ||
+                                      item[1]?.realValue?.start?.value?.y,
+                                  },
+                                  x2: {
+                                    alias: '终点x',
+                                    value:
+                                      item[1]?.realValue?.x2?.value ||
+                                      item[1]?.realValue?.end?.value?.x,
+                                  },
+                                  y2: {
+                                    alias: '终点y',
+                                    value:
+                                      item[1]?.realValue?.y2?.value ||
+                                      item[1]?.realValue?.end?.value?.y,
+                                  },
                                 };
-                              } else if (!!item[1]?.cx && !!item[1]?.r) {
+                              } else if (type === 'CIRCLE') {
                                 // 圆
                                 value = {
-                                  cx: { alias: 'cx', value: item[1].cx },
-                                  cy: { alias: 'cy', value: item[1].cy },
-                                  r: { alias: 'r', value: item[1].r },
+                                  ...item[1].realValue,
                                 };
+                                // 圆环
                                 if (feature?.props?.type === 'DOUBLE_CIRCLE') {
-                                  // 同心圆
                                   const feature2 =
-                                    gFirstFeatureLayer.current.getFeatureById(feature?.id + 100) ||
+                                    gFirstFeatureLayer.current.getFeatureById(
+                                      feature?.id + 100,
+                                    ) ||
                                     gFirstFeatureLayer.current.getFeatureById(feature?.id - 100);
                                   value = {
                                     ...value,
@@ -1928,6 +1826,13 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                     },
                                   };
                                 }
+                              } else if (type === 'POINT') {
+                                // 点
+                                value = {
+                                  x: { alias: 'x', value: item[1]?.realValue?.x?.value },
+                                  y: { alias: 'y', value: item[1]?.realValue?.y?.value },
+                                  sr: { alias: 'sr', value: item[1]?.realValue?.sr?.value },
+                                };
                               } else {
                                 value = Object.entries(_.omit(item[1], 'value')).reduce(
                                   (pre: any, cen: any) => {
@@ -1942,6 +1847,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                                 );
                               }
                             }
+
                             return (
                               <Form.Item
                                 key={`${item[0]}$$${guid()}`}
@@ -1969,10 +1875,108 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                               config={item}
                               form={form}
                               disabled={false}
-                              // display={['POINT', 'LINE'].includes(feature?.type)}
+                            // display={['POINT', 'LINE'].includes(feature?.type)}
                             />
                           );
-                        })}
+                        })
+                        : null
+                      : Object.entries(selectedOptionType)?.map?.((item: any) => {
+                        if (item[0] === 'roi') {
+                          let value = {};
+                          if (!_.isEmpty(item[1])) {
+                            if (_.isNumber(item[1]?.x) && !!item[1]?.width) {
+                              // 矩形
+                              value = {
+                                x: {
+                                  alias: 'cx',
+                                  value: item[1]?.x + item[1]?.width / 2,
+                                },
+                                y: {
+                                  alias: 'cy',
+                                  value: item[1]?.y + item[1]?.height / 2,
+                                },
+                                width: {
+                                  alias: 'width',
+                                  value: item[1]?.width,
+                                },
+                                height: {
+                                  alias: 'height',
+                                  value: item[1]?.height,
+                                },
+                              };
+                            } else if (_.isObject(item[1]?.start) && _.isObject(item[1]?.end)) {
+                              // 线
+                              value = {
+                                x1: { alias: '起点x', value: item[1]?.start?.x },
+                                y1: { alias: '起点y', value: item[1]?.start?.y },
+                                x2: { alias: '终点x', value: item[1]?.end?.x },
+                                y2: { alias: '终点y', value: item[1]?.end?.y },
+                              };
+                            } else if (!!item[1]?.cx && !!item[1]?.r) {
+                              // 圆
+                              value = {
+                                cx: { alias: 'cx', value: item[1].cx },
+                                cy: { alias: 'cy', value: item[1].cy },
+                                r: { alias: 'r', value: item[1].r },
+                              };
+                              if (feature?.props?.type === 'DOUBLE_CIRCLE') {
+                                // 同心圆
+                                const feature2 =
+                                  gFirstFeatureLayer.current.getFeatureById(feature?.id + 100) ||
+                                  gFirstFeatureLayer.current.getFeatureById(feature?.id - 100);
+                                value = {
+                                  ...value,
+                                  r2: {
+                                    alias: 'r2',
+                                    value: feature2?.shape?.r,
+                                  },
+                                };
+                              }
+                            } else {
+                              value = Object.entries(_.omit(item[1], 'value')).reduce(
+                                (pre: any, cen: any) => {
+                                  return Object.assign({}, pre, {
+                                    [cen[0]]: {
+                                      alias: cen[0],
+                                      value: cen[1],
+                                    },
+                                  });
+                                },
+                                {},
+                              );
+                            }
+                          }
+                          return (
+                            <Form.Item
+                              key={`${item[0]}$$${guid()}`}
+                              name={`roi`}
+                              label={'位置信息'}
+                              initialValue={
+                                value || {
+                                  num_0: { alias: 'num_0', value: undefined },
+                                  num_1: { alias: 'num_1', value: undefined },
+                                  num_2: { alias: 'num_2', value: undefined },
+                                  num_3: { alias: 'num_3', value: undefined },
+                                }
+                              }
+                              rules={[{ required: true, message: '位置信息' }]}
+                            >
+                              <Measurement gap={8} />
+                            </Form.Item>
+                          );
+                        }
+                        return (
+                          <FormatWidgetToDom
+                            key={item[0]}
+                            id={item[0]}
+                            label={item?.[1]?.alias || item[0]}
+                            config={item}
+                            form={form}
+                            disabled={false}
+                          // display={['POINT', 'LINE'].includes(feature?.type)}
+                          />
+                        );
+                      })}
                   </Form>
                 )}
               </div>
@@ -2041,15 +2045,15 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                             height: value?.['roi']?.value?.yLength?.value,
                           };
                           let line1: any = {
-                              start: {
-                                x: shape.x + (shape.width * 3) / 8,
-                                y: shape.y + shape.height / 2,
-                              },
-                              end: {
-                                x: shape.x + (shape.width * 5) / 8,
-                                y: shape.y + shape.height / 2,
-                              },
+                            start: {
+                              x: shape.x + (shape.width * 3) / 8,
+                              y: shape.y + shape.height / 2,
                             },
+                            end: {
+                              x: shape.x + (shape.width * 5) / 8,
+                              y: shape.y + shape.height / 2,
+                            },
+                          },
                             line2: any = {
                               start: {
                                 x: shape.x + shape.width / 2,
@@ -2187,193 +2191,193 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                             ...featureList,
                             [selectedFeature]:
                               !_.isEmpty(selectedOptionType) ||
-                              !_.isEmpty(featureList?.[selectedFeature])
+                                !_.isEmpty(featureList?.[selectedFeature])
                                 ? Object.entries(
-                                    !_.isEmpty(selectedOptionType)
-                                      ? selectedOptionType
-                                      : featureList?.[selectedFeature],
-                                  )?.reduce(
-                                    (pre: any, cen: any) => {
-                                      if (cen[0] === 'roi') {
+                                  !_.isEmpty(selectedOptionType)
+                                    ? selectedOptionType
+                                    : featureList?.[selectedFeature],
+                                )?.reduce(
+                                  (pre: any, cen: any) => {
+                                    if (cen[0] === 'roi') {
+                                      const feature =
+                                        gFirstFeatureLayer.current.getFeatureById(
+                                          selectedFeature,
+                                        );
+                                      const { type } = feature;
+                                      let { value: val } = value?.[cen[0]] || {};
+                                      // realValue：没旋转的 中心点x,y
+                                      let realValue = val;
+                                      if (type === 'RECT') {
+                                        // 矩形
+                                        val = {
+                                          ...val,
+                                          x: {
+                                            ...val?.x,
+                                            value: val?.x?.value - val?.width?.value / 2,
+                                          },
+                                          y: {
+                                            ...val?.y,
+                                            value: val?.y?.value - val?.height?.value / 2,
+                                          },
+                                        };
+                                        if ([90, 270].includes(range)) {
+                                          // 有旋转
+                                          val = {
+                                            x: {
+                                              ...val?.x,
+                                              value:
+                                                val?.x?.value +
+                                                val?.width?.value / 2 -
+                                                val?.height?.value / 2,
+                                            },
+                                            y: {
+                                              ...val?.y,
+                                              value:
+                                                val?.y?.value -
+                                                val?.width?.value / 2 +
+                                                val?.height?.value / 2,
+                                            },
+                                            width: { ...val?.width, value: val?.height?.value },
+                                            height: { ...val?.height, value: val?.width?.value },
+                                          };
+                                        }
+                                        /****************通过roi更新图层******************/
                                         const feature =
                                           gFirstFeatureLayer.current.getFeatureById(
                                             selectedFeature,
                                           );
-                                        const { type } = feature;
-                                        let { value: val } = value?.[cen[0]] || {};
-                                        // realValue：没旋转的 中心点x,y
-                                        let realValue = val;
-                                        if (type === 'RECT') {
-                                          // 矩形
-                                          val = {
-                                            ...val,
-                                            x: {
-                                              ...val?.x,
-                                              value: val?.x?.value - val?.width?.value / 2,
-                                            },
-                                            y: {
-                                              ...val?.y,
-                                              value: val?.y?.value - val?.height?.value / 2,
-                                            },
-                                          };
-                                          if ([90, 270].includes(range)) {
-                                            // 有旋转
-                                            val = {
-                                              x: {
-                                                ...val?.x,
-                                                value:
-                                                  val?.x?.value +
-                                                  val?.width?.value / 2 -
-                                                  val?.height?.value / 2,
-                                              },
-                                              y: {
-                                                ...val?.y,
-                                                value:
-                                                  val?.y?.value -
-                                                  val?.width?.value / 2 +
-                                                  val?.height?.value / 2,
-                                              },
-                                              width: { ...val?.width, value: val?.height?.value },
-                                              height: { ...val?.height, value: val?.width?.value },
-                                            };
-                                          }
-                                          /****************通过roi更新图层******************/
-                                          const feature =
-                                            gFirstFeatureLayer.current.getFeatureById(
-                                              selectedFeature,
-                                            );
-                                          const shape = Object.entries(val).reduce(
-                                            (pre: any, cen: any) => {
-                                              return Object.assign({}, pre, {
-                                                [cen[0]]: cen[1]?.value,
-                                              });
-                                            },
-                                            {},
+                                        const shape = Object.entries(val).reduce(
+                                          (pre: any, cen: any) => {
+                                            return Object.assign({}, pre, {
+                                              [cen[0]]: cen[1]?.value,
+                                            });
+                                          },
+                                          {},
+                                        );
+                                        if (
+                                          (Math.min(shape?.x, shape?.y) < 0 ||
+                                            shape?.x + shape?.width > img.current?.width ||
+                                            shape?.y + shape?.height > img.current?.height) &&
+                                          process.env.NODE_ENV !== 'development'
+                                        ) {
+                                          message.warning('标注位置 不能超出图片范围！');
+                                        } else {
+                                          feature.style['direction'] = range;
+                                          feature.updateShape(shape);
+                                          const targetText = gFirstTextLayer.current.getTextById(
+                                            feature?.props?.textId,
                                           );
-                                          if (
-                                            (Math.min(shape?.x, shape?.y) < 0 ||
-                                              shape?.x + shape?.width > img.current?.width ||
-                                              shape?.y + shape?.height > img.current?.height) &&
-                                            process.env.NODE_ENV !== 'development'
-                                          ) {
-                                            message.warning('标注位置 不能超出图片范围！');
-                                          } else {
-                                            feature.style['direction'] = range;
-                                            feature.updateShape(shape);
-                                            const targetText = gFirstTextLayer.current.getTextById(
-                                              feature?.props?.textId,
-                                            );
-                                            targetText?.updatePosition({ x: shape.x, y: shape.y });
-                                            // 删除delete-icon
-                                            gMap.current.markerLayer.removeMarkerById(
-                                              feature.props.deleteMarkerId,
-                                            );
-                                            // 先删除direction-icon
-                                            gMap.current.markerLayer.removeMarkerById(
-                                              feature.props.directionMarkerId,
-                                            );
-                                            // 后添加direction-icon
-                                            const gFirstMarker = new AILabel.Marker(
-                                              feature?.props?.directionMarkerId, // id
-                                              {
-                                                src:
-                                                  range === 90
-                                                    ? directionRightIcon
-                                                    : range === 180
+                                          targetText?.updatePosition({ x: shape.x, y: shape.y });
+                                          // 删除delete-icon
+                                          gMap.current.markerLayer.removeMarkerById(
+                                            feature.props.deleteMarkerId,
+                                          );
+                                          // 先删除direction-icon
+                                          gMap.current.markerLayer.removeMarkerById(
+                                            feature.props.directionMarkerId,
+                                          );
+                                          // 后添加direction-icon
+                                          const gFirstMarker = new AILabel.Marker(
+                                            feature?.props?.directionMarkerId, // id
+                                            {
+                                              src:
+                                                range === 90
+                                                  ? directionRightIcon
+                                                  : range === 180
                                                     ? directionBottomIcon
                                                     : range === 270
-                                                    ? directionLeftIcon
-                                                    : directionTopIcon,
-                                                position: { x: shape.x, y: shape.y },
-                                                offset: {
-                                                  x: -20,
-                                                  y: 0,
-                                                },
-                                              }, // markerInfo
-                                              { name: 'direction-icon注记' }, // props
-                                            );
-                                            gMap.current.markerLayer.addMarker(gFirstMarker);
-                                          }
-                                          /****************通过roi更新图层******************/
-                                        } else if (type === 'LINE') {
-                                          // 线
-                                          /****************通过roi更新图层******************/
-                                          const feature =
-                                            gFirstFeatureLayer.current.getFeatureById(
-                                              selectedFeature,
-                                            );
-                                          const shape = {
-                                            ...feature?.shape,
-                                            start: {
-                                              x: value?.['roi']?.value?.x1?.value,
-                                              y: value?.['roi']?.value?.y1?.value,
-                                            },
-                                            end: {
-                                              x: value?.['roi']?.value?.x2?.value,
-                                              y: value?.['roi']?.value?.y2?.value,
-                                            },
-                                          };
-                                          feature.updateShape(shape);
-                                          const targetText = gFirstTextLayer.current.getTextById(
-                                            feature?.props?.textId,
+                                                      ? directionLeftIcon
+                                                      : directionTopIcon,
+                                              position: { x: shape.x, y: shape.y },
+                                              offset: {
+                                                x: -20,
+                                                y: 0,
+                                              },
+                                            }, // markerInfo
+                                            { name: 'direction-icon注记' }, // props
                                           );
-                                          targetText?.updatePosition({ ...shape?.start });
-                                          // 删除delete-icon
-                                          gMap.current.markerLayer.removeMarkerById(
-                                            feature.props.deleteMarkerId,
-                                          );
-                                          /****************通过roi更新图层******************/
-                                        } else if (type === 'POINT') {
-                                          // 点
-                                          /****************通过roi更新图层******************/
-                                          const feature =
-                                            gFirstFeatureLayer.current.getFeatureById(
-                                              selectedFeature,
-                                            );
-                                          const shape = {
-                                            ...feature?.shape,
-                                            x: value?.['roi']?.value?.x?.value,
-                                            y: value?.['roi']?.value?.y?.value,
-                                            sr: value?.['roi']?.value?.sr?.value,
-                                          };
-                                          feature.updateShape(shape);
-                                          const targetText = gFirstTextLayer.current.getTextById(
-                                            feature?.props?.textId,
-                                          );
-                                          targetText?.updatePosition({ ...shape?.start });
-                                          // 删除delete-icon
-                                          gMap.current.markerLayer.removeMarkerById(
-                                            feature.props.deleteMarkerId,
-                                          );
-                                          /****************通过roi更新图层******************/
+                                          gMap.current.markerLayer.addMarker(gFirstMarker);
                                         }
-
-                                        return Object.assign({}, pre, {
-                                          [cen[0]]: {
-                                            // ...cen[1],
-                                            value: val,
-                                            realValue: realValue,
+                                        /****************通过roi更新图层******************/
+                                      } else if (type === 'LINE') {
+                                        // 线
+                                        /****************通过roi更新图层******************/
+                                        const feature =
+                                          gFirstFeatureLayer.current.getFeatureById(
+                                            selectedFeature,
+                                          );
+                                        const shape = {
+                                          ...feature?.shape,
+                                          start: {
+                                            x: value?.['roi']?.value?.x1?.value,
+                                            y: value?.['roi']?.value?.y1?.value,
                                           },
-                                        });
+                                          end: {
+                                            x: value?.['roi']?.value?.x2?.value,
+                                            y: value?.['roi']?.value?.y2?.value,
+                                          },
+                                        };
+                                        feature.updateShape(shape);
+                                        const targetText = gFirstTextLayer.current.getTextById(
+                                          feature?.props?.textId,
+                                        );
+                                        targetText?.updatePosition({ ...shape?.start });
+                                        // 删除delete-icon
+                                        gMap.current.markerLayer.removeMarkerById(
+                                          feature.props.deleteMarkerId,
+                                        );
+                                        /****************通过roi更新图层******************/
+                                      } else if (type === 'POINT') {
+                                        // 点
+                                        /****************通过roi更新图层******************/
+                                        const feature =
+                                          gFirstFeatureLayer.current.getFeatureById(
+                                            selectedFeature,
+                                          );
+                                        const shape = {
+                                          ...feature?.shape,
+                                          x: value?.['roi']?.value?.x?.value,
+                                          y: value?.['roi']?.value?.y?.value,
+                                          sr: value?.['roi']?.value?.sr?.value,
+                                        };
+                                        feature.updateShape(shape);
+                                        const targetText = gFirstTextLayer.current.getTextById(
+                                          feature?.props?.textId,
+                                        );
+                                        targetText?.updatePosition({ ...shape?.start });
+                                        // 删除delete-icon
+                                        gMap.current.markerLayer.removeMarkerById(
+                                          feature.props.deleteMarkerId,
+                                        );
+                                        /****************通过roi更新图层******************/
                                       }
+
                                       return Object.assign({}, pre, {
                                         [cen[0]]: {
-                                          ...cen[1],
-                                          value: value[cen[0]]?.value,
+                                          // ...cen[1],
+                                          value: val,
+                                          realValue: realValue,
                                         },
                                       });
-                                    },
-                                    {
-                                      option_type: { value: value?.['option_type']?.value },
-                                      找线方向: { value: range },
-                                    },
-                                  )
-                                : {
-                                    roi: {
-                                      value: value?.['roi']?.value,
-                                      realValue: value?.['roi']?.value,
-                                    },
+                                    }
+                                    return Object.assign({}, pre, {
+                                      [cen[0]]: {
+                                        ...cen[1],
+                                        value: value[cen[0]]?.value,
+                                      },
+                                    });
                                   },
+                                  {
+                                    option_type: { value: value?.['option_type']?.value },
+                                    找线方向: { value: range },
+                                  },
+                                )
+                                : {
+                                  roi: {
+                                    value: value?.['roi']?.value,
+                                    realValue: value?.['roi']?.value,
+                                  },
+                                },
                           };
                           console.log(result);
                           setGetDataFun((prev: any) => ({
@@ -2421,6 +2425,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
           <PictureOutlined style={{ marginRight: 8, color: 'rgb(60, 124, 255)' }} />
           {(img.current && img.current?.title) || 'img.png'}
         </div>
+        <div>{color}</div>
       </div>
     </div>
   );

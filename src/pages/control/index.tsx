@@ -197,8 +197,8 @@ const Control: React.FC<any> = (props: any) => {
                 pre,
                 cen[1]?.type
                   ? {
-                      [cen[0]]: Object.assign({}, cen[1], cen[1]?.name ? {} : { name: cen[0] }),
-                    }
+                    [cen[0]]: Object.assign({}, cen[1], cen[1]?.name ? {} : { name: cen[0] }),
+                  }
                   : {},
               );
             },
@@ -211,69 +211,69 @@ const Control: React.FC<any> = (props: any) => {
                 initParams,
                 !!initParams?.[key[1]]?.name && !!initParams?.[key[1]]?.type
                   ? {
-                      [key[1]]: Object.assign(
-                        {},
-                        initParams?.[key[1]],
-                        _.isObject(value) &&
-                          !_.isArray(value) &&
-                          initParams[key[1]]?.widget?.type !== 'Measurement'
-                          ? value
-                          : { value },
-                        initParams?.[key[1]]?.widget?.type === 'codeEditor'
-                          ? {
-                              value:
-                                value?.language === 'json'
-                                  ? _.isString(value?.value)
-                                    ? JSON.parse(value?.value)
-                                    : value?.value
-                                  : value?.value,
-                            }
-                          : {},
-                        initParams?.[key[1]]?.widget?.type === 'DataMap'
-                          ? {
-                              widget: {
-                                ...initParams?.[key[1]]?.widget,
-                                options: value,
-                              },
-                              value: (value || [])?.reduce((pre: any, cen: any) => {
-                                return Object.assign({}, pre, {
-                                  [cen.label]: cen.value,
-                                });
-                              }, {}),
-                            }
-                          : {},
-                      ),
-                    }
+                    [key[1]]: Object.assign(
+                      {},
+                      initParams?.[key[1]],
+                      _.isObject(value) &&
+                        !_.isArray(value) &&
+                        initParams[key[1]]?.widget?.type !== 'Measurement'
+                        ? value
+                        : { value },
+                      initParams?.[key[1]]?.widget?.type === 'codeEditor'
+                        ? {
+                          value:
+                            value?.language === 'json'
+                              ? _.isString(value?.value)
+                                ? JSON.parse(value?.value)
+                                : value?.value
+                              : value?.value,
+                        }
+                        : {},
+                      initParams?.[key[1]]?.widget?.type === 'DataMap'
+                        ? {
+                          widget: {
+                            ...initParams?.[key[1]]?.widget,
+                            options: value,
+                          },
+                          value: (value || [])?.reduce((pre: any, cen: any) => {
+                            return Object.assign({}, pre, {
+                              [cen.label]: cen.value,
+                            });
+                          }, {}),
+                        }
+                        : {},
+                    ),
+                  }
                   : {},
                 // 有parent代表是TagRadio
                 !!parent && !!initParams?.[parent[1]]
                   ? {
-                      [parent[1]]: {
-                        ...initParams[parent[1]],
-                        widget: {
-                          ...initParams[parent[1]]?.widget,
-                          options: (initParams[parent[1]]?.widget?.options || [])?.map?.(
-                            (option: any) => {
-                              if (option?.name === initParams[parent[1]]?.value) {
-                                return {
-                                  ...option,
-                                  children: (option?.children || [])?.map?.((child: any) => {
-                                    if (child?.name === key[1]) {
-                                      return {
-                                        ...child,
-                                        value,
-                                      };
-                                    }
-                                    return child;
-                                  }),
-                                };
-                              }
-                              return option;
-                            },
-                          ),
-                        },
+                    [parent[1]]: {
+                      ...initParams[parent[1]],
+                      widget: {
+                        ...initParams[parent[1]]?.widget,
+                        options: (initParams[parent[1]]?.widget?.options || [])?.map?.(
+                          (option: any) => {
+                            if (option?.name === initParams[parent[1]]?.value) {
+                              return {
+                                ...option,
+                                children: (option?.children || [])?.map?.((child: any) => {
+                                  if (child?.name === key[1]) {
+                                    return {
+                                      ...child,
+                                      value,
+                                    };
+                                  }
+                                  return child;
+                                }),
+                              };
+                            }
+                            return option;
+                          },
+                        ),
                       },
-                    }
+                    },
+                  }
                   : {},
               ),
             }),
@@ -534,7 +534,7 @@ const Control: React.FC<any> = (props: any) => {
                                 onOk() {
                                   selectDelete(value);
                                 },
-                                onCancel() {},
+                                onCancel() { },
                               });
                             }}
                           />
@@ -626,9 +626,8 @@ const Control: React.FC<any> = (props: any) => {
                                 return null;
                               return (
                                 <div
-                                  className={`${
-                                    type === 'TagRadio' ? '' : 'flex-box-start'
-                                  } param-item`}
+                                  className={`${type === 'TagRadio' ? '' : 'flex-box-start'
+                                    } param-item`}
                                   key={`${id}@$@${item[0]}`}
                                 >
                                   <div className="flex-box">
@@ -730,9 +729,8 @@ const Control: React.FC<any> = (props: any) => {
                                     const { type } = widget || {};
                                     return (
                                       <div
-                                        className={`${
-                                          type === 'TagRadio' ? '' : 'flex-box'
-                                        } param-item`}
+                                        className={`${type === 'TagRadio' ? '' : 'flex-box'
+                                          } param-item`}
                                         key={`${id}@$@${child}`}
                                       >
                                         <div className="flex-box-start">
@@ -1053,9 +1051,9 @@ const Control: React.FC<any> = (props: any) => {
               />
             </Form.Item>
             {!!connectNodeItem.node &&
-            !['TagRadio', 'File', 'Dir', 'codeEditor', 'ImageLabelField', 'DataMap'].includes(
-              connectNodeItem?.widget.type,
-            ) ? (
+              !['TagRadio', 'File', 'Dir', 'codeEditor', 'ImageLabelField', 'DataMap'].includes(
+                connectNodeItem?.widget.type,
+              ) ? (
               <FormatWidgetToDom
                 label={'关联属性值'}
                 id={'value'}
@@ -1354,8 +1352,8 @@ export const FormatWidgetToDom: any = (props: any) => {
             value || value == 0
               ? value
               : defaultValue || defaultValue == 0
-              ? defaultValue
-              : undefined
+                ? defaultValue
+                : undefined
           }
           rules={[{ required: require, message: `${alias}` }]}
         >
@@ -1549,9 +1547,9 @@ export const FormatWidgetToDom: any = (props: any) => {
             label={label}
             style={display ? { display: 'none' } : {}}
             tooltip={description}
-            initialValue={localPath || undefined}
+            initialValue={undefined}
             valuePropName="file"
-            rules={[{ required: require, message: `${alias}` }]}
+            rules={[{ required: false, message: `${alias}` }]}
           >
             <TooltipDiv title={localPath}>{localPath}</TooltipDiv>
           </FormItem>
@@ -1567,7 +1565,6 @@ export const FormatWidgetToDom: any = (props: any) => {
                 setSelectImageLabelField?.(param);
               }}
               disabled={disabled}
-              style={{ marginRight: 8 }}
             >
               设置接口
             </Button>
@@ -1593,7 +1590,7 @@ export const FormatWidgetToDom: any = (props: any) => {
                 setSelectPathVisible?.(false);
               }}
               disabled={disabled}
-              style={{ marginRight: 8 }}
+              style={{ margin: '0 8px' }}
             >
               选择文件
             </ChooseFileButton>
