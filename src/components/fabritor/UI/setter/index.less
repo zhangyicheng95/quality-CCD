@@ -1,0 +1,132 @@
+.fabritor-sider {
+  height: 100%;
+  position: relative;
+  font-size: 14px;
+
+  :global {
+    .ant-tabs-nav {
+      width: 64px;
+      padding: 8px 0 !important;
+
+      .ant-tabs-tab {
+        padding: 8px 0;
+        font-size: 14px;
+
+        .ant-tabs-tab-btn {
+          width: 100%;
+          text-align: center;
+        }
+      }
+    }
+
+    .ant-layout-sider-children {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .fabritor-setter-panel {
+      position: absolute;
+      left: 64px;
+      top: 50px;
+      right: 0;
+      bottom: 0;
+      overflow: auto;
+      z-index: 99;
+      background-color: #fff;
+    }
+
+    .fabritor-panel-wrapper {
+      margin-left: -24px;
+      padding: 16px;
+    }
+
+    .fabritor-panel-shape-item {
+      cursor: pointer;
+    }
+
+    .fabritor-crop-wrapper {
+      .cropper-line {
+        background-color: #f22;
+        opacity: 1;
+
+        &.line-n {
+          height: 2px;
+          top: -2px;
+        }
+
+        &.line-e {
+          width: 2px;
+          right: -2px;
+        }
+
+        &.line-s {
+          height: 2px;
+          bottom: -2px;
+        }
+
+        &.line-w {
+          width: 2px;
+          left: -2px;
+        }
+      }
+
+      .cropper-point {
+        opacity: 1;
+        background-color: #fff;
+        box-shadow: 0 0 2px 2px rgba(221, 221, 221, 1);
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+
+        &.point-ne {
+          right: -5px;
+          top: -5px;
+        }
+
+        &.point-nw {
+          left: -5px;
+          top: -5px;
+        }
+
+        &.point-sw {
+          left: -5px;
+          bottom: -5px;
+        }
+
+        &.point-se {
+          right: -5px;
+          bottom: -5px;
+        }
+
+        &.point-n {
+          width: 20px;
+          height: 6px;
+          border-radius: 10px;
+          top: -3px;
+        }
+
+        &.point-w {
+          width: 6px;
+          height: 20px;
+          border-radius: 10px;
+          left: -3px;
+        }
+
+        &.point-s {
+          width: 20px;
+          height: 6px;
+          border-radius: 10px;
+          bottom: -3px;
+        }
+
+        &.point-e {
+          width: 6px;
+          height: 20px;
+          border-radius: 10px;
+          right: -3px;
+        }
+      }
+    }
+  }
+}

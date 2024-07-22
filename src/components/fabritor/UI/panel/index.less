@@ -1,0 +1,47 @@
+.fabritor-sider {
+  height: 100%;
+  position: relative;
+
+  :global {
+    .ant-tabs-nav {
+      width: 64px;
+      padding: 8px 0 !important;
+
+      .ant-tabs-tab {
+        padding: 8px 0;
+        font-size: 14px;
+
+        .ant-tabs-tab-btn {
+          width: 100%;
+          text-align: center;
+        }
+      }
+    }
+
+    .ant-layout-sider-children {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .fabritor-setter-panel {
+      position: absolute;
+      left: 64px;
+      top: 50px;
+      right: 0;
+      bottom: 0;
+      overflow: auto;
+      z-index: 99;
+      background-color: #fff;
+    }
+
+    .fabritor-panel-wrapper {
+      margin-left: -24px;
+      padding: 16px;
+    }
+
+    .fabritor-panel-shape-item {
+      cursor: pointer;
+    }
+  }
+}

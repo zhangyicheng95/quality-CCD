@@ -3,12 +3,13 @@ import PrimaryTitle from '@/components/PrimaryTitle';
 import styles from './index.less';
 import ReactRuler from '@/components/ReactRuler';
 import MarkCanvasFabric from '@/components/platFormFabric/MarkCanvasFabric';
+import Fabritor1 from '@/components/fabritor';
 
 const MarkList: React.FC = (props: any) => {
   return (
     <div className={`${styles.markList} background-ubv`}>
       {/* <ReactRuler /> */}
-      <MarkCanvasFabric
+      {/* <MarkCanvasFabric
         width={400}
         height={400}
         orientation={100}
@@ -17,7 +18,8 @@ const MarkList: React.FC = (props: any) => {
         }
         activeBoxIndex={''}
         regions={[1, 5]}
-      />
+      /> */}
+      <Fabritor1 />
     </div>
   );
 };

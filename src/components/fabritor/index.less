@@ -1,0 +1,46 @@
+.fabritor-layout {
+    :global {
+        #fabritor-rough-svg {
+            position: fixed;
+            top: 99999999px;
+            left: 99999999px;
+            z-index: -1;
+        }
+
+        .ant-slider-rail {
+            background-color: rgba(0, 0, 0, 0.04);
+            border-radius: 2px;
+            transition: background-color 0.2s;
+        }
+
+        .ant-input-number {
+            width: 56px !important;
+        }
+
+        .ant-btn {
+            font-size: 14px;
+            height: 32px;
+            padding: 4px 15px;
+            border-radius: 6px;
+        }
+
+        .ant-typography {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .fabritor-list-item {
+            background: rgba(53, 71, 90, 0.2);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            box-sizing: border-box;
+
+            &:hover {
+                border: 2px solid rgba(255, 34, 34, .5) !important;
+            }
+        }
+    }
+}

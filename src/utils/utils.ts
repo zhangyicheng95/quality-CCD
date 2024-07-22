@@ -1,6 +1,8 @@
+import { FONT_PRESET_FAMILY_LIST, LOG_PREFIX } from '@/common/constants/globalConstants';
 import { message } from 'antd';
 import * as _ from 'lodash';
 import * as XLSX from 'xlsx';
+import * as FontFaceObserver from 'fontfaceobserver';
 const Base64 = require('base-64');
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
@@ -545,6 +547,19 @@ export function downFileFun(data = '{}', name = '') {
     a.click();
     document.body.removeChild(a);
   }
+}
+export const downloadFile = (content: string, type: string, name: string) => {
+  const link = document.createElement('a');
+  link.href = content;
+  link.download = `${name || uuid()}.${type}`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+export const base64ToBlob = async (base64Data: any) => {
+  return fetch(base64Data).then((res) => {
+    return res.blob();
+  });
 }
 // 十六进制 转 RGB
 export const hexToRGB = (hex: any) => {
