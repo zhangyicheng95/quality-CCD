@@ -94,7 +94,7 @@ export default function TextSetter() {
 
   useEffect(() => {
     form.setFieldsValue({
-      fontFamily: object.fontFamily,
+      // fontFamily: object.fontFamily,
       fontSize: object.fontSize,
       fill: transformFill2Colors(object.fill),
       textAlign: object.textAlign,
@@ -116,14 +116,14 @@ export default function TextSetter() {
         onValuesChange={handleValuesChange}
         colon={false}
       >
-        <FormItem
+        {/* <FormItem
           name="fontFamily"
           label={'字体'}
         >
           <Select
             options={FONT_PRESET_FAMILY_LIST}
           />
-        </FormItem>
+        </FormItem> */}
         <FormItem
           name="fontSize"
           label={'字号'}
