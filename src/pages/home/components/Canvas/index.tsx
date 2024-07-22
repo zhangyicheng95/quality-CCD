@@ -137,6 +137,7 @@ import FormCharts from './components/FormCharts';
 import NestFormCharts from './components/NestFormCharts';
 import TableAntdCharts from './components/TableAntdCharts';
 import SegmentSwitch from '@/components/SegmentSwitch';
+import IaminationImageCharts from './components/IaminationImageCharts';
 
 const leftPanelDataLocal = [
   {
@@ -1737,6 +1738,15 @@ const Home: React.FC<any> = (props: any) => {
                       des_column,
                       des_bordered,
                       yName,
+                    }}
+                  />
+                ) : type === 'laminationImage' ? (
+                  <IaminationImageCharts
+                    id={key}
+                    data={{
+                      dataValue,
+                      fontSize,
+                      des_column,
                     }}
                   />
                 ) : type === 'button' ? (
@@ -3656,8 +3666,7 @@ const Home: React.FC<any> = (props: any) => {
                             const { name, password, id } = tab;
                             return (
                               <div
-                                className={`right-canvas-body-grid-tab-item ${tabNum == index ? 'right-canvas-body-grid-tab-selected' : ''
-                                  }`}
+                                className={`right-canvas-body-grid-tab-item ${tabNum == index ? 'right-canvas-body-grid-tab-selected' : ''}`}
                                 key={id}
                                 onClick={() => {
                                   if (!!password) {
@@ -5265,6 +5274,15 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                   </Fragment>
                 ) : null}
+                {
+                  ['laminationImage'].includes(windowType) ? (
+                    <Fragment>
+                      <Form.Item name="des_column" label="行数">
+                        <InputNumber />
+                      </Form.Item>
+                    </Fragment>
+                  ) : null
+                }
                 {['button', 'buttonInp'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item

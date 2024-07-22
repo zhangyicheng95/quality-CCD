@@ -291,6 +291,10 @@ export const windowTypeList: any = [
     label: '嵌套表单',
     type: 'form',
   },
+  {
+    value: 'laminationImage',
+    label: '分层图片窗口',
+  },
 ];
 // 默认基础组件
 export const basicWindowList: any = [
