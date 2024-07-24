@@ -4,7 +4,7 @@ import ImageSelector from '@/components/fabritor/components/ImageSelector';
 import { GloablStateContext } from '@/context';
 
 export default function ImagePanel() {
-  const { editor } = useContext(GloablStateContext);
+  const { editor } = useContext<any>(GloablStateContext);
 
   const addImage = async (url: any) => {
     await createFImage({

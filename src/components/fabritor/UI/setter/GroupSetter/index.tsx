@@ -4,7 +4,7 @@ import { GloablStateContext } from '@/context';
 import { groupSelection, ungroup } from '@/utils/helper';
 
 export default function GroupSetter() {
-  const { object, editor } = useContext(GloablStateContext);
+  const { object, editor } = useContext<any>(GloablStateContext);
 
   if (!object || (object.type !== 'group' && object.type !== 'activeSelection')) return null;
 

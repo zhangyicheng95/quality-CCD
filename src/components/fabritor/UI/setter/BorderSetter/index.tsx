@@ -55,7 +55,7 @@ export const BORDER_TYPES = [
 
 export default function BorderSetter(props: any) {
   const { value, onChange } = props;
-  const { editor } = useContext(GloablStateContext);
+  const { editor } = useContext<any>(GloablStateContext);
   const [form] = Form.useForm();
 
   const handleChange = (v: any) => {

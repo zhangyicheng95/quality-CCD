@@ -8,7 +8,7 @@ import { createTextbox } from '@/components/fabritor/editor/objects/textbox';
 
 export default function EmojiPanel(props: any) {
   const { back } = props;
-  const { editor } = useContext(GloablStateContext);
+  const { editor } = useContext<any>(GloablStateContext);
   const [emojiLocale, setEmojiLocale] = useState('zh');
 
   const handleEmojiSelect = async (emoji: any) => {

@@ -29,7 +29,7 @@ const ContextMenuItem = (props: any) => {
 const ContextMenu = (props: any, ref: any) => {
   const { object, noCareOpen } = props;
   const [open, setOpen] = useState(false);
-  const { editor } = useContext(GloablStateContext);
+  const { editor } = useContext<any>(GloablStateContext);
 
   const renderMenuItems = () => {
     if (!object || object.id === SKETCH_ID) {

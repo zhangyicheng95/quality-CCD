@@ -6,7 +6,7 @@ function ObjectRotateAngleTip() {
   const [pos, setPos] = useState({ left: 0, top: 0 });
   const [content, setContent] = useState('');
   const [open, setOpen] = useState(false);
-  const { editor } = useContext(GloablStateContext);
+  const { editor } = useContext<any>(GloablStateContext);
 
   const rotateHandler = (opt: any) => {
     const { target, e } = opt;

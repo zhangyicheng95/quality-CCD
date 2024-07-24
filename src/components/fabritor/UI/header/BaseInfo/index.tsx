@@ -6,7 +6,7 @@ const { Text } = Typography;
 
 export default function BaseInfo() {
   const [desc, setDesc] = useState('');
-  const { editor } = useContext(GloablStateContext);
+  const { editor } = useContext<any>(GloablStateContext);
 
   const handleChange = (v: any) => {
     const _v = v || 'ubvision fabritor';

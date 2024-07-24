@@ -44,7 +44,7 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
   useEffect(() => {
     let index = 0;
     fontInBody.forEach((item: any, cIndex: number) => {
-      if (item.value === (value || defaultValue)) {
+      if (item.value === (!_.isUndefined(value) ? value : defaultValue)) {
         index = cIndex;
       }
     });

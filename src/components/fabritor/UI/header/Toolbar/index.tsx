@@ -27,10 +27,16 @@ export default function Toolbar() {
     const json = editor.canvas2Json();
     console.log('原始', json);
 
-    const result = {
-      ...json,
-      objects: (json.objects || [])?.filter((i: any) => i.id !== "fabritor-sketch")
-    }
+    const result = (json.objects || [])?.filter((i: any) => i.id !== "fabritor-sketch")?.map((item: any) => {
+      const { width, height, top, left, type, sub_type, path, strokeWidth } = item;
+      return {
+        type: !!sub_type ? sub_type : path?.length > 2 ? 'pencil' : 'point',
+        width: !!sub_type ? width : strokeWidth,
+        height: !!sub_type ? height : strokeWidth,
+        top, left,
+        ...path?.length > 2 ? { path } : {}
+      }
+    })
     console.log(result);
   };
 

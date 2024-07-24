@@ -21,8 +21,8 @@ const handleFilterValue = (filter) => {
   return { type };
 }
 
-export default function ImageFx () {
-  const { object, editor } = useContext(GloablStateContext);
+export default function ImageFx() {
+  const { object, editor } = useContext<any>(GloablStateContext);
   const [form] = Form.useForm();
 
   const handleFxValueChange = (values) => {
@@ -31,9 +31,9 @@ export default function ImageFx () {
       let filter;
       if (type === 'Emboss') {
         filter = new fabric.Image.filters.Convolute({
-          matrix:  [ 1,   1,  1,
-                     1, 0.7, -1,
-                    -1,  -1, -1 ]
+          matrix: [1, 1, 1,
+            1, 0.7, -1,
+            -1, -1, -1]
         });
       } else if (type === 'none') {
         filter = null;

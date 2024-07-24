@@ -12,20 +12,20 @@ import Title from '@/components/fabritor/components/Title';
 import Center from '@/components/fabritor/components/Center';
 
 export default function ShapePanel() {
-  const { editor, roughSvg } = useContext(GloablStateContext);
+  const { editor, roughSvg } = useContext<any>(GloablStateContext);
 
   const addLine = (item: any) => {
-    const { type, options = {} } = item;
+    const { type, key, options = {} } = item;
     const canvas = editor.canvas;
     switch (type) {
       case 'f-line':
-        drawLine({ ...options, canvas });
+        drawLine({ ...options, canvas, sub_type: key, });
         break;
       case 'f-arrow':
-        drawArrowLine({ ...options, canvas });
+        drawArrowLine({ ...options, canvas, sub_type: key, });
         break;
       case 'f-tri-arrow':
-        drawTriArrowLine({ ...options, canvas });
+        drawTriArrowLine({ ...options, canvas, sub_type: key, });
         break;
       default:
         break;
@@ -35,19 +35,19 @@ export default function ShapePanel() {
   const addShape = (item: any) => {
     const { key, elem, options } = item;
     const canvas = editor.canvas;
-    switch (key) {
-      case 'rect':
-      case 'rect-r':
-        createRect({ ...options, canvas });
-        break;
-      case 'star':
-      case 'heart':
-        createPathFromSvg({ svgString: elem, canvas, sub_type: key, strokeWidth: 20 });
-        break;
-      default:
-        createShape(item.shape, { ...options, canvas });
-        break;
-    }
+    // switch (key) {
+    // case 'rect':
+    // case 'rect-r':
+    //   createRect({ ...options, canvas });
+    //   break;
+    // case 'star':
+    // case 'heart':
+    createPathFromSvg({ svgString: elem, canvas, sub_type: key, strokeWidth: 4 });
+    // break;
+    // default:
+    //   createShape(item.shape, { ...options, canvas });
+    //   break;
+    // }
   }
 
   const addRough = (item: any) => {

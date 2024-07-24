@@ -10,7 +10,7 @@ import PathSetterForm from '../../setter/PathSetter/PathSetterForm';
 export default function PaintPanel() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDrawingMode, setIsDrawingMode] = useState(true);
-  const { editor } = useContext(GloablStateContext);
+  const { editor } = useContext<any>(GloablStateContext);
   const [penFormValues, setPenFormValues] = useState({});
 
   const handleBrushChange = (options: any) => {

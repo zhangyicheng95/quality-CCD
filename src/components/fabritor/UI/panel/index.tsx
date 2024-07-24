@@ -56,7 +56,7 @@ const OBJECT_TYPES = [
 ];
 
 export default function Panel() {
-  const { editor } = useContext(GloablStateContext);
+  const { editor } = useContext<any>(GloablStateContext);
 
   const renderPanel = (value: any) => {
     if (value === 'design') {

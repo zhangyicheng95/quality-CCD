@@ -10,7 +10,7 @@ const { Item: FormItem } = Form;
 export default function PathSetterForm(props: any) {
   const { value, onChange, shouldFireEvent, showPenTip, showFillConfig } = props;
   const [form] = Form.useForm();
-  const { editor } = useContext(GloablStateContext);
+  const { editor } = useContext<any>(GloablStateContext);
 
   const fireEvent = () => {
     if (shouldFireEvent) {

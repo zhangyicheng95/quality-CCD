@@ -3037,13 +3037,23 @@
       width: 100%;
 
       .ant-btn {
-        height: auto;
         width: 31%;
         border-radius: 4px;
         padding: 8px 16px;
         margin: 0 2% 16px 0;
-        float: left;
         font-size: inherit;
+      }
+
+      .error-font {
+        .ant-badge-status-dot {
+          width: 16px;
+          height: 16px;
+          background-color: red;
+        }
+
+        .ant-badge-status-processing::after {
+          border-color: red;
+        }
       }
     }
   }

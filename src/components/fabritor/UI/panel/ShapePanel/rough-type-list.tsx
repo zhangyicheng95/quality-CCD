@@ -67,13 +67,13 @@ export default [
       ...DEFAULT_ROUGH_CONFIG
     }
   },
-  {
-    key: 'rough-diamond123',
-    elem: roughDiamondIcon,
-    options: {
-      fill: '#F6C445',
-      stroke: '#EC6A52',
-      ...DEFAULT_ROUGH_CONFIG
-    }
-  }
+  // {
+  //   key: 'rough-diamond123',
+  //   elem: roughDiamondIcon,
+  //   options: {
+  //     fill: '#F6C445',
+  //     stroke: '#EC6A52',
+  //     ...DEFAULT_ROUGH_CONFIG
+  //   }
+  // }
 ]
