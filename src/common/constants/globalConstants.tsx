@@ -295,6 +295,10 @@ export const windowTypeList: any = [
     value: 'laminationImage',
     label: '分层图片窗口',
   },
+  {
+    value: 'reJudgment',
+    label: '人工复判窗口',
+  },
 ];
 // 默认基础组件
 export const basicWindowList: any = [

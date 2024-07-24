@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import styles from '../../index.module.less';
 import * as _ from 'lodash';
-import { Button, Col, Form, Input, InputNumber, message, Row } from 'antd';
+import { Button, message, Modal } from 'antd';
 import CustomWindowBody from '@/components/CustomWindowBody';
-import ChooseFileButton from '@/components/ChooseFileButton';
 import { btnFetch } from '@/services/api';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 interface Props {
   data: any;
@@ -14,10 +14,12 @@ interface Props {
 
 const FastFunctionCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  const { titleFontSize = 24, fontSize = 24, fetchType, xName } = data;
-  const [form] = Form.useForm();
+  const {
+    titleFontSize = 24, fontSize = 24,
+    fetchType, xName, ifNeedAllow = false
+  } = data;
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
   const onChange = (val: any) => {
     btnFetch(fetchType, xName, { type: 'fastFun', value: val }).then((res: any) => {
       if (!!res && res.code === 'SUCCESS') {
@@ -51,7 +53,25 @@ const FastFunctionCharts: React.FC<Props> = (props: any) => {
                 key={`fast-function-box-btn-${type}`}
                 className={color}
                 type={!!color ? 'default' : 'primary'}
-                onClick={() => onChange(type)}
+                onClick={() => {
+                  if (ifNeedAllow) {
+                    Modal.confirm({
+                      title: '确认此操作？',
+                      icon: <ExclamationCircleOutlined />,
+                      content: '',
+                      okText: '确认',
+                      cancelText: '取消',
+                      onOk: () => {
+                        onChange(type);
+                      },
+                      onCancel: () => {
+
+                      }
+                    });
+                  } else {
+                    onChange(type);
+                  }
+                }}
               >
                 {title}
               </Button>

@@ -156,7 +156,7 @@ function ItemBox(props: any) {
             >
               <div className="flex-box-justify-end" style={{ gap: 4 }}>
                 {name?.slice(0, 2)?.map((itemName: string, indexName: number) => {
-                  return <div>{itemName}</div>;
+                  return <div key={indexName}>{itemName}</div>;
                 })}
               </div>
             </Tooltip>

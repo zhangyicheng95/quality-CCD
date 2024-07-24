@@ -138,6 +138,7 @@ import NestFormCharts from './components/NestFormCharts';
 import TableAntdCharts from './components/TableAntdCharts';
 import SegmentSwitch from '@/components/SegmentSwitch';
 import IaminationImageCharts from './components/IaminationImageCharts';
+import ReJudgmentCharts from './components/ReJudgmentCharts';
 
 const leftPanelDataLocal = [
   {
@@ -1315,6 +1316,7 @@ const Home: React.FC<any> = (props: any) => {
         const SecLabel = items?.filter(
           (i: any) => i.group === 'bottom' && i?.label?.name === __value[1],
         )[0];
+
         listData = listData.concat(
           <div
             key={key}
@@ -1340,7 +1342,14 @@ const Home: React.FC<any> = (props: any) => {
                             })`,
                           backgroundColor: 'transparent',
                         },
-              !!parentBodyBox && parentBodyBoxTab != bodyBoxTab ? { visibility: 'hidden' } : {},
+              (
+                !!parentBodyBox && parentBodyBoxTab != bodyBoxTab
+                ||
+                size.x < tabNum * 96 - 10
+                ||
+                (size.x > ((tabNum + 1) * 96))
+              )
+                ? { visibility: 'hidden' } : {},
             )}
           >
             {!['default', 'transparent'].includes(backgroundColor) ? (
@@ -1747,6 +1756,18 @@ const Home: React.FC<any> = (props: any) => {
                       dataValue,
                       fontSize,
                       des_column,
+                      markNumberLeft,
+                      markNumberTop,
+                    }}
+                  />
+                ) : type === 'reJudgment' ? (
+                  <ReJudgmentCharts
+                    id={key}
+                    data={{
+                      dataValue,
+                      fontSize,
+                      xName,
+                      fetchType,
                     }}
                   />
                 ) : type === 'button' ? (
@@ -1883,6 +1904,7 @@ const Home: React.FC<any> = (props: any) => {
                       timeSelectDefault,
                       xName,
                       fetchType,
+                      ifNeedAllow
                     }}
                   />
                 ) : type === 'operation' ? (
@@ -2026,6 +2048,7 @@ const Home: React.FC<any> = (props: any) => {
                       titleFontSize,
                       fetchType,
                       xName,
+                      ifNeedAllow
                     }}
                   />
                 ) : type === 'orderInformation' ? (
@@ -2037,6 +2060,7 @@ const Home: React.FC<any> = (props: any) => {
                       titleFontSize,
                       fetchType,
                       xName,
+                      ifNeedAllow
                     }}
                   />
                 ) : type === 'equipment' ? (
@@ -2046,6 +2070,7 @@ const Home: React.FC<any> = (props: any) => {
                       dataValue,
                       fontSize,
                       titleFontSize,
+                      ifNeedAllow
                     }}
                   />
                 ) : type === 'paramControl' ? (
@@ -2058,6 +2083,7 @@ const Home: React.FC<any> = (props: any) => {
                       fetchType,
                       xName,
                       yName,
+                      ifNeedAllow
                     }}
                   />
                 ) : type === 'connectStatus' ? (
@@ -2078,6 +2104,7 @@ const Home: React.FC<any> = (props: any) => {
                       titleFontSize,
                       fetchType,
                       xName,
+                      ifNeedAllow,
                     }}
                   />
                 ) : type === 'outputArea' ? (
@@ -2089,6 +2116,7 @@ const Home: React.FC<any> = (props: any) => {
                       titleFontSize,
                       fetchType,
                       xName,
+                      ifNeedAllow
                     }}
                   />
                 ) : type === 'equipmentInfo' ? (
@@ -2483,7 +2511,12 @@ const Home: React.FC<any> = (props: any) => {
                   ? _.omit(dataValue, 'action')
                   : ['modelSwitch'].includes(type)
                     ? undefined
-                    : dataValue,
+                    : ['laminationImage'].includes(type) ?
+                      {
+                        ...(item?.[__value[1]] || {}),
+                        ...(dataValue || {})
+                      }
+                      : dataValue,
               }
               : item,
           );
@@ -2496,7 +2529,7 @@ const Home: React.FC<any> = (props: any) => {
     } else {
       setContentList([]);
     }
-  }, [gridContentList, addContentList, addWindowVisible, bodyBoxTab]);
+  }, [gridContentList, addContentList, addWindowVisible, bodyBoxTab, tabNum]);
   // 批量启动任务
   const startProjects = (item: any, list: any, index: number, projectStatus: any) => {
     const data = projectStatus?.filter((i: any) => i.value === item.key)?.[0] || {};
@@ -5277,8 +5310,48 @@ const Home: React.FC<any> = (props: any) => {
                 {
                   ['laminationImage'].includes(windowType) ? (
                     <Fragment>
-                      <Form.Item name="des_column" label="行数">
-                        <InputNumber />
+                      <Form.Item initialValue={3} name="des_column" label="行数">
+                        <InputNumber min={1} placeholder="行数" />
+                      </Form.Item>
+                      <Form.Item
+                        name="markNumberTop"
+                        label="顶部图示长度"
+                        rules={[{ required: true, message: '顶部图示长度' }]}
+                      >
+                        <InputNumber min={0} placeholder="顶部图示长度" />
+                      </Form.Item>
+                      <Form.Item
+                        name="markNumberLeft"
+                        label="左侧图示长度"
+                        rules={[{ required: true, message: '左侧图示长度' }]}
+                      >
+                        <InputNumber min={0} placeholder="左侧图示长度" />
+                      </Form.Item>
+                    </Fragment>
+                  ) : null
+                }
+                {
+                  ['reJudgment'].includes(windowType) ? (
+                    <Fragment>
+                      <Form.Item
+                        name={`fetchType`}
+                        label={'http类型'}
+                        rules={[{ required: false, message: 'http类型' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
+                            value: item,
+                            label: _.toUpper(item),
+                          }))}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`xName`}
+                        label={'接口地址'}
+                        rules={[{ required: false, message: '接口地址' }]}
+                      >
+                        <Input size="large" />
                       </Form.Item>
                     </Fragment>
                   ) : null
@@ -5767,6 +5840,9 @@ const Home: React.FC<any> = (props: any) => {
                       rules={[{ required: false, message: '接口地址' }]}
                     >
                       <Input size="large" />
+                    </Form.Item>
+                    <Form.Item name="ifNeedAllow" label="是否二次确认" valuePropName="checked">
+                      <Switch />
                     </Form.Item>
                   </Fragment>
                 ) : null}
@@ -6579,6 +6655,9 @@ const Home: React.FC<any> = (props: any) => {
                       rules={[{ required: false, message: '接口地址' }]}
                     >
                       <Input placeholder="接口地址" size="large" />
+                    </Form.Item>
+                    <Form.Item name="ifNeedAllow" label="是否二次确认" valuePropName="checked">
+                      <Switch />
                     </Form.Item>
                   </Fragment>
                 ) : null}

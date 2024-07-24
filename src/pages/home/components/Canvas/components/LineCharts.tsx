@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 import options from './commonOptions';
 import * as _ from 'lodash';
@@ -91,7 +91,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
   }
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
-
+  const domRef = useRef<any>();
   useEffect(() => {
     if (!_.isArray(dataValue)) {
       message.error('趋势图数据格式不正确，请检查');
@@ -257,20 +257,6 @@ const LineCharts: React.FC<Props> = (props: any) => {
       });
     });
     myChart.setOption(option);
-    myChart.resize({
-      width: dom.clientWidth,
-      height: dom.clientHeight,
-    });
-    window.addEventListener(
-      'resize',
-      () => {
-        myChart.resize({
-          width: dom.clientWidth,
-          height: dom.clientHeight,
-        });
-      },
-      false,
-    );
 
     return () => {
       window.removeEventListener(
@@ -285,11 +271,43 @@ const LineCharts: React.FC<Props> = (props: any) => {
       );
       myChart && myChart.dispose();
     };
-  }, [data, legend]);
+  }, [data, legend,]);
+  useEffect(() => {
+    const dom = domRef?.current;
+    if (!!dom && !!myChart) {
+      myChart.resize({
+        width: dom.clientWidth,
+        height: dom.clientHeight,
+      });
+      window.addEventListener(
+        'resize',
+        () => {
+          myChart.resize({
+            width: dom.clientWidth,
+            height: dom.clientHeight,
+          });
+        },
+        false,
+      );
+    }
 
+    return () => {
+      window.removeEventListener(
+        'resize',
+        () => {
+          myChart.resize({
+            width: dom.clientWidth,
+            height: dom.clientHeight,
+          });
+        },
+        false,
+      );
+      myChart && myChart.dispose();
+    };
+  }, [domRef?.current?.clientWidth]);
   return (
     <Fragment>
-      <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} />
+      <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} ref={domRef} />
       <div className="preview-box flex-box-center">
         <CompressOutlined
           className="preview-icon"

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import { btnFetch, startFlowService, stopFlowService } from '@/services/api';
 import SegmentSwitch from '@/components/SegmentSwitch';
 import { connect } from 'umi';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 interface Props {
   data: any;
@@ -23,6 +24,7 @@ const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
     timeSelectDefault = [],
     xName,
     fetchType,
+    ifNeedAllow = false,
   } = data;
   const ipString: any = localStorage.getItem('ipString') || '';
   const [selected, setSelected] = useState('');
@@ -107,16 +109,38 @@ const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
           } else if (e === 'stop') {
             end();
           } else {
-            setSelected(e);
-            if (!fetchType || !xName) return;
-            btnFetch(fetchType, xName, { value: e }).then((res: any) => {
-              if (!!res && res.code === 'SUCCESS') {
-                message.success('success');
-              } else {
-                message.error(res?.message || '后台服务异常，请重启服务');
-                setSelected(selected);
-              }
-            });
+            const func = () => {
+              setSelected(e);
+              if (!fetchType || !xName) return;
+              btnFetch(fetchType, xName, { value: e }).then((res: any) => {
+                if (!!res && res.code === 'SUCCESS') {
+                  message.success('success');
+                } else {
+                  message.error(res?.message || '后台服务异常，请重启服务');
+                  setSelected(selected);
+                }
+              });
+            };
+            if (ifNeedAllow) {
+              Modal.confirm({
+                title: '确认此操作？',
+                icon: <ExclamationCircleOutlined />,
+                content: '',
+                okText: '确认',
+                cancelText: '取消',
+                onOk: () => {
+                  func();
+                },
+                onCancel: () => {
+                  setSelected(e);
+                  setTimeout(() => {
+                    setSelected(selected);
+                  }, 200);
+                }
+              });
+            } else {
+              func();
+            }
           }
         }}
       />
