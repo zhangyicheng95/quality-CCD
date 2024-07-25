@@ -84,7 +84,7 @@ export default class Editor {
     const { canvasEl, workspaceEl } = this._options;
     const { width = workspaceEl.offsetWidth, height = workspaceEl.offsetHeight } = this._template || {};
     const sketch = new fabric.Rect({
-      fill: '#ffffff',
+      fill: '#fff',
       left: 0,
       top: 0,
       width,

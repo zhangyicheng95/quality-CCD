@@ -6,6 +6,7 @@ export const createGroup = (options: any) => {
 
   const group = new fabric.Group(items, {
     id: uuid(),
+    sub_type: 'group',
     ...rest
   });
 

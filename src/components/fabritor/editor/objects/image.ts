@@ -81,7 +81,8 @@ export const createFImage = async (options: any) => {
   // @ts-ignore
   const fimg = new fabric.FImage({
     image: img,
-    id: uuid()
+    id: uuid(),
+    sub_type: 'image'
   });
 
   canvas.viewportCenterObject(fimg);
