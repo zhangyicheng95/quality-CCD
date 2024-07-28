@@ -147,7 +147,6 @@ export default class Editor {
     viewportTransform[4] = this.canvas.width / 2 - sketchCenter.x * viewportTransform[0];
     // @ts-ignore 平移 
     viewportTransform[5] = this.canvas.height / 2 - sketchCenter.y * viewportTransform[3];
-    // @ts-ignore
     this.canvas.setViewportTransform(viewportTransform);
     this.canvas.requestRenderAll();
 
@@ -173,9 +172,7 @@ export default class Editor {
       if (this._pan.enable && this._pan.isDragging) {
         const { e } = opt;
         const vpt = this.canvas.viewportTransform;
-        // @ts-ignore
         vpt[4] += e.clientX - this._pan.lastPosX;
-        // @ts-ignore
         vpt[5] += e.clientY - this._pan.lastPosY;
         this.canvas.requestRenderAll();
         this._pan.lastPosX = e.clientX;
@@ -195,7 +192,6 @@ export default class Editor {
 
       if (HOVER_OBJECT_CONTROL) {
         if (target && target.id !== SKETCH_ID && target !== this.canvas.getActiveObject()) {
-          // @ts-ignore
           target._renderControls(this.canvas.contextTop, { hasControls: false });
         }
       }
@@ -213,7 +209,6 @@ export default class Editor {
       // on mouse up we want to recalculate new interaction
       // for all objects, so we call setViewportTransform
       if (this._pan.enable) {
-        // @ts-ignore
         this.canvas.setViewportTransform(this.canvas.viewportTransform);
         this._pan.isDragging = false;
       }
@@ -359,7 +354,6 @@ export default class Editor {
       format: 'png',
       ...options
     });
-    // @ts-ignore
     this.canvas.setViewportTransform(transform);
     return dataURL;
   }
@@ -388,6 +382,8 @@ export default class Editor {
   public async loadFromJSON(json: any, errorToast = false) {
     if (!json) return false;
     if (typeof json === 'string') {
+      console.log(json);
+
       try {
         json = JSON.parse(json);
       } catch (e) {
@@ -409,17 +405,13 @@ export default class Editor {
         }
       }
     }
-
     const lastActiveObject: any = this.canvas.getActiveObject();
     let nowActiveObject: any = null;
-
     // disabled auto save when load json
     this.autoSave.setCanSave(false);
-
     return new Promise((resolve) => {
       this.canvas.loadFromJSON(json, () => {
         this.canvas.requestRenderAll();
-
         this.autoSave.setCanSave(true);
         this.canvas.fire('fabritor:load:json', { lastActiveObject: nowActiveObject });
         resolve(true);
@@ -437,9 +429,9 @@ export default class Editor {
   }
 
   public async clearCanvas() {
-    // @ts-ignore
     const { width, height, fabritor_desc } = this.sketch;
-    const originalJson = `{"fabritor_schema_version":3,"version":"5.3.0","objects":[{"type":"rect","version":"5.3.0","originX":"left","originY":"top","left":0,"top":0,"width":${width},"height":${height},"fill":"#ffffff","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeUniform":true,"strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"backgroundColor":"","fillRule":"nonzero","paintFirst":"stroke","globalCompositeOperation":"source-over","skewX":0,"skewY":0,"rx":0,"ry":0,"id":"fabritor-sketch","fabritor_desc":"${fabritor_desc}","selectable":false,"hasControls":false}],"clipPath":{"type":"rect","version":"5.3.0","originX":"left","originY":"top","left":0,"top":0,"width":${width},"height":${height},"fill":"#ffffff","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeUniform":true,"strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"backgroundColor":"","fillRule":"nonzero","paintFirst":"stroke","globalCompositeOperation":"source-over","skewX":0,"skewY":0,"rx":0,"ry":0,"selectable":true,"hasControls":true},"background":"#fff"}`;
+    const { theme } = this._options;
+    const originalJson = `{"fabritor_schema_version":3,"version":"5.3.0","objects":[],"clipPath":{"type":"rect","version":"5.3.0","originX":"left","originY":"top","left":0,"top":0,"width":${width},"height":${height},"fill":"#ffffff","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeUniform":true,"strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"backgroundColor":"","fillRule":"nonzero","paintFirst":"stroke","globalCompositeOperation":"source-over","skewX":0,"skewY":0,"rx":0,"ry":0,"selectable":true,"hasControls":true},"background":${JSON.stringify(theme === "realDark" ? "#000" : "#fff")}}`;
     await this.loadFromJSON(originalJson);
     this.fhistory.reset();
   }

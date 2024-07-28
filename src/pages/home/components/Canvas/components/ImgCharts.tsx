@@ -47,7 +47,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
 
   if (process.env.NODE_ENV === 'development' && !dataValue) {
     dataValue =
-      'https://ts1.cn.mm.bing.net/th/id/R-C.6195f97cbda5adc5c5a20bd54f8f1787?rik=DCKWcoAcSLKKLQ&riu=http%3a%2f%2fimg1.xcarimg.com%2fnews%2f3305%2f3308%2f4390%2f20110810232606712965.jpg-908x681.jpg&ehk=eHQs4fbLytZQlYDb9EngsqDxiiZ0VXw62bpt2YZS7jI%3d&risl=&pid=ImgRaw&r=0';
+      'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0';
   }
   const ifCanEdit = useMemo(() => {
     return location.hash?.indexOf('edit') > -1;
@@ -178,7 +178,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         const kongbaichuX = (dom.current.clientWidth - ulWidth) * 0.5;
         const marginTop = e.pageY - e.offsetY - (dom.current.clientHeight - ulHeight) * 0.5;
         const kongbaichuY = (dom.current.clientHeight - ulHeight) * 0.5;
-        x -= (ratio - 1) * (e.clientX - x - marginLeft - kongbaichuX) - origin.x;
+        x -= (ratio - 1) * (e.clientX - x - marginLeft - kongbaichuX) - origin?.x;
         y -= (ratio - 1) * (e.clientY - y - marginTop - kongbaichuY) - origin.y;
         let offsetX = Math.min(
           Math.max(x, ulWidth - (ulWidth * (scale + 1)) / 2),
@@ -324,10 +324,10 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       e.stopPropagation();
       if (isDown) {
         const current1 = { x: e.clientX, y: e.clientY };
-        diff.x = current1.x - lastPointermove.x;
+        diff.x = current1?.x - lastPointermove?.x;
         diff.y = current1.y - lastPointermove.y;
-        lastPointermove = { x: current1.x, y: current1.y };
-        x += diff.x;
+        lastPointermove = { x: current1?.x, y: current1.y };
+        x += diff?.x;
         y += diff.y;
         //边界判断
         let offsetX = Math.min(
@@ -541,7 +541,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                       ? item.split('NG/')?.[1]?.split('/')?.[0]
                       : 'NG'
                     : ''
-                : item.type;
+                : item?.type;
               const url = _.isString(item) ? item : item?.url;
               if (!!url) {
                 return (

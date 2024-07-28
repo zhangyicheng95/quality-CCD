@@ -42,7 +42,13 @@ export default function ShapePanel() {
     //   break;
     // case 'star':
     // case 'heart':
-    createPathFromSvg({ svgString: elem, canvas, sub_type: key, strokeWidth: 4 });
+    createPathFromSvg({
+      svgString: elem,
+      canvas,
+      sub_type: key,
+      hasControls: key !== 'point',
+      strokeWidth: 4
+    });
     // break;
     // default:
     //   createShape(item.shape, { ...options, canvas });
@@ -115,7 +121,7 @@ export default function ShapePanel() {
           ))
         }
       </div>
-      <Title>
+      {/* <Title>
         <div style={{ position: 'relative' }}>
           <span>{'手绘风格'}</span>
           <Tag color='#f50' style={{ position: 'absolute', right: -48, top: -5, padding: '0 4px' }}>beta</Tag>
@@ -135,7 +141,7 @@ export default function ShapePanel() {
             </div>
           ))
         }
-      </div>
+      </div> */}
     </div>
   )
 }

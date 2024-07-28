@@ -139,6 +139,8 @@ import TableAntdCharts from './components/TableAntdCharts';
 import SegmentSwitch from '@/components/SegmentSwitch';
 import IaminationImageCharts from './components/IaminationImageCharts';
 import ReJudgmentCharts from './components/ReJudgmentCharts';
+import AntdTableFromHttpCharts from './components/AntdTableFromHttpCharts';
+import FabricCharts from './components/FabricCharts';
 
 const leftPanelDataLocal = [
   {
@@ -344,7 +346,7 @@ const Home: React.FC<any> = (props: any) => {
               ? {}
               : homeSettingData['slider-1']?.backgroundColor === 'transparent'
                 ? { backgroundColor: 'transparent' }
-                : { backgroundImage: homeSettingData['slider-1']?.backgroundColor }
+                : { backgroundImage: `url(${homeSettingData['slider-1']?.backgroundColor})` }
           }
         >
           {homeSettingData['slider-1']?.ifShowHeader ? (
@@ -477,7 +479,7 @@ const Home: React.FC<any> = (props: any) => {
               ? {}
               : homeSettingData['slider-4']?.backgroundColor === 'transparent'
                 ? { backgroundColor: 'transparent' }
-                : { backgroundImage: homeSettingData['slider-4']?.backgroundColor }
+                : { backgroundImage: `url(${homeSettingData['slider-4']?.backgroundColor})` }
           }
         >
           {homeSettingData['slider-4']?.ifShowHeader ? (
@@ -662,7 +664,7 @@ const Home: React.FC<any> = (props: any) => {
               ? {}
               : homeSettingData['footer-1']?.backgroundColor === 'transparent'
                 ? { backgroundColor: 'transparent' }
-                : { backgroundImage: homeSettingData['footer-1']?.backgroundColor }
+                : { backgroundImage: `url(${homeSettingData['footer-1']?.backgroundColor})` }
           }
         >
           {homeSettingData['footer-1']?.ifShowHeader ? (
@@ -748,7 +750,7 @@ const Home: React.FC<any> = (props: any) => {
               ? {}
               : homeSettingData['footer-2']?.backgroundColor === 'transparent'
                 ? { backgroundColor: 'transparent' }
-                : { backgroundImage: homeSettingData['footer-2']?.backgroundColor }
+                : { backgroundImage: `url(${homeSettingData['footer-2']?.backgroundColor})` }
           }
         >
           {homeSettingData['footer-2']?.ifShowHeader ? (
@@ -1227,6 +1229,7 @@ const Home: React.FC<any> = (props: any) => {
           direction,
           symbol,
           fetchType,
+          httpRotation, httpRotationTime,
           ifFetch,
           fetchParams,
           align,
@@ -1345,9 +1348,9 @@ const Home: React.FC<any> = (props: any) => {
               (
                 !!parentBodyBox && parentBodyBoxTab != bodyBoxTab
                 ||
-                size.x < tabNum * 96 - 10
+                size?.x < tabNum * 96 - 10
                 ||
-                (size.x > ((tabNum + 1) * 96))
+                (size?.x > ((tabNum + 1) * 96))
               )
                 ? { visibility: 'hidden' } : {},
             )}
@@ -1415,6 +1418,7 @@ const Home: React.FC<any> = (props: any) => {
                     'modelSwitch',
                     'iframe',
                     'timeSelect',
+                    'httpTable',
                   ].includes(type) ? (
                   '请重新绑定数据节点'
                 ) : type === 'line' ? (
@@ -1661,6 +1665,16 @@ const Home: React.FC<any> = (props: any) => {
                       yName,
                     }}
                   />
+                ) : type === 'fabric' ? (
+                  <FabricCharts
+                    id={key}
+                    data={{
+                      dataValue: dataValue || { name: '', value: [] },
+                      fontSize,
+                      fetchType,
+                      xName,
+                    }}
+                  />
                 ) : type === 'alert' ? (
                   <AlertCharts
                     id={key}
@@ -1768,6 +1782,17 @@ const Home: React.FC<any> = (props: any) => {
                       fontSize,
                       xName,
                       fetchType,
+                    }}
+                  />
+                ) : type === 'httpTable' ? (
+                  <AntdTableFromHttpCharts
+                    id={key}
+                    data={{
+                      dataValue,
+                      fontSize,
+                      xName,
+                      fetchType,
+                      httpRotation, httpRotationTime
                     }}
                   />
                 ) : type === 'button' ? (
@@ -2443,7 +2468,7 @@ const Home: React.FC<any> = (props: any) => {
                             value: [uuid32],
                             type,
                             size: {
-                              x: size.x + size.w >= 96 ? size.x - size.w : size.x + size.w,
+                              x: size?.x + size.w >= 96 ? size?.x - size.w : size?.x + size.w,
                               y: size.y,
                             },
                           });
@@ -2507,7 +2532,7 @@ const Home: React.FC<any> = (props: any) => {
             !!dataValue && !['operation2'].includes(type)
               ? {
                 ...item,
-                [__value[1]]: ['three', 'buttonImages', 'imgButton'].includes(type)
+                [__value[1]]: ['three', 'fabric', 'buttonImages', 'imgButton'].includes(type)
                   ? _.omit(dataValue, 'action')
                   : ['modelSwitch'].includes(type)
                     ? undefined
@@ -2903,6 +2928,8 @@ const Home: React.FC<any> = (props: any) => {
       direction: 'column',
       symbol: 'rect',
       fetchType: undefined,
+      httpRotation: false,
+      httpRotationTime: 1000,
       ifFetch: false,
       fetchParams: undefined,
       align: 'left',
@@ -2976,10 +3003,10 @@ const Home: React.FC<any> = (props: any) => {
   };
   useEffect(() => {
     setFieldsValue({
-      xColumns: editWindowData.xColumns,
+      xColumns: editWindowData?.xColumns,
       yColumns: editWindowData.yColumns,
     });
-  }, [editWindowData.xColumns, editWindowData.yColumns]);
+  }, [editWindowData?.xColumns, editWindowData.yColumns]);
   // 分段开关选项
   const onSegmentSwitchChange = (value: any, index: number, type: string) => {
     let list: any = [];
@@ -3279,14 +3306,14 @@ const Home: React.FC<any> = (props: any) => {
                     // 画布与实际屏幕的宽度差值
                     const diffWidth = (window.screen.width - width) / 2;
                     // 计算实际的x,y坐标
-                    const x = ((e.x + tabNum * width - diffWidth) / width) * 96;
+                    const x = ((e?.x + tabNum * width - diffWidth) / width) * 96;
                     const y = (e.y * 14) / 300;
                     if (['main', 'custom'].includes(key)) {
                       const parentBodyBox = addContentList?.filter((i: any) => {
                         return (
                           i.type === 'bodyBox' &&
-                          x > i.size.x &&
-                          x < i.size.x + i.size.w &&
+                          x > i.size?.x &&
+                          x < i.size?.x + i.size.w &&
                           y > i.size.y &&
                           y < i.size.y + i.size.h
                         );
@@ -4152,7 +4179,10 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item name="comparison" label="开启对比图" valuePropName="checked">
                       <Switch />
                     </Form.Item>
-                    <Form.Item name="notLocalStorage" label="开启图片缓存" valuePropName="checked">
+                    <Form.Item
+                      name="notLocalStorage" label="开启图片缓存" valuePropName="checked"
+                      initialValue={true}
+                    >
                       <Switch />
                     </Form.Item>
                     <Form.Item name="showImgList" label="图片列表" valuePropName="checked">
@@ -5356,6 +5386,50 @@ const Home: React.FC<any> = (props: any) => {
                     </Fragment>
                   ) : null
                 }
+                {
+                  ['httpTable'].includes(windowType) ? (
+                    <Fragment>
+                      <Form.Item
+                        name={`fetchType`}
+                        label={'http类型'}
+                        rules={[{ required: false, message: 'http类型' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={['get', 'post', 'put', 'delete', 'wbsocket']
+                            ?.map?.((item: any) => ({
+                              value: item,
+                              label: _.toUpper(item),
+                            }))}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`xName`}
+                        label={'接口地址'}
+                        rules={[{ required: false, message: '接口地址' }]}
+                      >
+                        <Input size="large" />
+                      </Form.Item>
+                      <Form.Item
+                        name={`httpRotation`}
+                        label={'接口轮训'}
+                        rules={[{ required: true, message: '接口轮训' }]}
+                        valuePropName="checked"
+                        initialValue={false}
+                      >
+                        <Switch />
+                      </Form.Item>
+                      <Form.Item
+                        name={`httpRotationTime`}
+                        label={'轮训时间间隔'}
+                        initialValue={2000}
+                        rules={[{ required: false, message: '轮训时间间隔' }]}
+                      >
+                        <InputNumber addonAfter="毫秒" />
+                      </Form.Item>
+                    </Fragment>
+                  ) : null
+                }
                 {['button', 'buttonInp'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item
@@ -6024,6 +6098,33 @@ const Home: React.FC<any> = (props: any) => {
                     ) : null}
                   </Fragment>
                 ) : null}
+                {
+                  ['fabric'].includes(windowType) ? (
+                    <Fragment>
+                      <Form.Item
+                        name={`fetchType`}
+                        label={'http类型'}
+                        rules={[{ required: false, message: 'http类型' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          placeholder="http类型"
+                          options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
+                            value: item,
+                            label: _.toUpper(item),
+                          }))}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`xName`}
+                        label={'接口地址'}
+                        rules={[{ required: false, message: '接口地址' }]}
+                      >
+                        <Input placeholder="接口地址" size="large" />
+                      </Form.Item>
+                    </Fragment>
+                  ) : null
+                }
                 {['operation', 'operation2'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item name="des_column" label="列数" initialValue={1}>
@@ -6416,7 +6517,7 @@ const Home: React.FC<any> = (props: any) => {
                       <InputNumber min={1} placeholder="左侧图示长度" />
                     </Form.Item>
                     <Form.Item label="缺陷类型" name="xColumns">
-                      {(editWindowData.xColumns || [])?.map?.((item: any, index: number) => {
+                      {(editWindowData?.xColumns || [])?.map?.((item: any, index: number) => {
                         if (!item || _.isEmpty(item)) return null;
 
                         const { id, value, label } = item;
@@ -6435,7 +6536,7 @@ const Home: React.FC<any> = (props: any) => {
                                   setEditWindowData((prev: any) => {
                                     return {
                                       ...prev,
-                                      xColumns: (prev.xColumns || [])?.map?.((i: any) => {
+                                      xColumns: (prev?.xColumns || [])?.map?.((i: any) => {
                                         if (i.id === id) {
                                           return {
                                             ...i,
@@ -6458,7 +6559,7 @@ const Home: React.FC<any> = (props: any) => {
                                   setEditWindowData((prev: any) => {
                                     return {
                                       ...prev,
-                                      xColumns: (prev.xColumns || [])?.map?.((i: any) => {
+                                      xColumns: (prev?.xColumns || [])?.map?.((i: any) => {
                                         if (i.id === id) {
                                           return {
                                             ...i,
@@ -6480,10 +6581,10 @@ const Home: React.FC<any> = (props: any) => {
                                   setEditWindowData((prev: any) => {
                                     return {
                                       ...prev,
-                                      xColumns: (prev.xColumns || []).filter(
+                                      xColumns: (prev?.xColumns || []).filter(
                                         (i: any) => i.id !== id,
                                       )?.length
-                                        ? (prev.xColumns || []).filter((i: any) => i.id !== id)
+                                        ? (prev?.xColumns || []).filter((i: any) => i.id !== id)
                                         : [{ id: guid(), label: '', value: '', color: '' }],
                                     };
                                   });
@@ -6499,7 +6600,7 @@ const Home: React.FC<any> = (props: any) => {
                           setEditWindowData((prev: any) => {
                             return {
                               ...prev,
-                              xColumns: (prev.xColumns || []).concat({
+                              xColumns: (prev?.xColumns || []).concat({
                                 id: guid(),
                                 label: '',
                                 value: '',
@@ -6643,10 +6744,11 @@ const Home: React.FC<any> = (props: any) => {
                       <Select
                         style={{ width: '100%' }}
                         placeholder="http类型"
-                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
-                          value: item,
-                          label: _.toUpper(item),
-                        }))}
+                        options={['get', 'post', 'put', 'delete', 'wbsocket']
+                          ?.map?.((item: any) => ({
+                            value: item,
+                            label: _.toUpper(item),
+                          }))}
                       />
                     </Form.Item>
                     <Form.Item
@@ -6658,6 +6760,23 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                     <Form.Item name="ifNeedAllow" label="是否二次确认" valuePropName="checked">
                       <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name={`httpRotation`}
+                      label={'接口轮训'}
+                      rules={[{ required: true, message: '接口轮训' }]}
+                      valuePropName="checked"
+                      initialValue={false}
+                    >
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name={`httpRotationTime`}
+                      label={'轮训时间间隔'}
+                      initialValue={2000}
+                      rules={[{ required: false, message: '轮训时间间隔' }]}
+                    >
+                      <InputNumber addonAfter="毫秒" />
                     </Form.Item>
                   </Fragment>
                 ) : null}

@@ -81,7 +81,7 @@ export default function ColorSetter(props: any) {
           className="fabritor-toolbar-item"
           style={{
             borderRadius: 4,
-            backgroundColor: calcTriggerBg()
+            backgroundColor: calcTriggerBg() || ''
           }}
         >
           {renderTrigger()}

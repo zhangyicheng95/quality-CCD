@@ -1,6 +1,6 @@
 import { fabric } from 'fabric';
-import { useEffect, useRef, useState } from 'react';
-import { Layout, Spin } from 'antd';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Layout, message, Spin } from 'antd';
 import Header from './UI/header';
 import Panel from './UI/panel';
 import Setter from './UI/setter';
@@ -10,7 +10,10 @@ import ContextMenu from './components/ContextMenu';
 import { SKETCH_ID } from '@/common/constants/globalConstants';
 import ObjectRotateAngleTip from './components/ObjectRotateAngleTip';
 import rough from 'roughjs';
+import { createPathFromSvg } from '@/components/fabritor/editor/objects/path';
+import ShapeTypeList from '@/components/fabritor/UI/panel/ShapePanel/shape-type-list';
 import styles from './index.less';
+import { useModel } from 'umi';
 
 const { Content } = Layout;
 
@@ -28,7 +31,15 @@ const contentStyle: React.CSSProperties = {
   height: '100%'
 }
 
-export default function Fabritor() {
+interface Props {
+  shapeFromData: any;
+  onLoadTypeChange?: any;
+}
+
+export default function Fabritor(props: Props) {
+  const { shapeFromData, onLoadTypeChange } = props;
+  const { initialState } = useModel<any>('@@initialState');
+  const { params } = initialState;
   const canvasEl = useRef<HTMLCanvasElement>(null);
   const workspaceEl = useRef<HTMLDivElement>(null);
   const roughSvgEl = useRef(null);
@@ -38,6 +49,9 @@ export default function Fabritor() {
   const [isReady, setReady] = useState(false);
   const contextMenuRef = useRef<any>(null);
 
+  const theme = useMemo(() => {
+    return params?.contentData?.theme || 'realDark';
+  }, [params?.contentData?.theme]);
   const clickHandler = (opt: any) => {
     const { target } = opt;
     if (editor.getIfPanEnable()) return;
@@ -117,7 +131,8 @@ export default function Fabritor() {
         groupHandler: () => {
           setActiveObject(_editor.canvas?.getActiveObject());
         }
-      }
+      },
+      theme
     });
 
     await _editor.init();
@@ -127,8 +142,12 @@ export default function Fabritor() {
 
     const jsonStr = localStorage.getItem('fabritor_web_json')
     if (jsonStr) {
-      const json = JSON.parse(jsonStr);
-      await _editor.loadFromJSON(json);
+      try {
+        const json = JSON.parse(jsonStr);
+        await _editor.loadFromJSON(json);
+      } catch (err) {
+        message.error('画布数据异常');
+      }
     }
 
     _editor.canvas?.on('object:moving', function (e: any) {
@@ -159,12 +178,12 @@ export default function Fabritor() {
       }
     });
   }
-
+  // 初始化图形画布
   const initRoughSvg = () => {
     // @ts-ignore rough svg
     setRoughSvg(rough.svg(roughSvgEl.current));
   }
-
+  // 初始化所有事件
   useEffect(() => {
     if (editor) {
       initEvent();
@@ -177,7 +196,7 @@ export default function Fabritor() {
       }
     }
   }, [editor]);
-
+  // 初始化 画布
   useEffect(() => {
     initEditor();
 
@@ -187,6 +206,20 @@ export default function Fabritor() {
       }
     }
   }, []);
+  // 返回轨迹点渲染
+  useEffect(() => {
+    if (!!editor && !!shapeFromData?.length) {
+      (shapeFromData || [])?.forEach((i: any) => {
+        createPathFromSvg({
+          svgString: '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="2" fill="#f00" stroke="#f00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+          canvas: editor.canvas,
+          sub_type: 'point',
+          hasControls: false,
+          strokeWidth: 4
+        });
+      });
+    }
+  }, [shapeFromData]);
 
   return (
     <GloablStateContext.Provider
@@ -196,10 +229,12 @@ export default function Fabritor() {
         isReady,
         setReady,
         editor,
-        roughSvg
+        roughSvg,
+        onLoadTypeChange,
+        theme,
       }}
     >
-      <div style={{ height: '100%' }} className={styles["fabritor-layout"]}>
+      <div className={styles["fabritor-layout"]}>
         <Spin spinning={!isReady}>
           <ObjectRotateAngleTip />
           <Header />

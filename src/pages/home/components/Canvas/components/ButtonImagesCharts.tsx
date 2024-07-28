@@ -2089,9 +2089,8 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
   return (
     <div
       id={`echart-${id}`}
-      className={`${transformSize < 1 ? 'flex-box-start' : 'flex-box-center'} ${
-        styles.buttonImagesCharts
-      }`}
+      className={`${transformSize < 1 ? 'flex-box-start' : 'flex-box-center'} ${styles.buttonImagesCharts
+        }`}
       ref={dom}
       style={{ fontSize }}
     >
@@ -2114,7 +2113,7 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
                       throw new Error();
                     }
                   });
-                } catch (err) {}
+                } catch (err) { }
                 return (
                   <TooltipDiv
                     className={`flex-box-center img-box-mark-top-item ${ngStatus ? 'error' : ''}`}
@@ -2138,7 +2137,7 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
                         throw new Error();
                       }
                     });
-                  } catch (err) {}
+                  } catch (err) { }
                   return (
                     <div className="flex-box img-button-item-line" key={`item-${index}`}>
                       <TooltipDiv
@@ -2158,8 +2157,8 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
                               style={
                                 !!item[tIndex]?.color
                                   ? {
-                                      backgroundColor: item[tIndex]?.color,
-                                    }
+                                    backgroundColor: item[tIndex]?.color,
+                                  }
                                   : {}
                               }
                               onClick={() => {

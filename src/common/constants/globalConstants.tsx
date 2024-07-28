@@ -299,6 +299,10 @@ export const windowTypeList: any = [
     value: 'reJudgment',
     label: '人工复判窗口',
   },
+  {
+    value: 'httpTable',
+    label: 'http数据表格窗口',
+  },
 ];
 // 默认基础组件
 export const basicWindowList: any = [
@@ -384,6 +388,10 @@ export const customWindowList: any = [
   {
     value: 'modelSwitch',
     label: '型号切换窗口',
+  },
+  {
+    value: 'fabric',
+    label: '尺寸测量标注窗口',
   },
 ];
 // 仿真涂层-背景图

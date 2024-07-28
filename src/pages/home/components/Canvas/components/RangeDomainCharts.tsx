@@ -243,7 +243,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                 if (cDataItem.key === key) {
                   return {
                     ...cDataItem,
-                    value: ['int', 'float', 'number'].includes(_.lowerCase(cDataItem.type))
+                    value: ['int', 'float', 'number'].includes(_.lowerCase(cDataItem?.type))
                       ? Number(value)
                       : value,
                   };
@@ -255,7 +255,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
               ) {
                 return {
                   ...cDataItem,
-                  value: ['int', 'float', 'number'].includes(_.lowerCase(cDataItem.type))
+                  value: ['int', 'float', 'number'].includes(_.lowerCase(cDataItem?.type))
                     ? Number(range?.[dataItem.name]?.[cDataItem.key])
                     : range?.[dataItem.name]?.[cDataItem.key],
                 };
@@ -290,10 +290,10 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                   {},
                   des_column > 1
                     ? {
-                        width: `${100 / des_column}%`,
-                        paddingRight: 8,
-                        // marginRight: index % index === 1 ? 0 : 8,
-                      }
+                      width: `${100 / des_column}%`,
+                      paddingRight: 8,
+                      // marginRight: index % index === 1 ? 0 : 8,
+                    }
                     : {},
                   { gap: 4 },
                   // dataSource?.length % des_column === 1

@@ -67,7 +67,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
   }, [dataValue]);
 
   const onUploadExcel = {
-    accept: '.xlsx,.csv',
+    accept: '?.xlsx,.csv',
     showUploadList: false,
     multiple: false,
     beforeUpload(file: any) {

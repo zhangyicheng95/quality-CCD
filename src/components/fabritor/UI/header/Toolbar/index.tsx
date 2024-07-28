@@ -1,14 +1,15 @@
-import { useContext, useEffect, useState } from 'react';
-import { Modal } from 'antd';
+import { Fragment, useContext, useEffect, useState } from 'react';
+import { Button, message, Modal } from 'antd';
 import { GloablStateContext } from '@/context';
 import { ClearOutlined, ExclamationCircleFilled, UndoOutlined, RedoOutlined, SaveOutlined, DragOutlined } from '@ant-design/icons';
 import { CenterV } from '@/components/fabritor/components/Center';
 import ToolbarItem from './ToolbarItem';
 import ToolbarDivider from '@/components/fabritor/components/ToolbarDivider';
 import { DRAG_ICON } from '@/common/constants/globalConstants';
+import SegmentSwitch from '@/components/SegmentSwitch';
 
 export default function Toolbar() {
-  const { setActiveObject, editor } = useContext<any>(GloablStateContext);
+  const { setActiveObject, editor, onLoadTypeChange } = useContext<any>(GloablStateContext);
   const [panEnable, setPanEnable] = useState(false);
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
@@ -26,30 +27,36 @@ export default function Toolbar() {
   }
   const saveCanvas = () => {
     const json = editor.canvas2Json();
-    console.log('原始', json);
+    console.log('画布数据：', json);
 
-    const result = (json.objects || [])?.filter((i: any) => i.id !== "fabritor-sketch")?.map((item: any) => {
-      const { width, height, top, left, type, sub_type, path, strokeWidth } = item;
+    const initItem = (item: any) => {
+      const { sub_type, path, strokeWidth } = item;
+      return Object.assign(
+        {},
+        item,
+        !sub_type ? {
+          type: path?.length > 3 ? 'pencil' : 'point',
+          path,
+          width: strokeWidth,
+          height: strokeWidth
+        } : {
+          type: sub_type
+        }
+      )
+    }
+    const result = (json.objects || [])?.map((item: any) => {
+      const { type } = item;
       return type === 'group' ? {
-        type, width, height, left, top, children: item.objects?.map((item: any) => {
-          const { width, height, top, left, sub_type, path, strokeWidth } = item;
-          return {
-            type: !!sub_type ? sub_type : path?.length > 2 ? 'pencil' : 'point',
-            width: !!sub_type ? width : strokeWidth,
-            height: !!sub_type ? height : strokeWidth,
-            top, left,
-            ...path?.length > 2 ? { path } : {}
-          }
+        ...item,
+        children: item.objects?.map((cItem: any) => {
+          return initItem(cItem)
         })
-      } : {
-        type: !!sub_type ? sub_type : path?.length > 2 ? 'pencil' : 'point',
-        width: !!sub_type ? width : strokeWidth,
-        height: !!sub_type ? height : strokeWidth,
-        top, left,
-        ...path?.length > 2 ? { path } : {}
-      }
-    })
-    console.log(result);
+      } : initItem(item)
+    })?.filter((i: any) => i.type !== 'image');
+    // console.log('result', JSON.stringify(result));
+    !!onLoadTypeChange && onLoadTypeChange({ type: 'mark', data: result });
+    message.success('保存画布成功');
+    localStorage.setItem('fabritor_web_json', JSON.stringify(json));
   };
 
   const enablePan = () => {
@@ -68,7 +75,7 @@ export default function Toolbar() {
     <CenterV
       className='fabritor-toolbar'
     >
-      <ToolbarItem
+      {/* <ToolbarItem
         disabled={!canUndo}
         title={"撤销"}
         onClick={() => { editor.fhistory.undo() }}
@@ -81,7 +88,33 @@ export default function Toolbar() {
         onClick={() => { editor.fhistory.redo() }}
       >
         <RedoOutlined style={{ fontSize: 20 }} />
-      </ToolbarItem>
+      </ToolbarItem> */}
+      {
+        !!onLoadTypeChange ?
+          <Fragment>
+            <SegmentSwitch
+              style={{ width: 180, height: 32, fontSize: 16, backgroundColor: 'transparent' }}
+              fontInBody={[
+                { value: false, label: '连续拉流', backgroundColor: 'rgba(24, 144, 255, 1)' },
+                { value: true, label: '单点拉流', backgroundColor: '#88db57' }
+              ]}
+              onChange={(e: any) => {
+                onLoadTypeChange({ type: 'pull', data: e })
+              }}
+            />
+            <ToolbarItem onClick={() => {
+              onLoadTypeChange({ type: 'registration' })
+            }} title={'配准'}>
+              配准
+            </ToolbarItem>
+            <ToolbarItem onClick={() => {
+              onLoadTypeChange({ type: 'measurementError' })
+            }} title={'测量误差'}>
+              测量误差
+            </ToolbarItem>
+          </Fragment>
+          : null
+      }
       <ToolbarDivider />
       <ToolbarItem
         onClick={enablePan}

@@ -70,7 +70,7 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
     initList();
     let ids: any = [];
     addContentList.forEach((i: any) => {
-      if (i.type === 'rangeDomain') {
+      if (i?.type === 'rangeDomain') {
         ids.push(i.id);
       }
     });
@@ -357,47 +357,47 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
                         ? formatJson(value)
                         : value
                       : formatJson([
-                          {
-                            x1_min: 1500,
-                            y1_min: 1,
-                            x1_max: 2500,
-                            y1_max: 999,
-                            x2_min: 6500,
-                            y2_min: 1,
-                            x2_max: 7500,
-                            y2_max: 999,
-                          },
-                          {
-                            x1_min: 1500,
-                            y1_min: 1,
-                            x1_max: 2500,
-                            y1_max: 999,
-                            x2_min: 6500,
-                            y2_min: 1,
-                            x2_max: 7500,
-                            y2_max: 999,
-                          },
-                          {
-                            x1_min: 6000,
-                            y1_min: 1,
-                            x1_max: 7000,
-                            y1_max: 999,
-                            x2_min: 300,
-                            y2_min: 1,
-                            x2_max: 1500,
-                            y2_max: 999,
-                          },
-                          {
-                            x1_min: 6000,
-                            y1_min: 1,
-                            x1_max: 7000,
-                            y1_max: 999,
-                            x2_min: 300,
-                            y2_min: 1,
-                            x2_max: 1500,
-                            y2_max: 999,
-                          },
-                        ]),
+                        {
+                          x1_min: 1500,
+                          y1_min: 1,
+                          x1_max: 2500,
+                          y1_max: 999,
+                          x2_min: 6500,
+                          y2_min: 1,
+                          x2_max: 7500,
+                          y2_max: 999,
+                        },
+                        {
+                          x1_min: 1500,
+                          y1_min: 1,
+                          x1_max: 2500,
+                          y1_max: 999,
+                          x2_min: 6500,
+                          y2_min: 1,
+                          x2_max: 7500,
+                          y2_max: 999,
+                        },
+                        {
+                          x1_min: 6000,
+                          y1_min: 1,
+                          x1_max: 7000,
+                          y1_max: 999,
+                          x2_min: 300,
+                          y2_min: 1,
+                          x2_max: 1500,
+                          y2_max: 999,
+                        },
+                        {
+                          x1_min: 6000,
+                          y1_min: 1,
+                          x1_max: 7000,
+                          y1_max: 999,
+                          x2_min: 300,
+                          y2_min: 1,
+                          x2_max: 1500,
+                          y2_max: 999,
+                        },
+                      ]),
                     language: 'json',
                   });
                   setEditorVisible(true);

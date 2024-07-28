@@ -498,19 +498,19 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             setSelectedBtn((prev: any) => prev.filter((i: any) => i !== 'bzBtn04'));
             toggleLabelOpacity(0);
           }
-        } else if (mesh.children.filter((i: any) => i.type === 'Points')[0]) {
+        } else if (mesh.children.filter((i: any) => i?.type === 'Points')[0]) {
           // 没有材质，点组成
-          const depth = mesh.children.filter((i: any) => i.type === 'Points')[0]?.material
+          const depth = mesh.children.filter((i: any) => i?.type === 'Points')[0]?.material
             ?.depthTest;
-          if (!!mesh.children.filter((i: any) => i.type === 'Points')[0]?.material) {
+          if (!!mesh.children.filter((i: any) => i?.type === 'Points')[0]?.material) {
             if (depth) {
               // 开启透视
-              mesh.children.filter((i: any) => i.type === 'Points')[0].material.depthTest = false;
+              mesh.children.filter((i: any) => i?.type === 'Points')[0].material.depthTest = false;
               setSelectedBtn((prev: any) => (prev || []).concat('bzBtn04'));
               toggleLabelOpacity(1);
             } else {
               // 关闭透视
-              mesh.children.filter((i: any) => i.type === 'Points')[0].material.depthTest = true;
+              mesh.children.filter((i: any) => i?.type === 'Points')[0].material.depthTest = true;
               setSelectedBtn((prev: any) => prev.filter((i: any) => i !== 'bzBtn04'));
               toggleLabelOpacity(0);
             }
@@ -1376,19 +1376,19 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   z: !(averageValue == 0 && maxValue == 0 && minValue == 0)
                     ? position[0].z
                     : count[1].length === 1
-                    ? 0
-                    : count[1].length === 2
-                    ? (width / 3) * (index === 0 ? -1 : 1)
-                    : index === 0 || index + 1 === count[1].length
-                    ? (width / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
-                    : index * 2 + 1 === count[1].length
-                    ? 0
-                    : (width / 2 / (Number(count[1].length / 2) + 1)) *
-                      (index + 1 > count[1].length / 2
-                        ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
-                          ? count[1].length / 2 - index - 1
-                          : (count[1].length / 2) * -1
-                        : count[1].length / 2 - index),
+                      ? 0
+                      : count[1].length === 2
+                        ? (width / 3) * (index === 0 ? -1 : 1)
+                        : index === 0 || index + 1 === count[1].length
+                          ? (width / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
+                          : index * 2 + 1 === count[1].length
+                            ? 0
+                            : (width / 2 / (Number(count[1].length / 2) + 1)) *
+                            (index + 1 > count[1].length / 2
+                              ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
+                                ? count[1].length / 2 - index - 1
+                                : (count[1].length / 2) * -1
+                              : count[1].length / 2 - index),
                 };
                 position = [point, point];
                 localPosition = [
@@ -1408,19 +1408,19 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   z: !(averageValue == 0 && maxValue == 0 && minValue == 0)
                     ? position[0].z
                     : count[1].length === 1
-                    ? 0
-                    : count[1].length === 2
-                    ? (width / 3) * (index === 0 ? -1 : 1)
-                    : index === 0 || index + 1 === count[1].length
-                    ? (width / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
-                    : index * 2 + 1 === count[1].length
-                    ? 0
-                    : (width / 2 / (Number(count[1].length / 2) + 1)) *
-                      (index + 1 > count[1].length / 2
-                        ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
-                          ? count[1].length / 2 - index - 1
-                          : (count[1].length / 2) * -1
-                        : count[1].length / 2 - index),
+                      ? 0
+                      : count[1].length === 2
+                        ? (width / 3) * (index === 0 ? -1 : 1)
+                        : index === 0 || index + 1 === count[1].length
+                          ? (width / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
+                          : index * 2 + 1 === count[1].length
+                            ? 0
+                            : (width / 2 / (Number(count[1].length / 2) + 1)) *
+                            (index + 1 > count[1].length / 2
+                              ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
+                                ? count[1].length / 2 - index - 1
+                                : (count[1].length / 2) * -1
+                              : count[1].length / 2 - index),
                 };
                 position = [point, point];
                 localPosition = [
@@ -1438,19 +1438,19 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   x: !(averageValue == 0 && maxValue == 0 && minValue == 0)
                     ? position[0].x
                     : count[1].length === 1
-                    ? 0
-                    : count[1].length === 2
-                    ? (length / 3) * (index === 0 ? -1 : 1)
-                    : index === 0 || index + 1 === count[1].length
-                    ? (length / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
-                    : index * 2 + 1 === count[1].length
-                    ? 0
-                    : (length / 2 / (Number(count[1].length / 2) + 1)) *
-                      (index + 1 > count[1].length / 2
-                        ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
-                          ? count[1].length / 2 - index - 1
-                          : (count[1].length / 2) * -1
-                        : count[1].length / 2 - index),
+                      ? 0
+                      : count[1].length === 2
+                        ? (length / 3) * (index === 0 ? -1 : 1)
+                        : index === 0 || index + 1 === count[1].length
+                          ? (length / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
+                          : index * 2 + 1 === count[1].length
+                            ? 0
+                            : (length / 2 / (Number(count[1].length / 2) + 1)) *
+                            (index + 1 > count[1].length / 2
+                              ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
+                                ? count[1].length / 2 - index - 1
+                                : (count[1].length / 2) * -1
+                              : count[1].length / 2 - index),
                   y: 0,
                   z: (width * 5) / 6,
                 };
@@ -1470,19 +1470,19 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   x: !(averageValue == 0 && maxValue == 0 && minValue == 0)
                     ? position[0].x
                     : count[1].length === 1
-                    ? 0
-                    : count[1].length === 2
-                    ? (length / 3) * (index === 0 ? -1 : 1)
-                    : index === 0 || index + 1 === count[1].length
-                    ? (length / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
-                    : index * 2 + 1 === count[1].length
-                    ? 0
-                    : (length / 2 / (Number(count[1].length / 2) + 1)) *
-                      (index + 1 > count[1].length / 2
-                        ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
-                          ? count[1].length / 2 - index - 1
-                          : (count[1].length / 2) * -1
-                        : count[1].length / 2 - index),
+                      ? 0
+                      : count[1].length === 2
+                        ? (length / 3) * (index === 0 ? -1 : 1)
+                        : index === 0 || index + 1 === count[1].length
+                          ? (length / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
+                          : index * 2 + 1 === count[1].length
+                            ? 0
+                            : (length / 2 / (Number(count[1].length / 2) + 1)) *
+                            (index + 1 > count[1].length / 2
+                              ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
+                                ? count[1].length / 2 - index - 1
+                                : (count[1].length / 2) * -1
+                              : count[1].length / 2 - index),
                   y: 0,
                   z: -1 * width,
                 };
@@ -1530,17 +1530,17 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     count[1].length === 1
                       ? position[0].z
                       : count[1].length === 2
-                      ? (width / 3) * (index === 0 ? -1 : 1)
-                      : index === 0 || index + 1 === count[1].length
-                      ? (width / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
-                      : index * 2 + 1 === count[1].length
-                      ? position[0].z
-                      : (width / 2 / (Number(count[1].length / 2) + 1)) *
-                        (index + 1 > count[1].length / 2
-                          ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
-                            ? count[1].length / 2 - index - 1
-                            : (count[1].length / 2) * -1
-                          : count[1].length / 2 - index),
+                        ? (width / 3) * (index === 0 ? -1 : 1)
+                        : index === 0 || index + 1 === count[1].length
+                          ? (width / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
+                          : index * 2 + 1 === count[1].length
+                            ? position[0].z
+                            : (width / 2 / (Number(count[1].length / 2) + 1)) *
+                            (index + 1 > count[1].length / 2
+                              ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
+                                ? count[1].length / 2 - index - 1
+                                : (count[1].length / 2) * -1
+                              : count[1].length / 2 - index),
                 };
                 position = [
                   { ...position[0], ...point },
@@ -1557,17 +1557,17 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     count[1].length === 1
                       ? position[0].z
                       : count[1].length === 2
-                      ? (width / 3) * (index === 0 ? -1 : 1)
-                      : index === 0 || index + 1 === count[1].length
-                      ? (width / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
-                      : index * 2 + 1 === count[1].length
-                      ? position[0].z
-                      : (width / 2 / (Number(count[1].length / 2) + 1)) *
-                        (index + 1 > count[1].length / 2
-                          ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
-                            ? count[1].length / 2 - index - 1
-                            : (count[1].length / 2) * -1
-                          : count[1].length / 2 - index),
+                        ? (width / 3) * (index === 0 ? -1 : 1)
+                        : index === 0 || index + 1 === count[1].length
+                          ? (width / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
+                          : index * 2 + 1 === count[1].length
+                            ? position[0].z
+                            : (width / 2 / (Number(count[1].length / 2) + 1)) *
+                            (index + 1 > count[1].length / 2
+                              ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
+                                ? count[1].length / 2 - index - 1
+                                : (count[1].length / 2) * -1
+                              : count[1].length / 2 - index),
                 };
                 position = [
                   { ...position[0], ...point },
@@ -1583,17 +1583,17 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     count[1].length === 1
                       ? position[0].x
                       : count[1].length === 2
-                      ? (length / 3) * (index === 0 ? -1 : 1)
-                      : index === 0 || index + 1 === count[1].length
-                      ? (length / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
-                      : index * 2 + 1 === count[1].length
-                      ? position[0].x
-                      : (length / 2 / (Number(count[1].length / 2) + 1)) *
-                        (index + 1 > count[1].length / 2
-                          ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
-                            ? count[1].length / 2 - index - 1
-                            : (count[1].length / 2) * -1
-                          : count[1].length / 2 - index),
+                        ? (length / 3) * (index === 0 ? -1 : 1)
+                        : index === 0 || index + 1 === count[1].length
+                          ? (length / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
+                          : index * 2 + 1 === count[1].length
+                            ? position[0].x
+                            : (length / 2 / (Number(count[1].length / 2) + 1)) *
+                            (index + 1 > count[1].length / 2
+                              ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
+                                ? count[1].length / 2 - index - 1
+                                : (count[1].length / 2) * -1
+                              : count[1].length / 2 - index),
                   z: (width * 5) / 6,
                 };
                 position = [
@@ -1610,17 +1610,17 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     count[1].length === 1
                       ? position[0].x
                       : count[1].length === 2
-                      ? (length / 3) * (index === 0 ? -1 : 1)
-                      : index === 0 || index + 1 === count[1].length
-                      ? (length / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
-                      : index * 2 + 1 === count[1].length
-                      ? position[0].x
-                      : (length / 2 / (Number(count[1].length / 2) + 1)) *
-                        (index + 1 > count[1].length / 2
-                          ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
-                            ? count[1].length / 2 - index - 1
-                            : (count[1].length / 2) * -1
-                          : count[1].length / 2 - index),
+                        ? (length / 3) * (index === 0 ? -1 : 1)
+                        : index === 0 || index + 1 === count[1].length
+                          ? (length / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
+                          : index * 2 + 1 === count[1].length
+                            ? position[0].x
+                            : (length / 2 / (Number(count[1].length / 2) + 1)) *
+                            (index + 1 > count[1].length / 2
+                              ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
+                                ? count[1].length / 2 - index - 1
+                                : (count[1].length / 2) * -1
+                              : count[1].length / 2 - index),
                   z: -1 * width,
                 };
                 position = [
@@ -1684,26 +1684,19 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             measurementDiv.innerHTML = `
                         <div>
                             <div class="item-title item">${name}</div>
-                            <div class="flex-box item" style="display:${
-                              _.isNumber(standardValue) ? '' : 'none'
-                            }"><div class="key">标准值</div><div class="value">${standardValue}</div></div>
-                            <div class="flex-box item" style="color: ${
-                              maxValue?.color || 'inherit'
-                            }"><div class="key">最大值</div><div class="value">${
-              !!maxValue?.value || maxValue?.value == 0 ? maxValue?.value : JSON.stringify(maxValue)
-            }</div></div>
-                            <div class="flex-box item" style="color: ${
-                              minValue?.color || 'inherit'
-                            }"><div class="key">最小值</div><div class="value">${
-              !!minValue?.value || minValue?.value == 0 ? minValue?.value : JSON.stringify(minValue)
-            }</div></div>
-                            <div class="flex-box item" style="display:none; color: ${
-                              averageValue?.color || 'inherit'
-                            }"><div class="key">平均值</div><div class="value">${
-              !!averageValue?.value || averageValue?.value == 0
+                            <div class="flex-box item" style="display:${_.isNumber(standardValue) ? '' : 'none'
+              }"><div class="key">标准值</div><div class="value">${standardValue}</div></div>
+                            <div class="flex-box item" style="color: ${maxValue?.color || 'inherit'
+              }"><div class="key">最大值</div><div class="value">${!!maxValue?.value || maxValue?.value == 0 ? maxValue?.value : JSON.stringify(maxValue)
+              }</div></div>
+                            <div class="flex-box item" style="color: ${minValue?.color || 'inherit'
+              }"><div class="key">最小值</div><div class="value">${!!minValue?.value || minValue?.value == 0 ? minValue?.value : JSON.stringify(minValue)
+              }</div></div>
+                            <div class="flex-box item" style="display:none; color: ${averageValue?.color || 'inherit'
+              }"><div class="key">平均值</div><div class="value">${!!averageValue?.value || averageValue?.value == 0
                 ? averageValue?.value
                 : JSON.stringify(averageValue)
-            }</div></div>
+              }</div></div>
                         </div>
                     `;
             const measurementLabel: any = new CSS2DObject(measurementDiv);
@@ -2241,68 +2234,68 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         <div className={`flex-box ${modelUpload ? 'camera-position' : ''}`}>
           {modelUpload
             ? [
-                { key: 'top1', label: '顶1' },
-                { key: 'top2', label: '顶2' },
-                { key: 'top3', label: '顶3' },
-                { key: 'top', label: '顶' },
-                { key: 'bottom', label: '底' },
-                { key: 'right', label: '右' },
-                { key: 'left', label: '左' },
-                { key: 'front', label: '前' },
-                { key: 'back', label: '后' },
-              ]?.map?.((item: any, index: number) => {
-                const { key, label } = item;
-                return (
-                  <Button
-                    key={`camera-position-item-${index}`}
-                    type={cameraDirection.includes(key) ? 'primary' : 'default'}
-                    onClick={() => {
-                      if (!cameraDirection.includes(key)) {
-                        var modelCenter = new THREE.Vector3();
-                        const mesh: any = scene?.current?.getObjectByName?.('tx-0');
-                        const box = new THREE.Box3().setFromObject(mesh);
-                        const meshCenter = box.getCenter(modelCenter);
-                        // 模型尺寸
-                        const {
-                          length: xLength,
-                          height: yLength,
-                          width: zLength,
-                          max,
-                          cameraScale,
-                        } = getSize();
-                        var targetPos = ['top', 'top1', 'top2', 'top3'].includes(key)
-                          ? new THREE.Vector3(0, max * cameraScale, 0)
-                          : key === 'bottom'
+              { key: 'top1', label: '顶1' },
+              { key: 'top2', label: '顶2' },
+              { key: 'top3', label: '顶3' },
+              { key: 'top', label: '顶' },
+              { key: 'bottom', label: '底' },
+              { key: 'right', label: '右' },
+              { key: 'left', label: '左' },
+              { key: 'front', label: '前' },
+              { key: 'back', label: '后' },
+            ]?.map?.((item: any, index: number) => {
+              const { key, label } = item;
+              return (
+                <Button
+                  key={`camera-position-item-${index}`}
+                  type={cameraDirection.includes(key) ? 'primary' : 'default'}
+                  onClick={() => {
+                    if (!cameraDirection.includes(key)) {
+                      var modelCenter = new THREE.Vector3();
+                      const mesh: any = scene?.current?.getObjectByName?.('tx-0');
+                      const box = new THREE.Box3().setFromObject(mesh);
+                      const meshCenter = box.getCenter(modelCenter);
+                      // 模型尺寸
+                      const {
+                        length: xLength,
+                        height: yLength,
+                        width: zLength,
+                        max,
+                        cameraScale,
+                      } = getSize();
+                      var targetPos = ['top', 'top1', 'top2', 'top3'].includes(key)
+                        ? new THREE.Vector3(0, max * cameraScale, 0)
+                        : key === 'bottom'
                           ? new THREE.Vector3(0, max * -cameraScale, 0)
                           : key === 'left'
-                          ? new THREE.Vector3(-1 * max * cameraScale, 0, 0)
-                          : key === 'right'
-                          ? new THREE.Vector3(max * cameraScale, 0, 0)
-                          : key === 'front'
-                          ? new THREE.Vector3(0, 0, max * cameraScale)
-                          : new THREE.Vector3(0, 0, -1 * max * cameraScale);
-                        animationClick(targetPos).then((res) => {
-                          const positions: any =
-                            key === 'top1'
+                            ? new THREE.Vector3(-1 * max * cameraScale, 0, 0)
+                            : key === 'right'
+                              ? new THREE.Vector3(max * cameraScale, 0, 0)
+                              : key === 'front'
+                                ? new THREE.Vector3(0, 0, max * cameraScale)
+                                : new THREE.Vector3(0, 0, -1 * max * cameraScale);
+                      animationClick(targetPos).then((res) => {
+                        const positions: any =
+                          key === 'top1'
+                            ? [
+                              meshCenter?.x - xLength / 2 - xLength / 20,
+                              yLength / 2 + 100,
+                              meshCenter?.z - zLength / 2 - zLength / 10,
+                              meshCenter?.x - xLength / 2 + xLength / 10,
+                              (yLength / 6) * -1,
+                              meshCenter?.z + zLength / 2 + zLength / 10,
+                            ]
+                            : key === 'top2'
                               ? [
-                                  meshCenter?.x - xLength / 2 - xLength / 20,
-                                  yLength / 2 + 100,
-                                  meshCenter?.z - zLength / 2 - zLength / 10,
-                                  meshCenter?.x - xLength / 2 + xLength / 10,
-                                  (yLength / 6) * -1,
-                                  meshCenter?.z + zLength / 2 + zLength / 10,
-                                ]
-                              : key === 'top2'
-                              ? [
-                                  meshCenter?.x - xLength / 2 + xLength / 9,
-                                  yLength / 2 + 100,
-                                  meshCenter?.z - zLength / 2 - zLength / 10,
-                                  meshCenter?.x - xLength / 90,
-                                  (yLength / 6) * -1,
-                                  meshCenter?.z + zLength / 2 + zLength / 10,
-                                ]
+                                meshCenter?.x - xLength / 2 + xLength / 9,
+                                yLength / 2 + 100,
+                                meshCenter?.z - zLength / 2 - zLength / 10,
+                                meshCenter?.x - xLength / 90,
+                                (yLength / 6) * -1,
+                                meshCenter?.z + zLength / 2 + zLength / 10,
+                              ]
                               : key === 'top3'
-                              ? [
+                                ? [
                                   meshCenter?.x,
                                   yLength / 2 + 100,
                                   meshCenter?.z - zLength / 2 - zLength / 10,
@@ -2310,73 +2303,73 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                                   (yLength / 6) * -1,
                                   meshCenter?.z + zLength / 2 + zLength / 10,
                                 ]
-                              : key === 'top'
-                              ? [
-                                  meshCenter?.x - xLength / 2 - xLength / 10,
-                                  yLength / 2 + 100,
-                                  meshCenter?.z - zLength / 2 - zLength / 10,
-                                  meshCenter?.x + xLength / 2 + xLength / 10,
-                                  (yLength / 6) * -1,
-                                  meshCenter?.z + zLength / 2 + zLength / 10,
-                                ]
-                              : key === 'bottom'
-                              ? [
-                                  meshCenter?.x - xLength / 2 - xLength / 10,
-                                  (yLength / 2) * -1 - 100,
-                                  meshCenter?.z - zLength / 2 - zLength / 10,
-                                  meshCenter?.x + xLength / 2 + xLength / 10,
-                                  (yLength / 4) * -1,
-                                  meshCenter?.z + zLength / 2 + zLength / 10,
-                                ]
-                              : key === 'left'
-                              ? [
-                                  meshCenter?.x - xLength / 2 - xLength / 10,
-                                  meshCenter?.y - yLength / 2 - yLength / 10,
-                                  meshCenter?.z - zLength / 2 - zLength / 10,
-                                  meshCenter?.x - xLength / 2 + xLength / 10,
-                                  meshCenter?.y + yLength / 2 + yLength / 10,
-                                  meshCenter?.z + zLength / 2 + zLength / 10,
-                                ]
-                              : key === 'right'
-                              ? [
-                                  meshCenter?.x + xLength / 2 - xLength / 10,
-                                  meshCenter?.y - yLength / 2 - yLength / 10,
-                                  meshCenter?.z - zLength / 2 - zLength / 10,
-                                  meshCenter?.x + xLength / 2 + xLength / 10,
-                                  meshCenter?.y + yLength / 2 + yLength / 10,
-                                  meshCenter?.z + zLength / 2 + zLength / 10,
-                                ]
-                              : key === 'front'
-                              ? [
-                                  meshCenter?.x - xLength / 2 - xLength / 10,
-                                  meshCenter?.y - yLength / 2 - yLength / 10,
-                                  meshCenter?.z - zLength / 2 - zLength / 10,
-                                  meshCenter?.x + xLength / 2 + xLength / 10,
-                                  meshCenter?.y + yLength / 2 + yLength / 10,
-                                  meshCenter?.z - zLength / 2 + zLength / 10,
-                                ]
-                              : [
-                                  meshCenter?.x - xLength / 2 - xLength / 10,
-                                  meshCenter?.y - yLength / 2 - yLength / 10,
-                                  meshCenter?.z + zLength / 2 - zLength / 10,
-                                  meshCenter?.x + xLength / 2 + xLength / 10,
-                                  meshCenter?.y + yLength / 2 + yLength / 10,
-                                  meshCenter?.z + zLength / 2 + zLength / 10,
-                                ];
-                          addRectArea({ positions, addType: 'form', cameraDirection: key }).then(
-                            (cube) => {
-                              editableObjects.current?.push?.(cube);
-                            },
-                          );
-                        });
-                        setCameraDirection((prev: any) => prev.concat(key));
-                      }
-                    }}
-                  >
-                    {label}
-                  </Button>
-                );
-              })
+                                : key === 'top'
+                                  ? [
+                                    meshCenter?.x - xLength / 2 - xLength / 10,
+                                    yLength / 2 + 100,
+                                    meshCenter?.z - zLength / 2 - zLength / 10,
+                                    meshCenter?.x + xLength / 2 + xLength / 10,
+                                    (yLength / 6) * -1,
+                                    meshCenter?.z + zLength / 2 + zLength / 10,
+                                  ]
+                                  : key === 'bottom'
+                                    ? [
+                                      meshCenter?.x - xLength / 2 - xLength / 10,
+                                      (yLength / 2) * -1 - 100,
+                                      meshCenter?.z - zLength / 2 - zLength / 10,
+                                      meshCenter?.x + xLength / 2 + xLength / 10,
+                                      (yLength / 4) * -1,
+                                      meshCenter?.z + zLength / 2 + zLength / 10,
+                                    ]
+                                    : key === 'left'
+                                      ? [
+                                        meshCenter?.x - xLength / 2 - xLength / 10,
+                                        meshCenter?.y - yLength / 2 - yLength / 10,
+                                        meshCenter?.z - zLength / 2 - zLength / 10,
+                                        meshCenter?.x - xLength / 2 + xLength / 10,
+                                        meshCenter?.y + yLength / 2 + yLength / 10,
+                                        meshCenter?.z + zLength / 2 + zLength / 10,
+                                      ]
+                                      : key === 'right'
+                                        ? [
+                                          meshCenter?.x + xLength / 2 - xLength / 10,
+                                          meshCenter?.y - yLength / 2 - yLength / 10,
+                                          meshCenter?.z - zLength / 2 - zLength / 10,
+                                          meshCenter?.x + xLength / 2 + xLength / 10,
+                                          meshCenter?.y + yLength / 2 + yLength / 10,
+                                          meshCenter?.z + zLength / 2 + zLength / 10,
+                                        ]
+                                        : key === 'front'
+                                          ? [
+                                            meshCenter?.x - xLength / 2 - xLength / 10,
+                                            meshCenter?.y - yLength / 2 - yLength / 10,
+                                            meshCenter?.z - zLength / 2 - zLength / 10,
+                                            meshCenter?.x + xLength / 2 + xLength / 10,
+                                            meshCenter?.y + yLength / 2 + yLength / 10,
+                                            meshCenter?.z - zLength / 2 + zLength / 10,
+                                          ]
+                                          : [
+                                            meshCenter?.x - xLength / 2 - xLength / 10,
+                                            meshCenter?.y - yLength / 2 - yLength / 10,
+                                            meshCenter?.z + zLength / 2 - zLength / 10,
+                                            meshCenter?.x + xLength / 2 + xLength / 10,
+                                            meshCenter?.y + yLength / 2 + yLength / 10,
+                                            meshCenter?.z + zLength / 2 + zLength / 10,
+                                          ];
+                        addRectArea({ positions, addType: 'form', cameraDirection: key }).then(
+                          (cube) => {
+                            editableObjects.current?.push?.(cube);
+                          },
+                        );
+                      });
+                      setCameraDirection((prev: any) => prev.concat(key));
+                    }
+                  }}
+                >
+                  {label}
+                </Button>
+              );
+            })
             : null}
           <Button
             onClick={() => {
@@ -2895,9 +2888,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   }
                 }}
                 onOk={(value: any) => {
-                  const path = `http://localhost:5001/files${
-                    value?.indexOf('/') === 0 ? '' : '/'
-                  }${value}`;
+                  const path = `http://localhost:5001/files${value?.indexOf('/') === 0 ? '' : '/'
+                    }${value}`;
                   if (modelUploadVisible) {
                     form2.setFieldsValue({ modelfilename: value });
                   }
@@ -3162,7 +3154,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             </div>
           }
           destroyOnClose
-          // maskClosable={false}
+        // maskClosable={false}
         >
           <Form form={form1} scrollToFirstError>
             <Form.Item name="position" label="坐标" rules={[{ required: true, message: '坐标' }]}>

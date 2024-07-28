@@ -117,12 +117,12 @@ const BarCharts: React.FC<Props> = (props: any) => {
         { top: '30px' },
         align === 'right'
           ? {
-              left: `${xName?.length * (xName?.length < 4 ? 24 : 16)}px`,
-              right: '3%',
-            }
+            left: `${xName?.length * (xName?.length < 4 ? 24 : 16)}px`,
+            right: '3%',
+          }
           : {
-              right: `${xName?.length * (xName?.length < 4 ? 24 : 16)}px`,
-            },
+            right: `${xName?.length * (xName?.length < 4 ? 24 : 16)}px`,
+          },
       ),
       yAxis: Object.assign(
         {},
@@ -153,11 +153,11 @@ const BarCharts: React.FC<Props> = (props: any) => {
       ),
       xAxis: Object.assign(
         {},
-        options.xAxis,
+        options?.xAxis,
         {
           axisLabel: Object.assign(
             {},
-            options.xAxis?.axisLabel,
+            options?.xAxis?.axisLabel,
             {
               formatter: function (val: any) {
                 return val;
@@ -191,13 +191,13 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 ? labelDirection === 'top'
                   ? 'insideRight'
                   : labelDirection === 'bottom'
-                  ? 'insideLeft'
-                  : 'inside'
+                    ? 'insideLeft'
+                    : 'inside'
                 : labelDirection === 'top'
-                ? 'top'
-                : labelDirection === 'bottom'
-                ? 'insideBottom'
-                : 'inside',
+                  ? 'top'
+                  : labelDirection === 'bottom'
+                    ? 'insideBottom'
+                    : 'inside',
             formatter: (params: any) => params?.value?.toFixed?.(0) || params?.value,
             fontSize,
           },
@@ -216,7 +216,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 barColor.includes('default')
                   ? { color: color }
                   : barColor.includes('line1')
-                  ? {
+                    ? {
                       color: new echarts.graphic.LinearGradient(
                         direction === 'rows' ? 1 : 0,
                         direction === 'rows' ? 0 : 1,
@@ -234,26 +234,26 @@ const BarCharts: React.FC<Props> = (props: any) => {
                         ],
                       ),
                     }
-                  : barColor.includes('line2')
-                  ? {
-                      color: new echarts.graphic.LinearGradient(
-                        direction === 'rows' ? 1 : 0,
-                        direction === 'rows' ? 0 : 1,
-                        0,
-                        0,
-                        [
-                          {
-                            offset: 0,
-                            color: colorList2[0],
-                          },
-                          {
-                            offset: 1,
-                            color: colorList2[1],
-                          },
-                        ],
-                      ),
-                    }
-                  : { color: barColor[index % barColor?.length] },
+                    : barColor.includes('line2')
+                      ? {
+                        color: new echarts.graphic.LinearGradient(
+                          direction === 'rows' ? 1 : 0,
+                          direction === 'rows' ? 0 : 1,
+                          0,
+                          0,
+                          [
+                            {
+                              offset: 0,
+                              color: colorList2[0],
+                            },
+                            {
+                              offset: 1,
+                              color: colorList2[1],
+                            },
+                          ],
+                        ),
+                      }
+                      : { color: barColor[index % barColor?.length] },
                 barRadius ? { borderRadius: [100, 100, 0, 0] } : {},
               ),
             };
@@ -288,78 +288,78 @@ const BarCharts: React.FC<Props> = (props: any) => {
         },
         !barRadius && !!showBackground
           ? {
-              type: 'bar',
-              show: true,
-              itemStyle: {
-                normal: {
-                  label: {
-                    show: labelDirection !== 'none',
-                    position: direction === 'rows' ? 'insideRight' : 'insideTop',
-                    formatter: '{b}',
-                    padding: [0, 12, 0, 0],
-                    fontSize: 14,
-                  },
-                  color: 'rgba(180, 180, 180, 0.2)',
+            type: 'bar',
+            show: true,
+            itemStyle: {
+              normal: {
+                label: {
+                  show: labelDirection !== 'none',
+                  position: direction === 'rows' ? 'insideRight' : 'insideTop',
+                  formatter: '{b}',
+                  padding: [0, 12, 0, 0],
+                  fontSize: 14,
                 },
+                color: 'rgba(180, 180, 180, 0.2)',
               },
-              tooltip: { show: false },
-              stack: 'total',
-              data: seriesData?.map?.(() => max),
-            }
+            },
+            tooltip: { show: false },
+            stack: 'total',
+            data: seriesData?.map?.(() => max),
+          }
           : null,
         showWithLine
           ? {
-              name: 'name',
-              type: 'line',
-              tooltip: {
-                show: false,
-              },
-              lineStyle: {
-                ...(barColor.includes('line1')
+            name: 'name',
+            type: 'line',
+            tooltip: {
+              show: false,
+            },
+            lineStyle: {
+              ...(barColor.includes('line1')
+                ? {
+                  color: new echarts.graphic.LinearGradient(
+                    direction === 'rows' ? 1 : 0,
+                    direction === 'rows' ? 0 : 1,
+                    0,
+                    0,
+                    [
+                      {
+                        offset: 0,
+                        color: colorList[0],
+                      },
+                      {
+                        offset: 1,
+                        color: colorList[1],
+                      },
+                    ],
+                  ),
+                }
+                : barColor.includes('line2')
                   ? {
-                      color: new echarts.graphic.LinearGradient(
-                        direction === 'rows' ? 1 : 0,
-                        direction === 'rows' ? 0 : 1,
-                        0,
-                        0,
-                        [
-                          {
-                            offset: 0,
-                            color: colorList[0],
-                          },
-                          {
-                            offset: 1,
-                            color: colorList[1],
-                          },
-                        ],
-                      ),
-                    }
-                  : barColor.includes('line2')
-                  ? {
-                      color: new echarts.graphic.LinearGradient(
-                        direction === 'rows' ? 1 : 0,
-                        direction === 'rows' ? 0 : 1,
-                        0,
-                        0,
-                        [
-                          {
-                            offset: 0,
-                            color: colorList2[0],
-                          },
-                          {
-                            offset: 1,
-                            color: colorList2[1],
-                          },
-                        ],
-                      ),
-                    }
+                    color: new echarts.graphic.LinearGradient(
+                      direction === 'rows' ? 1 : 0,
+                      direction === 'rows' ? 0 : 1,
+                      0,
+                      0,
+                      [
+                        {
+                          offset: 0,
+                          color: colorList2[0],
+                        },
+                        {
+                          offset: 1,
+                          color: colorList2[1],
+                        },
+                      ],
+                    ),
+                  }
                   : {}),
-              },
-              data: seriesData?.map?.((item: any, index: number) => {
-                const { value } = item;
-                return value;
-              }),
-            }
+            },
+            data: seriesData?.map?.((item: any, index: number) => {
+              const { value } = item;
+              return value;
+            }),
+          }
           : null,
       ].filter(Boolean),
     });

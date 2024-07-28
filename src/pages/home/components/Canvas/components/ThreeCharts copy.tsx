@@ -503,12 +503,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       setSelectedBtn((prev: any) => {
         if ((prev || []).includes('bzBtn02')) {
           models.forEach((mesh: any) => {
-            (mesh.children || []).filter((i: any) => i.type === 'BoxHelper')[0].visible = false;
+            (mesh.children || []).filter((i: any) => i?.type === 'BoxHelper')[0].visible = false;
           });
           return prev.filter((i: any) => i !== 'bzBtn02');
         } else {
           models.forEach((mesh: any) => {
-            (mesh.children || []).filter((i: any) => i.type === 'BoxHelper')[0].visible = true;
+            (mesh.children || []).filter((i: any) => i?.type === 'BoxHelper')[0].visible = true;
           });
           return (prev || []).concat('bzBtn02');
         }
@@ -561,19 +561,19 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             setSelectedBtn((prev: any) => prev.filter((i: any) => i !== 'bzBtn04'));
             toggleLabelOpacity(0);
           }
-        } else if (mesh.children.filter((i: any) => i.type === 'Points')[0]) {
+        } else if (mesh.children.filter((i: any) => i?.type === 'Points')[0]) {
           // 没有材质，点组成
-          const depth = mesh.children.filter((i: any) => i.type === 'Points')[0]?.material
+          const depth = mesh.children.filter((i: any) => i?.type === 'Points')[0]?.material
             ?.depthTest;
-          if (!!mesh.children.filter((i: any) => i.type === 'Points')[0]?.material) {
+          if (!!mesh.children.filter((i: any) => i?.type === 'Points')[0]?.material) {
             if (depth) {
               // 开启透视
-              mesh.children.filter((i: any) => i.type === 'Points')[0].material.depthTest = false;
+              mesh.children.filter((i: any) => i?.type === 'Points')[0].material.depthTest = false;
               setSelectedBtn((prev: any) => (prev || []).concat('bzBtn04'));
               toggleLabelOpacity(1);
             } else {
               // 关闭透视
-              mesh.children.filter((i: any) => i.type === 'Points')[0].material.depthTest = true;
+              mesh.children.filter((i: any) => i?.type === 'Points')[0].material.depthTest = true;
               setSelectedBtn((prev: any) => prev.filter((i: any) => i !== 'bzBtn04'));
               toggleLabelOpacity(0);
             }
@@ -727,7 +727,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         const axis: any = scene?.current?.getObjectByName?.('axis');
         models.forEach((mesh: any) => {
           (mesh.children || [])
-            .filter((i: any) => i.type === 'BoxHelper')
+            .filter((i: any) => i?.type === 'BoxHelper')
             .forEach((child: any) => {
               child.visible = true;
             });
@@ -785,7 +785,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
           // 隐藏边框
           models.forEach((mesh: any) => {
             const item = (mesh.children || []).filter(
-              (i: any) => i.name !== 'measureBoxHelper' && i.type === 'BoxHelper',
+              (i: any) => i.name !== 'measureBoxHelper' && i?.type === 'BoxHelper',
             );
             if (item?.[0]) {
               item[0].visible = false;
@@ -1058,8 +1058,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   index === 0 || index + 1 === count[1].length
                     ? (width / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
                     : index * 2 + 1 === count[1].length
-                    ? 0
-                    : (width / 2 / (parseFloat(count[1].length / 2) + 1)) *
+                      ? 0
+                      : (width / 2 / (parseFloat(count[1].length / 2) + 1)) *
                       (index + 1 > count[1].length / 2
                         ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
                           ? count[1].length / 2 - index - 1
@@ -1086,8 +1086,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   index === 0 || index + 1 === count[1].length
                     ? (width / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
                     : index * 2 + 1 === count[1].length
-                    ? 0
-                    : (width / 2 / (parseFloat(count[1].length / 2) + 1)) *
+                      ? 0
+                      : (width / 2 / (parseFloat(count[1].length / 2) + 1)) *
                       (index + 1 > count[1].length / 2
                         ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
                           ? count[1].length / 2 - index - 1
@@ -1112,8 +1112,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   index === 0 || index + 1 === count[1].length
                     ? (length / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
                     : index * 2 + 1 === count[1].length
-                    ? 0
-                    : (length / 2 / (parseFloat(count[1].length / 2) + 1)) *
+                      ? 0
+                      : (length / 2 / (parseFloat(count[1].length / 2) + 1)) *
                       (index + 1 > count[1].length / 2
                         ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
                           ? count[1].length / 2 - index - 1
@@ -1140,8 +1140,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   index === 0 || index + 1 === count[1].length
                     ? (length / 2) * (index + 1 > count[1].length / 2 ? -1 : 1)
                     : index * 2 + 1 === count[1].length
-                    ? 0
-                    : (length / 2 / (parseFloat(count[1].length / 2) + 1)) *
+                      ? 0
+                      : (length / 2 / (parseFloat(count[1].length / 2) + 1)) *
                       (index + 1 > count[1].length / 2
                         ? Math.abs(count[1].length / 2 - index - 1) < count[1].length / 2
                           ? count[1].length / 2 - index - 1

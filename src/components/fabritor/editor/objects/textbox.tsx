@@ -59,6 +59,9 @@ export const createTextbox = async (options: any) => {
   const textBox = new fabric.FText(text || '添加文本框', {
     ...TEXTBOX_DEFAULT_CONFIG,
     ...rest,
+    backgroundColor: 'rgba(144,144,144,1)',
+    lineHeight: 1.1,
+    fontSize: 24,
     fontFamily,
     pathAlign: 'center',
     id: uuid(),

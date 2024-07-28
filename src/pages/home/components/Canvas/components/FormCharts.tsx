@@ -24,7 +24,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
     dataValue = [],
     titleFontSize = 24,
     fontSize = 20,
-    timeSelectDefault,
+    timeSelectDefault = [],
     yName,
     xName,
     fetchType,
@@ -266,8 +266,8 @@ const FormCharts: React.FC<Props> = (props: any) => {
                   { type },
                   ['MultiSelect', 'Select'].includes(type)
                     ? {
-                        options: selectOptions?.[name]?.options || [],
-                      }
+                      options: selectOptions?.[name]?.options || [],
+                    }
                     : {},
                 ),
               };
@@ -355,8 +355,8 @@ const FormCharts: React.FC<Props> = (props: any) => {
                         { type },
                         ['MultiSelect', 'Select'].includes(type)
                           ? {
-                              options: selectOptions?.[name]?.options || [],
-                            }
+                            options: selectOptions?.[name]?.options || [],
+                          }
                           : {},
                       ),
                     };
@@ -415,8 +415,8 @@ const FormCharts: React.FC<Props> = (props: any) => {
                       { type },
                       ['MultiSelect', 'Select'].includes(type)
                         ? {
-                            options: selectOptions?.[name]?.options || [],
-                          }
+                          options: selectOptions?.[name]?.options || [],
+                        }
                         : {},
                     ),
                   };

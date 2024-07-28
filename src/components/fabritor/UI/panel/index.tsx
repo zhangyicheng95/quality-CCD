@@ -48,11 +48,11 @@ const OBJECT_TYPES = [
     value: 'paint',
     icon: <BulbOutlined style={iconStyle} />
   },
-  {
-    label: '应用',
-    value: 'app',
-    icon: <AppstoreOutlined style={iconStyle} />
-  }
+  // {
+  //   label: '应用',
+  //   value: 'app',
+  //   icon: <AppstoreOutlined style={iconStyle} />
+  // }
 ];
 
 export default function Panel() {

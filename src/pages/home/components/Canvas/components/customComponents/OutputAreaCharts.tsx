@@ -5,6 +5,7 @@ import { message, Tooltip } from 'antd';
 import { btnFetch } from '@/services/api';
 import CustomWindowBody from '@/components/CustomWindowBody';
 import { ClearOutlined } from '@ant-design/icons';
+import TooltipDiv from '@/components/TooltipDiv';
 
 interface Props {
   data: any;
@@ -31,7 +32,7 @@ const OutputAreaCharts: React.FC<Props> = (props: any) => {
   let { dataValue, titleFontSize = 24, fontSize = 24, fetchType, xName } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = {
-      '1': { name: ['崩边'], isReady: true, value: 88, status: 'INFO' },
+      '1': { name: '崩边崩边崩边崩边崩边崩边崩边崩边', isReady: true, value: 88, status: 'INFO' },
       '2': { name: ['缺角', '隐裂', '缺角2', '隐裂2'], isReady: true, value: 88, status: 'ERROR' },
       '3': { name: ['崩边3'], isReady: true, value: 88, status: 'WARNNING' },
       '4': { name: ['崩边4'], isReady: true, value: 88, status: 'INFO' },
@@ -124,6 +125,7 @@ export default OutputAreaCharts;
 function ItemBox(props: any) {
   const { id, item = {}, fontSize = 20, onClear } = props;
   const { isReady, name, value, status } = item;
+
   return (
     <div
       className="output-area-item"
@@ -138,15 +140,18 @@ function ItemBox(props: any) {
         <div className="output-area-item-top-left">{id}#</div>
         <div
           className={`flex-box-justify-end output-area-item-top-right`}
-          style={{ fontSize: Math.max(fontSize - 8, 14) }}
+          style={{
+            fontSize: Math.max(fontSize - 8, 14),
+            width: `calc(100% - ${((id + '').length + 1) * fontSize + 8}px)`
+          }}
         >
           {id === 19 ? (
             <span className="ant-tag ant-tag-blue">直流</span>
           ) : id === 20 ? (
             <span className="ant-tag ant-tag-cyan">剔除</span>
           ) : _.isArray(name) ? (
-            <Tooltip
-              title={name?.slice(0, 2)?.map((itemName: string, indexName: number) => {
+            <TooltipDiv
+              title={name?.map((itemName: string, indexName: number) => {
                 return (
                   <span key={indexName} className={`ant-tag ant-tag-${colorList[indexName]}`}>
                     {itemName}
@@ -156,10 +161,20 @@ function ItemBox(props: any) {
             >
               <div className="flex-box-justify-end" style={{ gap: 4 }}>
                 {name?.slice(0, 2)?.map((itemName: string, indexName: number) => {
-                  return <div key={indexName}>{itemName}</div>;
+                  return <div key={indexName}>{itemName.slice(0, 3)}</div>;
                 })}
               </div>
-            </Tooltip>
+            </TooltipDiv>
+          ) : _.isString(name) ? (
+            <TooltipDiv
+              title={<span className={`ant-tag ant-tag-${colorList[0]}`}>
+                {name}
+              </span>}
+            >
+              <div className="flex-box-justify-end" style={{ gap: 4 }}>
+                <div>{name.slice(0, 3)}</div>
+              </div>
+            </TooltipDiv>
           ) : null}
         </div>
       </div>

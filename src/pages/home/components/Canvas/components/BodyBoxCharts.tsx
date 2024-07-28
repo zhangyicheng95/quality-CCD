@@ -113,7 +113,7 @@ const BodyBoxCharts: React.FC<Props> = (props: any) => {
     });
     let ids: any = [];
     addContentList.forEach((i: any) => {
-      if (i.type === 'rangeDomain') {
+      if (i?.type === 'rangeDomain') {
         ids.push(i.id);
       }
     });
@@ -182,8 +182,8 @@ const BodyBoxCharts: React.FC<Props> = (props: any) => {
                             label.indexOf('实时') > -1
                               ? icon1
                               : label.indexOf('缺陷') > -1
-                              ? icon2
-                              : icon3
+                                ? icon2
+                                : icon3
                           }
                           alt=""
                         />
@@ -196,8 +196,8 @@ const BodyBoxCharts: React.FC<Props> = (props: any) => {
                     _.lowerCase(value) === 'start'
                       ? started
                       : ['stop', 'end', 'restart'].includes(value)
-                      ? !started
-                      : false
+                        ? !started
+                        : false
                   }
                   loading={['start', 'stop', 'end', 'restart'].includes(value) ? loading : false}
                   hover={!['start', 'stop', 'end', 'restart'].includes(value)}

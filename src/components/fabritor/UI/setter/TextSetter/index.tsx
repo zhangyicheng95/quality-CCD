@@ -58,6 +58,11 @@ export default function TextSetter() {
     }
     object.set({ fill });
   }
+  const handleBackground = (_fill: string) => {
+    object.set({
+      backgroundColor: _fill,
+    });
+  }
 
   const handleValuesChange = async (values: any) => {
     const keys = Object.keys(values);
@@ -74,6 +79,10 @@ export default function TextSetter() {
         }
       } else if (key === 'fill') {
         handleFill(values[key]);
+      } else if (key === 'backgroundColor') {
+        if (values[key]?.color) {
+          handleBackground(values[key]?.color);
+        };
       } else {
         const selectedText = object.getSelectedText();
         if (selectedText && key === 'fill') {
@@ -97,6 +106,7 @@ export default function TextSetter() {
       // fontFamily: object.fontFamily,
       fontSize: object.fontSize,
       fill: transformFill2Colors(object.fill),
+      backgroundColor: transformFill2Colors(object.backgroundColor),
       textAlign: object.textAlign,
       lineHeight: object.lineHeight,
       charSpacing: object.charSpacing,
@@ -135,6 +145,12 @@ export default function TextSetter() {
           label={'颜色'}
         >
           <ColorSetter type="fontColor" defaultColor="#000000" />
+        </FormItem>
+        <FormItem
+          name="backgroundColor"
+          label={'背景色'}
+        >
+          <ColorSetter defaultColor="ddd" />
         </FormItem>
         <FormItem
           name="textAlign"

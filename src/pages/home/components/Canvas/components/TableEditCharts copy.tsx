@@ -48,28 +48,28 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
         index < 2
           ? { fixed: 'left' }
           : {
-              render: (text: any, record: any) => {
-                if (_.isString(text) || _.isUndefined(text)) {
-                  return text;
-                }
-                const { __type, __name } = record;
-                return (
-                  <Form.Item
-                    name={`${__name}$@$${item}`}
-                    style={{ margin: 0 }}
-                    {...(__type === 'bool' || __type === 'range'
-                      ? { valuePropName: 'checked', initialValue: false }
-                      : { initialValue: 0 })}
-                  >
-                    {__type === 'bool' || __type === 'range' ? (
-                      <Switch />
-                    ) : (
-                      <InputNumber defaultValue={0} precision={2} min={0} />
-                    )}
-                  </Form.Item>
-                );
-              },
+            render: (text: any, record: any) => {
+              if (_.isString(text) || _.isUndefined(text)) {
+                return text;
+              }
+              const { __type, __name } = record;
+              return (
+                <Form.Item
+                  name={`${__name}$@$${item}`}
+                  style={{ margin: 0 }}
+                  {...(__type === 'bool' || __type === 'range'
+                    ? { valuePropName: 'checked', initialValue: false }
+                    : { initialValue: 0 })}
+                >
+                  {__type === 'bool' || __type === 'range' ? (
+                    <Switch />
+                  ) : (
+                    <InputNumber defaultValue={0} precision={2} min={0} />
+                  )}
+                </Form.Item>
+              );
             },
+          },
       );
     });
   }, [xColumns]);
@@ -140,7 +140,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
           const { title, config } = cen;
           const obj = (config || [])?.reduce?.((p: any, c: any) => {
             let obj1 = {};
-            if (c.type === 'range') {
+            if (c?.type === 'range') {
               obj1 = {
                 [`${c.description}:ON/OFF$@$${title}`]: c.field_val,
                 [`${c.description}:MIN$@$${title}`]: c.min,
@@ -169,7 +169,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
     }
   }, [xColumns, yColumns]);
   const onUploadExcel = {
-    accept: '.xlsx,.csv',
+    accept: '?.xlsx,.csv',
     showUploadList: false,
     multiple: false,
     beforeUpload(file: any) {
@@ -267,14 +267,14 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
           ...item,
           ...(result[0]?.xName?.indexOf('MATCH') < 0
             ? {
-                type: 'range',
-                min: result.filter((i: any) => i.type === 'min')?.[0]?.value,
-                max: result.filter((i: any) => i.type === 'max')?.[0]?.value,
-              }
+              type: 'range',
+              min: result.filter((i: any) => i?.type === 'min')?.[0]?.value,
+              max: result.filter((i: any) => i?.type === 'max')?.[0]?.value,
+            }
             : {
-                type: 'bool',
-                child_value: result[0]?.value,
-              }),
+              type: 'bool',
+              child_value: result[0]?.value,
+            }),
           children: (item.children || [])?.concat(result),
         };
       });
@@ -291,16 +291,16 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
                     field_name:
                       yColumns.filter((m: any) => m.yName === i.association)?.[0]?.xName || '',
                     field_val: i.value,
-                    type: i.type,
+                    type: i?.type,
                     description: i.association,
-                    ...(i.type === 'range'
+                    ...(i?.type === 'range'
                       ? {
-                          min: i.min,
-                          max: i.max,
-                        }
+                        min: i.min,
+                        max: i.max,
+                      }
                       : {
-                          value: i.child_value,
-                        }),
+                        value: i.child_value,
+                      }),
                   };
                 }
                 return null;

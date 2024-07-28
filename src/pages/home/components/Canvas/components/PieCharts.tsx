@@ -87,12 +87,12 @@ const PieCharts: React.FC<Props> = (props: any) => {
             maxSurfaceAngle: 80,
           },
           labelLayout: function (params: any) {
-            const isLeft = params.labelRect.x < myChart.getWidth() / 2;
+            const isLeft = params.labelRect?.x < myChart.getWidth() / 2;
             const points = params.labelLinePoints;
             // Update the end point.
             points[2][0] = isLeft
-              ? params.labelRect.x
-              : params.labelRect.x + params.labelRect.width;
+              ? params.labelRect?.x
+              : params.labelRect?.x + params.labelRect.width;
             return {
               labelLinePoints: points,
             };

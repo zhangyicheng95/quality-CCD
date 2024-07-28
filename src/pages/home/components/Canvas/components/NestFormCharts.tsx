@@ -206,19 +206,18 @@ const NestFormCharts: React.FC<Props> = (props: any) => {
             const { name, alias, widget = {}, addType, show, enabled } = item;
             return (
               <div
-                className={`${
-                  ['codeEditor', 'ImageLabelField'].includes(widget?.type)
-                    ? 'flex-box-start'
-                    : 'flex-box'
-                } param-item ${des_bordered ? 'item-border' : ''}`}
+                className={`${['codeEditor', 'ImageLabelField'].includes(widget?.type)
+                  ? 'flex-box-start'
+                  : 'flex-box'
+                  } param-item ${des_bordered ? 'item-border' : ''}`}
                 key={`${id}@$@${name}`}
                 style={Object.assign(
                   {},
                   des_column > 1
                     ? {
-                        width: `calc(${100 / des_column}% - 8px)`,
-                        marginRight: configList?.length % des_column === des_column - 1 ? 0 : 8,
-                      }
+                      width: `calc(${100 / des_column}% - 8px)`,
+                      marginRight: configList?.length % des_column === des_column - 1 ? 0 : 8,
+                    }
                     : {},
                   configList?.length % des_column === 1
                     ? { marginBottom: index + 1 === configList.length ? 0 : 16 }
@@ -238,11 +237,10 @@ const NestFormCharts: React.FC<Props> = (props: any) => {
                   </TooltipDiv>
                 </div>
                 <div
-                  className={`${
-                    ['codeEditor', 'ImageLabelField'].includes(widget?.type)
-                      ? 'flex-box-start'
-                      : 'flex-box'
-                  } value-box`}
+                  className={`${['codeEditor', 'ImageLabelField'].includes(widget?.type)
+                    ? 'flex-box-start'
+                    : 'flex-box'
+                    } value-box`}
                 >
                   <div style={{ flex: 1 }}>
                     <FormatWidgetToDom

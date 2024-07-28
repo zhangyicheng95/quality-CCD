@@ -112,7 +112,7 @@ const PointCharts: React.FC<Props> = (props: any) => {
         type: 'value', //direction === 'rows' ? 'category' : 'value',
         name: direction === 'rows' ? xName : yName,
         boundaryGap: false, //['5%', '5%'],
-        axisLabel: Object.assign({}, options.xAxis?.axisLabel, {
+        axisLabel: Object.assign({}, options?.xAxis?.axisLabel, {
           formatter: function (val: any) {
             return val;
           },
@@ -141,23 +141,23 @@ const PointCharts: React.FC<Props> = (props: any) => {
           },
           direction === 'rows'
             ? {
-                orient: 'vertical',
-                left: 10,
-                top: 80,
-                bottom: 60,
-                width: 20,
-              }
+              orient: 'vertical',
+              left: 10,
+              top: 80,
+              bottom: 60,
+              width: 20,
+            }
             : {
-                orient: 'horizontal',
-                bottom: 15,
-                left: 80,
-                right: 60,
-                height: 20,
-              },
+              orient: 'horizontal',
+              bottom: 15,
+              left: 80,
+              right: 60,
+              height: 20,
+            },
         ),
       ],
-      xAxis: Object.assign({}, options.xAxis, {
-        axisLabel: Object.assign({}, options.xAxis?.axisLabel, {
+      xAxis: Object.assign({}, options?.xAxis, {
+        axisLabel: Object.assign({}, options?.xAxis?.axisLabel, {
           formatter: function (val: any) {
             return val;
           },

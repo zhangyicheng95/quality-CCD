@@ -178,7 +178,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
         boundaryGap: false,
         scale: true,
       }),
-      xAxis: Object.assign({}, options.xAxis, {
+      xAxis: Object.assign({}, options?.xAxis, {
         type: 'category',
         name: xName,
         boundaryGap: [0, 0],
@@ -186,7 +186,7 @@ const LineCharts: React.FC<Props> = (props: any) => {
         max: maxValue + '',
         scale: true,
         axisLabel: {
-          ...options.xAxis.axisLabel,
+          ...options?.xAxis.axisLabel,
           formatter: function (val: any) {
             return val;
           },

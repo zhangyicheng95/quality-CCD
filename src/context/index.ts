@@ -8,6 +8,8 @@ export interface IGloablStateContext {
   setReady?: (o: boolean) => void;
   editor?: Editor;
   roughSvg?: any;
+  onLoadTypeChange?: any;
+  theme?: string;
 }
 
 export const GloablStateContext = createContext<IGloablStateContext>(null);
