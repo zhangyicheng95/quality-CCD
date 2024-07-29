@@ -1669,7 +1669,7 @@ const Home: React.FC<any> = (props: any) => {
                   <FabricCharts
                     id={key}
                     data={{
-                      dataValue: dataValue || { name: '', value: [] },
+                      dataValue: dataValue || [],
                       fontSize,
                       fetchType,
                       xName,

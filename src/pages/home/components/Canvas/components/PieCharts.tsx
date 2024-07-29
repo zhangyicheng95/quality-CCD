@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 import options from './commonOptions';
 import _ from 'lodash';
@@ -26,15 +26,10 @@ const PieCharts: React.FC<Props> = (props: any) => {
   }
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
+  const domRef = useRef<any>();
 
-  useEffect(() => {
-    if (!_.isArray(dataValue)) {
-      message.error('饼状图数据格式不正确，请检查');
-      console.log('PieCharts:', dataValue);
-      return;
-    }
-    const dom: any = document.getElementById(`echart-${id}`);
-    myChart = echarts.init(dom);
+  const init = () => {
+    myChart = echarts.init(domRef.current);
     const option = Object.assign({}, options, {
       legend: Object.assign(
         {},
@@ -124,27 +119,37 @@ const PieCharts: React.FC<Props> = (props: any) => {
     });
     myChart.setOption(option);
     myChart.resize({
-      width: dom.clientWidth,
-      height: dom.clientHeight,
+      width: domRef.current.clientWidth,
+      height: domRef.current.clientHeight,
     });
     window.addEventListener(
       'resize',
       () => {
         myChart.resize({
-          width: dom.clientWidth,
-          height: dom.clientHeight,
+          width: domRef.current.clientWidth,
+          height: domRef.current.clientHeight,
         });
       },
       false,
     );
+  };
+  useEffect(() => {
+    if (!_.isArray(dataValue)) {
+      message.error('饼状图数据格式不正确，请检查');
+      console.log('PieCharts:', dataValue);
+      return;
+    }
+    setTimeout(() => {
+      init();
+    }, 200);
 
     return () => {
       window.removeEventListener(
         'resize',
         () => {
           myChart.resize({
-            width: dom.clientWidth,
-            height: dom.clientHeight,
+            width: domRef.current.clientWidth,
+            height: domRef.current.clientHeight,
           });
         },
         false,
@@ -155,7 +160,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
 
   return (
     <Fragment>
-      <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} />
+      <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} ref={domRef} />
       <div className="preview-box flex-box-center">
         <CompressOutlined
           className="preview-icon"

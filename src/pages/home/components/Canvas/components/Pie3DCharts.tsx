@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 import 'echarts-gl';
 import _, { forEach } from 'lodash';
@@ -36,13 +36,9 @@ const PieCharts: React.FC<Props> = (props: any) => {
       },
     ];
   }
-  useEffect(() => {
-    if (!_.isArray(dataValue)) {
-      message.error('3D饼状图数据格式不正确，请检查');
-      console.log('PieCharts:', dataValue);
-      return;
-    }
+  const domRef = useRef<any>();
 
+  const init = () => {
     let max = 0;
     let gap = 1;
     let dataSource = [];
@@ -64,8 +60,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
     } else {
       dataSource = dataValue.sort((a: any, b: any) => a.value - b.value);
     }
-    const dom: any = document.getElementById(`echart-${id}`);
-    myChart = echarts.init(dom);
+    myChart = echarts.init(domRef.current);
     // 传入数据生成 option
     const series: any = getPie3D(dataSource, 0.5, false);
     // 准备待返回的配置项，把准备好的 legendData、series 传入。
@@ -113,7 +108,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
         boxHeight: 0.5, // 设置立体柱状图的高度
         boxWidth: 100, // 设置立体柱状图的宽度
         bottom: 0,
-        left: `-${dom.clientWidth / 6}px`,
+        left: `-${domRef.current.clientWidth / 6}px`,
         // environment: "rgba(255,255,255,0)",
         viewControl: {
           distance: xName || 180, // 视角距离
@@ -238,27 +233,38 @@ const PieCharts: React.FC<Props> = (props: any) => {
 
     myChart.setOption(option);
     myChart.resize({
-      width: dom.clientWidth,
-      height: dom.clientHeight,
+      width: domRef.current.clientWidth,
+      height: domRef.current.clientHeight,
     });
     window.addEventListener(
       'resize',
       () => {
         myChart.resize({
-          width: dom.clientWidth,
-          height: dom.clientHeight,
+          width: domRef.current.clientWidth,
+          height: domRef.current.clientHeight,
         });
       },
       false,
     );
+  };
+  useEffect(() => {
+    if (!_.isArray(dataValue)) {
+      message.error('3D饼状图数据格式不正确，请检查');
+      console.log('PieCharts:', dataValue);
+      return;
+    }
+
+    setTimeout(() => {
+      init();
+    }, 200);
 
     return () => {
       window.removeEventListener(
         'resize',
         () => {
           myChart.resize({
-            width: dom.clientWidth,
-            height: dom.clientHeight,
+            width: domRef.current.clientWidth,
+            height: domRef.current.clientHeight,
           });
         },
         false,
@@ -269,7 +275,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
 
   return (
     <div className={styles.pieCharts}>
-      <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} />
+      <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} ref={domRef} />
       <div className="preview-box flex-box-center">
         <CompressOutlined
           className="preview-icon"

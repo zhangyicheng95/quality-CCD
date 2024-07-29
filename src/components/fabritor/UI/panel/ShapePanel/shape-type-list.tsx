@@ -47,24 +47,24 @@ export default [
   //   shape: fabric.Ellipse,
   //   options: { rx: 120, ry: 200, fill: '#555555' }
   // },
-  {
-    key: 'triangle',
-    elem: '<svg width="200" height="200" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.2692 6.98965C23.0395 5.65908 24.9565 5.65908 25.7309 6.98965L44.262 38.9979C45.0339 40.3313 44.0718 42 42.5311 42H5.4689C3.92823 42 2.96611 40.3313 3.73804 38.9979L22.2692 6.98965Z" fill="" stroke="#f00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    shape: fabric.Triangle,
-    options: { width: 200, height: 180, fill: '#555555' }
-  },
-  {
-    key: 'right-angle',
-    elem: '<svg width="200" height="200" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 9.1153C8 7.29468 10.2347 6.42094 11.4696 7.75874L40.9016 39.6434C42.0842 40.9246 41.1755 43 39.432 43H10C8.89543 43 8 42.1046 8 41V9.1153Z" fill="" stroke="#f00" stroke-width="4" stroke-linecap="square" stroke-linejoin="miter"/></svg>',
-    shape: fabric.Polygon,
-    options: { points: [{ x: 0, y: 0 }, { x: 0, y: 200 }, { x: 200, y: 200 }], fill: '#555555' }
-  },
-  {
-    key: 'diamond',
-    elem: '<svg width="200" height="200" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.41421 22.5858L22.5858 5.41421C23.3668 4.63317 24.6332 4.63316 25.4142 5.41421L42.5858 22.5858C43.3668 23.3668 43.3668 24.6332 42.5858 25.4142L25.4142 42.5858C24.6332 43.3668 23.3668 43.3668 22.5858 42.5858L5.41421 25.4142C4.63317 24.6332 4.63316 23.3668 5.41421 22.5858Z" fill="" stroke="#f00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    shape: fabric.Polygon,
-    options: { points: [{ x: 0, y: 100 }, { x: 100, y: 200 }, { x: 200, y: 100 }, { x: 100, y: 0 }], fill: '#555555' }
-  },
+  // {
+  //   key: 'triangle',
+  //   elem: '<svg width="200" height="200" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.2692 6.98965C23.0395 5.65908 24.9565 5.65908 25.7309 6.98965L44.262 38.9979C45.0339 40.3313 44.0718 42 42.5311 42H5.4689C3.92823 42 2.96611 40.3313 3.73804 38.9979L22.2692 6.98965Z" fill="" stroke="#f00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  //   shape: fabric.Triangle,
+  //   options: { width: 200, height: 180, fill: '#555555' }
+  // },
+  // {
+  //   key: 'right-angle',
+  //   elem: '<svg width="200" height="200" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 9.1153C8 7.29468 10.2347 6.42094 11.4696 7.75874L40.9016 39.6434C42.0842 40.9246 41.1755 43 39.432 43H10C8.89543 43 8 42.1046 8 41V9.1153Z" fill="" stroke="#f00" stroke-width="4" stroke-linecap="square" stroke-linejoin="miter"/></svg>',
+  //   shape: fabric.Polygon,
+  //   options: { points: [{ x: 0, y: 0 }, { x: 0, y: 200 }, { x: 200, y: 200 }], fill: '#555555' }
+  // },
+  // {
+  //   key: 'diamond',
+  //   elem: '<svg width="200" height="200" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.41421 22.5858L22.5858 5.41421C23.3668 4.63317 24.6332 4.63316 25.4142 5.41421L42.5858 22.5858C43.3668 23.3668 43.3668 24.6332 42.5858 25.4142L25.4142 42.5858C24.6332 43.3668 23.3668 43.3668 22.5858 42.5858L5.41421 25.4142C4.63317 24.6332 4.63316 23.3668 5.41421 22.5858Z" fill="" stroke="#f00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  //   shape: fabric.Polygon,
+  //   options: { points: [{ x: 0, y: 100 }, { x: 100, y: 200 }, { x: 200, y: 100 }, { x: 100, y: 0 }], fill: '#555555' }
+  // },
   // {
   //   key: 'parallelgram',
   //   elem: '<svg width="200" height="200" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M41.2796 8H15.4704C14.5956 8 13.8223 8.5685 13.5614 9.40345L4.81142 37.4035C4.40897 38.6913 5.3711 40 6.72038 40H32.5296C33.4044 40 34.1777 39.4315 34.4386 38.5965L43.1886 10.5965C43.591 9.30869 42.6289 8 41.2796 8Z" fill="" stroke="#f00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>',

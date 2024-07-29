@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 import options from './commonOptions';
 import { useModel } from 'umi';
@@ -63,13 +63,10 @@ const BarCharts: React.FC<Props> = (props: any) => {
   }
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
+  const domRef = useRef<any>();
   barColor = [].concat(barColor);
-  useEffect(() => {
-    if (!_.isArray(dataValue)) {
-      message.error('柱状图数据格式不正确，请检查');
-      console.log('BarCharts:', dataValue);
-      return;
-    }
+
+  const init = () => {
     let seriesData: any = [],
       markLineData: any = [],
       yData: any = [],
@@ -106,8 +103,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
       }
     });
 
-    const dom: any = document.getElementById(`echart-${id}`);
-    myChart = echarts.init(dom);
+    myChart = echarts.init(domRef.current);
     const option = Object.assign({}, options, {
       legend: {
         show: false,
@@ -366,27 +362,38 @@ const BarCharts: React.FC<Props> = (props: any) => {
 
     myChart.setOption(option);
     myChart.resize({
-      width: dom.clientWidth,
-      height: dom.clientHeight,
+      width: domRef.current.clientWidth,
+      height: domRef.current.clientHeight,
     });
     window.addEventListener(
       'resize',
       () => {
         myChart.resize({
-          width: dom.clientWidth,
-          height: dom.clientHeight,
+          width: domRef.current.clientWidth,
+          height: domRef.current.clientHeight,
         });
       },
       false,
     );
+  };
+  useEffect(() => {
+    if (!_.isArray(dataValue)) {
+      message.error('柱状图数据格式不正确，请检查');
+      console.log('BarCharts:', dataValue);
+      return;
+    }
+
+    setTimeout(() => {
+      init();
+    }, 200);
 
     return () => {
       window.removeEventListener(
         'resize',
         () => {
           myChart.resize({
-            width: dom.clientWidth,
-            height: dom.clientHeight,
+            width: domRef.current.clientWidth,
+            height: domRef.current.clientHeight,
           });
         },
         false,
@@ -397,7 +404,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
 
   return (
     <Fragment>
-      <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} />
+      <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} ref={domRef} />
       <div className="preview-box flex-box-center">
         <CompressOutlined
           className="preview-icon"

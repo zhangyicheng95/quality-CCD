@@ -20,7 +20,7 @@ interface Props {
 const FabricCharts: React.FC<Props> = (props: any) => {
   let { data = {}, id, started } = props;
   let {
-    dataValue = [],
+    dataValue = { name: '', value: [] },
     fontSize = 20,
     fetchType,
     xName,

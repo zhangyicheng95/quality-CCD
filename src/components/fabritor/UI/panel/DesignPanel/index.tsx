@@ -104,7 +104,7 @@ export default function Layer() {
                   onClick={() => { handleItemClick(item) }}
                 >
                   <div className='flex-box-justify-between' style={{ width: '100%', height: 40 }}>
-                    <img src={item.cover} style={{ maxWidth: 200, maxHeight: 34 }} />
+                    <img src={item.cover} style={{ maxWidth: 200, maxHeight: 34, width: 'auto', height: 'auto' }} />
                     {
                       item.group ?
                         <GroupOutlined style={{ fontSize: 18, color: 'rgba(17, 23, 29, 0.6)' }} /> : null

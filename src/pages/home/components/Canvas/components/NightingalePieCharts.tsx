@@ -21,30 +21,11 @@ const NightingalePieCharts: React.FC<Props> = (props: any) => {
   let { dataValue = [], fontSize } = data;
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
-
+  const domRef = useRef<any>();
   const [domSize, setDomSize] = useState({ width: 0, height: 0 });
-  useEffect(() => {
-    if (!_.isArray(dataValue)) {
-      message.error('饼状图数据格式不正确，请检查');
-      console.log('PieCharts:', dataValue);
-      return;
-    }
-    if (process.env.NODE_ENV === 'development') {
-      dataValue = [
-        { name: '缺陷类型1', value: '488' },
-        { name: '缺陷类型2', value: '1024' },
-        { name: '缺陷类型3', value: '824' },
-        { name: '缺陷类型4', value: '488' },
-        // { name: '缺陷类型5', value: '1024' },
-        // { name: '缺陷类型6', value: '824' },
-        // { name: '缺陷类型7', value: '488' },
-        // { name: '缺陷类型8', value: '1024' },
-        // { name: '缺陷类型9', value: '824' },
-      ];
-    }
 
-    const dom: any = document.getElementById(`echart-${id}`);
-    myChart = echarts.init(dom);
+  const init = () => {
+    myChart = echarts.init(domRef.current);
     const option = Object.assign({}, options, {
       legend: Object.assign(
         {},
@@ -103,27 +84,52 @@ const NightingalePieCharts: React.FC<Props> = (props: any) => {
     });
     myChart.setOption(option);
     myChart.resize({
-      width: dom.clientWidth,
-      height: dom.clientHeight,
+      width: domRef.current.clientWidth,
+      height: domRef.current.clientHeight,
     });
     window.addEventListener(
       'resize',
       () => {
         myChart.resize({
-          width: dom.clientWidth,
-          height: dom.clientHeight,
+          width: domRef.current.clientWidth,
+          height: domRef.current.clientHeight,
         });
       },
       false,
     );
-    setDomSize({ width: dom.clientWidth, height: dom.clientHeight });
+    setDomSize({ width: domRef.current.clientWidth, height: domRef.current.clientHeight });
+  };
+  useEffect(() => {
+    if (!_.isArray(dataValue)) {
+      message.error('饼状图数据格式不正确，请检查');
+      console.log('PieCharts:', dataValue);
+      return;
+    }
+    if (process.env.NODE_ENV === 'development') {
+      dataValue = [
+        { name: '缺陷类型1', value: '488' },
+        { name: '缺陷类型2', value: '1024' },
+        { name: '缺陷类型3', value: '824' },
+        { name: '缺陷类型4', value: '488' },
+        // { name: '缺陷类型5', value: '1024' },
+        // { name: '缺陷类型6', value: '824' },
+        // { name: '缺陷类型7', value: '488' },
+        // { name: '缺陷类型8', value: '1024' },
+        // { name: '缺陷类型9', value: '824' },
+      ];
+    }
+
+    setTimeout(() => {
+      init();
+    }, 200);
+
     return () => {
       window.removeEventListener(
         'resize',
         () => {
           myChart.resize({
-            width: dom.clientWidth,
-            height: dom.clientHeight,
+            width: domRef.current.clientWidth,
+            height: domRef.current.clientHeight,
           });
         },
         false,
@@ -134,7 +140,7 @@ const NightingalePieCharts: React.FC<Props> = (props: any) => {
 
   return (
     <div className={`${styles.nightingalePieCharts}`}>
-      <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} />
+      <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} ref={domRef} />
       <div className="preview-box flex-box-center">
         <CompressOutlined
           className="preview-icon"

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts';
 import options from './commonOptions';
 import * as _ from 'lodash';
@@ -74,13 +74,9 @@ const PointCharts: React.FC<Props> = (props: any) => {
   }
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
+  const domRef = useRef<any>();
 
-  useEffect(() => {
-    if (!_.isArray(dataValue)) {
-      message.error('散点图数据格式不正确，请检查');
-      console.log('PointCharts:', dataValue);
-      return;
-    }
+  const init = () => {
     let maxLength = 0;
     dataValue.forEach((item: any) => {
       const { value = [] } = item;
@@ -93,8 +89,7 @@ const PointCharts: React.FC<Props> = (props: any) => {
       }
     });
 
-    const dom: any = document.getElementById(`echart-${id}`);
-    myChart = echarts.init(dom);
+    myChart = echarts.init(domRef.current);
     const option = Object.assign({}, options, {
       // color: ["rgb(115,171,216)", "rgb(245,142,94)"],
       legend: Object.assign({}, options.legend, {
@@ -215,8 +210,8 @@ const PointCharts: React.FC<Props> = (props: any) => {
     });
     myChart.setOption(option);
     myChart.resize({
-      width: dom.clientWidth,
-      height: dom.clientHeight,
+      width: domRef.current.clientWidth,
+      height: domRef.current.clientHeight,
     });
     myChart.on('dataZoom', function (event: any) {
       // const { start, end } = event;
@@ -225,20 +220,31 @@ const PointCharts: React.FC<Props> = (props: any) => {
       'resize',
       () => {
         myChart.resize({
-          width: dom.clientWidth,
-          height: dom.clientHeight,
+          width: domRef.current.clientWidth,
+          height: domRef.current.clientHeight,
         });
       },
       false,
     );
+  };
+  useEffect(() => {
+    if (!_.isArray(dataValue)) {
+      message.error('散点图数据格式不正确，请检查');
+      console.log('PointCharts:', dataValue);
+      return;
+    }
+
+    setTimeout(() => {
+      init();
+    }, 200);
 
     return () => {
       window.removeEventListener(
         'resize',
         () => {
           myChart.resize({
-            width: dom.clientWidth,
-            height: dom.clientHeight,
+            width: domRef.current.clientWidth,
+            height: domRef.current.clientHeight,
           });
         },
         false,
@@ -249,7 +255,7 @@ const PointCharts: React.FC<Props> = (props: any) => {
 
   return (
     <Fragment>
-      <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} />
+      <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} ref={domRef} />
       <div className="preview-box flex-box-center">
         <CompressOutlined
           className="preview-icon"

@@ -92,15 +92,8 @@ const LineCharts: React.FC<Props> = (props: any) => {
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
   const domRef = useRef<any>();
-  useEffect(() => {
-    if (!_.isArray(dataValue)) {
-      message.error('趋势图数据格式不正确，请检查');
-      console.log('LineCharts', dataValue);
-      return;
-    }
-
-    const dom: any = document.getElementById(`echart-${id}`);
-    myChart = echarts.init(dom);
+  const init = () => {
+    myChart = echarts.init(domRef.current);
     let minValue: any = null,
       maxValue: any = null;
     let maxLength = 0;
@@ -257,20 +250,16 @@ const LineCharts: React.FC<Props> = (props: any) => {
       });
     });
     myChart.setOption(option);
-
-    return () => {
-      window.removeEventListener(
-        'resize',
-        () => {
-          myChart.resize({
-            width: dom.clientWidth,
-            height: dom.clientHeight,
-          });
-        },
-        false,
-      );
-      myChart && myChart.dispose();
-    };
+  }
+  useEffect(() => {
+    if (!_.isArray(dataValue)) {
+      message.error('趋势图数据格式不正确，请检查');
+      console.log('LineCharts', dataValue);
+      return;
+    }
+    setTimeout(() => {
+      init();
+    }, 100);
   }, [data, legend,]);
   useEffect(() => {
     const dom = domRef?.current;

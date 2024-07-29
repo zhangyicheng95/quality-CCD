@@ -25,10 +25,7 @@ export default function Toolbar() {
       }
     });
   }
-  const saveCanvas = () => {
-    const json = editor.canvas2Json();
-    console.log('画布数据：', json);
-
+  const formatResult = (list: any) => {
     const initItem = (item: any) => {
       const { sub_type, path, strokeWidth } = item;
       return Object.assign(
@@ -44,7 +41,7 @@ export default function Toolbar() {
         }
       )
     }
-    const result = (json.objects || [])?.map((item: any) => {
+    const result = (list || [])?.map((item: any) => {
       const { type } = item;
       return type === 'group' ? {
         ...item,
@@ -53,6 +50,13 @@ export default function Toolbar() {
         })
       } : initItem(item)
     })?.filter((i: any) => i.type !== 'image');
+    return result || [];
+  }
+  const saveCanvas = () => {
+    const json = editor.canvas2Json();
+    console.log('画布数据：', json);
+
+    const result = formatResult(json.objects);
     // console.log('result', JSON.stringify(result));
     !!onLoadTypeChange && onLoadTypeChange({ type: 'mark', data: result });
     message.success('保存画布成功');
@@ -103,12 +107,22 @@ export default function Toolbar() {
               }}
             />
             <ToolbarItem onClick={() => {
-              onLoadTypeChange({ type: 'registration' })
+              const json = editor.canvas2Json();
+              const result = formatResult(json.objects);
+              onLoadTypeChange({
+                type: 'registration',
+                data: result
+              });
             }} title={'配准'}>
               配准
             </ToolbarItem>
             <ToolbarItem onClick={() => {
-              onLoadTypeChange({ type: 'measurementError' })
+              const json = editor.canvas2Json();
+              const result = formatResult(json.objects);
+              onLoadTypeChange({
+                type: 'measurementError',
+                data: result
+              });
             }} title={'测量误差'}>
               测量误差
             </ToolbarItem>
