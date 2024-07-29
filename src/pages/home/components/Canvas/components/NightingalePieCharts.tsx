@@ -16,16 +16,32 @@ interface Props {
 }
 
 const NightingalePieCharts: React.FC<Props> = (props: any) => {
-  let myChart: any = null;
   let { data = {}, id, legend, dispatch, setMyChartVisible } = props;
   let { dataValue = [], fontSize } = data;
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
   const domRef = useRef<any>();
+  const myChartRef = useRef<any>();
   const [domSize, setDomSize] = useState({ width: 0, height: 0 });
 
+  useEffect(() => {
+    myChartRef.current = echarts.init(domRef.current);
+
+    return () => {
+      window.removeEventListener(
+        'resize',
+        () => {
+          myChartRef.current.resize({
+            width: domRef.current.clientWidth,
+            height: domRef.current.clientHeight,
+          });
+        },
+        false,
+      );
+      myChartRef.current && myChartRef.current.dispose();
+    };
+  }, []);
   const init = () => {
-    myChart = echarts.init(domRef.current);
     const option = Object.assign({}, options, {
       legend: Object.assign(
         {},
@@ -75,22 +91,22 @@ const NightingalePieCharts: React.FC<Props> = (props: any) => {
       ],
     });
 
-    myChart.on('legendselectchanged', function (obj: any) {
+    myChartRef.current.on('legendselectchanged', function (obj: any) {
       const { selected } = obj;
       dispatch({
         type: 'themeStore/shortTimeAction',
         payload: { [id]: selected },
       });
     });
-    myChart.setOption(option);
-    myChart.resize({
+    myChartRef.current.setOption(option);
+    myChartRef.current.resize({
       width: domRef.current.clientWidth,
       height: domRef.current.clientHeight,
     });
     window.addEventListener(
       'resize',
       () => {
-        myChart.resize({
+        myChartRef.current.resize({
           width: domRef.current.clientWidth,
           height: domRef.current.clientHeight,
         });
@@ -122,20 +138,6 @@ const NightingalePieCharts: React.FC<Props> = (props: any) => {
     setTimeout(() => {
       init();
     }, 200);
-
-    return () => {
-      window.removeEventListener(
-        'resize',
-        () => {
-          myChart.resize({
-            width: domRef.current.clientWidth,
-            height: domRef.current.clientHeight,
-          });
-        },
-        false,
-      );
-      myChart && myChart.dispose();
-    };
   }, [dataValue, fontSize, legend]);
 
   return (
@@ -145,8 +147,8 @@ const NightingalePieCharts: React.FC<Props> = (props: any) => {
         <CompressOutlined
           className="preview-icon"
           onClick={() => {
-            if (!!myChart) {
-              const options = myChart?.getOption?.();
+            if (!!myChartRef.current) {
+              const options = myChartRef.current?.getOption?.();
               setMyChartVisible(options);
             }
           }}

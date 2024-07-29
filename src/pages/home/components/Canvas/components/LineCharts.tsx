@@ -15,7 +15,6 @@ interface Props {
 }
 
 const LineCharts: React.FC<Props> = (props: any) => {
-  let myChart: any = null;
   const { data = {}, id, legend, dispatch, setMyChartVisible } = props;
   let { dataValue = [], yName, xName = '', dataZoom } = data;
   if (process.env.NODE_ENV === 'development') {
@@ -92,8 +91,26 @@ const LineCharts: React.FC<Props> = (props: any) => {
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
   const domRef = useRef<any>();
+  const myChartRef = useRef<any>(null);
+
+  useEffect(() => {
+    myChartRef.current = echarts.init(domRef.current);
+
+    return () => {
+      window.removeEventListener(
+        'resize',
+        () => {
+          myChartRef.current.resize({
+            width: domRef?.current.clientWidth,
+            height: domRef?.current.clientHeight,
+          });
+        },
+        false,
+      );
+      myChartRef.current && myChartRef.current.dispose();
+    };
+  }, []);
   const init = () => {
-    myChart = echarts.init(domRef.current);
     let minValue: any = null,
       maxValue: any = null;
     let maxLength = 0;
@@ -242,14 +259,18 @@ const LineCharts: React.FC<Props> = (props: any) => {
         }
       }),
     });
-    myChart.on('legendselectchanged', function (obj: any) {
+    myChartRef.current.on('legendselectchanged', function (obj: any) {
       const { selected } = obj;
       dispatch({
         type: 'themeStore/shortTimeAction',
         payload: { [id]: selected },
       });
     });
-    myChart.setOption(option);
+    myChartRef.current.setOption(option);
+    myChartRef.current.resize({
+      width: domRef.current.clientWidth,
+      height: domRef.current.clientHeight,
+    });
   }
   useEffect(() => {
     if (!_.isArray(dataValue)) {
@@ -257,43 +278,12 @@ const LineCharts: React.FC<Props> = (props: any) => {
       console.log('LineCharts', dataValue);
       return;
     }
+
     setTimeout(() => {
       init();
-    }, 100);
-  }, [data, legend,]);
-  useEffect(() => {
-    const dom = domRef?.current;
-    if (!!dom && !!myChart) {
-      myChart.resize({
-        width: dom.clientWidth,
-        height: dom.clientHeight,
-      });
-      window.addEventListener(
-        'resize',
-        () => {
-          myChart.resize({
-            width: dom.clientWidth,
-            height: dom.clientHeight,
-          });
-        },
-        false,
-      );
-    }
+    }, 200);
+  }, [data]);
 
-    return () => {
-      window.removeEventListener(
-        'resize',
-        () => {
-          myChart.resize({
-            width: dom.clientWidth,
-            height: dom.clientHeight,
-          });
-        },
-        false,
-      );
-      myChart && myChart.dispose();
-    };
-  }, [domRef?.current?.clientWidth]);
   return (
     <Fragment>
       <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} ref={domRef} />
@@ -301,8 +291,8 @@ const LineCharts: React.FC<Props> = (props: any) => {
         <CompressOutlined
           className="preview-icon"
           onClick={() => {
-            if (!!myChart) {
-              const options = myChart?.getOption?.();
+            if (!!myChartRef.current) {
+              const options = myChartRef.current?.getOption?.();
               setMyChartVisible(options);
             }
           }}

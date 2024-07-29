@@ -29,7 +29,6 @@ var colorList = ['rgba(39,97,235,0.8)', 'rgba(56,200,234,0.8)'];
 var colorList2 = ['rgba(40,255,187,0.6)', 'rgba(36,222,212,0.9)'];
 
 const BarCharts: React.FC<Props> = (props: any) => {
-  let myChart: any = null;
   const { data = {}, id, setMyChartVisible } = props;
   let {
     dataValue = [],
@@ -64,8 +63,26 @@ const BarCharts: React.FC<Props> = (props: any) => {
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
   const domRef = useRef<any>();
+  const myChartRef = useRef<any>();
   barColor = [].concat(barColor);
 
+  useEffect(() => {
+    myChartRef.current = echarts.init(domRef.current);
+
+    return () => {
+      window.removeEventListener(
+        'resize',
+        () => {
+          myChartRef.current.resize({
+            width: domRef.current.clientWidth,
+            height: domRef.current.clientHeight,
+          });
+        },
+        false,
+      );
+      myChartRef.current && myChartRef.current.dispose();
+    };
+  }, []);
   const init = () => {
     let seriesData: any = [],
       markLineData: any = [],
@@ -103,7 +120,6 @@ const BarCharts: React.FC<Props> = (props: any) => {
       }
     });
 
-    myChart = echarts.init(domRef.current);
     const option = Object.assign({}, options, {
       legend: {
         show: false,
@@ -360,21 +376,11 @@ const BarCharts: React.FC<Props> = (props: any) => {
       ].filter(Boolean),
     });
 
-    myChart.setOption(option);
-    myChart.resize({
+    myChartRef.current.setOption(option);
+    myChartRef.current.resize({
       width: domRef.current.clientWidth,
       height: domRef.current.clientHeight,
     });
-    window.addEventListener(
-      'resize',
-      () => {
-        myChart.resize({
-          width: domRef.current.clientWidth,
-          height: domRef.current.clientHeight,
-        });
-      },
-      false,
-    );
   };
   useEffect(() => {
     if (!_.isArray(dataValue)) {
@@ -386,20 +392,6 @@ const BarCharts: React.FC<Props> = (props: any) => {
     setTimeout(() => {
       init();
     }, 200);
-
-    return () => {
-      window.removeEventListener(
-        'resize',
-        () => {
-          myChart.resize({
-            width: domRef.current.clientWidth,
-            height: domRef.current.clientHeight,
-          });
-        },
-        false,
-      );
-      myChart && myChart.dispose();
-    };
   }, [data]);
 
   return (
@@ -409,8 +401,8 @@ const BarCharts: React.FC<Props> = (props: any) => {
         <CompressOutlined
           className="preview-icon"
           onClick={() => {
-            if (!!myChart) {
-              const options = myChart?.getOption?.();
+            if (!!myChartRef.current) {
+              const options = myChartRef.current?.getOption?.();
               setMyChartVisible(options);
             }
           }}

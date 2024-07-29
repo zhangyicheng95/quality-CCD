@@ -34,7 +34,7 @@ const HomeLayout: React.FC<any> = (props) => {
     try {
       const list = JSON.parse(
         localStorage.getItem('ipUrlList') ||
-          JSON.stringify([{ name: '本地服务', value: 'localhost:8866' }]),
+        JSON.stringify([{ name: '本地服务', value: 'localhost:8866' }]),
       );
       if (!!list.length) {
         loopGetProjects(0, list[0], list);
@@ -167,7 +167,7 @@ const HomeLayout: React.FC<any> = (props) => {
             },
           },
         }));
-      } catch (err) {}
+      } catch (err) { }
     } else {
       if (!!name) {
         const list = [{ label: name, name: name, children: null, key: id }];
@@ -213,6 +213,10 @@ const HomeLayout: React.FC<any> = (props) => {
     window.location.reload();
   });
   window.focus();
+
+  console.log = (message?: any, ...optionalParams: any) => {
+    console.info(`${new Date()}`, message, ...optionalParams);
+  };
   return (
     <div className={styles.reportWrap}>
       <div className="box flex-box">

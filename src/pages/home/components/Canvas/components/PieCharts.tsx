@@ -14,7 +14,6 @@ interface Props {
 }
 
 const PieCharts: React.FC<Props> = (props: any) => {
-  let myChart: any = null;
   let { data = {}, id, legend, dispatch, setMyChartVisible } = props;
   let { dataValue = [], fontSize } = data;
   if (process.env.NODE_ENV === 'development') {
@@ -27,9 +26,26 @@ const PieCharts: React.FC<Props> = (props: any) => {
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
   const domRef = useRef<any>();
+  const myChartRef = useRef<any>();
 
+  useEffect(() => {
+    myChartRef.current = echarts.init(domRef.current);
+
+    return () => {
+      window.removeEventListener(
+        'resize',
+        () => {
+          myChartRef.current.resize({
+            width: domRef.current.clientWidth,
+            height: domRef.current.clientHeight,
+          });
+        },
+        false,
+      );
+      myChartRef.current && myChartRef.current.dispose();
+    };
+  }, []);
   const init = () => {
-    myChart = echarts.init(domRef.current);
     const option = Object.assign({}, options, {
       legend: Object.assign(
         {},
@@ -82,7 +98,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
             maxSurfaceAngle: 80,
           },
           labelLayout: function (params: any) {
-            const isLeft = params.labelRect?.x < myChart.getWidth() / 2;
+            const isLeft = params.labelRect?.x < myChartRef.current.getWidth() / 2;
             const points = params.labelLinePoints;
             // Update the end point.
             points[2][0] = isLeft
@@ -110,22 +126,22 @@ const PieCharts: React.FC<Props> = (props: any) => {
         },
       ],
     });
-    myChart.on('legendselectchanged', function (obj: any) {
+    myChartRef.current.on('legendselectchanged', function (obj: any) {
       const { selected } = obj;
       dispatch({
         type: 'themeStore/shortTimeAction',
         payload: { [id]: selected },
       });
     });
-    myChart.setOption(option);
-    myChart.resize({
+    myChartRef.current.setOption(option);
+    myChartRef.current.resize({
       width: domRef.current.clientWidth,
       height: domRef.current.clientHeight,
     });
     window.addEventListener(
       'resize',
       () => {
-        myChart.resize({
+        myChartRef.current.resize({
           width: domRef.current.clientWidth,
           height: domRef.current.clientHeight,
         });
@@ -142,20 +158,6 @@ const PieCharts: React.FC<Props> = (props: any) => {
     setTimeout(() => {
       init();
     }, 200);
-
-    return () => {
-      window.removeEventListener(
-        'resize',
-        () => {
-          myChart.resize({
-            width: domRef.current.clientWidth,
-            height: domRef.current.clientHeight,
-          });
-        },
-        false,
-      );
-      myChart && myChart.dispose();
-    };
   }, [dataValue, fontSize, legend]);
 
   return (
@@ -165,8 +167,8 @@ const PieCharts: React.FC<Props> = (props: any) => {
         <CompressOutlined
           className="preview-icon"
           onClick={() => {
-            if (!!myChart) {
-              const options = myChart?.getOption?.();
+            if (!!myChartRef.current) {
+              const options = myChartRef.current?.getOption?.();
               setMyChartVisible(options);
             }
           }}

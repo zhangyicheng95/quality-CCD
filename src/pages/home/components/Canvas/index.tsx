@@ -3643,6 +3643,7 @@ const Home: React.FC<any> = (props: any) => {
                                   list={gridList.concat(contentList)}
                                   layout={gridHomeList.concat(contentLayout)}
                                   tabLength={paramData?.contentData?.tabList?.length || 1}
+                                  tabNum={tabNum}
                                   margin={
                                     _.isNumber(paramData?.contentData?.gridMargin)
                                       ? [
@@ -3781,6 +3782,7 @@ const Home: React.FC<any> = (props: any) => {
                           list={gridList.concat(contentList)}
                           layout={gridHomeList.concat(contentLayout)}
                           tabLength={paramData?.contentData?.tabList?.length || 1}
+                          tabNum={tabNum}
                           margin={
                             _.isNumber(paramData?.contentData?.gridMargin)
                               ? [

@@ -221,7 +221,7 @@ export default function Fabritor(props: Props) {
   }
   // 返回轨迹点渲染
   useEffect(() => {
-    console.log(new Date(), '标定组件接受到数据', shapeFromData);
+    console.log('标定组件接受到数据', shapeFromData);
     if (!!editor && !!shapeFromData?.length) {
       (shapeFromData || [])?.forEach((i: any) => {
         if (i.type === 'text') {
@@ -297,6 +297,8 @@ export default function Fabritor(props: Props) {
           createPathFromSvg({
             top: i.top,
             left: i.left,
+            width: i.width,
+            height: i.height,
             svgString: ShapeTypeList?.filter((i: any) => i.key === 'rect')?.[0]?.elem,
             canvas: editor.canvas,
             sub_type: 'rect',
@@ -306,6 +308,7 @@ export default function Fabritor(props: Props) {
           createPathFromSvg({
             top: i.top,
             left: i.left,
+            radius: i.radius,
             svgString: ShapeTypeList?.filter((i: any) => i.key === 'circle')?.[0]?.elem,
             canvas: editor.canvas,
             sub_type: 'circle',

@@ -17,7 +17,6 @@ interface Props {
 }
 
 const PieCharts: React.FC<Props> = (props: any) => {
-  let myChart: any = null;
   let { data = {}, id, legend, dispatch, setMyChartVisible } = props;
   let { dataValue = [], fontSize, xName = 180 } = data;
   if (process.env.NODE_ENV === 'development') {
@@ -37,7 +36,25 @@ const PieCharts: React.FC<Props> = (props: any) => {
     ];
   }
   const domRef = useRef<any>();
+  const myChartRef = useRef<any>();
 
+  useEffect(() => {
+    myChartRef.current = echarts.init(domRef.current);
+
+    return () => {
+      window.removeEventListener(
+        'resize',
+        () => {
+          myChartRef.current.resize({
+            width: domRef.current.clientWidth,
+            height: domRef.current.clientHeight,
+          });
+        },
+        false,
+      );
+      myChartRef.current && myChartRef.current.dispose();
+    };
+  }, []);
   const init = () => {
     let max = 0;
     let gap = 1;
@@ -60,7 +77,6 @@ const PieCharts: React.FC<Props> = (props: any) => {
     } else {
       dataSource = dataValue.sort((a: any, b: any) => a.value - b.value);
     }
-    myChart = echarts.init(domRef.current);
     // 传入数据生成 option
     const series: any = getPie3D(dataSource, 0.5, false);
     // 准备待返回的配置项，把准备好的 legendData、series 传入。
@@ -121,12 +137,12 @@ const PieCharts: React.FC<Props> = (props: any) => {
       },
       series: series,
     };
-    myChart.setOption(option);
+    myChartRef.current.setOption(option);
     // 监听鼠标事件，实现饼图选中效果（单选），近似实现高亮（放大）效果。
     let hoveredIndex = '';
 
     // 监听 mouseover，近似实现高亮（放大）效果
-    myChart.on('mouseover', function (params: any) {
+    myChartRef.current.on('mouseover', function (params: any) {
       // 准备重新渲染扇形所需的参数
       let isSelected;
       let isHovered;
@@ -191,11 +207,11 @@ const PieCharts: React.FC<Props> = (props: any) => {
         }
 
         // 使用更新后的 option，渲染图表
-        myChart.setOption(option);
+        myChartRef.current.setOption(option);
       }
     });
     // 修正取消高亮失败的 bug
-    myChart.on('globalout', function () {
+    myChartRef.current.on('globalout', function () {
       if (hoveredIndex !== '') {
         // 从 option.series 中读取重新渲染扇形所需的参数，将是否高亮设置为 true。
         let isSelected = option.series[hoveredIndex]?.pieStatus?.selected,
@@ -221,9 +237,9 @@ const PieCharts: React.FC<Props> = (props: any) => {
       }
 
       // 使用更新后的 option，渲染图表
-      myChart.setOption(option);
+      myChartRef.current.setOption(option);
     });
-    myChart.on('legendselectchanged', function (obj: any) {
+    myChartRef.current.on('legendselectchanged', function (obj: any) {
       const { selected } = obj;
       dispatch({
         type: 'themeStore/shortTimeAction',
@@ -231,15 +247,15 @@ const PieCharts: React.FC<Props> = (props: any) => {
       });
     });
 
-    myChart.setOption(option);
-    myChart.resize({
+    myChartRef.current.setOption(option);
+    myChartRef.current.resize({
       width: domRef.current.clientWidth,
       height: domRef.current.clientHeight,
     });
     window.addEventListener(
       'resize',
       () => {
-        myChart.resize({
+        myChartRef.current.resize({
           width: domRef.current.clientWidth,
           height: domRef.current.clientHeight,
         });
@@ -257,20 +273,6 @@ const PieCharts: React.FC<Props> = (props: any) => {
     setTimeout(() => {
       init();
     }, 200);
-
-    return () => {
-      window.removeEventListener(
-        'resize',
-        () => {
-          myChart.resize({
-            width: domRef.current.clientWidth,
-            height: domRef.current.clientHeight,
-          });
-        },
-        false,
-      );
-      myChart && myChart.dispose();
-    };
   }, [dataValue, fontSize, legend]);
 
   return (
@@ -280,8 +282,8 @@ const PieCharts: React.FC<Props> = (props: any) => {
         <CompressOutlined
           className="preview-icon"
           onClick={() => {
-            if (!!myChart) {
-              const options = myChart?.getOption?.();
+            if (!!myChartRef.current) {
+              const options = myChartRef.current?.getOption?.();
               setMyChartVisible(options);
             }
           }}
