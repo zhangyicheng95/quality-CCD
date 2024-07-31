@@ -1347,10 +1347,10 @@ const Home: React.FC<any> = (props: any) => {
                         },
               (
                 !!parentBodyBox && parentBodyBoxTab != bodyBoxTab
-                ||
-                size?.x < tabNum * 96 - 10
-                ||
-                (size?.x > ((tabNum + 1) * 96))
+                // ||
+                // size?.x < tabNum * 96 - 10
+                // ||
+                // (size?.x > ((tabNum + 1) * 96))
               )
                 ? { visibility: 'hidden' } : {},
             )}

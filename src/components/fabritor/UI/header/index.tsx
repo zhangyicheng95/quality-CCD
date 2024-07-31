@@ -5,6 +5,7 @@ import Logo from './Logo';
 import BaseInfo from './BaseInfo';
 import { CenterV } from '@/components/fabritor/components/Center';
 import styles from './index.less';
+import FileToolbar from './FileToolbar';
 
 const { Header } = Layout;
 
@@ -20,14 +21,13 @@ const headerStyle: React.CSSProperties = {
 export default function () {
   return (
     <Header style={headerStyle} className={styles['fabritor-header']}>
-      <Logo />
-      <CenterV
-        style={{ flex: 1, justifyContent: 'space-between' }}
-      >
-        <BaseInfo />
+      {/* <Logo /> */}
+      <CenterV className={"fabritor-base-info"}>
+        <FileToolbar />
+        {/* <BaseInfo /> */}
         <Toolbar />
       </CenterV>
-      <Export />
+      {/* <Export /> */}
     </Header>
   )
 }

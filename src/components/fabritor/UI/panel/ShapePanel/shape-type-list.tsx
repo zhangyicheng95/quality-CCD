@@ -19,7 +19,7 @@ const getRightPolygonPoints = (num: any, radius = 100) => {
 export default [
   {
     key: 'point',
-    elem: '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="6" fill="#f00" stroke="#f00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    elem: '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="3" fill="#f00" stroke="#f00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     shape: fabric.Circle,
     options: { radius: 100, fill: '#555555' }
   },

@@ -17,16 +17,13 @@ export default function Layer() {
       setLayers([]);
       return;
     }
-    const activeObject = editor?.canvas.getActiveObject();
     for (let i = length - 1; i >= 0; i--) {
       let object = objects[i];
       if (object && object.id !== SKETCH_ID) {
-        if (activeObject === object) {
-          object.__cover = object.toDataURL();
+        if (object.sub_type === 'image') {
+          object.__cover = object?.img?.src;
         } else {
-          if (!object.__cover) {
-            object.__cover = object.toDataURL();
-          }
+          object.__cover = object?.toDataURL?.();
         }
 
         _layers.push({
@@ -56,7 +53,7 @@ export default function Layer() {
 
   useEffect(() => {
     let canvas: any;
-    const initCanvasLayers = () => { getCanvasLayers(canvas.getObjects()); }
+    const initCanvasLayers = () => { getCanvasLayers?.(canvas?.getObjects?.()); }
 
     if (isReady) {
       setLayers([]);
@@ -93,26 +90,28 @@ export default function Layer() {
         layers.length ?
           <List
             dataSource={layers}
-            renderItem={(item: any) => (
-              <ContextMenu object={item.object} noCareOpen>
-                <List.Item
-                  className="fabritor-list-item"
-                  style={{
-                    border: activeObject === item.object ? ' 2px solid #ff2222' : '2px solid transparent',
-                    padding: '10px 16px'
-                  }}
-                  onClick={() => { handleItemClick(item) }}
-                >
-                  <div className='flex-box-justify-between' style={{ width: '100%', height: 40 }}>
-                    <img src={item.cover} style={{ maxWidth: 200, maxHeight: 34, width: 'auto', height: 'auto' }} />
-                    {
-                      item.group ?
-                        <GroupOutlined style={{ fontSize: 18, color: 'rgba(17, 23, 29, 0.6)' }} /> : null
-                    }
-                  </div>
-                </List.Item>
-              </ContextMenu>
-            )}
+            renderItem={(item: any) => {
+              return (
+                <ContextMenu object={item.object} noCareOpen>
+                  <List.Item
+                    className="fabritor-list-item"
+                    style={{
+                      border: activeObject === item.object ? ' 2px solid #ff2222' : '2px solid transparent',
+                      padding: '10px 16px'
+                    }}
+                    onClick={() => { handleItemClick(item) }}
+                  >
+                    <div className='flex-box-justify-between' style={{ width: '100%', height: 40 }}>
+                      <img src={item.cover} style={{ maxWidth: 200, maxHeight: 34, width: 'auto', height: 'auto' }} />
+                      {
+                        item.group ?
+                          <GroupOutlined style={{ fontSize: 18, color: 'rgba(17, 23, 29, 0.6)' }} /> : null
+                      }
+                    </div>
+                  </List.Item>
+                </ContextMenu>
+              )
+            }}
           /> :
           <Empty
             image={null}

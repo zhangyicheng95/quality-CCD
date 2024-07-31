@@ -14,20 +14,32 @@ export const loadImageDom = async (url: any) => {
   });
 }
 
-export const loadImage = async (imageSource: any) => {
+export const loadImage = async (imageSource: any, canvas: any) => {
   if (typeof imageSource === 'string') {
     return new Promise<fabric.Image>((resolve, reject) => {
-      fabric.Image.fromURL(imageSource, (img) => {
-        debugger
-        if (!img) {
-          message.error('加载图片失败');
-          reject();
-          return;
-        }
-        resolve(img);
-      }, {
-        crossOrigin: 'anonymous'
-      });
+      fabric.Image.fromURL(
+        imageSource,
+        () => {
+          fabric.util.loadImage(imageSource, (img: any) => {
+            if (!img || !img.width) {
+              message.error('加载图片失败');
+              reject();
+              return;
+            } else {
+              const { width, height } = canvas;
+              let scale = (img.width / width >= 0.9 || img.height / height >= 0.9) ?
+                Math.min(width / img.width, height / img.height) : 1;
+
+              const result = new fabric.Image(img, {
+                scaleX: scale,
+                scaleY: scale
+              });
+              resolve(result);
+            }
+          }, { crossOrigin: 'anonymous' });
+        },
+        { crossOrigin: 'anonymous' }
+      );
     });
   }
   return Promise.resolve(new fabric.Image(imageSource));
@@ -50,7 +62,7 @@ export const createImage = async (options: any) => {
 
   let img!: fabric.Image;
   try {
-    img = await loadImage(imageSource);
+    img = await loadImage(imageSource, canvas);
   } catch (e) { console.log(e); }
 
   if (!img) return;
@@ -74,8 +86,10 @@ export const createFImage = async (options: any) => {
 
   let img!: fabric.Image;
   try {
-    img = await loadImage(imageSource);
-  } catch (e) { console.log(e); }
+    img = await loadImage(imageSource, canvas);
+  } catch (e) {
+    console.log(e);
+  }
 
   if (!img) return;
   // @ts-ignore

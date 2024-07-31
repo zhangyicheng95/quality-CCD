@@ -1,7 +1,7 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import { Button, message, Modal } from 'antd';
 import { GloablStateContext } from '@/context';
-import { ClearOutlined, ExclamationCircleFilled, UndoOutlined, RedoOutlined, SaveOutlined, DragOutlined } from '@ant-design/icons';
+import { ClearOutlined, ExclamationCircleFilled, UndoOutlined, RedoOutlined, SaveOutlined, DragOutlined, BorderlessTableOutlined } from '@ant-design/icons';
 import { CenterV } from '@/components/fabritor/components/Center';
 import ToolbarItem from './ToolbarItem';
 import ToolbarDivider from '@/components/fabritor/components/ToolbarDivider';
@@ -37,7 +37,8 @@ export default function Toolbar() {
           width: strokeWidth,
           height: strokeWidth
         } : {
-          type: sub_type
+          type: sub_type,
+          ...sub_type === 'image' ? { src: item.objects?.[0]?.src, } : {}
         }
       )
     }
@@ -49,15 +50,13 @@ export default function Toolbar() {
           return initItem(cItem)
         })
       } : initItem(item)
-    })?.filter((i: any) => i.type !== 'image');
+    });
     return result || [];
   }
   const saveCanvas = () => {
     const json = editor.canvas2Json();
-    console.log('画布数据：', json);
-
     const result = formatResult(json.objects);
-    // console.log('result', JSON.stringify(result));
+    console.log('result', result);
     !!onLoadTypeChange && onLoadTypeChange({ type: 'mark', data: result });
     message.success('保存画布成功');
     localStorage.setItem('fabritor_web_json', JSON.stringify(json));
@@ -130,16 +129,16 @@ export default function Toolbar() {
           : null
       }
       <ToolbarDivider />
-      <ToolbarItem
+      {/* <ToolbarItem
         onClick={enablePan}
         title={panEnable ? '选择元素' : '拖拽画布'}
       >
         {
           panEnable ?
             <DragOutlined style={{ fontSize: 22, color: panEnable ? '#000' : '#ccc' }} /> :
-            <img src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(DRAG_ICON)}`} style={{ width: 22, height: 22 }} />
+            <BorderlessTableOutlined style={{ fontSize: 22, color: panEnable ? '#000' : '#ccc' }} />
         }
-      </ToolbarItem>
+      </ToolbarItem> */}
       <ToolbarItem onClick={saveCanvas} title={'保存数据'}>
         <SaveOutlined style={{ fontSize: 20 }} />
       </ToolbarItem>

@@ -8,6 +8,7 @@ export default function RemoteImageSelector(props: any) {
   const handleClick = () => {
     if (url) {
       onChange?.(url);
+      setUrl('');
     }
   }
 

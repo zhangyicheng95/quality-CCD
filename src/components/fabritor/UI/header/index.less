@@ -1,10 +1,27 @@
 .fabritor-header {
 
   :global {
+    .fabritor-base-info {
+      flex: 1;
+      justify-content: space-between;
+      padding: 0 279px 0 16px;
+
+      .ant-typography {
+        .ant-input {
+          height: 40px !important;
+          min-height: 40px !important;
+          max-height: 40px !important;
+        }
+
+        .ant-typography-edit-content-confirm {
+          top: 8px;
+        }
+      }
+    }
+
     .fabritor-toolbar {
       height: 46px;
       background-color: #fff;
-      border-bottom: 1px solid #e8e8e8;
       padding: 0 16px;
       overflow: hidden;
       border-right: 1px solid #e8e8e8;

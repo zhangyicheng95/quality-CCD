@@ -145,7 +145,12 @@ export default function Fabritor(props: Props) {
 
     const jsonStr = localStorage.getItem('fabritor_web_json')
     if (jsonStr) {
-      await _editor.loadFromJSON(jsonStr);
+      const json = JSON.parse(jsonStr);
+      const string = JSON.stringify({
+        ...json,
+        background: theme === "realDark" ? "#000" : "#fff",
+      })
+      await _editor.loadFromJSON(string);
     }
 
     _editor.canvas?.on('object:moving', function (e: any) {
@@ -330,6 +335,7 @@ export default function Fabritor(props: Props) {
         roughSvg,
         onLoadTypeChange,
         theme,
+        addImage,
       }}
     >
       <div className={styles["fabritor-layout"]}>

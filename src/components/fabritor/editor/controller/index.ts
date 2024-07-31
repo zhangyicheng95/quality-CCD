@@ -25,19 +25,19 @@ DEL_IMG_ACTIVE.src = DEL_SVG_ACTIVE;
 const renderSizeIcon = (ctx: any, left: any, top: any, styleOverride: any, fabricObject: any, TBorLR: any) => {
   const xSize = TBorLR === 'TB' ? 20 : 6;
   const ySize = TBorLR === 'TB' ? 6 : 20;;
-  ctx.save();
+  ctx?.save?.();
   ctx.fillStyle = '#ffffff';
   ctx.strokeStyle = '#bbb';
   ctx.lineWidth = 2;
   ctx.shadowBlur = 2;
   ctx.shadowColor = '#ddd';
-  ctx.translate(left, top);
-  ctx.rotate(fabric.util.degreesToRadians(fabricObject.angle));
-  ctx.beginPath();
-  ctx.roundRect(-xSize / 2, -ySize / 2, xSize, ySize, 10);
-  ctx.stroke();
-  ctx.fill();
-  ctx.restore();
+  ctx?.translate(left, top);
+  ctx?.rotate(fabric.util.degreesToRadians(fabricObject.angle));
+  ctx?.beginPath();
+  ctx?.roundRect?.(-xSize / 2, -ySize / 2, xSize, ySize, 10);
+  ctx?.stroke();
+  ctx?.fill();
+  ctx?.restore();
 }
 
 const renderLRIcon = (ctx: any, left: any, top: any, styleOverride: any, fabricObject: any) => {
@@ -50,27 +50,27 @@ const renderTBIcon = (ctx: any, left: any, top: any, styleOverride: any, fabricO
 
 export const renderVertexIcon = (ctx: any, left: any, top: any, styleOverride: any, fabricObject: any) => {
   const size = 12;
-  ctx.save();
+  ctx?.save();
   ctx.fillStyle = '#fff';
   ctx.strokeStyle = '#bbb';
   ctx.lineWidth = 2;
   ctx.shadowBlur = 2;
   ctx.shadowColor = '#ddd';
-  ctx.beginPath();
-  ctx.arc(left, top, size / 2, 0, 2 * Math.PI, false);
-  ctx.stroke();
-  ctx.fill();
-  ctx.restore();
+  ctx?.beginPath();
+  ctx?.arc(left, top, size / 2, 0, 2 * Math.PI, false);
+  ctx?.stroke();
+  ctx?.fill();
+  ctx?.restore();
 }
 
 function renderSvgIcon(icon: any) {
   return function renderIcon(ctx: any, left: any, top: any, styleOverride: any, fabricObject: any) {
     const size = 28;
-    ctx.save();
-    ctx.translate(left, top);
-    ctx.rotate(fabric.util.degreesToRadians(fabricObject.angle));
-    ctx.drawImage(icon, -size / 2, -size / 2, size, size);
-    ctx.restore();
+    ctx?.save();
+    ctx?.translate(left, top);
+    ctx?.rotate(fabric.util.degreesToRadians(fabricObject.angle));
+    ctx?.drawImage(icon, -size / 2, -size / 2, size, size);
+    ctx?.restore();
   }
 }
 

@@ -10,6 +10,7 @@ export interface IGloablStateContext {
   roughSvg?: any;
   onLoadTypeChange?: any;
   theme?: string;
+  addImage?: any;
 }
 
 export const GloablStateContext = createContext<IGloablStateContext>(null);

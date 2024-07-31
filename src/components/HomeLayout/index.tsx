@@ -214,9 +214,9 @@ const HomeLayout: React.FC<any> = (props) => {
   });
   window.focus();
 
-  console.log = (message?: any, ...optionalParams: any) => {
-    console.info(`${new Date()}`, message, ...optionalParams);
-  };
+  // console.log = (message?: any, ...optionalParams: any) => {
+  //   console.info(`${new Date()}`, message, ...optionalParams);
+  // };
   return (
     <div className={styles.reportWrap}>
       <div className="box flex-box">

@@ -1,12 +1,12 @@
 import { useState, useEffect, useContext } from 'react';
-import { Typography } from 'antd';
+import { Button, Typography } from 'antd';
 import { GloablStateContext } from '@/context';
 
 const { Text } = Typography;
 
 export default function BaseInfo() {
   const [desc, setDesc] = useState('');
-  const { editor } = useContext<any>(GloablStateContext);
+  const { editor, addImage } = useContext<any>(GloablStateContext);
 
   const handleChange = (v: any) => {
     const _v = v || 'ubvision fabritor';
@@ -37,9 +37,12 @@ export default function BaseInfo() {
       }}
       className="flex-box"
       ellipsis={true}
-      style={{ margin: 0, width: 200 }}
+      style={{ margin: 0, width: 200, height: 46, lineHeight: '46px' }}
     >
       {desc || ''}
+      <Button onClick={() => {
+        addImage({})
+      }}>导入CAD图纸</Button>
     </Text>
   )
 }

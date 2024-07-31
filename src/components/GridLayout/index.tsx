@@ -63,7 +63,7 @@ const GridLayout: React.FC<Props> = (props: any) => {
             //     lg: layout.filter(Boolean)
             // }}
             rowHeight={14}
-            layout={layout.filter((i: any) => (tabNum * 96 <= i.x) && (i.x < ((tabNum + 1) * 96)) && i.w > 0)}
+            layout={!!ifCanEdit ? layout : layout.filter((i: any) => (tabNum * 96 <= i.x) && (i.x < ((tabNum + 1) * 96)) && i.w > 0)}
             cols={96 * (tabLength || 1)}
             // breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
             // cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
@@ -81,12 +81,16 @@ const GridLayout: React.FC<Props> = (props: any) => {
             margin={margin}
           >
             {list.filter(Boolean)?.map?.((item: any) => {
-              const lay = layout.filter((i: any) => (tabNum * 96 <= i.x) && (i.x < ((tabNum + 1) * 96)) && i.w > 0 && item.key === i.i);
-              if (!!lay && !!lay?.[0]) {
+              if (!!ifCanEdit) {
                 return item;
+              } else {
+                const lay = layout.filter((i: any) => (tabNum * 96 <= i.x) && (i.x < ((tabNum + 1) * 96)) && i.w > 0 && item.key === i.i);
+                if (!!lay && !!lay?.[0]) {
+                  return item;
+                }
+                return null;
               }
-              return null;
-            })}
+            })?.filter(Boolean)}
           </ResponsiveGridLayout>
         }
       </div>
