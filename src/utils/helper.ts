@@ -116,12 +116,14 @@ export const removeObject = (target: any, canvas: any) => {
 }
 
 export const groupSelection = (canvas: any, target: any) => {
+  console.log(canvas, target);
   if (!target) {
     target = canvas.getActiveObject();
   }
   if (!target || target.type !== 'activeSelection') {
     return;
   }
+
   target.toGroup();
   canvas.requestRenderAll();
   canvas.fire('fabritor:group');
@@ -138,7 +140,7 @@ export const ungroup = (canvas: any, target: any) => {
     obj.set({
       lockMovementX: false,
       lockMovementY: false,
-      hasControls: true,
+      hasControls: !((obj.type === 'path' && obj.path?.length <= 3) || obj.sub_type === 'point'),
       selectable: true
     });
   });

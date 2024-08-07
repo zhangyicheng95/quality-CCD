@@ -141,6 +141,7 @@ import IaminationImageCharts from './components/IaminationImageCharts';
 import ReJudgmentCharts from './components/ReJudgmentCharts';
 import AntdTableFromHttpCharts from './components/AntdTableFromHttpCharts';
 import FabricCharts from './components/FabricCharts';
+import CableCharts from './components/CableCharts';
 
 const leftPanelDataLocal = [
   {
@@ -1793,6 +1794,15 @@ const Home: React.FC<any> = (props: any) => {
                       xName,
                       fetchType,
                       httpRotation, httpRotationTime
+                    }}
+                  />
+                ) : type === 'cable' ? (
+                  <CableCharts
+                    id={key}
+                    data={{
+                      dataValue,
+                      fontSize,
+                      yName
                     }}
                   />
                 ) : type === 'button' ? (
@@ -5428,6 +5438,19 @@ const Home: React.FC<any> = (props: any) => {
                         rules={[{ required: false, message: '轮训时间间隔' }]}
                       >
                         <InputNumber addonAfter="毫秒" />
+                      </Form.Item>
+                    </Fragment>
+                  ) : null
+                }
+                {
+                  ['cable'].includes(windowType) ? (
+                    <Fragment>
+                      <Form.Item
+                        name={`yName`}
+                        label={'名称'}
+                        rules={[{ required: false, message: '名称' }]}
+                      >
+                        <Input size="large" />
                       </Form.Item>
                     </Fragment>
                   ) : null

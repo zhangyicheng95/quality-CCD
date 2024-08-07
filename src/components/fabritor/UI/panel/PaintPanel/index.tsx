@@ -3,7 +3,7 @@ import Title from '@/components/fabritor/components/Title';
 import { useContext, useEffect, useState } from 'react';
 import { fabric } from 'fabric';
 import { DRAW_MODE_CURSOR, DRAG_ICON } from '@/common/constants/globalConstants';
-import BrushList from './brush-list';
+import BrushList from '@/components/fabritor/UI/panel/PaintPanel/brush-list';
 import { GloablStateContext } from '@/context';
 import PathSetterForm from '../../setter/PathSetter/PathSetterForm';
 

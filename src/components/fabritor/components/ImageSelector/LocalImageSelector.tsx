@@ -1,35 +1,16 @@
 import { useRef, useState } from 'react';
-import { Button } from 'antd';
-import LocalFileSelector from '../LocalFileSelector';
 import ChooseFileButton from '@/components/ChooseFileButton';
 import FileManager from '@/components/FileManager';
+import { btnFetch } from '@/services/api';
+import { message } from 'antd';
 
 export default function LocalImageSelector(props: any) {
-  const { onChange, ...rest } = props;
-  const localFileSelectorRef = useRef<any>();
+  const { onChange } = props;
   const [selectPathVisible, setSelectPathVisible] = useState(false);
   const [selectedPath, setSelectedPath] = useState<any>({});
 
-  const handleClick = () => {
-    localFileSelectorRef.current?.start?.();
-  }
-
-  const handleFileChange = (file: any) => {
-    if (file.type === 'image/svg+xml') {
-      // const url = URL.createObjectURL(file);
-      // addSvg?.({ url });
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (revt: any) => {
-      onChange?.(revt.target.result);
-    }
-    reader.readAsDataURL(file);
-  }
-
   return (
-    <div>
+    <div className='flex-box' style={{ flexWrap: 'wrap', gap: 16 }}>
       <ChooseFileButton
         name={'fabric-img-select'}
         type="primary"
@@ -48,16 +29,46 @@ export default function LocalImageSelector(props: any) {
         }}
         style={{ height: 40, width: 'auto', fontSize: 16, borderRadius: 4 }}
       >
-        添加本地图片
+        添加图片
+      </ChooseFileButton>
+      <ChooseFileButton
+        name={'fabric-img-select'}
+        type="primary"
+        onClick={() => {
+          if (!!localStorage.getItem('parentOrigin')) {
+            window?.parent?.postMessage?.(
+              { type: 'openFile', name: 'fabric-img-select', suffix: "dwg" },
+              localStorage.getItem('parentOrigin') || '',
+            );
+          } else {
+            setSelectPathVisible?.(true);
+          }
+        }}
+        onOk={(value: any) => {
+          btnFetch(
+            'post',
+            'localhost:8801/dwgToImg',
+            { url: value }
+          ).then((res: any) => {
+            if (res && res.code === 'SUCCESS') {
+              onChange(res?.data || '');
+            } else {
+              message.error('截图上传时，接口报错', 5);
+            }
+          });
+        }}
+        style={{ height: 40, width: 'auto', fontSize: 16, borderRadius: 4 }}
+      >
+        添加CAD模板
       </ChooseFileButton>
       {selectPathVisible ? (
         <FileManager
           fileType={selectedPath.fileType}
           data={selectedPath}
           onOk={(val: any) => {
-            const { id, value, ...rest } = val;
-            onChange(val?.value);
-            setSelectedPath(val?.value);
+            const { id, value } = val;
+            onChange(value);
+            setSelectedPath(value);
             setSelectPathVisible?.(false);
           }}
           onCancel={() => {
@@ -65,12 +76,6 @@ export default function LocalImageSelector(props: any) {
           }}
         />
       ) : null}
-
-      {/* <Button type="primary" size="large" onClick={handleClick} {...rest}>
-        添加本地图片
-      </Button>
-
-      <LocalFileSelector accept={["image/*", ".dwg"]} ref={localFileSelectorRef} onChange={handleFileChange} /> */}
     </div>
   );
 }

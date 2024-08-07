@@ -1,5 +1,5 @@
 export default function Center(props: any) {
-  const { children, height = 46, style, className, ...rest } = props;
+  const { children, height = 49, style, className, ...rest } = props;
 
   return (
     <div className={`flex-box ${className}`} {...rest} style={{ height, ...style }} >

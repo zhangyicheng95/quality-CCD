@@ -16,7 +16,7 @@ const LogPreviewModal: React.FC<Props> = (props: any) => {
     <Modal
       title={'日志信息'}
       width="calc(100vw - 48px)"
-      wrapClassName={'chart-preview-modal'}
+      wrapClassName={'full-screen-modal'}
       centered
       open={true}
       footer={null}

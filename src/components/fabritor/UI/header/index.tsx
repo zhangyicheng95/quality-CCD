@@ -27,7 +27,10 @@ export default function () {
         {/* <BaseInfo /> */}
         <Toolbar />
       </CenterV>
-      {/* <Export /> */}
+      <div style={{ width: 279 }} >
+        {/* <Export /> */}
+        {/* <FileToolbar /> */}
+      </div>
     </Header>
   )
 }

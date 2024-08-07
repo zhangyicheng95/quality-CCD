@@ -5,8 +5,10 @@ export default [
     title: '铅笔',
     options: {
       color: '#f00',
-      width: 10,
+      width: 5,
       strokeLineCap: 'round',
+      hasControls: false,
+      type: 'path'
     }
   },
   {
@@ -17,6 +19,8 @@ export default [
       color: '#FF0000',
       width: 36,
       strokeLineCap: 'square',
+      hasControls: false,
+      type: 'path'
     }
   }
 ]

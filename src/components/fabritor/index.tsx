@@ -46,6 +46,7 @@ export default function Fabritor(props: Props) {
   const canvasEl = useRef<HTMLCanvasElement>(null);
   const workspaceEl = useRef<HTMLDivElement>(null);
   const roughSvgEl = useRef(null);
+  const [dataSource, setDataSOurce] = useState<any>({});
   const [editor, setEditor] = useState<any>(null);
   const [roughSvg, setRoughSvg] = useState<any>();
   const [activeObject, setActiveObject] = useState<fabric.Object | null | undefined>(null);
@@ -146,9 +147,17 @@ export default function Fabritor(props: Props) {
     const jsonStr = localStorage.getItem('fabritor_web_json')
     if (jsonStr) {
       const json = JSON.parse(jsonStr);
+      setDataSOurce(json || {});
       const string = JSON.stringify({
         ...json,
         background: theme === "realDark" ? "#000" : "#fff",
+        objects: (json.objects || [])?.map((item: any) => {
+          return Object.assign({}, item,
+            (item?.type === 'path' && item?.path?.length <= 3) ? {
+              hasControls: false,
+            } : {}
+          )
+        })
       })
       await _editor.loadFromJSON(string);
     }
@@ -250,41 +259,41 @@ export default function Fabritor(props: Props) {
           });
         } else if (i.type === "line") {
           drawLine({
-            x1: i.x1,
-            y1: i.y1,
-            x2: i.x2,
-            y2: i.y2,
+            left: i.x1,
+            top: i.y1,
+            points: [i.x1, i.y1, i.x2, i.y2],
             stroke: i.color,
+            strokeWidth: 2,
             canvas: editor.canvas,
             sub_type: 'line'
           });
         } else if (i.type === "dash-line") {
           drawLine({
-            x1: i.x1,
-            y1: i.y1,
-            x2: i.x2,
-            y2: i.y2,
+            left: i.x1,
+            top: i.y1,
+            points: [i.x1, i.y1, i.x2, i.y2],
             stroke: i.color,
+            strokeWidth: 2,
             canvas: editor.canvas,
             sub_type: 'dash-line'
           });
         } else if (i.type === "arrow-line-1") {
           drawArrowLine({
-            x1: i.x1,
-            y1: i.y1,
-            x2: i.x2,
-            y2: i.y2,
+            left: i.x1,
+            top: i.y1,
+            points: [i.x1, i.y1, i.x2, i.y2],
             stroke: i.color,
+            strokeWidth: 2,
             canvas: editor.canvas,
             sub_type: 'arrow-line-1'
           });
         } else if (i.type === "arrow-line-2") {
           drawTriArrowLine({
-            x1: i.x1,
-            y1: i.y1,
-            x2: i.x2,
-            y2: i.y2,
+            left: i.x1,
+            top: i.y1,
+            points: [i.x1, i.y1, i.x2, i.y2],
             stroke: i.color,
+            strokeWidth: 2,
             canvas: editor.canvas,
             sub_type: 'arrow-line-2'
           });
@@ -296,7 +305,7 @@ export default function Fabritor(props: Props) {
             canvas: editor.canvas,
             sub_type: 'point',
             hasControls: false,
-            strokeWidth: 4,
+            strokeWidth: 2,
           });
         } else if (i.type === 'rect') {
           createPathFromSvg({
@@ -309,7 +318,7 @@ export default function Fabritor(props: Props) {
             sub_type: 'rect',
             strokeWidth: 4,
           });
-        } if (i.type === 'circle') {
+        } else if (i.type === 'circle') {
           createPathFromSvg({
             top: i.top,
             left: i.left,
@@ -327,6 +336,7 @@ export default function Fabritor(props: Props) {
   return (
     <GloablStateContext.Provider
       value={{
+        data: dataSource,
         object: activeObject,
         setActiveObject,
         isReady,

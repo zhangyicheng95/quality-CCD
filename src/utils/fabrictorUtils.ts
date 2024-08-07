@@ -1,6 +1,7 @@
 import { fabric } from 'fabric';
 import * as FontFaceObserver from 'fontfaceobserver';
 import { FONT_PRESET_FAMILY_LIST, LOG_PREFIX } from '@/common/constants/globalConstants';
+import { message } from 'antd';
 
 const AngleCoordsMap = {
     45: JSON.stringify({ x1: 0, y1: 1, x2: 1, y2: 0 }),
@@ -131,3 +132,48 @@ export const getSystemClipboard = async () => {
         return null;
     }
 }
+
+export function getArrowPoint(array: any) {
+    //ctx为需要绘制的canvas元素的CanvasRenderingContext2D 对象，使用它可以绘制到 Canvas 元素中。
+    if (array.length === 2) {
+        let x1 = array[0].x; // 第一个点的X
+        let x2 = array[1].x; // 第2个点的X
+        let y1 = array[0].y; // 第一个点的y
+        let y2 = array[1].y; // 第2个点的y
+        // 中点c的位置为
+        let c = { x: (x1 + x2) / 2, y: (y1 + y2) / 2 };
+        // 根据x、y的值 计算是x1-x2 还是x2-x1 以及y2-y1 还是 y1-y2
+        let borderX = null;
+        let borderY = null;
+        if (x1 > x2 && y2 > y1) {
+            borderX = x2 - x1;
+            borderY = y2 - y1;
+        } else if (x1 > x2 && y1 > y2) {
+            borderX = x1 - x2;
+            borderY = y2 - y1;
+        } else if (x2 > x1 && y1 > y2) {
+            borderX = x2 - x1;
+            borderY = y1 - y2;
+        } else {
+            borderX = x1 - x2;
+            borderY = y1 - y2;
+        }
+        // 斜边l1的长度为
+        let l1 = Math.sqrt(Math.pow(borderX, 2) + Math.pow(borderY, 2));
+
+        // 定义l2的默认长度为50
+        let l2 = 100;
+        let h2 = (l2 * borderX) / l1;
+        let s2 = Math.sqrt(Math.pow(l2, 2) - Math.pow(h2, 2));
+        let endX = array[1].x >= array[0].x ? s2 + c.x : c.x - s2;
+        let endY = c.y + h2;
+        let end2X = 2 * c.x - endX;
+        let end2Y = 2 * c.y - endY;
+        return [c.x, c.y, end2X, end2Y];
+        //drawLineArrow为 画箭头的方法
+        // this.drawLineArrow(ctx, c.x, c.y, endX, endY, '#f00', 'A');
+        // this.drawLineArrow(ctx, c.x, c.y, end2X, end2Y, '#f00', 'B');
+    } else {
+        message.error('需要两个点的xy坐标');
+    }
+};

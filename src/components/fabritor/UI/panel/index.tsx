@@ -34,7 +34,7 @@ const OBJECT_TYPES = [
     icon: <FileTextOutlined style={iconStyle} />
   },
   {
-    label: '图片',
+    label: '模板',
     value: 'image',
     icon: <PictureOutlined style={iconStyle} />
   },

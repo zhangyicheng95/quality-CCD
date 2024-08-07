@@ -384,8 +384,7 @@ export default class Editor {
     if (typeof json === 'string') {
       try {
         json = JSON.parse(json);
-        console.log(json);
-
+        console.log('加载的模版是：', json);
       } catch (e) {
         console.log('加载本地模板失败', e);
         errorToast && message.error('加载本地模板失败，请重试');

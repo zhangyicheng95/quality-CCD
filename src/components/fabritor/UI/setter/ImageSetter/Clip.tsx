@@ -37,15 +37,17 @@ export default function ClipSetter(props: any) {
 
   const handleCrop = () => {
     if (cropperRef.current) {
-      const newImage = cropperRef.current.getCroppedCanvas().toDataURL();
-      object.setSrc(newImage, () => {
-        object.set('hasControls', true);
-        if (object.group) {
-          object.group.addWithUpdate();
-        }
-        object.canvas.requestRenderAll();
-        object.setCoords();
-      });
+      try {
+        const newImage = cropperRef.current?.getCroppedCanvas().toDataURL();
+        object.setSrc(newImage, () => {
+          object.set('hasControls', true);
+          if (object.group) {
+            object.group.addWithUpdate();
+          }
+          object.canvas.requestRenderAll();
+          object.setCoords();
+        });
+      } catch (err) { }
       setShowCrop(false);
     }
   }
@@ -103,8 +105,8 @@ export default function ClipSetter(props: any) {
                 <Button onClick={() => { changeRatio(3 / 4) }}>3:4</Button>
                 <Button onClick={() => { changeRatio(16 / 9) }}>16:9</Button>
                 <Button onClick={() => { changeRatio(9 / 16) }}>9:16</Button>
-                <Button icon={<CloseOutlined />} onClick={cancel} />
-                <Button icon={<CheckOutlined />} onClick={handleCrop} />
+                <Button icon={<CloseOutlined />} style={{ padding: 0 }} onClick={cancel} />
+                <Button icon={<CheckOutlined />} style={{ padding: 0 }} onClick={handleCrop} />
               </Space.Compact>
             </div>
             <div

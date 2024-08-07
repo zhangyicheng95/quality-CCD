@@ -303,6 +303,10 @@ export const windowTypeList: any = [
     value: 'httpTable',
     label: 'http数据表格窗口',
   },
+  {
+    value: 'fabric',
+    label: '尺寸测量标注窗口',
+  },
 ];
 // 默认基础组件
 export const basicWindowList: any = [
@@ -390,8 +394,8 @@ export const customWindowList: any = [
     label: '型号切换窗口',
   },
   {
-    value: 'fabric',
-    label: '尺寸测量标注窗口',
+    value: 'cable',
+    label: '线缆标定窗口',
   },
 ];
 // 仿真涂层-背景图

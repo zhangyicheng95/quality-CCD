@@ -7,7 +7,7 @@ export default function ImageSelector(props: any) {
   return (
     <div className='flex-box-justify-around' style={{ gap: 8 }}>
       <LocalImagePanel {...rest} onChange={onChange} />
-      <RemoteImagePanel {...rest} onChange={onChange} />
+      {/* <RemoteImagePanel {...rest} onChange={onChange} /> */}
     </div>
   )
 }

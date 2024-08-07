@@ -9,7 +9,7 @@ import { useContext } from 'react';
 import { GloablStateContext } from '@/context';
 import { createPathFromSvg } from '@/components/fabritor/editor/objects/path';
 import Title from '@/components/fabritor/components/Title';
-import Center from '@/components/fabritor/components/Center';
+import sectorIcon from '@/assets/imgs/扇形.svg';
 
 export default function ShapePanel() {
   const { editor, roughSvg } = useContext<any>(GloablStateContext);
@@ -33,7 +33,7 @@ export default function ShapePanel() {
   }
 
   const addShape = (item: any) => {
-    const { key, elem, options } = item;
+    const { key, elem, shape, options } = item;
     const canvas = editor.canvas;
     // switch (key) {
     // case 'rect':
@@ -116,7 +116,12 @@ export default function ShapePanel() {
               onClick={() => { addShape(item) }}
               className="fabritor-panel-shape-item"
             >
-              <img src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(item.elem)}`} style={{ width: 64, height: 64 }} />
+              {
+                item.key === 'sector' ?
+                  <img src={sectorIcon} alt="" style={{ width: 64, height: 64 }} />
+                  :
+                  <img src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(item.elem)}`} style={{ width: 64, height: 64 }} />
+              }
             </div>
           ))
         }

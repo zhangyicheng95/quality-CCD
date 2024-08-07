@@ -2,6 +2,7 @@ import { createContext } from 'react';
 import { fabric } from 'fabric';
 import Editor from '@/components/fabritor/editor';
 export interface IGloablStateContext {
+  data: any;
   object?: fabric.Object | null | undefined;
   setActiveObject?: (o: fabric.Object) => void;
   isReady?: boolean;

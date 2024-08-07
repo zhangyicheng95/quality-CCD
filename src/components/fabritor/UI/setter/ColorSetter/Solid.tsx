@@ -8,12 +8,15 @@ export default function SolidColorSetter(props: any) {
     onChange?.(v);
   }
 
-  const calcTriggerBg = () => {
-    const c = new Color(value);
-    if (c.toHexString() === '#ffffff') {
-      return 'rgba(103,103,103,0.24)';
+  const calcTriggerBg: any = () => {
+    try {
+      const c = new Color(value);
+      if (c.toHexString() === '#ffffff') {
+        return 'rgba(103,103,103,0.24)';
+      }
+    } catch (err) {
+      return null;
     }
-    return null;
   }
 
   const renderTrigger = () => {

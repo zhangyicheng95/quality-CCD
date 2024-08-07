@@ -13,7 +13,7 @@ const i18nKeySuffix = 'header.export';
 const importItems: MenuProps['items'] = [
   { key: 'json', label: '导入JSON模版' },
   { type: 'divider' },
-  { key: 'cad', label: '导入CAD模版' },
+  // { key: 'cad', label: '导入CAD模版' },
 ];
 const exportItems: MenuProps['items'] = [
   { key: 'jpg', label: '导出为 JPG' },
@@ -38,18 +38,26 @@ export default function FileToolbar() {
 
   const handleFileChange = (file: any) => {
     setReady(false);
-    const reader = new FileReader();
-    reader.onload = (async (evt) => {
-      const json = evt.target?.result as string;
-      if (json) {
-        await editor.loadFromJSON(json, true);
-        editor.fhistory.reset();
-        setReady(true);
-        setActiveObject(null);
-        editor.fireCustomModifiedEvent();
+    try {
+      if (file?.name?.indexof('.dwg') > -1) {
+
+      } else if (file?.name?.indexof('.json') > -1) {
+        const reader = new FileReader();
+        reader.onload = (async (evt) => {
+          const json = evt.target?.result as string;
+          if (json) {
+            await editor.loadFromJSON(json, true);
+            editor.fhistory.reset();
+            setReady(true);
+            setActiveObject(null);
+            editor.fireCustomModifiedEvent();
+          }
+        });
+        reader.readAsText(file);
       }
-    });
-    reader.readAsText(file);
+    } catch (err) {
+      setReady(true);
+    }
   }
 
   const copyImage = async () => {

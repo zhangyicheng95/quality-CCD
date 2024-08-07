@@ -40,7 +40,7 @@ const ChartPreviewModal: React.FC<Props> = (props: any) => {
         <Modal
             title={"统计预览"}
             width="calc(100vw - 48px)"
-            wrapClassName={"chart-preview-modal"}
+            wrapClassName={"full-screen-modal"}
             centered
             open={true}
             footer={null}

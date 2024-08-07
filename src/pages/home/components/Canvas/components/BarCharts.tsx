@@ -48,7 +48,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
   if (process.env.NODE_ENV === 'development') {
     for (let i = 0; i < 7; i++) {
       dataValue.push({
-        name: moment(+new Date() + i * 24 * 3600 * 1000).format('MM-DD'),
+        name: '数据' + i,
         value: Math.random() * 10,
       });
     }

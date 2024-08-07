@@ -7,6 +7,9 @@ export const createFImageClass = () => {
 
     initialize(options: any, alreayGrouped = false) {
       const { image, imageBorder = {}, ...rest } = options;
+      if (!image) {
+        return;
+      }
       image.set({
         originX: 'center',
         originY: 'center'

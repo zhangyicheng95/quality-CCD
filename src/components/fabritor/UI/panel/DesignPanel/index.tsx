@@ -20,12 +20,16 @@ export default function Layer() {
     for (let i = length - 1; i >= 0; i--) {
       let object = objects[i];
       if (object && object.id !== SKETCH_ID) {
-        if (object.sub_type === 'image') {
-          object.__cover = object?.img?.src;
-        } else {
-          object.__cover = object?.toDataURL?.();
-        }
-
+        try {
+          if (object.sub_type === 'image') {
+            object.__cover = object?.img?.src;
+          } else if (object.type === 'group') {
+            const img = object?._objects?.filter((i: any) => i.sub_type === 'image')?.[0];
+            object.__cover = img?.img?.src;
+          } else {
+            object.__cover = object?.toDataURL?.();
+          }
+        } catch (err) { }
         _layers.push({
           cover: object.__cover,
           group: object.type === 'group',
@@ -91,6 +95,9 @@ export default function Layer() {
           <List
             dataSource={layers}
             renderItem={(item: any) => {
+              if (item.object.sub_type === 'line-fuzhu') {
+                return null;
+              }
               return (
                 <ContextMenu object={item.object} noCareOpen>
                   <List.Item
@@ -102,7 +109,12 @@ export default function Layer() {
                     onClick={() => { handleItemClick(item) }}
                   >
                     <div className='flex-box-justify-between' style={{ width: '100%', height: 40 }}>
-                      <img src={item.cover} style={{ maxWidth: 200, maxHeight: 34, width: 'auto', height: 'auto' }} />
+                      {
+                        !!item.cover ?
+                          <img src={item.cover} style={{ maxWidth: 200, maxHeight: 34, width: 'auto', height: 'auto' }} />
+                          :
+                          <div style={{ height: 34, width: 28, background: '#000' }} />
+                      }
                       {
                         item.group ?
                           <GroupOutlined style={{ fontSize: 18, color: 'rgba(17, 23, 29, 0.6)' }} /> : null
