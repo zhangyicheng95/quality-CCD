@@ -9,7 +9,9 @@ export interface IGloablStateContext {
   setReady?: (o: boolean) => void;
   editor?: Editor;
   roughSvg?: any;
-  onLoadTypeChange?: any;
+  fetchType?: any;
+  xName?: any;
+  yName?: any;
   theme?: string;
   addImage?: any;
 }

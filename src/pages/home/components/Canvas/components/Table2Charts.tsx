@@ -245,7 +245,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
               isNum = false;
             }
           }
-          const number = text?.length * fontSize * (isNum ? 0.57 : 1) + 18;
+          const number = (text?.indexOf('http://') > -1 ? 2 : text?.length) * fontSize * (isNum ? 0.57 : 1) + 18;
           if (number > (numberList[i] || 0)) {
             numberList[i] = number;
             boxSize += number;

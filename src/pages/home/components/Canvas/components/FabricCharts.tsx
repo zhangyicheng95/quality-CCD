@@ -20,10 +20,10 @@ interface Props {
 const FabricCharts: React.FC<Props> = (props: any) => {
   let { data = {}, id, started } = props;
   let {
-    dataValue = { name: '', value: [] },
+    dataValue = { type: '', data: [] },
     fontSize = 20,
     fetchType,
-    xName,
+    xName, yName,
   } = data;
 
 
@@ -33,17 +33,12 @@ const FabricCharts: React.FC<Props> = (props: any) => {
       className={`flex-box-column ${styles.fabricCharts}`}
       style={{ fontSize }}
     >
-      <Fabritor1 shapeFromData={dataValue} onLoadTypeChange={(param: any) => {
-        if (!!xName) {
-          btnFetch(fetchType, xName, param).then((res: any) => {
-            if (!!res && res.code === 'SUCCESS') {
-
-            } else {
-              message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
-            }
-          });
-        }
-      }} />
+      <Fabritor1
+        shapeFromData={dataValue}
+        fetchType={fetchType}
+        xName={xName}
+        yName={yName}
+      />
     </div>
   );
 };

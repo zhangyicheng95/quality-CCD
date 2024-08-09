@@ -1,11 +1,13 @@
-import { useRef, useState } from 'react';
+import { useContext, useState } from 'react';
 import ChooseFileButton from '@/components/ChooseFileButton';
 import FileManager from '@/components/FileManager';
 import { btnFetch } from '@/services/api';
 import { message } from 'antd';
+import { GloablStateContext } from '@/context';
 
 export default function LocalImageSelector(props: any) {
   const { onChange } = props;
+  const { fetchType, yName, } = useContext<any>(GloablStateContext);
   const [selectPathVisible, setSelectPathVisible] = useState(false);
   const [selectedPath, setSelectedPath] = useState<any>({});
 
@@ -17,7 +19,7 @@ export default function LocalImageSelector(props: any) {
         onClick={() => {
           if (!!localStorage.getItem('parentOrigin')) {
             window?.parent?.postMessage?.(
-              { type: 'openFile', name: 'fabric-img-select', suffix: "image/*" },
+              { type: 'openFile', name: 'fabric-img-select', suffix: ['jpg', 'png', 'svg'] },
               localStorage.getItem('parentOrigin') || '',
             );
           } else {
@@ -37,7 +39,7 @@ export default function LocalImageSelector(props: any) {
         onClick={() => {
           if (!!localStorage.getItem('parentOrigin')) {
             window?.parent?.postMessage?.(
-              { type: 'openFile', name: 'fabric-img-select', suffix: "dwg" },
+              { type: 'openFile', name: 'fabric-img-select', suffix: ["dwg"] },
               localStorage.getItem('parentOrigin') || '',
             );
           } else {
@@ -45,15 +47,11 @@ export default function LocalImageSelector(props: any) {
           }
         }}
         onOk={(value: any) => {
-          btnFetch(
-            'post',
-            'localhost:8801/dwgToImg',
-            { url: value }
-          ).then((res: any) => {
-            if (res && res.code === 'SUCCESS') {
+          btnFetch(fetchType, yName, { type: 'dwgToImg', url: value }).then((res: any) => {
+            if (!!res && res.code === 'SUCCESS') {
               onChange(res?.data || '');
             } else {
-              message.error('截图上传时，接口报错', 5);
+              message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
             }
           });
         }}
@@ -66,7 +64,7 @@ export default function LocalImageSelector(props: any) {
           fileType={selectedPath.fileType}
           data={selectedPath}
           onOk={(val: any) => {
-            const { id, value } = val;
+            const { value } = val;
             onChange(value);
             setSelectedPath(value);
             setSelectPathVisible?.(false);

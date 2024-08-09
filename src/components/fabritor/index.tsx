@@ -36,11 +36,18 @@ const contentStyle: React.CSSProperties = {
 
 interface Props {
   shapeFromData: any;
-  onLoadTypeChange?: any;
+  fetchType?: any;
+  xName?: any;
+  yName?: any;
 }
 
 export default function Fabritor(props: Props) {
-  const { shapeFromData, onLoadTypeChange } = props;
+  const {
+    shapeFromData,
+    fetchType,
+    xName,
+    yName,
+  } = props;
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
   const canvasEl = useRef<HTMLCanvasElement>(null);
@@ -236,8 +243,9 @@ export default function Fabritor(props: Props) {
   // 返回轨迹点渲染
   useEffect(() => {
     console.log('标定组件接受到数据', shapeFromData);
-    if (!!editor && !!shapeFromData?.length) {
-      (shapeFromData || [])?.forEach((i: any) => {
+    if (!!editor && !!Object.keys(shapeFromData)?.length) {
+      const { type, data = [] } = shapeFromData;
+      (data || [])?.forEach((i: any) => {
         if (i.type === 'text') {
           handleAddText({
             top: i.top,
@@ -246,7 +254,8 @@ export default function Fabritor(props: Props) {
             height: i.height,
             backgroundColor: i.backgroundColor,
             fill: i.color,
-            text: i.text
+            text: i.text,
+            mark_type: type
           });
         } else if (i.type === 'image') {
           addImage({
@@ -256,6 +265,7 @@ export default function Fabritor(props: Props) {
             width: i.width,
             height: i.height,
             backgroundColor: i.backgroundColor,
+            mark_type: type
           });
         } else if (i.type === "line") {
           drawLine({
@@ -265,7 +275,8 @@ export default function Fabritor(props: Props) {
             stroke: i.color,
             strokeWidth: 2,
             canvas: editor.canvas,
-            sub_type: 'line'
+            sub_type: 'line',
+            mark_type: type
           });
         } else if (i.type === "dash-line") {
           drawLine({
@@ -275,7 +286,8 @@ export default function Fabritor(props: Props) {
             stroke: i.color,
             strokeWidth: 2,
             canvas: editor.canvas,
-            sub_type: 'dash-line'
+            sub_type: 'dash-line',
+            mark_type: type
           });
         } else if (i.type === "arrow-line-1") {
           drawArrowLine({
@@ -285,7 +297,8 @@ export default function Fabritor(props: Props) {
             stroke: i.color,
             strokeWidth: 2,
             canvas: editor.canvas,
-            sub_type: 'arrow-line-1'
+            sub_type: 'arrow-line-1',
+            mark_type: type
           });
         } else if (i.type === "arrow-line-2") {
           drawTriArrowLine({
@@ -295,7 +308,8 @@ export default function Fabritor(props: Props) {
             stroke: i.color,
             strokeWidth: 2,
             canvas: editor.canvas,
-            sub_type: 'arrow-line-2'
+            sub_type: 'arrow-line-2',
+            mark_type: type
           });
         } else if (i.type === 'point') {
           createPathFromSvg({
@@ -303,9 +317,10 @@ export default function Fabritor(props: Props) {
             left: i.left,
             svgString: '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="2" fill="#f00" stroke="#f00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
             canvas: editor.canvas,
-            sub_type: 'point',
+            sub_type: 'outline_point',
             hasControls: false,
             strokeWidth: 2,
+            mark_type: type
           });
         } else if (i.type === 'rect') {
           createPathFromSvg({
@@ -317,6 +332,7 @@ export default function Fabritor(props: Props) {
             canvas: editor.canvas,
             sub_type: 'rect',
             strokeWidth: 4,
+            mark_type: type
           });
         } else if (i.type === 'circle') {
           createPathFromSvg({
@@ -327,6 +343,7 @@ export default function Fabritor(props: Props) {
             canvas: editor.canvas,
             sub_type: 'circle',
             strokeWidth: 4,
+            mark_type: type
           });
         }
       });
@@ -343,7 +360,9 @@ export default function Fabritor(props: Props) {
         setReady,
         editor,
         roughSvg,
-        onLoadTypeChange,
+        fetchType,
+        xName,
+        yName,
         theme,
         addImage,
       }}

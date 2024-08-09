@@ -2,7 +2,7 @@ import { Button, Tooltip } from 'antd';
 import styles from './index.less';
 
 export default function ToolbarItem(props: any) {
-  const { onClick, onDoubleClick, title, disabled, selectable, tooltipProps, children } = props;
+  const { onClick, onDoubleClick, onContextMenu, title, disabled, selectable, tooltipProps, children } = props;
 
   const handleClick = () => {
     if (!disabled) {
@@ -24,6 +24,7 @@ export default function ToolbarItem(props: any) {
         disabled={disabled}
         onClick={handleClick}
         onDoubleClick={onDoubleClick}
+        onContextMenu={onContextMenu}
       >
         {children}
       </Button>

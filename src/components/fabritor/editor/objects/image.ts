@@ -58,49 +58,47 @@ export const createClipRect = (object: any, options = {}) => {
 }
 
 export const createImage = async (options: any) => {
-  const { imageSource, canvas, ...rest } = options || {};
-
-  let img!: fabric.Image;
   try {
+    const { imageSource, canvas, ...rest } = options || {};
+
+    let img!: fabric.Image;
     img = await loadImage(imageSource, canvas);
+
+    if (!img) return;
+
+    img.set({
+      ...rest,
+      paintFirst: 'fill',
+      id: uuid()
+    });
+
+    canvas.viewportCenterObject(img);
+    canvas.add(img);
+    canvas.setActiveObject(img);
+    canvas.requestRenderAll();
+
+    return img;
   } catch (e) { console.log(e); }
-
-  if (!img) return;
-
-  img.set({
-    ...rest,
-    paintFirst: 'fill',
-    id: uuid()
-  });
-
-  canvas.viewportCenterObject(img);
-  canvas.add(img);
-  canvas.setActiveObject(img);
-  canvas.requestRenderAll();
-
-  return img;
 }
 
 export const createFImage = async (options: any) => {
-  const { imageSource, canvas } = options || {};
-
-  let img!: fabric.Image;
   try {
+    const { imageSource, canvas, ...rest } = options || {};
+
+    let img!: fabric.Image;
     img = await loadImage(imageSource, canvas);
-  } catch (e) {
-    console.log(e);
-  }
 
-  if (!img) return;
-  // @ts-ignore
-  const fimg = new fabric.FImage({
-    image: img,
-    id: uuid(),
-    sub_type: 'image'
-  });
+    if (!img) return;
+    // @ts-ignore
+    const fimg = new fabric.FImage({
+      image: img,
+      id: uuid(),
+      ...rest
+    });
 
-  canvas.viewportCenterObject(fimg);
-  canvas.add(fimg);
-  canvas.setActiveObject(fimg);
-  canvas.requestRenderAll();
+    canvas.viewportCenterObject(fimg);
+    canvas.add(fimg);
+    canvas.setActiveObject(fimg);
+    canvas.requestRenderAll();
+  } catch (err) { }
 }

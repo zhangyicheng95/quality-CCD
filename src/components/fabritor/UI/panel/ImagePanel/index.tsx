@@ -8,16 +8,27 @@ export default function ImagePanel() {
   const { editor } = useContext<any>(GloablStateContext);
 
   const addImage = async (url: any) => {
-    const res = `${url?.indexOf('http') === 0
-      ? url
-      : `${BASE_IP}file${url?.indexOf('\\') === 0 || url?.indexOf('/') === 0 ? '' : '\\'
-      }${url}`
-      }`;
+    if (
+      !!url &&
+      (
+        url?.indexOf('.jpg') > -1
+        || url?.indexOf('.png') > -1
+        || url?.indexOf('.svg') > -1
+      )
+    ) {
+      const res = `${url?.indexOf('http') === 0
+        ? url
+        : `${BASE_IP}file${url?.indexOf('\\') === 0 || url?.indexOf('/') === 0 ? '' : '\\'
+        }${url}`
+        }`;
 
-    await createFImage({
-      imageSource: res,
-      canvas: editor.canvas
-    });
+      await createFImage({
+        imageSource: res,
+        canvas: editor.canvas,
+        sub_type: 'image',
+        selectable: false,
+      });
+    }
   }
 
   return (

@@ -1670,10 +1670,11 @@ const Home: React.FC<any> = (props: any) => {
                   <FabricCharts
                     id={key}
                     data={{
-                      dataValue: dataValue || [],
+                      dataValue: dataValue || {},
                       fontSize,
                       fetchType,
                       xName,
+                      yName,
                     }}
                   />
                 ) : type === 'alert' ? (
@@ -4150,7 +4151,7 @@ const Home: React.FC<any> = (props: any) => {
                                   {
                                     type: 'openFile',
                                     name: 'defaultImg',
-                                    suffix: ['.jpg', '.png', '.svg'],
+                                    suffix: ['jpg', 'png', 'svg'],
                                   },
                                   localStorage.getItem('parentOrigin') || '',
                                 );
@@ -6141,8 +6142,15 @@ const Home: React.FC<any> = (props: any) => {
                         />
                       </Form.Item>
                       <Form.Item
+                        name={`yName`}
+                        label={'服务接口地址'}
+                        rules={[{ required: false, message: '接口地址' }]}
+                      >
+                        <Input placeholder="接口地址" size="large" />
+                      </Form.Item>
+                      <Form.Item
                         name={`xName`}
-                        label={'接口地址'}
+                        label={'算法接口地址'}
                         rules={[{ required: false, message: '接口地址' }]}
                       >
                         <Input placeholder="接口地址" size="large" />

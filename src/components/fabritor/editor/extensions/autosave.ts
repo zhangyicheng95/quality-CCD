@@ -41,7 +41,7 @@ export default class AutoSave {
 
     try {
       if (this.canSave) {
-        localStorage.setItem('fabritor_web_json', this._getJSON());
+        // localStorage.setItem('fabritor_web_json', this._getJSON());
       }
     } catch (e) { console.log(e) }
 

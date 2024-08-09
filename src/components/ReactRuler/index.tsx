@@ -1217,7 +1217,7 @@ const ReactRuler: React.FC<Props> = (props: any) => {
                                             {
                                               type: 'openFile',
                                               name: 'defaultImg',
-                                              suffix: ['.jpg', '.png', '.svg'],
+                                              suffix: ['jpg', 'png', 'svg'],
                                             },
                                             localStorage.getItem('parentOrigin') || '',
                                           );
