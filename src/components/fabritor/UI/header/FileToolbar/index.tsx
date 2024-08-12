@@ -39,9 +39,9 @@ export default function FileToolbar() {
   const handleFileChange = (file: any) => {
     setReady(false);
     try {
-      if (file?.name?.indexof('.dwg') > -1) {
+      if (file?.name?.indexOf('.dwg') > -1) {
 
-      } else if (file?.name?.indexof('.json') > -1) {
+      } else if (file?.name?.indexOf('.json') > -1) {
         const reader = new FileReader();
         reader.onload = (async (evt) => {
           const json = evt.target?.result as string;
@@ -56,6 +56,7 @@ export default function FileToolbar() {
         reader.readAsText(file);
       }
     } catch (err) {
+      console.log(err);
       setReady(true);
     }
   }

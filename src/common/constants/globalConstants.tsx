@@ -725,7 +725,8 @@ export const FABRITOR_CUSTOM_PROPS = [
   'sub_type',
   'imageSource',
   'imageBorder',
-  'oldArrowInfo'
+  'oldArrowInfo',
+  'caliperRule'
 ];
 // LOCAL
 export const LOAD_FROM_LOCAL_WHEN_INIT = true;

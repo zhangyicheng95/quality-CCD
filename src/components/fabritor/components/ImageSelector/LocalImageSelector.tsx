@@ -19,7 +19,7 @@ export default function LocalImageSelector(props: any) {
         onClick={() => {
           if (!!localStorage.getItem('parentOrigin')) {
             window?.parent?.postMessage?.(
-              { type: 'openFile', name: 'fabric-img-select', suffix: ['jpg', 'png', 'svg'] },
+              { type: 'openFile', name: 'fabric-img-select', suffix: ['jpg', 'png', 'svg', 'dxf'] },
               localStorage.getItem('parentOrigin') || '',
             );
           } else {
@@ -39,7 +39,7 @@ export default function LocalImageSelector(props: any) {
         onClick={() => {
           if (!!localStorage.getItem('parentOrigin')) {
             window?.parent?.postMessage?.(
-              { type: 'openFile', name: 'fabric-img-select', suffix: ["dwg"] },
+              { type: 'openFile', name: 'fabric-img-select', suffix: ["dwg", "dxf"] },
               localStorage.getItem('parentOrigin') || '',
             );
           } else {
@@ -49,10 +49,12 @@ export default function LocalImageSelector(props: any) {
         onOk={(value: any) => {
           btnFetch(fetchType, yName, { type: 'dwgToImg', url: value }).then((res: any) => {
             if (!!res && res.code === 'SUCCESS') {
-              onChange(res?.data || '');
+              onChange(res?.data || value);
             } else {
               message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
             }
+          }).catch(() => {
+            onChange(value);
           });
         }}
         style={{ height: 40, width: 'auto', fontSize: 16, borderRadius: 4 }}

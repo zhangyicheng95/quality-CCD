@@ -12,8 +12,9 @@ import { groupSelection, removeObject } from '@/utils/helper';
 import { drawLine } from '@/components/fabritor/editor/objects/line';
 import { getArrowPoint } from '@/utils/fabrictorUtils';
 import { btnFetch } from '@/services/api';
-import { guid } from '@/utils/utils';
+import { guid, twoPointDistance } from '@/utils/utils';
 import { createPathFromSvg } from '@/components/fabritor/editor/objects/path';
+import { createTextbox } from '@/components/fabritor/editor/objects/textbox';
 
 export default function Toolbar() {
   const {
@@ -32,8 +33,8 @@ export default function Toolbar() {
 
   // 初始化卡尺参数值
   useEffect(() => {
-    setCaliperRule(data?.caliperRule || {})
-    setMeasurementErrorRule(data?.measurementErrorRule || {});
+    // setCaliperRule(data?.caliperRule || {})
+    // setMeasurementErrorRule(data?.measurementErrorRule || {});
   }, [data?.caliperRule, data?.measurementErrorRule]);
   // http传递参数
   const onChange = (type: string, data: any) => {
@@ -49,6 +50,10 @@ export default function Toolbar() {
       });
     });
   }
+  // 根据返回的数据渲染文字
+  const handleAddText = async (options: any) => {
+    await createTextbox({ ...options, canvas: editor.canvas });
+  }
   // 卡尺画完
   const brushEnd = (target: any, type: string) => {
     if (!!timerRef.current) {
@@ -60,11 +65,10 @@ export default function Toolbar() {
           const point = target.path;
           // 如果是平均卡尺，一条线
           // 如果是单边卡尺，两条线
-          brushRef.current.push(target);
           // 删除画笔，然后按照首尾 添加直线
           removeObject(target, editor.canvas);
           const sub_caliper = `${type}_${selectedCaliperID}`;
-          drawLine({
+          const activeLine: any = drawLine({
             points: [point[0][1], point[0][2], point[point.length - 1][1], point[point.length - 1][2]],
             left: target.left,
             top: target.top,
@@ -72,44 +76,17 @@ export default function Toolbar() {
             strokeWidth: 2,
             canvas: editor.canvas,
             sub_type: `line_${sub_caliper}`,
+            caliperRule
           });
+          brushRef.current.push(activeLine);
           if (
             (type === 'average' && brushRef.current?.length >= 1)
             ||
             (type === 'average_half' && brushRef.current?.length >= 2)
           ) {
             if (type === 'average_half') {
-              brushRef.current?.forEach((item: any) => {
-                // const point = item.path;
-                // const res1: any = getArrowPoint([
-                //   { x: point[0][1], y: point[0][2] },
-                //   {
-                //     x: point[point.length - 1][1],
-                //     y: point[point.length - 1][2]
-                //   }
-                // ]);
-                // drawLine({
-                //   points: res1,
-                //   left: Math.min(res1[0], res1[2]),
-                //   top: Math.min(res1[1], res1[3]),
-                //   stroke: '#f00',
-                //   strokeWidth: 2,
-                //   strokeDashArray: [8, 8],
-                //   canvas: editor.canvas,
-                //   sub_type: 'line-fuzhu'
-                // });
-              });
+
             } else if (type === 'average') {
-              // 平均卡尺，画完之后，直接传递
-              const activeObj = editor.canvas.getActiveObject();
-              const activeResult = formatResult([].concat(activeObj))?.filter((i: any) => i.type === 'line');
-              const json = editor.canvas2Json();
-              const jsonResult = formatResult(json.objects);
-              const result = {
-                file_image: jsonResult?.filter((i: any) => i.type === 'image')?.[0],
-                line: activeResult?.map((item: any) => ({ ...item, ...caliperRule })),
-              };
-              // onChange('average', result);
               saveCanvas();
             }
             // 已经画够了，取消画笔
@@ -140,7 +117,7 @@ export default function Toolbar() {
     return () => {
       editor?.canvas.off({ 'object:added': (e: any) => brushEnd(e.target, selectedBtn) });
     }
-  }, [isReady, selectedBtn]);
+  }, [isReady, selectedBtn, caliperRule]);
   // 清理画布
   const clearCanvas = () => {
     Modal.confirm({
@@ -150,6 +127,7 @@ export default function Toolbar() {
         await editor.clearCanvas();
         setActiveObject(editor.sketch);
         editor.fireCustomModifiedEvent();
+        saveCanvas();
       }
     });
   };
@@ -163,28 +141,40 @@ export default function Toolbar() {
       let {
         sub_type, path, height, width, text, strokeWidth,
         left, top, scaleX = 1, angle,
-        backgroundColor, fill, fontSize
+        backgroundColor, fill, fontSize, caliperRule
       } = item;
+      if (
+        sub_type?.indexOf('line_result') > -1
+        ||
+        sub_type?.indexOf('image_result') > -1
+      ) {
+        return null;
+      }
       if (left < 0 || top < 0) {
         if (sub_type?.indexOf('line') > -1) {
           left = Math.min(item?.x1, item?.x2);
           top = Math.min(item.y1, item.y2);
+        } else if (sub_type?.indexOf('point') > -1) {
+          // 轨迹轮廓点
+          left = path[0][1];
+          top = path[0][2];
         } else {
           return null;
         }
       }
       const common = {
-        type: sub_type, left, top, height: height * scaleX, width: width * scaleX, angle, scale: scaleX
+        type: sub_type, left, top, height: height * scaleX, width: width * scaleX,
+        angle, scale: scaleX
       }
-      if (sub_type === 'text') {
+      // if (sub_type === 'text') {
+      //   return {
+      //     ...common,
+      //     text, backgroundColor, color: fill, fontSize,
+      //   }
+      // } else 
+      if (sub_type === 'image') {
         return {
           ...common,
-          text, backgroundColor, color: fill, fontSize,
-        }
-      } else if (sub_type === 'image') {
-        return {
-          ...common,
-          height: height / scaleX, width: width / scaleX,
           url: item.objects?.[0]?.src,
         }
       } else if (["line", "dash-line", "arrow-line-1", "arrow-line-2"].includes(sub_type)) {
@@ -222,7 +212,7 @@ export default function Toolbar() {
           angle: 0,
           scale: scaleX
         }
-      } else if (sub_type === 'outline_point') {
+      } else if (sub_type === 'outer_point') {
         return {
           type: 'point',
           sub_type,
@@ -273,15 +263,28 @@ export default function Toolbar() {
       }
       return null;
     }
-    const result = (list || [])?.map((item: any) => {
-      const { type } = item;
-      return type === 'group' ? {
-        ...item,
-        children: item.objects?.map((cItem: any) => {
-          return initItem(cItem)
-        })
-      } : initItem(item)
-    }).filter(Boolean);
+    const result = (list || [])?.reduce((pre: any, cen: any) => {
+      const { type } = cen;
+      if (type === 'group') {
+        const list = cen.objects?.map((cItem: any) => {
+          if (cItem.sub_type?.indexOf('point_') > -1) {
+            cItem.left = cItem.path[0]?.[1];
+            cItem.top = cItem.path[0]?.[2];
+          }
+          if (!!initItem(cItem)) {
+            return initItem(cItem);
+          }
+          return null;
+        }).filter(Boolean);
+        return pre.concat(list);
+      } else {
+        if (!!initItem(cen)) {
+          return pre.concat(initItem(cen));
+        } else {
+          return pre;
+        }
+      }
+    }, []);
     console.log('格式化的', result);
 
     return result || [];
@@ -289,16 +292,26 @@ export default function Toolbar() {
   // 保存结果
   const saveCanvas = () => {
     const json = editor.canvas2Json();
-    const result = formatResult(json.objects);
-    btnFetch(fetchType, xName, { data: result }).then((res: any) => {
-      if (!!res && res.code === 'SUCCESS') {
-
-      } else {
-        message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
-      }
-    });
-    // message.success('保存画布成功');
-    localStorage.setItem('fabritor_web_json', JSON.stringify({ ...json, caliperRule, measurementErrorRule }));
+    const objects = editor.canvas?.getObjects();
+    const string = {
+      ...json,
+      objects: objects?.filter((i: any) => {
+        return i?.sub_type?.indexOf('line_result') < 0 &&
+          i?.sub_type?.indexOf('image_result') < 0 &&
+          i?.sub_type?.indexOf('outer_point') < 0
+      })
+    };
+    const result = formatResult(objects);
+    if (!!result?.length) {
+      btnFetch(fetchType, xName, { data: result }).then((res: any) => {
+        if (!!res && res.code === 'SUCCESS') {
+          message.success('success');
+        } else {
+          message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
+        }
+      });
+    }
+    localStorage.setItem('fabritor_web_json', JSON.stringify({ ...string }));
   };
   // 初始化卡尺
   const initBrush = () => {
@@ -343,7 +356,7 @@ export default function Toolbar() {
       >
         <RedoOutlined style={{ fontSize: 20 }} />
       </ToolbarItem> */}
-      <SegmentSwitch
+      {/* <SegmentSwitch
         style={{ width: 180, height: 32, fontSize: 16, backgroundColor: 'transparent' }}
         fontInBody={[
           { value: false, label: '连续拉流', backgroundColor: 'rgba(24, 144, 255, 1)' },
@@ -353,17 +366,15 @@ export default function Toolbar() {
           cancelBrush();
           onChange('pull', e);
         }}
-      />
+      /> */}
       <ToolbarItem
         onContextMenu={() => {
-          setCaliperRule(data?.caliperRule || {});
-          form.setFieldsValue(data?.caliperRule || {});
+          form.setFieldsValue({});
           setRuleVisible(true);
         }}
         onClick={() => {
           if (!Object.keys(caliperRule)?.length) {
             setRuleVisible(true);
-            return;
           }
           setSelectedBtn(prev => prev === 'average' ? '' : 'average');
           if (selectedBtn === 'average') {
@@ -379,14 +390,12 @@ export default function Toolbar() {
       </ToolbarItem>
       <ToolbarItem
         onContextMenu={() => {
-          setCaliperRule(data?.caliperRule || {});
-          form.setFieldsValue(data?.caliperRule || {});
+          form.setFieldsValue({});
           setRuleVisible(true);
         }}
         onClick={() => {
           if (!Object.keys(caliperRule)?.length) {
             setRuleVisible(true);
-            return;
           }
           setSelectedBtn(prev => prev === 'average_half' ? '' : 'average_half');
           if (selectedBtn === 'average_half') {
@@ -410,24 +419,11 @@ export default function Toolbar() {
         } else {
           message.warning('请选择两个半卡尺进行Link');
         }
-        // const activeResult = formatResult(activeObj)?.filter((i: any) => i.type === 'line');
-        // const json = editor.canvas2Json();
-        // const jsonResult = formatResult(json.objects);
-        // const guid1 = guid();
-        // const result = {
-        //   file_image: jsonResult?.filter((i: any) => i.type === 'image')?.[0],
-        //   line: activeResult?.map((item: any) => ({
-        //     ...item,
-        //     sub_type: `average_half_${guid1}`,
-        //     ...caliperRule
-        //   })),
-        // };
-        // onChange('average_half', result);
       }} title={'卡尺Link'}>
         卡尺Link
       </ToolbarItem>
       <ToolbarItem onClick={() => {
-        cancelBrush();
+        // 清理掉原始轮廓点
         const activeObj = [].concat(editor.canvas.getActiveObject()?._objects || []);
         const uuid = guid();
         (activeObj || [])?.forEach((target: any) => {
@@ -438,18 +434,10 @@ export default function Toolbar() {
         });
         saveCanvas();
         cancelBrush();
-        // const json = editor.canvas2Json();
-        // const jsonResult = formatResult(json.objects);
-        // const result = {
-        //   file_image: jsonResult?.filter((i: any) => i.type === 'image')?.[0],
-        //   registration_points: activeResult,
-        //   outline_points: jsonResult?.filter((i: any) => i.type === 'outline_point'),
-        // };
-        // onChange('registration', result);
       }} title={'配准'}>
         配准
       </ToolbarItem>
-      <ToolbarItem
+      {/* <ToolbarItem
         onContextMenu={() => {
           setMeasurementErrorRule(data?.measurementErrorRule || {});
           form.setFieldsValue(data?.measurementErrorRule || {});
@@ -480,14 +468,14 @@ export default function Toolbar() {
           // const result = {
           //   file_image: jsonResult?.filter((i: any) => i.type === 'image')?.[0],
           //   registration_points: activeResult,
-          //   outline_points: jsonResult?.filter((i: any) => i.type === 'outline_point'),
+          //   outline_points: jsonResult?.filter((i: any) => i.type === 'outer_point'),
           // };
           // onChange('measurementError', result);
         }}
         title={'测量误差'}
       >
         误差测量
-      </ToolbarItem>
+      </ToolbarItem> */}
       <ToolbarDivider />
       {/* <ToolbarItem
         onClick={enablePan}

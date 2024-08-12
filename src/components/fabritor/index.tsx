@@ -17,6 +17,8 @@ import { drawArrowLine, drawLine, drawTriArrowLine } from '@/components/fabritor
 import ShapeTypeList from '@/components/fabritor/UI/panel/ShapePanel/shape-type-list';
 import styles from './index.less';
 import { useModel } from 'umi';
+import { groupSelection, removeObject } from '@/utils/helper';
+import { guid } from '@/utils/utils';
 
 const { Content } = Layout;
 
@@ -53,8 +55,10 @@ export default function Fabritor(props: Props) {
   const canvasEl = useRef<HTMLCanvasElement>(null);
   const workspaceEl = useRef<HTMLDivElement>(null);
   const roughSvgEl = useRef(null);
+  const timerRef = useRef<any>();
   const [dataSource, setDataSOurce] = useState<any>({});
   const [editor, setEditor] = useState<any>(null);
+  const [isInit, setIsInit] = useState(false);
   const [roughSvg, setRoughSvg] = useState<any>();
   const [activeObject, setActiveObject] = useState<fabric.Object | null | undefined>(null);
   const [isReady, setReady] = useState(false);
@@ -148,6 +152,7 @@ export default function Fabritor(props: Props) {
 
     await _editor.init();
     setEditor(_editor);
+    setIsInit(true);
     setReady(true);
     setActiveObject(_editor.sketch);
 
@@ -158,13 +163,14 @@ export default function Fabritor(props: Props) {
       const string = JSON.stringify({
         ...json,
         background: theme === "realDark" ? "#000" : "#fff",
-        objects: (json.objects || [])?.map((item: any) => {
-          return Object.assign({}, item,
-            (item?.type === 'path' && item?.path?.length <= 3) ? {
-              hasControls: false,
-            } : {}
-          )
-        })
+        objects: (json.objects || [])
+          ?.map((item: any) => {
+            return Object.assign({}, item,
+              (item?.type === 'path' && item?.path?.length <= 3) ? {
+                hasControls: false,
+              } : {}
+            )
+          })
       })
       await _editor.loadFromJSON(string);
     }
@@ -233,122 +239,171 @@ export default function Fabritor(props: Props) {
   }
   // 根据返回的数据渲染图片
   const addImage = async (options: any) => {
-    const { url, ...rest } = options;
     await createFImage({
-      ...rest,
-      imageSource: url,
+      ...options,
       canvas: editor.canvas
     });
   }
   // 返回轨迹点渲染
   useEffect(() => {
-    console.log('标定组件接受到数据', shapeFromData);
-    if (!!editor && !!Object.keys(shapeFromData)?.length) {
-      const { type, data = [] } = shapeFromData;
-      (data || [])?.forEach((i: any) => {
-        if (i.type === 'text') {
-          handleAddText({
-            top: i.top,
-            left: i.left,
-            width: i.width,
-            height: i.height,
-            backgroundColor: i.backgroundColor,
-            fill: i.color,
-            text: i.text,
-            mark_type: type
-          });
-        } else if (i.type === 'image') {
-          addImage({
-            url: i.url,
-            top: i.top,
-            left: i.left,
-            width: i.width,
-            height: i.height,
-            backgroundColor: i.backgroundColor,
-            mark_type: type
-          });
-        } else if (i.type === "line") {
-          drawLine({
-            left: i.x1,
-            top: i.y1,
-            points: [i.x1, i.y1, i.x2, i.y2],
-            stroke: i.color,
-            strokeWidth: 2,
-            canvas: editor.canvas,
-            sub_type: 'line',
-            mark_type: type
-          });
-        } else if (i.type === "dash-line") {
-          drawLine({
-            left: i.x1,
-            top: i.y1,
-            points: [i.x1, i.y1, i.x2, i.y2],
-            stroke: i.color,
-            strokeWidth: 2,
-            canvas: editor.canvas,
-            sub_type: 'dash-line',
-            mark_type: type
-          });
-        } else if (i.type === "arrow-line-1") {
-          drawArrowLine({
-            left: i.x1,
-            top: i.y1,
-            points: [i.x1, i.y1, i.x2, i.y2],
-            stroke: i.color,
-            strokeWidth: 2,
-            canvas: editor.canvas,
-            sub_type: 'arrow-line-1',
-            mark_type: type
-          });
-        } else if (i.type === "arrow-line-2") {
-          drawTriArrowLine({
-            left: i.x1,
-            top: i.y1,
-            points: [i.x1, i.y1, i.x2, i.y2],
-            stroke: i.color,
-            strokeWidth: 2,
-            canvas: editor.canvas,
-            sub_type: 'arrow-line-2',
-            mark_type: type
-          });
-        } else if (i.type === 'point') {
-          createPathFromSvg({
-            top: i.top,
-            left: i.left,
-            svgString: '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="2" fill="#f00" stroke="#f00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-            canvas: editor.canvas,
-            sub_type: 'outline_point',
-            hasControls: false,
-            strokeWidth: 2,
-            mark_type: type
-          });
-        } else if (i.type === 'rect') {
-          createPathFromSvg({
-            top: i.top,
-            left: i.left,
-            width: i.width,
-            height: i.height,
-            svgString: ShapeTypeList?.filter((i: any) => i.key === 'rect')?.[0]?.elem,
-            canvas: editor.canvas,
-            sub_type: 'rect',
-            strokeWidth: 4,
-            mark_type: type
-          });
-        } else if (i.type === 'circle') {
-          createPathFromSvg({
-            top: i.top,
-            left: i.left,
-            radius: i.radius,
-            svgString: ShapeTypeList?.filter((i: any) => i.key === 'circle')?.[0]?.elem,
-            canvas: editor.canvas,
-            sub_type: 'circle',
-            strokeWidth: 4,
-            mark_type: type
-          });
-        }
-      });
+    if (!isInit || !editor || !shapeFromData) {
+      return;
     }
-  }, [shapeFromData]);
+    if (!!timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    timerRef.current = setTimeout(() => {
+      console.log('标定组件接受到数据', shapeFromData);
+      if (!!editor && !!shapeFromData && !!Object.keys(shapeFromData)?.length) {
+        // 渲染之前，先把前一次算法结果删除
+        const json = editor.canvas?.getObjects();
+        json?.forEach((item: any) => {
+          if (
+            item?.sub_type === 'outer_point' ||
+            item?.sub_type?.indexOf('line_result') > -1 ||
+            item?.sub_type === 'image_result'
+          ) {
+            removeObject(item, editor.canvas);
+          }
+        });
+        // 然后开始渲染新的结果
+        const { type, data = [] } = shapeFromData;
+        (data || [])?.forEach((i: any) => {
+          if (i.type === 'image') {
+            addImage({
+              imageSource: i.url,
+              ...!!i.top ? {
+                top: i.top,
+                left: i.left,
+                width: i.width,
+                height: i.height,
+                backgroundColor: i.backgroundColor,
+              } : {},
+              selectable: false,
+              hasControls: false,
+              opacity: i.opacity ? i.opacity : 1,
+              sub_type: 'image',
+            });
+          } else if (i.type === "line") {
+            const { result } = i;
+            const ID = guid();
+            drawLine({
+              points: [result.x1, result.y1, result.x2, result.y2],
+              left: Math.min(result.x1, result.x2),
+              top: Math.min(result.y1, result.y2),
+              stroke: '#f00',
+              strokeWidth: 2,
+              canvas: editor.canvas,
+              selectable: false,
+              hasControls: false,
+              mark_type: type,
+              id: ID,
+              sub_type: 'line_result'
+            });
+            if (result.value) {
+              const x = Math.min(result.x1, result.x2) + 200;
+              handleAddText({
+                top: (result.y1 + result.y2) / 2 - 13,
+                left: x,
+                backgroundColor: result.type === 1 ? '#b8831b' : result.type === 2 ? '#f00' : '#0f0',
+                fill: '#fff',
+                width: (result.value + '')?.length * 16,
+                text: result.value + '',
+                selectable: false,
+                hasControls: false,
+                sub_type: `line_result-${ID}`
+              });
+              drawLine({
+                points: [
+                  (result.x1 + result.x2) / 2, (result.y1 + result.y2) / 2,
+                  x, (result.y1 + result.y2) / 2
+                ],
+                left: (result.x1 + result.x2) / 2,
+                top: (result.y1 + result.y2) / 2,
+                stroke: '#f00',
+                strokeWidth: 2,
+                strokeDashArray: [8, 8],
+                canvas: editor.canvas,
+                selectable: false,
+                hasControls: false,
+                sub_type: `line_result-${ID}`
+              });
+            }
+          } else if (i.type === 'point') {
+            drawLine({
+              points: [i.x, i.y, i.x + 1, i.y + 1],
+              left: i.x,
+              top: i.y,
+              stroke: '#f00',
+              strokeWidth: 2,
+              canvas: editor.canvas,
+              selectable: false,
+              hasControls: false,
+              mark_type: type,
+              sub_type: 'outer_point'
+            });
+            // createPathFromSvg({
+            //   svgString: '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="2" fill="#f00" stroke="#f00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+            //   canvas: editor.canvas,
+            //   selectable: false,
+            //   hasControls: false,
+            //   top: i.y,
+            //   left: i.x,
+            //   y: i.y,
+            //   x: i.x,
+            //   strokeWidth: 2,
+            //   sub_type: 'outer_point',
+            //   mark_type: type
+            // });
+          } else if (i.type === 'rect') {
+            createPathFromSvg({
+              top: i.top,
+              left: i.left,
+              width: i.width,
+              height: i.height,
+              svgString: ShapeTypeList?.filter((i: any) => i.key === 'rect')?.[0]?.elem,
+              canvas: editor.canvas,
+              sub_type: 'rect',
+              strokeWidth: 4,
+              mark_type: type
+            });
+          } else if (i.type === 'circle') {
+            createPathFromSvg({
+              top: i.top,
+              left: i.left,
+              radius: i.radius,
+              svgString: ShapeTypeList?.filter((i: any) => i.key === 'circle')?.[0]?.elem,
+              canvas: editor.canvas,
+              sub_type: 'circle',
+              strokeWidth: 4,
+              mark_type: type
+            });
+          } else if (i.type === 'image_result') {
+            const target = json?.filter((ic: any) => ic.sub_type === 'image')?.[0] || {};
+            addImage({
+              imageSource: i.url,
+              ...!!i.top ? {
+                top: i.top,
+                left: i.left,
+                width: i.width,
+                height: i.height,
+                backgroundColor: i.backgroundColor,
+              } : !!target ? {
+                top: target.top,
+                left: target.left,
+                width: target.width,
+                height: target.height,
+              } : {},
+              selectable: false,
+              hasControls: false,
+              opacity: i.opacity ? i.opacity : 0.5,
+              sub_type: 'image_result',
+            });
+          }
+        });
+      }
+    }, 500);
+  }, [isInit, shapeFromData]);
 
   return (
     <GloablStateContext.Provider

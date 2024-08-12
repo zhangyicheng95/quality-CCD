@@ -57,15 +57,15 @@ export const createTextbox = async (options: any) => {
   let tmpPathInfo = { hasPath: false, offset: 100 };
   // @ts-ignore
   const textBox = new fabric.FText(text || '添加文本框', {
+    sub_type: 'text',
     ...TEXTBOX_DEFAULT_CONFIG,
-    ...rest,
     backgroundColor: 'rgba(144,144,144,1)',
     lineHeight: 1.1,
     fontSize: 24,
     fontFamily,
     pathAlign: 'center',
     id: uuid(),
-    sub_type: 'text'
+    ...rest,
   });
 
   textBox.on('editing:entered', () => {

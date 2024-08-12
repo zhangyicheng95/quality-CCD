@@ -140,9 +140,16 @@ export const ungroup = (canvas: any, target: any) => {
     obj.set({
       lockMovementX: false,
       lockMovementY: false,
-      hasControls: !((obj.type === 'path' && obj.path?.length <= 3) || obj.sub_type === 'point'),
-      selectable: true
+      selectable: true,
+      ...((obj.type === 'path' && obj.path?.length <= 3) || obj.sub_type === 'point') ?
+        {
+          hasControls: false,
+          left: obj?.path[0]?.[1],
+          top: obj?.path[0]?.[2]
+        } :
+        {}
     });
+    obj.setPosition(obj?.path[0]?.[1], obj?.path[0]?.[2])
   });
   target.toActiveSelection();
   canvas.requestRenderAll();

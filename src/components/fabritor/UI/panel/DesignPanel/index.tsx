@@ -95,7 +95,11 @@ export default function Layer() {
           <List
             dataSource={layers}
             renderItem={(item: any) => {
-              if (item.object.sub_type === 'line-fuzhu') {
+              if (
+                item?.object?.sub_type?.indexOf('outer_point') > -1
+                ||
+                item?.object?.sub_type?.indexOf('line_result') > -1
+              ) {
                 return null;
               }
               return (
@@ -131,8 +135,8 @@ export default function Layer() {
               <div>
                 <HeartTwoTone twoToneColor="#eb2f96" style={{ fontSize: 40 }} />
                 <p style={{ color: '#aaa', fontSize: 16 }}>{'开始绘图'}</p>
-                <Divider />
-                <Button onClick={loadDemo}>{'或者从一个简单 DEMO 开始'}</Button>
+                {/* <Divider />
+                <Button onClick={loadDemo}>{'或者从一个简单 DEMO 开始'}</Button> */}
               </div>
             }
           />

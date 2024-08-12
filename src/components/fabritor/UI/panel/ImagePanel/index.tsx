@@ -21,6 +21,7 @@ export default function ImagePanel() {
         : `${BASE_IP}file${url?.indexOf('\\') === 0 || url?.indexOf('/') === 0 ? '' : '\\'
         }${url}`
         }`;
+      console.log('导入的图片路径', res);
 
       await createFImage({
         imageSource: res,
