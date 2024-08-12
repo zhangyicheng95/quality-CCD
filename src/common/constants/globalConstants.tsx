@@ -728,6 +728,17 @@ export const FABRITOR_CUSTOM_PROPS = [
   'oldArrowInfo',
   'caliperRule'
 ];
+export const CALIPER_RULE_FORMAT = {
+  'averaging_depth': '平均深度',
+  'design_value': '设计值',
+  'high_error_tolerance': '上偏差',
+  'high_warning_tolerance': '上预警偏差',
+  'low_error_tolerance': '下偏差',
+  'low_warning_tolerance': '下预警偏差',
+  'measurement_offset': '测量偏移量',
+  'minimum_points': '最少点数',
+  'output_index': '输出索引'
+}
 // LOCAL
 export const LOAD_FROM_LOCAL_WHEN_INIT = true;
 export const AUTO_SAVE_WHEN_CHANGE = true;
@@ -744,7 +755,7 @@ export const IMAGE_CLIPPATH_QUALITY = true;
 export const MAX_HISTORY_LENGTH = 100;
 
 export const PANEL_WIDTH = 360;
-export const SETTER_WIDTH = 280;
+export const SETTER_WIDTH = 340;
 
 export const CAPTURE_SUBTARGET_WHEN_DBLCLICK = false;
 

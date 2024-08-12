@@ -1,9 +1,10 @@
-import { useContext, useEffect } from 'react';
-import { Form, Radio, Switch } from 'antd';
+import { Fragment, useContext, useEffect } from 'react';
+import { Form, Input, Radio, Switch } from 'antd';
 import { GloablStateContext } from '@/context';
 import ColorSetter from '../ColorSetter/Solid';
 import SliderInputNumber from '@/components/fabritor/components/SliderInputNumber';
 import { BORDER_TYPES, getObjectBorderType, getStrokeDashArray } from '../BorderSetter';
+import { CALIPER_RULE_FORMAT } from '@/common/constants/globalConstants';
 
 const { Item: FormItem } = Form;
 
@@ -58,6 +59,25 @@ export default function LineSetter() {
       onValuesChange={handleValuesChange}
       colon={false}
     >
+      {
+        !!object?.caliperRule && !!Object.keys?.(object?.caliperRule)?.length ?
+          <Fragment>
+            {
+              Object.entries(object?.caliperRule)?.map((item: any) => {
+                return !!CALIPER_RULE_FORMAT[item[0]] ?
+                  <FormItem
+                    name={item[0]}
+                    label={CALIPER_RULE_FORMAT[item[0]]}
+                    initialValue={item[1]}
+                  >
+                    <Input disabled />
+                  </FormItem>
+                  : null
+              })
+            }
+          </Fragment>
+          : null
+      }
       <FormItem
         name="stroke"
         label={'颜色'}

@@ -43,6 +43,7 @@ export default function Setter() {
       case 'ellipse':
         return <ShapeSetter />;
       case 'f-line':
+        return <LineSetter />;
       case 'f-arrow':
       case 'f-tri-arrow':
         return <LineSetter />;
@@ -125,8 +126,8 @@ export default function Setter() {
       return null;
     }
     return (
-      <CenterV style={{ borderBottom: '1px solid #e8e8e8', paddingLeft: 16 }}>
-        <Title level={5}>
+      <CenterV style={{ borderBottom: '1px solid #e8e8e8', paddingLeft: 16, height: 30 }}>
+        <Title level={5} style={{ marginBottom: 0 }}>
           {getSetterTitle()}
         </Title>
       </CenterV>
@@ -141,7 +142,7 @@ export default function Setter() {
     >
       {renderSetterTitle()}
       <div
-        style={{ padding: 16 }}
+        style={{ padding: 16, height: `calc(100% - 30px)`, overflow: 'auto' }}
       >
         {renderSetter()}
         <CommonSetter />

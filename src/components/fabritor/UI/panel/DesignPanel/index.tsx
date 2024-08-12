@@ -98,7 +98,7 @@ export default function Layer() {
               if (
                 item?.object?.sub_type?.indexOf('outer_point') > -1
                 ||
-                item?.object?.sub_type?.indexOf('line_result') > -1
+                item?.object?.sub_type?.indexOf('line_result-') > -1
               ) {
                 return null;
               }

@@ -2,12 +2,12 @@ import { Fragment, useContext, useEffect, useRef, useState } from 'react';
 import { Button, Form, Input, InputNumber, message, Modal, Select } from 'antd';
 import { fabric } from 'fabric';
 import { GloablStateContext } from '@/context';
-import { ClearOutlined, ExclamationCircleFilled, SaveOutlined } from '@ant-design/icons';
+import { BorderlessTableOutlined, ClearOutlined, DragOutlined, ExclamationCircleFilled, SaveOutlined } from '@ant-design/icons';
 import { CenterV } from '@/components/fabritor/components/Center';
 import ToolbarItem from './ToolbarItem';
 import ToolbarDivider from '@/components/fabritor/components/ToolbarDivider';
 import SegmentSwitch from '@/components/SegmentSwitch';
-import { DRAW_MODE_CURSOR } from '@/common/constants/globalConstants';
+import { CALIPER_RULE_FORMAT, DRAW_MODE_CURSOR } from '@/common/constants/globalConstants';
 import { groupSelection, removeObject } from '@/utils/helper';
 import { drawLine } from '@/components/fabritor/editor/objects/line';
 import { getArrowPoint } from '@/utils/fabrictorUtils';
@@ -24,6 +24,7 @@ export default function Toolbar() {
   const timerRef = useRef<any>(null);
   const brushRef = useRef<any>([]);
   const [form] = Form.useForm();
+  const [panEnable, setPanEnable] = useState(false);
   const [selectedBtn, setSelectedBtn] = useState('');
   const [selectedCaliperID, setSelectedCaliperID] = useState('');
   const [caliperRule, setCaliperRule] = useState({});
@@ -337,6 +338,10 @@ export default function Toolbar() {
     setMeasurementErrorVisible(false);
     form.resetFields();
   }
+  const enablePan = () => {
+    const enable = editor.switchEnablePan();
+    setPanEnable(enable);
+  }
 
   return (
     <CenterV
@@ -477,7 +482,7 @@ export default function Toolbar() {
         误差测量
       </ToolbarItem> */}
       <ToolbarDivider />
-      {/* <ToolbarItem
+      <ToolbarItem
         onClick={enablePan}
         title={panEnable ? '选择元素' : '拖拽画布'}
       >
@@ -486,7 +491,7 @@ export default function Toolbar() {
             <DragOutlined style={{ fontSize: 22, color: panEnable ? '#000' : '#ccc' }} /> :
             <BorderlessTableOutlined style={{ fontSize: 22, color: panEnable ? '#000' : '#ccc' }} />
         }
-      </ToolbarItem> */}
+      </ToolbarItem>
       <ToolbarItem onClick={saveCanvas} title={'保存数据'}>
         <SaveOutlined style={{ fontSize: 20 }} />
       </ToolbarItem>
@@ -521,63 +526,63 @@ export default function Toolbar() {
               </Form.Item>
               <Form.Item
                 name={'design_value'}
-                label={'设计值'}
+                label={CALIPER_RULE_FORMAT['design_value']}
                 rules={[{ required: false, message: '设计值' }]}
               >
                 <InputNumber min={0} precision={2} />
               </Form.Item>
               <Form.Item
                 name={'measurement_offset'}
-                label={'测量抵消'}
+                label={CALIPER_RULE_FORMAT['measurement_offset']}
                 rules={[{ required: false, message: '测量抵消' }]}
               >
                 <InputNumber min={0} precision={2} />
               </Form.Item>
               <Form.Item
                 name={'output_index'}
-                label={'产出指数'}
+                label={CALIPER_RULE_FORMAT['output_index']}
                 rules={[{ required: false, message: '产出指数' }]}
               >
                 <InputNumber min={0} />
               </Form.Item>
               <Form.Item
                 name={'high_error_tolerance'}
-                label={'告警上限'}
+                label={CALIPER_RULE_FORMAT['high_error_tolerance']}
                 rules={[{ required: false, message: '告警上限' }]}
               >
                 <InputNumber min={0} precision={2} />
               </Form.Item>
               <Form.Item
                 name={'high_warning_tolerance'}
-                label={'预警上限'}
+                label={CALIPER_RULE_FORMAT['high_warning_tolerance']}
                 rules={[{ required: false, message: '预警上限' }]}
               >
                 <InputNumber min={0} precision={2} />
               </Form.Item>
               <Form.Item
                 name={'low_warning_tolerance'}
-                label={'预警下限'}
+                label={CALIPER_RULE_FORMAT['low_warning_tolerance']}
                 rules={[{ required: false, message: '预警下限' }]}
               >
                 <InputNumber min={0} precision={2} />
               </Form.Item>
               <Form.Item
                 name={'low_error_tolerance'}
-                label={'告警下限'}
+                label={CALIPER_RULE_FORMAT['low_error_tolerance']}
                 rules={[{ required: false, message: '告警下限' }]}
               >
                 <InputNumber min={0} precision={2} />
               </Form.Item>
               <Form.Item
                 name={'averaging_depth'}
-                label={'平均深度'}
+                label={CALIPER_RULE_FORMAT['averaging_depth']}
                 rules={[{ required: false, message: '平均深度' }]}
               >
                 <InputNumber min={0} precision={2} />
               </Form.Item>
               <Form.Item
                 name={'minimum_points'}
-                label={'微小点数'}
+                label={CALIPER_RULE_FORMAT['minimum_points']}
                 rules={[{ required: false, message: '微小点数' }]}
               >
                 <InputNumber min={0} />

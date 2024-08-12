@@ -7,7 +7,7 @@ import Setter from './UI/setter';
 import Editor from './editor';
 import { GloablStateContext } from '@/context';
 import ContextMenu from './components/ContextMenu';
-import { SKETCH_ID } from '@/common/constants/globalConstants';
+import { CALIPER_RULE_FORMAT, SKETCH_ID } from '@/common/constants/globalConstants';
 import ObjectRotateAngleTip from './components/ObjectRotateAngleTip';
 import rough from 'roughjs';
 import { createPathFromSvg } from '@/components/fabritor/editor/objects/path';
@@ -86,6 +86,8 @@ export default function Fabritor(props: Props) {
     } else {
       contextMenuRef.current?.hide();
     }
+    const selection = editor.canvas?.getActiveObject();
+    setActiveObject(selection);
   }
 
   const selectionHandler = (opt: any) => {
@@ -118,8 +120,8 @@ export default function Fabritor(props: Props) {
   };
   // 初始化绑定事件
   const initEvent = () => {
-    editor.canvas?.on('selection:created', selectionHandler);
-    editor.canvas?.on('selection:updated', selectionHandler);
+    // editor.canvas?.on('selection:created', selectionHandler);
+    // editor.canvas?.on('selection:updated', selectionHandler);
     editor.canvas?.on('selection:cleared', selectionHandler);
     editor.canvas?.on('mouse:down', clickHandler);
     editor.canvas?.on('fabritor:group', groupHandler);
@@ -166,7 +168,7 @@ export default function Fabritor(props: Props) {
         objects: (json.objects || [])
           ?.map((item: any) => {
             return Object.assign({}, item,
-              (item?.type === 'path' && item?.path?.length <= 3) ? {
+              ((item?.type === 'path' && item?.path?.length <= 3) || item?.sub_type === 'image') ? {
                 hasControls: false,
               } : {}
             )
@@ -259,9 +261,10 @@ export default function Fabritor(props: Props) {
         const json = editor.canvas?.getObjects();
         json?.forEach((item: any) => {
           if (
-            item?.sub_type === 'outer_point' ||
-            item?.sub_type?.indexOf('line_result') > -1 ||
-            item?.sub_type === 'image_result'
+            item?.sub_type === 'outer_point'
+            || item?.sub_type?.indexOf('line_result') > -1
+            || item?.sub_type === 'image_result'
+            || (item?.sub_type?.indexOf('average') > -1 && item?.sub_type?.indexOf('average_half_') < 0)
           ) {
             removeObject(item, editor.canvas);
           }
@@ -298,7 +301,15 @@ export default function Fabritor(props: Props) {
               hasControls: false,
               mark_type: type,
               id: ID,
-              sub_type: 'line_result'
+              sub_type: 'line_result',
+              caliperRule: {
+                name: i.name,
+                ...Object.keys(CALIPER_RULE_FORMAT)?.reduce((pre: any, cen: string) => {
+                  return Object.assign({}, pre, {
+                    [cen]: i[cen]
+                  })
+                }, {})
+              }
             });
             if (result.value) {
               const x = Math.min(result.x1, result.x2) + 200;
@@ -308,8 +319,8 @@ export default function Fabritor(props: Props) {
                 backgroundColor: result.type === 1 ? '#b8831b' : result.type === 2 ? '#f00' : '#0f0',
                 fill: '#fff',
                 width: (result.value + '')?.length * 16,
-                text: result.value + '',
-                selectable: false,
+                text: result.value?.toFixed(2),
+                // selectable: false,
                 hasControls: false,
                 sub_type: `line_result-${ID}`
               });
@@ -401,6 +412,7 @@ export default function Fabritor(props: Props) {
             });
           }
         });
+        setActiveObject(editor.sketch);
       }
     }, 500);
   }, [isInit, shapeFromData]);

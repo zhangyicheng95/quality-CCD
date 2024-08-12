@@ -28,6 +28,7 @@ export default function ImagePanel() {
         canvas: editor.canvas,
         sub_type: 'image',
         selectable: false,
+        hasControls: false,
       });
     }
   }
