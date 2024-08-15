@@ -1,19 +1,81 @@
 import { Tag } from 'antd';
-import LineTypeList from './line-type-list';
-import ShapeTypeList from './shape-type-list';
-import RoughTypeList from './rough-type-list';
+import LineTypeList from '@/components/fabritor/UI/panel/ShapePanel/line-type-list';
+import ShapeTypeList from '@/components/fabritor/UI/panel/ShapePanel/shape-type-list';
+import RoughTypeList from '@/components/fabritor/UI/panel/ShapePanel/rough-type-list';
 import { drawArrowLine, drawLine, drawTriArrowLine } from '@/components/fabritor/editor/objects/line';
 import createRect from '@/components/fabritor/editor/objects/rect';
 import createShape from '@/components/fabritor/editor/objects/shape';
-import { useContext } from 'react';
+import { fabric } from 'fabric';
+import { useContext, useEffect } from 'react';
 import { GloablStateContext } from '@/context';
 import { createPathFromSvg } from '@/components/fabritor/editor/objects/path';
 import Title from '@/components/fabritor/components/Title';
-import sectorIcon from '@/assets/imgs/扇形.svg';
+import sectorIcon from '@/assets/imgs/sector.svg';
 
 export default function ShapePanel() {
   const { editor, roughSvg } = useContext<any>(GloablStateContext);
 
+  function makeCurveCircle(left: number, top: number, line1: any, line2: any, line3: any) {
+    const c: any = new fabric.Circle({
+      left: left,
+      top: top,
+      strokeWidth: 5,
+      radius: 12,
+      fill: '#fff',
+      stroke: '#666'
+    });
+    c.hasBorders = c.hasControls = false;
+    c.line1 = line1;
+    c.line2 = line2;
+    c.line3 = line3;
+    return c;
+  };
+  function makeCurvePoint(left: number, top: number, line1: any, line2: any, line3: any) {
+    const c: any = new fabric.Circle({
+      left: left,
+      top: top,
+      strokeWidth: 8,
+      radius: 14,
+      fill: '#fff',
+      stroke: '#666'
+    });
+    c.hasBorders = c.hasControls = false;
+    c.line1 = line1;
+    c.line2 = line2;
+    c.line3 = line3;
+    return c;
+  };
+  // 添加曲线
+  function drawQuadratic() {
+    const cParams = {
+      sub_type: 'curve',
+    }
+    const line: any = new fabric.Path('M 65 0 Q 100, 100, 200, 0', {
+      fill: '', stroke: 'red',
+      //  objectCaching: false,
+      ...cParams
+    });
+    line.path[0][1] = 100;
+    line.path[0][2] = 100;
+
+    line.path[1][1] = 200;
+    line.path[1][2] = 200;
+
+    line.path[1][3] = 300;
+    line.path[1][4] = 100;
+    line.selectable = false;
+    editor?.canvas?.add?.(line);
+    const p1 = makeCurvePoint(200, 200, null, line, null)
+    p1.name = "p1";
+    editor?.canvas?.add(p1);
+    const p0 = makeCurveCircle(100, 100, line, p1, null);
+    p0.name = "p0";
+    editor?.canvas?.add(p0);
+    const p2 = makeCurveCircle(300, 100, null, p1, line);
+    p2.name = "p2";
+    editor?.canvas?.add(p2);
+  };
+  // 添加直线
   const addLine = (item: any) => {
     const { type, key, options = {} } = item;
     const canvas = editor.canvas;
@@ -30,32 +92,83 @@ export default function ShapePanel() {
       default:
         break;
     }
-  }
-
+  };
+  // 添加图形
   const addShape = (item: any) => {
     const { key, elem, shape, options } = item;
-    const canvas = editor.canvas;
-    // switch (key) {
-    // case 'rect':
-    // case 'rect-r':
-    //   createRect({ ...options, canvas });
-    //   break;
-    // case 'star':
-    // case 'heart':
-    createPathFromSvg({
-      svgString: elem,
-      canvas,
-      sub_type: key,
-      hasControls: key !== 'point',
-      strokeWidth: 4
-    });
-    // break;
-    // default:
-    //   createShape(item.shape, { ...options, canvas });
-    //   break;
-    // }
+    const common = {
+      left: 200,
+      top: 100,
+      cornerColor: "white",
+      cornerSize: 10,
+      transparentCorners: false,
+      cornerStrokeColor: 'gray',
+      radius: 3,
+      fill: 'red',
+    };
+    switch (key) {
+      case 'point':
+        const hParams = {
+          sub_type: `point`,
+        };
+        const horizationLine = new fabric.Circle({
+          ...common,
+          ...hParams,
+        });
+        editor.canvas?.add?.(horizationLine);
+        break;
+      case 'rect':
+        const borderParams = {
+          sub_type: `rect`,
+        };
+        const rectBorder = new fabric.Rect({
+          ...common,
+          width: 100,
+          height: 100,
+          fill: 'transparent',
+          strokeWidth: 1,
+          stroke: "#f00",
+          ...borderParams
+        });
+        editor.canvas?.add?.(rectBorder);
+        break;
+      case 'circle':
+        const cParams = {
+          sub_type: `point`,
+          radius: 48,
+          fill: 'transparent',
+          strokeWidth: 1,
+          stroke: "#f00",
+        };
+        const circle = new fabric.Circle({
+          ...common,
+          ...cParams,
+        });
+        editor.canvas?.add?.(circle);
+        break;
+      case 'curve':
+        drawQuadratic();
+        break;
+      // case 'rect-r':
+      //   createRect({ ...options, canvas });
+      //   break;
+      // case 'star':
+      // case 'heart':
+      // break;
+      default:
+        //   createShape(item.shape, { ...options, canvas });
+        createPathFromSvg({
+          svgString: elem,
+          canvas: editor.canvas,
+          sub_type: key,
+          hasControls: key !== 'point',
+          strokeWidth: 4,
+          ...options
+        });
+        break;
+    }
   }
-
+  // 添加自定义图像
   const addRough = (item: any) => {
     const { key, options } = item;
     const canvas = editor.canvas;

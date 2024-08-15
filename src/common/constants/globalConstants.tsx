@@ -723,6 +723,7 @@ export const FABRITOR_CUSTOM_PROPS = [
   'selectable',
   'hasControls',
   'sub_type',
+  'absolutePositioned',
   'imageSource',
   'imageBorder',
   'oldArrowInfo',
@@ -738,7 +739,12 @@ export const CALIPER_RULE_FORMAT = {
   'measurement_offset': '测量偏移量',
   'minimum_points': '最少点数',
   'output_index': '输出索引'
-}
+};
+export const BASIC_POINT_RULE_FORMAT = {
+  'horization_point_1': '卡尺1类型',
+  'horization_point_2': '卡尺2类型',
+  'vertical_point': '垂直卡尺类型',
+};
 // LOCAL
 export const LOAD_FROM_LOCAL_WHEN_INIT = true;
 export const AUTO_SAVE_WHEN_CHANGE = true;
@@ -755,7 +761,7 @@ export const IMAGE_CLIPPATH_QUALITY = true;
 export const MAX_HISTORY_LENGTH = 100;
 
 export const PANEL_WIDTH = 360;
-export const SETTER_WIDTH = 340;
+export const SETTER_WIDTH = 280;
 
 export const CAPTURE_SUBTARGET_WHEN_DBLCLICK = false;
 

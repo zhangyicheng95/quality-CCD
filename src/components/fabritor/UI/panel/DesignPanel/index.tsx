@@ -1,5 +1,6 @@
 import { List, Empty, Button, Divider } from 'antd';
 import { useEffect, useContext, useState } from 'react';
+import { fabric } from 'fabric';
 import { GloablStateContext } from '@/context';
 import { SKETCH_ID } from '@/common/constants/globalConstants';
 import { GroupOutlined, HeartTwoTone } from '@ant-design/icons';
@@ -51,7 +52,17 @@ export default function Layer() {
 
   const handleItemClick = (item: any) => {
     editor.canvas.discardActiveObject();
-    editor.canvas.setActiveObject(item.object);
+    const id = item.sub_type?.split('-')?.[1];
+    const objects = editor.canvas?.getObjects();
+    const group = objects?.filter((i: any) => i.sub_type?.indexOf('basic_point') > -1 && i.sub_type?.indexOf(id) > -1);
+    if (!!group && !!group?.length) {
+      const selection = new fabric.ActiveSelection(group, {
+        canvas: editor.canvas
+      });
+      editor.canvas?.setActiveObject(selection);
+    } else {
+      editor.canvas.setActiveObject(item);
+    }
     editor.canvas.requestRenderAll();
   }
 
@@ -97,8 +108,8 @@ export default function Layer() {
             renderItem={(item: any) => {
               if (
                 item?.object?.sub_type?.indexOf('outer_point') > -1
-                ||
-                item?.object?.sub_type?.indexOf('line_result-') > -1
+                // ||
+                // item?.object?.sub_type?.indexOf('line_result') > -1
               ) {
                 return null;
               }
@@ -110,7 +121,7 @@ export default function Layer() {
                       border: activeObject === item.object ? ' 2px solid #ff2222' : '2px solid transparent',
                       padding: '10px 16px'
                     }}
-                    onClick={() => { handleItemClick(item) }}
+                    onClick={() => { handleItemClick(item.object) }}
                   >
                     <div className='flex-box-justify-between' style={{ width: '100%', height: 40 }}>
                       {

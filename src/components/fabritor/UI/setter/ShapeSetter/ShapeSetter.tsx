@@ -1,10 +1,11 @@
-import { useContext, useEffect } from 'react';
+import { Fragment, useContext, useEffect } from 'react';
 import { fabric } from 'fabric';
-import { Form } from 'antd';
+import { Divider, Form, Select } from 'antd';
 import { GloablStateContext } from '@/context';
 import ColorSetter from '../ColorSetter';
 import BorderSetter, { getObjectBorderType, getStrokeDashArray } from '../BorderSetter';
 import { transformColors2Fill, transformFill2Colors } from '@/utils/fabrictorUtils';
+import { BASIC_POINT_RULE_FORMAT } from '@/common/constants/globalConstants';
 
 const { Item: FormItem } = Form;
 
@@ -72,6 +73,47 @@ export default function ShapeSetter() {
       onValuesChange={handleValuesChange}
       colon={false}
     >
+      {
+        !!object?.caliperRule && !!Object.keys?.(object?.caliperRule)?.length ?
+          <Fragment>
+            {
+              Object.entries(object?.caliperRule)?.map((item: any) => {
+                return !!BASIC_POINT_RULE_FORMAT[item[0]] ?
+                  <FormItem
+                    name={item[0]}
+                    label={BASIC_POINT_RULE_FORMAT[item[0]]}
+                    initialValue={item[1]}
+                  >
+                    <Select
+                      options={[
+                        {
+                          value: 'average',
+                          label: '平均卡尺',
+                        },
+                        {
+                          value: 'concave-convex',
+                          label: '凹凸卡尺',
+                        },
+                      ]}
+                      onChange={(val) => {
+                        const id = object?.sub_type?.split('-');
+                        const realCanvas = editor.canvas?.getObjects()?.filter((i: any) => i.sub_type?.indexOf(id[1]) > -1);
+                        (realCanvas || [])?.forEach((target: any) => {
+                          target.caliperRule = {
+                            ...target.caliperRule,
+                            [item[0]]: val
+                          };
+                        });
+                      }}
+                    />
+                  </FormItem>
+                  : null
+              })
+            }
+            <Divider />
+          </Fragment>
+          : null
+      }
       <FormItem name="fill" label={'颜色'}>
         <ColorSetter defaultColor="#000000" />
       </FormItem>

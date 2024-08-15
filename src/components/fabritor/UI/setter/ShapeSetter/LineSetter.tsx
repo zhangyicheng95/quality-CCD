@@ -1,5 +1,5 @@
 import { Fragment, useContext, useEffect } from 'react';
-import { Form, Input, Radio, Switch } from 'antd';
+import { Divider, Form, Input, InputNumber, Radio, Switch } from 'antd';
 import { GloablStateContext } from '@/context';
 import ColorSetter from '../ColorSetter/Solid';
 import SliderInputNumber from '@/components/fabritor/components/SliderInputNumber';
@@ -37,10 +37,8 @@ export default function LineSetter() {
         default:
           break;
       }
-    }
-
+    };
     object.setCoords();
-
     editor.canvas.requestRenderAll();
   }
 
@@ -49,9 +47,11 @@ export default function LineSetter() {
       stroke: object.stroke || '#000000',
       type: getObjectBorderType(object),
       strokeWidth: object.strokeWidth,
-      round: object.strokeLineCap === 'round'
+      round: object.strokeLineCap === 'round',
+      ...object.caliperRule
     });
   }, [object]);
+
 
   return (
     <Form
@@ -70,11 +70,20 @@ export default function LineSetter() {
                     label={CALIPER_RULE_FORMAT[item[0]]}
                     initialValue={item[1]}
                   >
-                    <Input disabled />
+                    <InputNumber onChange={(val) => {
+                      const realCanvas = editor.canvas?.getObjects()?.filter((i: any) => i.sub_type === object?.sub_type);
+                      (realCanvas || [])?.forEach((target: any) => {
+                        target.caliperRule = {
+                          ...target.caliperRule,
+                          [item[0]]: val
+                        };
+                      });
+                    }} />
                   </FormItem>
                   : null
               })
             }
+            <Divider />
           </Fragment>
           : null
       }

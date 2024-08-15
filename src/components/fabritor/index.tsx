@@ -7,7 +7,7 @@ import Setter from './UI/setter';
 import Editor from './editor';
 import { GloablStateContext } from '@/context';
 import ContextMenu from './components/ContextMenu';
-import { CALIPER_RULE_FORMAT, SKETCH_ID } from '@/common/constants/globalConstants';
+import { CALIPER_RULE_FORMAT, SKETCH_ID, TEXTBOX_DEFAULT_CONFIG } from '@/common/constants/globalConstants';
 import ObjectRotateAngleTip from './components/ObjectRotateAngleTip';
 import rough from 'roughjs';
 import { createPathFromSvg } from '@/components/fabritor/editor/objects/path';
@@ -67,15 +67,15 @@ export default function Fabritor(props: Props) {
   const theme = useMemo(() => {
     return params?.contentData?.theme || 'realDark';
   }, [params?.contentData?.theme]);
+  // 元素被点击
   const clickHandler = (opt: any) => {
     const { target } = opt;
+    setActiveObject(target);
     if (editor.getIfPanEnable()) return;
-
     if (!target) {
       contextMenuRef.current?.hide();
       return;
     }
-
     if (opt.button === 3) { // 右键
       if (target.id !== SKETCH_ID) {
         editor.canvas?.setActiveObject(target);
@@ -87,9 +87,11 @@ export default function Fabritor(props: Props) {
       contextMenuRef.current?.hide();
     }
     const selection = editor.canvas?.getActiveObject();
-    setActiveObject(selection);
-  }
-
+    if (!!selection) {
+      setActiveObject(selection);
+    }
+  };
+  // 框选选中
   const selectionHandler = (opt: any) => {
     const { selected, sketch } = opt;
     if (selected && selected.length) {
@@ -99,19 +101,12 @@ export default function Fabritor(props: Props) {
       // @ts-ignore
       setActiveObject(sketch);
     }
-  }
-
+    onSelectionCleared(opt);
+  };
+  // 框选结组
   const groupHandler = () => {
     const selection = editor.canvas?.getActiveObject();
     setActiveObject(selection);
-  }
-
-  const loadJsonHandler = (opt: any) => {
-    const { lastActiveObject } = opt;
-    if (lastActiveObject) {
-      editor.canvas?.setActiveObject(lastActiveObject);
-      setActiveObject(lastActiveObject);
-    }
   };
   // 窗口大小改变，动态修改画布大小
   const resizeCanvas = () => {
@@ -120,25 +115,93 @@ export default function Fabritor(props: Props) {
   };
   // 初始化绑定事件
   const initEvent = () => {
-    // editor.canvas?.on('selection:created', selectionHandler);
-    // editor.canvas?.on('selection:updated', selectionHandler);
-    editor.canvas?.on('selection:cleared', selectionHandler);
-    editor.canvas?.on('mouse:down', clickHandler);
-    editor.canvas?.on('fabritor:group', groupHandler);
-    editor.canvas?.on('fabritor:ungroup', groupHandler);
-    editor.canvas?.on('fabritor:load:json', loadJsonHandler);
+    editor.canvas?.on({
+      // 'selection:created': selectionHandler,
+      // 'selection:updated': selectionHandler,
+      'selection:cleared': selectionHandler,
+      'mouse:down': clickHandler,
+      'fabritor:group': groupHandler,
+      'fabritor:ungroup': groupHandler,
+      // 绑定贝塞尔曲线
+      'object:selected': onObjectSelected,
+      'object:moving': onObjectMoving,
+    });
     window.addEventListener('resize', resizeCanvas);
   };
   const removeEvent = () => {
-    editor.canvas?.off('selection:created', selectionHandler);
-    editor.canvas?.off('selection:updated', selectionHandler);
-    editor.canvas?.off('selection:cleared', selectionHandler);
-    editor.canvas?.off('mouse:down', clickHandler);
-    editor.canvas?.off('fabritor:group', groupHandler);
-    editor.canvas?.off('fabritor:ungroup', groupHandler);
-    editor.canvas?.off('fabritor:load:json', loadJsonHandler);
+    editor.canvas?.off({
+      // 'selection:created': selectionHandler,
+      // 'selection:updated': selectionHandler,
+      'selection:cleared': selectionHandler,
+      'mouse:down': clickHandler,
+      'fabritor:group': groupHandler,
+      'fabritor:ungroup': groupHandler,
+      // 绑定贝塞尔曲线
+      'object:selected': onObjectSelected,
+      'object:moving': onObjectMoving,
+    });
     window.removeEventListener('resize', resizeCanvas);
   }
+  // 曲线被选中
+  function onObjectSelected(e: any) {
+    var activeObject = e.target;
+    if (activeObject.name == "p0" || activeObject.name == "p2") {
+      activeObject.line2.animate('opacity', '1', {
+        duration: 200,
+        onChange: editor?.canvas?.renderAll.bind(editor?.canvas),
+      });
+      activeObject.line2.selectable = true;
+    }
+  };
+  // 清理
+  function onSelectionCleared(e: any) {
+    var activeObject = e.target;
+    if (!activeObject) return;
+    console.log(activeObject);
+
+    if (activeObject.name == "p0" || activeObject.name == "p2") {
+      activeObject.line2.animate('opacity', '0', {
+        duration: 200,
+        onChange: editor?.canvas?.renderAll.bind(editor?.canvas),
+      });
+      activeObject.line2.selectable = false;
+    }
+    else if (activeObject.name == "p1") {
+      activeObject.animate('opacity', '0', {
+        duration: 200,
+        onChange: editor?.canvas?.renderAll.bind(editor?.canvas),
+      });
+      activeObject.selectable = false;
+    }
+  };
+  // 移动
+  function onObjectMoving(e: any) {
+    if (e.target.name == "p0" || e.target.name == "p2") {
+      var p = e.target;
+      if (p.line1) {
+        p.line1.path[0][1] = p.left;
+        p.line1.path[0][2] = p.top;
+      }
+      else if (p.line3) {
+        p.line3.path[1][3] = p.left;
+        p.line3.path[1][4] = p.top;
+      }
+    }
+    else if (e.target.name == "p1") {
+      var p = e.target;
+      if (p.line2) {
+        p.line2.path[1][1] = p.left;
+        p.line2.path[1][2] = p.top;
+      }
+    }
+    else if (e.target.name == "p0" || e.target.name == "p2") {
+      var p = e.target;
+      p.line1 && p.line1.set({ 'x2': p.left, 'y2': p.top });
+      p.line2 && p.line2.set({ 'x1': p.left, 'y1': p.top });
+      p.line3 && p.line3.set({ 'x1': p.left, 'y1': p.top });
+      p.line4 && p.line4.set({ 'x1': p.left, 'y1': p.top });
+    }
+  };
   // 初始化画布
   const initEditor = async () => {
     const _editor: any = new Editor({
@@ -173,8 +236,11 @@ export default function Fabritor(props: Props) {
               } : {}
             )
           })
-      })
-      await _editor.loadFromJSON(string);
+      });
+      await _editor.loadFromJSON(string).then(() => {
+        _editor.canvas?.discardActiveObject?.();
+      });
+
     }
 
     _editor.canvas?.on('object:moving', function (e: any) {
@@ -237,7 +303,8 @@ export default function Fabritor(props: Props) {
   }, []);
   // 根据返回的数据渲染文字
   const handleAddText = async (options: any) => {
-    await createTextbox({ ...options, canvas: editor.canvas });
+    const text = await createTextbox({ ...options, canvas: editor.canvas });
+    return text;
   }
   // 根据返回的数据渲染图片
   const addImage = async (options: any) => {
@@ -245,6 +312,10 @@ export default function Fabritor(props: Props) {
       ...options,
       canvas: editor.canvas
     });
+  }
+  // 批量load图形
+  const loadShapes = async (jsonString: any) => {
+    await editor.loadFromJSON(jsonString);
   }
   // 返回轨迹点渲染
   useEffect(() => {
@@ -257,18 +328,20 @@ export default function Fabritor(props: Props) {
     timerRef.current = setTimeout(() => {
       console.log('标定组件接受到数据', shapeFromData);
       if (!!editor && !!shapeFromData && !!Object.keys(shapeFromData)?.length) {
+        const canvasWidth = editor.sketch?.cacheWidth;
         // 渲染之前，先把前一次算法结果删除
         const json = editor.canvas?.getObjects();
         json?.forEach((item: any) => {
           if (
-            item?.sub_type === 'outer_point'
+            item?.sub_type?.indexOf('outer_point') > -1
             || item?.sub_type?.indexOf('line_result') > -1
-            || item?.sub_type === 'image_result'
-            || (item?.sub_type?.indexOf('average') > -1 && item?.sub_type?.indexOf('average_half_') < 0)
+            || item?.sub_type?.indexOf('image_result') > -1
+            // || (item?.sub_type?.indexOf('average') > -1 && item?.sub_type?.indexOf('average_half_') < 0)
           ) {
             removeObject(item, editor.canvas);
           }
         });
+        let pointFormatList: any = [];
         // 然后开始渲染新的结果
         const { type, data = [] } = shapeFromData;
         (data || [])?.forEach((i: any) => {
@@ -289,9 +362,9 @@ export default function Fabritor(props: Props) {
             });
           } else if (i.type === "line") {
             const { result } = i;
-            const ID = guid();
-            drawLine({
-              points: [result.x1, result.y1, result.x2, result.y2],
+            const ID = i.sub_type;
+            const points = [result.x1, result.y1, result.x2, result.y2];
+            const params = {
               left: Math.min(result.x1, result.x2),
               top: Math.min(result.y1, result.y2),
               stroke: '#f00',
@@ -310,26 +383,28 @@ export default function Fabritor(props: Props) {
                   })
                 }, {})
               }
+            };
+            // @ts-ignore
+            const line = new fabric.FLine(points, {
+              strokeLineJoin: 'round',
+              strokeLineCap: 'round',
+              borderColor: '#00000000',
+              ...params
             });
             if (result.value) {
-              const x = Math.min(result.x1, result.x2) + 200;
-              handleAddText({
-                top: (result.y1 + result.y2) / 2 - 13,
-                left: x,
-                backgroundColor: result.type === 1 ? '#b8831b' : result.type === 2 ? '#f00' : '#0f0',
-                fill: '#fff',
-                width: (result.value + '')?.length * 16,
-                text: result.value?.toFixed(2),
-                // selectable: false,
-                hasControls: false,
-                sub_type: `line_result-${ID}`
-              });
-              drawLine({
-                points: [
-                  (result.x1 + result.x2) / 2, (result.y1 + result.y2) / 2,
-                  x, (result.y1 + result.y2) / 2
-                ],
-                left: (result.x1 + result.x2) / 2,
+              const x = (result.x1 + result.x2) / 2 > canvasWidth / 2 ?
+                Math.max(result.x1, result.x2) + 200
+                :
+                Math.min(result.x1, result.x2) - 200;
+              // @ts-ignore
+              const dashLine = new fabric.FLine([
+                x, (result.y1 + result.y2) / 2,
+                (result.x1 + result.x2) / 2, (result.y1 + result.y2) / 2
+              ], {
+                strokeLineJoin: 'round',
+                strokeLineCap: 'round',
+                borderColor: '#00000000',
+                left: Math.min(x, (result.x1 + result.x2) / 2),
                 top: (result.y1 + result.y2) / 2,
                 stroke: '#f00',
                 strokeWidth: 2,
@@ -339,56 +414,91 @@ export default function Fabritor(props: Props) {
                 hasControls: false,
                 sub_type: `line_result-${ID}`
               });
+              // @ts-ignore
+              const text = new fabric.FText(result.value?.toFixed(2), {
+                ...TEXTBOX_DEFAULT_CONFIG,
+                lineHeight: 1.1,
+                fontSize: 24,
+                pathAlign: 'center',
+                id: guid(),
+                top: (result.y1 + result.y2) / 2 - 13,
+                left: x - ((result.x1 + result.x2) / 2 > canvasWidth / 2 ? 0 : (result.value?.toFixed(2) + '')?.length * 16),
+                backgroundColor: result.type === 1 ? '#b8831b' : result.type === 2 ? '#f00' : '#0f0',
+                fill: '#fff',
+                width: (result.value?.toFixed(2) + '')?.length * 16,
+                selectable: false,
+                hasControls: false,
+                sub_type: `line_result-${ID}`
+              });
+              try {
+                const groupType = {
+                  sub_type: `line_result-${ID}`,
+                  caliperRule: Object.keys(CALIPER_RULE_FORMAT)?.reduce((pre: any, cen: any) => {
+                    return Object.assign({}, pre, {
+                      [cen]: i[cen]
+                    });
+                  }, { name: i.name })
+                };
+                const group = new fabric.Group([line, text, dashLine], {
+                  type: 'group',
+                  angle: 0,
+                  selectable: false,
+                  hasControls: false,
+                  ...groupType
+                });
+                editor.canvas?.add?.(group);
+              } catch (err) { }
             }
           } else if (i.type === 'point') {
-            drawLine({
-              points: [i.x, i.y, i.x + 1, i.y + 1],
+            pointFormatList.push({
+              ...shapeFormat['point'],
               left: i.x,
               top: i.y,
-              stroke: '#f00',
-              strokeWidth: 2,
-              canvas: editor.canvas,
-              selectable: false,
-              hasControls: false,
-              mark_type: type,
-              sub_type: 'outer_point'
             });
-            // createPathFromSvg({
-            //   svgString: '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="2" fill="#f00" stroke="#f00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+            // drawLine({
+            //   points: [i.x, i.y, i.x + 1, i.y + 1],
+            //   left: i.x,
+            //   top: i.y,
+            //   stroke: '#f00',
+            //   strokeWidth: 2,
             //   canvas: editor.canvas,
             //   selectable: false,
             //   hasControls: false,
-            //   top: i.y,
-            //   left: i.x,
-            //   y: i.y,
-            //   x: i.x,
-            //   strokeWidth: 2,
-            //   sub_type: 'outer_point',
-            //   mark_type: type
+            //   mark_type: type,
+            //   sub_type: 'outer_point'
             // });
           } else if (i.type === 'rect') {
-            createPathFromSvg({
+            const rectParams = {
+              sub_type: 'rect_result',
+            }
+            const rect = new fabric.Rect({
               top: i.top,
               left: i.left,
               width: i.width,
               height: i.height,
-              svgString: ShapeTypeList?.filter((i: any) => i.key === 'rect')?.[0]?.elem,
-              canvas: editor.canvas,
-              sub_type: 'rect',
-              strokeWidth: 4,
-              mark_type: type
+              fill: 'transparent',
+              strokeWidth: 1,
+              strokeDashArray: [8, 8],
+              stroke: "#f00",
+              ...rectParams
             });
+            editor.canvas?.add?.(rect);
           } else if (i.type === 'circle') {
-            createPathFromSvg({
+            const circleParams = {
+              sub_type: 'circle_result',
+            }
+            const circle = new fabric.Circle({
+              cornerColor: "white",
+              cornerSize: 4,
+              transparentCorners: false,
+              cornerStrokeColor: 'gray',
+              fill: 'red',
               top: i.top,
               left: i.left,
-              radius: i.radius,
-              svgString: ShapeTypeList?.filter((i: any) => i.key === 'circle')?.[0]?.elem,
-              canvas: editor.canvas,
-              sub_type: 'circle',
-              strokeWidth: 4,
-              mark_type: type
+              radius: i.radius || 4,
+              ...circleParams,
             });
+            editor.canvas?.add?.(circle);
           } else if (i.type === 'image_result') {
             const target = json?.filter((ic: any) => ic.sub_type === 'image')?.[0] || {};
             addImage({
@@ -412,7 +522,13 @@ export default function Fabritor(props: Props) {
             });
           }
         });
-        setActiveObject(editor.sketch);
+        console.log(pointFormatList);
+        // const json1 = editor.canvas2Json();
+        // loadShapes(JSON.stringify({
+        //   ...json1,
+        //   objects: (json1.objects || []).concat(pointFormatList)
+        // }));
+        editor.canvas?.discardActiveObject?.();
       }
     }, 500);
   }, [isInit, shapeFromData]);
@@ -454,4 +570,155 @@ export default function Fabritor(props: Props) {
       </div>
     </GloablStateContext.Provider>
   )
+}
+
+
+const shapeFormat = {
+  point: {
+    "type": "circle",
+    "version": "5.3.0",
+    "originX": "left",
+    "originY": "top",
+    "left": 10,
+    "top": 10,
+    "width": 2,
+    "height": 2,
+    "fill": "#f00",
+    "stroke": "#f00",
+    "strokeWidth": 1,
+    "strokeDashArray": null,
+    "strokeLineCap": "round",
+    "strokeDashOffset": 0,
+    "strokeLineJoin": "round",
+    "strokeUniform": true,
+    "strokeMiterLimit": 1,
+    "scaleX": 1,
+    "scaleY": 1,
+    "angle": 0,
+    "flipX": false,
+    "flipY": false,
+    "opacity": 1,
+    "shadow": null,
+    "visible": true,
+    "backgroundColor": "",
+    "fillRule": "nonzero",
+    "paintFirst": "stroke",
+    "globalCompositeOperation": "source-over",
+    "skewX": 0,
+    "skewY": 0,
+    "radius": 1,
+    "startAngle": 0,
+    "endAngle": 360,
+    "id": "7a99af53",
+    "selectable": true,
+    "hasControls": false,
+    "sub_type": "point"
+  },
+  circle: {
+    "type": "circle",
+    "version": "5.3.0",
+    "originX": "left",
+    "originY": "top",
+    "left": 10,
+    "top": 10,
+    "width": 20,
+    "height": 20,
+    "fill": "",
+    "stroke": "#f00",
+    "strokeWidth": 4,
+    "strokeDashArray": null,
+    "strokeLineCap": "round",
+    "strokeDashOffset": 0,
+    "strokeLineJoin": "round",
+    "strokeUniform": true,
+    "strokeMiterLimit": 4,
+    "scaleX": 4.17,
+    "scaleY": 4.17,
+    "angle": 0,
+    "flipX": false,
+    "flipY": false,
+    "opacity": 1,
+    "shadow": null,
+    "visible": true,
+    "backgroundColor": "",
+    "fillRule": "nonzero",
+    "paintFirst": "stroke",
+    "globalCompositeOperation": "source-over",
+    "skewX": 0,
+    "skewY": 0,
+    "radius": 10,
+    "startAngle": 0,
+    "endAngle": 360,
+    "id": "2b9c0408",
+    "selectable": true,
+    "hasControls": true,
+    "sub_type": "circle"
+  },
+  rect: {
+    "type": "path",
+    "version": "5.3.0",
+    "originX": "left",
+    "originY": "top",
+    "left": 10,
+    "top": 10,
+    "width": 36,
+    "height": 36,
+    "fill": "",
+    "stroke": "#f00",
+    "strokeWidth": 4,
+    "strokeDashArray": null,
+    "strokeLineCap": "round",
+    "strokeDashOffset": 0,
+    "strokeLineJoin": "round",
+    "strokeUniform": true,
+    "strokeMiterLimit": 4,
+    "scaleX": 4.17,
+    "scaleY": 4.17,
+    "angle": 0,
+    "flipX": false,
+    "flipY": false,
+    "opacity": 1,
+    "shadow": null,
+    "visible": true,
+    "backgroundColor": "",
+    "fillRule": "nonzero",
+    "paintFirst": "stroke",
+    "globalCompositeOperation": "source-over",
+    "skewX": 0,
+    "skewY": 0,
+    "id": "f88e0498",
+    "selectable": true,
+    "hasControls": true,
+    "sub_type": "rect",
+    "path": [
+      [
+        "M",
+        42,
+        6
+      ],
+      [
+        "L",
+        6,
+        6
+      ],
+      [
+        "L",
+        6,
+        42
+      ],
+      [
+        "L",
+        42,
+        42
+      ],
+      [
+        "L",
+        42,
+        6
+      ],
+      [
+        "Z"
+      ]
+    ]
+  }
 }

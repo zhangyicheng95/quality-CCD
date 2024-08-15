@@ -7,7 +7,8 @@ import { CenterV } from '@/components/fabritor/components/Center';
 import ToolbarItem from './ToolbarItem';
 import ToolbarDivider from '@/components/fabritor/components/ToolbarDivider';
 import SegmentSwitch from '@/components/SegmentSwitch';
-import { CALIPER_RULE_FORMAT, DRAW_MODE_CURSOR } from '@/common/constants/globalConstants';
+import ShapeTypeList from '@/components/fabritor/UI/panel/ShapePanel/shape-type-list';
+import { BASIC_POINT_RULE_FORMAT, CALIPER_RULE_FORMAT, DRAW_MODE_CURSOR } from '@/common/constants/globalConstants';
 import { groupSelection, removeObject } from '@/utils/helper';
 import { drawLine } from '@/components/fabritor/editor/objects/line';
 import { getArrowPoint } from '@/utils/fabrictorUtils';
@@ -31,6 +32,8 @@ export default function Toolbar() {
   const [ruleVisible, setRuleVisible] = useState(false);
   const [measurementErrorRule, setMeasurementErrorRule] = useState({});
   const [measurementErrorVisible, setMeasurementErrorVisible] = useState(false);
+  const [basicPointRule, setBasicPointRule] = useState<any>({});
+  const [basicPointVisible, setBasicPointVisible] = useState(false);
 
   // 初始化卡尺参数值
   useEffect(() => {
@@ -140,9 +143,9 @@ export default function Toolbar() {
         return null;
       }
       let {
-        sub_type, path, height, width, text, strokeWidth,
+        type, sub_type, path, height, width, text, strokeWidth,
         left, top, scaleX = 1, angle,
-        backgroundColor, fill, fontSize, caliperRule
+        backgroundColor, fill, fontSize, caliperRule,
       } = item;
       if (
         sub_type?.indexOf('line_result') > -1
@@ -155,7 +158,7 @@ export default function Toolbar() {
         if (sub_type?.indexOf('line') > -1) {
           left = Math.min(item?.x1, item?.x2);
           top = Math.min(item.y1, item.y2);
-        } else if (sub_type?.indexOf('point') > -1) {
+        } else if (type === 'path') {
           // 轨迹轮廓点
           left = path[0][1];
           top = path[0][2];
@@ -205,6 +208,19 @@ export default function Toolbar() {
           scale: scaleX,
           ...caliperRule
         }
+      } else if (sub_type?.indexOf("basic_point") > -1) {
+        if (sub_type?.indexOf("basic_point_border") > -1) {
+          return null;
+        }
+        return {
+          type: 'point',
+          sub_type,
+          left: left + width / 2,
+          top: top + height / 2,
+          angle,
+          scale: scaleX,
+          ...caliperRule
+        };
       } else if (sub_type?.indexOf('point_') > -1) {
         return {
           type: 'point',
@@ -264,16 +280,24 @@ export default function Toolbar() {
       }
       return null;
     }
+    const realCanvas = editor.canvas?.getObjects();
     const result = (list || [])?.reduce((pre: any, cen: any) => {
-      const { type } = cen;
+      const { type, angle, objects } = cen;
       if (type === 'group') {
-        const list = cen.objects?.map((cItem: any) => {
-          if (cItem.sub_type?.indexOf('point_') > -1) {
-            cItem.left = cItem.path[0]?.[1];
-            cItem.top = cItem.path[0]?.[2];
-          }
-          if (!!initItem(cItem)) {
-            return initItem(cItem);
+        const realItemGroup = realCanvas?.filter((i: any) => (i.sub_type === cen.sub_type))?.[0];
+        const positions = realItemGroup?.getCoords?.();
+
+        const list = objects?.map((cItem: any, index: number) => {
+          const realItem = realItemGroup?.getObjects()?.filter((i: any) => i.sub_type === cItem?.sub_type)?.[0];
+
+          if (!!positions) {
+            cItem.left = positions[index]?.x;
+            cItem.top = positions[index]?.y;
+            cItem.angle = angle;
+            const res = initItem(cItem);
+            if (!!res) {
+              return res;
+            }
           }
           return null;
         }).filter(Boolean);
@@ -293,16 +317,18 @@ export default function Toolbar() {
   // 保存结果
   const saveCanvas = () => {
     const json = editor.canvas2Json();
-    const objects = editor.canvas?.getObjects();
     const string = {
       ...json,
-      objects: objects?.filter((i: any) => {
-        return i?.sub_type?.indexOf('line_result') < 0 &&
+      objects: json.objects?.filter((i: any) => {
+        return (i?.sub_type?.indexOf('line_result') < 0 &&
           i?.sub_type?.indexOf('image_result') < 0 &&
-          i?.sub_type?.indexOf('outer_point') < 0
+          i?.sub_type?.indexOf('outer_point') < 0)
+          ||
+          !i?.sub_type
       })
     };
-    const result = formatResult(objects);
+    localStorage.setItem('fabritor_web_json', JSON.stringify(string));
+    const result = formatResult(json?.objects);
     if (!!result?.length) {
       btnFetch(fetchType, xName, { data: result }).then((res: any) => {
         if (!!res && res.code === 'SUCCESS') {
@@ -312,7 +338,6 @@ export default function Toolbar() {
         }
       });
     }
-    localStorage.setItem('fabritor_web_json', JSON.stringify({ ...string }));
   };
   // 初始化卡尺
   const initBrush = () => {
@@ -336,12 +361,80 @@ export default function Toolbar() {
   const onRuleCancel = () => {
     setRuleVisible(false);
     setMeasurementErrorVisible(false);
+    setBasicPointVisible(false);
     form.resetFields();
   }
   const enablePan = () => {
     const enable = editor.switchEnablePan();
+    const objects = editor.canvas?.getObjects();
+    objects?.forEach((item: any) => {
+      if (
+        item?.sub_type?.indexOf('image') > -1
+        ||
+        item?.sub_type?.indexOf('_result') > -1
+        ||
+        item?.sub_type?.indexOf('outer_point') > -1
+      ) {
+        item.selectable = false;
+        item.hasControls = false;
+      }
+    });
     setPanEnable(enable);
-  }
+  };
+  // 三基点
+  const onBasicPointCanvs = (rule: any) => {
+    const ID = guid();
+    const common = {
+      hasControls: false,
+      radius: 1,
+      fill: 'red',
+      caliperRule: rule,
+    };
+    const vParams = {
+      sub_type: `basic_point_vertical-${ID}`,
+    };
+    const hParams = {
+      sub_type: `basic_point-${ID}`,
+    };
+    if (rule.datum_type === 'one') {
+      const horizationLine = new fabric.Circle({
+        ...common,
+        left: 280,
+        top: 180,
+        ...hParams,
+        radius: 2,
+        fill: 'green',
+      });
+      editor.canvas?.add?.(horizationLine);
+      editor.canvas?.setActiveObject(horizationLine);
+    } else {
+      const verticalLine = new fabric.Circle({
+        ...common,
+        left: 220,
+        top: 120,
+        ...vParams,
+        fill: 'green',
+      });
+      const horizationLine1 = new fabric.Circle({
+        ...common,
+        left: 220,
+        top: 180,
+        ...hParams
+      });
+      const horizationLine2 = new fabric.Circle({
+        ...common,
+        left: 280,
+        top: 180,
+        ...hParams
+      });
+      editor.canvas?.add?.(verticalLine, horizationLine1, horizationLine2);
+      editor.canvas?.renderAll();
+      const selection = new fabric.ActiveSelection([verticalLine, horizationLine1, horizationLine2], {
+        canvas: editor.canvas
+      });
+      editor.canvas?.setActiveObject(selection);
+    }
+  };
 
   return (
     <CenterV
@@ -374,13 +467,13 @@ export default function Toolbar() {
       /> */}
       <ToolbarItem
         onContextMenu={() => {
-          form.setFieldsValue({});
+          form.setFieldsValue(caliperRule || {});
           setRuleVisible(true);
         }}
         onClick={() => {
-          if (!Object.keys(caliperRule)?.length) {
-            setRuleVisible(true);
-          }
+          // if (!Object.keys(caliperRule)?.length) {
+          //   setRuleVisible(true);
+          // }
           setSelectedBtn(prev => prev === 'average' ? '' : 'average');
           if (selectedBtn === 'average') {
             cancelBrush();
@@ -395,13 +488,13 @@ export default function Toolbar() {
       </ToolbarItem>
       <ToolbarItem
         onContextMenu={() => {
-          form.setFieldsValue({});
+          form.setFieldsValue(caliperRule || {});
           setRuleVisible(true);
         }}
         onClick={() => {
-          if (!Object.keys(caliperRule)?.length) {
-            setRuleVisible(true);
-          }
+          // if (!Object.keys(caliperRule)?.length) {
+          //   setRuleVisible(true);
+          // }
           setSelectedBtn(prev => prev === 'average_half' ? '' : 'average_half');
           if (selectedBtn === 'average_half') {
             cancelBrush();
@@ -428,19 +521,26 @@ export default function Toolbar() {
         卡尺Link
       </ToolbarItem>
       <ToolbarItem onClick={() => {
-        // 清理掉原始轮廓点
-        const activeObj = [].concat(editor.canvas.getActiveObject()?._objects || []);
-        const uuid = guid();
-        (activeObj || [])?.forEach((target: any) => {
-          if (!target) {
-            return;
-          }
-          target.sub_type = `point_registration_${uuid}`;
-        });
         saveCanvas();
         cancelBrush();
       }} title={'配准'}>
         配准
+      </ToolbarItem>
+      <ToolbarItem
+        onContextMenu={() => {
+          form.setFieldsValue(basicPointRule || {});
+          setBasicPointVisible(true);
+        }}
+        onClick={() => {
+          if (!Object.keys(basicPointRule)?.length) {
+            setBasicPointVisible(true);
+            return;
+          }
+          onBasicPointCanvs(basicPointRule);
+        }}
+        title={'三基点定位'}
+      >
+        三基点定位
       </ToolbarItem>
       {/* <ToolbarItem
         onContextMenu={() => {
@@ -667,6 +767,97 @@ export default function Toolbar() {
                   {
                     value: 'y',
                     label: 'y方向',
+                  },
+                ]} />
+              </Form.Item>
+            </Form>
+          </Modal>
+        ) : null
+      }
+      {
+        // 三基点规则设置
+        !!basicPointVisible ? (
+          <Modal
+            title={`三基点定位规则设置`}
+            centered
+            open={!!basicPointVisible}
+            maskClosable={false}
+            onOk={() => {
+              form.validateFields().then((values) => {
+                setBasicPointRule(values);
+                onBasicPointCanvs(values);
+                onRuleCancel();
+              });
+
+            }}
+            onCancel={() => onRuleCancel()}
+          >
+            <Form form={form} scrollToFirstError>
+              <Form.Item
+                name={'datum_type'}
+                label={'Datum Type'}
+                initialValue={'three'}
+                rules={[{ required: false, message: 'Datum Type' }]}
+              >
+                <Select options={[
+                  {
+                    value: 'three',
+                    label: '三基点',
+                  },
+                  {
+                    value: 'one',
+                    label: '单基点',
+                  },
+                ]} />
+              </Form.Item>
+              <Form.Item
+                name={'vertical_point'}
+                label={BASIC_POINT_RULE_FORMAT['vertical_point']}
+                initialValue={'average'}
+                rules={[{ required: false, message: BASIC_POINT_RULE_FORMAT['vertical_point'] }]}
+              >
+                <Select options={[
+                  {
+                    value: 'average',
+                    label: '平均卡尺',
+                  },
+                  {
+                    value: 'concave-convex',
+                    label: '凹凸卡尺',
+                  },
+                ]} />
+              </Form.Item>
+              <Form.Item
+                name={'horization_point_1'}
+                label={BASIC_POINT_RULE_FORMAT['horization_point_1']}
+                initialValue={'average'}
+                rules={[{ required: false, message: BASIC_POINT_RULE_FORMAT['horization_point_1'] }]}
+              >
+                <Select options={[
+                  {
+                    value: 'average',
+                    label: '平均卡尺',
+                  },
+                  {
+                    value: 'concave-convex',
+                    label: '凹凸卡尺',
+                  },
+                ]} />
+              </Form.Item>
+              <Form.Item
+                name={'horization_point_2'}
+                label={BASIC_POINT_RULE_FORMAT['horization_point_2']}
+                initialValue={'average'}
+                rules={[{ required: false, message: BASIC_POINT_RULE_FORMAT['horization_point_2'] }]}
+              >
+                <Select options={[
+                  {
+                    value: 'average',
+                    label: '平均卡尺',
+                  },
+                  {
+                    value: 'concave-convex',
+                    label: '凹凸卡尺',
                   },
                 ]} />
               </Form.Item>

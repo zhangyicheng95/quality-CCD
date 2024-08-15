@@ -85,9 +85,18 @@ const FabricCharts: React.FC<Props> = (props: any) => {
             "model_x2": 30.15999984741211,
             "model_y2": 15.569999694824219
           }
-        }
+        },
+
       ]
     }
+
+    // for (let i = 0; i < 66; i++) {
+    //   dataValue['data'].push({
+    //     type: 'point',
+    //     x: 10 * i,
+    //     y: 5 * i,
+    //   })
+    // }
   }
 
   return (

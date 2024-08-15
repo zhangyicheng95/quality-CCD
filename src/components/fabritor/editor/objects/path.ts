@@ -19,7 +19,7 @@ export const loadSvgFromUrl = async (url: any) => {
   });
 }
 
-export const createPathFromSvg = async (options: any) => {
+export const createPathFromSvg = async (options: any, notAddCanvas?: boolean) => {
   const { svgString, canvas, ...rest } = options || {};
 
   const svg = await loadSvgFromString(svgString) as fabric.Path;
@@ -28,8 +28,11 @@ export const createPathFromSvg = async (options: any) => {
     ...rest,
     id: uuid()
   });
-
   canvas.viewportCenterObject(svg);
+  if (notAddCanvas) {
+    return svg;
+  }
+
   canvas.add(svg);
   canvas.setActiveObject(svg);
   canvas.requestRenderAll();
