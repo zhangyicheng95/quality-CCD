@@ -62,6 +62,22 @@ export default function LineSetter() {
       {
         !!object?.caliperRule && !!Object.keys?.(object?.caliperRule)?.length ?
           <Fragment>
+            <FormItem
+              name={'name'}
+              label={'卡尺名称'}
+              initialValue={object?.caliperRule || undefined}
+            >
+              <Input onChange={(e) => {
+                const val = e?.target?.value || '';
+                const realCanvas = editor.canvas?.getObjects()?.filter((i: any) => i.sub_type === object?.sub_type);
+                (realCanvas || [])?.forEach((target: any) => {
+                  target.caliperRule = {
+                    ...target.caliperRule,
+                    name: val
+                  };
+                });
+              }} />
+            </FormItem>
             {
               Object.entries(object?.caliperRule)?.map((item: any) => {
                 return !!CALIPER_RULE_FORMAT[item[0]] ?

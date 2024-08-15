@@ -28,11 +28,27 @@ export default function Toolbar() {
   const [panEnable, setPanEnable] = useState(false);
   const [selectedBtn, setSelectedBtn] = useState('');
   const [selectedCaliperID, setSelectedCaliperID] = useState('');
-  const [caliperRule, setCaliperRule] = useState({});
+  const [caliperRule, setCaliperRule] = useState({
+    'name': undefined,
+    'averaging_depth': undefined,
+    'design_value': undefined,
+    'high_error_tolerance': undefined,
+    'high_warning_tolerance': undefined,
+    'low_error_tolerance': undefined,
+    'low_warning_tolerance': undefined,
+    'measurement_offset': undefined,
+    'minimum_points': undefined,
+    'output_index': undefined,
+  });
   const [ruleVisible, setRuleVisible] = useState(false);
   const [measurementErrorRule, setMeasurementErrorRule] = useState({});
   const [measurementErrorVisible, setMeasurementErrorVisible] = useState(false);
-  const [basicPointRule, setBasicPointRule] = useState<any>({});
+  const [basicPointRule, setBasicPointRule] = useState<any>({
+    'datum_type': 'three',
+    'horization_point_1': 'average',
+    'horization_point_2': 'average',
+    'vertical_point': 'average',
+  });
   const [basicPointVisible, setBasicPointVisible] = useState(false);
 
   // 初始化卡尺参数值
