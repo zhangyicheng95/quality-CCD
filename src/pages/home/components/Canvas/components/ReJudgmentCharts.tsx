@@ -65,7 +65,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
   }, [dataValue]);
   const handleChange = (key: string, value: any) => {
     searchRef.current[key] = value;
-    btnFetch(fetchType, xName, searchRef.current).then((res: any) => {
+    btnFetch('get', xName, searchRef.current).then((res: any) => {
       if (!!res && res.code === 'SUCCESS') {
         message.success('success');
       } else {
@@ -141,7 +141,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                     const box = domRef.current.getElementsByClassName(`re-judgment-left-table-th-${position}`)?.[0];
                     console.log(box, position);
                     if (!!box) {
-                      box.style.border = '1px solid #00f';
+                      box.style.border = '1px solid #f00';
                     }
                     setSelected(item);
                   }}

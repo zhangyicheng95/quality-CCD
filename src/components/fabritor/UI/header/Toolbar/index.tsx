@@ -41,7 +41,13 @@ export default function Toolbar() {
     'output_index': undefined,
   });
   const [ruleVisible, setRuleVisible] = useState(false);
-  const [measurementErrorRule, setMeasurementErrorRule] = useState({});
+  const [measurementErrorRule, setMeasurementErrorRule] = useState({
+    'design_value': undefined,
+    'error_tolerance': undefined,
+    'warning_tolerance': undefined,
+    'calculation_type': undefined,
+    'direction': undefined
+  });
   const [measurementErrorVisible, setMeasurementErrorVisible] = useState(false);
   const [basicPointRule, setBasicPointRule] = useState<any>({
     'datum_type': 'three',
@@ -50,12 +56,8 @@ export default function Toolbar() {
     'vertical_point': 'average',
   });
   const [basicPointVisible, setBasicPointVisible] = useState(false);
+  const [detectionValue, setDetectionValue] = useState(false);
 
-  // 初始化卡尺参数值
-  useEffect(() => {
-    // setCaliperRule(data?.caliperRule || {})
-    // setMeasurementErrorRule(data?.measurementErrorRule || {});
-  }, [data?.caliperRule, data?.measurementErrorRule]);
   // http传递参数
   const onChange = (type: string, data: any) => {
     return new Promise((resolve, reject) => {
@@ -92,11 +94,22 @@ export default function Toolbar() {
             points: [point[0][1], point[0][2], point[point.length - 1][1], point[point.length - 1][2]],
             left: target.left,
             top: target.top,
-            stroke: '#f00',
+            stroke: '#0f0',
             strokeWidth: 2,
             canvas: editor.canvas,
             sub_type: `line_${sub_caliper}`,
-            caliperRule
+            caliperRule: Object.assign({}, {
+              'name': undefined,
+              'averaging_depth': undefined,
+              'design_value': undefined,
+              'high_error_tolerance': undefined,
+              'high_warning_tolerance': undefined,
+              'low_error_tolerance': undefined,
+              'low_warning_tolerance': undefined,
+              'measurement_offset': undefined,
+              'minimum_points': undefined,
+              'output_index': undefined,
+            }, caliperRule)
           });
           brushRef.current.push(activeLine);
           if (
@@ -161,7 +174,7 @@ export default function Toolbar() {
       let {
         type, sub_type, path, height, width, text, strokeWidth,
         left, top, scaleX = 1, angle,
-        backgroundColor, fill, fontSize, caliperRule,
+        backgroundColor, fill, fontSize, caliperRule, measurementErrorRule
       } = item;
       if (
         sub_type?.indexOf('line_result') > -1
@@ -262,15 +275,20 @@ export default function Toolbar() {
         }
       } else if (sub_type?.indexOf('_measurementError_') > -1) {
         const res = sub_type.split('_measurementError_');
+        const realItem = editor?.canvas?.getObjects()?.filter((i: any) => i.sub_type === sub_type)?.[0];
         return {
           ...common,
+          points: realItem?.aCoords,
           type: res[0],
-          path,
           sub_type: `measurementError_${res[1]}`,
-          ...measurementErrorRule,
+          measurementErrorRule: realItem?.measurementErrorRule,
         };
       } else if (sub_type === 'rect') {
-        return common;
+        const realItem = editor?.canvas?.getObjects()?.filter((i: any) => i?.angle === angle && i.sub_type === sub_type && i.top === top)?.[0];
+        return {
+          ...common,
+          points: realItem?.aCoords,
+        };
       } else if (sub_type === 'circle') {
         return {
           type: sub_type,
@@ -361,7 +379,7 @@ export default function Toolbar() {
     editor.canvas.freeDrawingCursor = `url("data:image/svg+xml;charset=utf-8,${encodeURIComponent(DRAW_MODE_CURSOR)}") 4 12, crosshair`;
     const freeDrawingBrush = new fabric.PencilBrush(editor.canvas);
     editor.canvas.freeDrawingBrush = freeDrawingBrush;
-    freeDrawingBrush.color = '#f00';
+    freeDrawingBrush.color = '#0f0';
     freeDrawingBrush.width = 2;
     freeDrawingBrush.shadow = new fabric.Shadow({
       blur: 0,
@@ -398,7 +416,7 @@ export default function Toolbar() {
     setPanEnable(enable);
   };
   // 三基点
-  const onBasicPointCanvs = (rule: any) => {
+  const onBasicPointCanvas = (rule: any) => {
     const ID = guid();
     const common = {
       hasControls: false,
@@ -451,6 +469,35 @@ export default function Toolbar() {
       editor.canvas?.setActiveObject(selection);
     }
   };
+  // 三基点
+  const onmeasurementErrorCanvas = (rule: any) => {
+    const rParams = {
+      sub_type: `rect_measurementError_${guid()}`,
+      measurementErrorRule: rule
+    };
+    const rect = new fabric.Rect({
+      left: 280,
+      top: 180,
+      width: 100,
+      height: 100,
+      strokeWidth: 1,
+      stroke: '#0f0',
+      fill: 'transparent',
+      ...rParams,
+    });
+    editor.canvas?.add?.(rect);
+    // const activeObj = [].concat(!!editor.canvas.getActiveObject()?._objects ? editor.canvas.getActiveObject()?._objects : editor.canvas.getActiveObject());
+    // activeObj?.forEach((target: any) => {
+    //   if (!target) {
+    //     return;
+    //   }
+    //   target.sub_type = `${target.sub_type?.split('_')?.[0]}_measurementError_${guid()}`;
+    //   target.set('measurementErrorRule', rule);
+    // });
+    // saveCanvas();
+    // cancelBrush();
+
+  };
 
   return (
     <CenterV
@@ -470,15 +517,41 @@ export default function Toolbar() {
       >
         <RedoOutlined style={{ fontSize: 20 }} />
       </ToolbarItem> */}
+      <ToolbarItem
+        onClick={() => {
+          onChange('startOrStop', false).then(() => setDetectionValue(false));
+        }}
+        selectable={!detectionValue}
+        title={'停止检测'}
+      >
+        停止检测
+      </ToolbarItem>
+      <ToolbarItem
+        onClick={() => {
+          onChange('startOrStop', true).then(() => setDetectionValue(true));
+        }}
+        selectable={!!detectionValue}
+        title={'开始检测'}
+      >
+        开始检测
+      </ToolbarItem>
       {/* <SegmentSwitch
-        style={{ width: 180, height: 32, fontSize: 16, backgroundColor: 'transparent' }}
+        style={{ width: 180, height: 32, fontSize: 14, backgroundColor: 'transparent' }}
         fontInBody={[
-          { value: false, label: '连续拉流', backgroundColor: 'rgba(24, 144, 255, 1)' },
-          { value: true, label: '单点拉流', backgroundColor: '#88db57' }
+          { value: false, label: '停止检测', backgroundColor: '#f00' },
+          { value: true, label: '开始检测', backgroundColor: '#0f0' }
         ]}
+        value={detectionValue}
         onChange={(e: any) => {
-          cancelBrush();
-          onChange('pull', e);
+          btnFetch(fetchType, yName, { data: e }).then((res: any) => {
+            if (!!res && res.code === 'SUCCESS') {
+              setDetectionValue(e);
+              message.success('success');
+            } else {
+              setDetectionValue(detectionValue);
+              message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
+            }
+          });
         }}
       /> */}
       <ToolbarItem
@@ -487,9 +560,6 @@ export default function Toolbar() {
           setRuleVisible(true);
         }}
         onClick={() => {
-          // if (!Object.keys(caliperRule)?.length) {
-          //   setRuleVisible(true);
-          // }
           setSelectedBtn(prev => prev === 'average' ? '' : 'average');
           if (selectedBtn === 'average') {
             cancelBrush();
@@ -508,9 +578,6 @@ export default function Toolbar() {
           setRuleVisible(true);
         }}
         onClick={() => {
-          // if (!Object.keys(caliperRule)?.length) {
-          //   setRuleVisible(true);
-          // }
           setSelectedBtn(prev => prev === 'average_half' ? '' : 'average_half');
           if (selectedBtn === 'average_half') {
             cancelBrush();
@@ -552,51 +619,24 @@ export default function Toolbar() {
             setBasicPointVisible(true);
             return;
           }
-          onBasicPointCanvs(basicPointRule);
+          onBasicPointCanvas(basicPointRule);
         }}
         title={'三基点定位'}
       >
         三基点定位
       </ToolbarItem>
-      {/* <ToolbarItem
+      <ToolbarItem
         onContextMenu={() => {
-          setMeasurementErrorRule(data?.measurementErrorRule || {});
-          form.setFieldsValue(data?.measurementErrorRule || {});
+          form.setFieldsValue(measurementErrorRule || {});
           setMeasurementErrorVisible(true);
         }}
         onClick={() => {
-          if (!Object.keys(measurementErrorRule)?.length) {
-            setMeasurementErrorVisible(true);
-            return;
-          }
-          const activeObj = [].concat(!!editor.canvas.getActiveObject()?._objects ? editor.canvas.getActiveObject()?._objects : editor.canvas.getActiveObject());
-          if (!!activeObj?.length) {
-            const uuid = guid();
-            activeObj?.forEach((target: any) => {
-              if (!target) {
-                return;
-              }
-              target.sub_type = `${target.sub_type?.split('_')?.[0]}_measurementError_${uuid}`;
-            });
-            saveCanvas();
-            cancelBrush();
-          } else {
-            message.warning('请选择标定框');
-          }
-
-          // const json = editor.canvas2Json();
-          // const jsonResult = formatResult(json.objects);
-          // const result = {
-          //   file_image: jsonResult?.filter((i: any) => i.type === 'image')?.[0],
-          //   registration_points: activeResult,
-          //   outline_points: jsonResult?.filter((i: any) => i.type === 'outer_point'),
-          // };
-          // onChange('measurementError', result);
+          onmeasurementErrorCanvas(measurementErrorRule);
         }}
         title={'测量误差'}
       >
         误差测量
-      </ToolbarItem> */}
+      </ToolbarItem>
       <ToolbarDivider />
       <ToolbarItem
         onClick={enablePan}
@@ -718,6 +758,7 @@ export default function Toolbar() {
             onOk={() => {
               form.validateFields().then((values) => {
                 setMeasurementErrorRule(values);
+                onmeasurementErrorCanvas(values);
                 onRuleCancel();
               });
 
@@ -801,7 +842,7 @@ export default function Toolbar() {
             onOk={() => {
               form.validateFields().then((values) => {
                 setBasicPointRule(values);
-                onBasicPointCanvs(values);
+                onBasicPointCanvas(values);
                 onRuleCancel();
               });
 

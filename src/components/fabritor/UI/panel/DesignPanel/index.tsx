@@ -118,7 +118,7 @@ export default function Layer() {
                   <List.Item
                     className="fabritor-list-item"
                     style={{
-                      border: activeObject === item.object ? ' 2px solid #ff2222' : '2px solid transparent',
+                      border: activeObject === item.object ? ' 2px solid #0f0' : '2px solid transparent',
                       padding: '10px 16px'
                     }}
                     onClick={() => { handleItemClick(item.object) }}

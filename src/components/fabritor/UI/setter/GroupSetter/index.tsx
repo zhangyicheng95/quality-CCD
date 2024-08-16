@@ -40,7 +40,7 @@ export default function GroupSetter() {
               <FormItem
                 name={'name'}
                 label={'卡尺名称'}
-                initialValue={object?.caliperRule || undefined}
+                initialValue={object?.caliperRule?.name || undefined}
               >
                 <Input onChange={(e) => {
                   const val = e?.target?.value || '';

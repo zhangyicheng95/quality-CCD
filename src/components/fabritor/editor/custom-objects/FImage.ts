@@ -18,7 +18,7 @@ export const createFImageClass = () => {
       this.borderRect = this._createBorderRect(imageBorder);
       this.img.clipPath = this._createClipPath();
       this.callSuper('initialize', [this.img, this.borderRect], {
-        borderColor: '#FF2222',
+        borderColor: 'transparent',
         borderDashArray: null,
         borderScaleFactor: 2,
         padding: 0,
@@ -123,11 +123,13 @@ export const createFImageClass = () => {
       return this.img.filters[0];
     }
   });
-
+  // @ts-ignore
   fabric.FImage.fromObject = (object: any, callback: any) => {
     const { objects, ...options } = object;
     const imgJson = { ...objects[0] };
+    // @ts-ignore
     fabric.Image.fromObject(imgJson, (img: any) => {
+      // @ts-ignore
       callback(new fabric.FImage({ image: img, ...options }, true));
     });
   }

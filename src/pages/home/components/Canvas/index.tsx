@@ -1320,6 +1320,11 @@ const Home: React.FC<any> = (props: any) => {
         const SecLabel = items?.filter(
           (i: any) => i.group === 'bottom' && i?.label?.name === __value[1],
         )[0];
+        const ifOnShowTab = !(
+          size?.x < tabNum * 96 - 10
+          ||
+          (size?.x > ((tabNum + 1) * 96))
+        );
 
         listData = listData.concat(
           <div
@@ -1354,6 +1359,12 @@ const Home: React.FC<any> = (props: any) => {
                 // (size?.x > ((tabNum + 1) * 96))
               )
                 ? { visibility: 'hidden' } : {},
+              (
+                !ifCanEdit &&
+                ((size?.x < tabNum * 96 - 10)
+                  ||
+                  (size?.x > ((tabNum + 1) * 96)))
+              ) ? { display: 'none' } : {}
             )}
           >
             {!['default', 'transparent'].includes(backgroundColor) ? (

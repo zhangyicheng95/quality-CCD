@@ -617,10 +617,10 @@ export const LOG_PREFIX = `${APP_NAME}_log：`;
 
 export const OBJECT_DEFAULT_CONFIG = {
   // controls
-  borderColor: '#FF2222',
+  borderColor: '#0f0',
   borderScaleFactor: 2,
   cornerStrokeColor: '#2222',
-  cornerColor: '#FF2222',
+  cornerColor: '#0f0',
   cornerSize: 12,
   cornerStyle: 'circle',
   transparentCorners: false,
@@ -727,7 +727,8 @@ export const FABRITOR_CUSTOM_PROPS = [
   'imageSource',
   'imageBorder',
   'oldArrowInfo',
-  'caliperRule'
+  'caliperRule',
+  'measurementErrorRule'
 ];
 export const CALIPER_RULE_FORMAT = {
   'averaging_depth': '平均深度',
@@ -744,6 +745,13 @@ export const BASIC_POINT_RULE_FORMAT = {
   'horization_point_1': '卡尺1类型',
   'horization_point_2': '卡尺2类型',
   'vertical_point': '垂直卡尺类型',
+};
+export const MEASUREMENT_RULE_FORMAT = {
+  'design_value': '设计值',
+  'error_tolerance': '报警线',
+  'warning_tolerance': '预警线',
+  'calculation_type': '计算类型',
+  'direction': '方向'
 };
 // LOCAL
 export const LOAD_FROM_LOCAL_WHEN_INIT = true;

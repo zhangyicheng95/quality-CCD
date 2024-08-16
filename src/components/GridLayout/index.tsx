@@ -63,7 +63,8 @@ const GridLayout: React.FC<Props> = (props: any) => {
             //     lg: layout.filter(Boolean)
             // }}
             rowHeight={14}
-            layout={!!ifCanEdit ? layout : layout.filter((i: any) => (tabNum * 96 <= i.x) && (i.x < ((tabNum + 1) * 96)) && i.w > 0)}
+            // layout={!!ifCanEdit ? layout : layout.filter((i: any) => (tabNum * 96 <= i.x) && (i.x < ((tabNum + 1) * 96)) && i.w > 0)}
+            layout={layout.filter(Boolean)}
             cols={96 * (tabLength || 1)}
             // breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
             // cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
@@ -80,7 +81,7 @@ const GridLayout: React.FC<Props> = (props: any) => {
             draggableHandle={dragName}
             margin={margin}
           >
-            {list.filter(Boolean)?.map?.((item: any) => {
+            {/* {list.filter(Boolean)?.map?.((item: any) => {
               if (!!ifCanEdit) {
                 return item;
               } else {
@@ -90,7 +91,9 @@ const GridLayout: React.FC<Props> = (props: any) => {
                 }
                 return null;
               }
-            })?.filter(Boolean)}
+            })?.filter(Boolean)} */}
+
+            {list.filter(Boolean)}
           </ResponsiveGridLayout>
         }
       </div>

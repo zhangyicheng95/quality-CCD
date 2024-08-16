@@ -56,6 +56,7 @@ export default function Fabritor(props: Props) {
   const workspaceEl = useRef<HTMLDivElement>(null);
   const roughSvgEl = useRef(null);
   const timerRef = useRef<any>();
+  const domBoxRef = useRef<any>();
   const [dataSource, setDataSOurce] = useState<any>({});
   const [editor, setEditor] = useState<any>(null);
   const [isInit, setIsInit] = useState(false);
@@ -70,6 +71,8 @@ export default function Fabritor(props: Props) {
   // 元素被点击
   const clickHandler = (opt: any) => {
     const { target } = opt;
+    console.log(target);
+
     setActiveObject(target);
     if (editor.getIfPanEnable()) return;
     if (!target) {
@@ -94,6 +97,7 @@ export default function Fabritor(props: Props) {
   // 框选选中
   const selectionHandler = (opt: any) => {
     const { selected, sketch } = opt;
+
     if (selected && selected.length) {
       const selection = editor.canvas?.getActiveObject();
       setActiveObject(selection);
@@ -216,6 +220,7 @@ export default function Fabritor(props: Props) {
     });
 
     await _editor.init();
+    _editor.canvas.selectionBorderColor = "transparent" // 画布鼠标框选时的边框颜色
     setEditor(_editor);
     setIsInit(true);
     setReady(true);
@@ -228,6 +233,17 @@ export default function Fabritor(props: Props) {
       const string = JSON.stringify({
         ...json,
         background: theme === "realDark" ? "#000" : "#fff",
+        clipPath: {
+          ...json.clipPath,
+          left: 0,
+          top: 0,
+          scaleX: 1,
+          scaleY: 1,
+          ...!!domBoxRef.current?.clientHeight ? {
+            height: domBoxRef.current?.clientHeight,
+            width: domBoxRef.current?.clientWidth,
+          } : {}
+        },
         objects: (json.objects || [])
           ?.map((item: any) => {
             return Object.assign({}, item,
@@ -328,7 +344,7 @@ export default function Fabritor(props: Props) {
     timerRef.current = setTimeout(() => {
       console.log('标定组件接受到数据', shapeFromData);
       if (!!editor && !!shapeFromData && !!Object.keys(shapeFromData)?.length) {
-        const canvasWidth = editor.sketch?.cacheWidth;
+        const canvasWidth = editor.canvas?.width;
         // 渲染之前，先把前一次算法结果删除
         const json = editor.canvas?.getObjects();
         json?.forEach((item: any) => {
@@ -367,7 +383,7 @@ export default function Fabritor(props: Props) {
             const params = {
               left: Math.min(result.x1, result.x2),
               top: Math.min(result.y1, result.y2),
-              stroke: '#f00',
+              stroke: '#0f0',
               strokeWidth: 2,
               canvas: editor.canvas,
               selectable: false,
@@ -385,13 +401,17 @@ export default function Fabritor(props: Props) {
               }
             };
             // @ts-ignore
-            const line = new fabric.FLine(points, {
-              strokeLineJoin: 'round',
-              strokeLineCap: 'round',
-              borderColor: '#00000000',
-              ...params
-            });
+            // const line = new fabric.FLine(points, {
+            //   strokeLineJoin: 'round',
+            //   strokeLineCap: 'round',
+            //   borderColor: '#00000000',
+            //   ...params
+            // });
             if (result.value) {
+              result.x1 = i.x1;
+              result.y1 = i.y1;
+              result.x2 = i.x2;
+              result.y2 = i.y2;
               const x = (result.x1 + result.x2) / 2 > canvasWidth / 2 ?
                 Math.max(result.x1, result.x2) + 200
                 :
@@ -406,7 +426,7 @@ export default function Fabritor(props: Props) {
                 borderColor: '#00000000',
                 left: Math.min(x, (result.x1 + result.x2) / 2),
                 top: (result.y1 + result.y2) / 2,
-                stroke: '#f00',
+                stroke: '#0f0',
                 strokeWidth: 2,
                 strokeDashArray: [8, 8],
                 canvas: editor.canvas,
@@ -439,7 +459,9 @@ export default function Fabritor(props: Props) {
                     });
                   }, { name: i.name })
                 };
-                const group = new fabric.Group([line, text, dashLine], {
+                const group = new fabric.Group([
+                  // line,
+                  text, dashLine], {
                   type: 'group',
                   angle: 0,
                   selectable: false,
@@ -459,7 +481,7 @@ export default function Fabritor(props: Props) {
             //   points: [i.x, i.y, i.x + 1, i.y + 1],
             //   left: i.x,
             //   top: i.y,
-            //   stroke: '#f00',
+            //   stroke: '#0f0',
             //   strokeWidth: 2,
             //   canvas: editor.canvas,
             //   selectable: false,
@@ -479,7 +501,7 @@ export default function Fabritor(props: Props) {
               fill: 'transparent',
               strokeWidth: 1,
               strokeDashArray: [8, 8],
-              stroke: "#f00",
+              stroke: "#0f0",
               ...rectParams
             });
             editor.canvas?.add?.(rect);
@@ -492,7 +514,7 @@ export default function Fabritor(props: Props) {
               cornerSize: 4,
               transparentCorners: false,
               cornerStrokeColor: 'gray',
-              fill: 'red',
+              fill: 'green',
               top: i.top,
               left: i.left,
               radius: i.radius || 4,
@@ -556,7 +578,7 @@ export default function Fabritor(props: Props) {
           <Header />
           <div style={{ height: 'calc(100% - 51px)' }} className="flex-box">
             <Panel />
-            <Content style={contentStyle}>
+            <Content style={contentStyle} ref={domBoxRef}>
               <ContextMenu ref={contextMenuRef} object={activeObject}>
                 <div style={workspaceStyle} ref={workspaceEl} className="fabritor-workspace">
                   <canvas ref={canvasEl} />
@@ -583,8 +605,8 @@ const shapeFormat = {
     "top": 10,
     "width": 2,
     "height": 2,
-    "fill": "#f00",
-    "stroke": "#f00",
+    "fill": "#0f0",
+    "stroke": "#0f0",
     "strokeWidth": 1,
     "strokeDashArray": null,
     "strokeLineCap": "round",
@@ -624,7 +646,7 @@ const shapeFormat = {
     "width": 20,
     "height": 20,
     "fill": "",
-    "stroke": "#f00",
+    "stroke": "#0f0",
     "strokeWidth": 4,
     "strokeDashArray": null,
     "strokeLineCap": "round",
@@ -664,7 +686,7 @@ const shapeFormat = {
     "width": 36,
     "height": 36,
     "fill": "",
-    "stroke": "#f00",
+    "stroke": "#0f0",
     "strokeWidth": 4,
     "strokeDashArray": null,
     "strokeLineCap": "round",

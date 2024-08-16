@@ -10,7 +10,6 @@ import { useContext, useEffect } from 'react';
 import { GloablStateContext } from '@/context';
 import { createPathFromSvg } from '@/components/fabritor/editor/objects/path';
 import Title from '@/components/fabritor/components/Title';
-import sectorIcon from '@/assets/imgs/sector.svg';
 
 export default function ShapePanel() {
   const { editor, roughSvg } = useContext<any>(GloablStateContext);
@@ -51,7 +50,7 @@ export default function ShapePanel() {
       sub_type: 'curve',
     }
     const line: any = new fabric.Path('M 65 0 Q 100, 100, 200, 0', {
-      fill: '', stroke: 'red',
+      fill: '', stroke: 'green',
       //  objectCaching: false,
       ...cParams
     });
@@ -104,12 +103,13 @@ export default function ShapePanel() {
       transparentCorners: false,
       cornerStrokeColor: 'gray',
       radius: 3,
-      fill: 'red',
+      fill: 'green',
     };
     switch (key) {
       case 'point':
         const hParams = {
           sub_type: `point`,
+          borderColor: '#0f0',
         };
         const horizationLine = new fabric.Circle({
           ...common,
@@ -120,6 +120,7 @@ export default function ShapePanel() {
       case 'rect':
         const borderParams = {
           sub_type: `rect`,
+          borderColor: '#0f0',
         };
         const rectBorder = new fabric.Rect({
           ...common,
@@ -127,7 +128,7 @@ export default function ShapePanel() {
           height: 100,
           fill: 'transparent',
           strokeWidth: 1,
-          stroke: "#f00",
+          stroke: "#0f0",
           ...borderParams
         });
         editor.canvas?.add?.(rectBorder);
@@ -138,7 +139,8 @@ export default function ShapePanel() {
           radius: 48,
           fill: 'transparent',
           strokeWidth: 1,
-          stroke: "#f00",
+          stroke: "#0f0",
+          borderColor: '#0f0',
         };
         const circle = new fabric.Circle({
           ...common,
@@ -229,12 +231,7 @@ export default function ShapePanel() {
               onClick={() => { addShape(item) }}
               className="fabritor-panel-shape-item"
             >
-              {
-                item.key === 'sector' ?
-                  <img src={sectorIcon} alt="" style={{ width: 64, height: 64 }} />
-                  :
-                  <img src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(item.elem)}`} style={{ width: 64, height: 64 }} />
-              }
+              <img src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(item.elem)}`} style={{ width: 64, height: 64 }} />
             </div>
           ))
         }

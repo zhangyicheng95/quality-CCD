@@ -52,7 +52,6 @@ export default function LineSetter() {
     });
   }, [object]);
 
-
   return (
     <Form
       form={form}

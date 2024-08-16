@@ -37,6 +37,7 @@ export default function Setter() {
       case 'f-text':
         return <TextSetter />;
       case 'rect':
+        return <ShapeSetter />;
       case 'circle':
       case 'triangle':
       case 'polygon':

@@ -47,7 +47,7 @@ export default function LocalImageSelector(props: any) {
           }
         }}
         onOk={(value: any) => {
-          btnFetch(fetchType, yName, { type: 'dwgToImg', url: value }).then((res: any) => {
+          btnFetch(fetchType, yName, { type: 'dwgToImg', data: value }).then((res: any) => {
             if (!!res && res.code === 'SUCCESS') {
               onChange(res?.data || value);
             } else {

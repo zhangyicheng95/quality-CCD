@@ -238,12 +238,12 @@ export default class Editor {
       const scaledWidth = target.getScaledWidth();
       const scaledHeight = target.getScaledHeight();
       if (target.type !== 'f-line' && target.type !== 'f-image') {
-        if (target.type !== 'f-text') {
-          target.setControlVisible('mt', scaledWidth >= 100);
-          target.setControlVisible('mb', scaledWidth >= 100);
-        }
-        target.setControlVisible('ml', scaledHeight >= 40);
-        target.setControlVisible('mr', scaledHeight >= 40);
+        // if (target.type !== 'f-text') {
+        //   target.setControlVisible('mt', scaledWidth >= 100);
+        //   target.setControlVisible('mb', scaledWidth >= 100);
+        // }
+        // target.setControlVisible('ml', scaledHeight >= 40);
+        // target.setControlVisible('mr', scaledHeight >= 40);
         this.canvas.requestRenderAll();
       }
 
