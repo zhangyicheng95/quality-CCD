@@ -728,7 +728,8 @@ export const FABRITOR_CUSTOM_PROPS = [
   'imageBorder',
   'oldArrowInfo',
   'caliperRule',
-  'measurementErrorRule'
+  'measurementErrorRule',
+  'sectorParams',
 ];
 export const CALIPER_RULE_FORMAT = {
   'averaging_depth': '平均深度',

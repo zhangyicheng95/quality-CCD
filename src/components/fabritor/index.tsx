@@ -71,8 +71,6 @@ export default function Fabritor(props: Props) {
   // 元素被点击
   const clickHandler = (opt: any) => {
     const { target } = opt;
-    console.log(target);
-
     setActiveObject(target);
     if (editor.getIfPanEnable()) return;
     if (!target) {
@@ -379,43 +377,84 @@ export default function Fabritor(props: Props) {
           } else if (i.type === "line") {
             const { result } = i;
             const ID = i.sub_type;
-            const points = [result.x1, result.y1, result.x2, result.y2];
-            const params = {
-              left: Math.min(result.x1, result.x2),
-              top: Math.min(result.y1, result.y2),
-              stroke: '#0f0',
-              strokeWidth: 2,
-              canvas: editor.canvas,
-              selectable: false,
-              hasControls: false,
-              mark_type: type,
-              id: ID,
-              sub_type: 'line_result',
-              caliperRule: {
-                name: i.name,
-                ...Object.keys(CALIPER_RULE_FORMAT)?.reduce((pre: any, cen: string) => {
-                  return Object.assign({}, pre, {
-                    [cen]: i[cen]
-                  })
-                }, {})
-              }
-            };
-            // @ts-ignore
-            // const line = new fabric.FLine(points, {
-            //   strokeLineJoin: 'round',
-            //   strokeLineCap: 'round',
-            //   borderColor: '#00000000',
-            //   ...params
-            // });
-            if (result.value) {
+            const sectorItem = json.filter((ji: any) => ji.sub_type?.indexOf(ID) > -1)?.[0];
+            if (result.value && !!sectorItem) {
               result.x1 = i.x1;
               result.y1 = i.y1;
               result.x2 = i.x2;
               result.y2 = i.y2;
               const x = (result.x1 + result.x2) / 2 > canvasWidth / 2 ?
-                Math.max(result.x1, result.x2) + 200
+                Math.max(result.x1, result.x2) + 150
                 :
-                Math.min(result.x1, result.x2) - 200;
+                Math.min(result.x1, result.x2) - 150;
+              // @ts-ignore
+              const dashLine = new fabric.FLine([
+                x, (result.y1 + result.y2) / 2,
+                (result.x1 + result.x2) / 2, (result.y1 + result.y2) / 2
+              ], {
+                strokeLineJoin: 'round',
+                strokeLineCap: 'round',
+                borderColor: '#00000000',
+                left: Math.min(x, (result.x1 + result.x2) / 2),
+                top: (result.y1 + result.y2) / 2,
+                stroke: '#0f0',
+                strokeWidth: 2,
+                strokeDashArray: [8, 8],
+                canvas: editor.canvas,
+                selectable: false,
+                hasControls: false,
+                sub_type: `line_result-${ID}`
+              });
+              // @ts-ignore
+              const text = new fabric.FText(result.value?.toFixed(2), {
+                ...TEXTBOX_DEFAULT_CONFIG,
+                lineHeight: 1.1,
+                fontSize: 24,
+                pathAlign: 'center',
+                id: guid(),
+                top: (result.y1 + result.y2) / 2 - 13,
+                left: x - ((result.x1 + result.x2) / 2 > canvasWidth / 2 ? 0 : (result.value?.toFixed(2) + '')?.length * 16),
+                backgroundColor: result.type === 1 ? '#b8831b' : result.type === 2 ? '#f00' : '#0f0',
+                fill: '#fff',
+                width: (result.value?.toFixed(2) + '')?.length * 16,
+                selectable: false,
+                hasControls: false,
+                sub_type: `line_result-${ID}`
+              });
+              try {
+                const groupType = {
+                  sub_type: `line_result-${ID}`,
+                  caliperRule: Object.keys(CALIPER_RULE_FORMAT)?.reduce((pre: any, cen: any) => {
+                    return Object.assign({}, pre, {
+                      [cen]: i[cen]
+                    });
+                  }, { name: i.name })
+                };
+                const group = new fabric.Group([
+                  // line,
+                  text, dashLine], {
+                  type: 'group',
+                  angle: 0,
+                  selectable: false,
+                  hasControls: false,
+                  ...groupType
+                });
+                editor.canvas?.add?.(group);
+              } catch (err) { }
+            }
+          } else if ((i.type === "sector" || i.type === "rect") && i.sub_type?.indexOf('measurementError_') > -1) {
+            const { result } = i;
+            const ID = i.sub_type;
+            const sectorItem = json.filter((ji: any) => ji.sub_type?.indexOf(ID) > -1)?.[0];
+            if (result.value) {
+              result.x1 = sectorItem?.aCoords?.tl?.x;
+              result.y1 = sectorItem?.aCoords?.tl?.y;
+              result.x2 = sectorItem?.aCoords?.br?.x;
+              result.y2 = sectorItem?.aCoords?.br?.y;
+              const x = (result.x1 + result.x2) / 2 > canvasWidth / 2 ?
+                Math.max(result.x1, result.x2) + 150
+                :
+                Math.min(result.x1, result.x2) - 150;
               // @ts-ignore
               const dashLine = new fabric.FLine([
                 x, (result.y1 + result.y2) / 2,

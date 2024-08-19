@@ -148,6 +148,16 @@ export default function ShapePanel() {
         });
         editor.canvas?.add?.(circle);
         break;
+      case 'sector':
+        createPathFromSvg({
+          svgString: elem,
+          canvas: editor.canvas,
+          sub_type: key,
+          hasControls: key !== 'point',
+          strokeWidth: 4,
+          ...options
+        });
+        break;
       case 'curve':
         drawQuadratic();
         break;

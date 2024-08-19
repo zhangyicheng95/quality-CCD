@@ -6,6 +6,7 @@ import ColorSetter from '../ColorSetter';
 import BorderSetter, { getObjectBorderType, getStrokeDashArray } from '../BorderSetter';
 import { transformColors2Fill, transformFill2Colors } from '@/utils/fabrictorUtils';
 import { BASIC_POINT_RULE_FORMAT } from '@/common/constants/globalConstants';
+import * as _ from 'lodash';
 
 const { Item: FormItem } = Form;
 
@@ -125,7 +126,7 @@ export default function ShapeSetter() {
             <Form.Item
               name={'design_value'}
               label={'设计值'}
-              initialValue={object?.measurementErrorRule?.design_value || undefined}
+              initialValue={object?.measurementErrorRule?.design_value}
               rules={[{ required: false, message: '设计值' }]}
             >
               <InputNumber min={0} precision={2} />
@@ -133,7 +134,7 @@ export default function ShapeSetter() {
             <Form.Item
               name={'error_tolerance'}
               label={'报警线'}
-              initialValue={object?.measurementErrorRule?.error_tolerance || undefined}
+              initialValue={object?.measurementErrorRule?.error_tolerance}
               rules={[{ required: false, message: '报警线' }]}
             >
               <InputNumber min={0} precision={2} />
@@ -141,7 +142,7 @@ export default function ShapeSetter() {
             <Form.Item
               name={'warning_tolerance'}
               label={'预警线'}
-              initialValue={object?.measurementErrorRule?.warning_tolerance || undefined}
+              initialValue={object?.measurementErrorRule?.warning_tolerance}
               rules={[{ required: false, message: '预警线' }]}
             >
               <InputNumber min={0} precision={2} />
@@ -149,7 +150,7 @@ export default function ShapeSetter() {
             <Form.Item
               name={'calculation_type'}
               label={'计算类型'}
-              initialValue={object?.measurementErrorRule?.calculation_type || undefined}
+              initialValue={object?.measurementErrorRule?.calculation_type}
               rules={[{ required: false, message: '计算类型' }]}
             >
               <Select options={[
@@ -170,7 +171,7 @@ export default function ShapeSetter() {
             <Form.Item
               name={'direction'}
               label={'方向'}
-              initialValue={object?.measurementErrorRule?.direction || undefined}
+              initialValue={object?.measurementErrorRule?.direction}
               rules={[{ required: false, message: '方向' }]}
             >
               <Select options={[

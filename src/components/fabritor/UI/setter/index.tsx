@@ -25,7 +25,6 @@ const siderStyle: React.CSSProperties = {
 
 export default function Setter() {
   const { object, isReady } = useContext<any>(GloablStateContext);
-
   const objectType = object?.get?.('type') || '';
 
   const getRenderSetter = () => {
@@ -52,7 +51,9 @@ export default function Setter() {
         return <ImageSetter />;
       case 'path':
         if (object?.sub_type === 'rough') {
-          return <RoughSetter />
+          return <RoughSetter />;
+        } else if (object?.sub_type?.indexOf('measurementError_') > -1) {
+          return <RoughSetter />;
         }
         return <PathSetter />;
       case 'group':

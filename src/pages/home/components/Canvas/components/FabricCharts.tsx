@@ -23,8 +23,8 @@ const FabricCharts: React.FC<Props> = (props: any) => {
     dataValue = {
       "data": [
         {
-          "type": "line",
-          "sub_type": "average_w2r4g6j9",
+          "type": "sector",
+          "sub_type": "measurementError_d35289b4",
           "name": "a1",
           "design_value": 13,
           "measurement_offset": 2,
@@ -35,17 +35,9 @@ const FabricCharts: React.FC<Props> = (props: any) => {
           "low_warning_tolerance": 0.25,
           "averaging_depth": 0,
           "minimum_points": 1,
-          "x1": 1106.32071304321289,
-          "y1": 186.226240158081055,
-          "x2": 1065.10594367980957,
-          "y2": 215.568119049072266,
           "result": {
             "type": 2,
             "value": 13.545120239257813,
-            "x1": 1106.32071304321289,
-            "y1": 186.226240158081055,
-            "x2": 1065.10594367980957,
-            "y2": 215.568119049072266,
           }
         },
         {

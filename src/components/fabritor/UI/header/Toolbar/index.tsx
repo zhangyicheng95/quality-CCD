@@ -42,6 +42,7 @@ export default function Toolbar() {
   });
   const [ruleVisible, setRuleVisible] = useState(false);
   const [measurementErrorRule, setMeasurementErrorRule] = useState({
+    'rule_type': 'rect',
     'design_value': undefined,
     'error_tolerance': undefined,
     'warning_tolerance': undefined,
@@ -276,13 +277,43 @@ export default function Toolbar() {
       } else if (sub_type?.indexOf('_measurementError_') > -1) {
         const res = sub_type.split('_measurementError_');
         const realItem = editor?.canvas?.getObjects()?.filter((i: any) => i.sub_type === sub_type)?.[0];
-        return {
-          ...common,
-          points: realItem?.aCoords,
-          type: res[0],
-          sub_type: `measurementError_${res[1]}`,
-          measurementErrorRule: realItem?.measurementErrorRule,
-        };
+
+        if (res[0] === 'sector') {
+          return {
+            ...common,
+            points: {
+              tl: {
+                x: (realItem?.aCoords.tl.x + realItem?.aCoords.tr.x) / 2,
+                y: (realItem?.aCoords.tl.y + realItem?.aCoords.tr.y) / 2,
+              },
+              tr: realItem?.aCoords.tr,
+              bl: {
+                x: (realItem?.aCoords.tl.x + realItem?.aCoords.bl.x) / 2,
+                y: (realItem?.aCoords.tl.y + realItem?.aCoords.bl.y) / 2,
+              },
+              br: realItem?.aCoords.bl,
+            },
+            sectorParams: {
+              x: realItem?.aCoords?.tl?.x,
+              y: realItem?.aCoords?.tl?.y,
+              r1: common.width / 2,
+              r2: common.width,
+              angle1: common.angle,
+              angle2: common.angle + 90,
+            },
+            type: res[0],
+            sub_type: `measurementError_${res[1]}`,
+            ...realItem?.measurementErrorRule,
+          };
+        } else {
+          return {
+            ...common,
+            points: realItem?.aCoords,
+            type: res[0],
+            sub_type: `measurementError_${res[1]}`,
+            ...realItem?.measurementErrorRule,
+          };
+        }
       } else if (sub_type === 'rect') {
         const realItem = editor?.canvas?.getObjects()?.filter((i: any) => i?.angle === angle && i.sub_type === sub_type && i.top === top)?.[0];
         return {
@@ -469,34 +500,99 @@ export default function Toolbar() {
       editor.canvas?.setActiveObject(selection);
     }
   };
-  // 三基点
+  // 画圆环弧形
+  const addRing = (angle1: number, angle2: number, x: number, y: number, r1: number, r2: number, params: any) => {
+    let pathRes: any = null;
+    let point1 = { x: 0, y: 0 };
+    let point2 = { x: 0, y: 0 };
+    let point3 = { x: 0, y: 0 };
+    let point4 = { x: 0, y: 0 };
+    let isBig = 0
+    params = {
+      ...params,
+      sectorParams: {
+        x, y,
+        angle1, r1,
+        angle2, r2
+      }
+    }
+    angle1 = angle1 % 360;
+    angle2 = angle2 % 360;
+    if (angle2 > 180) {
+      isBig = 1
+    }
+    if (!angle2) {
+      point1.x = r1 + x;
+      point1.y = y;
+      point2.x = r2 + x;
+      point2.y = y;
+      pathRes = new fabric.Path(`M${point1.x},${point1.y} A${r1},${r1} 0 0,1 ${point1.x - 2 * r1},${point1.y} 
+        A${r1},${r1} 0 0,1 ${point1.x},${point1.y} 
+        M${point2.x},${point2.y} A${r2},${r2} 0 0,1 ${point2.x - 2 * r2},${point2.y} 
+        A${r2},${r2} 0 0,1 ${point2.x},${point2.y}`, {
+        stroke: '#0f0',
+        fill: 'rgba(0, 255, 0, 0.3)',
+        ...params,
+      })
+    } else {
+      point1.x = r1 * Math.cos(angle1 / 180 * Math.PI) + x;
+      point1.y = r1 * Math.sin(angle1 / 180 * Math.PI) + y;
+      point2.x = r2 * Math.cos(angle1 / 180 * Math.PI) + x;
+      point2.y = r2 * Math.sin(angle1 / 180 * Math.PI) + y;
+      point3.x = r2 * Math.cos((angle1 + angle2) / 180 * Math.PI) + x;
+      point3.y = r2 * Math.sin((angle1 + angle2) / 180 * Math.PI) + y;
+      point4.x = r1 * Math.cos((angle1 + angle2) / 180 * Math.PI) + x;
+      point4.y = r1 * Math.sin((angle1 + angle2) / 180 * Math.PI) + y;
+      pathRes = new fabric.Path(`M${point1.x},${point1.y} L${point2.x},${point2.y} A${r2},${r2} 0 ${isBig},1 ${point3.x},${point3.y} L${point4.x},${point4.y} A${r1},${r1} 0 ${isBig},0 ${point1.x},${point1.y}`, {
+        stroke: '#0f0',
+        fill: 'rgba(0, 255, 0, 0.3)',
+        ...params,
+      })
+    };
+    editor?.canvas?.add?.(pathRes);
+  };
+  // 区域测量
   const onmeasurementErrorCanvas = (rule: any) => {
+    console.log(rule);
+
     const rParams = {
-      sub_type: `rect_measurementError_${guid()}`,
+      sub_type: `${rule?.rule_type}_measurementError_${guid()}`,
       measurementErrorRule: rule
     };
-    const rect = new fabric.Rect({
-      left: 280,
-      top: 180,
-      width: 100,
-      height: 100,
-      strokeWidth: 1,
-      stroke: '#0f0',
-      fill: 'transparent',
-      ...rParams,
-    });
-    editor.canvas?.add?.(rect);
-    // const activeObj = [].concat(!!editor.canvas.getActiveObject()?._objects ? editor.canvas.getActiveObject()?._objects : editor.canvas.getActiveObject());
-    // activeObj?.forEach((target: any) => {
-    //   if (!target) {
-    //     return;
-    //   }
-    //   target.sub_type = `${target.sub_type?.split('_')?.[0]}_measurementError_${guid()}`;
-    //   target.set('measurementErrorRule', rule);
-    // });
-    // saveCanvas();
-    // cancelBrush();
-
+    if (rule?.rule_type === 'sector') {
+      // 扇形
+      addRing(0, 90, 200, 200, 30, 60, rParams);
+      // createPathFromSvg({
+      //   svgString: ShapeTypeList[3]?.elem,
+      //   canvas: editor.canvas,
+      //   strokeWidth: 4,
+      //   ...rParams
+      // });
+      // const sector = new fabric.Rect({
+      //   left: 280,
+      //   top: 180,
+      //   width: 100,
+      //   height: 100,
+      //   strokeWidth: 1,
+      //   stroke: '#0f0',
+      //   fill: 'transparent',
+      //   ...rParams,
+      // });
+      // editor.canvas?.add?.(sector);
+    } else {
+      // 矩形
+      const rect = new fabric.Rect({
+        left: 280,
+        top: 180,
+        width: 100,
+        height: 100,
+        strokeWidth: 1,
+        stroke: '#0f0',
+        fill: 'transparent',
+        ...rParams,
+      });
+      editor.canvas?.add?.(rect);
+    }
   };
 
   return (
@@ -766,6 +862,23 @@ export default function Toolbar() {
             onCancel={() => onRuleCancel()}
           >
             <Form form={form} scrollToFirstError>
+              <Form.Item
+                name={'rule_type'}
+                label={'框选类型'}
+                initialValue={'sector'}
+                rules={[{ required: false, message: '框选类型' }]}
+              >
+                <Select options={[
+                  {
+                    value: 'rect',
+                    label: '矩形',
+                  },
+                  {
+                    value: 'sector',
+                    label: '扇形',
+                  },
+                ]} />
+              </Form.Item>
               <Form.Item
                 name={'design_value'}
                 label={'设计值'}
