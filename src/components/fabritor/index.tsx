@@ -307,7 +307,7 @@ export default function Fabritor(props: Props) {
   useEffect(() => {
     setTimeout(() => {
       initEditor();
-    }, 200)
+    }, 1000)
 
     return () => {
       if (editor) {

@@ -553,8 +553,6 @@ export default function Toolbar() {
   };
   // 区域测量
   const onmeasurementErrorCanvas = (rule: any) => {
-    console.log(rule);
-
     const rParams = {
       sub_type: `${rule?.rule_type}_measurementError_${guid()}`,
       measurementErrorRule: rule
@@ -587,8 +585,8 @@ export default function Toolbar() {
         width: 100,
         height: 100,
         strokeWidth: 1,
-        stroke: '#0f0',
-        fill: 'transparent',
+        // stroke: '#0f0',
+        fill: 'rgba(0, 255, 0, 0.3)',
         ...rParams,
       });
       editor.canvas?.add?.(rect);

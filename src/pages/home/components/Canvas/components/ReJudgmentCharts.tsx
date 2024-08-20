@@ -21,7 +21,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
   } = data;
   const [form] = Form.useForm();
   const domRef = useRef<any>();
-  const searchRef = useRef<any>({ productCode: '', regionCode: [] });
+  const searchRef = useRef<any>({ productCode: undefined, regionCode: undefined });
   const timeRef = useRef<any>(null);
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
@@ -57,21 +57,26 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
     };
     return arr;
   }, []);
-
+  // 默认选中第一个
   useEffect(() => {
     if (!selected && !!dataValue?.filter((i: any) => i.status === 0)?.[0]) {
       setSelected(dataValue?.filter((i: any) => i.status === 0)?.[0])
     }
   }, [dataValue]);
+  // 条件查询
   const handleChange = (key: string, value: any) => {
     searchRef.current[key] = value;
-    btnFetch('get', xName, searchRef.current).then((res: any) => {
-      if (!!res && res.code === 'SUCCESS') {
-        message.success('success');
-      } else {
-        message.error(res?.message || '后台服务异常，请重启服务');
-      }
-    });
+    const values = Object.values(searchRef.current)?.filter(Boolean);
+    if (values?.length === 2) {
+      btnFetch('get', xName, searchRef.current).then((res: any) => {
+        if (!!res && res.code === 'SUCCESS') {
+          message.success('success');
+          setSelected(res.data);
+        } else {
+          message.error(res?.message || '后台服务异常，请重启服务');
+        }
+      });
+    }
   }
 
   return (
@@ -166,14 +171,17 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
               rules={[{ required: false, message: '产品码' }]}
               style={{ marginBottom: 0 }}
             >
-              <Input onChange={(e) => {
-                if (!!timeRef.current) {
-                  clearTimeout(timeRef.current);
-                }
-                timeRef.current = setTimeout(() => {
-                  handleChange('productCode', e.target.value);
-                }, 300);
-              }} />
+              <Input
+                allowClear
+                onChange={(e) => {
+                  if (!!timeRef.current) {
+                    clearTimeout(timeRef.current);
+                  }
+                  timeRef.current = setTimeout(() => {
+                    handleChange('productCode', e.target.value);
+                  }, 300);
+                }}
+              />
             </Form.Item>
             <Form.Item
               name={`regionCode`}
@@ -182,7 +190,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
               style={{ marginBottom: 0 }}
             >
               <Select
-                mode="multiple"
+                // mode="multiple"
                 allowClear
                 style={{ width: 200 }}
                 onChange={(value) => handleChange('regionCode', value)}
@@ -211,24 +219,22 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
               btnFetch(fetchType, xName, { data: 1 }).then((res: any) => {
                 if (!!res && res.code === 'SUCCESS') {
                   message.success('success');
+                  setSelected(null);
                 } else {
                   message.error(res?.message || '后台服务异常，请重启服务');
                 }
               });
-            }}>
-              复判OK
-            </Button>
+            }}>复判OK</Button>
             <Button icon={<CloseCircleOutlined />} type="primary" danger onClick={() => {
               btnFetch(fetchType, xName, { data: 0 }).then((res: any) => {
                 if (!!res && res.code === 'SUCCESS') {
                   message.success('success');
+                  setSelected(null);
                 } else {
                   message.error(res?.message || '后台服务异常，请重启服务');
                 }
               });
-            }}>
-              复判NG
-            </Button>
+            }}>复判NG</Button>
           </div>
         </div>
       </div>

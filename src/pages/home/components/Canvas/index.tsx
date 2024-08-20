@@ -1951,6 +1951,7 @@ const Home: React.FC<any> = (props: any) => {
                       timeSelectDefault,
                       xName,
                       fetchType,
+                      password,
                       ifNeedAllow
                     }}
                   />
@@ -5949,6 +5950,14 @@ const Home: React.FC<any> = (props: any) => {
                       name={`xName`}
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      name={`password`}
+                      label={'传递参数的key'}
+                      initialValue={'value'}
+                      rules={[{ required: false, message: '传递参数的key' }]}
                     >
                       <Input size="large" />
                     </Form.Item>

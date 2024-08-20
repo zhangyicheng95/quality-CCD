@@ -24,6 +24,7 @@ const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
     timeSelectDefault = [],
     xName,
     fetchType,
+    password = 'value',
     ifNeedAllow = false,
   } = data;
   const ipString: any = localStorage.getItem('ipString') || '';
@@ -35,7 +36,7 @@ const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
         if (!!res && res.code === 'SUCCESS') {
           setSelected(res?.data?.value);
         } else {
-          message.error(res?.message || '后台服务异常，请重启服务');
+          // message.error(res?.message || '后台服务异常，请重启服务');
           const select = dataValue || timeSelectDefault?.[0]?.value;
           setSelected(select);
         }
@@ -112,7 +113,7 @@ const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
             const func = () => {
               setSelected(e);
               if (!fetchType || !xName) return;
-              btnFetch(fetchType, xName, { value: e }).then((res: any) => {
+              btnFetch(fetchType, xName, { [password || 'value']: e }).then((res: any) => {
                 if (!!res && res.code === 'SUCCESS') {
                   message.success('success');
                 } else {
