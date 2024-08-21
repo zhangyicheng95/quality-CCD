@@ -560,23 +560,6 @@ export default function Toolbar() {
     if (rule?.rule_type === 'sector') {
       // 扇形
       addRing(0, 90, 200, 200, 30, 60, rParams);
-      // createPathFromSvg({
-      //   svgString: ShapeTypeList[3]?.elem,
-      //   canvas: editor.canvas,
-      //   strokeWidth: 4,
-      //   ...rParams
-      // });
-      // const sector = new fabric.Rect({
-      //   left: 280,
-      //   top: 180,
-      //   width: 100,
-      //   height: 100,
-      //   strokeWidth: 1,
-      //   stroke: '#0f0',
-      //   fill: 'transparent',
-      //   ...rParams,
-      // });
-      // editor.canvas?.add?.(sector);
     } else {
       // 矩形
       const rect = new fabric.Rect({
@@ -629,25 +612,6 @@ export default function Toolbar() {
       >
         开始检测
       </ToolbarItem>
-      {/* <SegmentSwitch
-        style={{ width: 180, height: 32, fontSize: 14, backgroundColor: 'transparent' }}
-        fontInBody={[
-          { value: false, label: '停止检测', backgroundColor: '#f00' },
-          { value: true, label: '开始检测', backgroundColor: '#0f0' }
-        ]}
-        value={detectionValue}
-        onChange={(e: any) => {
-          btnFetch(fetchType, yName, { data: e }).then((res: any) => {
-            if (!!res && res.code === 'SUCCESS') {
-              setDetectionValue(e);
-              message.success('success');
-            } else {
-              setDetectionValue(detectionValue);
-              message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
-            }
-          });
-        }}
-      /> */}
       <ToolbarItem
         onContextMenu={() => {
           form.setFieldsValue(caliperRule || {});

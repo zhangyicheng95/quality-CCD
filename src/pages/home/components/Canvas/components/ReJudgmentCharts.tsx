@@ -25,11 +25,11 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
   const timeRef = useRef<any>(null);
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
-      { status: 0, position: '1-1', title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11', url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0' },
-      { status: 0, position: '1-3', title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11', url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0' },
-      { status: 1, position: '2-1A', title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11', url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0' },
-      { status: 0, position: '3-1B', title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11', url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0' },
-      { status: 0, position: '4-2A', title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11', url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0' }
+      { status: 0, position: { "x": 0.3, "y": 0.2 }, title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11', url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0' },
+      { status: 0, position: { "x": 0.35, "y": 0.1 }, title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11', url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0' },
+      { status: 1, position: { "x": 0.4, "y": 0.2 }, title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11', url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0' },
+      { status: 0, position: { "x": 0.6, "y": 0.5 }, title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11', url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0' },
+      { status: 0, position: { "x": 0.7, "y": 0.88 }, title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11', url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0' }
     ];
   }
   const [selected, setSelected] = useState<any>(null);
@@ -68,7 +68,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
     searchRef.current[key] = value;
     const values = Object.values(searchRef.current)?.filter(Boolean);
     if (values?.length === 2) {
-      btnFetch('get', xName, searchRef.current).then((res: any) => {
+      btnFetch(fetchType, xName, { type: 'search', data: searchRef.current }).then((res: any) => {
         if (!!res && res.code === 'SUCCESS') {
           message.success('success');
           setSelected(res.data);
@@ -116,6 +116,17 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                 }
               </div>
             })
+          }
+          {
+            !!selected ?
+              <div
+                className="re-judgment-left-table-error"
+                style={{
+                  left: `${selected?.position?.x * 100}%`,
+                  top: `${selected?.position?.y * 100}%`,
+                }}
+              />
+              : null
           }
         </div>
       </div>
@@ -216,7 +227,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
           </div>
           <div className="flex-box-center re-judgment-right-img-box-bottom">
             <Button icon={<CheckCircleOutlined />} className='OK' onClick={() => {
-              btnFetch(fetchType, xName, { data: 1 }).then((res: any) => {
+              btnFetch(fetchType, xName, { type: 'decide', data: true }).then((res: any) => {
                 if (!!res && res.code === 'SUCCESS') {
                   message.success('success');
                   setSelected(null);
@@ -226,7 +237,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
               });
             }}>复判OK</Button>
             <Button icon={<CloseCircleOutlined />} type="primary" danger onClick={() => {
-              btnFetch(fetchType, xName, { data: 0 }).then((res: any) => {
+              btnFetch(fetchType, xName, { type: 'decide', data: false }).then((res: any) => {
                 if (!!res && res.code === 'SUCCESS') {
                   message.success('success');
                   setSelected(null);

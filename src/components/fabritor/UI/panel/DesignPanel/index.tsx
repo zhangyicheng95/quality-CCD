@@ -1,5 +1,5 @@
 import { List, Empty, Button, Divider } from 'antd';
-import { useEffect, useContext, useState } from 'react';
+import { useEffect, useContext, useState, useRef } from 'react';
 import { fabric } from 'fabric';
 import { GloablStateContext } from '@/context';
 import { SKETCH_ID } from '@/common/constants/globalConstants';
@@ -9,6 +9,7 @@ import DEMOJSON from '@/components/fabritor/demo.json';
 
 export default function Layer() {
   const { isReady, setReady, object: activeObject, setActiveObject, editor } = useContext<any>(GloablStateContext);
+  const timeRef = useRef<any>(null);
   const [layers, setLayers] = useState([]);
 
   const getCanvasLayers = (objects: any) => {
@@ -68,7 +69,14 @@ export default function Layer() {
 
   useEffect(() => {
     let canvas: any;
-    const initCanvasLayers = () => { getCanvasLayers?.(canvas?.getObjects?.()); }
+    const initCanvasLayers = () => {
+      if (!!timeRef.current) {
+        clearTimeout(timeRef.current);
+      }
+      timeRef.current = setTimeout(() => {
+        getCanvasLayers?.(canvas?.getObjects?.());
+      }, 1000);
+    }
 
     if (isReady) {
       setLayers([]);

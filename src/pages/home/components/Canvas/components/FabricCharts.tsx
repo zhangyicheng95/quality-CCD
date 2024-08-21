@@ -24,7 +24,7 @@ const FabricCharts: React.FC<Props> = (props: any) => {
       "data": [
         {
           "type": "sector",
-          "sub_type": "measurementError_d35289b4",
+          "sub_type": "measurementError_88a38264",
           "name": "a1",
           "design_value": 13,
           "measurement_offset": 2,

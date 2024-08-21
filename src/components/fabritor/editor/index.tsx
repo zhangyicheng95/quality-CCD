@@ -433,7 +433,7 @@ export default class Editor {
       height = workspaceEl.offsetHeight;
 
     const { theme } = this._options;
-    const originalJson = `{"fabritor_schema_version":3,"version":"5.3.0","objects":[],"clipPath":{"type":"rect","version":"5.3.0","originX":"left","originY":"top","left":0,"top":0,"width":${width},"height":${height},"fill":"#ffffff","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeUniform":true,"strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"backgroundColor":"","fillRule":"nonzero","paintFirst":"stroke","globalCompositeOperation":"source-over","skewX":0,"skewY":0,"rx":0,"ry":0,"selectable":true,"hasControls":true},"background":${JSON.stringify(theme === "realDark" ? "#000" : "#fff")}}`;
+    const originalJson = `{"version":"5.3.0","objects":[],"clipPath":{"type":"rect","version":"5.3.0","originX":"left","originY":"top","left":0,"top":0,"width":${width},"height":${height},"fill":"#fff","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeUniform":true,"strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"background":${JSON.stringify(theme === "realDark" ? "#000" : "#fff")},"fillRule":"nonzero","paintFirst":"stroke","globalCompositeOperation":"source-over","skewX":0,"skewY":0,"rx":0,"ry":0,"selectable":true,"hasControls":true,"absolutePositioned":false},"background":"#000","fabritor_schema_version":3}`;
     await this.loadFromJSON(originalJson);
     this.fhistory.reset();
   }

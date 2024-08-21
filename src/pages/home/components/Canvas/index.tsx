@@ -1831,7 +1831,7 @@ const Home: React.FC<any> = (props: any) => {
                     className={`${des_bordered ? 'text-break' : ''}`}
                     onClick={() => {
                       const func = () => {
-                        let params = '';
+                        let params = undefined;
                         if (
                           !_.isUndefined(fetchParams) &&
                           !_.isNull(fetchParams) &&
@@ -1842,7 +1842,7 @@ const Home: React.FC<any> = (props: any) => {
                             params = JSON.parse(fetchParams);
                           } catch (e) {
                             console.log('按钮传递参数格式不对:', e);
-                            params = '';
+                            params = undefined;
                           }
                         }
                         btnFetch(fetchType, xName, params).then((res: any) => {

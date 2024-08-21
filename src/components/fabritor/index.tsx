@@ -446,7 +446,7 @@ export default function Fabritor(props: Props) {
             const { result } = i;
             const ID = i.sub_type;
             const sectorItem = json.filter((ji: any) => ji.sub_type?.indexOf(ID) > -1)?.[0];
-            if (result.value) {
+            if (result.value && !!sectorItem) {
               result.x1 = sectorItem?.aCoords?.tl?.x;
               result.y1 = sectorItem?.aCoords?.tl?.y;
               result.x2 = sectorItem?.aCoords?.br?.x;
@@ -465,7 +465,7 @@ export default function Fabritor(props: Props) {
                 borderColor: '#00000000',
                 left: Math.min(x, (result.x1 + result.x2) / 2),
                 top: (result.y1 + result.y2) / 2,
-                stroke: '#0f0',
+                stroke: result.type === 1 ? '#b8831b' : result.type === 2 ? '#f00' : '#0f0',
                 strokeWidth: 2,
                 strokeDashArray: [8, 8],
                 canvas: editor.canvas,
@@ -498,9 +498,7 @@ export default function Fabritor(props: Props) {
                     });
                   }, { name: i.name })
                 };
-                const group = new fabric.Group([
-                  // line,
-                  text, dashLine], {
+                const group = new fabric.Group([text, dashLine], {
                   type: 'group',
                   angle: 0,
                   selectable: false,
@@ -583,7 +581,6 @@ export default function Fabritor(props: Props) {
             });
           }
         });
-        console.log(pointFormatList);
         // const json1 = editor.canvas2Json();
         // loadShapes(JSON.stringify({
         //   ...json1,
