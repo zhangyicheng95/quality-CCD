@@ -594,7 +594,9 @@ const Home: React.FC<any> = (props: any) => {
                           !!key && localStorage.setItem('ipString', key);
                           !!statusItem?.realIp &&
                             localStorage.setItem('ipUrl-realtime', statusItem?.realIp);
-                          window.location.reload();
+                          setTimeout(() => {
+                            window.location.reload();
+                          }, 300);
                         }
                       }
                     }}

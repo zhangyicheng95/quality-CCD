@@ -56,7 +56,7 @@ const HomeLayout: React.FC<any> = (props) => {
     window.addEventListener('unload', function (e) {
       const nowTime = new Date().getTime();
       if (nowTime - time < 5) {
-        localStorage.removeItem('ipString');
+        // localStorage.removeItem('ipString');
       }
     });
 

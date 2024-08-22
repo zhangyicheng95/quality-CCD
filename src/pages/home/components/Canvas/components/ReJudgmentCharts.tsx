@@ -25,11 +25,42 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
   const timeRef = useRef<any>(null);
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
-      { status: 0, position: { "x": 0.3, "y": 0.2 }, title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11', url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0' },
-      { status: 0, position: { "x": 0.35, "y": 0.1 }, title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11', url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0' },
-      { status: 1, position: { "x": 0.4, "y": 0.2 }, title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11', url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0' },
-      { status: 0, position: { "x": 0.6, "y": 0.5 }, title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11', url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0' },
-      { status: 0, position: { "x": 0.7, "y": 0.88 }, title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11', url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0' }
+      {
+        status: 0,
+        position: {
+          leftTop: { "x": 0.3, "y": 0.2 },
+          rightBottom: { "x": 0.35, "y": 0.25 },
+        },
+        title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11',
+        url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0'
+      },
+      {
+        status: 0,
+        position: {
+          leftTop: { "x": 0.35, "y": 0.25 },
+          rightBottom: { "x": 0.63, "y": 0.62 },
+        },
+        title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11',
+        url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0'
+      },
+      {
+        status: 0,
+        position: {
+          leftTop: { "x": 0.35, "y": 0.25 },
+          rightBottom: { "x": 0.53, "y": 0.52 },
+        },
+        title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11',
+        url: 'https://th.bing.com/th/1id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0'
+      },
+      {
+        status: 0,
+        position: {
+          leftTop: { "x": 0.35, "y": 0.25 },
+          rightBottom: { "x": 0.45, "y": 0.45 },
+        },
+        title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11',
+        url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0'
+      },
     ];
   }
   const [selected, setSelected] = useState<any>(null);
@@ -73,7 +104,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
           message.success('success');
           setSelected(res.data);
         } else {
-          message.error(res?.message || '后台服务异常，请重启服务');
+          message.error(res?.message || res?.msg || '后台服务异常，请重启服务');
         }
       });
     }
@@ -122,8 +153,10 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
               <div
                 className="re-judgment-left-table-error"
                 style={{
-                  left: `${selected?.position?.x * 100}%`,
-                  top: `${selected?.position?.y * 100}%`,
+                  left: `${selected?.position?.leftTop?.x * 100}%`,
+                  top: `${selected?.position?.leftTop?.y * 100}%`,
+                  width: `${(selected?.position?.rightBottom?.x - selected?.position?.leftTop?.x) * 100}%`,
+                  height: `${(selected?.position?.rightBottom?.y - selected?.position?.leftTop?.y) * 100}%`,
                 }}
               />
               : null
@@ -140,25 +173,24 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                   className="re-judgment-right-img-list-item"
                   key={`re-judgment-right-img-list-item-${index}`}
                   onClick={() => {
-                    const tds = domRef.current.getElementsByClassName('re-judgment-left-table-th-td');
-                    const tds1 = domRef.current.getElementsByClassName('re-judgment-left-table-top');
-                    const tds2 = domRef.current.getElementsByClassName('re-judgment-left-table-bottom');
-                    tds.forEach((i: any) => {
-                      i.style.border = '1px dashed #eee';
-                    });
-                    tds1.forEach((i: any) => {
-                      i.style.border = 0;
-                      i.style.borderBottom = '1px dashed #eee';
-                    });
-                    tds2.forEach((i: any) => {
-                      i.style.border = 0;
-                      i.style.borderTop = '1px dashed #eee';
-                    });
-                    const box = domRef.current.getElementsByClassName(`re-judgment-left-table-th-${position}`)?.[0];
-                    console.log(box, position);
-                    if (!!box) {
-                      box.style.border = '1px solid #f00';
-                    }
+                    // const tds = domRef.current.getElementsByClassName('re-judgment-left-table-th-td');
+                    // const tds1 = domRef.current.getElementsByClassName('re-judgment-left-table-top');
+                    // const tds2 = domRef.current.getElementsByClassName('re-judgment-left-table-bottom');
+                    // tds.forEach((i: any) => {
+                    //   i.style.border = '1px dashed #eee';
+                    // });
+                    // tds1.forEach((i: any) => {
+                    //   i.style.border = 0;
+                    //   i.style.borderBottom = '1px dashed #eee';
+                    // });
+                    // tds2.forEach((i: any) => {
+                    //   i.style.border = 0;
+                    //   i.style.borderTop = '1px dashed #eee';
+                    // });
+                    // const box = domRef.current.getElementsByClassName(`re-judgment-left-table-th-${position}`)?.[0];
+                    // if (!!box) {
+                    //   box.style.border = '1px solid #f00';
+                    // }
                     setSelected(item);
                   }}
                 >

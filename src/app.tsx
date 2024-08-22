@@ -74,8 +74,7 @@ export async function getInitialState(): Promise<{
     ? query?.id
     : (localStorage.getItem('ipString') || query?.id) || '';
   const iframeTheme = query?.theme;
-
-  if (!localStorage.getItem('ipString')) {
+  if (!localStorage.getItem('ipString') && !!ipString) {
     localStorage.setItem('ipString', ipString);
   }
   if (!localStorage.getItem('ipUrlList')) {
@@ -85,7 +84,7 @@ export async function getInitialState(): Promise<{
     localStorage.setItem('ipUrl-history', 'localhost:8867');
   }
   if (!localStorage.getItem('ipUrl-realtime') && !!ipUrl) {
-    localStorage.setItem('ipUrl-realtime', ipUrl || '');
+    localStorage.setItem('ipUrl-realtime', ipUrl);
     window.location.reload();
   } else {
     if (ipString) {

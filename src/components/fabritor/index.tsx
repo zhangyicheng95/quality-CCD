@@ -10,14 +10,11 @@ import ContextMenu from './components/ContextMenu';
 import { CALIPER_RULE_FORMAT, SKETCH_ID, TEXTBOX_DEFAULT_CONFIG } from '@/common/constants/globalConstants';
 import ObjectRotateAngleTip from './components/ObjectRotateAngleTip';
 import rough from 'roughjs';
-import { createPathFromSvg } from '@/components/fabritor/editor/objects/path';
 import { createTextbox } from '@/components/fabritor/editor/objects/textbox';
 import { createFImage } from '@/components/fabritor/editor/objects/image';
-import { drawArrowLine, drawLine, drawTriArrowLine } from '@/components/fabritor/editor/objects/line';
-import ShapeTypeList from '@/components/fabritor/UI/panel/ShapePanel/shape-type-list';
 import styles from './index.less';
 import { useModel } from 'umi';
-import { groupSelection, removeObject } from '@/utils/helper';
+import { removeObject } from '@/utils/helper';
 import { guid } from '@/utils/utils';
 
 const { Content } = Layout;
@@ -206,6 +203,7 @@ export default function Fabritor(props: Props) {
   };
   // 初始化画布
   const initEditor = async () => {
+    console.log('editor init');
     const _editor: any = new Editor({
       canvasEl: canvasEl.current,
       workspaceEl: workspaceEl.current,
@@ -310,9 +308,8 @@ export default function Fabritor(props: Props) {
     }, 1000)
 
     return () => {
-      if (editor) {
-        editor.destroy();
-      }
+      console.log('editor destroy');
+      editor?.destroy?.();
     }
   }, []);
   // 根据返回的数据渲染文字
