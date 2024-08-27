@@ -13,8 +13,9 @@ interface Props {
 
 const FormulaCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  let { dataValue, titleFontSize = 24, fontSize = 24, fetchType, xName } = data;
-
+  let {
+    dataValue, titleFontSize = 24, fontSize = 24, fetchType, xName, ifOnShowTab,
+  } = data;
   const [form] = Form.useForm();
   const [options, setOptions] = useState({
     testFormula: [],
@@ -58,7 +59,7 @@ const FormulaCharts: React.FC<Props> = (props: any) => {
         errorFields?.length && message.error(`${errorFields[0]?.errors[0]} 是必填项`);
       });
   };
-
+  if (!ifOnShowTab) return null;
   return (
     <div
       id={`echart-${id}`}

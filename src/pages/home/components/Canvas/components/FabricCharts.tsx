@@ -18,13 +18,15 @@ const FabricCharts: React.FC<Props> = (props: any) => {
     fontSize = 20,
     fetchType,
     xName, yName,
+    ifOnShowTab,
   } = data;
+
   if (process.env.NODE_ENV === 'development') {
     dataValue = {
       "data": [
         {
           "type": "sector",
-          "sub_type": "measurementError_88a38264",
+          "sub_type": "measurementError_2bdc2a07",
           "name": "a1",
           "design_value": 13,
           "measurement_offset": 2,
@@ -69,16 +71,8 @@ const FabricCharts: React.FC<Props> = (props: any) => {
 
       ]
     }
-
-    // for (let i = 0; i < 66; i++) {
-    //   dataValue['data'].push({
-    //     type: 'point',
-    //     x: 10 * i,
-    //     y: 5 * i,
-    //   })
-    // }
   }
-
+  if (!ifOnShowTab) return null;
   return (
     <div
       id={`echart-${id}`}

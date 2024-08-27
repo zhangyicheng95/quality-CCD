@@ -15,7 +15,9 @@ interface Props {
 
 const PointCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id, setMyChartVisible } = props;
-  let { dataValue = [], yName, xName = '', direction, symbol = 'rect', dataZoom } = data;
+  let {
+    dataValue = [], yName, xName = '', direction, symbol = 'rect', dataZoom, ifOnShowTab,
+  } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
       {
@@ -75,24 +77,6 @@ const PointCharts: React.FC<Props> = (props: any) => {
   const { params } = initialState;
   const domRef = useRef<any>();
   const myChartRef = useRef<any>();
-
-  useEffect(() => {
-    myChartRef.current = echarts.init(domRef.current);
-
-    return () => {
-      window.removeEventListener(
-        'resize',
-        () => {
-          myChartRef.current.resize({
-            width: domRef.current.clientWidth,
-            height: domRef.current.clientHeight,
-          });
-        },
-        false,
-      );
-      myChartRef.current && myChartRef.current.dispose();
-    };
-  }, []);
   const init = () => {
     let maxLength = 0;
     dataValue.forEach((item: any) => {
@@ -224,20 +208,20 @@ const PointCharts: React.FC<Props> = (props: any) => {
         }
       }),
     });
-    myChartRef.current.setOption(option);
-    myChartRef.current.resize({
-      width: domRef.current.clientWidth,
-      height: domRef.current.clientHeight,
+    myChartRef.current?.setOption(option);
+    myChartRef.current?.resize({
+      width: domRef.current?.clientWidth,
+      height: domRef.current?.clientHeight,
     });
-    myChartRef.current.on('dataZoom', function (event: any) {
+    myChartRef.current?.on('dataZoom', function (event: any) {
       // const { start, end } = event;
     });
     window.addEventListener(
       'resize',
       () => {
-        myChartRef.current.resize({
-          width: domRef.current.clientWidth,
-          height: domRef.current.clientHeight,
+        myChartRef.current?.resize({
+          width: domRef.current?.clientWidth,
+          height: domRef.current?.clientHeight,
         });
       },
       false,
@@ -249,12 +233,28 @@ const PointCharts: React.FC<Props> = (props: any) => {
       console.log('PointCharts:', dataValue);
       return;
     }
+    if (!!domRef.current) {
+      myChartRef.current = echarts.init(domRef.current);
+      setTimeout(() => {
+        init();
+      }, 200);
+    }
 
-    setTimeout(() => {
-      init();
-    }, 200);
-  }, [data]);
-
+    return () => {
+      window.removeEventListener(
+        'resize',
+        () => {
+          myChartRef.current?.resize({
+            width: domRef?.current.clientWidth,
+            height: domRef?.current.clientHeight,
+          });
+        },
+        false,
+      );
+      myChartRef.current && myChartRef.current?.dispose();
+    };
+  }, [data, domRef.current]);
+  if (!ifOnShowTab) return null;
   return (
     <Fragment>
       <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} ref={domRef} />

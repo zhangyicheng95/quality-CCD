@@ -174,8 +174,8 @@ export default function Toolbar() {
       }
       let {
         type, sub_type, path, height, width, text, strokeWidth,
-        left, top, scaleX = 1, angle,
-        backgroundColor, fill, fontSize, caliperRule, measurementErrorRule
+        left, top, scaleX = 1, angle, dpi,
+        backgroundColor, fill, fontSize, caliperRule, measurementErrorRule,
       } = item;
       if (
         sub_type?.indexOf('line_result') > -1
@@ -210,6 +210,7 @@ export default function Toolbar() {
         return {
           ...common,
           url: item.objects?.[0]?.src,
+          dpi: dpi,
         }
       } else if (["line", "dash-line", "arrow-line-1", "arrow-line-2"].includes(sub_type)) {
         return {
@@ -612,6 +613,7 @@ export default function Toolbar() {
       >
         开始检测
       </ToolbarItem>
+      <ToolbarDivider />
       <ToolbarItem
         onContextMenu={() => {
           form.setFieldsValue(caliperRule || {});

@@ -12,7 +12,9 @@ interface Props {
 //对比图组件
 const ImgContrastCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  let { dataValue, fontSize = 16, modelRotateScreenshot = false } = data;
+  let {
+    dataValue, fontSize = 16, modelRotateScreenshot = false, ifOnShowTab,
+  } = data;
   const dom = useRef<any>();
   const [selected, setSelected] = useState(0);
   const [dataSource, setDataSource] = useState<any>([]);
@@ -50,7 +52,7 @@ const ImgContrastCharts: React.FC<Props> = (props: any) => {
       value: index,
     }));
   }, [dataSource]);
-
+  if (!ifOnShowTab) return null;
   return (
     <div
       id={`echart-${id}`}
@@ -75,8 +77,8 @@ const ImgContrastCharts: React.FC<Props> = (props: any) => {
             dataSource?.length > 2
               ? null
               : () => {
-                  setSelected((prev: any) => (prev === 1 ? 0 : 1));
-                },
+                setSelected((prev: any) => (prev === 1 ? 0 : 1));
+              },
         }}
       />
       <div className="img-contrast-select">

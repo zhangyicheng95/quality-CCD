@@ -25,6 +25,7 @@ const Table3Charts: React.FC<Props> = (props: any) => {
     headerBackgroundColor,
     valueColor = 'value',
     line_height,
+    ifOnShowTab,
   } = data;
   const ifCanEdit = useMemo(() => {
     return location.hash?.indexOf('edit') > -1;
@@ -181,7 +182,7 @@ const Table3Charts: React.FC<Props> = (props: any) => {
       };
     };
   };
-
+  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={styles.table3Charts} ref={domRef} style={{ fontSize }}>
       <div className="flex-box charts-tab-box">
@@ -189,9 +190,8 @@ const Table3Charts: React.FC<Props> = (props: any) => {
           const { tab } = item;
           return (
             <div
-              className={`charts-tab-item ${
-                tabSelected === index ? 'charts-tab-item-selected' : ''
-              }`}
+              className={`charts-tab-item ${tabSelected === index ? 'charts-tab-item-selected' : ''
+                }`}
               key={`tab-${index}`}
               onClick={() => {
                 setTabSelected(index);
@@ -219,10 +219,10 @@ const Table3Charts: React.FC<Props> = (props: any) => {
                 style={Object.assign(
                   !!tableSizeSelf?.[index]
                     ? {
-                        width: tableSizeSelf?.[index],
-                        minWidth: tableSizeSelf?.[index],
-                        maxWidth: tableSizeSelf?.[index],
-                      }
+                      width: tableSizeSelf?.[index],
+                      minWidth: tableSizeSelf?.[index],
+                      maxWidth: tableSizeSelf?.[index],
+                    }
                     : {},
                 )}
               >
@@ -250,91 +250,51 @@ const Table3Charts: React.FC<Props> = (props: any) => {
         style={
           des_bordered
             ? {
-                borderWidth: '1px',
-              }
+              borderWidth: '1px',
+            }
             : {}
         }
       >
         {_.isArray(dataValue[tabSelected]?.children)
           ? (dataValue[tabSelected]?.children || [])?.map?.((item: any, index: number) => {
-              const { value = [], color } = item;
-              if (!_.isArray(value)) {
-                const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
-                message.error(`${node.name}（${node.id}）推送信息错误，请检查`, 5);
-                return null;
-              }
-              return (
-                <div
-                  className={`charts-body-tr`}
-                  key={`echart-${id}-tr-${index}`}
-                  style={Object.assign(
-                    !!tableSizeSelf?.[index]
-                      ? {
-                          width: tableSizeSelf?.[index],
-                          minWidth: tableSizeSelf?.[index],
-                          maxWidth: tableSizeSelf?.[index],
-                        }
-                      : {},
-                    !!color
-                      ? valueColor === 'value'
-                        ? { color }
-                        : { backgroundColor: color, color: '#fff' }
-                      : {},
-                  )}
-                >
-                  {(!!reverse ? _.cloneDeep(value).reverse() : value)?.map?.(
-                    (val: any, sIndex: number) => {
-                      if (_.isObject(val)) {
-                        // @ts-ignore
-                        const { value, color } = val;
-                        return (
-                          <div
-                            key={`echart-${id}-tr-td-${sIndex}-${value}`}
-                            className={`flex-box charts-body-td charts-body-td-interlacing-${interlacing}`}
-                          >
-                            <TooltipDiv
-                              className={`charts-body-td-title`}
-                              title={value?.length > 15 ? value : ''}
-                              style={Object.assign(
-                                !!color
-                                  ? valueColor === 'value'
-                                    ? { color }
-                                    : { backgroundColor: color, color: '#fff' }
-                                  : {},
-                                des_bordered ? { borderWidth: '1px' } : {},
-                                line_height
-                                  ? { lineHeight: `${line_height - 4}px`, height: line_height }
-                                  : {},
-                              )}
-                              placement={'top'}
-                              onClick={
-                                value?.indexOf?.('http://') > -1
-                                  ? () => {
-                                      window.open(value, '_blank');
-                                    }
-                                  : null
-                              }
-                            >
-                              {value?.indexOf?.('http://') > -1 ? '查看' : value}
-                            </TooltipDiv>
-                            {!des_bordered ||
-                            index + 1 === dataValue[tabSelected]?.children?.length ? null : (
-                              <div
-                                className="charts-body-item-border"
-                                style={line_height ? { height: line_height } : {}}
-                              />
-                            )}
-                          </div>
-                        );
-                      }
+            const { value = [], color } = item;
+            if (!_.isArray(value)) {
+              const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
+              message.error(`${node.name}（${node.id}）推送信息错误，请检查`, 5);
+              return null;
+            }
+            return (
+              <div
+                className={`charts-body-tr`}
+                key={`echart-${id}-tr-${index}`}
+                style={Object.assign(
+                  !!tableSizeSelf?.[index]
+                    ? {
+                      width: tableSizeSelf?.[index],
+                      minWidth: tableSizeSelf?.[index],
+                      maxWidth: tableSizeSelf?.[index],
+                    }
+                    : {},
+                  !!color
+                    ? valueColor === 'value'
+                      ? { color }
+                      : { backgroundColor: color, color: '#fff' }
+                    : {},
+                )}
+              >
+                {(!!reverse ? _.cloneDeep(value).reverse() : value)?.map?.(
+                  (val: any, sIndex: number) => {
+                    if (_.isObject(val)) {
+                      // @ts-ignore
+                      const { value, color } = val;
                       return (
                         <div
-                          key={`echart-${id}-tr-td-${sIndex}-${val}`}
+                          key={`echart-${id}-tr-td-${sIndex}-${value}`}
                           className={`flex-box charts-body-td charts-body-td-interlacing-${interlacing}`}
                         >
                           <TooltipDiv
                             className={`charts-body-td-title`}
-                            title={val?.length > 15 ? val : ''}
+                            title={value?.length > 15 ? value : ''}
                             style={Object.assign(
                               !!color
                                 ? valueColor === 'value'
@@ -348,17 +308,17 @@ const Table3Charts: React.FC<Props> = (props: any) => {
                             )}
                             placement={'top'}
                             onClick={
-                              val?.indexOf?.('http://') > -1
+                              value?.indexOf?.('http://') > -1
                                 ? () => {
-                                    window.open(val, '_blank');
-                                  }
+                                  window.open(value, '_blank');
+                                }
                                 : null
                             }
                           >
-                            {val?.indexOf?.('http://') > -1 ? '查看' : val}
+                            {value?.indexOf?.('http://') > -1 ? '查看' : value}
                           </TooltipDiv>
                           {!des_bordered ||
-                          index + 1 === dataValue[tabSelected]?.children?.length ? null : (
+                            index + 1 === dataValue[tabSelected]?.children?.length ? null : (
                             <div
                               className="charts-body-item-border"
                               style={line_height ? { height: line_height } : {}}
@@ -366,11 +326,51 @@ const Table3Charts: React.FC<Props> = (props: any) => {
                           )}
                         </div>
                       );
-                    },
-                  )}
-                </div>
-              );
-            })
+                    }
+                    return (
+                      <div
+                        key={`echart-${id}-tr-td-${sIndex}-${val}`}
+                        className={`flex-box charts-body-td charts-body-td-interlacing-${interlacing}`}
+                      >
+                        <TooltipDiv
+                          className={`charts-body-td-title`}
+                          title={val?.length > 15 ? val : ''}
+                          style={Object.assign(
+                            !!color
+                              ? valueColor === 'value'
+                                ? { color }
+                                : { backgroundColor: color, color: '#fff' }
+                              : {},
+                            des_bordered ? { borderWidth: '1px' } : {},
+                            line_height
+                              ? { lineHeight: `${line_height - 4}px`, height: line_height }
+                              : {},
+                          )}
+                          placement={'top'}
+                          onClick={
+                            val?.indexOf?.('http://') > -1
+                              ? () => {
+                                window.open(val, '_blank');
+                              }
+                              : null
+                          }
+                        >
+                          {val?.indexOf?.('http://') > -1 ? '查看' : val}
+                        </TooltipDiv>
+                        {!des_bordered ||
+                          index + 1 === dataValue[tabSelected]?.children?.length ? null : (
+                          <div
+                            className="charts-body-item-border"
+                            style={line_height ? { height: line_height } : {}}
+                          />
+                        )}
+                      </div>
+                    );
+                  },
+                )}
+              </div>
+            );
+          })
           : null}
       </div>
     </div>

@@ -1,10 +1,12 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { Button, Form, Input, message, Select } from 'antd';
+import { Button, Form, Input, message, Select, Upload } from 'antd';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import ImgCharts from './ImgCharts';
 import { btnFetch } from '@/services/api';
+import ChooseFileButton from '@/components/ChooseFileButton';
+import { connect } from 'umi';
 
 interface Props {
   data: any;
@@ -13,14 +15,17 @@ interface Props {
 };
 
 const ReJudgmentCharts: React.FC<Props> = (props: any) => {
-  const { data = {}, id } = props;
+  const { data = {}, id, started } = props;
   let {
     dataValue = [], fontSize,
     xName = '',
     fetchType,
+    ifOnShowTab,
   } = data;
   const [form] = Form.useForm();
   const domRef = useRef<any>();
+  const leftTableDomRef = useRef<any>();
+  const leftTableImgDomRef = useRef<any>();
   const searchRef = useRef<any>({ productCode: undefined, regionCode: undefined });
   const timeRef = useRef<any>(null);
   if (process.env.NODE_ENV === 'development') {
@@ -63,53 +68,86 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
       },
     ];
   }
+  const [leftModelSelected, setLeftModelSelected] = useState<any>({});
   const [selected, setSelected] = useState<any>(null);
 
-  const options = useMemo(() => {
-    let arr = [];
-    for (let i = 0; i < 4; i++) {
-      for (let j = 0; j < 7; j++) {
-        if (((i === 3) && ![0, 6].includes(j)) || ([1, 2].includes(i) && [0, 6].includes(j))) {
-          arr.push({
-            label: `${i + 1}-${j + 1}A`,
-            value: `${i + 1}-${j + 1}A`,
-          });
-          arr.push({
-            label: `${i + 1}-${j + 1}B`,
-            value: `${i + 1}-${j + 1}B`,
-          });
-        } else {
-          arr.push({
-            label: `${i + 1}-${j + 1}`,
-            value: `${i + 1}-${j + 1}`,
-          });
-        }
+  // 拉取模板图列表
+  useEffect(() => {
+    if (!!localStorage.getItem(`rejudgment-${id}`)) {
+      setLeftModelSelected(JSON.parse(localStorage.getItem(`rejudgment-${id}`) || "{}"));
+    }
+  }, []);
+  // 选择的模板图，计算大小
+  useEffect(() => {
+    const boxWidth = leftTableDomRef.current?.clientWidth || 0;
+    const boxHeight = (leftTableDomRef.current?.clientHeight * 0.8) || 0;
+    let img: any = document.createElement('img');
+    img.src = leftModelSelected?.url;
+    img.title = 'img.png';
+    img.onload = (res: any) => {
+      const { width = 1, height = 1 } = img;
+      if (width >= height) {
+        // 横着的图
+        leftTableImgDomRef.current.width = boxWidth;
+        leftTableImgDomRef.current.height = (height / width) * boxWidth;
+      } else {
+        // 竖着的图
+        leftTableImgDomRef.current.width = (width / height) * boxHeight;
+        leftTableImgDomRef.current.height = boxHeight;
       }
     };
-    return arr;
-  }, []);
-  // 默认选中第一个
-  useEffect(() => {
-    if (!selected && !!dataValue?.filter((i: any) => i.status === 0)?.[0]) {
-      setSelected(dataValue?.filter((i: any) => i.status === 0)?.[0])
-    }
-  }, [dataValue]);
+  }, [leftModelSelected?.url, leftTableDomRef.current?.clientWidth]);
+  // 导入模板
+  const uploadProps = {
+    accept: '.json',
+    showUploadList: false,
+    multiple: false,
+    beforeUpload(file: any) {
+      const reader = new FileReader(); // 创建文件对象
+      reader.readAsText(file); // 读取文件的内容/URL
+      reader.onload = (res: any) => {
+        const {
+          target: { result },
+        } = res;
+        try {
+          const params = JSON.parse(result);
+          btnFetch(fetchType, xName, { type: 'upload', data: params }).then((res: any) => {
+            if (!!res && res.code === 'SUCCESS') {
+              setLeftModelSelected(params);
+              localStorage.setItem(`rejudgment-${id}`, JSON.stringify(params));
+              message.success('success');
+            } else {
+              message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
+            }
+          });
+        } catch (err) {
+          message.error('json文件格式错误，请修改后上传。');
+          console.error(err);
+        }
+      };
+      return false;
+    },
+  };
   // 条件查询
   const handleChange = (key: string, value: any) => {
     searchRef.current[key] = value;
-    const values = Object.values(searchRef.current)?.filter(Boolean);
-    if (values?.length === 2) {
-      btnFetch(fetchType, xName, { type: 'search', data: searchRef.current }).then((res: any) => {
-        if (!!res && res.code === 'SUCCESS') {
-          message.success('success');
-          setSelected(res.data);
-        } else {
-          message.error(res?.message || res?.msg || '后台服务异常，请重启服务');
-        }
-      });
+    if (!searchRef.current['productCode']) {
+      return;
     }
+    btnFetch(fetchType, xName, { type: 'search', data: searchRef.current }).then((res: any) => {
+      if (!!res && res.code === 'SUCCESS') {
+        message.success('success');
+        if (_.isObject(res.data) && !_.isArray(res.data)) {
+          setSelected(res.data);
+        } else if (_.isArray(res.data)) {
+          setSelected(res.data?.[0]);
+        }
+      } else {
+        message.error(res?.message || res?.msg || '后台服务异常，请重启服务');
+      }
+    });
   }
-
+  if (!ifOnShowTab) return null;
   return (
     <div
       id={`echart-${id}`}
@@ -117,36 +155,19 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
       className={`flex-box ${styles.reJudgmentCharts}`}
       style={{ fontSize }}
     >
-      <div className="flex-box-center re-judgment-left">
-        <div className="flex-box re-judgment-left-table">
+      <div className="flex-box-center re-judgment-left" ref={leftTableDomRef}>
+        <div className="flex-box re-judgment-left-table" ref={leftTableImgDomRef}>
           {
-            Array.from({ length: 4 }).map((i, index: number) => {
-              let className = `re-judgment-left-table-th`;
-              return <div className={`flex-box ${className}`} key={`${className}-${index}`}>
-                {
-                  Array.from({ length: 7 }).map((i, cIndex: number) => {
-                    const title = `${index + 1}-${cIndex + 1}`;
-                    return <div
-                      className={`flex-box-center ${className}-td ${className}-${title}`}
-                      key={`${className}-td-${cIndex}`}
-                    >
-                      {
-                        (
-                          ((index === 3) && ![0, 6].includes(cIndex))
-                          ||
-                          ([1, 2].includes(index) && [0, 6].includes(cIndex))
-                        ) ?
-                          <Fragment>
-                            <div className={`flex-box-center re-judgment-left-table-top ${className}-${title}A`}>{`${title}A`}</div>
-                            <div className={`flex-box-center re-judgment-left-table-bottom ${className}-${title}B`}>{`${title}B`}</div>
-                          </Fragment>
-                          : title
-                      }
-                    </div>
-                  })
+            !!leftModelSelected?.url ?
+              <img
+                src={leftModelSelected?.url?.indexOf('files/') > -1 ?
+                  leftModelSelected?.url :
+                  `http://localhost:5001/files/${leftModelSelected?.url}`
                 }
-              </div>
-            })
+                alt={leftModelSelected?.url}
+                style={{ width: '100%', height: '100%' }}
+              />
+              : null
           }
           {
             !!selected ?
@@ -162,41 +183,38 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
               : null
           }
         </div>
+        <div className="re-judgment-left-select">
+          <Upload {...uploadProps}>
+            <Button
+              disabled={!started}
+            // type="primary"
+            >
+              更换模板
+            </Button>
+          </Upload>
+        </div>
       </div>
       <div className="flex-box re-judgment-right">
         <div className="re-judgment-right-img-list">
           {
             (dataValue || [])?.map((item: any, index: number) => {
-              const { status, title, url, position } = item;
+              const { status, title, url } = item;
               if (status === 0) {
                 return <div
                   className="re-judgment-right-img-list-item"
                   key={`re-judgment-right-img-list-item-${index}`}
                   onClick={() => {
-                    // const tds = domRef.current.getElementsByClassName('re-judgment-left-table-th-td');
-                    // const tds1 = domRef.current.getElementsByClassName('re-judgment-left-table-top');
-                    // const tds2 = domRef.current.getElementsByClassName('re-judgment-left-table-bottom');
-                    // tds.forEach((i: any) => {
-                    //   i.style.border = '1px dashed #eee';
-                    // });
-                    // tds1.forEach((i: any) => {
-                    //   i.style.border = 0;
-                    //   i.style.borderBottom = '1px dashed #eee';
-                    // });
-                    // tds2.forEach((i: any) => {
-                    //   i.style.border = 0;
-                    //   i.style.borderTop = '1px dashed #eee';
-                    // });
-                    // const box = domRef.current.getElementsByClassName(`re-judgment-left-table-th-${position}`)?.[0];
-                    // if (!!box) {
-                    //   box.style.border = '1px solid #f00';
-                    // }
                     setSelected(item);
                   }}
                 >
                   <div className="flex-box-align-end re-judgment-right-img-list-item-status">NG</div>
                   <img src={url} alt={url} />
-                  <div className='re-judgment-right-img-list-item-title'>{title}</div>
+                  <div
+                    className='re-judgment-right-img-list-item-title'
+                    style={selected?.url === url ? {
+                      backgroundColor: 'rgba(255,0,0,.4)'
+                    } : {}}
+                  >{title}</div>
                 </div>
               }
               return null;
@@ -216,7 +234,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
             >
               <Input
                 allowClear
-                onChange={(e) => {
+                onPressEnter={(e: any) => {
                   if (!!timeRef.current) {
                     clearTimeout(timeRef.current);
                   }
@@ -237,7 +255,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                 allowClear
                 style={{ width: 200 }}
                 onChange={(value) => handleChange('regionCode', value)}
-                options={options}
+                options={Object.keys(leftModelSelected?.position || {})?.map((i: any) => ({ key: i, value: i }))}
               />
             </Form.Item>
           </Form>
@@ -258,26 +276,35 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
             }
           </div>
           <div className="flex-box-center re-judgment-right-img-box-bottom">
-            <Button icon={<CheckCircleOutlined />} className='OK' onClick={() => {
-              btnFetch(fetchType, xName, { type: 'decide', data: true }).then((res: any) => {
-                if (!!res && res.code === 'SUCCESS') {
-                  message.success('success');
-                  setSelected(null);
-                } else {
-                  message.error(res?.message || '后台服务异常，请重启服务');
-                }
-              });
-            }}>复判OK</Button>
-            <Button icon={<CloseCircleOutlined />} type="primary" danger onClick={() => {
-              btnFetch(fetchType, xName, { type: 'decide', data: false }).then((res: any) => {
-                if (!!res && res.code === 'SUCCESS') {
-                  message.success('success');
-                  setSelected(null);
-                } else {
-                  message.error(res?.message || '后台服务异常，请重启服务');
-                }
-              });
-            }}>复判NG</Button>
+            <Button
+              icon={<CheckCircleOutlined />}
+              className='OK'
+              disabled={!selected}
+              onClick={() => {
+                btnFetch(fetchType, xName, { type: 'decide', data: { ...selected, value: true } }).then((res: any) => {
+                  if (!!res && res.code === 'SUCCESS') {
+                    message.success('success');
+                    setSelected(null);
+                  } else {
+                    message.error(res?.message || '后台服务异常，请重启服务');
+                  }
+                });
+              }}>复判OK</Button>
+            <Button
+              icon={<CloseCircleOutlined />}
+              type="primary"
+              disabled={!selected}
+              danger
+              onClick={() => {
+                btnFetch(fetchType, xName, { type: 'decide', data: { ...selected, value: false } }).then((res: any) => {
+                  if (!!res && res.code === 'SUCCESS') {
+                    message.success('success');
+                    setSelected(null);
+                  } else {
+                    message.error(res?.message || '后台服务异常，请重启服务');
+                  }
+                });
+              }}>复判NG</Button>
           </div>
         </div>
       </div>
@@ -285,4 +312,6 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default ReJudgmentCharts;
+export default connect(({ home, themeStore }) => ({
+  started: home.started || false,
+}))(ReJudgmentCharts);

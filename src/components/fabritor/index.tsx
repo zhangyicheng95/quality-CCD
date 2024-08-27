@@ -370,6 +370,7 @@ export default function Fabritor(props: Props) {
               hasControls: false,
               opacity: i.opacity ? i.opacity : 1,
               sub_type: 'image',
+              dpi: i.dpi,
             });
           } else if (i.type === "line") {
             const { result } = i;

@@ -16,7 +16,9 @@ const lineColorList = {
 };
 const RankCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  let { dataValue, fontSize = 20, yName = 'verse' } = data;
+  let {
+    dataValue, fontSize = 20, yName = 'verse', ifOnShowTab,
+  } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
       { name: '缺陷名称1', value: 1234 },
@@ -36,7 +38,7 @@ const RankCharts: React.FC<Props> = (props: any) => {
     });
     return num;
   }, [dataValue]);
-
+  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={`${styles.rankCharts}`} style={{ fontSize }}>
       {(dataValue || [])
@@ -54,9 +56,8 @@ const RankCharts: React.FC<Props> = (props: any) => {
                 style={{
                   width: Math.max(fontSize * 2, 24),
                   height: Math.max(fontSize * 2, 24),
-                  backgroundImage: `linear-gradient(to right, ${
-                    lineColorList[index] || 'rgba(39,90,235,0.8), rgba(41,100,200,1)'
-                  })`,
+                  backgroundImage: `linear-gradient(to right, ${lineColorList[index] || 'rgba(39,90,235,0.8), rgba(41,100,200,1)'
+                    })`,
                 }}
               >
                 {index + 1}
@@ -71,14 +72,14 @@ const RankCharts: React.FC<Props> = (props: any) => {
                     index < 3
                       ? { from: 'rgba(251,225,51,0.8)', to: 'rgba(247,186,32,1)' }
                       : {
-                          from: 'rgba(39,97,235,0.8)',
-                          to: 'rgba(56,200,234,0.8)',
-                        }
+                        from: 'rgba(39,97,235,0.8)',
+                        to: 'rgba(56,200,234,0.8)',
+                      }
                   }
                   percent={(value / maxValue || 0) * 100}
                   showInfo={false}
                   trailColor="rgba(144,144,144,0.5)"
-                  // status="active"
+                // status="active"
                 />
               </div>
             </div>

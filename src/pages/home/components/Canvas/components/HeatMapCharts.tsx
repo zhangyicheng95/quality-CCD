@@ -13,7 +13,9 @@ interface Props {
 
 const HeatMapCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  let { dataValue = [], backgroundColor } = data;
+  let {
+    dataValue = [], backgroundColor, ifOnShowTab,
+  } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
       { x: '0.49', y: '0.45', value: 2 },
@@ -78,7 +80,7 @@ const HeatMapCharts: React.FC<Props> = (props: any) => {
     });
     heatmapInstance.current?.setData?.({ max, data: result });
   }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight]);
-
+  if (!ifOnShowTab) return null;
   return (
     <div className={`flex-box-center ${styles.heatMapCharts}`} ref={dom}>
       <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} />

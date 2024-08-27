@@ -42,6 +42,7 @@ const CableCharts: React.FC<Props> = (props: any) => {
     dataValue = process.env.NODE_ENV === 'development' ? localData : {},
     fontSize = 20,
     yName = '',
+    ifOnShowTab,
   } = data;
   // 变量
   let x = 0,
@@ -245,6 +246,7 @@ const CableCharts: React.FC<Props> = (props: any) => {
     setScaleNum(scale);
     dom.current.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${offsetX}, ${offsetY})`;
   }
+  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={`flex-box-column ${styles.cableCharts}`} style={{ fontSize }}>
       <div className="flex-box-column cable-box-left">

@@ -43,8 +43,8 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     onLockImgChange = null,
     lockImg = false,
     modelRotateScreenshot = false,
+    ifOnShowTab,
   } = data;
-
   if (process.env.NODE_ENV === 'development' && !dataValue) {
     dataValue =
       'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0';
@@ -381,6 +381,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       return pre;
     });
   };
+  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={`flex-box ${styles.imgCharts}`} style={{ fontSize }}>
       <div

@@ -730,6 +730,7 @@ export const FABRITOR_CUSTOM_PROPS = [
   'caliperRule',
   'measurementErrorRule',
   'sectorParams',
+  'dpi',
 ];
 export const CALIPER_RULE_FORMAT = {
   'averaging_depth': '平均深度',

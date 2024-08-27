@@ -12,16 +12,16 @@ interface Props {
 
 const ProgressCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
-    let { dataValue = 0, barColor, progressType, progressSize, progressSteps } = data;
+    let {
+        dataValue = 0, barColor, progressType, progressSize, progressSteps, ifOnShowTab,
+    } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = 0.5;
     }
     const dom = useRef<any>();
     const { initialState } = useModel<any>('@@initialState');
     const { params } = initialState;
-
     const [fontSize, setFontSize] = useState(1);
-
     useEffect(() => {
         if (!_.isNumber(dataValue)) {
             message.error('进度条组件数据格式不正确，请检查');
@@ -34,7 +34,7 @@ const ProgressCharts: React.FC<Props> = (props: any) => {
             setFontSize(dom?.current?.clientWidth / 120);
         }
     }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight]);
-
+    if (!ifOnShowTab) return null;
     return (
         <div
             id={`echart-${id}`}

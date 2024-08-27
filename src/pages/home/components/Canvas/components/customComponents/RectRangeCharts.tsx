@@ -25,7 +25,9 @@ const rectList = [
 ];
 const RectRangeCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id, started } = props;
-  let { dataValue, fontSize = 14, fetchType, xName } = data;
+  let {
+    dataValue, fontSize = 14, fetchType, xName, ifOnShowTab,
+  } = data;
   const [form] = Form.useForm();
   const dom = useRef<any>(null);
 
@@ -68,7 +70,7 @@ const RectRangeCharts: React.FC<Props> = (props: any) => {
       });
     }
   }, [dataValue]);
-
+  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} ref={dom} className={`${styles.rectRangeCharts}`} style={{ fontSize }}>
       <Form form={form} scrollToFirstError className="rect-range-box">

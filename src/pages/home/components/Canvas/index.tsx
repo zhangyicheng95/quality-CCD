@@ -1444,6 +1444,7 @@ const Home: React.FC<any> = (props: any) => {
                       yName,
                       xName,
                       dataZoom,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'point' ? (
@@ -1457,6 +1458,7 @@ const Home: React.FC<any> = (props: any) => {
                       direction,
                       symbol,
                       dataZoom,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'bar' ? (
@@ -1477,6 +1479,7 @@ const Home: React.FC<any> = (props: any) => {
                       showBackground,
                       showWithLine,
                       barColor,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'pie' ? (
@@ -1486,6 +1489,7 @@ const Home: React.FC<any> = (props: any) => {
                     data={{
                       dataValue: dataValue || [],
                       fontSize,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'pie3D' ? (
@@ -1496,6 +1500,7 @@ const Home: React.FC<any> = (props: any) => {
                       dataValue: dataValue || [],
                       fontSize,
                       xName,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'nightingalePie' ? (
@@ -1505,6 +1510,7 @@ const Home: React.FC<any> = (props: any) => {
                     data={{
                       dataValue: dataValue || [],
                       fontSize,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'heatMap' ? (
@@ -1515,6 +1521,7 @@ const Home: React.FC<any> = (props: any) => {
                       dataValue: dataValue || [],
                       fontSize,
                       backgroundColor,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'table' ? (
@@ -1532,6 +1539,7 @@ const Home: React.FC<any> = (props: any) => {
                       headerBackgroundColor,
                       valueColor,
                       line_height,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'table2' ? (
@@ -1549,6 +1557,7 @@ const Home: React.FC<any> = (props: any) => {
                       line_height,
                       bodyPaddingSize,
                       des_layout,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'table3' ? (
@@ -1564,6 +1573,7 @@ const Home: React.FC<any> = (props: any) => {
                       headerBackgroundColor,
                       valueColor,
                       line_height,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'table4' ? (
@@ -1579,6 +1589,7 @@ const Home: React.FC<any> = (props: any) => {
                       headerBackgroundColor,
                       valueColor,
                       staticHeight,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'table5' ? (
@@ -1591,6 +1602,7 @@ const Home: React.FC<any> = (props: any) => {
                       xName,
                       yName,
                       ifFetch,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'tableAntd' ? (
@@ -1610,6 +1622,7 @@ const Home: React.FC<any> = (props: any) => {
                       valueColor,
                       timeSelectDefault,
                       staticHeight,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'rangeDomain' ? (
@@ -1629,6 +1642,7 @@ const Home: React.FC<any> = (props: any) => {
                       timeSelectDefault,
                       parentBodyBoxTab,
                       formCustom,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'rectRange' ? (
@@ -1639,6 +1653,7 @@ const Home: React.FC<any> = (props: any) => {
                       fontSize,
                       fetchType,
                       xName,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'modelSwitch' ? (
@@ -1652,6 +1667,7 @@ const Home: React.FC<any> = (props: any) => {
                       parentBodyBoxTab,
                       formCustom,
                       addContentList,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'tree' ? (
@@ -1661,6 +1677,7 @@ const Home: React.FC<any> = (props: any) => {
                       dataValue: dataValue || [],
                       fontSize,
                       line_height,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'three' ? (
@@ -1677,6 +1694,7 @@ const Home: React.FC<any> = (props: any) => {
                       ifShowColorList,
                       modelUpload,
                       yName,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'fabric' ? (
@@ -1688,6 +1706,7 @@ const Home: React.FC<any> = (props: any) => {
                       fetchType,
                       xName,
                       yName,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'alert' ? (
@@ -1696,6 +1715,7 @@ const Home: React.FC<any> = (props: any) => {
                     data={{
                       dataValue: dataValue || [],
                       fontSize,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'imgs' ? (
@@ -1705,6 +1725,7 @@ const Home: React.FC<any> = (props: any) => {
                       dataValue: dataValue || [],
                       imgs_width,
                       imgs_height,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'progress' ? (
@@ -1716,6 +1737,7 @@ const Home: React.FC<any> = (props: any) => {
                       progressType,
                       progressSize,
                       progressSteps,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'description' ? (
@@ -1729,6 +1751,7 @@ const Home: React.FC<any> = (props: any) => {
                       des_column,
                       des_layout,
                       des_size,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'rank' ? (
@@ -1738,6 +1761,7 @@ const Home: React.FC<any> = (props: any) => {
                       dataValue: dataValue || [],
                       fontSize,
                       yName,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'bodyBox' ? (
@@ -1751,6 +1775,7 @@ const Home: React.FC<any> = (props: any) => {
                       fetchParams,
                       direction,
                       addContentList,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'form' ? (
@@ -1766,6 +1791,9 @@ const Home: React.FC<any> = (props: any) => {
                       modelUpload,
                       ifNeedAllow,
                       modelRotate,
+                      passwordHelp,
+                      direction,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'nestForm' ? (
@@ -1776,6 +1804,7 @@ const Home: React.FC<any> = (props: any) => {
                       des_column,
                       des_bordered,
                       yName,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'laminationImage' ? (
@@ -1787,6 +1816,7 @@ const Home: React.FC<any> = (props: any) => {
                       des_column,
                       markNumberLeft,
                       markNumberTop,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'reJudgment' ? (
@@ -1797,6 +1827,7 @@ const Home: React.FC<any> = (props: any) => {
                       fontSize,
                       xName,
                       fetchType,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'httpTable' ? (
@@ -1807,7 +1838,8 @@ const Home: React.FC<any> = (props: any) => {
                       fontSize,
                       xName,
                       fetchType,
-                      httpRotation, httpRotationTime
+                      httpRotation, httpRotationTime,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'cable' ? (
@@ -1816,7 +1848,8 @@ const Home: React.FC<any> = (props: any) => {
                     data={{
                       dataValue,
                       fontSize,
-                      yName
+                      yName,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'button' ? (
@@ -1883,6 +1916,7 @@ const Home: React.FC<any> = (props: any) => {
                       fetchType,
                       timeSelectDefault,
                       modelRotate,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'buttonInp' ? (
@@ -1896,6 +1930,7 @@ const Home: React.FC<any> = (props: any) => {
                       ifNeedClear,
                       valueColor,
                       des_bordered,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'buttonPassword' ? (
@@ -1911,6 +1946,7 @@ const Home: React.FC<any> = (props: any) => {
                       fetchParams,
                       valueColor,
                       des_bordered,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'buttonUpload' ? (
@@ -1925,6 +1961,7 @@ const Home: React.FC<any> = (props: any) => {
                       valueColor,
                       ifNeedAllow,
                       des_bordered,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'switchBox' ? (
@@ -1939,6 +1976,7 @@ const Home: React.FC<any> = (props: any) => {
                       des_column,
                       direction,
                       modelRotate,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'segmentSwitch' ? (
@@ -1954,7 +1992,8 @@ const Home: React.FC<any> = (props: any) => {
                       xName,
                       fetchType,
                       password,
-                      ifNeedAllow
+                      ifNeedAllow,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'operation' ? (
@@ -1971,7 +2010,8 @@ const Home: React.FC<any> = (props: any) => {
                       yName,
                       valueOnTop,
                       passwordHelp,
-                      password
+                      password,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'operation2' ? (
@@ -1992,7 +2032,8 @@ const Home: React.FC<any> = (props: any) => {
                       yName,
                       valueOnTop,
                       passwordHelp,
-                      password
+                      password,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'statistic' ? (
@@ -2005,6 +2046,7 @@ const Home: React.FC<any> = (props: any) => {
                       fontColor,
                       direction,
                       valueOnTop,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'platForm' ? (
@@ -2017,6 +2059,7 @@ const Home: React.FC<any> = (props: any) => {
                       xName,
                       ifFetch,
                       platFormOptions,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'modal' ? (
@@ -2030,6 +2073,7 @@ const Home: React.FC<any> = (props: any) => {
                       xName,
                       ifFetch,
                       ifFetchParams,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'buttonImages' ? (
@@ -2042,6 +2086,7 @@ const Home: React.FC<any> = (props: any) => {
                       modelRotateScreenshot,
                       fetchType,
                       xName,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'imgButton' ? (
@@ -2058,6 +2103,7 @@ const Home: React.FC<any> = (props: any) => {
                       markNumberTop,
                       fileTypes,
                       fileFetch,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'alertImg' ? (
@@ -2070,6 +2116,7 @@ const Home: React.FC<any> = (props: any) => {
                       columnNumber,
                       magnifier,
                       magnifierSize,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'iframe' ? (
@@ -2078,6 +2125,7 @@ const Home: React.FC<any> = (props: any) => {
                     data={{
                       dataValue,
                       xName,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'imgContrast' ? (
@@ -2087,6 +2135,7 @@ const Home: React.FC<any> = (props: any) => {
                       dataValue,
                       fontSize,
                       modelRotateScreenshot,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'formula' ? (
@@ -2098,7 +2147,8 @@ const Home: React.FC<any> = (props: any) => {
                       titleFontSize,
                       fetchType,
                       xName,
-                      ifNeedAllow
+                      ifNeedAllow,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'orderInformation' ? (
@@ -2110,7 +2160,8 @@ const Home: React.FC<any> = (props: any) => {
                       titleFontSize,
                       fetchType,
                       xName,
-                      ifNeedAllow
+                      ifNeedAllow,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'equipment' ? (
@@ -2120,7 +2171,8 @@ const Home: React.FC<any> = (props: any) => {
                       dataValue,
                       fontSize,
                       titleFontSize,
-                      ifNeedAllow
+                      ifNeedAllow,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'paramControl' ? (
@@ -2133,7 +2185,8 @@ const Home: React.FC<any> = (props: any) => {
                       fetchType,
                       xName,
                       yName,
-                      ifNeedAllow
+                      ifNeedAllow,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'connectStatus' ? (
@@ -2143,6 +2196,7 @@ const Home: React.FC<any> = (props: any) => {
                       dataValue,
                       fontSize,
                       titleFontSize,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'fastFunction' ? (
@@ -2155,6 +2209,7 @@ const Home: React.FC<any> = (props: any) => {
                       fetchType,
                       xName,
                       ifNeedAllow,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'outputArea' ? (
@@ -2166,7 +2221,8 @@ const Home: React.FC<any> = (props: any) => {
                       titleFontSize,
                       fetchType,
                       xName,
-                      ifNeedAllow
+                      ifNeedAllow,
+                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'equipmentInfo' ? (
@@ -2176,6 +2232,7 @@ const Home: React.FC<any> = (props: any) => {
                       dataValue,
                       fontSize,
                       xName,
+                      ifOnShowTab,
                     }}
                   />
                 ) : (
@@ -2200,6 +2257,7 @@ const Home: React.FC<any> = (props: any) => {
                       ifShowHeader,
                       magnifierWidth,
                       magnifierHeight,
+                      ifOnShowTab,
                     }}
                   />
                 )}
@@ -2559,7 +2617,7 @@ const Home: React.FC<any> = (props: any) => {
                 ...item,
                 [__value[1]]: ['three', 'buttonImages', 'imgButton'].includes(type)
                   ? _.omit(dataValue, 'action')
-                  : ['fabric', 'modelSwitch'].includes(type)
+                  : ['fabric', 'modelSwitch', 'reJudgment'].includes(type)
                     ? undefined
                     : ['laminationImage'].includes(type) ?
                       {
@@ -3943,7 +4001,7 @@ const Home: React.FC<any> = (props: any) => {
                       )?.[0];
                       if (!!res) {
                         setFieldsValue({ operationList: [] });
-                        const { config = {} } = res;
+                        const { config = {}, ports = {} } = res;
                         const params = ['operation', 'platForm', 'table5'].includes(windowType)
                           ? config?.initParams
                           : ['operation2'].includes(windowType)
@@ -3962,6 +4020,46 @@ const Home: React.FC<any> = (props: any) => {
                           );
                         } else {
                           setSelectedNodeConfig([]);
+                        }
+                        // 检测绑定的节点是否开启了数据推送，如果没开，直接打开
+                        if (val?.length === 2 && ports?.items?.length > 0) {
+                          const portList = ports?.items?.map((i: any) => {
+                            if (i?.label?.name === val[1] && i?.group === 'bottom') {
+                              return {
+                                ...i,
+                                label: {
+                                  ...i?.label,
+                                  pushData: true
+                                }
+                              }
+                            } else {
+                              return i;
+                            }
+                          });
+                          const newParams = {
+                            ...paramData,
+                            flowData: {
+                              ...paramData?.flowData,
+                              nodes: (paramData?.flowData?.nodes || [])?.map((node: any) => {
+                                if (1) {
+                                  return {
+                                    ...node,
+                                    ports: {
+                                      ...node.ports,
+                                      items: portList,
+                                    }
+                                  }
+                                } else {
+                                  return node;
+                                }
+                              })
+                            }
+                          };
+                          setInitialState((preInitialState: any) => ({
+                            ...preInitialState,
+                            params: newParams,
+                          }));
+                          setParamData(newParams);
                         }
                       }
                     }}
@@ -5161,12 +5259,27 @@ const Home: React.FC<any> = (props: any) => {
                       <Switch />
                     </Form.Item>
                     <Form.Item
+                      name="direction"
+                      label="是否需要二次确认"
+                      initialValue={false}
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                    {/* <Form.Item
                       name="modelRotate"
                       label="是否需要右侧按钮"
                       initialValue={false}
                       valuePropName="checked"
                     >
                       <Switch />
+                    </Form.Item> */}
+                    <Form.Item
+                      name={`passwordHelp`}
+                      label={'确认按钮名称'}
+                      rules={[{ required: false, message: '确认按钮名称' }]}
+                    >
+                      <Input size="large" />
                     </Form.Item>
                     <Form.Item
                       name={`timeSelectDefault`}

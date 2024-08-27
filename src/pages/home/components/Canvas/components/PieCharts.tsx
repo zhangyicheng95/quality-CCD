@@ -15,7 +15,9 @@ interface Props {
 
 const PieCharts: React.FC<Props> = (props: any) => {
   let { data = {}, id, legend, dispatch, setMyChartVisible } = props;
-  let { dataValue = [], fontSize } = data;
+  let {
+    dataValue = [], fontSize, ifOnShowTab,
+  } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
       { name: '机台状态1', value: '1024' },
@@ -27,24 +29,6 @@ const PieCharts: React.FC<Props> = (props: any) => {
   const { params } = initialState;
   const domRef = useRef<any>();
   const myChartRef = useRef<any>();
-
-  useEffect(() => {
-    myChartRef.current = echarts.init(domRef.current);
-
-    return () => {
-      window.removeEventListener(
-        'resize',
-        () => {
-          myChartRef.current.resize({
-            width: domRef.current.clientWidth,
-            height: domRef.current.clientHeight,
-          });
-        },
-        false,
-      );
-      myChartRef.current && myChartRef.current.dispose();
-    };
-  }, []);
   const init = () => {
     const option = Object.assign({}, options, {
       legend: Object.assign(
@@ -98,7 +82,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
             maxSurfaceAngle: 80,
           },
           labelLayout: function (params: any) {
-            const isLeft = params.labelRect?.x < myChartRef.current.getWidth() / 2;
+            const isLeft = params.labelRect?.x < myChartRef.current?.getWidth() / 2;
             const points = params.labelLinePoints;
             // Update the end point.
             points[2][0] = isLeft
@@ -126,24 +110,24 @@ const PieCharts: React.FC<Props> = (props: any) => {
         },
       ],
     });
-    myChartRef.current.on('legendselectchanged', function (obj: any) {
+    myChartRef.current?.on('legendselectchanged', function (obj: any) {
       const { selected } = obj;
       dispatch({
         type: 'themeStore/shortTimeAction',
         payload: { [id]: selected },
       });
     });
-    myChartRef.current.setOption(option);
-    myChartRef.current.resize({
-      width: domRef.current.clientWidth,
-      height: domRef.current.clientHeight,
+    myChartRef.current?.setOption(option);
+    myChartRef.current?.resize({
+      width: domRef.current?.clientWidth,
+      height: domRef.current?.clientHeight,
     });
     window.addEventListener(
       'resize',
       () => {
-        myChartRef.current.resize({
-          width: domRef.current.clientWidth,
-          height: domRef.current.clientHeight,
+        myChartRef.current?.resize({
+          width: domRef.current?.clientWidth,
+          height: domRef.current?.clientHeight,
         });
       },
       false,
@@ -155,11 +139,28 @@ const PieCharts: React.FC<Props> = (props: any) => {
       console.log('PieCharts:', dataValue);
       return;
     }
-    setTimeout(() => {
-      init();
-    }, 200);
-  }, [dataValue, fontSize, legend]);
+    if (!!domRef.current) {
+      myChartRef.current = echarts.init(domRef.current);
+      setTimeout(() => {
+        init();
+      }, 200);
+    }
 
+    return () => {
+      window.removeEventListener(
+        'resize',
+        () => {
+          myChartRef.current?.resize({
+            width: domRef?.current.clientWidth,
+            height: domRef?.current.clientHeight,
+          });
+        },
+        false,
+      );
+      myChartRef.current && myChartRef.current?.dispose();
+    };
+  }, [dataValue, fontSize, legend, domRef.current]);
+  if (!ifOnShowTab) return null;
   return (
     <Fragment>
       <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} ref={domRef} />

@@ -141,6 +141,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
     timeSelectDefault,
     parentBodyBoxTab,
     formCustom,
+    ifOnShowTab,
   } = data;
   const [dataSource, setDataSource] = useState<any>(
     process.env.NODE_ENV === 'development' ? sourceList : [],
@@ -276,7 +277,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
       });
     }
   };
-
+  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={`${styles.rangeDomainCharts}`} style={{ fontSize }}>
       <Form form={formCustom} scrollToFirstError className="range-domain flex-box-justify-between">
@@ -317,7 +318,8 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
                 ) : null}
                 {(!!differenceData?.length ? data?.concat(differenceData) : data)?.map(
                   (cItem: any, cIndex: number) => {
-                    const { key, value, type } = cItem;
+                    const { key, value } = cItem;
+                    const type = timeSelectDefault?.filter((i: any) => i.value === key)?.[0]?.type || timeSelectDefault?.[cIndex]?.type;
                     return (
                       <div
                         className="flex-box-column range-domain-box-item-td"

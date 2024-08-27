@@ -13,7 +13,9 @@ interface Props {
 // 图片监视器组件
 const AlertImgCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  let { dataValue = {}, lineNumber = 1, columnNumber = 1, magnifier, magnifierSize } = data;
+  let {
+    dataValue = {}, lineNumber = 1, columnNumber = 1, magnifier, magnifierSize, ifOnShowTab,
+  } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = {
       1: 'https://img0.baidu.com/it/u=4285923189,2766387018&fm=253&fmt=auto&app=138&f=JPEG?w=281&h=499',
@@ -33,7 +35,7 @@ const AlertImgCharts: React.FC<Props> = (props: any) => {
       return;
     }
   }, []);
-
+  if (!ifOnShowTab) return null;
   return (
     <div
       id={`echart-${id}`}

@@ -17,7 +17,9 @@ interface Props {
 
 const NightingalePieCharts: React.FC<Props> = (props: any) => {
   let { data = {}, id, legend, dispatch, setMyChartVisible } = props;
-  let { dataValue = [], fontSize } = data;
+  let {
+    dataValue = [], fontSize, ifOnShowTab,
+  } = data;
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
   const domRef = useRef<any>();
@@ -25,22 +27,24 @@ const NightingalePieCharts: React.FC<Props> = (props: any) => {
   const [domSize, setDomSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
-    myChartRef.current = echarts.init(domRef.current);
+    if (!!domRef.current) {
+      myChartRef.current = echarts.init(domRef.current);
+    }
 
     return () => {
       window.removeEventListener(
         'resize',
         () => {
-          myChartRef.current.resize({
-            width: domRef.current.clientWidth,
-            height: domRef.current.clientHeight,
+          myChartRef.current?.resize({
+            width: domRef.current?.clientWidth,
+            height: domRef.current?.clientHeight,
           });
         },
         false,
       );
-      myChartRef.current && myChartRef.current.dispose();
+      myChartRef.current && myChartRef.current?.dispose();
     };
-  }, []);
+  }, [domRef.current]);
   const init = () => {
     const option = Object.assign({}, options, {
       legend: Object.assign(
@@ -91,29 +95,29 @@ const NightingalePieCharts: React.FC<Props> = (props: any) => {
       ],
     });
 
-    myChartRef.current.on('legendselectchanged', function (obj: any) {
+    myChartRef.current?.on('legendselectchanged', function (obj: any) {
       const { selected } = obj;
       dispatch({
         type: 'themeStore/shortTimeAction',
         payload: { [id]: selected },
       });
     });
-    myChartRef.current.setOption(option);
-    myChartRef.current.resize({
-      width: domRef.current.clientWidth,
-      height: domRef.current.clientHeight,
+    myChartRef.current?.setOption(option);
+    myChartRef.current?.resize({
+      width: domRef.current?.clientWidth,
+      height: domRef.current?.clientHeight,
     });
     window.addEventListener(
       'resize',
       () => {
-        myChartRef.current.resize({
-          width: domRef.current.clientWidth,
-          height: domRef.current.clientHeight,
+        myChartRef.current?.resize({
+          width: domRef.current?.clientWidth,
+          height: domRef.current?.clientHeight,
         });
       },
       false,
     );
-    setDomSize({ width: domRef.current.clientWidth, height: domRef.current.clientHeight });
+    setDomSize({ width: domRef.current?.clientWidth, height: domRef.current?.clientHeight });
   };
   useEffect(() => {
     if (!_.isArray(dataValue)) {
@@ -139,7 +143,7 @@ const NightingalePieCharts: React.FC<Props> = (props: any) => {
       init();
     }, 200);
   }, [dataValue, fontSize, legend]);
-
+  if (!ifOnShowTab) return null;
   return (
     <div className={`${styles.nightingalePieCharts}`}>
       <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} ref={domRef} />

@@ -68,7 +68,9 @@ const GlobalHeaderRight: React.FC = () => {
               localStorage.removeItem(key);
               // }
             });
-            window.location.reload();
+            setTimeout(() => {
+              window.location.reload();
+            }, 500);
           }
         }}
       />

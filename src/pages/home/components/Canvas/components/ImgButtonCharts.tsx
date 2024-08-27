@@ -24,7 +24,9 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
     markNumberTop,
     fileTypes,
     fileFetch,
+    ifOnShowTab,
   } = data;
+
   const ifCanEdit = useMemo(() => {
     return location.hash?.indexOf('edit') > -1;
   }, [location.hash]);
@@ -139,7 +141,7 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
     setFileVisible(false);
     setFileSelect([]);
   };
-
+  if (!ifOnShowTab) return null;
   return (
     <div
       id={`echart-${id}`}
@@ -197,9 +199,8 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
               const { label, value } = item;
               return (
                 <div
-                  className={`flex-box-center header-img-button-box-item ${
-                    defect == value ? 'header-img-button-box-selected' : ''
-                  }`}
+                  className={`flex-box-center header-img-button-box-item ${defect == value ? 'header-img-button-box-selected' : ''
+                    }`}
                   onClick={() => {
                     setDefect(value);
                   }}
@@ -212,47 +213,46 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
           <div className="img-button-charts-body">
             {!!markNumberLeft
               ? Array.from({ length: markNumberLeft || 0 })?.map?.((left: any, lIndex: number) => {
-                  return (
-                    <div className="flex-box img-button-item-line" key={`left-${lIndex}`}>
-                      {Array.from({ length: markNumberTop || 0 })?.map?.(
-                        (top: any, tIndex: number) => {
-                          const title = `${numToString(lIndex + 1)}-${tIndex + 1}`;
-                          return (
-                            <div
-                              className={`img-button-item-box ${
-                                defectSelect?.[defect + '']?.includes(title)
-                                  ? 'img-button-item-box-selected'
-                                  : ''
+                return (
+                  <div className="flex-box img-button-item-line" key={`left-${lIndex}`}>
+                    {Array.from({ length: markNumberTop || 0 })?.map?.(
+                      (top: any, tIndex: number) => {
+                        const title = `${numToString(lIndex + 1)}-${tIndex + 1}`;
+                        return (
+                          <div
+                            className={`img-button-item-box ${defectSelect?.[defect + '']?.includes(title)
+                              ? 'img-button-item-box-selected'
+                              : ''
                               }`}
-                              key={`top-${tIndex}`}
-                              onClick={() => {
-                                setDefectSelect((prev: any) => {
-                                  let result = Object.assign({}, prev);
-                                  if (prev?.[defect + '']?.includes(title)) {
-                                    if (
-                                      prev?.[defect + ''].filter((i: any) => i !== title)?.length
-                                    ) {
-                                      result[defect + ''] = prev?.[defect + ''].filter(
-                                        (i: any) => i !== title,
-                                      );
-                                    } else {
-                                      result = _.omit(prev, defect + '');
-                                    }
+                            key={`top-${tIndex}`}
+                            onClick={() => {
+                              setDefectSelect((prev: any) => {
+                                let result = Object.assign({}, prev);
+                                if (prev?.[defect + '']?.includes(title)) {
+                                  if (
+                                    prev?.[defect + ''].filter((i: any) => i !== title)?.length
+                                  ) {
+                                    result[defect + ''] = prev?.[defect + ''].filter(
+                                      (i: any) => i !== title,
+                                    );
                                   } else {
-                                    result[defect + ''] = (prev?.[defect + ''] || []).concat(title);
+                                    result = _.omit(prev, defect + '');
                                   }
-                                  return result;
-                                });
-                              }}
-                            >
-                              {title}
-                            </div>
-                          );
-                        },
-                      )}
-                    </div>
-                  );
-                })
+                                } else {
+                                  result[defect + ''] = (prev?.[defect + ''] || []).concat(title);
+                                }
+                                return result;
+                              });
+                            }}
+                          >
+                            {title}
+                          </div>
+                        );
+                      },
+                    )}
+                  </div>
+                );
+              })
               : null}
           </div>
         </Modal>
@@ -274,9 +274,8 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
             {(fileTypes || [])?.map?.((item: any) => {
               return (
                 <div
-                  className={`file-type-item ${
-                    fileSelect?.includes(item) ? 'file-type-item-selected' : ''
-                  }`}
+                  className={`file-type-item ${fileSelect?.includes(item) ? 'file-type-item-selected' : ''
+                    }`}
                   onClick={() => {
                     setFileSelect((prev: any) => {
                       if (prev?.includes(item)) {

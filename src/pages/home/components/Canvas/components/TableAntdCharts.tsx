@@ -94,10 +94,10 @@ const TableAntdCharts: React.FC<Props> = (props: any) => {
     valueColor,
     timeSelectDefault,
     staticHeight,
+    ifOnShowTab,
   } = data;
   const [form] = Form.useForm();
   const { validateFields, setFieldsValue, resetFields } = form;
-
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
   if (process.env.NODE_ENV === 'development') {
@@ -143,44 +143,44 @@ const TableAntdCharts: React.FC<Props> = (props: any) => {
     });
     return timeSelectDefault?.length
       ? result.concat({
-          title: '操作项',
-          dataIndex: 'operation',
-          key: 'operation',
-          width: length * fontSize + 16 + 40,
-          render: (text: any, record: any) => {
-            return (
-              <div className="flex-box">
-                {(timeSelectDefault || [])?.map((item: any, index: number) => {
-                  const { value, label } = item;
-                  return (
-                    <div className="flex-box" key={`operation-${value}`}>
-                      <a
-                        onClick={() => {
-                          if (!!fetchType && !!xName) {
-                            btnFetch(fetchType, xName, { value }).then((res: any) => {
-                              if (res && res.code === 'SUCCESS') {
-                                message.success('success');
-                              } else {
-                                message.error(
-                                  res?.msg || res?.message || '后台服务异常，请重启服务',
-                                );
-                              }
-                            });
-                          }
-                        }}
-                      >
-                        {label}
-                      </a>
-                      {index + 1 === timeSelectDefault?.length ? null : (
-                        <span className="operation-line">|</span>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          },
-        })
+        title: '操作项',
+        dataIndex: 'operation',
+        key: 'operation',
+        width: length * fontSize + 16 + 40,
+        render: (text: any, record: any) => {
+          return (
+            <div className="flex-box">
+              {(timeSelectDefault || [])?.map((item: any, index: number) => {
+                const { value, label } = item;
+                return (
+                  <div className="flex-box" key={`operation-${value}`}>
+                    <a
+                      onClick={() => {
+                        if (!!fetchType && !!xName) {
+                          btnFetch(fetchType, xName, { value }).then((res: any) => {
+                            if (res && res.code === 'SUCCESS') {
+                              message.success('success');
+                            } else {
+                              message.error(
+                                res?.msg || res?.message || '后台服务异常，请重启服务',
+                              );
+                            }
+                          });
+                        }
+                      }}
+                    >
+                      {label}
+                    </a>
+                    {index + 1 === timeSelectDefault?.length ? null : (
+                      <span className="operation-line">|</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        },
+      })
       : result;
   }, [dataValue, timeSelectDefault]);
   const onSearch = (params?: any) => {
@@ -216,7 +216,7 @@ const TableAntdCharts: React.FC<Props> = (props: any) => {
       setExpandedRowKeys(result);
     }
   }, [dataValue]);
-
+  if (!ifOnShowTab) return null;
   return (
     <div
       id={`echart-${id}`}
@@ -279,9 +279,8 @@ const TableAntdCharts: React.FC<Props> = (props: any) => {
             setExpandedRowKeys(value);
           }}
           pagination={null}
-          className={`expand-icon-size-${
-            fontSize < 24 ? (fontSize > 16 ? '20' : '16') : '24'
-          } header-color-${headerBackgroundColor}
+          className={`expand-icon-size-${fontSize < 24 ? (fontSize > 16 ? '20' : '16') : '24'
+            } header-color-${headerBackgroundColor}
         body-color-${interlacing}`}
         />
       </div>

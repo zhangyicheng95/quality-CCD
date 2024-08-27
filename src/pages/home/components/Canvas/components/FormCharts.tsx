@@ -8,6 +8,7 @@ import { FormatWidgetToDom } from './Operation2Charts';
 import BasicTable from '@/components/BasicTable';
 import { guid } from '@/utils/utils';
 import { connect } from 'umi';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 interface Props {
   data: any;
@@ -31,6 +32,8 @@ const FormCharts: React.FC<Props> = (props: any) => {
     modelUpload,
     ifNeedAllow,
     modelRotate,
+    passwordHelp = '',
+    direction = false,
   } = data;
   const [selectOptions, setSelectOptions] = useState({
     1: { value: '', type: '', options: [{ label: 'aaa', value: 'aaa' }] },
@@ -294,12 +297,26 @@ const FormCharts: React.FC<Props> = (props: any) => {
         <div className="flex-box-center">
           <Button
             type="primary"
-            style={{ height: 40, width: 200 }}
+            style={{ height: 40, width: 200, fontSize }}
             onClick={() => {
-              onSubmit();
+              if (direction) {
+                Modal.confirm({
+                  title: '提示',
+                  icon: <ExclamationCircleOutlined />,
+                  content: '确认发送？',
+                  okText: '确认',
+                  cancelText: '取消',
+                  onOk: () => {
+                    onSubmit();
+                  },
+                });
+              } else {
+                onSubmit();
+              }
+
             }}
           >
-            确认
+            {passwordHelp ? passwordHelp : '确认'}
           </Button>
         </div>
       ) : null}

@@ -13,7 +13,9 @@ interface Props {
 // 图片列表组件
 const ImgsCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  let { dataValue = [], imgs_width: width = 150, imgs_height: height = 150 } = data;
+  let {
+    dataValue = [], imgs_width: width = 150, imgs_height: height = 150, ifOnShowTab,
+  } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
       {
@@ -78,7 +80,7 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
     // };
     // loadFun(dataValue[0], 0);
   }, []);
-
+  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={`${styles.imgsCharts}`} ref={dom}>
       {_.isArray(dataValue) &&

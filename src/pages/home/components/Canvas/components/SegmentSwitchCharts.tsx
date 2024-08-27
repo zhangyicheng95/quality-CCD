@@ -31,6 +31,11 @@ const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
   const [selected, setSelected] = useState('');
   const [loading, setLoading] = useState(false);
   useEffect(() => {
+    if (!!localStorage.getItem(`segmentSwitch-${id}`)) {
+      setTimeout(() => {
+        setSelected(localStorage.getItem(`segmentSwitch-${id}`) || "");
+      }, 300);
+    }
     if (started) {
       btnFetch('get', xName).then((res: any) => {
         if (!!res && res.code === 'SUCCESS') {
@@ -116,6 +121,7 @@ const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
               btnFetch(fetchType, xName, { [password || 'value']: e }).then((res: any) => {
                 if (!!res && res.code === 'SUCCESS') {
                   message.success('success');
+                  localStorage.setItem(`segmentSwitch-${id}`, e);
                 } else {
                   message.error(res?.message || '后台服务异常，请重启服务');
                   setSelected(selected);

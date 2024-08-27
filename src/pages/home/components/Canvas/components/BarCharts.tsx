@@ -44,12 +44,13 @@ const BarCharts: React.FC<Props> = (props: any) => {
     showBackground,
     showWithLine,
     barColor = [],
+    ifOnShowTab,
   } = data;
   if (process.env.NODE_ENV === 'development') {
     for (let i = 0; i < 7; i++) {
       dataValue.push({
         name: '数据' + i,
-        value: Math.random() * 10,
+        value: i < 3 ? 0 : Math.random() * 10,
       });
     }
     // dataValue = [
@@ -65,24 +66,6 @@ const BarCharts: React.FC<Props> = (props: any) => {
   const domRef = useRef<any>();
   const myChartRef = useRef<any>();
   barColor = [].concat(barColor);
-
-  useEffect(() => {
-    myChartRef.current = echarts.init(domRef.current);
-
-    return () => {
-      window.removeEventListener(
-        'resize',
-        () => {
-          myChartRef.current.resize({
-            width: domRef.current.clientWidth,
-            height: domRef.current.clientHeight,
-          });
-        },
-        false,
-      );
-      myChartRef.current && myChartRef.current.dispose();
-    };
-  }, []);
   const init = () => {
     let seriesData: any = [],
       markLineData: any = [],
@@ -104,8 +87,8 @@ const BarCharts: React.FC<Props> = (props: any) => {
       } else if (type === 'end') {
         threshold_end = value;
       } else {
-        seriesData = seriesData.concat(item);
-        yData = yData.concat(name);
+        seriesData.push(item);
+        yData.push(name);
       }
       if (_.isNull(minValue) || _.isNull(maxValue)) {
         minValue = value;
@@ -119,6 +102,10 @@ const BarCharts: React.FC<Props> = (props: any) => {
         maxValue = value;
       }
     });
+    if (direction === 'rows') {
+      seriesData = seriesData?.reverse?.();
+      yData = yData?.reverse?.();
+    }
 
     const option = Object.assign({}, options, {
       legend: {
@@ -316,7 +303,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
             },
             tooltip: { show: false },
             stack: 'total',
-            data: seriesData?.map?.(() => max),
+            data: seriesData?.map?.(() => max * 2),
           }
           : null,
         showWithLine
@@ -376,10 +363,10 @@ const BarCharts: React.FC<Props> = (props: any) => {
       ].filter(Boolean),
     });
 
-    myChartRef.current.setOption(option);
-    myChartRef.current.resize({
-      width: domRef.current.clientWidth,
-      height: domRef.current.clientHeight,
+    myChartRef.current?.setOption(option);
+    myChartRef.current?.resize({
+      width: domRef.current?.clientWidth,
+      height: domRef.current?.clientHeight,
     });
   };
   useEffect(() => {
@@ -388,12 +375,28 @@ const BarCharts: React.FC<Props> = (props: any) => {
       console.log('BarCharts:', dataValue);
       return;
     }
+    if (!!domRef.current) {
+      myChartRef.current = echarts.init(domRef.current);
+      setTimeout(() => {
+        init();
+      }, 200);
+    }
 
-    setTimeout(() => {
-      init();
-    }, 200);
-  }, [data]);
-
+    return () => {
+      window.removeEventListener(
+        'resize',
+        () => {
+          myChartRef.current?.resize({
+            width: domRef?.current.clientWidth,
+            height: domRef?.current.clientHeight,
+          });
+        },
+        false,
+      );
+      myChartRef.current && myChartRef.current?.dispose();
+    };
+  }, [data, domRef.current]);
+  if (!ifOnShowTab) return null;
   return (
     <Fragment>
       <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} ref={domRef} />

@@ -111,8 +111,12 @@ export default function FileToolbar() {
         break;
       case 'json':
         const json = editor.canvas2Json();
+        const result = {
+          ...json,
+          objects: (json.objects || [])?.filter((i: any) => i.sub_type?.indexOf('_result') < 0)
+        }
         downloadFile(`data:text/json;charset=utf-8,${encodeURIComponent(
-          JSON.stringify(json, null, 2)
+          JSON.stringify(result, null, 2)
         )}`, 'json', name);
         break;
       case 'clipboard':

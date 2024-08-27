@@ -12,7 +12,9 @@ interface Props {
 
 const TreeCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  let { dataValue, fontSize, line_height } = data;
+  let {
+    dataValue, fontSize, line_height, ifOnShowTab,
+  } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
       {
@@ -86,7 +88,7 @@ const TreeCharts: React.FC<Props> = (props: any) => {
       return;
     }
   }, [dataValue]);
-
+  if (!ifOnShowTab) return null;
   return (
     <div
       id={`echart-${id}`}

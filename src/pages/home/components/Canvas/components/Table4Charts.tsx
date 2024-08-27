@@ -12,7 +12,9 @@ interface Props {
 
 const Table4Charts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
-  let { dataValue = [], fontSize, staticHeight } = data;
+  let {
+    dataValue = [], fontSize, staticHeight, ifOnShowTab,
+  } = data;
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
   if (process.env.NODE_ENV === 'development' && !!dataValue?.length) {
@@ -123,7 +125,7 @@ const Table4Charts: React.FC<Props> = (props: any) => {
       setExpandedRowKeys(result);
     }
   }, [dataValue]);
-
+  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={styles.table4Charts} ref={domRef} style={{ fontSize }}>
       <BasicTable
