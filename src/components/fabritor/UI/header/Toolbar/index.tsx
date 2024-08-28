@@ -502,7 +502,9 @@ export default function Toolbar() {
     }
   };
   // 画圆环弧形
-  const addRing = (angle1: number, angle2: number, x: number, y: number, r1: number, r2: number, params: any) => {
+  const addRing = (
+    angle1: number, angle2: number, x: number, y: number, r1: number, r2: number, params: any
+  ) => {
     let pathRes: any = null;
     let point1 = { x: 0, y: 0 };
     let point2 = { x: 0, y: 0 };
@@ -556,7 +558,8 @@ export default function Toolbar() {
   const onmeasurementErrorCanvas = (rule: any) => {
     const rParams = {
       sub_type: `${rule?.rule_type}_measurementError_${guid()}`,
-      measurementErrorRule: rule
+      measurementErrorRule: rule,
+      strokeWidth: 0,
     };
     if (rule?.rule_type === 'sector') {
       // 扇形
@@ -568,8 +571,6 @@ export default function Toolbar() {
         top: 180,
         width: 100,
         height: 100,
-        strokeWidth: 1,
-        // stroke: '#0f0',
         fill: 'rgba(0, 255, 0, 0.3)',
         ...rParams,
       });

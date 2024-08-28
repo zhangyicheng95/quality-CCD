@@ -4041,7 +4041,7 @@ const Home: React.FC<any> = (props: any) => {
                             flowData: {
                               ...paramData?.flowData,
                               nodes: (paramData?.flowData?.nodes || [])?.map((node: any) => {
-                                if (1) {
+                                if (node.id === val[0]) {
                                   return {
                                     ...node,
                                     ports: {

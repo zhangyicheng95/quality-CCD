@@ -77,6 +77,16 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
       setLeftModelSelected(JSON.parse(localStorage.getItem(`rejudgment-${id}`) || "{}"));
     }
   }, []);
+  // 取SN码
+  useEffect(() => {
+    const productValue = dataValue?.filter((i: any) => i.type === 'SN')?.[0]?.value || undefined;
+    if (!!productValue) {
+      form.setFieldsValue({
+        productCode: productValue,
+      });
+      handleChange('productCode', productValue);
+    }
+  }, [dataValue]);
   // 选择的模板图，计算大小
   useEffect(() => {
     const boxWidth = leftTableDomRef.current?.clientWidth || 0;
@@ -137,16 +147,16 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
     btnFetch(fetchType, xName, { type: 'search', data: searchRef.current }).then((res: any) => {
       if (!!res && res.code === 'SUCCESS') {
         message.success('success');
-        if (_.isObject(res.data) && !_.isArray(res.data)) {
-          setSelected(res.data);
-        } else if (_.isArray(res.data)) {
-          setSelected(res.data?.[0]);
-        }
+        // if (_.isObject(res.data) && !_.isArray(res.data)) {
+        //   setSelected(res.data);
+        // } else if (_.isArray(res.data)) {
+        //   setSelected(res.data?.[0]);
+        // }
       } else {
         message.error(res?.message || res?.msg || '后台服务异常，请重启服务');
       }
     });
-  }
+  };
   if (!ifOnShowTab) return null;
   return (
     <div
@@ -270,6 +280,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                     comparison: false,
                     magnifier: true,
                     magnifierSize: 4,
+                    ifOnShowTab: true
                   }}
                 />
                 : null
