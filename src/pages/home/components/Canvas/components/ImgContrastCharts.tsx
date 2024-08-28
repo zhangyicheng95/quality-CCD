@@ -70,6 +70,7 @@ const ImgContrastCharts: React.FC<Props> = (props: any) => {
           magnifierSize: 4,
           lockImg,
           modelRotateScreenshot,
+          ifOnShowTab: true,
           onLockImgChange: () => {
             setLockImg((prev) => !prev);
           },

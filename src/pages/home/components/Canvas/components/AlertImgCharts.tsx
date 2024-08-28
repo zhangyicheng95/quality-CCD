@@ -62,6 +62,7 @@ const AlertImgCharts: React.FC<Props> = (props: any) => {
                 comparison: false,
                 magnifier,
                 magnifierSize,
+                ifOnShowTab: true
               }}
             />
           </div>

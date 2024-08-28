@@ -106,6 +106,7 @@ const IaminationImageCharts: React.FC<Props> = (props: any) => {
                     comparison: false,
                     magnifier: true,
                     magnifierSize: 4,
+                    ifOnShowTab: true
                   }}
                 />
               </div>
