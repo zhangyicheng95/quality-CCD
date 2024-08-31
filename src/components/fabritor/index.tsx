@@ -366,10 +366,10 @@ export default function Fabritor(props: Props) {
                 height: i.height,
                 backgroundColor: i.backgroundColor,
               } : {},
-              selectable: false,
-              hasControls: false,
               opacity: i.opacity ? i.opacity : 1,
               sub_type: 'image',
+              selectable: false,
+              hasControls: false,
               dpi: i.dpi,
             });
           } else if (i.type === "line") {

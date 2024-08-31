@@ -132,7 +132,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
   } = data;
   let { name, value = [], action = '', guid: uuid, addType } = dataValue;
   if (process.env.NODE_ENV === 'development') {
-    name = 'models/Pipes.obj'; // models/pressure.json  models/tx.stl  output  sgz630_zbc_214
+    name = 'models/Pipes.ply'; // models/pressure.json  models/tx.stl  output  sgz630_zbc_214
     addType = 'rxptPoint';
     // value = [];
   }
@@ -155,8 +155,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
   const [selectedPoint, setSelectedPoint] = useState<any>(null);
   const [selectedArea, setSelectedArea] = useState<any>(null);
   const [cameraDirection, setCameraDirection] = useState<any>([]);
-
   const [pointRef, setPointRef] = useState(false);
+
   const theme = useMemo(() => {
     return params?.contentData?.theme || 'realDark';
   }, [params?.contentData?.theme]);
@@ -2229,7 +2229,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       });
     });
   };
-  if (!ifOnShowTab) return null;
+
   return (
     <div id={`echart-${id}`} className={`${styles.threeCharts} flex-box`} style={{ fontSize }}>
       <div id="instructions" className="flex-box-justify-between">

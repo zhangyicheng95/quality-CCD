@@ -64,9 +64,9 @@ const GlobalHeaderRight: React.FC = () => {
           if (!!localStorage.getItem(`localGridContentList-${params.id}`)) {
             const localStorageKeys = getAllLocalStorageKeys();
             (localStorageKeys || []).forEach((key: any) => {
-              // if (key?.indexOf(params.id) > -1) {
-              localStorage.removeItem(key);
-              // }
+              if (!['parentOrigin', 'ipUrlList', 'ipUrl-realtime']?.includes(key)) {
+                localStorage.removeItem(key);
+              }
             });
             setTimeout(() => {
               window.location.reload();

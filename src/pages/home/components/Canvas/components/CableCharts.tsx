@@ -57,22 +57,18 @@ const CableCharts: React.FC<Props> = (props: any) => {
     lastPointermove = { x: 0, y: 0 }; // 用于计算diff
   const dom = useRef<any>(null);
   const timeboxRef = useRef<any>(null);
+  const localDataRef = useRef<any>({});
   const [visible, setVisible] = useState(false);
   const [visibleData, setVisibleData] = useState<any>(null);
   const [dataSource, setDataSource] = useState<any>({});
   const [selectLook, setSelectLook] = useState(false);
   const [scaleNum, setScaleNum] = useState(1);
 
-  useEffect(() => {
-    if (selectLook) {
-      return;
-    }
-    if (process.env.NODE_ENV === 'development') {
-      setDataSource(localData);
-    } else {
-      setDataSource(dataValue);
-    }
-  }, [dataValue, selectLook]);
+  if (selectLook) {
+    dataValue = localDataRef.current;
+  } else {
+    localDataRef.current = dataValue;
+  };
 
   useEffect(() => {
     const ul: any = dom?.current;
@@ -269,16 +265,10 @@ const CableCharts: React.FC<Props> = (props: any) => {
             }}
           >
             {
-              (dataSource?.defects || [])?.map((defect: any, cIndex: number) => {
+              (dataValue?.defects || [])?.map((defect: any, cIndex: number) => {
                 const { position, length, type } = defect;
                 return <Tooltip
                   key={`cable-box-left-item-line-point-${cIndex}`}
-                  getPopupContainer={(node) => {
-                    if (node && node.parentNode) {
-                      return node.parentNode as HTMLElement;
-                    }
-                    return node;
-                  }}
                   title={<div>
                     <div>方位：{position}</div>
                     <div>距离：{length}米</div>
@@ -288,8 +278,8 @@ const CableCharts: React.FC<Props> = (props: any) => {
                   <div
                     className="cable-box-left-item-line-point"
                     style={{
-                      left: `${length / dataSource.length * 100}%`,
-                      backgroundColor: options.color?.[cIndex]
+                      left: `${length / dataValue.length * 100}%`,
+                      backgroundColor: 'rgba(200,0,0,1)', // options.color?.[cIndex]
                     }}
                     onClick={() => {
                       setVisibleData(defect);

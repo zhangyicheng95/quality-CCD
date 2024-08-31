@@ -4,7 +4,7 @@ import options from './commonOptions';
 import { useModel } from 'umi';
 import { message } from 'antd';
 import _ from 'lodash';
-import { CompressOutlined } from '@ant-design/icons';
+import { ExpandOutlined } from '@ant-design/icons';
 import moment from 'moment';
 
 interface Props {
@@ -50,7 +50,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
     for (let i = 0; i < 7; i++) {
       dataValue.push({
         name: '数据' + i,
-        value: i < 3 ? 0 : Math.random() * 10,
+        value: Math.random() * 10,
       });
     }
     // dataValue = [
@@ -66,6 +66,25 @@ const BarCharts: React.FC<Props> = (props: any) => {
   const domRef = useRef<any>();
   const myChartRef = useRef<any>();
   barColor = [].concat(barColor);
+
+  useEffect(() => {
+    if (!!domRef.current) {
+      myChartRef.current = echarts.init(domRef.current);
+    }
+    return () => {
+      window.removeEventListener(
+        'resize',
+        () => {
+          myChartRef.current?.resize({
+            width: domRef.current?.clientWidth,
+            height: domRef.current?.clientHeight,
+          });
+        },
+        false,
+      );
+      myChartRef.current && myChartRef.current?.dispose();
+    };
+  }, []);
   const init = () => {
     let seriesData: any = [],
       markLineData: any = [],
@@ -87,8 +106,8 @@ const BarCharts: React.FC<Props> = (props: any) => {
       } else if (type === 'end') {
         threshold_end = value;
       } else {
-        seriesData.push(item);
-        yData.push(name);
+        seriesData = seriesData.concat(item);
+        yData = yData.concat(name);
       }
       if (_.isNull(minValue) || _.isNull(maxValue)) {
         minValue = value;
@@ -113,7 +132,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
       },
       grid: Object.assign(
         options.grid,
-        { top: '30px' },
+        { top: '30px', bottom: '15px' },
         align === 'right'
           ? {
             left: `${xName?.length * (xName?.length < 4 ? 24 : 16)}px`,
@@ -375,33 +394,19 @@ const BarCharts: React.FC<Props> = (props: any) => {
       console.log('BarCharts:', dataValue);
       return;
     }
-    if (!!domRef.current) {
-      myChartRef.current = echarts.init(domRef.current);
-      setTimeout(() => {
-        init();
-      }, 200);
-    }
 
-    return () => {
-      window.removeEventListener(
-        'resize',
-        () => {
-          myChartRef.current?.resize({
-            width: domRef?.current.clientWidth,
-            height: domRef?.current.clientHeight,
-          });
-        },
-        false,
-      );
-      myChartRef.current && myChartRef.current?.dispose();
-    };
-  }, [data, domRef.current]);
-  if (!ifOnShowTab) return null;
+    setTimeout(() => {
+      if (!!myChartRef.current) {
+        init();
+      };
+    }, 200);
+  }, [data]);
+
   return (
     <Fragment>
       <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} ref={domRef} />
       <div className="preview-box flex-box-center">
-        <CompressOutlined
+        <ExpandOutlined
           className="preview-icon"
           onClick={() => {
             if (!!myChartRef.current) {

@@ -4,7 +4,7 @@ import options from './commonOptions';
 import * as _ from 'lodash';
 import { useModel } from 'umi';
 import { message } from 'antd';
-import { CompressOutlined } from '@ant-design/icons';
+import { ExpandOutlined } from '@ant-design/icons';
 
 interface Props {
   data: any;
@@ -15,9 +15,7 @@ interface Props {
 
 const PointCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id, setMyChartVisible } = props;
-  let {
-    dataValue = [], yName, xName = '', direction, symbol = 'rect', dataZoom, ifOnShowTab,
-  } = data;
+  let { dataValue = [], yName, xName = '', direction, symbol = 'rect', dataZoom } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
       {
@@ -77,6 +75,24 @@ const PointCharts: React.FC<Props> = (props: any) => {
   const { params } = initialState;
   const domRef = useRef<any>();
   const myChartRef = useRef<any>();
+
+  useEffect(() => {
+    myChartRef.current = echarts.init(domRef.current);
+
+    return () => {
+      window.removeEventListener(
+        'resize',
+        () => {
+          myChartRef.current.resize({
+            width: domRef.current.clientWidth,
+            height: domRef.current.clientHeight,
+          });
+        },
+        false,
+      );
+      myChartRef.current && myChartRef.current.dispose();
+    };
+  }, []);
   const init = () => {
     let maxLength = 0;
     dataValue.forEach((item: any) => {
@@ -208,20 +224,20 @@ const PointCharts: React.FC<Props> = (props: any) => {
         }
       }),
     });
-    myChartRef.current?.setOption(option);
-    myChartRef.current?.resize({
-      width: domRef.current?.clientWidth,
-      height: domRef.current?.clientHeight,
+    myChartRef.current.setOption(option);
+    myChartRef.current.resize({
+      width: domRef.current.clientWidth,
+      height: domRef.current.clientHeight,
     });
-    myChartRef.current?.on('dataZoom', function (event: any) {
+    myChartRef.current.on('dataZoom', function (event: any) {
       // const { start, end } = event;
     });
     window.addEventListener(
       'resize',
       () => {
-        myChartRef.current?.resize({
-          width: domRef.current?.clientWidth,
-          height: domRef.current?.clientHeight,
+        myChartRef.current.resize({
+          width: domRef.current.clientWidth,
+          height: domRef.current.clientHeight,
         });
       },
       false,
@@ -233,33 +249,17 @@ const PointCharts: React.FC<Props> = (props: any) => {
       console.log('PointCharts:', dataValue);
       return;
     }
-    if (!!domRef.current) {
-      myChartRef.current = echarts.init(domRef.current);
-      setTimeout(() => {
-        init();
-      }, 200);
-    }
 
-    return () => {
-      window.removeEventListener(
-        'resize',
-        () => {
-          myChartRef.current?.resize({
-            width: domRef?.current.clientWidth,
-            height: domRef?.current.clientHeight,
-          });
-        },
-        false,
-      );
-      myChartRef.current && myChartRef.current?.dispose();
-    };
-  }, [data, domRef.current]);
-  if (!ifOnShowTab) return null;
+    setTimeout(() => {
+      init();
+    }, 200);
+  }, [data]);
+
   return (
     <Fragment>
       <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} ref={domRef} />
       <div className="preview-box flex-box-center">
-        <CompressOutlined
+        <ExpandOutlined
           className="preview-icon"
           onClick={() => {
             if (!!myChartRef.current) {

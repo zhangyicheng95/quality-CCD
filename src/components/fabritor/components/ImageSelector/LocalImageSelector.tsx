@@ -39,7 +39,7 @@ export default function LocalImageSelector(props: any) {
         onClick={() => {
           if (!!localStorage.getItem('parentOrigin')) {
             window?.parent?.postMessage?.(
-              { type: 'openFile', name: 'fabric-img-select', suffix: ["dwg", "dxf"] },
+              { type: 'openFile', name: 'fabric-img-select', suffix: ["ply", "dxf"] },
               localStorage.getItem('parentOrigin') || '',
             );
           } else {

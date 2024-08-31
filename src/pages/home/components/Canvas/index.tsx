@@ -2617,7 +2617,7 @@ const Home: React.FC<any> = (props: any) => {
                 ...item,
                 [__value[1]]: ['three', 'buttonImages', 'imgButton'].includes(type)
                   ? _.omit(dataValue, 'action')
-                  : ['fabric', 'modelSwitch', 'reJudgment'].includes(type)
+                  : ['fabric', 'modelSwitch', 'reJudgment', 'cable'].includes(type)
                     ? undefined
                     : ['laminationImage'].includes(type) ?
                       {
@@ -2630,8 +2630,11 @@ const Home: React.FC<any> = (props: any) => {
           );
         }
       });
-      localStorage.setItem(`localGridContentList-${paramData.id}`, JSON.stringify(resultData));
-
+      try {
+        localStorage.setItem(`localGridContentList-${paramData.id}`, JSON.stringify(resultData));
+      } catch (err) {
+        console.log('缓存报错：', err);
+      }
       setContentList(listData);
       setContentLayout(layoutData);
     } else {

@@ -4,7 +4,7 @@ import 'echarts-gl';
 import _, { forEach } from 'lodash';
 import { message } from 'antd';
 import { connect, useModel } from 'umi';
-import { CompressOutlined } from '@ant-design/icons';
+import { ExpandOutlined } from '@ant-design/icons';
 import { getPie3D, getParametricEquation } from './pie3DOption';
 import options from './commonOptions';
 import styles from '../index.module.less';
@@ -18,9 +18,7 @@ interface Props {
 
 const PieCharts: React.FC<Props> = (props: any) => {
   let { data = {}, id, legend, dispatch, setMyChartVisible } = props;
-  let {
-    dataValue = [], fontSize, xName = 180, ifOnShowTab,
-  } = data;
+  let { dataValue = [], fontSize, xName = 180 } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
       {
@@ -39,6 +37,24 @@ const PieCharts: React.FC<Props> = (props: any) => {
   }
   const domRef = useRef<any>();
   const myChartRef = useRef<any>();
+
+  useEffect(() => {
+    myChartRef.current = echarts.init(domRef.current);
+
+    return () => {
+      window.removeEventListener(
+        'resize',
+        () => {
+          myChartRef.current.resize({
+            width: domRef.current.clientWidth,
+            height: domRef.current.clientHeight,
+          });
+        },
+        false,
+      );
+      myChartRef.current && myChartRef.current.dispose();
+    };
+  }, []);
   const init = () => {
     let max = 0;
     let gap = 1;
@@ -108,7 +124,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
         boxHeight: 0.5, // 设置立体柱状图的高度
         boxWidth: 100, // 设置立体柱状图的宽度
         bottom: 0,
-        left: `-${domRef.current?.clientWidth / 6}px`,
+        left: `-${domRef.current.clientWidth / 6}px`,
         // environment: "rgba(255,255,255,0)",
         viewControl: {
           distance: xName || 180, // 视角距离
@@ -121,12 +137,12 @@ const PieCharts: React.FC<Props> = (props: any) => {
       },
       series: series,
     };
-    myChartRef.current?.setOption(option);
+    myChartRef.current.setOption(option);
     // 监听鼠标事件，实现饼图选中效果（单选），近似实现高亮（放大）效果。
     let hoveredIndex = '';
 
     // 监听 mouseover，近似实现高亮（放大）效果
-    myChartRef.current?.on('mouseover', function (params: any) {
+    myChartRef.current.on('mouseover', function (params: any) {
       // 准备重新渲染扇形所需的参数
       let isSelected;
       let isHovered;
@@ -191,11 +207,11 @@ const PieCharts: React.FC<Props> = (props: any) => {
         }
 
         // 使用更新后的 option，渲染图表
-        myChartRef.current?.setOption(option);
+        myChartRef.current.setOption(option);
       }
     });
     // 修正取消高亮失败的 bug
-    myChartRef.current?.on('globalout', function () {
+    myChartRef.current.on('globalout', function () {
       if (hoveredIndex !== '') {
         // 从 option.series 中读取重新渲染扇形所需的参数，将是否高亮设置为 true。
         let isSelected = option.series[hoveredIndex]?.pieStatus?.selected,
@@ -221,9 +237,9 @@ const PieCharts: React.FC<Props> = (props: any) => {
       }
 
       // 使用更新后的 option，渲染图表
-      myChartRef.current?.setOption(option);
+      myChartRef.current.setOption(option);
     });
-    myChartRef.current?.on('legendselectchanged', function (obj: any) {
+    myChartRef.current.on('legendselectchanged', function (obj: any) {
       const { selected } = obj;
       dispatch({
         type: 'themeStore/shortTimeAction',
@@ -231,17 +247,17 @@ const PieCharts: React.FC<Props> = (props: any) => {
       });
     });
 
-    myChartRef.current?.setOption(option);
-    myChartRef.current?.resize({
-      width: domRef.current?.clientWidth,
-      height: domRef.current?.clientHeight,
+    myChartRef.current.setOption(option);
+    myChartRef.current.resize({
+      width: domRef.current.clientWidth,
+      height: domRef.current.clientHeight,
     });
     window.addEventListener(
       'resize',
       () => {
-        myChartRef.current?.resize({
-          width: domRef.current?.clientWidth,
-          height: domRef.current?.clientHeight,
+        myChartRef.current.resize({
+          width: domRef.current.clientWidth,
+          height: domRef.current.clientHeight,
         });
       },
       false,
@@ -254,33 +270,16 @@ const PieCharts: React.FC<Props> = (props: any) => {
       return;
     }
 
-    if (!!domRef.current) {
-      myChartRef.current = echarts.init(domRef.current);
-      setTimeout(() => {
-        init();
-      }, 200);
-    }
+    setTimeout(() => {
+      init();
+    }, 200);
+  }, [dataValue, fontSize, legend]);
 
-    return () => {
-      window.removeEventListener(
-        'resize',
-        () => {
-          myChartRef.current?.resize({
-            width: domRef?.current.clientWidth,
-            height: domRef?.current.clientHeight,
-          });
-        },
-        false,
-      );
-      myChartRef.current && myChartRef.current?.dispose();
-    };
-  }, [dataValue, fontSize, legend, domRef.current]);
-  if (!ifOnShowTab) return null;
   return (
     <div className={styles.pieCharts}>
       <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} ref={domRef} />
       <div className="preview-box flex-box-center">
-        <CompressOutlined
+        <ExpandOutlined
           className="preview-icon"
           onClick={() => {
             if (!!myChartRef.current) {

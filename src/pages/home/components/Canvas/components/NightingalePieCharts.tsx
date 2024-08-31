@@ -4,7 +4,7 @@ import options from './commonOptions';
 import _ from 'lodash';
 import { message } from 'antd';
 import { connect, useModel } from 'umi';
-import { CompressOutlined } from '@ant-design/icons';
+import { ExpandOutlined } from '@ant-design/icons';
 import styles from '../index.module.less';
 import bg1 from '@/assets/images/pie-bg-1.png';
 
@@ -148,7 +148,7 @@ const NightingalePieCharts: React.FC<Props> = (props: any) => {
     <div className={`${styles.nightingalePieCharts}`}>
       <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} ref={domRef} />
       <div className="preview-box flex-box-center">
-        <CompressOutlined
+        <ExpandOutlined
           className="preview-icon"
           onClick={() => {
             if (!!myChartRef.current) {
