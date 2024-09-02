@@ -58,7 +58,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
     form1.setFieldsValue(result);
 
     let list: any = {};
-    (timeSelectDefault || []).forEach((item: any) => {
+    (timeSelectDefault || []).forEach?.((item: any) => {
       const { name, parent } = item;
       if (!!parent) {
         list = {
@@ -74,7 +74,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
   // 初始化进入
   useEffect(() => {
     if (modelUpload && started) {
-      btnFetch('get', xName).then((res: any) => {
+      btnFetch(fetchType, xName, { type: 'get' }).then((res: any) => {
         if (!!res && res.code === 'SUCCESS') {
           message.success('success');
           init(res.data);

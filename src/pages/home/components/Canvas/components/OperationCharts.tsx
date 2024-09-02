@@ -63,7 +63,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
       const { config = {} } = node;
       const { initParams = {} } = config;
       let resConfig: any = [];
-      operationList?.forEach((item: any) => {
+      operationList?.forEach?.((item: any) => {
         if (initParams[item]) {
           resConfig = resConfig.concat(
             Object.assign({ enabled: true }, _.omit(initParams[item], 'show')),
@@ -80,7 +80,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
     const { config = {} } = node;
     let { initParams = {} } = config;
     let num = 1;
-    (operationList || []).forEach((item: any) => {
+    (operationList || []).forEach?.((item: any) => {
       if (initParams?.[item] && initParams?.[item]?.widget?.type === 'Measurement') {
         const length = Object?.keys?.(initParams?.[item]?.value)?.length || 1;
         if (length > num) {
@@ -124,7 +124,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
             if (node.id === id.split('$$')[0]) {
               const { initParams = {} } = config;
               let obj = Object.assign({}, initParams);
-              result.forEach((item: any, index: number) => {
+              result.forEach?.((item: any, index: number) => {
                 obj[item?.id || item?.name] = item;
               });
               return Object.assign({}, node, {
@@ -175,7 +175,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
           if (node.id === id.split('$$')[0]) {
             const { initParams = {} } = config;
             let obj = Object.assign({}, initParams);
-            configList.forEach((item: any, index: number) => {
+            configList.forEach?.((item: any, index: number) => {
               if (!!item.enabled) {
                 obj[item?.id || item?.name] = item;
               }

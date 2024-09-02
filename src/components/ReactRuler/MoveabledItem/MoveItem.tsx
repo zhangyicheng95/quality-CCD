@@ -290,7 +290,7 @@ const MoveItem: React.FC<Props> = (props: any) => {
           }
         }
       });
-      props?.data?.filter((i: any) => i.type === 'slider-1')?.[0]?.controlList?.forEach((item: any, index: number) => {
+      props?.data?.filter((i: any) => i.type === 'slider-1')?.[0]?.controlList?.forEach?.((item: any, index: number) => {
         const { ip, url } = item;
         startFlowService(ip || '', url).then((res: any) => {
           if (res && res.code === 'SUCCESS') {
@@ -336,7 +336,7 @@ const MoveItem: React.FC<Props> = (props: any) => {
             }, props?.data?.filter((i: any) => i.type === 'slider-1')?.[0]?.delay * 1000 || 0);
           }
         });
-        props?.data?.filter((i: any) => i.type === 'slider-1')?.[0]?.controlList?.forEach((item: any, index: number) => {
+        props?.data?.filter((i: any) => i.type === 'slider-1')?.[0]?.controlList?.forEach?.((item: any, index: number) => {
           const { ip, url } = item;
           stopFlowService(ip || '', url).then((res: any) => {
             if (res && res.code === 'SUCCESS') {

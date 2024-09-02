@@ -97,7 +97,7 @@ export const renderController = () => {
     offsetY: -1,
     render: renderTBIcon
   };
-  Object.keys(mtConfig).forEach(key => {
+  Object.keys(mtConfig).forEach?.(key => {
     fabric.Object.prototype.controls.mt[key] = mtConfig[key];
   });
 
@@ -108,7 +108,7 @@ export const renderController = () => {
     offsetY: 1,
     render: renderTBIcon
   };
-  Object.keys(mbConfig).forEach(key => {
+  Object.keys(mbConfig).forEach?.(key => {
     fabric.Object.prototype.controls.mb[key] = mbConfig[key];
   });
 
@@ -119,7 +119,7 @@ export const renderController = () => {
     offsetX: -1,
     render: renderLRIcon
   };
-  Object.keys(mlConfig).forEach(key => {
+  Object.keys(mlConfig).forEach?.(key => {
     fabric.Object.prototype.controls.ml[key] = mlConfig[key];
   });
 
@@ -130,7 +130,7 @@ export const renderController = () => {
     offsetX: 1,
     render: renderLRIcon
   };
-  Object.keys(mrConfig).forEach(key => {
+  Object.keys(mrConfig).forEach?.(key => {
     fabric.Object.prototype.controls.mr[key] = mrConfig[key];
   });
 
@@ -140,7 +140,7 @@ export const renderController = () => {
     y: -0.5,
     render: renderVertexIcon
   }
-  Object.keys(tlConfig).forEach(key => {
+  Object.keys(tlConfig).forEach?.(key => {
     fabric.Object.prototype.controls.tl[key] = tlConfig[key];
   });
 
@@ -150,7 +150,7 @@ export const renderController = () => {
     y: -0.5,
     render: renderVertexIcon
   }
-  Object.keys(trConfig).forEach(key => {
+  Object.keys(trConfig).forEach?.(key => {
     fabric.Object.prototype.controls.tr[key] = trConfig[key];
   });
 
@@ -160,7 +160,7 @@ export const renderController = () => {
     y: 0.5,
     render: renderVertexIcon
   }
-  Object.keys(blConfig).forEach(key => {
+  Object.keys(blConfig).forEach?.(key => {
     fabric.Object.prototype.controls.bl[key] = blConfig[key];
   });
 
@@ -170,7 +170,7 @@ export const renderController = () => {
     y: 0.5,
     render: renderVertexIcon
   }
-  Object.keys(brConfig).forEach(key => {
+  Object.keys(brConfig).forEach?.(key => {
     fabric.Object.prototype.controls.br[key] = brConfig[key];
   });
 }
@@ -186,7 +186,7 @@ export const renderRotateController = () => {
     render: renderSvgIcon(ROTATE_IMG),
     withConnection: false
   };
-  Object.keys(mtrConfig).forEach(key => {
+  Object.keys(mtrConfig).forEach?.(key => {
     fabric.Object.prototype.controls.mtr[key] = mtrConfig[key];
   });
 }

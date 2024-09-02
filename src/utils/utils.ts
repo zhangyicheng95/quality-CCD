@@ -120,7 +120,7 @@ export function parseParamsToUrl(params: any) {
   if (params) {
     const keys = Object.keys(params);
 
-    keys.forEach((key) => {
+    keys.forEach?.((key) => {
       const _value = typeof params[key] === 'object' ? JSON.stringify(params[key]) : params[key];
       if (!_value) return;
       queryParam = queryParam ? `${queryParam}&${key}=${_value}` : `${key}=${_value}`;
@@ -430,7 +430,7 @@ export function formatJson(jsonObj: any, callback?: any) {
   jsonString = jsonString.replace(/\r\n\,/g, ',');
   // 特殊处理双引号中的内容
   jsonArray = jsonString.split('\r\n');
-  jsonArray.forEach(function (node: any, index: any) {
+  jsonArray.forEach?.(function (node: any, index: any) {
     // 获取当前字符串段中"的数量
     var num = node.match(/\"/g) ? node.match(/\"/g).length : 0;
     // 判断num是否为奇数来确定是否需要特殊处理
@@ -451,7 +451,7 @@ export function formatJson(jsonObj: any, callback?: any) {
     }
   });
   // 开始处理双引号中的内容，将多余的"去除
-  _index.reverse().forEach(function (item: any, index: any) {
+  _index.reverse().forEach?.(function (item: any, index: any) {
     var newArray = jsonArray.slice(item.start, item.end + 1);
     jsonArray.splice(item.start, item.end + 1 - item.start, newArray.join(''));
   });
@@ -464,7 +464,7 @@ export function formatJson(jsonObj: any, callback?: any) {
   // 将上述转换后的字符串再次以\r\n分割成数组
   jsonArray = jsonString.split('\r\n');
   // 将转换完成的字符串根据PADDING值来组合成最终的形态
-  jsonArray.forEach(function (item: any, index: any) {
+  jsonArray.forEach?.(function (item: any, index: any) {
     var i = 0;
     // 表示缩进的位数，以tab作为计数单位
     var indent = 0;

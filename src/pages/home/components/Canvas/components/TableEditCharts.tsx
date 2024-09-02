@@ -85,7 +85,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
           const worksheet = workbook.Sheets[sheetName];
           const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
           let maxLength = 0;
-          jsonData.forEach((i: any) => {
+          jsonData.forEach?.((i: any) => {
             if (maxLength < i?.length) {
               maxLength = i.length;
             }
@@ -160,7 +160,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
         const list = text.Sheets?.Sheet1;
         let maxRow = 0;
         let maxCol = 0;
-        (Object.entries(list) || [])?.forEach((item: any) => {
+        (Object.entries(list) || [])?.forEach?.((item: any) => {
           if (item[0]?.indexOf('A') > -1) {
             const num = item[0]?.split('A')?.[1];
             if (maxRow < num) {
@@ -222,7 +222,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
           }
         });
         let jsonData: any = new Array(maxRow).fill(new Array(maxCol).fill(undefined));
-        (Object.entries(list) || [])?.forEach((item: any) => {
+        (Object.entries(list) || [])?.forEach?.((item: any) => {
           if (item[0]?.indexOf('A') > -1) {
             const rowNum = item[0]?.split('A')[1];
             if (!jsonData[rowNum - 1]) {

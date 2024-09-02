@@ -111,16 +111,19 @@ const LineCharts: React.FC<Props> = (props: any) => {
     };
   }, []);
   const init = () => {
+    if (!dataValue?.length) {
+      return;
+    }
     let minValue: any = null,
       maxValue: any = null;
     let maxLength = 0;
-    (dataValue || []).forEach((item: any, index: number) => {
+    (dataValue || []).forEach?.((item: any, index: number) => {
       const { value, type } = item;
       if (type === 'markLine') {
         return;
       } else {
         if (_.isArray(value)) {
-          (value || []).forEach((val: any) => {
+          (value || []).forEach?.((val: any) => {
             if (val[0] > maxLength) {
               maxLength = val[0];
             }

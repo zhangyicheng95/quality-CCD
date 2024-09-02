@@ -377,7 +377,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         } else if (type === 'POLYGON') {
           let xList: any = [],
             yList: any = [];
-          data?.forEach((item: any) => {
+          data?.forEach?.((item: any) => {
             xList.push(item.x);
             yList.push(item.y);
           });
@@ -870,7 +870,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
     if (!!gMap.current) {
       let obj = {};
       if (!!features?.length || _.isArray(platFormValue)) {
-        (!!features?.length ? features : platFormValue || [])?.forEach(
+        (!!features?.length ? features : platFormValue || [])?.forEach?.(
           (plat: any, index: number) => {
             const { type, id, shape, props, style } = plat;
             obj = Object.assign({}, obj, {
@@ -1102,7 +1102,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
         .filter(Boolean);
       let ifCangoOn = true;
       try {
-        data1.forEach((item: any) => {
+        data1.forEach?.((item: any) => {
           const { id, props, type, shape } = item;
           const { initParams = {} } = props;
           if ((!props?.type || props?.type?.indexOf('AXIS') < 0) && !initParams?.option_type) {
@@ -1543,7 +1543,7 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
               onClick={() => {
                 const feat = getFeatures();
                 console.log(feat);
-                (feat || []).forEach((item: any) => {
+                (feat || []).forEach?.((item: any) => {
                   const { id, props = {} } = item;
                   // 首先删除当前marker
                   gMap.current.markerLayer.removeMarkerById(props.directionMarkerId);

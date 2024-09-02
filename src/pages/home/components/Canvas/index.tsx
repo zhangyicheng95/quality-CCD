@@ -889,7 +889,7 @@ const Home: React.FC<any> = (props: any) => {
     let home: any = [],
       content: any = [];
 
-    data?.forEach((item: any) => {
+    data?.forEach?.((item: any) => {
       if (
         [
           'header',
@@ -1072,13 +1072,13 @@ const Home: React.FC<any> = (props: any) => {
     if (!_.isObject(contentHeader) || _.isEmpty(contentHeader)) {
       const header = {};
       // 默认显示/隐藏header
-      home?.forEach(
+      home?.forEach?.(
         (item: any) => (header[item.i] = item.i !== 'slider-4' && item.i !== 'slider-1'),
       );
       if (_.isArray(content)) {
-        content?.forEach((item: any) => (header[item.id] = true));
+        content?.forEach?.((item: any) => (header[item.id] = true));
       } else {
-        Object.entries(content)?.forEach((item: any) => {
+        Object.entries(content)?.forEach?.((item: any) => {
           const { value, type } = item[1];
           const id = `${value?.join('$$')}$$${type}`;
           header[id] = true;
@@ -1218,7 +1218,7 @@ const Home: React.FC<any> = (props: any) => {
       let listData: any = [],
         layoutData: any = [],
         resultData: any = [];
-      addContentList?.forEach((item: any, index: number) => {
+      addContentList?.forEach?.((item: any, index: number) => {
         const {
           id: key,
           size,
@@ -1459,6 +1459,7 @@ const Home: React.FC<any> = (props: any) => {
                       symbol,
                       dataZoom,
                       ifOnShowTab,
+                      ifShowColorList,
                     }}
                   />
                 ) : type === 'bar' ? (
@@ -1845,6 +1846,7 @@ const Home: React.FC<any> = (props: any) => {
                 ) : type === 'cable' ? (
                   <CableCharts
                     id={key}
+                    setMyChartVisible={setMyChartVisible}
                     data={{
                       dataValue,
                       fontSize,
@@ -2760,7 +2762,7 @@ const Home: React.FC<any> = (props: any) => {
           }
         }
       });
-      homeSettingData?.['slider-1']?.controlList?.forEach((item: any, index: number) => {
+      homeSettingData?.['slider-1']?.controlList?.forEach?.((item: any, index: number) => {
         const { ip, url } = item;
         startFlowService(ip || '', url).then((res: any) => {
           if (res && res.code === 'SUCCESS') {
@@ -2806,7 +2808,7 @@ const Home: React.FC<any> = (props: any) => {
             }, homeSettingData?.['slider-1']?.delay * 1000 || 0);
           }
         });
-        homeSettingData?.['slider-1']?.controlList?.forEach((item: any, index: number) => {
+        homeSettingData?.['slider-1']?.controlList?.forEach?.((item: any, index: number) => {
           const { ip, url } = item;
           stopFlowService(ip || '', url).then((res: any) => {
             if (res && res.code === 'SUCCESS') {
@@ -2865,7 +2867,7 @@ const Home: React.FC<any> = (props: any) => {
   const errorThrottleAndMerge = useThrottleAndMerge((errors) => {
     // try {
     //   const errorList: any = [];
-    //   errors?.filter((item: any) => isJSON(item.data))?.forEach((msg: any) => {
+    //   errors?.filter((item: any) => isJSON(item.data))?.forEach?.((msg: any) => {
     //     const result = JSON.parse(msg.data);
     //     const level = _.toLower(result.level);
     //     errorList.push({
@@ -4614,6 +4616,14 @@ const Home: React.FC<any> = (props: any) => {
                           },
                         ]}
                       />
+                    </Form.Item>
+                    <Form.Item
+                      name="ifShowColorList"
+                      label="时间缩放条"
+                      initialValue={false}
+                      valuePropName="checked"
+                    >
+                      <Switch />
                     </Form.Item>
                   </Fragment>
                 ) : null}

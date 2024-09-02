@@ -87,7 +87,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
       execParams = initParams;
     }
     let num = 1;
-    (operationList || []).forEach((item: any) => {
+    (operationList || []).forEach?.((item: any) => {
       if (execParams?.[item] && execParams?.[item]?.widget?.type === 'Measurement') {
         const length = Object?.keys?.(execParams?.[item]?.value || {})?.length || 1;
         if (length > num) {
@@ -107,7 +107,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     }
     let resConfig: any = [],
       selectedOptions = {};
-    operationList?.forEach((item: any) => {
+    operationList?.forEach?.((item: any) => {
       const itemGroup = group.filter((i: any) => i.children.includes(item))?.[0];
       if (execParams?.[item]) {
         resConfig = resConfig.concat(
@@ -181,7 +181,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
           // 1.直接发送动态数据
           let result = {};
           let resultEnabled = {};
-          (Object.entries(values) || []).forEach((res: any, index: number) => {
+          (Object.entries(values) || []).forEach?.((res: any, index: number) => {
             const name = res[0]?.split('$$')?.[0];
             const value: any =
               !_.isUndefined(res[1]) && !_.isNull(res[1])
@@ -219,7 +219,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
                   execParams = initParams;
                 }
                 let obj = Object.assign({}, execParams);
-                pre.forEach((item: any, index: number) => {
+                pre.forEach?.((item: any, index: number) => {
                   if (!!item?.name && item?.name !== 'undefined') {
                     obj[item?.name] = {
                       ...item,

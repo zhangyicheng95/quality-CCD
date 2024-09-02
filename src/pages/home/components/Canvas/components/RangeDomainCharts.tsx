@@ -150,7 +150,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
   const differenceData = useMemo(() => {
     let item: any = [];
     if (timeSelectDefault?.length > dataSource?.[0]?.data?.length) {
-      (timeSelectDefault || [])?.forEach((e: any) => {
+      (timeSelectDefault || [])?.forEach?.((e: any) => {
         if (!dataSource?.[0]?.data?.filter((i: any) => i.key === e.value)?.length) {
           // if (!_.isUndefined(e?.value)) {
           item.push({
@@ -172,7 +172,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
           const valData = (res.data || [])?.reduce((pre: any, cen: any) => {
             const { name, data } = cen;
             let list = {};
-            data.forEach((item: any) => {
+            data.forEach?.((item: any) => {
               const { key, value } = item;
               const listName =
                 key == name
@@ -205,7 +205,7 @@ const RangeDomainCharts: React.FC<Props> = (props: any) => {
 
   const titleLength = useMemo(() => {
     let length = 0;
-    dataSource?.forEach((item: any) => {
+    dataSource?.forEach?.((item: any) => {
       if (item?.alias?.length > length) {
         length = item?.alias?.length;
       }

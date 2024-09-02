@@ -82,17 +82,17 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
     const subColumns = xColumns[1]?.xName?.split(',') || [];
     const group = yColumns?.[0]?.yName?.split(',');
     let subTitle = {};
-    columns?.forEach((colu: any, index: number) => {
+    columns?.forEach?.((colu: any, index: number) => {
       subTitle[colu] = subColumns[index] || undefined;
     });
     let content: any = [];
-    yColumns?.slice(1).forEach((item: any, index: number) => {
+    yColumns?.slice(1).forEach?.((item: any, index: number) => {
       const { type, yName } = item;
       if (type === 'range') {
         let obj = { __type: 'range', __name: `${yName}:ON/OFF` },
           obj1 = { __type: 'child', __name: `${yName}:MIN` },
           obj2 = { __type: 'child', __name: `${yName}:MAX` };
-        columns.forEach((colu: any) => {
+        columns.forEach?.((colu: any) => {
           if (colu === '模组') {
             obj[colu] = group[content?.length];
             obj1[colu] = undefined;
@@ -112,7 +112,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
       if (type === 'bool') {
         let obj = { __type: 'bool', __name: `${yName}:ON/OFF` },
           obj1 = { __type: 'child', __name: `${yName}:MATCH` };
-        columns.forEach((colu: any) => {
+        columns.forEach?.((colu: any) => {
           if (colu === '模组') {
             obj[colu] = group[content?.length];
             obj1[colu] = undefined;
@@ -198,12 +198,12 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
           /****************解析excel******************/
           const valueList = result.slice(2);
           let obj = {};
-          (valueList || []).forEach((item1: any) => {
+          (valueList || []).forEach?.((item1: any) => {
             if (item1[1]?.indexOf(':') > -1) {
               if (!obj[item1[1]]) {
                 obj[item1[1]] = {};
               }
-              (keyList || []).forEach((key: any, index: number) => {
+              (keyList || []).forEach?.((key: any, index: number) => {
                 if (key?.indexOf('Q') > -1) {
                   obj[item1[1]][key] = JSON.parse(_.toLower(item1[index]));
                 }
@@ -238,7 +238,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
     form.validateFields().then((values: any) => {
       let obj1: any = [],
         obj2: any = [];
-      Object.entries(values)?.forEach((res: any) => {
+      Object.entries(values)?.forEach?.((res: any) => {
         const name = res[0]?.split('$@$');
         if (res[0]?.indexOf('ON') > -1) {
           obj1.push({

@@ -224,7 +224,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
       const horizontalLength = dataValue?.[0]?.value?.length;
       let nameListLength = 0;
       let numberList: any = [];
-      (dataValue || [])?.forEach((item: any, index: number) => {
+      (dataValue || [])?.forEach?.((item: any, index: number) => {
         const { name, value } = item;
         list[0] = (list[0] || []).concat(name);
 
@@ -266,12 +266,12 @@ const Table2Charts: React.FC<Props> = (props: any) => {
       });
       setBoxSizeSelf(Math.max(boxSize, domRef.current?.clientWidth));
     } else {
-      (dataValue || [])?.forEach((item: any, index: number) => {
+      (dataValue || [])?.forEach?.((item: any, index: number) => {
         const { name, value } = item;
         let text = '';
         let isNum = false;
         let number = 0;
-        (value || [])?.forEach((val: any) => {
+        (value || [])?.forEach?.((val: any) => {
           text = !_.isUndefined(val?.value) ? val?.value + '' : val + '';
 
           try {
@@ -367,7 +367,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
       if (!!tableSizes?.length) {
         tableSizes[index] = Math.max((width / clientWidth) * 100, 10) + '%';
       } else {
-        dataValue.forEach((item: any, ind: number) => {
+        dataValue.forEach?.((item: any, ind: number) => {
           if (ind === index) {
             tableSizes[index] = Math.max((width / clientWidth) * 100, 10) + '%';
           } else {

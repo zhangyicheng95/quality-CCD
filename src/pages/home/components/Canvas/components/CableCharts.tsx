@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import _ from 'lodash';
-import { Button, Form, message, Modal, Tooltip } from 'antd';
-import styles from '../index.module.less';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
+import * as echarts from 'echarts';
 import options from './commonOptions';
-import { connect } from 'umi';
+import * as _ from 'lodash';
+import { message, Modal } from 'antd';
+import { ExpandOutlined } from '@ant-design/icons';
 import ImgCharts from './ImgCharts';
+import { position } from 'html2canvas/dist/types/css/property-descriptors/position';
 
 interface Props {
   data: any;
@@ -12,6 +13,7 @@ interface Props {
   setMyChartVisible?: any;
   onClick?: any;
 }
+let timer: string | number | NodeJS.Timeout | null | undefined = null;
 const localData = {
   length: 120,
   defects: [
@@ -32,274 +34,251 @@ const localData = {
       length: 40,
       type: '[漆粒子｜划伤]',
       url: 'http://localhost:8866/123.jpg',
+    },
+    {
+      position: '下',
+      length: 40,
+      type: '[漆粒子｜划伤]',
+      url: 'http://localhost:8866/123.jpg',
+    },
+    {
+      position: '左',
+      length: 40,
+      type: '[漆粒子｜划伤]',
+      url: 'http://localhost:8866/123.jpg',
     }
   ]
 };
 const CableCharts: React.FC<Props> = (props: any) => {
-  const [form] = Form.useForm();
-  let { data = {}, id, started } = props;
-  let {
-    dataValue = process.env.NODE_ENV === 'development' ? localData : {},
-    fontSize = 20,
-    yName = '',
-    ifOnShowTab,
-  } = data;
-  // 变量
-  let x = 0,
-    y = 0,
-    scale = 1,
-    ulWidth = 0,
-    ulHeight = 0,
-    minScale = 1,
-    maxScale = 10; // 用于计算diff
-  let isDown = false, // 按下标识
-    diff = { x: 0, y: 0 }, // 相对于上一次lastPointermove移动差值
-    lastPointermove = { x: 0, y: 0 }; // 用于计算diff
-  const dom = useRef<any>(null);
-  const timeboxRef = useRef<any>(null);
-  const localDataRef = useRef<any>({});
+  const { data = {}, id, setMyChartVisible } = props;
+  let { dataValue = {}, yName, xName = '', direction, symbol = 'rect', dataZoom, ifShowColorList } = data;
+  if (process.env.NODE_ENV === 'development') {
+    dataValue = localData
+  }
+  const domRef = useRef<any>();
+  const myChartRef = useRef<any>();
   const [visible, setVisible] = useState(false);
   const [visibleData, setVisibleData] = useState<any>(null);
-  const [dataSource, setDataSource] = useState<any>({});
-  const [selectLook, setSelectLook] = useState(false);
-  const [scaleNum, setScaleNum] = useState(1);
-
-  if (selectLook) {
-    dataValue = localDataRef.current;
-  } else {
-    localDataRef.current = dataValue;
-  };
 
   useEffect(() => {
-    const ul: any = dom?.current;
-    if (!ul) return;
-    ul.onmousedown = function (e: any) {
-      console.log(scale);
-
-      if (scale === 1) {
-        return;
-      } else {
-        // e.preventDefault();
-        // e.stopPropagation();
-        isDown = true;
-        lastPointermove = { x: e.clientX, y: e.clientY };
-      }
-    };
-    // 绑定鼠标移动
-    // ul.onmousemove = function (e: any) {
-    //   console.log(scale);
-
-    //   if (!ul?.clientWidth || scale === 1) return;
-    //   e.preventDefault();
-    //   e.stopPropagation();
-    //   if (isDown) {
-    //     const current1 = { x: e.clientX, y: e.clientY };
-    //     diff.x = current1?.x - lastPointermove?.x;
-    //     diff.y = current1.y - lastPointermove.y;
-    //     lastPointermove = { x: current1?.x, y: current1.y };
-    //     x += diff?.x;
-    //     y += diff.y;
-    //     //边界判断
-    //     let offsetX = Math.min(
-    //       Math.max(x, ulWidth - (ulWidth * (scale + 1)) / 2),
-    //       (+ulWidth * (scale - 1)) / 2,
-    //     );
-    //     let offsetY = Math.min(
-    //       Math.max(y, ulHeight - (ulHeight * (scale + 1)) / 2),
-    //       (+ulHeight * (scale - 1)) / 2,
-    //     );
-    //     console.log(scale, offsetX);
-
-    //     ul.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${offsetX}, ${offsetY})`;
-    //   }
-    // };
-    // ul.onmouseup = function () {
-    //   //如果按下时间不到300毫秒便弹起，
-    //   ul.onmousemove = null;
-    //   isDown = false;
-    // };
-  }, []);
-  const onTimeboxChange = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (scale > 1) {
-      const current1 = { x: e.clientX, y: e.clientY };
-      diff.x = current1?.x - lastPointermove?.x;
-      diff.y = current1.y - lastPointermove.y;
-      lastPointermove = { x: current1?.x, y: current1.y };
-      x += diff?.x;
-      y += diff.y;
-      //边界判断
-      let offsetX = Math.min(
-        Math.max(x, ulWidth - (ulWidth * (scale + 1)) / 2),
-        (+ulWidth * (scale - 1)) / 2,
-      );
-      let offsetY = Math.min(
-        Math.max(y, ulHeight - (ulHeight * (scale + 1)) / 2),
-        (+ulHeight * (scale - 1)) / 2,
-      );
-      console.log(scale, offsetX);
-
-      dom.current.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${offsetX}, ${offsetY})`;
-    }
-    return;
-
-
-
-
-    e.preventDefault();
-    e.stopPropagation();
-    const transform0 = Number(e.target?.style?.transform?.split('matrix(')?.[1]?.split(',')?.[0] || "1");
-    const transform4 = Number(e.target?.style?.transform?.split('matrix(')?.[1]?.split(',')?.[4] || "0");
-    console.log(e.target?.style?.transform);
-
-    if (transform0 === 1) {
-      return;
-    };
-    const current1 = { x: e.clientX, y: e.clientY };
-    diff.x = current1?.x - lastPointermove?.x;
-    diff.y = current1.y - lastPointermove.y;
-    lastPointermove = { x: current1?.x, y: current1.y };
-    x += diff?.x;
-    y += diff.y;
-    //边界判断
-    let offsetX = Math.min(
-      Math.max(x, ulWidth - (ulWidth * (scale + 1)) / 2),
-      (+ulWidth * (scale - 1)) / 2,
-    );
-    let offsetY = Math.min(
-      Math.max(y, ulHeight - (ulHeight * (scale + 1)) / 2),
-      (+ulHeight * (scale - 1)) / 2,
-    );
-    // dom.current.style.transform = `matrix(${transform0}, 0, 0, ${transform0}, ${transform4 + marginLeft}, ${offsetY})`;
-
-  };
-  useEffect(() => {
-    dom?.current?.addEventListener('wheel', onScale);
-    dom?.current?.addEventListener('mousedown', function (e: any) {
-      isDown = true;
-      lastPointermove = { x: e.clientX, y: e.clientY };
-      dom?.current?.addEventListener('mousemove', onTimeboxChange);
-    });
-    dom?.current?.addEventListener('mouseup', function (e: any) {
-      dom?.current?.removeEventListener('mousemove', onTimeboxChange);
-    });
-    dom?.current?.addEventListener('mouseleave', function (e: any) {
-      dom?.current?.removeEventListener('mousemove', onTimeboxChange);
-    });
+    myChartRef.current = echarts.init(domRef.current);
 
     return () => {
-      dom?.current?.removeEventListener('wheel', onScale);
-      // dom?.current?.removeEventListener('mousedown', function (e: any) { });
-      // dom?.current?.removeEventListener('mouseup', function (e: any) { });
-      // dom?.current?.removeEventListener('mouseleave', function (e: any) { });
-    }
+      window.removeEventListener(
+        'resize',
+        () => {
+          myChartRef.current.resize({
+            width: domRef.current.clientWidth,
+            height: domRef.current.clientHeight,
+          });
+        },
+        false,
+      );
+      myChartRef.current && myChartRef.current.dispose();
+    };
   }, []);
+  const init = () => {
+    const { defects = [], length } = dataValue;
+    if (!defects?.length) {
+      return;
+    }
+    let maxLength = 0;
+    let centerData = {
+      '上': [],
+      '下': [],
+      '左': [],
+      '右': []
+    };
+    let resData: any = [];
+    (defects || [])?.forEach?.((item: any) => {
+      const { position, length, type, url } = item;
+      if (length > maxLength) {
+        maxLength = length;
+      };
+      if (!!centerData?.[position]) {
+        centerData[position].push({
+          value: [position, length],
+          position, length, type, url
+        });
+      } else {
+        centerData = Object.assign({}, centerData, {
+          [position]: [],
+        });
+      };
+    });
+    Object.entries(centerData)?.map((i: any) => {
+      resData.push({
+        name: i[0],
+        value: i[1],
+      });
+    });
 
+    const option = Object.assign({}, options, {
+      legend: false,
+      tooltip: {
+        trigger: 'item',
+      },
+      grid: Object.assign(
+        {},
+        options.grid,
+        {
+          right: 24,
+          left: 24,
+          bottom: 36
+        },
+      ),
+      yAxis: Object.assign({}, options.yAxis, {
+        type: 'category',
+        name: false,
+        color: 'green',
+        boundaryGap: false, //direction === 'rows' ? ['5%', '5%'] : false,
+        axisLabel: Object.assign({}, options?.xAxis?.axisLabel, {
+          formatter: function (val: any) {
+            return val;
+          },
+        }),
+        axisLine: {
+          show: false
+        },
+        splitLine: {
+          show: true,
+          lineStyle: {
+            type: 'solid',
+            color: 'rgba(144,144,144,.5)',
+            width: 4
+          }
+        },
+        axisTick: {
+          show: false,
+        },
+        splitNumber: 3,
+        scale: true,
+      }),
+      dataZoom: [
+        Object.assign(
+          {
+            type: 'slider',
+            show: true,
+            realtime: true,
+            start: !!dataZoom ? ((maxLength - dataZoom) / maxLength) * 100 : 0,
+            end: 100,
+            showDetai: false,
+            moveHandleStyle: {
+              opacity: 0,
+            },
+            orient: 'horizontal',
+            bottom: 15,
+            left: 80,
+            right: 60,
+            height: 20,
+          }
+        ),
+      ],
+      xAxis: Object.assign({}, options?.xAxis, {
+        axisLabel: Object.assign({}, options?.xAxis?.axisLabel, {
+          formatter: function (val: any) {
+            return val;
+          },
+        }),
+        axisLine: {
+          show: false
+        },
+        boundaryGap: ['1%', '1%'],
+        // splitNumber: 3,
+        splitLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
+        type: 'value',
+        name: '',
+        scale: false,
+        max: length
+      }),
+      seriesLayoutBy: 'row',
+      series: (resData || [])?.map?.((item: any) => {
+        const { name, value, type } = item;
+
+        return {
+          symbolSize: 8,
+          symbol: 'circle', //散点形状设置symbol: circle 圆, rect 方, roundRect 圆角方, triangle 三角, diamond 菱形, pin 气球, arrow 箭头
+          name: name,
+          // color: color,
+          type: 'scatter',
+          tooltip: {
+            position: 'top'
+          },
+          sampling: 'lttb',
+          itemStyle: { color: 'red' },
+          data: _.cloneDeep(value)?.map?.((item: any) => {
+            return (_.cloneDeep(item?.value).reverse())?.concat([item.type, item.url]);
+          }),
+        };
+      }),
+    });
+
+    myChartRef.current.setOption(option);
+    myChartRef.current.resize({
+      width: domRef.current.clientWidth,
+      height: domRef.current.clientHeight,
+    });
+    myChartRef.current.on('click', (e: any) => {
+      timer && clearTimeout(timer);
+      timer = setTimeout(() => {
+        console.log(e);
+        setVisibleData({
+          position: e.data?.[1],
+          length: e.data?.[0],
+          type: e.data?.[2],
+          url: e.data?.[3]
+        });
+        setVisible(true);
+      }, 200);
+    });
+
+    window.addEventListener(
+      'resize',
+      () => {
+        myChartRef.current.resize({
+          width: domRef.current.clientWidth,
+          height: domRef.current.clientHeight,
+        });
+      },
+      false,
+    );
+  };
+  useEffect(() => {
+    if (!_.isObject(dataValue)) {
+      message.error('线缆图数据格式不正确，请检查');
+      console.log('CableCharts:', dataValue);
+      return;
+    }
+
+    setTimeout(() => {
+      init();
+    }, 200);
+  }, [data]);
   const onCancel = () => {
     setVisibleData(null);
     setVisible(false);
-  }
-  const onScale = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
-    let ratio = 1.1;
-    // 缩小
-    if (e.deltaY > 0) {
-      ratio = 1 / 1.1;
-    }
-    // 限制缩放倍数
-    const onscale = scale * ratio;
-    if (onscale > maxScale) {
-      ratio = maxScale / scale;
-      scale = maxScale;
-    } else if (onscale < minScale) {
-      ratio = minScale / scale;
-      scale = minScale;
-    } else {
-      scale = onscale;
-    }
-    const origin = {
-      x: (ratio - 1) * dom?.current.clientWidth * 0.5,
-      y: (ratio - 1) * dom?.current.clientHeight * 0.5,
-    };
-    // 计算偏移量
-    let bounds = dom?.current?.getBoundingClientRect();
-    const marginLeft = e.pageX - bounds.left;
-    x -= (ratio - 1) * (e.clientX - x - marginLeft) - origin?.x;
-    let offsetX = Math.min(
-      Math.max(x, dom?.current.clientWidth - (dom?.current.clientWidth * (scale + 1)) / 2),
-      (dom?.current.clientWidth * (scale - 1)) / 2,
-    );
-    let offsetY = Math.min(
-      Math.max(y, dom?.current.clientHeight - (dom?.current.clientHeight * (scale + 1)) / 2),
-      (+dom?.current.clientHeight * (scale - 1)) / 2,
-    );
-    x = offsetX;
-    y = offsetY;
-    console.log('缩放倍数', scale);
-    console.log('缩放位置', offsetX);
-    setScaleNum(scale);
-    dom.current.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${offsetX}, ${offsetY})`;
-  }
-  if (!ifOnShowTab) return null;
-  return (
-    <div id={`echart-${id}`} className={`flex-box-column ${styles.cableCharts}`} style={{ fontSize }}>
-      <div className="flex-box-column cable-box-left">
-        <div className="flex-box cable-box-left-item">
-          {
-            !!yName ?
-              <div className="cable-box-left-item-title">
-                {yName}
-              </div>
-              : null
-          }
-          <div
-            className="flex-box cable-box-left-item-line"
-            ref={dom}
-            onMouseOver={() => {
-              setSelectLook(true);
-            }}
-            onMouseLeave={() => {
-              setSelectLook(false);
-            }}
-          >
-            {
-              (dataValue?.defects || [])?.map((defect: any, cIndex: number) => {
-                const { position, length, type } = defect;
-                return <Tooltip
-                  key={`cable-box-left-item-line-point-${cIndex}`}
-                  title={<div>
-                    <div>方位：{position}</div>
-                    <div>距离：{length}米</div>
-                    <div>缺陷：{type}</div>
-                  </div>}
-                >
-                  <div
-                    className="cable-box-left-item-line-point"
-                    style={{
-                      left: `${length / dataValue.length * 100}%`,
-                      backgroundColor: 'rgba(200,0,0,1)', // options.color?.[cIndex]
-                    }}
-                    onClick={() => {
-                      setVisibleData(defect);
-                      setVisible(true);
-                    }}
-                  ></div>
-                </Tooltip>
-              })
-            }
-          </div>
-        </div>
-      </div>
-      {/* <div className="flex-box cable-box-right">
-        <div
-          className="cable-box-right-timebox"
-          ref={timeboxRef}
-          style={{ width: '100%', marginLeft: '0%' }}
-        />
+  };
 
-      </div> */}
+  return (
+    <Fragment>
+      <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} ref={domRef} />
+      <div className="preview-box flex-box-center">
+        <ExpandOutlined
+          className="preview-icon"
+          onClick={() => {
+            if (!!myChartRef.current) {
+              const options = myChartRef.current?.getOption?.();
+              setMyChartVisible(options);
+            }
+          }}
+        />
+      </div>
+
       {
         // 每个缺陷
         !!visible ? (
@@ -329,10 +308,8 @@ const CableCharts: React.FC<Props> = (props: any) => {
           </Modal>
         ) : null
       }
-    </div>
+    </Fragment>
   );
 };
 
-export default connect(({ home, themeStore }) => ({
-  started: home.started || false,
-}))(CableCharts);
+export default CableCharts;

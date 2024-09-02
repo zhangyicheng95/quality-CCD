@@ -88,7 +88,7 @@ const Control: React.FC<any> = (props: any) => {
         TagRadioList: any = [],
         list: any = [],
         connectNode: any = [];
-      (nodes || [])?.forEach((node: any, index: number) => {
+      (nodes || [])?.forEach?.((node: any, index: number) => {
         const { alias, name, id, config } = node;
         const { initParams } = config;
         const childrenList = (Object.entries(initParams) || [])
@@ -111,7 +111,7 @@ const Control: React.FC<any> = (props: any) => {
           });
         }
 
-        (Object.entries(initParams) || [])?.forEach((res: any) => {
+        (Object.entries(initParams) || [])?.forEach?.((res: any) => {
           const item = res[1];
           if (item?.widget?.type === 'TagRadio') {
             configOption[item.name] = (item?.widget?.options || {})
@@ -497,7 +497,7 @@ const Control: React.FC<any> = (props: any) => {
               rules={[{ required: false, message: '配置文件' }]}
             >
               <Select
-                style={{ width: '100%' }}
+                style={{ width: '100%', height: '40px' }}
                 size="large"
                 // options={configList}
                 placeholder="配置文件"

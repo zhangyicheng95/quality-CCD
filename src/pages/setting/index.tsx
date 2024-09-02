@@ -122,7 +122,7 @@ const Setting: React.FC<any> = (props) => {
       .then((values) => {
         const { quality_icon, quality_name, selfStart, errorSelfStart } = values;
         let nodeList: any = [].concat(paramData?.flowData?.nodes);
-        (paramData?.flowData?.nodes || []).forEach((key: any) => {
+        (paramData?.flowData?.nodes || []).forEach?.((key: any) => {
           nodeList = nodeList?.map?.((node: any) => {
             const { config } = node;
             const { initParams = {} } = config;
@@ -346,9 +346,8 @@ const Setting: React.FC<any> = (props) => {
                   if (location.href?.indexOf('?') > -1) {
                     hash = location.href.split('?')[1];
                   }
-                  location.href = `${location.href?.split('#/')?.[0]}#/home/edit${
-                    !!hash ? `?${hash}` : ''
-                  }`;
+                  location.href = `${location.href?.split('#/')?.[0]}#/home/edit${!!hash ? `?${hash}` : ''
+                    }`;
                   window.location.reload();
                 }}
               >

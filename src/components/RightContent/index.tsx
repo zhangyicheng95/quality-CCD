@@ -63,7 +63,7 @@ const GlobalHeaderRight: React.FC = () => {
         onClick={() => {
           if (!!localStorage.getItem(`localGridContentList-${params.id}`)) {
             const localStorageKeys = getAllLocalStorageKeys();
-            (localStorageKeys || []).forEach((key: any) => {
+            (localStorageKeys || []).forEach?.((key: any) => {
               if (!['parentOrigin', 'ipUrlList', 'ipUrl-realtime']?.includes(key)) {
                 localStorage.removeItem(key);
               }

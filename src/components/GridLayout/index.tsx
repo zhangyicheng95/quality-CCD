@@ -44,7 +44,7 @@ const GridLayout: React.FC<Props> = (props: any) => {
   const onLayoutChange = (data: any) => {
     const EUlayoutArr: any = [];
     var index = -1;
-    data.forEach((item: any) => {
+    data.forEach?.((item: any) => {
       const { i, x, y, w, h, minW, maxW, minH, maxH } = item;
       index++;
       EUlayoutArr[index] = { i, x, y, w, h, minW, maxW, minH, maxH };

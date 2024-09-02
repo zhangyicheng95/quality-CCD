@@ -2109,7 +2109,7 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
                 index = index * 2;
                 let ngStatus = false;
                 try {
-                  dataValue?.list.forEach((i: any) => {
+                  dataValue?.list.forEach?.((i: any) => {
                     if (i[index]?.type == 0 || i[index + 1]?.type == 0) {
                       ngStatus = true;
                       throw new Error();
@@ -2133,7 +2133,7 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
                 (item: any, index: number) => {
                   let ngStatus = false;
                   try {
-                    item.forEach((i: any) => {
+                    item.forEach?.((i: any) => {
                       if (i?.type == 0) {
                         ngStatus = true;
                         throw new Error();

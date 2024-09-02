@@ -112,7 +112,7 @@ const BodyBoxCharts: React.FC<Props> = (props: any) => {
       },
     });
     let ids: any = [];
-    addContentList.forEach((i: any) => {
+    addContentList.forEach?.((i: any) => {
       if (i?.type === 'rangeDomain') {
         ids.push(i.id);
       }

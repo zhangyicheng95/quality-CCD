@@ -56,10 +56,13 @@ const PieCharts: React.FC<Props> = (props: any) => {
     };
   }, []);
   const init = () => {
+    if (!dataValue?.length) {
+      return;
+    }
     let max = 0;
     let gap = 1;
     let dataSource = [];
-    (dataValue || [])?.forEach((item: any) => {
+    (dataValue || [])?.forEach?.((item: any) => {
       if (max < item?.value) {
         max = item.value;
       }

@@ -19,7 +19,7 @@ export default function GroupSetter() {
       ?.filter((i: any) => i?.sub_type?.indexOf(id) > -1);
     console.log(realCanvas);
 
-    (realCanvas || [])?.forEach((target: any) => {
+    (realCanvas || [])?.forEach?.((target: any) => {
       target.caliperRule = {
         ...target.caliperRule,
         ...values
@@ -45,7 +45,7 @@ export default function GroupSetter() {
                 <Input onChange={(e) => {
                   const val = e?.target?.value || '';
                   const realCanvas = editor.canvas?.getObjects()?.filter((i: any) => i.sub_type === object?.sub_type);
-                  (realCanvas || [])?.forEach((target: any) => {
+                  (realCanvas || [])?.forEach?.((target: any) => {
                     target.caliperRule = {
                       ...target.caliperRule,
                       name: val

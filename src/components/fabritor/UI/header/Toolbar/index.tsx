@@ -433,7 +433,7 @@ export default function Toolbar() {
   const enablePan = () => {
     const enable = editor.switchEnablePan();
     const objects = editor.canvas?.getObjects();
-    objects?.forEach((item: any) => {
+    objects?.forEach?.((item: any) => {
       if (
         item?.sub_type?.indexOf('image') > -1
         ||

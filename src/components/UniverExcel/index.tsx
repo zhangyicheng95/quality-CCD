@@ -91,7 +91,7 @@ const UniverExcel: React.FC = (props: any) => {
         reader.onload = (res: any) => {
           const workbook = XLSX.read(res.target.result, { type: 'binary' });
           const { SheetNames, Sheets } = workbook;
-          (SheetNames || [])?.forEach((item: any) => {
+          (SheetNames || [])?.forEach?.((item: any) => {
             const jsonData: any = XLSX.utils.sheet_to_json(Sheets[item], { header: 1, defval: '' });
             const value = parseCSV2UniverData(jsonData);
             const activeWorkbook: any = univerAPI.current.getActiveWorkbook();

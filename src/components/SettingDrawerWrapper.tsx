@@ -27,7 +27,7 @@ const SettingDrawerWrapper: React.FC<any> = (props: any) => {
       const { contentData } = params;
       setParamData(params);
       if (!!contentData && !!contentData.theme) {
-        themeList.forEach((theme) => {
+        themeList.forEach?.((theme) => {
           const { key, light, dark } = theme;
           document.documentElement.style.setProperty(
             key,
@@ -59,7 +59,7 @@ const SettingDrawerWrapper: React.FC<any> = (props: any) => {
           type: 'themeStore/themeAction',
           payload: navTheme,
         });
-        themeList.forEach((theme) => {
+        themeList.forEach?.((theme) => {
           const { key, light, dark } = theme;
           document.documentElement.style.setProperty(key, navTheme === 'realDark' ? dark : light);
         });
@@ -68,12 +68,12 @@ const SettingDrawerWrapper: React.FC<any> = (props: any) => {
           paramData,
           paramData.id
             ? {
-                contentData: {
-                  ...paramData.contentData,
-                  theme: navTheme,
-                  inIframe: location.hash?.indexOf('inIframe') > -1,
-                },
-              }
+              contentData: {
+                ...paramData.contentData,
+                theme: navTheme,
+                inIframe: location.hash?.indexOf('inIframe') > -1,
+              },
+            }
             : {},
         );
         setInitialState((preInitialState: any) => ({

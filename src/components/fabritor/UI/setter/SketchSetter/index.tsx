@@ -25,7 +25,7 @@ export default function SketchSetter() {
   const handleValuesChange = (values: any) => {
     console.log(values);
 
-    Object.keys(values).forEach((key) => {
+    Object.keys(values).forEach?.((key) => {
       if (key === 'size') {
         editor.setSketchSize({ width: values[key][0], height: values[key][1] });
       } else if (key === 'fill') {

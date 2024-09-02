@@ -170,10 +170,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
           {
             !!leftModelSelected?.url ?
               <img
-                src={leftModelSelected?.url?.indexOf('files/') > -1 ?
-                  leftModelSelected?.url :
-                  `http://localhost:5001/files/${leftModelSelected?.url}`
-                }
+                src={`${leftModelSelected?.url?.indexOf('http') < 0 ? 'http://localhost:8866/file/' : ''}${leftModelSelected?.url}`}
                 alt={leftModelSelected?.url}
                 style={{ width: '100%', height: '100%' }}
               />
@@ -266,6 +263,23 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                 style={{ width: 200 }}
                 onChange={(value) => handleChange('regionCode', value)}
                 options={Object.keys(leftModelSelected?.position || {})?.map((i: any) => ({ key: i, value: i }))}
+              />
+            </Form.Item>
+            <Form.Item
+              name={`productionLine`}
+              label={'产线'}
+              rules={[{ required: false, message: '产线' }]}
+              style={{ marginBottom: 0 }}
+            >
+              <Select
+                // mode="multiple"
+                allowClear
+                style={{ width: 200 }}
+                onChange={(value) => handleChange('productionLine', value)}
+                options={[
+                  { label: '左工位', value: 'left' },
+                  { label: '右工位', value: 'right' }
+                ]}
               />
             </Form.Item>
           </Form>

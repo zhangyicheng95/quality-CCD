@@ -86,6 +86,9 @@ const BarCharts: React.FC<Props> = (props: any) => {
     };
   }, []);
   const init = () => {
+    if (!dataValue?.length) {
+      return;
+    }
     let seriesData: any = [],
       markLineData: any = [],
       yData: any = [],
@@ -94,7 +97,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
       threshold_start,
       threshold_end,
       max = 0;
-    dataValue.forEach((item: any) => {
+    dataValue.forEach?.((item: any) => {
       const { name, value, type } = item;
       if (value > max) {
         max = value;

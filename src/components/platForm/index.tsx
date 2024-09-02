@@ -60,8 +60,8 @@ const PlatFormModal: React.FC<Props> = (props) => {
                 },
                 !!value?.[id]?.option_type
                   ? {
-                      label: value?.[id]?.option_type?.value,
-                    }
+                    label: value?.[id]?.option_type?.value,
+                  }
                   : {},
               ),
             });
@@ -69,7 +69,7 @@ const PlatFormModal: React.FC<Props> = (props) => {
           .filter(Boolean);
         let ifCangoOn = true;
         try {
-          data1.forEach((item: any) => {
+          data1.forEach?.((item: any) => {
             const { id, props, type, shape } = item;
             const { initParams = {} } = props;
             if ((!props?.type || props?.type?.indexOf('AXIS') < 0) && !initParams?.option_type) {
@@ -77,7 +77,7 @@ const PlatFormModal: React.FC<Props> = (props) => {
               throw new Error();
             }
           });
-        } catch (err) {}
+        } catch (err) { }
         if (!ifCangoOn) {
           message.error('画框未进行标注，请返回标注');
           return;
@@ -98,52 +98,52 @@ const PlatFormModal: React.FC<Props> = (props) => {
                   cen[0] === 'roi'
                     ? !!cen[1]?.realValue?.x
                       ? {
-                          [cen[0]]: Object.assign(
-                            {},
-                            {
-                              cx: {
-                                alias: 'cx',
-                                value: Number(cen[1]?.realValue?.x?.value?.toFixed(2)),
-                              },
-                              cy: {
-                                alias: 'cy',
-                                value: Number(cen[1]?.realValue?.y?.value?.toFixed(2)),
-                              },
+                        [cen[0]]: Object.assign(
+                          {},
+                          {
+                            cx: {
+                              alias: 'cx',
+                              value: Number(cen[1]?.realValue?.x?.value?.toFixed(2)),
                             },
-                            type === 'RECT'
-                              ? Object.assign(
-                                  {
-                                    width: {
-                                      alias: 'width',
-                                      value: Number(cen[1]?.realValue?.width?.value?.toFixed(2)),
-                                    },
-                                    height: {
-                                      alias: 'height',
-                                      value: Number(cen[1]?.realValue?.height?.value?.toFixed(2)),
-                                    },
-                                  },
-                                  props?.type === 'AXIS'
-                                    ? {
-                                        xLength: {
-                                          alias: 'xLength',
-                                          value: Number(
-                                            cen[1]?.realValue?.xLength?.value?.toFixed(2),
-                                          ),
-                                        },
-                                        yLength: {
-                                          alias: 'yLength',
-                                          value: Number(
-                                            cen[1]?.realValue?.yLength?.value?.toFixed(2),
-                                          ),
-                                        },
-                                      }
-                                    : {},
-                                )
-                              : {
-                                  ..._.omit(_.omit(cen[1]?.realValue, 'x'), 'y'),
+                            cy: {
+                              alias: 'cy',
+                              value: Number(cen[1]?.realValue?.y?.value?.toFixed(2)),
+                            },
+                          },
+                          type === 'RECT'
+                            ? Object.assign(
+                              {
+                                width: {
+                                  alias: 'width',
+                                  value: Number(cen[1]?.realValue?.width?.value?.toFixed(2)),
                                 },
-                          ),
-                        }
+                                height: {
+                                  alias: 'height',
+                                  value: Number(cen[1]?.realValue?.height?.value?.toFixed(2)),
+                                },
+                              },
+                              props?.type === 'AXIS'
+                                ? {
+                                  xLength: {
+                                    alias: 'xLength',
+                                    value: Number(
+                                      cen[1]?.realValue?.xLength?.value?.toFixed(2),
+                                    ),
+                                  },
+                                  yLength: {
+                                    alias: 'yLength',
+                                    value: Number(
+                                      cen[1]?.realValue?.yLength?.value?.toFixed(2),
+                                    ),
+                                  },
+                                }
+                                : {},
+                            )
+                            : {
+                              ..._.omit(_.omit(cen[1]?.realValue, 'x'), 'y'),
+                            },
+                        ),
+                      }
                       : {}
                     : { [cen[0]]: cen[1]?.value },
                   { localPath: data.localPath },

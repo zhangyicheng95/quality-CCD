@@ -44,9 +44,8 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
           time: new Date().getTime(),
           ...result,
           level: _.toLower(result.level),
-          message: `（机器${ip}） ${
-            _.isArray(result?.message) ? result.message.join(',') : result.message
-          }`,
+          message: `（机器${ip}） ${_.isArray(result?.message) ? result.message.join(',') : result.message
+            }`,
         };
         openNotificationWithIcon(currentData);
       } catch (err) {
@@ -62,9 +61,8 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
   const initStatus = (list: any, index: number) => {
     const item = list?.[index];
     if (!!item) {
-      const url = `${item?.ip?.indexOf('http') > -1 ? '' : 'http://'}${item?.ip}${
-        item?.ip?.indexOf(':') > -1 ? '' : ':8866'
-      }`;
+      const url = `${item?.ip?.indexOf('http') > -1 ? '' : 'http://'}${item?.ip}${item?.ip?.indexOf(':') > -1 ? '' : ':8866'
+        }`;
       getFlowStatusService(item.projectId, url).then((res) => {
         statusListRef.current = {
           ...statusListRef.current,
@@ -113,7 +111,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
 
     return () => {
       timeRef.current = false;
-      Object.entries(socketRef.current).forEach((item: any) => {
+      Object.entries(socketRef.current).forEach?.((item: any) => {
         item[1]?.close();
       });
     };
@@ -122,7 +120,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
     let length = yName.length;
     (timeSelectDefault || [])
       ?.sort((a: any, b: any) => a.sort - b.sort)
-      ?.forEach((item: any) => {
+      ?.forEach?.((item: any) => {
         const { label } = item;
         if (label?.length > length) {
           length = label?.length;
@@ -132,9 +130,8 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
   }, [timeSelectDefault, fontSize, yName]);
   // 启动任务
   const start = (id: string, ip: string) => {
-    const url = `${ip?.indexOf('http') > -1 ? '' : 'http://'}${ip}${
-      ip?.indexOf(':') > -1 ? '' : ':8866'
-    }`;
+    const url = `${ip?.indexOf('http') > -1 ? '' : 'http://'}${ip}${ip?.indexOf(':') > -1 ? '' : ':8866'
+      }`;
     return new Promise((resolve: any, reject: any) => {
       if (!ipString) {
         resolve(false);
@@ -171,9 +168,8 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
   };
   // 停止任务
   const end = (id: string, ip: string) => {
-    const url = `${ip?.indexOf('http') > -1 ? '' : 'http://'}${ip}${
-      ip?.indexOf(':') > -1 ? '' : ':8866'
-    }`;
+    const url = `${ip?.indexOf('http') > -1 ? '' : 'http://'}${ip}${ip?.indexOf(':') > -1 ? '' : ':8866'
+      }`;
     return new Promise((resolve: any, reject: any) => {
       if (!ipString) {
         reject(false);

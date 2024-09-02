@@ -55,7 +55,7 @@ const HeatMapCharts: React.FC<Props> = (props: any) => {
     // 将数据传给热力图实例进行渲染
     let max = 0;
     let result: any = [];
-    (dataValue || [])?.forEach((item: any) => {
+    (dataValue || [])?.forEach?.((item: any) => {
       const { x, y, value } = item;
       if (max < value) {
         max = value;

@@ -292,7 +292,7 @@ export default class Editor {
     this._pan.enable = !this._pan.enable;
     this.canvas.discardActiveObject();
     this.canvas.hoverCursor = this._pan.enable ? 'grab' : 'move';
-    this.canvas.getObjects().forEach((obj: any) => {
+    this.canvas.getObjects().forEach?.((obj: any) => {
       if (obj.id !== SKETCH_ID) {
         obj.set('selectable', !this._pan.enable);
       }

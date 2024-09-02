@@ -69,7 +69,7 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
   const triggerUpdate = () => {
     initList();
     let ids: any = [];
-    addContentList.forEach((i: any) => {
+    addContentList.forEach?.((i: any) => {
       if (i?.type === 'rangeDomain') {
         ids.push(i.id);
       }
@@ -130,7 +130,7 @@ const ModelSwitchCharts: React.FC<Props> = (props: any) => {
         const valData = (res.data || [])?.reduce((pre: any, cen: any) => {
           const { name, data } = cen;
           let list = {};
-          data.forEach((item: any) => {
+          data.forEach?.((item: any) => {
             const { key, value } = item;
             const listName =
               key == name ? `${parentBodyBoxTab}$$${key}` : `${parentBodyBoxTab}$$${key}$$${name}`;

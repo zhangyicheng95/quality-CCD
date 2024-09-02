@@ -15,7 +15,7 @@ interface Props {
 
 const PointCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id, setMyChartVisible } = props;
-  let { dataValue = [], yName, xName = '', direction, symbol = 'rect', dataZoom } = data;
+  let { dataValue = [], yName, xName = '', direction, symbol = 'rect', dataZoom, ifShowColorList } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
       {
@@ -94,11 +94,14 @@ const PointCharts: React.FC<Props> = (props: any) => {
     };
   }, []);
   const init = () => {
+    if (!dataValue?.length) {
+      return;
+    };
     let maxLength = 0;
-    dataValue.forEach((item: any) => {
+    dataValue?.forEach?.((item: any) => {
       const { value = [] } = item;
       if (_.isArray(value)) {
-        (value || []).forEach((val: any) => {
+        (value || []).forEach?.((val: any) => {
           if (val[0] > maxLength) {
             maxLength = val[0];
           }
@@ -117,7 +120,7 @@ const PointCharts: React.FC<Props> = (props: any) => {
         {
           right: `${xName?.length * (xName?.length < 4 ? 24 : 16)}px`,
         },
-        direction === 'rows' ? { left: 30 } : { bottom: 30 },
+        direction === 'rows' ? { left: ifShowColorList ? 30 : 15 } : { bottom: ifShowColorList ? 30 : 15 },
       ),
       yAxis: Object.assign({}, options.yAxis, {
         type: 'value', //direction === 'rows' ? 'category' : 'value',
@@ -137,7 +140,7 @@ const PointCharts: React.FC<Props> = (props: any) => {
         splitNumber: 3,
         scale: false,
       }),
-      dataZoom: [
+      dataZoom: ifShowColorList ? [
         Object.assign(
           {
             type: 'slider',
@@ -166,7 +169,7 @@ const PointCharts: React.FC<Props> = (props: any) => {
               height: 20,
             },
         ),
-      ],
+      ] : [],
       xAxis: Object.assign({}, options?.xAxis, {
         axisLabel: Object.assign({}, options?.xAxis?.axisLabel, {
           formatter: function (val: any) {

@@ -69,7 +69,7 @@ export default function LineSetter() {
               <Input onChange={(e) => {
                 const val = e?.target?.value || '';
                 const realCanvas = editor.canvas?.getObjects()?.filter((i: any) => i.sub_type === object?.sub_type);
-                (realCanvas || [])?.forEach((target: any) => {
+                (realCanvas || [])?.forEach?.((target: any) => {
                   target.caliperRule = {
                     ...target.caliperRule,
                     name: val
@@ -87,7 +87,7 @@ export default function LineSetter() {
                   >
                     <InputNumber onChange={(val) => {
                       const realCanvas = editor.canvas?.getObjects()?.filter((i: any) => i.sub_type === object?.sub_type);
-                      (realCanvas || [])?.forEach((target: any) => {
+                      (realCanvas || [])?.forEach?.((target: any) => {
                         target.caliperRule = {
                           ...target.caliperRule,
                           [item[0]]: val

@@ -342,7 +342,7 @@ export default function Fabritor(props: Props) {
         const canvasWidth = editor.canvas?.width;
         // 渲染之前，先把前一次算法结果删除
         const json = editor.canvas?.getObjects();
-        json?.forEach((item: any) => {
+        json?.forEach?.((item: any) => {
           if (
             item?.sub_type?.indexOf('outer_point') > -1
             || item?.sub_type?.indexOf('line_result') > -1
@@ -355,7 +355,7 @@ export default function Fabritor(props: Props) {
         let pointFormatList: any = [];
         // 然后开始渲染新的结果
         const { type, data = [] } = shapeFromData;
-        (data || [])?.forEach((i: any) => {
+        (data || [])?.forEach?.((i: any) => {
           if (i.type === 'image') {
             addImage({
               imageSource: i.url,

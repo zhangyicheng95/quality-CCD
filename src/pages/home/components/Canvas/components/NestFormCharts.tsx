@@ -42,7 +42,7 @@ const NestFormCharts: React.FC<Props> = (props: any) => {
     });
 
     let num = 1;
-    (Object.entries(options) || []).forEach((item: any) => {
+    (Object.entries(options) || []).forEach?.((item: any) => {
       if (item[1] && item[1]?.widget?.type === 'Measurement') {
         const length = Object?.keys?.(item[1]?.value || {})?.length || 1;
         if (length > num) {
@@ -109,7 +109,7 @@ const NestFormCharts: React.FC<Props> = (props: any) => {
       .then((values) => {
         setConfigList((pre: any) => {
           let result = {};
-          (Object.entries(values) || []).forEach((res: any, index: number) => {
+          (Object.entries(values) || []).forEach?.((res: any, index: number) => {
             const name = res[0]?.split('$$')?.[0];
             const value: any =
               !_.isUndefined(res[1]) && !_.isNull(res[1])

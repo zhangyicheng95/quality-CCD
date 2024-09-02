@@ -247,7 +247,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     // for (let i = 1; i < 48; i++) {
     //     arr.push(i);
     // }
-    // arr.forEach((i: any, index: number) => {
+    // arr.forEach?.((i: any, index: number) => {
     //     setTimeout(() => {
     //         if (!!scene.current) {
     //             loadModel(`models/lines_${i}.ply`, addType);
@@ -326,7 +326,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       }
       child = null;
     });
-    (Object.values(measurementLabels) || [])?.forEach((label: any) => {
+    (Object.values(measurementLabels) || [])?.forEach?.((label: any) => {
       scene?.current?.remove?.(label);
     });
     // 场景中的参数释放清理或者置空等
@@ -502,12 +502,12 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       const models = getAllModelsFromScene(scene.current);
       setSelectedBtn((prev: any) => {
         if ((prev || []).includes('bzBtn02')) {
-          models.forEach((mesh: any) => {
+          models.forEach?.((mesh: any) => {
             (mesh.children || []).filter((i: any) => i?.type === 'BoxHelper')[0].visible = false;
           });
           return prev.filter((i: any) => i !== 'bzBtn02');
         } else {
-          models.forEach((mesh: any) => {
+          models.forEach?.((mesh: any) => {
             (mesh.children || []).filter((i: any) => i?.type === 'BoxHelper')[0].visible = true;
           });
           return (prev || []).concat('bzBtn02');
@@ -537,7 +537,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
        * 0：关闭透视，显示卡片
        */
       function toggleLabelOpacity(type: number) {
-        Object.entries(measurementLabels).forEach((label: any) => {
+        Object.entries(measurementLabels).forEach?.((label: any) => {
           if (!!label[1]?.element?.firstElementChild) {
             label[1].element.firstElementChild.style.display = type === 1 ? 'none' : 'block';
           }
@@ -546,7 +546,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
           }
         });
       }
-      models.forEach((mesh: any) => {
+      models.forEach?.((mesh: any) => {
         if (!!mesh.material) {
           // 有材质
           const depth = mesh.material?.depthTest;
@@ -584,7 +584,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     bzBtn04?.addEventListener('click', bzBtnFun04);
     // 清理数据
     function bzBtnFun05() {
-      (measurements || []).forEach((line: any) => {
+      (measurements || []).forEach?.((line: any) => {
         scene.current.remove(line);
         scene.current.remove(measurementLabels[line.name]);
         measurementLabels[line.name] = null;
@@ -725,10 +725,10 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         // 显示边框
         const models = getAllModelsFromScene(scene.current);
         const axis: any = scene?.current?.getObjectByName?.('axis');
-        models.forEach((mesh: any) => {
+        models.forEach?.((mesh: any) => {
           (mesh.children || [])
             .filter((i: any) => i?.type === 'BoxHelper')
-            .forEach((child: any) => {
+            .forEach?.((child: any) => {
               child.visible = true;
             });
         });
@@ -783,7 +783,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       setSelectedBtn((prev: any) => {
         if (!(prev || []).includes('bzBtn02')) {
           // 隐藏边框
-          models.forEach((mesh: any) => {
+          models.forEach?.((mesh: any) => {
             const item = (mesh.children || []).filter(
               (i: any) => i.name !== 'measureBoxHelper' && i?.type === 'BoxHelper',
             );
@@ -896,7 +896,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       console.log('scale:', scale);
       const basicPosition = new THREE.Vector3(0, -scale * max, 0);
       if (addType === 'add') {
-        models?.forEach((model: any) => {
+        models?.forEach?.((model: any) => {
           model.material = new THREE.PointsMaterial({
             // MeshStandardMaterial,MeshBasicMaterial,PointsMaterial
             color: '#808080',
@@ -1029,7 +1029,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
           left: [],
         };
         let indexCount = 0;
-        (value || []).forEach((item: any, index: number) => {
+        (value || []).forEach?.((item: any, index: number) => {
           let { type } = item;
           if (type === 'left') {
             counter.left.push(item);
@@ -1041,8 +1041,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             counter.bottom.push(item);
           }
         });
-        Object.entries(counter)?.forEach((count: any) => {
-          (count[1] || []).forEach((item: any, index: number) => {
+        Object.entries(counter)?.forEach?.((count: any) => {
+          (count[1] || []).forEach?.((item: any, index: number) => {
             let { type, name, standardValue, measureValue, offsetValue, position = [] } = item;
             const box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
             const length = box.max.x - box.min.x; // 模型长度
@@ -1378,7 +1378,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       minY: any = [],
       minZ: any = [];
     const models = getAllModelsFromScene(scene.current);
-    (models || []).forEach((mesh: any) => {
+    (models || []).forEach?.((mesh: any) => {
       const box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
       maxX.push(box.max.x);
       maxY.push(box.max.y);
@@ -1408,7 +1408,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
   const captureScreenshot = (type?: any) => {
     return new Promise((resolve, reject) => {
       // 将射线隐藏
-      (measurements || []).forEach((line: any) => {
+      (measurements || []).forEach?.((line: any) => {
         scene.current?.remove?.(line);
       });
       // requestAnimationFrame 确保截图在页面完全加载和渲染之后进行
@@ -1422,7 +1422,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
           link.click();
         }
         // 将射线显示回来
-        (measurements || []).forEach((line: any) => {
+        (measurements || []).forEach?.((line: any) => {
           scene.current?.add?.(line);
         });
         imageDataURL = imageDataURL.split('data:image/png;base64,')[1];

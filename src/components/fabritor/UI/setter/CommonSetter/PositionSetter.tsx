@@ -62,7 +62,7 @@ export default function PositionSetter() {
   }
 
   const handleChange = (values: any) => {
-    Object.keys(values).forEach(key => {
+    Object.keys(values).forEach?.(key => {
       const value = values[key];
       if (key === 'width' || key === 'height') {
         handleSize(key, value);

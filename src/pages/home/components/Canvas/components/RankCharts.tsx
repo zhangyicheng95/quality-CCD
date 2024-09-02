@@ -31,7 +31,7 @@ const RankCharts: React.FC<Props> = (props: any) => {
 
   const maxValue = useMemo(() => {
     let num = 0;
-    dataValue.forEach((item: any) => {
+    dataValue.forEach?.((item: any) => {
       if (num < item?.value) {
         num = item?.value;
       }

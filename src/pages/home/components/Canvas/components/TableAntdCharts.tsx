@@ -114,7 +114,7 @@ const TableAntdCharts: React.FC<Props> = (props: any) => {
     let result: any = [];
     if (!!dataValue?.[0] && !!Object.keys(dataValue?.[0])?.length) {
       let obj = Object.keys(_.omit(_.omit(dataValue?.[0], 'key'), 'children'));
-      obj.forEach((item: string, index: number) => {
+      obj.forEach?.((item: string, index: number) => {
         if (_.isString(item)) {
           result.push(item);
         }
@@ -126,7 +126,7 @@ const TableAntdCharts: React.FC<Props> = (props: any) => {
     let result: any = [];
     if (!!dataValue?.[0] && !!Object.keys(dataValue?.[0])?.length) {
       let obj = Object.keys(_.omit(_.omit(dataValue?.[0], 'key'), 'children'));
-      obj.forEach((item: string, index: number) => {
+      obj.forEach?.((item: string, index: number) => {
         if (_.isString(item)) {
           result.push({
             title: item,
@@ -137,7 +137,7 @@ const TableAntdCharts: React.FC<Props> = (props: any) => {
       });
     }
     let length = 0;
-    (timeSelectDefault || [])?.forEach((item: any) => {
+    (timeSelectDefault || [])?.forEach?.((item: any) => {
       const { label } = item;
       length += label?.length;
     });
@@ -204,12 +204,12 @@ const TableAntdCharts: React.FC<Props> = (props: any) => {
       function func(obj: any) {
         result.push(obj.key);
         if (!!obj?.children?.length) {
-          (obj?.children || []).forEach((i: any) => {
+          (obj?.children || []).forEach?.((i: any) => {
             func(i);
           });
         }
       }
-      (dataValue || []).forEach((i: any) => {
+      (dataValue || []).forEach?.((i: any) => {
         func(i);
       });
 

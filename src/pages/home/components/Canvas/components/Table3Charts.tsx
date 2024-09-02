@@ -136,7 +136,7 @@ const Table3Charts: React.FC<Props> = (props: any) => {
       if (!!tableSizes?.length) {
         tableSizes[index] = (width / clientWidth) * 100 + '%';
       } else {
-        dataValue.forEach((item: any, ind: number) => {
+        dataValue.forEach?.((item: any, ind: number) => {
           if (ind === index) {
             tableSizes[index] = (width / clientWidth) * 100 + '%';
           } else {

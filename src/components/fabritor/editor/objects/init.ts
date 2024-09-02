@@ -10,7 +10,7 @@ export const initObjectPrototype = () => {
   }
 
   // Text global config
-  Object.keys(OBJECT_DEFAULT_CONFIG).forEach(key => {
+  Object.keys(OBJECT_DEFAULT_CONFIG).forEach?.(key => {
     fabric.Object.prototype[key] = OBJECT_DEFAULT_CONFIG[key];
   });
 
@@ -21,7 +21,7 @@ export const initObjectPrototype = () => {
     borderScaleFactor: 3,
     padding: 10
   }
-  Object.keys(asConfig).forEach(key => {
+  Object.keys(asConfig).forEach?.(key => {
     fabric.ActiveSelection.prototype[key] = asConfig[key];
     fabric.Group.prototype[key] = asConfig[key];
   });

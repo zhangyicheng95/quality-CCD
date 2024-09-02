@@ -213,7 +213,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     mesh.current?.dispose?.();
     mesh.current?.material?.dispose?.();
     mesh.current?.geometry?.dispose?.();
-    (Object.values(measurementLabels) || [])?.forEach((label: any) => {
+    (Object.values(measurementLabels) || [])?.forEach?.((label: any) => {
       scene?.current?.remove?.(label);
     });
     // 场景中的参数释放清理或者置空等
@@ -278,17 +278,17 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       let pointList: any = [],
         areaIndex = 0,
         regionIndex = 1;
-      (value || []).forEach((item1: any, index: number) => {
+      (value || []).forEach?.((item1: any, index: number) => {
         const list1 = Object.entries(item1)?.filter(
           (i: any) => _.isArray(i[1]) && _.isObject(i[1][0]),
         );
-        list1?.forEach((item2: any, index2: number) => {
+        list1?.forEach?.((item2: any, index2: number) => {
           if (!_.isArray(item2[1])) return;
-          (item2[1] || []).forEach((item3: any, index3: number) => {
+          (item2[1] || []).forEach?.((item3: any, index3: number) => {
             if (!item3 || !item3?.Track) return;
             const { Track, ...rest } = item3;
             const list: any = [];
-            (Track || []).forEach((item4: any, index4: number) => {
+            (Track || []).forEach?.((item4: any, index4: number) => {
               const { Point_Normal, point, normVec, ...restItem4 } = item4;
               const po = Point_Normal?.slice(0, 3),
                 no = Point_Normal?.slice(3);
@@ -430,14 +430,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       const models = getAllModelsFromScene(scene.current);
       setSelectedBtn((prev: any) => {
         if ((prev || []).includes('bzBtn02')) {
-          models.forEach((mesh: any) => {
+          models.forEach?.((mesh: any) => {
             if (!!(mesh.children || []).filter((i: any) => i.name === 'border')?.[0]) {
               (mesh.children || []).filter((i: any) => i.name === 'border')[0].visible = false;
             }
           });
           return prev.filter((i: any) => i !== 'bzBtn02');
         } else {
-          models.forEach((mesh: any) => {
+          models.forEach?.((mesh: any) => {
             if (!!(mesh.children || []).filter((i: any) => i.name === 'border')?.[0]) {
               (mesh.children || []).filter((i: any) => i.name === 'border')[0].visible = true;
             }
@@ -469,7 +469,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
        * 0：关闭透视，显示卡片
        */
       function toggleLabelOpacity(type: number) {
-        Object.entries(measurementLabels).forEach((label: any) => {
+        Object.entries(measurementLabels).forEach?.((label: any) => {
           if (!!label[1]?.element?.firstElementChild) {
             label[1].element.firstElementChild.style.display = type === 1 ? 'none' : 'block';
           }
@@ -478,7 +478,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
           }
         });
       }
-      models.forEach((mesh: any) => {
+      models.forEach?.((mesh: any) => {
         if (!!mesh.material) {
           setSelectedBtn((prev: any) => {
             if (mesh?.name?.indexOf('editArea') < 0) {
@@ -523,14 +523,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     // 清理数据
     function bzBtnFun05() {
       const models = getAllModelsFromScene(scene.current);
-      models.forEach((object: any) => {
+      models.forEach?.((object: any) => {
         if (object?.name?.indexOf('editArea-') > -1) {
           scene.current?.remove?.(object); // 从场景中移除物体
           // 释放物体占用的内存资源
           if (object.geometry) object?.geometry?.dispose?.();
           if (object.material) {
             if (!!object?.material?.materials?.length) {
-              object.material.materials.forEach(function (mat: any) {
+              object.material.materials.forEach?.(function (mat: any) {
                 mat?.dispose?.();
               });
             } else {
@@ -658,11 +658,11 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         // 显示边框
         const models = getAllModelsFromScene(scene.current);
         const axis: any = scene?.current?.getObjectByName?.('axis');
-        models.forEach((mesh: any) => {
+        models.forEach?.((mesh: any) => {
           if (mesh.name?.indexOf('editArea-') < 0) {
             (mesh.children || [])
               .filter((i: any) => i.name === 'border')
-              .forEach((child: any) => {
+              .forEach?.((child: any) => {
                 child.visible = true;
               });
           }
@@ -688,7 +688,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       setSelectedBtn((prev: any) => {
         if (!(prev || []).includes('bzBtn02')) {
           // 隐藏边框
-          models.forEach((mesh: any) => {
+          models.forEach?.((mesh: any) => {
             const item = (mesh.children || []).filter(
               (i: any) => i.name !== 'measureBoxHelper' && i.name === 'border',
             );
@@ -820,14 +820,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     if (!!scene.current && addType === 'rxptPoint') {
       /***************清理框选区域********************/
       const models = getAllModelsFromScene(scene.current);
-      models.forEach((object: any) => {
+      models.forEach?.((object: any) => {
         if (object?.name?.indexOf('editArea-') > -1) {
           scene.current?.remove?.(object); // 从场景中移除物体
           // 释放物体占用的内存资源
           if (object.geometry) object?.geometry?.dispose?.();
           if (object.material) {
             if (!!object?.material?.materials?.length) {
-              object.material.materials.forEach(function (mat: any) {
+              object.material.materials.forEach?.(function (mat: any) {
                 mat?.dispose?.();
               });
             } else {
@@ -1028,17 +1028,17 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       //     position: [null],
       //   },
       // ] ||
-      (value || []).forEach((item1: any, index: number) => {
+      (value || []).forEach?.((item1: any, index: number) => {
         const list1 = Object.entries(item1)?.filter(
           (i: any) => _.isArray(i[1]) && _.isObject(i[1][0]),
         );
-        list1?.forEach((item2: any, index2: number) => {
+        list1?.forEach?.((item2: any, index2: number) => {
           if (!_.isArray(item2[1])) return;
-          (item2[1] || []).forEach((item3: any, index3: number) => {
+          (item2[1] || []).forEach?.((item3: any, index3: number) => {
             if (!item3 || !item3?.Track) return;
             const { Track, ...rest } = item3;
             const list: any = [];
-            (Track || []).forEach((item4: any, index4: number) => {
+            (Track || []).forEach?.((item4: any, index4: number) => {
               const { Point_Normal, point, normVec, ...restItem4 } = item4;
               const po = Point_Normal?.slice(0, 3),
                 no = Point_Normal?.slice(3);
@@ -1106,7 +1106,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
   // 添加轨迹点
   const addPointFun = (list: any) => {
     if (list?.length) {
-      (list || []).forEach((item: any, index: number) => {
+      (list || []).forEach?.((item: any, index: number) => {
         const { point, normVec, areaIndex, regionID, robID, surfaceType } = item;
         const scale = camera?.current?.zoom || 1.5;
         const geometry = new THREE.SphereGeometry(scale * 10, 32, 32);
@@ -1202,7 +1202,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       console.log('scale:', scale);
       const basicPosition = new THREE.Vector3(0, -scale * max, 0);
       if (addType === 'add') {
-        // models?.forEach((model: any) => {
+        // models?.forEach?.((model: any) => {
         //     model.material = new THREE.PointsMaterial({   // MeshStandardMaterial,MeshBasicMaterial,PointsMaterial
         //         color: '#808080',
         //     });
@@ -1328,7 +1328,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
           left: [],
         };
         let indexCount = 0;
-        (value || []).forEach((item: any, index: number) => {
+        (value || []).forEach?.((item: any, index: number) => {
           let { type, position } = item;
           const newPosition: any = [].concat(position);
           if (
@@ -1350,8 +1350,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             counter.bottom.push(item);
           }
         });
-        Object.entries(counter)?.forEach((count: any) => {
-          (count[1] || []).forEach((item: any, index: number) => {
+        Object.entries(counter)?.forEach?.((count: any) => {
+          (count[1] || []).forEach?.((item: any, index: number) => {
             let {
               type,
               name,
@@ -1862,7 +1862,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     } else if (!name && addType === 'add') {
       // 没有name
       const models = getAllModelsFromScene(scene.current);
-      models.forEach((mesh: any) => {
+      models.forEach?.((mesh: any) => {
         if (mesh.name?.indexOf('editPoint') > -1) {
           scene.current?.remove?.(mesh);
         }
@@ -1882,7 +1882,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     const models = getAllModelsFromScene(scene.current).filter(
       (i: any) => i.name?.indexOf('tx') > -1,
     );
-    (models || []).forEach((mesh: any) => {
+    (models || []).forEach?.((mesh: any) => {
       const box = new THREE.Box3().setFromObject(mesh); // 获取模型的包围盒
       maxX.push(box.max.x);
       maxY.push(box.max.y);
@@ -1922,14 +1922,14 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       let hideLines: any = [];
       // 截图时，隐藏部分卡片
       if ([1, 3].includes(index)) {
-        Object.entries(measurementLabels).forEach((label: any, index: number) => {
+        Object.entries(measurementLabels).forEach?.((label: any, index: number) => {
           if (
             (label[0]?.indexOf('bottom') > -1 || label[0]?.indexOf('right') > -1) &&
             !!label[1]?.element?.firstElementChild
           ) {
             label[1].element.firstElementChild.style.display = 'none';
             // 将射线隐藏
-            (measurements || []).forEach((line: any) => {
+            (measurements || []).forEach?.((line: any) => {
               if (label[0]?.indexOf?.(line.name) > -1) {
                 scene.current?.remove?.(line);
                 hideLines.push(line);
@@ -1938,7 +1938,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
           }
         });
       } else if ([2, 5].includes(index)) {
-        Object.entries(measurementLabels).forEach((label: any) => {
+        Object.entries(measurementLabels).forEach?.((label: any) => {
           if (
             (label[0]?.indexOf('top') > -1 ||
               label[0]?.indexOf('left') > -1 ||
@@ -1949,7 +1949,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
           ) {
             label[1].element.firstElementChild.style.display = 'none';
             // 将射线隐藏
-            (measurements || []).forEach((line: any) => {
+            (measurements || []).forEach?.((line: any) => {
               if (label[0]?.indexOf?.(line.name) > -1) {
                 scene.current?.remove?.(line);
                 hideLines.push(line);
@@ -1983,13 +1983,13 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
           }
           maskBox.style.display = maskStatus;
           // 显示所有的卡片
-          Object.entries(measurementLabels).forEach((label: any) => {
+          Object.entries(measurementLabels).forEach?.((label: any) => {
             if (!!label[1]?.element?.firstElementChild) {
               label[1].element.firstElementChild.style.display = 'block';
             }
           });
           // 将射线显示回来
-          (hideLines || []).forEach((line: any) => {
+          (hideLines || []).forEach?.((line: any) => {
             scene.current?.add?.(line);
           });
           imageDataURL = imageDataURL.split('data:image/png;base64,')[1];
@@ -1998,7 +1998,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       });
 
       // // 将射线隐藏
-      // (measurements || []).forEach((line: any) => {
+      // (measurements || []).forEach?.((line: any) => {
       //     scene.current?.remove?.(line);
       // });
       // // requestAnimationFrame 确保截图在页面完全加载和渲染之后进行
@@ -2012,7 +2012,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       //         link.click();
       //     }
       //     // 将射线显示回来
-      //     (measurements || []).forEach((line: any) => {
+      //     (measurements || []).forEach?.((line: any) => {
       //         scene.current?.add?.(line);
       //     });
       //     imageDataURL = imageDataURL.split('data:image/png;base64,')[1];
@@ -2116,7 +2116,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
         } = res;
         try {
           const areaList = JSON.parse(result);
-          (areaList || [])?.forEach((areaOptions: any) => {
+          (areaList || [])?.forEach?.((areaOptions: any) => {
             addRectArea(areaOptions).then((cube) => {
               editableObjects.current?.push?.(cube);
             });
@@ -2210,7 +2210,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       if (selectedArea.object.geometry) selectedArea.object?.geometry?.dispose?.();
       if (selectedArea.object.material) {
         if (!!selectedArea.object?.material?.materials?.length) {
-          selectedArea.object.material.materials.forEach(function (mat: any) {
+          selectedArea.object.material.materials.forEach?.(function (mat: any) {
             mat?.dispose?.();
           });
         } else {
@@ -2514,7 +2514,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   onClick={() => {
                     if (!!localStorage.getItem(`localGridContentList-${params.id}`)) {
                       const localStorageKeys = getAllLocalStorageKeys();
-                      (localStorageKeys || []).forEach((key: any) => {
+                      (localStorageKeys || []).forEach?.((key: any) => {
                         if (key?.indexOf(params.id) > -1) {
                           localStorage.removeItem(key);
                         }
@@ -2562,7 +2562,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                 onClick={() => {
                   const points = getAllModelsFromScene(scene.current, 'editPoint');
                   let obj: any = [];
-                  points.forEach((point: any) => {
+                  points.forEach?.((point: any) => {
                     const {
                       position,
                       normVec,
@@ -2944,7 +2944,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     )?.length;
                     const { areaIndex, __props, name } = selectedPoint?.object;
                     // 先把同一轨迹的点，下标+1
-                    (editableObjects.current || []).forEach((i: any) => {
+                    (editableObjects.current || []).forEach?.((i: any) => {
                       if (i.name?.indexOf('editPoint') > -1) {
                         if (i.areaIndex === selectedPoint.object.areaIndex) {
                           i['regionID'] = regionID;
@@ -3014,7 +3014,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                     };
                     selectedPoint.object.material.color = colorTran[selectedPoint.object.areaIndex];
                     const points = getAllModelsFromScene(scene.current, 'editPoint');
-                    (points || []).forEach((point: any) => {
+                    (points || []).forEach?.((point: any) => {
                       if (point.name === selectedPoint.object.name) {
                         point['regionID'] = regionID;
                         point['robID'] = robID;
@@ -3122,7 +3122,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
                   if (selectedArea.object.geometry) selectedArea.object?.geometry?.dispose?.();
                   if (selectedArea.object.material) {
                     if (!!selectedArea.object?.material?.materials?.length) {
-                      selectedArea.object.material.materials.forEach(function (mat: any) {
+                      selectedArea.object.material.materials.forEach?.(function (mat: any) {
                         mat?.dispose?.();
                       });
                     } else {

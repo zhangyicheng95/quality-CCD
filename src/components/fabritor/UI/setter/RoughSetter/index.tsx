@@ -12,7 +12,7 @@ export default function RoughSetter() {
 
   const handleValuesChange = (values: any) => {
     if (values?.stroke || values?.fill) {
-      Object.keys(values).forEach((key) => {
+      Object.keys(values).forEach?.((key) => {
         if (object.type === 'path') {
           object.set('stroke', values[key]);
         } else {
@@ -30,7 +30,7 @@ export default function RoughSetter() {
       // 代表是三基点
       const id = object?.sub_type?.split('-');
       const realCanvas = editor.canvas?.getObjects()?.filter((i: any) => i.sub_type?.indexOf(id[1]) > -1);
-      (realCanvas || [])?.forEach((target: any) => {
+      (realCanvas || [])?.forEach?.((target: any) => {
         target.caliperRule = {
           ...target.caliperRule,
           ...values

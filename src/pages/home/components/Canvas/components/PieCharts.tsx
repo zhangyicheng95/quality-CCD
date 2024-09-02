@@ -46,6 +46,9 @@ const PieCharts: React.FC<Props> = (props: any) => {
     };
   }, []);
   const init = () => {
+    if (!dataValue?.length) {
+      return;
+    }
     const option = Object.assign({}, options, {
       legend: Object.assign(
         {},
