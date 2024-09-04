@@ -445,7 +445,7 @@ const Home: React.FC<any> = (props: any) => {
                             (!!homeSettingData?.['slider-1']?.controlList?.length
                               ? homeSettingData?.['slider-1']?.controlList
                               : [{}]
-                            )?.map((item: any) => ({ ...item, id: guid() })),
+                            )?.map?.((item: any) => ({ ...item, id: guid() })),
                           );
                           setHomeSettingVisible('slider-1');
                         }, 500);
@@ -1851,7 +1851,6 @@ const Home: React.FC<any> = (props: any) => {
                       dataValue,
                       fontSize,
                       yName,
-                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'button' ? (
@@ -2295,7 +2294,7 @@ const Home: React.FC<any> = (props: any) => {
                               ),
                             );
                             setCommonSettingList(
-                              (!!timeSelectDefault?.length ? timeSelectDefault : [{}])?.map(
+                              (!!timeSelectDefault?.length ? timeSelectDefault : [{}])?.map?.(
                                 (item: any) => ({
                                   ...item,
                                   id: guid(),
@@ -3101,7 +3100,7 @@ const Home: React.FC<any> = (props: any) => {
     if (type === 'remove') {
       setCommonSettingList([]);
       list = commonSettingList
-        ?.map((cen: any, cIndex: number) => {
+        ?.map?.((cen: any, cIndex: number) => {
           if (cen.id === index) {
             return null;
           }
@@ -3112,7 +3111,7 @@ const Home: React.FC<any> = (props: any) => {
     } else if (type === 'add') {
       list = (commonSettingList || [])?.concat({});
     } else {
-      list = commonSettingList?.map((cen: any, cIndex: number) => {
+      list = commonSettingList?.map?.((cen: any, cIndex: number) => {
         if (cIndex === index) {
           return {
             ...cen,
@@ -3123,7 +3122,7 @@ const Home: React.FC<any> = (props: any) => {
       });
     }
     setTimeout(() => {
-      setCommonSettingList(list?.map((item: any) => ({ ...item, id: guid() })));
+      setCommonSettingList(list?.map?.((item: any) => ({ ...item, id: guid() })));
       form.setFieldsValue({
         timeSelectDefault: list,
       });
@@ -3135,7 +3134,7 @@ const Home: React.FC<any> = (props: any) => {
     if (type === 'remove') {
       setCommonSettingList([]);
       list = commonSettingList
-        ?.map((cen: any, cIndex: number) => {
+        ?.map?.((cen: any, cIndex: number) => {
           if (cen.id === index) {
             return null;
           }
@@ -3145,7 +3144,7 @@ const Home: React.FC<any> = (props: any) => {
     } else if (type === 'add') {
       list = (commonSettingList || [])?.concat('');
     } else {
-      list = commonSettingList?.map((cen: any, cIndex: number) => {
+      list = commonSettingList?.map?.((cen: any, cIndex: number) => {
         if (cIndex === index) {
           return {
             ...cen,
@@ -3156,7 +3155,7 @@ const Home: React.FC<any> = (props: any) => {
       });
     }
     setTimeout(() => {
-      setCommonSettingList(list?.map((item: any) => ({ ...item, id: guid() })));
+      setCommonSettingList(list?.map?.((item: any) => ({ ...item, id: guid() })));
       form.setFieldsValue({
         controlList: list,
       });
@@ -3168,7 +3167,7 @@ const Home: React.FC<any> = (props: any) => {
     if (type === 'remove') {
       setCommonSettingList([]);
       list = commonSettingList
-        ?.map((cen: any, cIndex: number) => {
+        ?.map?.((cen: any, cIndex: number) => {
           if (cen.id === index) {
             return null;
           }
@@ -3179,7 +3178,7 @@ const Home: React.FC<any> = (props: any) => {
       list = (commonSettingList || [])?.concat({ sort: commonSettingList.length });
     } else if (type === 'up') {
       setCommonSettingList([]);
-      list = commonSettingList?.map((cen: any, cIndex: number) => {
+      list = commonSettingList?.map?.((cen: any, cIndex: number) => {
         if (cIndex === index - 1) {
           return {
             ...cen,
@@ -3194,7 +3193,7 @@ const Home: React.FC<any> = (props: any) => {
         return cen;
       });
     } else {
-      list = commonSettingList?.map((cen: any, cIndex: number) => {
+      list = commonSettingList?.map?.((cen: any, cIndex: number) => {
         if (cIndex === index) {
           return {
             ...cen,
@@ -3205,7 +3204,7 @@ const Home: React.FC<any> = (props: any) => {
       });
     }
     setTimeout(() => {
-      setCommonSettingList(list?.map((item: any) => ({ ...item, id: guid() })));
+      setCommonSettingList(list?.map?.((item: any) => ({ ...item, id: guid() })));
       form.setFieldsValue({
         timeSelectDefault: list,
       });
@@ -3217,7 +3216,7 @@ const Home: React.FC<any> = (props: any) => {
     if (type === 'remove') {
       setCommonSettingList([]);
       list = commonSettingList
-        ?.map((cen: any, cIndex: number) => {
+        ?.map?.((cen: any, cIndex: number) => {
           if (cen.id === index) {
             return null;
           }
@@ -3230,7 +3229,7 @@ const Home: React.FC<any> = (props: any) => {
       list = (commonSettingList || [])?.concat({ sort: commonSettingList.length, parent });
     } else if (type === 'up') {
       setCommonSettingList([]);
-      list = commonSettingList?.map((cen: any, cIndex: number) => {
+      list = commonSettingList?.map?.((cen: any, cIndex: number) => {
         if (cIndex === index - 1) {
           return {
             ...cen,
@@ -3245,7 +3244,7 @@ const Home: React.FC<any> = (props: any) => {
         return { sort: cIndex, ...cen };
       });
     } else {
-      list = commonSettingList?.map((cen: any, cIndex: number) => {
+      list = commonSettingList?.map?.((cen: any, cIndex: number) => {
         if (cIndex === index) {
           return {
             ...cen,
@@ -3256,7 +3255,7 @@ const Home: React.FC<any> = (props: any) => {
       });
     }
     setTimeout(() => {
-      setCommonSettingList(list?.map((item: any) => ({ id: guid(), ...item })));
+      setCommonSettingList(list?.map?.((item: any) => ({ id: guid(), ...item })));
       form.setFieldsValue({
         timeSelectDefault: list,
       });
@@ -3293,7 +3292,7 @@ const Home: React.FC<any> = (props: any) => {
                     onSearch={(val) => {
                       if (!!val) {
                         setLeftPanelData((prev: any) => {
-                          return (leftPanelDataLocal || [])?.map((box: any) => {
+                          return (leftPanelDataLocal || [])?.map?.((box: any) => {
                             return {
                               ...box,
                               children: box?.children?.filter(
@@ -4028,7 +4027,7 @@ const Home: React.FC<any> = (props: any) => {
                         }
                         // 检测绑定的节点是否开启了数据推送，如果没开，直接打开
                         if (val?.length === 2 && ports?.items?.length > 0) {
-                          const portList = ports?.items?.map((i: any) => {
+                          const portList = ports?.items?.map?.((i: any) => {
                             if (i?.label?.name === val[1] && i?.group === 'bottom') {
                               return {
                                 ...i,
@@ -4045,7 +4044,7 @@ const Home: React.FC<any> = (props: any) => {
                             ...paramData,
                             flowData: {
                               ...paramData?.flowData,
-                              nodes: (paramData?.flowData?.nodes || [])?.map((node: any) => {
+                              nodes: (paramData?.flowData?.nodes || [])?.map?.((node: any) => {
                                 if (node.id === val[0]) {
                                   return {
                                     ...node,
@@ -4787,7 +4786,7 @@ const Home: React.FC<any> = (props: any) => {
                         >
                           {commonSettingList
                             ?.sort((a: any, b: any) => a.sort - b.sort)
-                            ?.map((item: any, index: number) => {
+                            ?.map?.((item: any, index: number) => {
                               const { label, value, id } = item;
                               return (
                                 <div
@@ -4945,7 +4944,7 @@ const Home: React.FC<any> = (props: any) => {
                     >
                       {commonSettingList
                         ?.sort((a: any, b: any) => a.sort - b.sort)
-                        ?.map((item: any, index: number) => {
+                        ?.map?.((item: any, index: number) => {
                           const { label, value, type, number, id } = item;
                           return (
                             <div
@@ -5152,7 +5151,7 @@ const Home: React.FC<any> = (props: any) => {
                     >
                       {commonSettingList
                         ?.sort((a: any, b: any) => a.sort - b.sort)
-                        ?.map((item: any, index: number) => {
+                        ?.map?.((item: any, index: number) => {
                           const { label, value, id } = item;
                           return (
                             <div
@@ -5301,7 +5300,7 @@ const Home: React.FC<any> = (props: any) => {
                     >
                       {commonSettingList
                         ?.sort((a: any, b: any) => a.sort - b.sort)
-                        ?.map((item: any, index: number) => {
+                        ?.map?.((item: any, index: number) => {
                           const {
                             name,
                             alias,
@@ -5898,7 +5897,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'按钮参数'}
                       rules={[{ required: true, message: '按钮参数' }]}
                     >
-                      {commonSettingList?.map((item: any, index: number) => {
+                      {commonSettingList?.map?.((item: any, index: number) => {
                         const { id, label, ip, projectId } = item;
                         return (
                           <div
@@ -5974,7 +5973,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'按钮参数'}
                       rules={[{ required: true, message: '按钮参数' }]}
                     >
-                      {commonSettingList?.map((item: any, index: number) => {
+                      {commonSettingList?.map?.((item: any, index: number) => {
                         const { label, value, color, id } = item;
                         return (
                           <div
@@ -6334,7 +6333,7 @@ const Home: React.FC<any> = (props: any) => {
                                 onChange={(e) => {
                                   if (e.target.checked === true) {
                                     form.setFieldsValue({
-                                      operationList: selectedNodeConfig?.map(
+                                      operationList: selectedNodeConfig?.map?.(
                                         (item: any) => item.value,
                                       ),
                                     });
@@ -7044,7 +7043,7 @@ const Home: React.FC<any> = (props: any) => {
                     <InputNumber min={12} />
                   </Form.Item>
                   <Form.Item name={'controlList'} label="控制从机">
-                    {commonSettingList?.map((item: any, index: number) => {
+                    {commonSettingList?.map?.((item: any, index: number) => {
                       const { ip, url, id } = item;
                       return (
                         <div
@@ -7553,7 +7552,7 @@ const Home: React.FC<any> = (props: any) => {
           >
             {commonSettingList
               ?.sort((a: any, b: any) => a.sort - b.sort)
-              ?.map((item: any, index: number) => {
+              ?.map?.((item: any, index: number) => {
                 const { name, alias, type, className = '', id, parent } = item;
                 if (formModalEdit === parent) {
                   return (

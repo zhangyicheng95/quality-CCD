@@ -1,11 +1,10 @@
-import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { Button, Form, Input, message, Select, Upload } from 'antd';
+import { Button, Form, Input, message, notification, Select } from 'antd';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import ImgCharts from './ImgCharts';
 import { btnFetch } from '@/services/api';
-import ChooseFileButton from '@/components/ChooseFileButton';
 import { connect } from 'umi';
 
 interface Props {
@@ -15,7 +14,7 @@ interface Props {
 };
 
 const ReJudgmentCharts: React.FC<Props> = (props: any) => {
-  const { data = {}, id, started } = props;
+  const { data = {}, id } = props;
   let {
     dataValue = [], fontSize,
     xName = '',
@@ -26,7 +25,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
   const domRef = useRef<any>();
   const leftTableDomRef = useRef<any>();
   const leftTableImgDomRef = useRef<any>();
-  const searchRef = useRef<any>({ productCode: undefined, regionCode: undefined });
+  const searchRef = useRef<any>({ productCode: undefined, regionCode: undefined, productionLine: 'left' });
   const timeRef = useRef<any>(null);
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
@@ -36,6 +35,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
           leftTop: { "x": 0.3, "y": 0.2 },
           rightBottom: { "x": 0.35, "y": 0.25 },
         },
+        flag: true,
         title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11',
         url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0'
       },
@@ -68,7 +68,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
       },
     ];
   }
-  const [leftModelSelected, setLeftModelSelected] = useState<any>({});
+  const [leftModelSelected, setLeftModelSelected] = useState<any>({ position: {}, url: '' });
   const [selected, setSelected] = useState<any>(null);
 
   // 拉取模板图列表
@@ -77,15 +77,29 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
       setLeftModelSelected(JSON.parse(localStorage.getItem(`rejudgment-${id}`) || "{}"));
     }
   }, []);
-  // 取SN码
   useEffect(() => {
+    // 取SN码
     const productValue = dataValue?.filter((i: any) => i.type === 'SN')?.[0]?.value || undefined;
     if (!!productValue) {
       form.setFieldsValue({
         productCode: productValue,
       });
       handleChange('productCode', productValue);
-    }
+    };
+    // 取模版
+    const modelValue = dataValue?.filter((i: any) => i.type === 'model')?.[0]?.value || undefined;
+    if (!!modelValue) {
+      setLeftModelSelected(modelValue);
+      localStorage.setItem(`rejudgment-${id}`, JSON.stringify(modelValue));
+    };
+    // 消息提示
+    const messageValue = dataValue?.filter((i: any) => i.type === 'message')?.[0]?.value || undefined;
+    if (!!messageValue) {
+      notification['warning']({
+        message: '警告',
+        description: messageValue
+      });
+    };
   }, [dataValue]);
   // 选择的模板图，计算大小
   useEffect(() => {
@@ -107,51 +121,12 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
       }
     };
   }, [leftModelSelected?.url, leftTableDomRef.current?.clientWidth]);
-  // 导入模板
-  const uploadProps = {
-    accept: '.json',
-    showUploadList: false,
-    multiple: false,
-    beforeUpload(file: any) {
-      const reader = new FileReader(); // 创建文件对象
-      reader.readAsText(file); // 读取文件的内容/URL
-      reader.onload = (res: any) => {
-        const {
-          target: { result },
-        } = res;
-        try {
-          const params = JSON.parse(result);
-          btnFetch(fetchType, xName, { type: 'upload', data: params }).then((res: any) => {
-            if (!!res && res.code === 'SUCCESS') {
-              setLeftModelSelected(params);
-              localStorage.setItem(`rejudgment-${id}`, JSON.stringify(params));
-              message.success('success');
-            } else {
-              message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
-            }
-          });
-        } catch (err) {
-          message.error('json文件格式错误，请修改后上传。');
-          console.error(err);
-        }
-      };
-      return false;
-    },
-  };
   // 条件查询
   const handleChange = (key: string, value: any) => {
     searchRef.current[key] = value;
-    if (!searchRef.current['productCode']) {
-      return;
-    }
     btnFetch(fetchType, xName, { type: 'search', data: searchRef.current }).then((res: any) => {
       if (!!res && res.code === 'SUCCESS') {
         message.success('success');
-        // if (_.isObject(res.data) && !_.isArray(res.data)) {
-        //   setSelected(res.data);
-        // } else if (_.isArray(res.data)) {
-        //   setSelected(res.data?.[0]);
-        // }
       } else {
         message.error(res?.message || res?.msg || '后台服务异常，请重启服务');
       }
@@ -177,10 +152,32 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
               : null
           }
           {
+            (dataValue || [])?.map((item: any, index: number) => {
+              const { status, position } = item;
+              if (status === 0) {
+                return <div
+                  key={`re-judgment-right-img-list-item-${index}`}
+                  className="re-judgment-left-table-error"
+                  style={{
+                    left: `${position?.leftTop?.x * 100}%`,
+                    top: `${position?.leftTop?.y * 100}%`,
+                    width: `${(position?.rightBottom?.x - position?.leftTop?.x) * 100}%`,
+                    height: `${(position?.rightBottom?.y - position?.leftTop?.y) * 100}%`,
+                  }}
+                  onClick={() => {
+                    setSelected(item);
+                  }}
+                />
+              }
+              return null;
+            })
+          }
+          {
             !!selected ?
               <div
                 className="re-judgment-left-table-error"
                 style={{
+                  background: 'rgba(0, 0, 200, 0.5)',
                   left: `${selected?.position?.leftTop?.x * 100}%`,
                   top: `${selected?.position?.leftTop?.y * 100}%`,
                   width: `${(selected?.position?.rightBottom?.x - selected?.position?.leftTop?.x) * 100}%`,
@@ -190,22 +187,12 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
               : null
           }
         </div>
-        <div className="re-judgment-left-select">
-          <Upload {...uploadProps}>
-            <Button
-              disabled={!started}
-            // type="primary"
-            >
-              更换模板
-            </Button>
-          </Upload>
-        </div>
       </div>
       <div className="flex-box re-judgment-right">
         <div className="re-judgment-right-img-list">
           {
             (dataValue || [])?.map((item: any, index: number) => {
-              const { status, title, url } = item;
+              const { status, title, url, flag } = item;
               if (status === 0) {
                 return <div
                   className="re-judgment-right-img-list-item"
@@ -215,6 +202,13 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                   }}
                 >
                   <div className="flex-box-align-end re-judgment-right-img-list-item-status">NG</div>
+                  {
+                    !!flag ?
+                      <div className="re-judgment-right-img-list-item-flag-title">
+                        已复判
+                      </div>
+                      : null
+                  }
                   <img src={url} alt={url} />
                   <div
                     className='re-judgment-right-img-list-item-title'
@@ -241,6 +235,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
             >
               <Input
                 allowClear
+                style={{ width: 150 }}
                 onPressEnter={(e: any) => {
                   if (!!timeRef.current) {
                     clearTimeout(timeRef.current);
@@ -260,22 +255,32 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
               <Select
                 // mode="multiple"
                 allowClear
-                style={{ width: 200 }}
+                style={{ minWidth: 80 }}
                 onChange={(value) => handleChange('regionCode', value)}
                 options={Object.keys(leftModelSelected?.position || {})?.map((i: any) => ({ key: i, value: i }))}
               />
             </Form.Item>
             <Form.Item
               name={`productionLine`}
-              label={'产线'}
-              rules={[{ required: false, message: '产线' }]}
+              label={'工位'}
+              rules={[{ required: false, message: '工位' }]}
+              initialValue={'left'}
               style={{ marginBottom: 0 }}
             >
               <Select
                 // mode="multiple"
                 allowClear
-                style={{ width: 200 }}
-                onChange={(value) => handleChange('productionLine', value)}
+                style={{ minWidth: 80 }}
+                onChange={(value) => {
+                  form.setFieldsValue({
+                    productCode: undefined,
+                    regionCode: undefined
+                  });
+                  searchRef.current = { productionLine: value };
+                  setTimeout(() => {
+                    handleChange('productionLine', value);
+                  }, 200);
+                }}
                 options={[
                   { label: '左工位', value: 'left' },
                   { label: '右工位', value: 'right' }

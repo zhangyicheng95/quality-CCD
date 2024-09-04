@@ -51,7 +51,7 @@ const localData = {
 };
 const CableCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id, setMyChartVisible } = props;
-  let { dataValue = {}, yName, xName = '', direction, symbol = 'rect', dataZoom, ifShowColorList } = data;
+  let { dataValue = {}, dataZoom } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = localData
   }
@@ -226,7 +226,6 @@ const CableCharts: React.FC<Props> = (props: any) => {
     myChartRef.current.on('click', (e: any) => {
       timer && clearTimeout(timer);
       timer = setTimeout(() => {
-        console.log(e);
         setVisibleData({
           position: e.data?.[1],
           length: e.data?.[0],

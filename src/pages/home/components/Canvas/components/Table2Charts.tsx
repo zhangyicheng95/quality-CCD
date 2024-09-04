@@ -273,7 +273,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
         let number = 0;
         (value || [])?.forEach?.((val: any) => {
           text = !_.isUndefined(val?.value) ? val?.value + '' : val + '';
-
+          if (text?.indexOf?.('http') > -1) {
+            text = '查看';
+          }
           try {
             const number = JSON.parse(text);
             if ((number + '')?.length > name.length) {
