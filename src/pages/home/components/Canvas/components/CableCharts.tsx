@@ -57,13 +57,30 @@ const CableCharts: React.FC<Props> = (props: any) => {
   }
   const domRef = useRef<any>();
   const myChartRef = useRef<any>();
+  const mouseOnBoxRef = useRef(false);
   const [visible, setVisible] = useState(false);
   const [visibleData, setVisibleData] = useState<any>(null);
 
   useEffect(() => {
+    if (!domRef.current) {
+      return;
+    }
     myChartRef.current = echarts.init(domRef.current);
 
+    domRef.current.addEventListener('mouseover', () => {
+      mouseOnBoxRef.current = true;
+    });
+    domRef.current.addEventListener('mouseleave', () => {
+      mouseOnBoxRef.current = false;
+    });
+
     return () => {
+      domRef?.current?.removeEventListener?.('mouseover', () => {
+        mouseOnBoxRef.current = true;
+      });
+      domRef?.current?.removeEventListener?.('mouseleave', () => {
+        mouseOnBoxRef.current = false;
+      });
       window.removeEventListener(
         'resize',
         () => {
@@ -112,7 +129,7 @@ const CableCharts: React.FC<Props> = (props: any) => {
         value: i[1],
       });
     });
-
+    resData = resData.reverse?.();
     const option = Object.assign({}, options, {
       legend: false,
       tooltip: {
@@ -122,9 +139,10 @@ const CableCharts: React.FC<Props> = (props: any) => {
         {},
         options.grid,
         {
-          right: 24,
+          right: 36,
           left: 24,
-          bottom: 36
+          bottom: 36,
+          top: 48,
         },
       ),
       yAxis: Object.assign({}, options.yAxis, {
@@ -173,6 +191,9 @@ const CableCharts: React.FC<Props> = (props: any) => {
             height: 20,
           }
         ),
+        {
+          type: 'inside',
+        }
       ],
       xAxis: Object.assign({}, options?.xAxis, {
         axisLabel: Object.assign({}, options?.xAxis?.axisLabel, {
@@ -253,11 +274,16 @@ const CableCharts: React.FC<Props> = (props: any) => {
       console.log('CableCharts:', dataValue);
       return;
     }
-
+    if (!domRef.current) {
+      return;
+    }
+    if (mouseOnBoxRef.current) {
+      return;
+    }
     setTimeout(() => {
       init();
     }, 200);
-  }, [data]);
+  }, [data, mouseOnBoxRef.current]);
   const onCancel = () => {
     setVisibleData(null);
     setVisible(false);
