@@ -126,6 +126,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
     searchRef.current[key] = value;
     btnFetch(fetchType, xName, { type: 'search', data: searchRef.current }).then((res: any) => {
       if (!!res && res.code === 'SUCCESS') {
+        setSelected(null);
         message.success('success');
       } else {
         message.error(res?.message || res?.msg || '后台服务异常，请重启服务');
@@ -282,8 +283,8 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                   }, 200);
                 }}
                 options={[
-                  { label: '左工位', value: 'left' },
-                  { label: '右工位', value: 'right' }
+                  { label: '左工位', value: 'left', key: 'left' },
+                  { label: '右工位', value: 'right', key: 'right' }
                 ]}
               />
             </Form.Item>
@@ -298,7 +299,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                     notLocalStorage: true,
                     comparison: false,
                     magnifier: true,
-                    magnifierSize: 4,
+                    magnifierSize: 12,
                     ifOnShowTab: true
                   }}
                 />
