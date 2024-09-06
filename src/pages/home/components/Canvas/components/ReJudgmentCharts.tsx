@@ -81,10 +81,25 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
     // 取SN码
     const productValue = dataValue?.filter((i: any) => i.type === 'SN')?.[0]?.value || undefined;
     if (!!productValue) {
-      form.setFieldsValue({
-        productCode: productValue,
-      });
-      handleChange('productCode', productValue);
+      if (_.isString(productValue)) {
+        form.setFieldsValue({
+          productCode: productValue,
+        });
+        handleChange('productCode', productValue);
+      } else if (!!Object?.keys?.(productValue)?.length) {
+        const { productionLine, productCode } = productValue;
+        form.setFieldsValue({
+          productCode: undefined,
+          regionCode: undefined,
+          productionLine: productionLine,
+        });
+        handleChange('productionLine', productionLine).then(() => {
+          form.setFieldsValue({
+            productCode: productCode,
+          });
+          handleChange('productCode', productCode);
+        });
+      }
     };
     // 取模版
     const modelValue = dataValue?.filter((i: any) => i.type === 'model')?.[0]?.value || undefined;
@@ -123,14 +138,20 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
   }, [leftModelSelected?.url, leftTableDomRef.current?.clientWidth]);
   // 条件查询
   const handleChange = (key: string, value: any) => {
-    searchRef.current[key] = value;
-    btnFetch(fetchType, xName, { type: 'search', data: searchRef.current }).then((res: any) => {
-      if (!!res && res.code === 'SUCCESS') {
-        setSelected(null);
-        message.success('success');
-      } else {
-        message.error(res?.message || res?.msg || '后台服务异常，请重启服务');
-      }
+    return new Promise((resolve: any, reject: any) => {
+      searchRef.current[key] = value;
+      btnFetch(fetchType, xName, { type: 'search', data: searchRef.current }).then((res: any) => {
+        if (!!res && res.code === 'SUCCESS') {
+          setSelected(null);
+          message.success('success');
+          setTimeout(() => {
+            resolve(true);
+          }, 200);
+        } else {
+          message.error(res?.message || res?.msg || '后台服务异常，请重启服务');
+          reject(false);
+        }
+      });
     });
   };
   if (!ifOnShowTab) return null;
