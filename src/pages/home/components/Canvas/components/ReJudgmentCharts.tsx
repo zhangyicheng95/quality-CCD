@@ -294,14 +294,16 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                 allowClear
                 style={{ minWidth: 80 }}
                 onChange={(value) => {
-                  form.setFieldsValue({
-                    productCode: undefined,
-                    regionCode: undefined
-                  });
-                  searchRef.current = { productionLine: value };
-                  setTimeout(() => {
-                    handleChange('productionLine', value);
-                  }, 200);
+                  if (!!value) {
+                    form.setFieldsValue({
+                      productCode: undefined,
+                      regionCode: undefined
+                    });
+                    searchRef.current = { productionLine: value };
+                    setTimeout(() => {
+                      handleChange('productionLine', value);
+                    }, 200);
+                  }
                 }}
                 options={[
                   { label: '左工位', value: 'left', key: 'left' },
