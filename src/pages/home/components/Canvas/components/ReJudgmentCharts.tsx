@@ -81,25 +81,35 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
     // 取SN码
     const productValue = dataValue?.filter((i: any) => i.type === 'SN')?.[0]?.value || undefined;
     if (!!productValue) {
-      if (_.isString(productValue)) {
-        form.setFieldsValue({
-          productCode: productValue,
-        });
-        handleChange('productCode', productValue);
-      } else if (!!Object?.keys?.(productValue)?.length) {
-        const { productionLine, productCode } = productValue;
-        form.setFieldsValue({
-          productCode: undefined,
-          regionCode: undefined,
-          productionLine: productionLine,
-        });
-        handleChange('productionLine', productionLine).then(() => {
-          form.setFieldsValue({
-            productCode: productCode,
-          });
-          handleChange('productCode', productCode);
-        });
-      }
+      form.setFieldsValue({
+        productCode: productValue,
+      });
+      handleChange('productCode', productValue);
+    };
+    // 取station码
+    const stationValue = dataValue?.filter((i: any) => i.type === 'station')?.[0]?.value || undefined;
+    if (!!stationValue) {
+      const transform = {
+        'left': '左工位',
+        'right': '右工位'
+      };
+      form.setFieldsValue({
+        productionLine: transform[stationValue],
+      });
+    };
+    // 取lot_no批次号 
+    const lotNoValue = dataValue?.filter((i: any) => i.type === 'lot_no')?.[0]?.value || undefined;
+    if (!!lotNoValue) {
+      form.setFieldsValue({
+        lot_no: lotNoValue,
+      });
+    };
+    // 取product_no产品号
+    const productNoValue = dataValue?.filter((i: any) => i.type === 'product_no')?.[0]?.value || undefined;
+    if (!!productNoValue) {
+      form.setFieldsValue({
+        product_no: productNoValue,
+      });
     };
     // 取模版
     const modelValue = dataValue?.filter((i: any) => i.type === 'model')?.[0]?.value || undefined;
@@ -258,6 +268,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
               <Input
                 allowClear
                 style={{ width: 150 }}
+                spellCheck="false"
                 onPressEnter={(e: any) => {
                   if (!!timeRef.current) {
                     clearTimeout(timeRef.current);
@@ -286,30 +297,25 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
               name={`productionLine`}
               label={'工位'}
               rules={[{ required: false, message: '工位' }]}
-              initialValue={'left'}
               style={{ marginBottom: 0 }}
             >
-              <Select
-                // mode="multiple"
-                allowClear
-                style={{ minWidth: 80 }}
-                onChange={(value) => {
-                  if (!!value) {
-                    form.setFieldsValue({
-                      productCode: undefined,
-                      regionCode: undefined
-                    });
-                    searchRef.current = { productionLine: value };
-                    setTimeout(() => {
-                      handleChange('productionLine', value);
-                    }, 200);
-                  }
-                }}
-                options={[
-                  { label: '左工位', value: 'left', key: 'left' },
-                  { label: '右工位', value: 'right', key: 'right' }
-                ]}
-              />
+              <Input spellCheck="false" disabled style={{ width: 80, color: '#000' }} />
+            </Form.Item>
+            <Form.Item
+              name={`lot_no`}
+              label={'批次号'}
+              rules={[{ required: false, message: '批次号' }]}
+              style={{ marginBottom: 0 }}
+            >
+              <Input spellCheck="false" disabled style={{ width: 80, color: '#000' }} />
+            </Form.Item>
+            <Form.Item
+              name={`product_no`}
+              label={'产品号'}
+              rules={[{ required: false, message: '产品号' }]}
+              style={{ marginBottom: 0 }}
+            >
+              <Input spellCheck="false" disabled style={{ width: 80, color: '#000' }} />
             </Form.Item>
           </Form>
           <div className="re-judgment-right-img-box-top">

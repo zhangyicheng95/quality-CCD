@@ -422,7 +422,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                 {
                   !!source?.defects ?
                     (source?.defects || [])?.map((defect: any, index: number) => {
-                      const { position = [] } = defect;
+                      const { defectName = '', location = '', position = [] } = defect;
                       const add = source?.increment || { x: 0.1, y: 0.1 };
                       return <div
                         className="img-box-mark-right-defect"
@@ -433,7 +433,9 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                           height: `${(position?.[3] - position?.[1]) * 100}%`,
                         }}
                         key={`defect-${index}`}
-                      />
+                      >
+                        {`${location}-${defectName}`}
+                      </div>
                     })
                     : null
                 }
