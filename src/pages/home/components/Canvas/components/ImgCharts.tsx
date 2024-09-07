@@ -11,7 +11,6 @@ import {
   LockOutlined,
   RightCircleOutlined,
   SwapOutlined,
-  SyncOutlined,
   UnlockOutlined,
 } from '@ant-design/icons';
 import html2canvas from 'html2canvas';
@@ -420,6 +419,24 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                   }
                   preview={false}
                 />
+                {
+                  !!source?.defects ?
+                    (source?.defects || [])?.map((defect: any, index: number) => {
+                      const { position = [] } = defect;
+                      const add = source?.increment || { x: 0.1, y: 0.1 };
+                      return <div
+                        className="img-box-mark-right-defect"
+                        style={{
+                          left: `${(position?.[0] + add?.x) * 100}%`,
+                          top: `${(position?.[1] + add?.y) * 100}%`,
+                          width: `${(position?.[2] - position?.[0]) * 100}%`,
+                          height: `${(position?.[3] - position?.[1]) * 100}%`,
+                        }}
+                        key={`defect-${index}`}
+                      />
+                    })
+                    : null
+                }
                 <div
                   className="mask"
                   style={

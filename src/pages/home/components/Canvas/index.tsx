@@ -908,7 +908,7 @@ const Home: React.FC<any> = (props: any) => {
             item,
             {
               maxW: 100,
-              maxH: 100,
+              maxH: 200,
             },
             item.w > 0
               ? {
@@ -932,7 +932,7 @@ const Home: React.FC<any> = (props: any) => {
             minW: 1,
             minH: 2,
             maxW: 100,
-            maxH: 100,
+            maxH: 200,
           },
         });
         // Object.assign({}, content, !!paramData?.contentData?.content[item.i] ? {
@@ -942,7 +942,7 @@ const Home: React.FC<any> = (props: any) => {
         //       ...item,
         //       maxW: 100,
         //       minW: 1,
-        //       maxH: 100,
+        //       maxH: 200,
         //       minH: 2,
         //     }
         //   }
@@ -988,13 +988,13 @@ const Home: React.FC<any> = (props: any) => {
     if (!ipString || _.isEmpty(paramsData)) return;
     const { flowData = {}, contentData = {}, selfStart = false } = paramsData;
     const homeSelf = [
-      { i: 'header', x: 0, y: 0, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
-      { i: 'slider-1', x: 0, y: 0, w: 9, h: 8, minW: 1, maxW: 100, minH: 2, maxH: 100 },
-      { i: 'slider-2', x: 0, y: 8, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
-      { i: 'slider-3', x: 0, y: 0, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
-      { i: 'slider-4', x: 7, y: 0, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
-      { i: 'footer-1', x: 7, y: 8, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
-      { i: 'footer-2', x: 7, y: 0, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 100 },
+      { i: 'header', x: 0, y: 0, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 200 },
+      { i: 'slider-1', x: 0, y: 0, w: 9, h: 8, minW: 1, maxW: 100, minH: 2, maxH: 200 },
+      { i: 'slider-2', x: 0, y: 8, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 200 },
+      { i: 'slider-3', x: 0, y: 0, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 200 },
+      { i: 'slider-4', x: 7, y: 0, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 200 },
+      { i: 'footer-1', x: 7, y: 8, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 200 },
+      { i: 'footer-2', x: 7, y: 0, w: 0, h: 0, minW: 0, maxW: 100, minH: 0, maxH: 200 },
     ];
     const {
       home = [],
@@ -2959,7 +2959,7 @@ const Home: React.FC<any> = (props: any) => {
               minW: 1,
               maxW: 100,
               minH: 2,
-              maxH: 100,
+              maxH: 200,
               ...size,
             },
             type,
@@ -4249,7 +4249,7 @@ const Home: React.FC<any> = (props: any) => {
                 </div>
               </Divider>
               <div style={showPanels?.custom ? {} : { display: 'none' }}>
-                {['img'].includes(windowType) ? (
+                {['img', 'imgDefects'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item
                       name={'defaultImg'}
