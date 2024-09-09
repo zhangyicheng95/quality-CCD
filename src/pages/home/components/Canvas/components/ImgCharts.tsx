@@ -380,7 +380,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       return pre;
     });
   };
-  if (!ifOnShowTab) return null;
+
   return (
     <div id={`echart-${id}`} className={`flex-box ${styles.imgCharts}`} style={{ fontSize }}>
       <div
@@ -420,22 +420,42 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                   preview={false}
                 />
                 {
-                  !!source?.defects ?
+                  (!!source?.defects && _.isArray(source?.defects)) ?
                     (source?.defects || [])?.map((defect: any, index: number) => {
-                      const { defectName = '', location = '', position = [] } = defect;
-                      const add = source?.increment || { x: 0.1, y: 0.1 };
-                      return <div
-                        className="img-box-mark-right-defect"
-                        style={{
-                          left: `${(position?.[0] + add?.x) * 100}%`,
-                          top: `${(position?.[1] + add?.y) * 100}%`,
-                          width: `${(position?.[2] - position?.[0]) * 100}%`,
-                          height: `${(position?.[3] - position?.[1]) * 100}%`,
-                        }}
-                        key={`defect-${index}`}
-                      >
-                        {`${location}-${defectName}`}
-                      </div>
+                      const { defectName = '', status, position = [] } = defect;
+                      const add = source?.increment || { x: 0, y: 0 };
+                      if (_.isNumber(status)) {
+                        // 有status代表是标记OK NG
+                        return <div
+                          className="img-box-mark-right-defect"
+                          style={{
+                            left: `${(position?.[0] + add?.x) * 100}%`,
+                            top: `${(position?.[1] + add?.y) * 100}%`,
+                            color: status == 1 ? '#0f0' : '#f00'
+                          }}
+                          key={`defect-${index}`}
+                        >
+                          <div className='img-box-mark-right-defect-status'>
+                            {status == 1 ? 'OK' : 'NG'}
+                          </div>
+                        </div>
+                      } else {
+                        return <div
+                          className="img-box-mark-right-defect"
+                          style={{
+                            left: `${(position?.[0] + add?.x) * 100}%`,
+                            top: `${(position?.[1] + add?.y) * 100}%`,
+                            width: `${(position?.[2] - position?.[0] + add?.x) * 100}%`,
+                            height: `${(position?.[3] - position?.[1] + add?.y) * 100}%`,
+                            border: '1px solid red',
+                          }}
+                          key={`defect-${index}`}
+                        >
+                          <div className='img-box-mark-right-defect-title'>
+                            {defectName}
+                          </div>
+                        </div>
+                      }
                     })
                     : null
                 }
@@ -451,82 +471,84 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                   }
                 />
               </div>
-              <div
-                className="flex-box img-box-btn-box"
-                style={Object.assign(
-                  {},
-                  !!ifShowHeader ? { display: 'flex', top: '-26px' } : {},
-                  modelRotateScreenshot ? { display: 'flex' } : {},
-                )}
-              >
-                {!!onLockImgChange ? (
-                  <Button
-                    className="img-box-btn-item"
-                    type={'link'}
-                    icon={lockImg ? <UnlockOutlined /> : <LockOutlined />}
-                    onClick={() => {
-                      onLockImgChange?.();
-                    }}
-                  >
-                    {lockImg ? '解锁图片' : '锁定图片'}
-                  </Button>
-                ) : null}
-                {notLocalStorage ? (
-                  !!onImgChange ? (
-                    <Button
-                      className="img-box-btn-item"
-                      // className="flex-box"
-                      // style={{ gap: 4 }}
-                      type={'link'}
-                      icon={<SwapOutlined />}
-                      onClick={() => {
-                        onImgChange && onImgChange?.();
-                      }}
-                    >
-                      切换
-                    </Button>
-                  ) : null
-                ) : (
-                  <Fragment>
-                    <div
-                      className={`${selectedNum === 0 ? 'greyColorStyle' : ''} prev-btn`}
-                      onClick={() => onPrev()}
-                    >
-                      {'< '}
-                    </div>
-                    {`${selectedNum + 1}/${urlList.current?.length}`}
-                    <div
-                      className={`next-btn ${selectedNum + 1 === urlList.current.length ? 'greyColorStyle' : ''
-                        }`}
-                      onClick={() => onNext()}
-                    >
-                      {' >'}
-                    </div>
-                  </Fragment>
-                )}
-                <DownloadOutlined
-                  className="img-box-btn-item"
-                  onClick={() => {
-                    const imgBox = dom?.current?.querySelector('.ant-image-img');
-                    html2canvas(imgBox, {
-                      scale: 1,
-                      useCORS: true, // 是否尝试使⽤CORS从服务器加载图像
-                      allowTaint: false, // 是否允许跨域图像。会污染画布，导致⽆法使⽤canvas.toDataURL ⽅法
-                    }).then((canvas: any) => {
-                      let imageDataURL = canvas.toDataURL('image/png', { quality: 1 });
-                      var link = document.createElement('a');
-                      link.href = imageDataURL;
-                      link.download = `output.png`;
-                      link.click();
-                    });
-                  }}
-                />
-                <ExpandOutlined className="img-box-btn-item" onClick={() => setVisible(true)} />
-              </div>
             </Fragment>
           ) : (
             <Skeleton.Image active={true} />
           )}
+        </div>
+        <div
+          className="flex-box img-box-btn-box"
+          style={Object.assign(
+            {},
+            !!ifShowHeader ? { display: 'flex', top: '-26px' } : {},
+            modelRotateScreenshot ? { display: 'flex' } : {},
+          )}
+        >
+          {!!onLockImgChange ? (
+            <Button
+              className="img-box-btn-item"
+              type={'link'}
+              icon={lockImg ? <UnlockOutlined /> : <LockOutlined />}
+              onClick={() => {
+                onLockImgChange?.();
+              }}
+            >
+              {lockImg ? '解锁图片' : '锁定图片'}
+            </Button>
+          ) : null}
+          {notLocalStorage ? (
+            !!onImgChange ? (
+              <Button
+                className="img-box-btn-item"
+                // className="flex-box"
+                // style={{ gap: 4 }}
+                type={'link'}
+                icon={<SwapOutlined />}
+                onClick={() => {
+                  onImgChange && onImgChange?.();
+                }}
+              >
+                切换
+              </Button>
+            ) : null
+          ) : (
+            <Fragment>
+              <div
+                className={`${selectedNum === 0 ? 'greyColorStyle' : ''} prev-btn`}
+                onClick={() => onPrev()}
+              >
+                {'< '}
+              </div>
+              {`${selectedNum + 1}/${urlList.current?.length}`}
+              <div
+                className={`next-btn ${selectedNum + 1 === urlList.current.length ? 'greyColorStyle' : ''
+                  }`}
+                onClick={() => onNext()}
+              >
+                {' >'}
+              </div>
+            </Fragment>
+          )}
+          <DownloadOutlined
+            className="img-box-btn-item"
+            onClick={() => {
+              // const ifCORS = (_.isString(source) ? source : source?.url || defaultImg)?.indexOf('localhost') < 0
+              //   && (_.isString(source) ? source : source?.url || defaultImg)?.indexOf('127.0.0.1') < 0;
+              const imgBox = dom?.current?.querySelector('.ant-image-img');  // ant-image-img
+              html2canvas(imgBoxRef.current, {
+                scale: 1,
+                useCORS: true, // 是否尝试使⽤CORS从服务器加载图像
+                allowTaint: false, // 是否允许跨域图像。会污染画布，导致⽆法使⽤canvas.toDataURL ⽅法
+              }).then((canvas: any) => {
+                let imageDataURL = canvas.toDataURL('image/png', { quality: 1, });
+                var link = document.createElement('a');
+                link.href = imageDataURL;
+                link.download = `output.png`;
+                link.click();
+              });
+            }}
+          />
+          <ExpandOutlined className="img-box-btn-item" onClick={() => setVisible(true)} />
         </div>
         <div style={{ display: 'none' }}>
           <Image.PreviewGroup

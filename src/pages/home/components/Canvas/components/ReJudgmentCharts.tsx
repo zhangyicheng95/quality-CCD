@@ -81,10 +81,10 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
     // 取SN码
     const productValue = dataValue?.filter((i: any) => i.type === 'SN')?.[0]?.value || undefined;
     if (!!productValue) {
+      handleChange('productCode', productValue);
       form.setFieldsValue({
         productCode: productValue,
       });
-      handleChange('productCode', productValue);
     };
     // 取station码
     const stationValue = dataValue?.filter((i: any) => i.type === 'station')?.[0]?.value || undefined;

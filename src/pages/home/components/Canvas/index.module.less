@@ -1406,11 +1406,21 @@
 
         &-defect {
           position: absolute;
-          border: 1px solid red;
-          color: red;
+          // border: 1px solid red;
           background-color: transparent;
           font-size: 12px;
-          padding: 4px;
+
+          &-title {
+            margin-top: -16px;
+            letter-spacing: 1px;
+            color: red;
+          }
+
+          &-status {
+            letter-spacing: 1px;
+            font-weight: bolder;
+            font-size: 28px;
+          }
         }
       }
     }
