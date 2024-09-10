@@ -19,6 +19,7 @@ import {
   Checkbox,
   Dropdown,
   Menu,
+  DatePicker,
 } from 'antd';
 import * as _ from 'lodash';
 import { BASE_IP, btnFetch, startFlowService, stopFlowService, updateParams } from '@/services/api';
@@ -1362,6 +1363,7 @@ const Home: React.FC<any> = (props: any) => {
               )
                 ? { visibility: 'hidden' } : {},
               (
+                !['modal'].includes(type) &&
                 !ifCanEdit &&
                 ((size?.x < tabNum * 96 - 10)
                   ||
@@ -2074,7 +2076,8 @@ const Home: React.FC<any> = (props: any) => {
                       xName,
                       ifFetch,
                       ifFetchParams,
-                      ifOnShowTab,
+                      lineNumber,
+                      columnNumber: moment(!!columnNumber ? new Date(columnNumber) : new Date(), 'YYYY-MM-DD HH:mm:ss')
                     }}
                   />
                 ) : type === 'buttonImages' ? (
@@ -2309,6 +2312,9 @@ const Home: React.FC<any> = (props: any) => {
                                 !!backgroundColor && !!backgroundColor?.rgb
                                   ? { backgroundColor: backgroundColor }
                                   : {},
+                                type === 'modal' ? {
+                                  columnNumber: moment(!!columnNumber ? new Date(columnNumber) : new Date(), 'YYYY-MM-DD HH:mm:ss')
+                                } : {},
                                 type === 'platForm'
                                   ? {
                                     platFormOptions: !!platFormOptions
@@ -3064,8 +3070,8 @@ const Home: React.FC<any> = (props: any) => {
       platFormOptions: undefined,
       ifFetchParams: false,
       ifNeedAllow: false,
-      lineNumber: 1,
-      columnNumber: 1,
+      lineNumber: undefined,
+      columnNumber: undefined,
       magnifierWidth: undefined,
       magnifierHeight: undefined,
       ifPopconfirm: true,
@@ -4330,6 +4336,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name="lineNumber"
                       label="行数"
+                      initialValue={1}
                       rules={[{ required: true, message: '行数' }]}
                     >
                       <InputNumber min={1} placeholder="" />
@@ -4337,6 +4344,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name="columnNumber"
                       label="列数"
+                      initialValue={1}
                       rules={[{ required: true, message: '列数' }]}
                     >
                       <InputNumber min={1} placeholder="" />
@@ -6677,6 +6685,22 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                     <Form.Item name="ifFetchParams" label="反馈参数" valuePropName="checked">
                       <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name={`lineNumber`}
+                      label={'倒计时'}
+                      tooltip="天"
+                      rules={[{ required: false, message: '倒计时' }]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                    <Form.Item
+                      name={`columnNumber`}
+                      label={'开始统计时间'}
+                      initialValue={moment(new Date(), 'YYYY-MM-DD HH:mm:ss')}
+                      rules={[{ required: false, message: '开始统计时间' }]}
+                    >
+                      <DatePicker showTime />
                     </Form.Item>
                   </Fragment>
                 ) : null}

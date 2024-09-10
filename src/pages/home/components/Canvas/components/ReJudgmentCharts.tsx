@@ -14,7 +14,7 @@ interface Props {
 };
 
 const ReJudgmentCharts: React.FC<Props> = (props: any) => {
-  const { data = {}, id } = props;
+  const { data = {}, id, started } = props;
   let {
     dataValue = [], fontSize,
     xName = '',
@@ -71,24 +71,52 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
   const [leftModelSelected, setLeftModelSelected] = useState<any>({ position: {}, url: '' });
   const [selected, setSelected] = useState<any>(null);
 
-  // 拉取模板图列表
   useEffect(() => {
-    if (!!localStorage.getItem(`rejudgment-${id}`)) {
-      setLeftModelSelected(JSON.parse(localStorage.getItem(`rejudgment-${id}`) || "{}"));
-    }
-  }, []);
+    setSelected(null);
+    setLeftModelSelected({ position: {}, url: '' });
+    dataValue = [
+      {
+        "type": "SN",
+        "value": ""
+      },
+      {
+        "type": "station",
+        "value": ""
+      },
+      {
+        "type": "model",
+        "value": {}// model.json的内容
+      },
+      {
+        "type": "lot_no", // 批次号
+        "value": ""
+      },
+      {
+        "type": "product_no", // 产品号
+        "value": ""
+      }
+    ];
+    // form.setFieldsValue({
+    //   productCode: '',
+    //   regionCode: '',
+    //   productionLine: '',
+    //   lot_no: '',
+    //   product_no: '',
+    // });
+    // handleChange('productCode', '');
+  }, [started]);
   useEffect(() => {
     // 取SN码
-    const productValue = dataValue?.filter((i: any) => i.type === 'SN')?.[0]?.value || undefined;
-    if (!!productValue) {
+    const productValue = dataValue?.filter((i: any) => i.type === 'SN')?.[0]?.value;
+    if (!_.isUndefined(productValue)) {
       handleChange('productCode', productValue);
       form.setFieldsValue({
         productCode: productValue,
       });
     };
     // 取station码
-    const stationValue = dataValue?.filter((i: any) => i.type === 'station')?.[0]?.value || undefined;
-    if (!!stationValue) {
+    const stationValue = dataValue?.filter((i: any) => i.type === 'station')?.[0]?.value;
+    if (!_.isUndefined(stationValue)) {
       const transform = {
         'left': '左工位',
         'right': '右工位'
@@ -98,30 +126,29 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
       });
     };
     // 取lot_no批次号 
-    const lotNoValue = dataValue?.filter((i: any) => i.type === 'lot_no')?.[0]?.value || undefined;
-    if (!!lotNoValue) {
+    const lotNoValue = dataValue?.filter((i: any) => i.type === 'lot_no')?.[0]?.value;
+    if (!_.isUndefined(lotNoValue)) {
       form.setFieldsValue({
         lot_no: lotNoValue,
       });
     };
     // 取product_no产品号
-    const productNoValue = dataValue?.filter((i: any) => i.type === 'product_no')?.[0]?.value || undefined;
-    if (!!productNoValue) {
+    const productNoValue = dataValue?.filter((i: any) => i.type === 'product_no')?.[0]?.value;
+    if (!_.isUndefined(productNoValue)) {
       form.setFieldsValue({
         product_no: productNoValue,
       });
     };
     // 取模版
-    const modelValue = dataValue?.filter((i: any) => i.type === 'model')?.[0]?.value || undefined;
-    if (!!modelValue) {
-      setLeftModelSelected(modelValue);
-      localStorage.setItem(`rejudgment-${id}`, JSON.stringify(modelValue));
+    const modelValue = dataValue?.filter((i: any) => i.type === 'model')?.[0]?.value;
+    if (!_.isUndefined(modelValue)) {
+      setLeftModelSelected(!!Object.keys(modelValue)?.length ? modelValue : { position: {}, url: '' });
     };
     // 消息提示
-    const messageValue = dataValue?.filter((i: any) => i.type === 'message')?.[0]?.value || undefined;
+    const messageValue = dataValue?.filter((i: any) => i.type === 'message')?.[0]?.value;
     if (!!messageValue) {
       notification['warning']({
-        message: '警告',
+        message: '提示',
         description: messageValue
       });
     };
@@ -159,7 +186,6 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
           }, 200);
         } else {
           message.error(res?.message || res?.msg || '后台服务异常，请重启服务');
-          reject(false);
         }
       });
     });

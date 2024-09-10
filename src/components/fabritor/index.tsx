@@ -586,7 +586,7 @@ export default function Fabritor(props: Props) {
         // }));
         editor.canvas?.discardActiveObject?.();
       }
-    }, 500);
+    }, 50);
   }, [isInit, shapeFromData]);
 
   return (
