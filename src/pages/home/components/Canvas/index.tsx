@@ -143,6 +143,7 @@ import ReJudgmentCharts from './components/ReJudgmentCharts';
 import AntdTableFromHttpCharts from './components/AntdTableFromHttpCharts';
 import FabricCharts from './components/FabricCharts';
 import CableCharts from './components/CableCharts';
+import CountDownCharts from './components/CountDownCharts';
 
 const leftPanelDataLocal = [
   {
@@ -1435,6 +1436,7 @@ const Home: React.FC<any> = (props: any) => {
                     'iframe',
                     'timeSelect',
                     'httpTable',
+                    'countdown',
                   ].includes(type) ? (
                   '请重新绑定数据节点'
                 ) : type === 'line' ? (
@@ -2076,8 +2078,6 @@ const Home: React.FC<any> = (props: any) => {
                       xName,
                       ifFetch,
                       ifFetchParams,
-                      lineNumber,
-                      columnNumber: moment(!!columnNumber ? new Date(columnNumber) : new Date(), 'YYYY-MM-DD HH:mm:ss')
                     }}
                   />
                 ) : type === 'buttonImages' ? (
@@ -2239,6 +2239,17 @@ const Home: React.FC<any> = (props: any) => {
                       ifOnShowTab,
                     }}
                   />
+                ) : type === 'countdown' ? (
+                  <CountDownCharts
+                    id={key}
+                    data={{
+                      dataValue,
+                      fontSize,
+                      fetchType,
+                      xName,
+                      ifFetchParams,
+                    }}
+                  />
                 ) : (
                   <ImgCharts
                     id={key}
@@ -2312,9 +2323,6 @@ const Home: React.FC<any> = (props: any) => {
                                 !!backgroundColor && !!backgroundColor?.rgb
                                   ? { backgroundColor: backgroundColor }
                                   : {},
-                                type === 'modal' ? {
-                                  columnNumber: moment(!!columnNumber ? new Date(columnNumber) : new Date(), 'YYYY-MM-DD HH:mm:ss')
-                                } : {},
                                 type === 'platForm'
                                   ? {
                                     platFormOptions: !!platFormOptions
@@ -6686,21 +6694,33 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item name="ifFetchParams" label="反馈参数" valuePropName="checked">
                       <Switch />
                     </Form.Item>
+                  </Fragment>
+                ) : null}
+                {['countdown'].includes(windowType) ? (
+                  <Fragment>
                     <Form.Item
-                      name={`lineNumber`}
-                      label={'倒计时'}
-                      tooltip="天"
-                      rules={[{ required: false, message: '倒计时' }]}
+                      name={`fetchType`}
+                      label={'http类型'}
+                      rules={[{ required: false, message: 'http类型' }]}
                     >
-                      <InputNumber />
+                      <Select
+                        style={{ width: '100%' }}
+                        placeholder="http类型"
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
+                          value: item,
+                          label: _.toUpper(item),
+                        }))}
+                      />
                     </Form.Item>
                     <Form.Item
-                      name={`columnNumber`}
-                      label={'开始统计时间'}
-                      initialValue={moment(new Date(), 'YYYY-MM-DD HH:mm:ss')}
-                      rules={[{ required: false, message: '开始统计时间' }]}
+                      name={`xName`}
+                      label={'接口地址'}
+                      rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <DatePicker showTime />
+                      <Input size="large" />
+                    </Form.Item>
+                    <Form.Item name="ifFetchParams" label="提示词">
+                      <Input size="large" />
                     </Form.Item>
                   </Fragment>
                 ) : null}

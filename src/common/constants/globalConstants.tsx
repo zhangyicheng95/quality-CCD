@@ -307,6 +307,10 @@ export const windowTypeList: any = [
     value: 'fabric',
     label: '尺寸测量标注窗口',
   },
+  {
+    value: 'countdown',
+    label: '倒计时窗口',
+  },
 ];
 // 默认基础组件
 export const basicWindowList: any = [

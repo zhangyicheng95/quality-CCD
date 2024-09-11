@@ -96,19 +96,17 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
         "value": ""
       }
     ];
-    // form.setFieldsValue({
-    //   productCode: '',
-    //   regionCode: '',
-    //   productionLine: '',
-    //   lot_no: '',
-    //   product_no: '',
-    // });
-    // handleChange('productCode', '');
   }, [started]);
   useEffect(() => {
     // 取SN码
     const productValue = dataValue?.filter((i: any) => i.type === 'SN')?.[0]?.value;
     if (!_.isUndefined(productValue)) {
+      setLeftModelSelected((prev: any) => {
+        return {
+          ...prev,
+          OK: ''
+        }
+      });
       handleChange('productCode', productValue);
       form.setFieldsValue({
         productCode: productValue,
@@ -152,6 +150,25 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
         description: messageValue
       });
     };
+    // 查询为空消息提示
+    const messageNoneValue = dataValue?.filter((i: any) => i.type === 'message-none')?.[0]?.value;
+    if (!!messageNoneValue) {
+      notification['warning']({
+        message: '提示',
+        description: messageNoneValue,
+        duration: null
+      });
+    };
+    // 全是OK消息提示
+    const messageOKValue = dataValue?.filter((i: any) => i.type === 'message-ok')?.[0]?.value;
+    if (!!messageOKValue) {
+      setLeftModelSelected((prev: any) => {
+        return {
+          ...prev,
+          OK: messageOKValue
+        }
+      });
+    };
   }, [dataValue]);
   // 选择的模板图，计算大小
   useEffect(() => {
@@ -175,6 +192,12 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
   }, [leftModelSelected?.url, leftTableDomRef.current?.clientWidth]);
   // 条件查询
   const handleChange = (key: string, value: any) => {
+    setLeftModelSelected((prev: any) => {
+      return {
+        ...prev,
+        OK: ''
+      }
+    });
     return new Promise((resolve: any, reject: any) => {
       searchRef.current[key] = value;
       btnFetch(fetchType, xName, { type: 'search', data: searchRef.current }).then((res: any) => {
@@ -199,7 +222,13 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
       style={{ fontSize }}
     >
       <div className="flex-box-center re-judgment-left" ref={leftTableDomRef}>
-        <div className="flex-box re-judgment-left-table" ref={leftTableImgDomRef}>
+        <div
+          className="flex-box re-judgment-left-table"
+          ref={leftTableImgDomRef}
+          style={
+            !!leftModelSelected.OK ? { backgroundColor: 'rgba(0,200,0,0.4)' } : {}
+          }
+        >
           {
             !!leftModelSelected?.url ?
               <img
@@ -243,6 +272,14 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                 }}
               />
               : null
+          }
+          {
+            !!leftModelSelected.OK ? <div className='flex-box-center' style={{
+              width: '100%',
+              height: '100%',
+              color: 'rgba(0,87,17,1)',
+              fontSize: 24
+            }}>{leftModelSelected.OK}</div> : null
           }
         </div>
       </div>

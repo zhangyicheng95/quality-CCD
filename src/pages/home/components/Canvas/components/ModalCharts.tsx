@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { Form, Input, message, Modal, notification } from 'antd';
+import { Form, Input, message, Modal } from 'antd';
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
@@ -10,7 +10,6 @@ import {
 } from '@ant-design/icons';
 import { btnFetch } from '@/services/api';
 import { useForm } from 'antd/es/form/Form';
-import { timeToString } from '@/utils/utils';
 
 interface Props {
   data: any;
@@ -22,8 +21,7 @@ interface Props {
 const ModalCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
-    dataValue = {}, fetchType, xName, ifFetch, ifFetchParams, lineNumber,
-    columnNumber
+    dataValue = {}, fetchType, xName, ifFetch, ifFetchParams,
   } = data;
   if (process.env.NODE_ENV === 'development') {
     // dataValue = { type: 'success', title: '我是标题', content: '内容啊啊啊啊啊啊' }
@@ -39,20 +37,6 @@ const ModalCharts: React.FC<Props> = (props: any) => {
   const ifCanEdit = useMemo(() => {
     return location.hash?.indexOf('edit') > -1;
   }, [location.hash]);
-
-  useEffect(() => {
-    if (!!lineNumber && !!columnNumber && !ifCanEdit) {
-      if ((new Date().getTime() - new Date(columnNumber).getTime()) >= (lineNumber - 3) * 24 * 60 * 60 * 1000) {
-        notification.destroy();
-        const leaveTime = timeToString(new Date().getTime() - new Date(columnNumber).getTime());
-        notification['warning']({
-          message: '提示',
-          description: (lineNumber - leaveTime?.d) >= 0 ? `设备保养剩余${lineNumber - leaveTime?.d}天，请及时保养！` : `设备保养已超期${leaveTime?.d - lineNumber}天，请及时保养！`,
-          duration: null
-        });
-      }
-    }
-  }, [lineNumber, columnNumber]);
 
   useEffect(() => {
     if (Object?.keys(dataValue)?.length && !ifCanEdit) {

@@ -410,7 +410,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                   }
                 />
                 <Image
-                  src={_.isString(source) ? source : source?.url || defaultImg}
+                  src={`${_.isString(source) ? source : source?.url || defaultImg}?__timestamp=${+new Date()}`}
                   alt="logo"
                   style={
                     chartSize
@@ -666,7 +666,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             </div>
             <div className={`flex-box image-contrast-modal-body-bottom ${visibleDirection}`}>
               <Image
-                src={urlList.current?.[selectedNum] || ''}
+                src={`${urlList.current?.[selectedNum] || ''}?__timestamp=${+new Date()}`}
                 alt="logo"
                 className="image-contrast-modal-body-img"
               />
