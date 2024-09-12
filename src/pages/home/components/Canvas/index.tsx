@@ -1484,7 +1484,6 @@ const Home: React.FC<any> = (props: any) => {
                       showBackground,
                       showWithLine,
                       barColor,
-                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'pie' ? (
@@ -3471,9 +3470,11 @@ const Home: React.FC<any> = (props: any) => {
                               contentBackground:
                                 value === 'blackBg'
                                   ? 'blackBg'
-                                  : prev?.contentData?.contentBackground === icon
-                                    ? ''
-                                    : icon,
+                                  : value === 'grayBg'
+                                    ? 'grayBg'
+                                    : prev?.contentData?.contentBackground === icon
+                                      ? ''
+                                      : icon,
                             }),
                           }),
                         );
@@ -3636,9 +3637,11 @@ const Home: React.FC<any> = (props: any) => {
                             !!paramData?.contentData?.contentBackground
                               ? paramData?.contentData?.contentBackground === 'blackBg'
                                 ? { backgroundColor: 'black' }
-                                : {
-                                  backgroundImage: `url(${paramData?.contentData?.contentBackground})`,
-                                }
+                                : paramData?.contentData?.contentBackground === 'grayBg'
+                                  ? { backgroundColor: '#ddd' }
+                                  : {
+                                    backgroundImage: `url(${paramData?.contentData?.contentBackground})`,
+                                  }
                               : {},
                             !paramData?.contentData?.autoSize &&
                               paramData?.contentData?.contentSize?.width
@@ -3790,9 +3793,11 @@ const Home: React.FC<any> = (props: any) => {
                     !!paramData?.contentData?.contentBackground
                       ? paramData?.contentData?.contentBackground === 'blackBg'
                         ? { backgroundColor: 'black' }
-                        : {
-                          backgroundImage: `url(${paramData?.contentData?.contentBackground})`,
-                        }
+                        : paramData?.contentData?.contentBackground === 'grayBg'
+                          ? { backgroundColor: '#ddd' }
+                          : {
+                            backgroundImage: `url(${paramData?.contentData?.contentBackground})`,
+                          }
                       : {},
                     !paramData?.contentData?.autoSize && paramData?.contentData?.contentSize?.width
                       ? {

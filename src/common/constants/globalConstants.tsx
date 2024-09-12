@@ -413,6 +413,10 @@ export const simulatedCoatingList: any = [
     value: 'blackBg',
     label: '纯黑背景图',
   },
+  {
+    value: 'grayBg',
+    label: '纯灰背景图',
+  },
 ];
 export const logColors = {
   warning: 'rgba(245,160,49,1)',

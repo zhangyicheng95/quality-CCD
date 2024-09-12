@@ -635,6 +635,7 @@ export function FormatWidgetToDom(props: any) {
     setSelectPathVisible,
     setSelectedPath,
     measurementLineNum = 4,
+    style = null,
   } = props;
   const { setFieldsValue, getFieldValue } = form;
   const {
@@ -677,6 +678,7 @@ export function FormatWidgetToDom(props: any) {
           name={name}
           label={label}
           tooltip={description}
+          style={!!style ? style : {}}
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
         >
@@ -698,6 +700,7 @@ export function FormatWidgetToDom(props: any) {
           name={name}
           label={label}
           tooltip={description}
+          style={!!style ? style : {}}
           initialValue={moment(value || undefined)}
           rules={[{ required: require, message: `${alias}` }]}
         >
@@ -721,6 +724,7 @@ export function FormatWidgetToDom(props: any) {
           name={name}
           label={label}
           tooltip={description}
+          style={!!style ? style : {}}
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
         >
@@ -738,6 +742,7 @@ export function FormatWidgetToDom(props: any) {
           name={name}
           label={label}
           tooltip={description}
+          style={!!style ? style : {}}
           initialValue={(_.isArray(value) ? value[0] : value) || undefined}
           rules={[{ required: require, message: `${alias}` }]}
         >
@@ -765,6 +770,7 @@ export function FormatWidgetToDom(props: any) {
             name={name}
             label={label}
             tooltip={description}
+            style={!!style ? style : {}}
             initialValue={(_.isArray(value) ? value[0] : value) || undefined}
             rules={[{ required: require, message: `${alias}` }]}
           >
@@ -828,6 +834,7 @@ export function FormatWidgetToDom(props: any) {
           name={name}
           label={label}
           tooltip={description}
+          style={!!style ? style : {}}
           initialValue={(_.isArray(value) ? value[0] : value) || false}
           rules={[{ required: require, message: `${alias}` }]}
         >
@@ -855,6 +862,7 @@ export function FormatWidgetToDom(props: any) {
           name={name}
           label={label}
           tooltip={description}
+          style={!!style ? style : {}}
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
         >
@@ -883,6 +891,7 @@ export function FormatWidgetToDom(props: any) {
           name={name}
           label={label}
           tooltip={description}
+          style={!!style ? style : {}}
           initialValue={value || undefined}
           rules={[{ required: require, message: `${alias}` }]}
         >
@@ -902,6 +911,7 @@ export function FormatWidgetToDom(props: any) {
             name={name}
             label={label}
             tooltip={description}
+            style={!!style ? style : {}}
             initialValue={
               value || value == 0
                 ? value
@@ -937,6 +947,7 @@ export function FormatWidgetToDom(props: any) {
           name={name}
           label={label}
           tooltip={description}
+          style={!!style ? style : {}}
           initialValue={value || value == 0 ? value : defaultValue}
           rules={[{ required: require, message: `${alias}` }]}
         >
@@ -961,6 +972,7 @@ export function FormatWidgetToDom(props: any) {
           name={name}
           label={label}
           tooltip={description}
+          style={!!style ? style : {}}
           initialValue={value || false}
           rules={[{ required: require, message: `${alias}` }]}
         >
@@ -984,6 +996,7 @@ export function FormatWidgetToDom(props: any) {
           name={name}
           label={label}
           tooltip={description}
+          style={!!style ? style : {}}
           initialValue={value || undefined}
           valuePropName="file"
           rules={[{ required: require, message: `${alias}` }]}
@@ -1022,6 +1035,7 @@ export function FormatWidgetToDom(props: any) {
           name={name}
           label={label}
           tooltip={description}
+          style={!!style ? style : {}}
           initialValue={value || undefined}
           valuePropName="file"
           getValueFromEvent={(e: any) => {
@@ -1063,7 +1077,13 @@ export function FormatWidgetToDom(props: any) {
       );
     case 'codeEditor':
       return (
-        <FormItem name={name} label={label} tooltip={description} className="codeEditor">
+        <FormItem
+          name={name}
+          label={label}
+          tooltip={description}
+          style={!!style ? style : {}}
+          className="codeEditor"
+        >
           {!!value ? (
             <Input.TextArea
               autoSize={{ maxRows: 5 }}
@@ -1097,6 +1117,7 @@ export function FormatWidgetToDom(props: any) {
             name={name}
             label={label}
             tooltip={description}
+            style={!!style ? style : {}}
             initialValue={undefined}
             valuePropName="file"
             rules={[{ required: false, message: `${alias}` }]}
@@ -1150,6 +1171,7 @@ export function FormatWidgetToDom(props: any) {
           name={name}
           label={label}
           tooltip={description}
+          style={!!style ? style : {}}
           initialValue={
             value ||
             defaultValue || {

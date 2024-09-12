@@ -5,7 +5,6 @@ import { useModel } from 'umi';
 import { message } from 'antd';
 import _ from 'lodash';
 import { ExpandOutlined } from '@ant-design/icons';
-import moment from 'moment';
 
 interface Props {
   data: any;
@@ -44,7 +43,6 @@ const BarCharts: React.FC<Props> = (props: any) => {
     showBackground,
     showWithLine,
     barColor = [],
-    ifOnShowTab,
   } = data;
   if (process.env.NODE_ENV === 'development') {
     for (let i = 0; i < 7; i++) {

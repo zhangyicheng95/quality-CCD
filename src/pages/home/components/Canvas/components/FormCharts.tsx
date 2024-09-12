@@ -283,6 +283,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
                   label={item?.alias || item?.name}
                   config={[item?.name, item]}
                   disabled={disabled}
+                  style={(index + 1) === timeSelectDefault.length ? { marginBottom: 0 } : {}}
                   widgetChange={() => {
                     if (!ifNeedAllow) {
                       onSubmit();

@@ -154,25 +154,25 @@ function ItemBox(props: any) {
               title={name?.map((itemName: string, indexName: number) => {
                 return (
                   <span key={indexName} className={`ant-tag ant-tag-${colorList[indexName]}`}>
-                    {itemName}
+                    {itemName?.split('<br/>')?.join(',')}
                   </span>
                 );
               })}
             >
               <div className="flex-box-justify-end" style={{ gap: 4 }}>
                 {name?.slice(0, 2)?.map((itemName: string, indexName: number) => {
-                  return <div key={indexName}>{itemName.slice(0, 3)}</div>;
+                  return <div key={indexName}>{itemName?.split('<br/>')?.[0]?.slice?.(0, 3)}</div>;
                 })}
               </div>
             </TooltipDiv>
           ) : _.isString(name) ? (
             <TooltipDiv
               title={<span className={`ant-tag ant-tag-${colorList[0]}`}>
-                {name}
+                {name?.split('<br/>')?.join(',')}
               </span>}
             >
               <div className="flex-box-justify-end" style={{ gap: 4 }}>
-                <div>{name.slice(0, 3)}</div>
+                <div>{name?.split('<br/>')?.[0]?.slice?.(0, 3)}</div>
               </div>
             </TooltipDiv>
           ) : null}

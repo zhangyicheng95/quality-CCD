@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import { Button, Form, Input, message, notification, Select } from 'antd';
@@ -72,6 +72,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
   const [selected, setSelected] = useState<any>(null);
 
   useEffect(() => {
+    if (!started) return;
     setSelected(null);
     setLeftModelSelected({ position: {}, url: '' });
     dataValue = [
@@ -107,7 +108,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
           OK: ''
         }
       });
-      handleChange('productCode', productValue);
+      !!productValue && handleChange('productCode', productValue);
       form.setFieldsValue({
         productCode: productValue,
       });
@@ -145,6 +146,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
     // 消息提示
     const messageValue = dataValue?.filter((i: any) => i.type === 'message')?.[0]?.value;
     if (!!messageValue) {
+      notification.destroy();
       notification['warning']({
         message: '提示',
         description: messageValue
@@ -153,10 +155,10 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
     // 查询为空消息提示
     const messageNoneValue = dataValue?.filter((i: any) => i.type === 'message-none')?.[0]?.value;
     if (!!messageNoneValue) {
+      notification.destroy();
       notification['warning']({
         message: '提示',
         description: messageNoneValue,
-        duration: null
       });
     };
     // 全是OK消息提示
@@ -230,6 +232,14 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
           }
         >
           {
+            !!leftModelSelected.OK ? <div className='flex-box-center' style={{
+              width: '100%',
+              padding: 24,
+              color: 'rgba(0,87,17,1)',
+              fontSize: 24
+            }}>{leftModelSelected.OK}</div> : null
+          }
+          {
             !!leftModelSelected?.url ?
               <img
                 src={`${leftModelSelected?.url?.indexOf('http') < 0 ? 'http://localhost:8866/file/' : ''}${leftModelSelected?.url}`}
@@ -272,14 +282,6 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                 }}
               />
               : null
-          }
-          {
-            !!leftModelSelected.OK ? <div className='flex-box-center' style={{
-              width: '100%',
-              height: '100%',
-              color: 'rgba(0,87,17,1)',
-              fontSize: 24
-            }}>{leftModelSelected.OK}</div> : null
           }
         </div>
       </div>
@@ -330,7 +332,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
             >
               <Input
                 allowClear
-                style={{ width: 150 }}
+                style={{ width: 180 }}
                 spellCheck="false"
                 onPressEnter={(e: any) => {
                   if (!!timeRef.current) {
@@ -384,17 +386,19 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
           <div className="re-judgment-right-img-box-top">
             {
               !!selected ?
-                <ImgCharts
-                  id={`${id.split('$$')[0]}$$1$$alertImg`}
-                  data={{
-                    dataValue: selected?.url || undefined,
-                    notLocalStorage: true,
-                    comparison: false,
-                    magnifier: true,
-                    magnifierSize: 12,
-                    ifOnShowTab: true
-                  }}
-                />
+                <Fragment>
+                  <ImgCharts
+                    id={`${id.split('$$')[0]}$$1$$alertImg`}
+                    data={{
+                      dataValue: selected?.url || undefined,
+                      notLocalStorage: true,
+                      comparison: false,
+                      magnifier: true,
+                      magnifierSize: 12,
+                      ifOnShowTab: true
+                    }}
+                  />
+                </Fragment>
                 : null
             }
           </div>
@@ -428,6 +432,21 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                   }
                 });
               }}>复判NG</Button>
+            {
+              !!selected ?
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setSelected((prev: any) => {
+                      return {
+                        ...prev,
+                        url: prev?.url?.indexOf('NG') > -1 ? prev?.url?.replace('NG', 'ORIG') : prev?.url?.replace('ORIG', 'NG'),
+                      }
+                    })
+                  }}
+                >切换{selected?.url?.indexOf('NG') > -1 ? '原图' : selected?.url?.indexOf('ORIG') > -1 ? '结果图' : ''}</Button>
+                : null
+            }
           </div>
         </div>
       </div>
