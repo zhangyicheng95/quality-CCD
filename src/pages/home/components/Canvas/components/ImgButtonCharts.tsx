@@ -115,6 +115,21 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
       });
     } else if (key === '4') {
       onDefectClick();
+    } else if (key === '6') {
+      if (itemClicked.current > 0) {
+        message.warning('只允许上传一次');
+        return;
+      }
+      if (!fetchType || !xName) return;
+      itemClicked.current += 1;
+      btnFetch(fetchType, xName, { type: '6' }).then((res: any) => {
+        if (res && res.code === 'SUCCESS') {
+          message.success('上传成功');
+        } else {
+          message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
+          itemClicked.current = 0;
+        }
+      });
     } else if (key === '9') {
       // 反档
       setFileVisible(true);

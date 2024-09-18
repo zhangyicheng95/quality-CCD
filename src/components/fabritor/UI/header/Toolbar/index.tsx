@@ -168,217 +168,234 @@ export default function Toolbar() {
   // 画布结果格式化
   const formatResult = (list: any) => {
     console.log('原始数据', list);
-    const initItem = (item: any) => {
-      if (!item) {
-        return null;
-      }
-      let {
-        type, sub_type, path, height, width, text, strokeWidth,
-        left, top, scaleX = 1, angle, dpi,
-        backgroundColor, fill, fontSize, caliperRule, measurementErrorRule,
-      } = item;
-      if (
-        sub_type?.indexOf('line_result') > -1
-        ||
-        sub_type?.indexOf('image_result') > -1
-      ) {
-        return null;
-      }
-      if (left < 0 || top < 0) {
-        if (sub_type?.indexOf('line') > -1) {
-          left = Math.min(item?.x1, item?.x2);
-          top = Math.min(item.y1, item.y2);
-        } else if (type === 'path') {
-          // 轨迹轮廓点
-          left = path[0][1];
-          top = path[0][2];
-        } else {
+    try {
+      const initItem = (item: any) => {
+        if (!item) {
           return null;
         }
-      }
-      const common = {
-        type: sub_type, left, top, height: height * scaleX, width: width * scaleX,
-        angle, scale: scaleX
-      }
-      // if (sub_type === 'text') {
-      //   return {
-      //     ...common,
-      //     text, backgroundColor, color: fill, fontSize,
-      //   }
-      // } else 
-      if (sub_type === 'image') {
-        return {
-          ...common,
-          url: item.objects?.[0]?.src,
-          dpi: dpi,
-        }
-      } else if (["line", "dash-line", "arrow-line-1", "arrow-line-2"].includes(sub_type)) {
-        return {
-          type: sub_type,
-          left: item.x1 < item.x2 ? item.x1 : item.x2,
-          top: item.x1 < item.x2 ? item.y1 : item.y2,
-          x1: item.x1,
-          y1: item.y1,
-          x2: item.x2,
-          y2: item.y2,
-          angle: 0,
-          scale: scaleX,
-          ...caliperRule
-        }
-      } else if (sub_type?.indexOf('line_') > -1) {
-        return {
-          type: 'line',
-          sub_type: sub_type.split('line_')[1],
-          left: item.x1 < item.x2 ? item.x1 : item.x2,
-          top: item.x1 < item.x2 ? item.y1 : item.y2,
-          x1: item.x1,
-          y1: item.y1,
-          x2: item.x2,
-          y2: item.y2,
-          angle: 0,
-          scale: scaleX,
-          ...caliperRule
-        }
-      } else if (sub_type?.indexOf("basic_point") > -1) {
-        if (sub_type?.indexOf("basic_point_border") > -1) {
+        let {
+          type, sub_type, path, height, width, text, strokeWidth,
+          left, top, scaleX = 1, angle, dpi, sub_name,
+          backgroundColor, fill, fontSize, caliperRule, measurementErrorRule,
+        } = item;
+        if (
+          sub_type?.indexOf('line_result') > -1
+          ||
+          sub_type?.indexOf('image_result') > -1
+        ) {
           return null;
         }
-        return {
-          type: 'point',
-          sub_type,
-          left: left + width / 2,
-          top: top + height / 2,
-          angle,
-          scale: scaleX,
-          ...caliperRule
-        };
-      } else if (sub_type?.indexOf('point_') > -1) {
-        return {
-          type: 'point',
-          sub_type: sub_type.split('point_')[1],
-          left: left + width / 2, top: top + top / 2,
-          angle: 0,
-          scale: scaleX
+        if (left < 0 || top < 0) {
+          if (sub_type?.indexOf('line') > -1) {
+            left = Math.min(item?.x1, item?.x2);
+            top = Math.min(item.y1, item.y2);
+          } else if (type === 'path') {
+            // 轨迹轮廓点
+            left = path[0][1];
+            top = path[0][2];
+          } else {
+            return null;
+          }
         }
-      } else if (sub_type === 'outer_point') {
-        return {
-          type: 'point',
-          sub_type,
-          left: left + width / 2, top: top + top / 2,
-          angle: 0,
-          scale: scaleX
+        const common = {
+          type: sub_type, left, top, height: height * scaleX, width: width * scaleX,
+          angle, scale: scaleX, sub_name
         }
-      } else if (sub_type === 'point' || (!sub_type && path?.length <= 3)) {
-        return {
-          type: 'point',
-          left: left + width / 2, top: top + top / 2,
-          angle: 0,
-          scale: scaleX
-        }
-      } else if (sub_type?.indexOf('_measurementError_') > -1) {
-        const res = sub_type.split('_measurementError_');
-        const realItem = editor?.canvas?.getObjects()?.filter((i: any) => i.sub_type === sub_type)?.[0];
-
-        if (res[0] === 'sector') {
+        // if (sub_type === 'text') {
+        //   return {
+        //     ...common,
+        //     text, backgroundColor, color: fill, fontSize,
+        //   }
+        // } else 
+        if (sub_type === 'image') {
           return {
             ...common,
-            points: {
-              tl: {
-                x: (realItem?.aCoords.tl.x + realItem?.aCoords.tr.x) / 2,
-                y: (realItem?.aCoords.tl.y + realItem?.aCoords.tr.y) / 2,
-              },
-              tr: realItem?.aCoords.tr,
-              bl: {
-                x: (realItem?.aCoords.tl.x + realItem?.aCoords.bl.x) / 2,
-                y: (realItem?.aCoords.tl.y + realItem?.aCoords.bl.y) / 2,
-              },
-              br: realItem?.aCoords.bl,
-            },
-            sectorParams: {
-              x: realItem?.aCoords?.tl?.x,
-              y: realItem?.aCoords?.tl?.y,
-              r1: common.width / 2,
-              r2: common.width,
-              angle1: common.angle,
-              angle2: common.angle + 90,
-            },
-            type: res[0],
-            sub_type: `measurementError_${res[1]}`,
-            ...realItem?.measurementErrorRule,
+            url: item.objects?.[0]?.src,
+            dpi: dpi,
+          }
+        } else if (["line", "dash-line", "arrow-line-1", "arrow-line-2"].includes(sub_type)) {
+          return {
+            type: sub_type,
+            left: item.x1 < item.x2 ? item.x1 : item.x2,
+            top: item.x1 < item.x2 ? item.y1 : item.y2,
+            x1: item.x1,
+            y1: item.y1,
+            x2: item.x2,
+            y2: item.y2,
+            angle: 0,
+            scale: scaleX,
+            ...caliperRule
+          }
+        } else if (sub_type?.indexOf('line_') > -1) {
+          if (!sub_name) {
+            throw new Error();
+          }
+          return {
+            type: 'line',
+            sub_type: sub_type.split('line_')[1],
+            left: item.x1 < item.x2 ? item.x1 : item.x2,
+            top: item.x1 < item.x2 ? item.y1 : item.y2,
+            x1: item.x1,
+            y1: item.y1,
+            x2: item.x2,
+            y2: item.y2,
+            angle: 0,
+            sub_name,
+            scale: scaleX,
+            ...caliperRule
+          }
+        } else if (sub_type?.indexOf("basic_point") > -1) {
+          if (sub_type?.indexOf("basic_point_border") > -1) {
+            return null;
+          }
+          return {
+            type: 'point',
+            sub_type,
+            left: left + width / 2,
+            top: top + height / 2,
+            angle,
+            scale: scaleX,
+            ...caliperRule
           };
-        } else {
+        } else if (sub_type?.indexOf('point_') > -1) {
+          return {
+            type: 'point',
+            sub_type: sub_type.split('point_')[1],
+            left: left + width / 2, top: top + top / 2,
+            angle: 0,
+            scale: scaleX
+          }
+        } else if (sub_type === 'outer_point') {
+          return {
+            type: 'point',
+            sub_type,
+            left: left + width / 2, top: top + top / 2,
+            angle: 0,
+            scale: scaleX
+          }
+        } else if (sub_type === 'point' || (!sub_type && path?.length <= 3)) {
+          return {
+            type: 'point',
+            left: left + width / 2, top: top + top / 2,
+            angle: 0,
+            scale: scaleX
+          }
+        } else if (sub_type?.indexOf('_measurementError_') > -1) {
+          if (!sub_name) {
+            throw new Error();
+          }
+          const res = sub_type.split('_measurementError_');
+          const realItem = editor?.canvas?.getObjects()?.filter((i: any) => i.sub_type === sub_type)?.[0];
+          if (res[0] === 'sector') {
+            return {
+              ...common,
+              points: {
+                tl: {
+                  x: (realItem?.aCoords.tl.x + realItem?.aCoords.tr.x) / 2,
+                  y: (realItem?.aCoords.tl.y + realItem?.aCoords.tr.y) / 2,
+                },
+                tr: realItem?.aCoords.tr,
+                bl: {
+                  x: (realItem?.aCoords.tl.x + realItem?.aCoords.bl.x) / 2,
+                  y: (realItem?.aCoords.tl.y + realItem?.aCoords.bl.y) / 2,
+                },
+                br: realItem?.aCoords.bl,
+              },
+              sectorParams: {
+                x: realItem?.aCoords?.tl?.x,
+                y: realItem?.aCoords?.tl?.y,
+                r1: common.width / 2,
+                r2: common.width,
+                angle1: common.angle,
+                angle2: common.angle + 90,
+              },
+              type: res[0],
+              sub_type: `measurementError_${res[1]}`,
+              ...realItem?.measurementErrorRule,
+            };
+          } else {
+            return {
+              ...common,
+              points: realItem?.aCoords,
+              type: res[0],
+              sub_type: `measurementError_${res[1]}`,
+              ...realItem?.measurementErrorRule,
+            };
+          }
+        } else if (sub_type === 'rect') {
+          if (!sub_name) {
+            throw new Error();
+          }
+          const realItem = editor?.canvas?.getObjects()?.filter((i: any) => i?.angle === angle && i.sub_type === sub_type && i.top === top)?.[0];
           return {
             ...common,
             points: realItem?.aCoords,
-            type: res[0],
-            sub_type: `measurementError_${res[1]}`,
-            ...realItem?.measurementErrorRule,
           };
-        }
-      } else if (sub_type === 'rect') {
-        const realItem = editor?.canvas?.getObjects()?.filter((i: any) => i?.angle === angle && i.sub_type === sub_type && i.top === top)?.[0];
-        return {
-          ...common,
-          points: realItem?.aCoords,
-        };
-      } else if (sub_type === 'circle') {
-        return {
-          type: sub_type,
-          left: left + width / 2,
-          top: top + top / 2,
-          radius: width / 2,
-          angle,
-          scale: scaleX
-        }
-      } else if (sub_type === "sector") {
-        return {
-          ...common,
-          path,
-        };
-      } else if (!sub_type && path?.length > 3) {
-        return {
-          ...common,
-          type: 'pencil',
-          path,
-          width: strokeWidth,
-          height: strokeWidth
-        }
-      }
-      return null;
-    }
-    const realCanvas = editor.canvas?.getObjects();
-    const result = (list || [])?.reduce((pre: any, cen: any) => {
-      const { type, angle, objects } = cen;
-      if (type === 'group') {
-        const realItemGroup = realCanvas?.filter((i: any) => (i.sub_type === cen.sub_type))?.[0];
-        const positions = realItemGroup?.getCoords?.();
-
-        const list = objects?.map((cItem: any, index: number) => {
-          const realItem = realItemGroup?.getObjects()?.filter((i: any) => i.sub_type === cItem?.sub_type)?.[0];
-
-          if (!!positions) {
-            cItem.left = positions[index]?.x;
-            cItem.top = positions[index]?.y;
-            cItem.angle = angle;
-            const res = initItem(cItem);
-            if (!!res) {
-              return res;
-            }
+        } else if (sub_type === 'circle') {
+          return {
+            type: sub_type,
+            left: left + width / 2,
+            top: top + top / 2,
+            radius: width / 2,
+            angle,
+            scale: scaleX
           }
-          return null;
-        }).filter(Boolean);
-        return pre.concat(list);
-      } else {
-        if (!!initItem(cen)) {
-          return pre.concat(initItem(cen));
-        } else {
-          return pre;
+        } else if (sub_type === "sector") {
+          if (!sub_name) {
+            throw new Error();
+          }
+          return {
+            ...common,
+            path,
+          };
+        } else if (!sub_type && path?.length > 3) {
+          return {
+            ...common,
+            type: 'pencil',
+            path,
+            width: strokeWidth,
+            height: strokeWidth,
+          }
         }
+        return null;
       }
-    }, []);
-    console.log('格式化的', result);
+      const realCanvas = editor.canvas?.getObjects();
+      const result = (list || [])?.reduce((pre: any, cen: any) => {
+        const { type, angle, objects } = cen;
+        if (type === 'group') {
+          const realItemGroup = realCanvas?.filter((i: any) => (i.sub_type === cen.sub_type))?.[0];
+          const positions = realItemGroup?.getCoords?.();
 
-    return result || [];
+          const list = objects?.map((cItem: any, index: number) => {
+            const realItem = realItemGroup?.getObjects()?.filter((i: any) => i.sub_type === cItem?.sub_type)?.[0];
+
+            if (!!positions) {
+              cItem.left = positions[index]?.x;
+              cItem.top = positions[index]?.y;
+              cItem.angle = angle;
+              const res = initItem(cItem);
+              if (!!res) {
+                return res;
+              }
+            }
+            return null;
+          }).filter(Boolean);
+          return pre.concat(list);
+        } else {
+          if (!!initItem(cen)) {
+            return pre.concat(initItem(cen));
+          } else {
+            return pre;
+          }
+        }
+      }, []);
+      console.log('格式化的', result);
+
+      return result || [];
+    } catch (err) {
+      message.error('请补全工具命名');
+      return [];
+    }
   };
   // 保存结果
   const saveCanvas = () => {

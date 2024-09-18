@@ -1,6 +1,6 @@
 import { Fragment, useContext, useEffect } from 'react';
 import { fabric } from 'fabric';
-import { Divider, Form, InputNumber, Select } from 'antd';
+import { Divider, Form, Input, InputNumber, Select } from 'antd';
 import { GloablStateContext } from '@/context';
 import ColorSetter from '../ColorSetter';
 import BorderSetter, { getObjectBorderType, getStrokeDashArray } from '../BorderSetter';
@@ -89,6 +89,19 @@ export default function ShapeSetter() {
       onValuesChange={handleValuesChange}
       colon={false}
     >
+      <FormItem
+        name={'sub_name'}
+        label={'名称'}
+        initialValue={object?.sub_name || undefined}
+      >
+        <Input onChange={(e) => {
+          const val = e?.target?.value || '';
+          const realCanvas = editor.canvas?.getObjects()?.filter((i: any) => i.sub_type === object?.sub_type);
+          (realCanvas || [])?.forEach?.((target: any) => {
+            target.sub_name = val;
+          });
+        }} />
+      </FormItem>
       {
         !!object?.caliperRule && !!Object.keys?.(object?.caliperRule)?.length ?
           <Fragment>

@@ -1,6 +1,6 @@
 import { Fragment, useContext, useEffect } from 'react';
 import { fabric } from 'fabric';
-import { Divider, Form, InputNumber, Select } from 'antd';
+import { Divider, Form, Input, InputNumber, Select } from 'antd';
 import ColorSetter from '../ColorSetter/Solid';
 import { GloablStateContext } from '@/context';
 
@@ -67,6 +67,19 @@ export default function RoughSetter() {
       form={form}
       onValuesChange={handleValuesChange}
     >
+      <FormItem
+        name={'sub_name'}
+        label={'名称'}
+        initialValue={object?.sub_name || undefined}
+      >
+        <Input onChange={(e) => {
+          const val = e?.target?.value || '';
+          const realCanvas = editor.canvas?.getObjects()?.filter((i: any) => i.sub_type === object?.sub_type);
+          (realCanvas || [])?.forEach?.((target: any) => {
+            target.sub_name = val;
+          });
+        }} />
+      </FormItem>
       {
         !!object?.measurementErrorRule && !!Object.keys?.(object?.measurementErrorRule)?.length ?
           <Fragment>

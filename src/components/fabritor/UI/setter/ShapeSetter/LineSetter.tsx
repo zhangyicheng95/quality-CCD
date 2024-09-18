@@ -58,13 +58,26 @@ export default function LineSetter() {
       onValuesChange={handleValuesChange}
       colon={false}
     >
+      <FormItem
+        name={'sub_name'}
+        label={'名称'}
+        initialValue={object?.sub_name || undefined}
+      >
+        <Input onChange={(e) => {
+          const val = e?.target?.value || '';
+          const realCanvas = editor.canvas?.getObjects()?.filter((i: any) => i.sub_type === object?.sub_type);
+          (realCanvas || [])?.forEach?.((target: any) => {
+            target.sub_name = val;
+          });
+        }} />
+      </FormItem>
       {
         !!object?.caliperRule && !!Object.keys?.(object?.caliperRule)?.length ?
           <Fragment>
             <FormItem
               name={'name'}
               label={'卡尺名称'}
-              initialValue={object?.caliperRule || undefined}
+              initialValue={object?.caliperRule?.name || undefined}
             >
               <Input onChange={(e) => {
                 const val = e?.target?.value || '';

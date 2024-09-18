@@ -1436,7 +1436,6 @@ const Home: React.FC<any> = (props: any) => {
                     'iframe',
                     'timeSelect',
                     'httpTable',
-                    'countdown',
                   ].includes(type) ? (
                   '请重新绑定数据节点'
                 ) : type === 'line' ? (
@@ -2247,6 +2246,7 @@ const Home: React.FC<any> = (props: any) => {
                       fetchType,
                       xName,
                       ifFetchParams,
+                      yName,
                     }}
                   />
                 ) : (
@@ -6724,7 +6724,10 @@ const Home: React.FC<any> = (props: any) => {
                     >
                       <Input size="large" />
                     </Form.Item>
-                    <Form.Item name="ifFetchParams" label="提示词">
+                    <Form.Item name="ifFetchParams" label="提示词" initialValue={"保养"}>
+                      <Input size="large" />
+                    </Form.Item>
+                    <Form.Item name="yName" label="按钮名称" initialValue={"已保养"}>
                       <Input size="large" />
                     </Form.Item>
                   </Fragment>
