@@ -78,7 +78,9 @@ export default function ShapeSetter() {
           strokeWidth: object.strokeWidth || 1,
           borderRadius: object.rx || object.ry || (object.strokeLineJoin === 'round' ? 100 : 0)
         },
-        fill: transformFill2Colors(object.fill)
+        fill: transformFill2Colors(object.fill),
+        name: object?.sub_name,
+        ...object.caliperRule
       });
     }
   }, [object]);

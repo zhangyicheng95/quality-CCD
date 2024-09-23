@@ -9,6 +9,7 @@ export default {
   namespace: 'home',
 
   state: {
+    params: {},
     started: false, // 服务是否已启动
     taskDataConnect: false, // 服务已连接
     canvasLock: false,
@@ -98,10 +99,12 @@ export default {
       const { payload } = action;
       yield put({ type: 'set', payload });
     },
-    *errorMessage({ payload }: any, { put, select }: any) {
+    *errorMessage({ state, payload }: any, { put, select }: any) {
+      const params: any[] = yield select((state: any) => state.home.params);
       const errorData: any[] = yield select((state: any) => state.home.errorData);
       errorData.length > 5 && notification.destroy();
-      openNotificationWithIcon(payload);
+
+      openNotificationWithIcon({ ...payload, params });
       const _errorData = [
         ...errorData,
         {
@@ -111,8 +114,8 @@ export default {
             payload.level === 'error'
               ? logColors.error
               : payload.level === 'critical'
-              ? logColors.critical
-              : logColors.warning,
+                ? logColors.critical
+                : logColors.warning,
         },
       ];
       yield put({

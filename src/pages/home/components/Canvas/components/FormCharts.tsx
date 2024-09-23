@@ -22,7 +22,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
   const [form1] = Form.useForm();
   let { data = {}, id, started } = props;
   let {
-    dataValue = [],
+    dataValue = {},
     titleFontSize = 24,
     fontSize = 20,
     timeSelectDefault = [],

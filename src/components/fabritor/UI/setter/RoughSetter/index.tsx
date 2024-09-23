@@ -55,7 +55,8 @@ export default function RoughSetter() {
         const _objects = (object as fabric.Group).getObjects();
         form.setFieldsValue({
           stroke: _objects[1].stroke,
-          fill: _objects[0].stroke
+          fill: _objects[0].stroke,
+          name: object?.sub_name,
         });
       }
     }

@@ -48,6 +48,7 @@ export default function LineSetter() {
       type: getObjectBorderType(object),
       strokeWidth: object.strokeWidth,
       round: object.strokeLineCap === 'round',
+      name: object?.sub_name,
       ...object.caliperRule
     });
   }, [object]);

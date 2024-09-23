@@ -1147,7 +1147,13 @@ const Home: React.FC<any> = (props: any) => {
           params: resultParams,
         }));
         setParamData(resultParams);
-      }
+      };
+      dispatch({
+        type: 'home/set',
+        payload: {
+          params: newParams,
+        },
+      });
     }
     if (ifCanEdit) {
       form2.setFieldsValue({
@@ -1719,6 +1725,7 @@ const Home: React.FC<any> = (props: any) => {
                       dataValue: dataValue || [],
                       fontSize,
                       ifOnShowTab,
+                      yName,
                     }}
                   />
                 ) : type === 'imgs' ? (
@@ -1785,6 +1792,7 @@ const Home: React.FC<any> = (props: any) => {
                   <FormCharts
                     id={key}
                     data={{
+                      dataValue,
                       titleFontSize,
                       fontSize,
                       timeSelectDefault,
@@ -5246,6 +5254,32 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                   </Fragment>
                 ) : null}
+                {
+                  ['alert'].includes(windowType) ? (
+                    <Fragment>
+                      <Form.Item
+                        name={`yName`}
+                        label={'显示方式'}
+                        initialValue="default"
+                        rules={[{ required: false, message: '显示方式' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: 'default',
+                              label: '默认',
+                            },
+                            {
+                              value: 'point',
+                              label: '圆点',
+                            },
+                          ]}
+                        />
+                      </Form.Item>
+                    </Fragment>
+                  ) : null
+                }
                 {['form'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item

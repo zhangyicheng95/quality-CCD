@@ -14,13 +14,11 @@ interface Props {
 const AlertCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
-    dataValue = [], fontSize, ifOnShowTab,
+    dataValue = [], fontSize = 12, ifOnShowTab, yName,
   } = data;
   if (process.env.NODE_ENV === 'development') {
-    dataValue = [{ name: '状态1', value: false, color: 'blue' }];
+    dataValue = [{ name: '状态1', value: false, }];
   }
-  const { initialState } = useModel<any>('@@initialState');
-  const { params } = initialState;
 
   useEffect(() => {
     if (!_.isArray(dataValue)) {
@@ -34,18 +32,45 @@ const AlertCharts: React.FC<Props> = (props: any) => {
     <div id={`echart-${id}`} className={`${styles.alertCharts} flex-box`}>
       {_.isArray(dataValue) &&
         (dataValue || [])?.map?.((item: any, index: number) => {
-          const { name, value } = item;
-          return (
-            <div
-              key={`echart-${id}-${index}`}
-              className={`flex-box-center alert-item ${!!value ? 'OK' : 'NG'}`}
-              style={{ fontSize }}
-            >
-              <span style={{ position: 'absolute', left: 4, top: 4, fontSize: 12 }}>{name}</span>
-              {!!value ? <SmileOutlined /> : <FrownOutlined />}
-              {!!value ? 'OK' : 'NG'}
-            </div>
-          );
+          const { name, value, color } = item;
+          const width = fontSize + 12;
+          const realColor = !!value ? '#88db57' : '#931212';
+          if (yName === 'point') {
+            return (
+              <div
+                key={`echart-${id}-${index}`}
+                className={`flex-box-column alert-item-point`}
+                style={Object.assign(
+                  { fontSize },
+                  !!color ? { color } : { color: realColor }
+                )}
+              >
+                <div
+                  className={`alert-item-point-icon`}
+                  style={Object.assign(
+                    { height: width, width: width },
+                    !!color ? { backgroundColor: color } : { backgroundColor: realColor }
+                  )}
+                />
+                {name}
+              </div>
+            );
+          } else {
+            return (
+              <div
+                key={`echart-${id}-${index}`}
+                className={`flex-box-center alert-item`}
+                style={Object.assign(
+                  { fontSize },
+                  !!color ? { backgroundColor: color, color } : { backgroundColor: realColor, color: realColor }
+                )}
+              >
+                <span style={{ position: 'absolute', left: 4, top: 4, fontSize: 12 }}>{name}</span>
+                {!!value ? <SmileOutlined /> : <FrownOutlined />}
+                {!!value ? 'OK' : 'NG'}
+              </div>
+            );
+          }
         })}
     </div>
   );

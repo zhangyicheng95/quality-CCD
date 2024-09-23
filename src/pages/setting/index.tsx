@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
-import { Form, Input, message, Button, Tree, Select, Row, Col } from 'antd';
+import { Form, Input, message, Button, Tree, Select, Row, Col, Switch } from 'antd';
 import * as _ from 'lodash';
 import styles from './index.module.less';
 import { updateParams } from '@/services/api';
@@ -29,6 +29,8 @@ const Setting: React.FC<any> = (props) => {
 
   // 获取数据信息
   useEffect(() => {
+    console.log(paramsData);
+
     if (!_.isEmpty(paramsData) && !_.isEmpty(paramsData?.flowData)) {
       const { quality_name, name, flowData } = paramsData;
       const { nodes } = flowData;
@@ -65,6 +67,7 @@ const Setting: React.FC<any> = (props) => {
         quality_name: quality_name || name,
         selfStart: paramsData.selfStart || false,
         errorSelfStart: paramsData.errorSelfStart || false,
+        filterWarning: paramsData.filterWarning || false,
       });
     }
   }, [paramsData]);
@@ -120,7 +123,7 @@ const Setting: React.FC<any> = (props) => {
   const onFinish = () => {
     validateFields()
       .then((values) => {
-        const { quality_icon, quality_name, selfStart, errorSelfStart } = values;
+        const { quality_icon, quality_name, selfStart, errorSelfStart, filterWarning } = values;
         let nodeList: any = [].concat(paramData?.flowData?.nodes);
         (paramData?.flowData?.nodes || []).forEach?.((key: any) => {
           nodeList = nodeList?.map?.((node: any) => {
@@ -143,6 +146,7 @@ const Setting: React.FC<any> = (props) => {
           quality_name,
           selfStart,
           errorSelfStart,
+          filterWarning,
           contentData: {
             ...(paramData?.contentData || {}),
             ipList: (paramData?.contentData?.ipList || [])?.map?.((item: any) => {
@@ -377,6 +381,16 @@ const Setting: React.FC<any> = (props) => {
               </Form.Item>
             </Col> */}
           </Row>
+          <Form.Item
+            name="filterWarning"
+            label="过滤warning"
+            tooltip="不显示warning告警提示，只有阻断性报错才展示"
+            valuePropName="checked"
+            initialValue={paramsData?.filterWarning}
+            rules={[{ required: false, message: "过滤warning" }]}
+          >
+            <Switch />
+          </Form.Item>
           {!isVision && !_.isEmpty(treeData) && !!treeData?.length ? (
             <Form.Item
               name="params"

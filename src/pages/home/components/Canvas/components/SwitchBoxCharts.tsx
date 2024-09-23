@@ -5,6 +5,7 @@ import { Badge, Form, message } from 'antd';
 import { getFlowStatusService, startFlowService, stopFlowService } from '@/services/api';
 import SegmentSwitch from '@/components/SegmentSwitch';
 import openNotificationWithIcon from '@/components/openNotificationWithIcon';
+import { useModel } from 'umi';
 
 interface Props {
   data: any;
@@ -23,6 +24,8 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
     direction = 0,
     modelRotate = false,
   } = data;
+  const { initialState } = useModel<any>('@@initialState');
+  const { params } = initialState;
   const ipString: any = localStorage.getItem('ipString') || '';
   const [form] = Form.useForm();
   const timeRef = useRef<any>();
@@ -47,7 +50,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
           message: `（机器${ip}） ${_.isArray(result?.message) ? result.message.join(',') : result.message
             }`,
         };
-        openNotificationWithIcon(currentData);
+        openNotificationWithIcon({ ...currentData, params });
       } catch (err) {
         // console.log(err);
       }
