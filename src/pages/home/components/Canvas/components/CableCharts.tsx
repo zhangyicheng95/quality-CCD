@@ -142,7 +142,7 @@ const CableCharts: React.FC<Props> = (props: any) => {
           right: 36,
           left: 24,
           bottom: 36,
-          top: 48,
+          top: 12,
         },
       ),
       yAxis: Object.assign({}, options.yAxis, {

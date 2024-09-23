@@ -42,7 +42,6 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     onLockImgChange = null,
     lockImg = false,
     modelRotateScreenshot = false,
-    ifOnShowTab,
   } = data;
   if (process.env.NODE_ENV === 'development' && !dataValue) {
     dataValue =

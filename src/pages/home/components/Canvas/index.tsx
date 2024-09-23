@@ -1860,7 +1860,7 @@ const Home: React.FC<any> = (props: any) => {
                     data={{
                       dataValue,
                       fontSize,
-                      yName,
+                      dataZoom
                     }}
                   />
                 ) : type === 'button' ? (
@@ -2639,7 +2639,7 @@ const Home: React.FC<any> = (props: any) => {
                 ...item,
                 [__value[1]]: ['three', 'buttonImages', 'imgButton'].includes(type)
                   ? _.omit(dataValue, 'action')
-                  : ['fabric', 'modelSwitch', 'reJudgment', 'cable'].includes(type)
+                  : ['fabric', 'modelSwitch', 'reJudgment'].includes(type)
                     ? undefined
                     : ['laminationImage'].includes(type) ?
                       {
@@ -5641,11 +5641,12 @@ const Home: React.FC<any> = (props: any) => {
                   ['cable'].includes(windowType) ? (
                     <Fragment>
                       <Form.Item
-                        name={`yName`}
-                        label={'名称'}
-                        rules={[{ required: false, message: '名称' }]}
+                        name={`dataZoom`}
+                        label={'展示最新的'}
+                        rules={[{ required: false, message: '展示最新的' }]}
+                        initialValue={0}
                       >
-                        <Input size="large" />
+                        <InputNumber min={0} />
                       </Form.Item>
                     </Fragment>
                   ) : null
