@@ -42,6 +42,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     onLockImgChange = null,
     lockImg = false,
     modelRotateScreenshot = false,
+    labelInxAxis = false,
   } = data;
   if (process.env.NODE_ENV === 'development' && !dataValue) {
     dataValue =
@@ -89,7 +90,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         isDown = false;
       }
     }
-    window.addEventListener('keyup', onKeyUp);
+    window.addEventListener('keyup', onKeyUp, { passive: true });
 
     return () => {
       window?.removeEventListener?.('keyup', onKeyUp);
@@ -409,7 +410,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                   }
                 />
                 <Image
-                  src={`${_.isString(source) ? source : source?.url || defaultImg}?__timestamp=${+new Date()}`}
+                  src={`${_.isString(source) ? source : source?.url || defaultImg}` + (!!labelInxAxis ? `?__timestamp=${+new Date()}` : '')}
                   alt="logo"
                   style={
                     chartSize

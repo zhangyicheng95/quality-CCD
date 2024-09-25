@@ -3,7 +3,7 @@ import * as echarts from 'echarts';
 import options from './commonOptions';
 import _ from 'lodash';
 import { message } from 'antd';
-import { connect, useModel } from 'umi';
+import { connect } from 'umi';
 import { ExpandOutlined } from '@ant-design/icons';
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
 
 const PieCharts: React.FC<Props> = (props: any) => {
   let { data = {}, id, legend, dispatch, setMyChartVisible } = props;
-  let { dataValue = [], fontSize } = data;
+  let { dataValue = [], fontSize, yName } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
       { name: '机台状态1', value: '1024' },
@@ -23,8 +23,6 @@ const PieCharts: React.FC<Props> = (props: any) => {
       { name: '机台状态3', value: '1024' },
     ];
   }
-  const { initialState } = useModel<any>('@@initialState');
-  const { params } = initialState;
   const domRef = useRef<any>();
   const myChartRef = useRef<any>();
 
@@ -66,7 +64,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
       series: [
         {
           type: 'pie',
-          radius: ['20%', '70%'],
+          radius: ['25%', '70%'],
           // top: "-30%",
           // bottom: "-40%",
           // right: "-50%",
@@ -177,6 +175,12 @@ const PieCharts: React.FC<Props> = (props: any) => {
           }}
         />
       </div>
+      {!!yName ? <div style={{
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translateX(-50%) translateY(-50%)'
+      }}>{yName}</div> : null}
     </Fragment>
   );
 };

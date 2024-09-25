@@ -1,9 +1,7 @@
-import React, { useEffect, useMemo } from 'react';
-import { Descriptions, message, Progress } from 'antd';
+import React, { useMemo } from 'react';
+import { Progress } from 'antd';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { useModel } from 'umi';
-import { guid } from '@/utils/utils';
 
 interface Props {
   data: any;

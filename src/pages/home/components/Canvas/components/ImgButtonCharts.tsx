@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { Button, message, Modal } from 'antd';
 import { numToString } from '@/utils/utils';
 import { btnFetch } from '@/services/api';
+import { connect } from 'umi';
 
 interface Props {
   data: any;
@@ -24,12 +25,12 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
     markNumberTop,
     fileTypes,
     fileFetch,
-    ifOnShowTab,
   } = data;
-
   const ifCanEdit = useMemo(() => {
     return location.hash?.indexOf('edit') > -1;
   }, [location.hash]);
+  const domRef = useRef<any>();
+  const timer = useRef<any>(null);
   const itemClicked = useRef(0); //记录按键次数，下一次数据来了之后清空
   const [visible, setVisible] = useState(false);
   const [defect, setDefect] = useState('');
@@ -96,71 +97,77 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
     });
   };
   const onKeyDown = (event: any) => {
-    const { key } = event;
-    if (key === '1') {
-      if (itemClicked.current > 0) {
-        message.warning('只允许上传一次');
-        return;
-      }
-      if (!fetchType || !xName) return;
-      itemClicked.current += 1;
-      // 触发接口传OK
-      btnFetch(fetchType, xName, { data: {} }).then((res: any) => {
-        if (res && res.code === 'SUCCESS') {
-          message.success('上传成功');
-        } else {
-          message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
-          itemClicked.current = 0;
-        }
-      });
-    } else if (key === '4') {
-      onDefectClick();
-    } else if (key === '6') {
-      if (itemClicked.current > 0) {
-        message.warning('只允许上传一次');
-        return;
-      }
-      if (!fetchType || !xName) return;
-      itemClicked.current += 1;
-      btnFetch(fetchType, xName, { type: '6' }).then((res: any) => {
-        if (res && res.code === 'SUCCESS') {
-          message.success('上传成功');
-        } else {
-          message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
-          itemClicked.current = 0;
-        }
-      });
-    } else if (key === '9') {
-      // 反档
-      setFileVisible(true);
-    } else if (key === 'Enter') {
-      setVisible((prev) => {
-        if (prev) {
-          onUpload();
-        }
-        return prev;
-      });
+    if (timer.current) {
+      clearTimeout(timer.current);
     }
+    timer.current = setTimeout(() => {
+      const { key } = event;
+      if (key === '1') {
+        if (itemClicked.current > 0) {
+          message.warning('只允许上传一次');
+          return;
+        }
+        if (!fetchType || !xName) return;
+        itemClicked.current += 1;
+        // 触发接口传OK
+        btnFetch(fetchType, xName, { data: {} }).then((res: any) => {
+          if (res && res.code === 'SUCCESS') {
+            message.success('上传成功');
+          } else {
+            message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
+            itemClicked.current = 0;
+          }
+        });
+      } else if (key === '4') {
+        onDefectClick();
+      } else if (key === '6') {
+        if (itemClicked.current > 0) {
+          message.warning('只允许上传一次');
+          return;
+        }
+        if (!fetchType || !xName) return;
+        itemClicked.current += 1;
+        btnFetch(fetchType, xName, { type: '6' }).then((res: any) => {
+          if (res && res.code === 'SUCCESS') {
+            message.success('上传成功');
+          } else {
+            message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
+            itemClicked.current = 0;
+          }
+        });
+      } else if (key === '9') {
+        // 反档
+        setFileVisible(true);
+      } else if (key === 'Enter') {
+        setVisible((prev) => {
+          if (prev) {
+            onUpload();
+          }
+          return prev;
+        });
+      }
+    }, 100);
   };
   useEffect(() => {
-    if (ifCanEdit) return;
-    document.addEventListener('keydown', onKeyDown);
+    if (ifCanEdit || !started) return;
+    document.addEventListener('keyup', onKeyDown);
 
     return () => {
-      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('keyup', onKeyDown);
     };
-  }, []);
+  }, [started]);
   const onCancel = () => {
     setVisible(false);
     setDefectSelect({});
     setFileVisible(false);
     setFileSelect([]);
   };
-  if (!ifOnShowTab) return null;
+
   return (
     <div
       id={`echart-${id}`}
       className={`flex-box-center ${styles.imgButtonCharts}`}
+      ref={domRef}
       style={{ fontSize }}
     >
       <div
@@ -312,4 +319,6 @@ const ImgButtonCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default ImgButtonCharts;
+export default connect(({ home, themeStore }) => ({
+  started: home.started || false,
+}))(ImgButtonCharts);

@@ -144,6 +144,7 @@ import AntdTableFromHttpCharts from './components/AntdTableFromHttpCharts';
 import FabricCharts from './components/FabricCharts';
 import CableCharts from './components/CableCharts';
 import CountDownCharts from './components/CountDownCharts';
+import ListSwitchImgCharts from './components/ListSwitchImgCharts';
 
 const leftPanelDataLocal = [
   {
@@ -1498,7 +1499,7 @@ const Home: React.FC<any> = (props: any) => {
                     data={{
                       dataValue: dataValue || [],
                       fontSize,
-                      ifOnShowTab,
+                      yName,
                     }}
                   />
                 ) : type === 'pie3D' ? (
@@ -1772,6 +1773,15 @@ const Home: React.FC<any> = (props: any) => {
                       fontSize,
                       yName,
                       ifOnShowTab,
+                    }}
+                  />
+                ) : type === 'listSwitchImg' ? (
+                  <ListSwitchImgCharts
+                    id={key}
+                    data={{
+                      dataValue: dataValue || [],
+                      fontSize,
+                      yName
                     }}
                   />
                 ) : type === 'bodyBox' ? (
@@ -2113,7 +2123,6 @@ const Home: React.FC<any> = (props: any) => {
                       markNumberTop,
                       fileTypes,
                       fileFetch,
-                      ifOnShowTab,
                     }}
                   />
                 ) : type === 'alertImg' ? (
@@ -2279,6 +2288,7 @@ const Home: React.FC<any> = (props: any) => {
                       ifShowHeader,
                       magnifierWidth,
                       magnifierHeight,
+                      labelInxAxis,
                       ifOnShowTab,
                     }}
                   />
@@ -2639,7 +2649,7 @@ const Home: React.FC<any> = (props: any) => {
                 ...item,
                 [__value[1]]: ['three', 'buttonImages', 'imgButton'].includes(type)
                   ? _.omit(dataValue, 'action')
-                  : ['fabric', 'modelSwitch', 'reJudgment'].includes(type)
+                  : ['fabric', 'modelSwitch', 'reJudgment', 'cable'].includes(type)
                     ? undefined
                     : ['laminationImage'].includes(type) ?
                       {
@@ -4344,6 +4354,9 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item name="showImgList" label="图片列表" valuePropName="checked">
                       <Switch />
                     </Form.Item>
+                    <Form.Item name="labelInxAxis" label="拼时间戳" valuePropName="checked">
+                      <Switch />
+                    </Form.Item>
                     <Form.Item name="imgListNum" label="图片列表数量">
                       <InputNumber min={1} placeholder="图片列表数量" />
                     </Form.Item>
@@ -4556,6 +4569,17 @@ const Home: React.FC<any> = (props: any) => {
                       }}
                     />
                   </Form.Item>
+                ) : null}
+                {['pie'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`yName`}
+                      label={'环内文字'}
+                      rules={[{ required: false, message: '环内文字' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                  </Fragment>
                 ) : null}
                 {['progress'].includes(windowType) ? (
                   <Fragment>

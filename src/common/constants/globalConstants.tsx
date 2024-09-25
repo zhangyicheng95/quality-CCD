@@ -311,6 +311,10 @@ export const windowTypeList: any = [
     value: 'countdown',
     label: '倒计时窗口',
   },
+  {
+    value: 'listSwitchImg',
+    label: '列表切换图片窗口',
+  },
 ];
 // 默认基础组件
 export const basicWindowList: any = [
