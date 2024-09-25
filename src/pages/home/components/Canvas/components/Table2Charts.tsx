@@ -184,7 +184,8 @@ const Table2Charts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
     dataValue = [],
-    fontSize,
+    tableFontSize = 14,
+    fontSize = 12,
     reverse,
     tableSize = [],
     interlacing,
@@ -401,6 +402,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                 <div
                   className="charts-body-td flex-box-center"
                   style={Object.assign(
+                    { fontSize: tableFontSize },
                     !!tableSizeSelf?.[0]
                       ? {
                         minWidth: tableSizeSelf?.[0]?.minWidth,
@@ -519,6 +521,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
           <div
             className="charts-header-box flex-box"
             style={Object.assign(
+              { fontSize: tableFontSize },
               { width: boxSizeSelf > domRef?.current?.clientWidth + 20 ? boxSizeSelf : '100%' },
               headerBackgroundColor === 'transparent'
                 ? { backgroundColor: 'transparent' }

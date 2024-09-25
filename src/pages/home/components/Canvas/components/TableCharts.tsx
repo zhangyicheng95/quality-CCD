@@ -17,7 +17,8 @@ const TableCharts: React.FC<Props> = (props: any) => {
     dataValue = [],
     yName,
     xName = '',
-    fontSize,
+    tableFontSize = 14,
+    fontSize = 12,
     reverse,
     interlacing,
     des_bordered,
@@ -70,7 +71,7 @@ const TableCharts: React.FC<Props> = (props: any) => {
       <div
         className="charts-header-box flex-box"
         style={Object.assign(
-          {},
+          { fontSize: tableFontSize },
           tableScroll ? { width: 'calc(100% - 6px)' } : { width: 'calc(100% - 1px)' },
           headerBackgroundColor === 'transparent' ? { backgroundColor: 'transparent' } : {},
         )}

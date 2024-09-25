@@ -82,7 +82,8 @@ const TableAntdCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
     dataValue = [],
-    fontSize,
+    tableFontSize = 14,
+    fontSize = 12,
     fetchType,
     xName,
     yName,

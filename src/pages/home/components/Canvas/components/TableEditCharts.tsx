@@ -18,7 +18,10 @@ interface Props {
 const TableEditCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id, started } = props;
   let {
-    dataValue = '', fontSize, fetchType, xName, yName, ifFetch, ifOnShowTab,
+    dataValue = '',
+    tableFontSize = 14,
+    fontSize = 12,
+    fetchType, xName, yName, ifFetch, ifOnShowTab,
   } = data;
   const [form] = Form.useForm();
   const domRef = useRef<any>(null);

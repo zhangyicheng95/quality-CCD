@@ -1236,6 +1236,7 @@ const Home: React.FC<any> = (props: any) => {
           yName,
           xName,
           defaultImg,
+          tableFontSize,
           fontSize,
           reverse,
           direction,
@@ -1539,6 +1540,7 @@ const Home: React.FC<any> = (props: any) => {
                     id={key}
                     data={{
                       dataValue: dataValue || [],
+                      tableFontSize,
                       yName,
                       xName,
                       fontSize,
@@ -1557,6 +1559,7 @@ const Home: React.FC<any> = (props: any) => {
                     id={key}
                     data={{
                       dataValue: dataValue || [],
+                      tableFontSize,
                       fontSize,
                       reverse,
                       tableSize,
@@ -1575,6 +1578,7 @@ const Home: React.FC<any> = (props: any) => {
                     id={key}
                     data={{
                       dataValue: dataValue || [],
+                      tableFontSize,
                       fontSize,
                       reverse,
                       tableSize,
@@ -1591,6 +1595,7 @@ const Home: React.FC<any> = (props: any) => {
                     id={key}
                     data={{
                       dataValue: dataValue || [],
+                      tableFontSize,
                       fontSize,
                       reverse,
                       tableSize,
@@ -1607,6 +1612,7 @@ const Home: React.FC<any> = (props: any) => {
                     id={key}
                     data={{
                       dataValue: dataValue || [],
+                      tableFontSize,
                       fontSize,
                       fetchType,
                       xName,
@@ -1620,6 +1626,7 @@ const Home: React.FC<any> = (props: any) => {
                     id={key}
                     data={{
                       dataValue: dataValue || [],
+                      tableFontSize,
                       fontSize,
                       fetchType,
                       xName,
@@ -3069,6 +3076,7 @@ const Home: React.FC<any> = (props: any) => {
       operationList: [],
       dataZoom: 0,
       fontColor: undefined,
+      tableFontSize: 14,
       interlacing: false,
       modelRotate: false,
       modelScale: false,
@@ -4754,6 +4762,9 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                     <Form.Item name="des_bordered" label="是否展示边框" valuePropName="checked">
                       <Switch />
+                    </Form.Item>
+                    <Form.Item name="tableFontSize" label="表头字号">
+                      <InputNumber min={14} placeholder="表头字号" />
                     </Form.Item>
                     {!['tableAntd'].includes(windowType) ? (
                       <Fragment>

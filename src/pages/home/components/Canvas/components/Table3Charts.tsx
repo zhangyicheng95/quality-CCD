@@ -17,7 +17,8 @@ const Table3Charts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
     dataValue = [],
-    fontSize,
+    tableFontSize = 14,
+    fontSize = 12,
     reverse,
     tableSize = [],
     interlacing,
@@ -190,8 +191,7 @@ const Table3Charts: React.FC<Props> = (props: any) => {
           const { tab } = item;
           return (
             <div
-              className={`charts-tab-item ${tabSelected === index ? 'charts-tab-item-selected' : ''
-                }`}
+              className={`charts-tab-item ${tabSelected === index ? 'charts-tab-item-selected' : ''}`}
               key={`tab-${index}`}
               onClick={() => {
                 setTabSelected(index);
@@ -217,6 +217,7 @@ const Table3Charts: React.FC<Props> = (props: any) => {
                 className="charts-header-item flex-box"
                 key={`echart-${id}-tr-th-${index}`}
                 style={Object.assign(
+                  { fontSize: tableFontSize },
                   !!tableSizeSelf?.[index]
                     ? {
                       width: tableSizeSelf?.[index],

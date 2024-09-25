@@ -13,7 +13,10 @@ interface Props {
 const Table4Charts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
-    dataValue = [], fontSize, staticHeight, ifOnShowTab,
+    dataValue = [],
+    tableFontSize = 14,
+    fontSize = 12,
+    staticHeight, ifOnShowTab,
   } = data;
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
