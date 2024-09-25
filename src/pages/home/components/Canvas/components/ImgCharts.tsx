@@ -46,7 +46,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
   } = data;
   if (process.env.NODE_ENV === 'development' && !dataValue) {
     dataValue =
-      'https://th.bing.com/th/id/OIP.Nyb5k0iKxw5XYkDXj-geSwHaE4?rs=1&pid=ImgDetMain';
+      'http://8.140.245.26:8081/build/240900223D01614_2024_09_25_19_19_42_WG.jpg';
   }
   const ifCanEdit = useMemo(() => {
     return location.hash?.indexOf('edit') > -1;
@@ -70,6 +70,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
   const urlList = useRef<any>([]);
   const [chartSize, setChartSize] = useState(false);
   const [selectedNum, setSelectedNum] = useState(0);
+  const [imgUpload, setImgUpload] = useState(false);
   const [imgVisible, setImgVisible] = useState(false);
   const [visibleDirection, setVisibleDirection] = useState<any>('column');
   const [visible, setVisible] = useState(false);
@@ -168,6 +169,11 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         } else {
           scale = onscale;
         }
+        if (ratio === 1) {
+          setImgUpload(pre => !pre);
+          return;
+        }
+
         const origin = {
           x: (ratio - 1) * ulWidth * 0.5,
           y: (ratio - 1) * ulHeight * 0.5,
@@ -363,7 +369,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
   }, [magnifierVisible, selectedNum, dataValue]);
   const source = useMemo(() => {
     return notLocalStorage ? dataValue : urlList.current?.[selectedNum] || dataValue;
-  }, [urlList.current, selectedNum, dataValue]);
+  }, [urlList.current, selectedNum, dataValue, imgUpload]);
   const onPrev = () => {
     setSelectedNum((pre: number) => {
       if (pre - 1 >= 0) {
