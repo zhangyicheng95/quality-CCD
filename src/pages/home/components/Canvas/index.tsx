@@ -1958,6 +1958,7 @@ const Home: React.FC<any> = (props: any) => {
                       ifNeedClear,
                       valueColor,
                       des_bordered,
+                      fetchParams,
                       ifOnShowTab,
                     }}
                   />
@@ -5716,24 +5717,23 @@ const Home: React.FC<any> = (props: any) => {
                     >
                       <Input size="large" />
                     </Form.Item>
-                    {['button'].includes(windowType) ? (
-                      <Fragment>
-                        <Form.Item
-                          name={`fetchParams`}
-                          label={'传递参数'}
-                          rules={[{ required: false, message: '传递参数' }]}
-                        >
-                          <Input.TextArea size="large" autoSize={{ minRows: 1, maxRows: 5 }} />
+                    <Form.Item
+                      name={`fetchParams`}
+                      label={'传递参数'}
+                      rules={[{ required: false, message: '传递参数' }]}
+                    >
+                      <Input.TextArea size="large" autoSize={{ minRows: 1, maxRows: 5 }} />
+                    </Form.Item>
+                    {
+                      ['buttonInp'].includes(windowType) ? (
+                        <Form.Item name="ifNeedClear" label="手动清空按钮" valuePropName="checked">
+                          <Switch />
                         </Form.Item>
+                      ) :
                         <Form.Item name="ifNeedAllow" label="二次确认" valuePropName="checked">
                           <Switch />
                         </Form.Item>
-                      </Fragment>
-                    ) : (
-                      <Form.Item name="ifNeedClear" label="手动清空按钮" valuePropName="checked">
-                        <Switch />
-                      </Form.Item>
-                    )}
+                    }
                   </Fragment>
                 ) : null}
                 {['buttonPassword'].includes(windowType) ? (

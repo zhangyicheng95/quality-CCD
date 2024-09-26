@@ -204,7 +204,7 @@ const CableCharts: React.FC<Props> = (props: any) => {
         axisLine: {
           show: false
         },
-        boundaryGap: ['1%', '1%'],
+        boundaryGap: [0, '1%'],
         // splitNumber: 3,
         splitLine: {
           show: false,
@@ -215,7 +215,8 @@ const CableCharts: React.FC<Props> = (props: any) => {
         type: 'value',
         name: '',
         scale: false,
-        max: length
+        max: length,
+        min: 0
       }),
       seriesLayoutBy: 'row',
       series: (resData || [])?.map?.((item: any) => {

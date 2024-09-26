@@ -22,6 +22,7 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
     ifNeedClear,
     valueColor = 'primary',
     des_bordered,
+    fetchParams,
   } = data;
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
@@ -91,7 +92,7 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
           let param1: any = null;
           if (!_.isUndefined(value) && !_.isNull(value) && _.isString(value) && !!value) {
             try {
-              param1 = JSON.parse(value);
+              param1 = { ...JSON.parse(value), ...!!fetchParams ? JSON.parse(fetchParams) : {} };
               setValueList((prev: any) => {
                 const result = !!param1?.msg
                   ? Array.from(new Set(prev.concat(param1?.msg)))

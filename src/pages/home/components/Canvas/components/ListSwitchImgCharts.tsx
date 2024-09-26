@@ -85,7 +85,7 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
       setSelectedNum({ left: 0, right: 0 });
     }
     setSearchItem(dataValue || []);
-  }, [dataValue]);
+  }, [JSON.stringify(dataValue)]);
 
   return (
     <div
