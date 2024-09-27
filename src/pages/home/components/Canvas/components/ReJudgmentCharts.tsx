@@ -19,7 +19,6 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
     dataValue = [], fontSize,
     xName = '',
     fetchType,
-    ifOnShowTab,
   } = data;
   const [form] = Form.useForm();
   const domRef = useRef<any>();
@@ -215,7 +214,6 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
       });
     });
   };
-  if (!ifOnShowTab) return null;
   return (
     <div
       id={`echart-${id}`}
@@ -395,7 +393,6 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                       comparison: false,
                       magnifier: true,
                       magnifierSize: 12,
-                      ifOnShowTab: true
                     }}
                   />
                 </Fragment>

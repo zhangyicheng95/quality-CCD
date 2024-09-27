@@ -14,7 +14,7 @@ interface Props {
 const AlertImgCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
-    dataValue = {}, lineNumber = 1, columnNumber = 1, magnifier, magnifierSize, ifOnShowTab,
+    dataValue = {}, lineNumber = 1, columnNumber = 1, magnifier, magnifierSize,
   } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = {
@@ -35,7 +35,6 @@ const AlertImgCharts: React.FC<Props> = (props: any) => {
       return;
     }
   }, []);
-  if (!ifOnShowTab) return null;
   return (
     <div
       id={`echart-${id}`}
@@ -62,7 +61,6 @@ const AlertImgCharts: React.FC<Props> = (props: any) => {
                 comparison: false,
                 magnifier,
                 magnifierSize,
-                ifOnShowTab: true
               }}
             />
           </div>

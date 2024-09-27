@@ -21,7 +21,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
     dataValue = '',
     tableFontSize = 14,
     fontSize = 12,
-    fetchType, xName, yName, ifFetch, ifOnShowTab,
+    fetchType, xName, yName, ifFetch,
   } = data;
   const [form] = Form.useForm();
   const domRef = useRef<any>(null);
@@ -407,7 +407,6 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
       setDataSource([]);
     }
   };
-  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={styles.tableEditCharts} ref={domRef} style={{ fontSize }}>
       <Spin spinning={loading} tip="加载中">

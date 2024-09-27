@@ -24,7 +24,6 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
     modelRotateScreenshot,
     fetchType,
     xName,
-    ifOnShowTab,
   } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue['list'] = [
@@ -2087,7 +2086,6 @@ const ButtonImagesCharts: React.FC<Props> = (props: any) => {
       });
     });
   };
-  if (!ifOnShowTab) return null;
   return (
     <div
       id={`echart-${id}`}

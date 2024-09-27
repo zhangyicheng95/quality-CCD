@@ -18,7 +18,7 @@ interface Props {
 const NightingalePieCharts: React.FC<Props> = (props: any) => {
   let { data = {}, id, legend, dispatch, setMyChartVisible } = props;
   let {
-    dataValue = [], fontSize, ifOnShowTab,
+    dataValue = [], fontSize,
   } = data;
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
@@ -143,7 +143,6 @@ const NightingalePieCharts: React.FC<Props> = (props: any) => {
       init();
     }, 200);
   }, [dataValue, fontSize, legend]);
-  if (!ifOnShowTab) return null;
   return (
     <div className={`${styles.nightingalePieCharts}`}>
       <div style={{ width: '100%', height: '100%' }} id={`echart-${id}`} ref={domRef} />

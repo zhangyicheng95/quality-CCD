@@ -17,7 +17,6 @@ const IaminationImageCharts: React.FC<Props> = (props: any) => {
     des_column,
     markNumberLeft,
     markNumberTop,
-    ifOnShowTab,
   } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = {
@@ -37,7 +36,6 @@ const IaminationImageCharts: React.FC<Props> = (props: any) => {
       });
     }
   }, [JSON.stringify(dataValue)]);
-  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={`flex-box-column ${styles.laminationImageCharts}`}>
       {
@@ -106,7 +104,6 @@ const IaminationImageCharts: React.FC<Props> = (props: any) => {
                     comparison: false,
                     magnifier: true,
                     magnifierSize: 4,
-                    ifOnShowTab: true
                   }}
                 />
               </div>

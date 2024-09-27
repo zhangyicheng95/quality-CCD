@@ -195,7 +195,6 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     line_height,
     bodyPaddingSize,
     des_layout,
-    ifOnShowTab,
   } = data;
   const ifCanEdit = useMemo(() => {
     return location.hash?.indexOf('edit') > -1;
@@ -386,7 +385,6 @@ const Table2Charts: React.FC<Props> = (props: any) => {
       };
     };
   };
-  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={styles.table2Charts} ref={domRef} style={{ fontSize }}>
       {des_layout === 'horizontal' ? (

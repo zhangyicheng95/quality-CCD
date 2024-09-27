@@ -18,7 +18,6 @@ const FabricCharts: React.FC<Props> = (props: any) => {
     fontSize = 20,
     fetchType,
     xName, yName,
-    ifOnShowTab,
   } = data;
 
   if (process.env.NODE_ENV === 'development') {
@@ -72,7 +71,6 @@ const FabricCharts: React.FC<Props> = (props: any) => {
       ]
     }
   }
-  if (!ifOnShowTab) return null;
   return (
     <div
       id={`echart-${id}`}

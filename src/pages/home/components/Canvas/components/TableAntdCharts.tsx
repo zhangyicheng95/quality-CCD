@@ -95,7 +95,6 @@ const TableAntdCharts: React.FC<Props> = (props: any) => {
     valueColor,
     timeSelectDefault,
     staticHeight,
-    ifOnShowTab,
   } = data;
   const [form] = Form.useForm();
   const { validateFields, setFieldsValue, resetFields } = form;
@@ -217,7 +216,6 @@ const TableAntdCharts: React.FC<Props> = (props: any) => {
       setExpandedRowKeys(result);
     }
   }, [dataValue]);
-  if (!ifOnShowTab) return null;
   return (
     <div
       id={`echart-${id}`}

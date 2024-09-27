@@ -146,7 +146,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
         init();
       }
     }
-  }, [dataValue, operationList, locked]);
+  }, [JSON.stringify(dataValue), operationList, locked]);
   const widgetChange = (key: string, value: any) => {
     setConfigList((prev: any) =>
       (prev || [])?.map?.((item: any) => {

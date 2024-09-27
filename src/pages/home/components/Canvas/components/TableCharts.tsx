@@ -25,7 +25,6 @@ const TableCharts: React.FC<Props> = (props: any) => {
     headerBackgroundColor,
     valueColor = 'value',
     line_height,
-    ifOnShowTab,
   } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
@@ -65,7 +64,6 @@ const TableCharts: React.FC<Props> = (props: any) => {
       setTableScroll(true);
     }
   }, [dataValue]);
-  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={styles.tableCharts} ref={domRef} style={{ fontSize }}>
       <div

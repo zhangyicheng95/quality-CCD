@@ -13,7 +13,7 @@ interface Props {
 const PlatFormCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
-    dataValue, fontSize, fetchType, xName, ifFetch, platFormOptions = '{}', ifOnShowTab,
+    dataValue, fontSize, fetchType, xName, ifFetch, platFormOptions = '{}',
   } = data;
   const [localPath, setLocalPath] = useState('');
   const ifCanEdit = useMemo(() => {
@@ -22,7 +22,6 @@ const PlatFormCharts: React.FC<Props> = (props: any) => {
   useEffect(() => {
     setLocalPath(dataValue);
   }, [dataValue]);
-  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={`${styles.platFormCharts} flex-box`}>
       {

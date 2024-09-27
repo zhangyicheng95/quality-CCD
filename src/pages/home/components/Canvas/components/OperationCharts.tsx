@@ -53,7 +53,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
 
   useEffect(() => {
     if (!_.isArray(operationList)) {
-      console.log('OperationCharts:', dataValue);
+      console.log('OperationCharts:', operationList);
       return;
     }
     const { flowData } = params;

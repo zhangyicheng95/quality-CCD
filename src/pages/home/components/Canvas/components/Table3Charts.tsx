@@ -26,7 +26,6 @@ const Table3Charts: React.FC<Props> = (props: any) => {
     headerBackgroundColor,
     valueColor = 'value',
     line_height,
-    ifOnShowTab,
   } = data;
   const ifCanEdit = useMemo(() => {
     return location.hash?.indexOf('edit') > -1;
@@ -183,7 +182,6 @@ const Table3Charts: React.FC<Props> = (props: any) => {
       };
     };
   };
-  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={styles.table3Charts} ref={domRef} style={{ fontSize }}>
       <div className="flex-box charts-tab-box">

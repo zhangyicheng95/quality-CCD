@@ -15,7 +15,7 @@ const lineColorList = {
 const RankCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
-    dataValue, fontSize = 20, yName = 'verse', ifOnShowTab,
+    dataValue, fontSize = 20, yName = 'verse',
   } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
@@ -36,7 +36,6 @@ const RankCharts: React.FC<Props> = (props: any) => {
     });
     return num;
   }, [dataValue]);
-  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={`${styles.rankCharts}`} style={{ fontSize }}>
       {(dataValue || [])

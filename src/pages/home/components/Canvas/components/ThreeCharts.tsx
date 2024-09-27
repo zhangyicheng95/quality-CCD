@@ -128,7 +128,6 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
     modelRotateScreenshot = false,
     modelUpload,
     yName = false,
-    ifOnShowTab,
   } = data;
   let { name, value = [], action = '', guid: uuid, addType } = dataValue;
   if (process.env.NODE_ENV === 'development') {

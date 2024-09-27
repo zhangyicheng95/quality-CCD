@@ -13,7 +13,7 @@ interface Props {
 const ProgressCharts: React.FC<Props> = (props: any) => {
     const { data = {}, id, } = props;
     let {
-        dataValue = 0, barColor, progressType, progressSize, progressSteps, ifOnShowTab,
+        dataValue = 0, barColor, progressType, progressSize, progressSteps,
     } = data;
     if (process.env.NODE_ENV === 'development') {
         dataValue = 0.5;
@@ -34,7 +34,6 @@ const ProgressCharts: React.FC<Props> = (props: any) => {
             setFontSize(dom?.current?.clientWidth / 120);
         }
     }, [dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight]);
-    if (!ifOnShowTab) return null;
     return (
         <div
             id={`echart-${id}`}

@@ -1591,7 +1591,6 @@ const InitItem = (props: any) => {
                 ifShowHeader,
                 magnifierWidth,
                 magnifierHeight,
-                ifOnShowTab: true
               }}
             />
           )}

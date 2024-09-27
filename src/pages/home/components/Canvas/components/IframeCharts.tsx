@@ -12,12 +12,11 @@ interface Props {
 const IframeCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
-    dataValue = [], xName = '', ifOnShowTab,
+    dataValue = [], xName = '',
   } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = '';
   }
-  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={`flex-box ${styles.iframeCharts}`}>
       <iframe

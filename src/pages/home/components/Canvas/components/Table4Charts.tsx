@@ -16,7 +16,7 @@ const Table4Charts: React.FC<Props> = (props: any) => {
     dataValue = [],
     tableFontSize = 14,
     fontSize = 12,
-    staticHeight, ifOnShowTab,
+    staticHeight,
   } = data;
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
@@ -128,7 +128,6 @@ const Table4Charts: React.FC<Props> = (props: any) => {
       setExpandedRowKeys(result);
     }
   }, [dataValue]);
-  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={styles.table4Charts} ref={domRef} style={{ fontSize }}>
       <BasicTable

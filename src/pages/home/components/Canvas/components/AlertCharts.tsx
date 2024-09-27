@@ -14,7 +14,7 @@ interface Props {
 const AlertCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
-    dataValue = [], fontSize = 12, ifOnShowTab, yName,
+    dataValue = [], fontSize = 12, yName,
   } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [{ name: '状态1', value: false, }];
@@ -27,7 +27,6 @@ const AlertCharts: React.FC<Props> = (props: any) => {
       return;
     }
   }, [dataValue]);
-  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={`${styles.alertCharts} flex-box`}>
       {_.isArray(dataValue) &&

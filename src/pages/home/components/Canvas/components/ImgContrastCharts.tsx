@@ -13,7 +13,7 @@ interface Props {
 const ImgContrastCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
-    dataValue, fontSize = 16, modelRotateScreenshot = false, ifOnShowTab,
+    dataValue, fontSize = 16, modelRotateScreenshot = false,
   } = data;
   const dom = useRef<any>();
   const [selected, setSelected] = useState(0);
@@ -52,7 +52,6 @@ const ImgContrastCharts: React.FC<Props> = (props: any) => {
       value: index,
     }));
   }, [dataSource]);
-  if (!ifOnShowTab) return null;
   return (
     <div
       id={`echart-${id}`}
@@ -70,7 +69,6 @@ const ImgContrastCharts: React.FC<Props> = (props: any) => {
           magnifierSize: 4,
           lockImg,
           modelRotateScreenshot,
-          ifOnShowTab: true,
           onLockImgChange: () => {
             setLockImg((prev) => !prev);
           },

@@ -17,7 +17,7 @@ interface Props {
 const OrderInformationCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
-    dataValue, titleFontSize = 24, fontSize = 24, fetchType, xName, ifOnShowTab,
+    dataValue, titleFontSize = 24, fontSize = 24, fetchType, xName,
   } = data;
   const [form] = Form.useForm();
   const [formData, setFormData] = useState({});
@@ -96,7 +96,6 @@ const OrderInformationCharts: React.FC<Props> = (props: any) => {
       message.error('无预设单号');
     }
   };
-  if (!ifOnShowTab) return null;
   return (
     <div
       id={`echart-${id}`}

@@ -13,7 +13,7 @@ interface Props {
 const DescriptionCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
-    dataValue, basicInfoData, des_bordered, des_column, des_layout, des_size, fontSize, ifOnShowTab,
+    dataValue, basicInfoData, des_bordered, des_column, des_layout, des_size, fontSize,
   } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
@@ -33,7 +33,6 @@ const DescriptionCharts: React.FC<Props> = (props: any) => {
       return;
     }
   }, [dataValue]);
-  if (!ifOnShowTab) return null;
   return (
     <div id={`echart-${id}`} className={`${styles.descriptionCharts} flex-box-center`}>
       <Descriptions
