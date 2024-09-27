@@ -46,7 +46,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
   } = data;
   if (process.env.NODE_ENV === 'development' && !dataValue) {
     dataValue =
-      'http://8.140.245.26:8081/build/240900223D01614_2024_09_25_19_19_42_WG.jpg';
+      'https://th.bing.com/th/id/OIP.Nyb5k0iKxw5XYkDXj-geSwHaE4?rs=1&pid=ImgDetMain';
   }
   const ifCanEdit = useMemo(() => {
     return location.hash?.indexOf('edit') > -1;

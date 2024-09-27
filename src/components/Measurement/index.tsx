@@ -60,13 +60,13 @@ const Measurement: React.FC<Props> = (props: any) => {
         _.isObject(Object.values(value)[0])
           ? value
           : Object.entries(value).reduce((pre: any, cen: any, index: number) => {
-              return Object.assign({}, pre, {
-                [cen[0]]: {
-                  alias: cen[0],
-                  value: cen[1],
-                },
-              });
-            }, {}),
+            return Object.assign({}, pre, {
+              [cen[0]]: {
+                alias: cen[0],
+                value: cen[1],
+              },
+            });
+          }, {}),
       );
       setFocus(() => {
         return Object.entries(value).reduce((pre: any, cen: any, index: number) => {
@@ -87,8 +87,8 @@ const Measurement: React.FC<Props> = (props: any) => {
           ? type === 'string'
             ? ''
             : type === 'bool'
-            ? false
-            : 0
+              ? false
+              : 0
           : number,
     };
     setSelfValue(Obj);
@@ -121,9 +121,8 @@ const Measurement: React.FC<Props> = (props: any) => {
             }}
           >
             <div
-              className={`input-name ${focus[`refnum_${index}`] ? 'focus' : ''} ${
-                titleColor ? 'bgColor' : ''
-              }`}
+              className={`input-name ${focus[`refnum_${index}`] ? 'focus' : ''} ${titleColor ? 'bgColor' : ''
+                }`}
               onClick={() => refList[index]?.current?.focus()}
             >
               {alias || item[0]}
@@ -200,7 +199,7 @@ const Measurement: React.FC<Props> = (props: any) => {
                 ref={refList[index]}
                 defaultValue={value}
                 stringMode //高精度
-                // precision={type === 'float' ? precision : 0}
+                precision={type === 'float' ? precision : 0}
                 step={step}
                 max={max}
                 min={min}

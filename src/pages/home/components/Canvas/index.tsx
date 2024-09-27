@@ -1332,1267 +1332,1276 @@ const Home: React.FC<any> = (props: any) => {
         const SecLabel = items?.filter(
           (i: any) => i.group === 'bottom' && i?.label?.name === __value[1],
         )[0];
-        listData = listData.concat(
-          <div
-            key={key}
-            className={`drag-item-content-box background-ubv`}
-            // @ts-ignore
-            style={Object.assign(
-              {},
-              ['imgButton', 'heatMap'].includes(type)
-                ? { backgroundColor: 'transparent' }
-                : ['default'].includes(backgroundColor)
-                  ? {}
-                  : backgroundColor === 'border'
-                    ? { paddingTop: (titleFontSize / 4) * 3, backgroundColor: 'transparent' }
-                    : backgroundColor === 'transparent'
-                      ? { backgroundColor: 'transparent' }
-                      : backgroundColor === 'black'
-                        ? { backgroundColor: 'black' }
-                        : {
-                          backgroundImage: `url(${type === 'img' &&
-                            (dataValue?.status == 'NG' || dataValue?.status?.value == 'NG')
-                            ? dataItemImageNG
-                            : backgroundColor
-                            })`,
-                          backgroundColor: 'transparent',
-                        },
-              (
-                !!parentBodyBox && parentBodyBoxTab != bodyBoxTab
-                // ||
-                // size?.x < tabNum * 96 - 10
-                // ||
-                // (size?.x > ((tabNum + 1) * 96))
-              )
-                ? { visibility: 'hidden' } : {},
-              (
-                !['modal'].includes(type) &&
-                !ifCanEdit &&
-                ((size?.x < tabNum * 96 - 10)
-                  ||
-                  (size?.x > ((tabNum + 1) * 96)))
-              ) ? { display: 'none' } : {}
-            )}
-          >
-            {!['default', 'transparent'].includes(backgroundColor) ? (
-              <div
-                className={`flex-box data-screen-card-title-box ${['border'].includes(backgroundColor) ? 'data-screen-card-title-box-border' : ''
-                  }`}
-                style={Object.assign(
-                  {},
-                  { fontSize: titleFontSize, padding: titlePaddingSize },
-                  ['border'].includes(backgroundColor)
-                    ? { padding: 0 }
-                    : { backgroundImage: `url(${titleBackgroundColor})` },
-                )}
-              >
-                {['border'].includes(backgroundColor) ? (
-                  <div
-                    className="data-screen-card-title-box-border-bg"
-                    style={{ top: (titleFontSize / 4) * 3 }}
-                  />
-                ) : null}
-                <div className="data-screen-card-title">{CCDName}</div>
-              </div>
-            ) : null}
-            {ifShowHeader ? (
-              <div className="common-card-title-box flex-box">
-                <TooltipDiv className="flex-box common-card-title">
-                  {`${CCDName || alias || name || '无效的节点'}`}
-                  <span className="title-span">{`- ${SecLabel?.label?.alias || __value[1] || ''
-                    }`}</span>
-                </TooltipDiv>
-              </div>
-            ) : null}
+        if (
+          !['modal'].includes(type) &&
+          !ifCanEdit &&
+          ((size?.x < (tabNum * 96 - 10))
+            ||
+            (size?.x > ((tabNum + 1) * 96)))
+        ) {
+
+        } else {
+          listData = listData.concat(
             <div
-              className={`card-body-box ${backgroundColor === 'border' ? 'background-ubv' : ''}`}
+              key={key}
+              className={`drag-item-content-box background-ubv`}
+              // @ts-ignore
               style={Object.assign(
                 {},
-                ifShowHeader
-                  ? { height: 'calc(100% - 28px)' }
-                  : !['default', 'transparent'].includes(backgroundColor)
-                    ? { height: `calc(100% - ${(titleFontSize / 2) * 3 + titlePaddingSize * 2}px)` }
-                    : { height: '100%' },
-                backgroundColor === 'border'
-                  ? {
-                    border: '2px solid rgba(144,144,144,0.6)',
-                    borderRadius: 6,
-                    height: '100%',
-                    padding: `${titleFontSize / 2 + bodyPaddingSize
-                      }px ${bodyPaddingSize}px ${bodyPaddingSize}px`,
-                  }
-                  : { padding: bodyPaddingSize },
+                ['imgButton', 'heatMap'].includes(type)
+                  ? { backgroundColor: 'transparent' }
+                  : ['default'].includes(backgroundColor)
+                    ? {}
+                    : backgroundColor === 'border'
+                      ? { paddingTop: (titleFontSize / 4) * 3, backgroundColor: 'transparent' }
+                      : backgroundColor === 'transparent'
+                        ? { backgroundColor: 'transparent' }
+                        : backgroundColor === 'black'
+                          ? { backgroundColor: 'black' }
+                          : {
+                            backgroundImage: `url(${type === 'img' &&
+                              (dataValue?.status == 'NG' || dataValue?.status?.value == 'NG')
+                              ? dataItemImageNG
+                              : backgroundColor
+                              })`,
+                            backgroundColor: 'transparent',
+                          },
+                (
+                  !!parentBodyBox && parentBodyBoxTab != bodyBoxTab
+                  // ||
+                  // size?.x < tabNum * 96 - 10
+                  // ||
+                  // (size?.x > ((tabNum + 1) * 96))
+                )
+                  ? { visibility: 'hidden' } : {},
+                (
+                  !['modal'].includes(type) &&
+                  !ifCanEdit &&
+                  ((size?.x < (tabNum * 96 - 10))
+                    ||
+                    (size?.x > ((tabNum + 1) * 96)))
+                ) ? { display: 'none' } : {}
               )}
             >
-              <div className="flex-box-center" style={{ height: '100%' }}>
-                {!parent?.[0] &&
-                  type?.indexOf('button') < 0 &&
-                  ![
-                    'bodyBox',
-                    'form',
-                    'switchBox',
-                    'segmentSwitch',
-                    'rangeDomain',
-                    'rectRange',
-                    'modelSwitch',
-                    'iframe',
-                    'timeSelect',
-                    'httpTable',
-                  ].includes(type) ? (
-                  '请重新绑定数据节点'
-                ) : type === 'line' ? (
-                  <LineCharts
-                    id={key}
-                    setMyChartVisible={setMyChartVisible}
-                    data={{
-                      dataValue: dataValue || [],
-                      yName,
-                      xName,
-                      dataZoom,
-                    }}
-                  />
-                ) : type === 'point' ? (
-                  <PointCharts
-                    id={key}
-                    setMyChartVisible={setMyChartVisible}
-                    data={{
-                      dataValue: dataValue || [],
-                      yName,
-                      xName,
-                      direction,
-                      symbol,
-                      dataZoom,
-                      ifShowColorList,
-                    }}
-                  />
-                ) : type === 'bar' ? (
-                  <BarCharts
-                    id={key}
-                    setMyChartVisible={setMyChartVisible}
-                    data={{
-                      dataValue: dataValue || [],
-                      fontSize,
-                      yName,
-                      xName,
-                      direction,
-                      align,
-                      hiddenAxis,
-                      labelInxAxis,
-                      labelDirection,
-                      barRadius,
-                      showBackground,
-                      showWithLine,
-                      barColor,
-                    }}
-                  />
-                ) : type === 'pie' ? (
-                  <PieCharts
-                    id={key}
-                    setMyChartVisible={setMyChartVisible}
-                    data={{
-                      dataValue: dataValue || [],
-                      fontSize,
-                      yName,
-                    }}
-                  />
-                ) : type === 'pie3D' ? (
-                  <Pie3DCharts
-                    id={key}
-                    setMyChartVisible={setMyChartVisible}
-                    data={{
-                      dataValue: dataValue || [],
-                      fontSize,
-                      xName,
-                    }}
-                  />
-                ) : type === 'nightingalePie' ? (
-                  <NightingalePieCharts
-                    id={key}
-                    setMyChartVisible={setMyChartVisible}
-                    data={{
-                      dataValue: dataValue || [],
-                      fontSize,
-                    }}
-                  />
-                ) : type === 'heatMap' ? (
-                  <HeatMapCharts
-                    id={key}
-                    setMyChartVisible={setMyChartVisible}
-                    data={{
-                      dataValue: dataValue || [],
-                      fontSize,
-                      backgroundColor,
-                    }}
-                  />
-                ) : type === 'table' ? (
-                  <TableCharts
-                    id={key}
-                    data={{
-                      dataValue: dataValue || [],
-                      tableFontSize,
-                      yName,
-                      xName,
-                      fontSize,
-                      reverse,
-                      tableSize,
-                      interlacing,
-                      des_bordered,
-                      headerBackgroundColor,
-                      valueColor,
-                      line_height,
-                    }}
-                  />
-                ) : type === 'table2' ? (
-                  <Table2Charts
-                    id={key}
-                    data={{
-                      dataValue: dataValue || [],
-                      tableFontSize,
-                      fontSize,
-                      reverse,
-                      tableSize,
-                      interlacing,
-                      des_bordered,
-                      headerBackgroundColor,
-                      valueColor,
-                      line_height,
-                      bodyPaddingSize,
-                      des_layout,
-                    }}
-                  />
-                ) : type === 'table3' ? (
-                  <Table3Charts
-                    id={key}
-                    data={{
-                      dataValue: dataValue || [],
-                      tableFontSize,
-                      fontSize,
-                      reverse,
-                      tableSize,
-                      interlacing,
-                      des_bordered,
-                      headerBackgroundColor,
-                      valueColor,
-                      line_height,
-                    }}
-                  />
-                ) : type === 'table4' ? (
-                  <Table4Charts
-                    id={key}
-                    data={{
-                      dataValue: dataValue || [],
-                      tableFontSize,
-                      fontSize,
-                      reverse,
-                      tableSize,
-                      interlacing,
-                      des_bordered,
-                      headerBackgroundColor,
-                      valueColor,
-                      staticHeight,
-                    }}
-                  />
-                ) : type === 'table5' ? (
-                  <TableEditCharts
-                    id={key}
-                    data={{
-                      dataValue: dataValue || [],
-                      tableFontSize,
-                      fontSize,
-                      fetchType,
-                      xName,
-                      yName,
-                      ifFetch,
-                    }}
-                  />
-                ) : type === 'tableAntd' ? (
-                  <TableAntdCharts
-                    id={key}
-                    data={{
-                      dataValue: dataValue || [],
-                      tableFontSize,
-                      fontSize,
-                      fetchType,
-                      xName,
-                      yName,
-                      ifFetch,
-                      reverse,
-                      interlacing,
-                      des_bordered,
-                      headerBackgroundColor,
-                      valueColor,
-                      timeSelectDefault,
-                      staticHeight,
-                    }}
-                  />
-                ) : type === 'rangeDomain' ? (
-                  <RangeDomainCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      des_column,
-                      line_height,
-                      hiddenAxis,
-                      labelInxAxis,
-                      fetchType,
-                      xName,
-                      ifFetch,
-                      barRadius,
-                      timeSelectDefault,
-                      parentBodyBoxTab,
-                      formCustom,
-                    }}
-                  />
-                ) : type === 'rectRange' ? (
-                  <RectRangeCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      fetchType,
-                      xName,
-                    }}
-                  />
-                ) : type === 'modelSwitch' ? (
-                  <ModelSwitchCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      fetchType,
-                      xName,
-                      parentBodyBoxTab,
-                      formCustom,
-                      addContentList,
-                    }}
-                  />
-                ) : type === 'tree' ? (
-                  <TreeCharts
-                    id={key}
-                    data={{
-                      dataValue: dataValue || [],
-                      fontSize,
-                      line_height,
-                    }}
-                  />
-                ) : type === 'three' ? (
-                  <ThreeCharts
-                    id={key}
-                    data={{
-                      dataValue: dataValue || { name: '', value: [] },
-                      modelRotate,
-                      modelScale,
-                      modelRotateScreenshot,
-                      fontSize,
-                      fetchType,
-                      xName,
-                      ifShowColorList,
-                      modelUpload,
-                      yName,
-                    }}
-                  />
-                ) : type === 'fabric' ? (
-                  <FabricCharts
-                    id={key}
-                    data={{
-                      dataValue: dataValue || {},
-                      fontSize,
-                      fetchType,
-                      xName,
-                      yName,
-                    }}
-                  />
-                ) : type === 'alert' ? (
-                  <AlertCharts
-                    id={key}
-                    data={{
-                      dataValue: dataValue || [],
-                      fontSize,
-                      yName,
-                    }}
-                  />
-                ) : type === 'imgs' ? (
-                  <ImgsCharts
-                    id={key}
-                    data={{
-                      dataValue: dataValue || [],
-                      imgs_width,
-                      imgs_height,
-                    }}
-                  />
-                ) : type === 'progress' ? (
-                  <ProgressCharts
-                    id={key}
-                    data={{
-                      dataValue: dataValue || 0,
-                      barColor,
-                      progressType,
-                      progressSize,
-                      progressSteps,
-                    }}
-                  />
-                ) : type === 'description' ? (
-                  <DescriptionCharts
-                    id={key}
-                    data={{
-                      dataValue: dataValue || [],
-                      basicInfoData,
-                      fontSize,
-                      des_bordered,
-                      des_column,
-                      des_layout,
-                      des_size,
-                    }}
-                  />
-                ) : type === 'rank' ? (
-                  <RankCharts
-                    id={key}
-                    data={{
-                      dataValue: dataValue || [],
-                      fontSize,
-                      yName,
-                    }}
-                  />
-                ) : type === 'listSwitchImg' ? (
-                  <ListSwitchImgCharts
-                    id={key}
-                    data={{
-                      dataValue: dataValue || [],
-                      fontSize,
-                      yName
-                    }}
-                  />
-                ) : type === 'bodyBox' ? (
-                  <BodyBoxCharts
-                    id={key}
-                    data={{
-                      fontSize,
-                      timeSelectDefault,
-                      yName,
-                      iconSize,
-                      fetchParams,
-                      direction,
-                      addContentList,
-                    }}
-                  />
-                ) : type === 'form' ? (
-                  <FormCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      titleFontSize,
-                      fontSize,
-                      timeSelectDefault,
-                      yName,
-                      xName,
-                      fetchType,
-                      modelUpload,
-                      ifNeedAllow,
-                      modelRotate,
-                      passwordHelp,
-                      direction,
-                    }}
-                  />
-                ) : type === 'nestForm' ? (
-                  <NestFormCharts
-                    id={key}
-                    data={{
-                      fontSize,
-                      des_column,
-                      des_bordered,
-                      yName,
-                    }}
-                  />
-                ) : type === 'laminationImage' ? (
-                  <IaminationImageCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      des_column,
-                      markNumberLeft,
-                      markNumberTop,
-                    }}
-                  />
-                ) : type === 'reJudgment' ? (
-                  <ReJudgmentCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      xName,
-                      fetchType,
-                    }}
-                  />
-                ) : type === 'httpTable' ? (
-                  <AntdTableFromHttpCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      xName,
-                      fetchType,
-                      httpRotation, httpRotationTime,
-                    }}
-                  />
-                ) : type === 'cable' ? (
-                  <CableCharts
-                    id={key}
-                    setMyChartVisible={setMyChartVisible}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      dataZoom
-                    }}
-                  />
-                ) : type === 'button' ? (
-                  <Button
-                    type={['primary', 'link', 'ghost'].includes(valueColor) ? valueColor : ''}
-                    id={key}
-                    style={Object.assign(
-                      { fontSize },
-                      { height: '100%', width: '100%' },
-                      !['primary', 'link', 'ghost'].includes(valueColor)
-                        ? { backgroundColor: valueColor, color: '#fff' }
-                        : {},
-                    )}
-                    className={`${des_bordered ? 'text-break' : ''}`}
-                    onClick={() => {
-                      const func = () => {
-                        let params = undefined;
-                        if (
-                          !_.isUndefined(fetchParams) &&
-                          !_.isNull(fetchParams) &&
-                          _.isString(fetchParams) &&
-                          !!fetchParams
-                        ) {
-                          try {
-                            params = JSON.parse(fetchParams);
-                          } catch (e) {
-                            console.log('按钮传递参数格式不对:', e);
-                            params = undefined;
-                          }
-                        }
-                        btnFetch(fetchType, xName, params).then((res: any) => {
-                          if (!!res && res.code === 'SUCCESS') {
-                            message.success('success');
-                          } else {
-                            message.error(res?.message || '后台服务异常，请重启服务');
-                          }
-                        });
-                      };
-                      if (ifNeedAllow) {
-                        Modal.confirm({
-                          title: '提示',
-                          icon: <ExclamationCircleOutlined />,
-                          content: '确认发送？',
-                          okText: '确认',
-                          cancelText: '取消',
-                          onOk: () => {
-                            func();
-                          },
-                        });
-                      } else {
-                        func();
-                      }
-                    }}
-                  >
-                    {yName || '按钮'}
-                  </Button>
-                ) : type === 'timeSelect' ? (
-                  <TimeSelectCharts
-                    id={key}
-                    data={{
-                      fontSize,
-                      yName,
-                      xName,
-                      fetchType,
-                      timeSelectDefault,
-                      modelRotate,
-                    }}
-                  />
-                ) : type === 'buttonInp' ? (
-                  <ButtonCharts
-                    id={key}
-                    data={{
-                      fontSize,
-                      yName,
-                      xName,
-                      fetchType,
-                      ifNeedClear,
-                      valueColor,
-                      des_bordered,
-                      fetchParams,
-                    }}
-                  />
-                ) : type === 'buttonPassword' ? (
-                  <ButtonPWCharts
-                    id={key}
-                    data={{
-                      fontSize,
-                      yName,
-                      xName,
-                      fetchType,
-                      password,
-                      passwordHelp,
-                      fetchParams,
-                      valueColor,
-                      des_bordered,
-                    }}
-                  />
-                ) : type === 'buttonUpload' ? (
-                  <ButtonUploadCharts
-                    id={key}
-                    data={{
-                      fontSize,
-                      yName,
-                      xName,
-                      fetchType,
-                      fetchParams,
-                      valueColor,
-                      ifNeedAllow,
-                      des_bordered,
-                    }}
-                  />
-                ) : type === 'switchBox' ? (
-                  <SwitchBoxCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      dispatch,
-                      fontSize,
-                      yName,
-                      timeSelectDefault,
-                      des_column,
-                      direction,
-                      modelRotate,
-                    }}
-                  />
-                ) : type === 'segmentSwitch' ? (
-                  <SegmentSwitchCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      yName,
-                      des_layout,
-                      des_bordered,
-                      timeSelectDefault,
-                      xName,
-                      fetchType,
-                      password,
-                      ifNeedAllow,
-                    }}
-                  />
-                ) : type === 'operation' ? (
-                  <OperationCharts
-                    id={key}
-                    data={{
-                      operationList,
-                      dataValue,
-                      fontSize,
-                      showLabel,
-                      ifPopconfirm,
-                      des_column,
-                      des_bordered,
-                      yName,
-                      valueOnTop,
-                      passwordHelp,
-                      password,
-                    }}
-                  />
-                ) : type === 'operation2' ? (
-                  <Operation2Charts
-                    id={key}
-                    data={{
-                      operationList,
-                      dataValue,
-                      fontSize,
-                      xName,
-                      ifUpdateProject,
-                      ifUpdatetoInitParams,
-                      ifFetch,
-                      ifPopconfirm,
-                      showLabel,
-                      des_column,
-                      des_bordered,
-                      yName,
-                      valueOnTop,
-                      passwordHelp,
-                      password,
-                    }}
-                  />
-                ) : type === 'statistic' ? (
-                  <StatisticCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      yName,
-                      fontColor,
-                      direction,
-                      valueOnTop,
-                    }}
-                  />
-                ) : type === 'platForm' ? (
-                  <PlatFormCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      fetchType,
-                      xName,
-                      ifFetch,
-                      platFormOptions,
-                    }}
-                  />
-                ) : type === 'modal' ? (
-                  <ModalCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      yName,
-                      fetchType,
-                      xName,
-                      ifFetch,
-                      ifFetchParams,
-                    }}
-                  />
-                ) : type === 'buttonImages' ? (
-                  <ButtonImagesCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      reverse,
-                      modelRotateScreenshot,
-                      fetchType,
-                      xName,
-                    }}
-                  />
-                ) : type === 'imgButton' ? (
-                  <ImgButtonCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      xColumns,
-                      fetchType,
-                      xName,
-                      yName,
-                      markNumberLeft,
-                      markNumberTop,
-                      fileTypes,
-                      fileFetch,
-                    }}
-                  />
-                ) : type === 'alertImg' ? (
-                  <AlertImgCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      lineNumber,
-                      columnNumber,
-                      magnifier,
-                      magnifierSize,
-                    }}
-                  />
-                ) : type === 'iframe' ? (
-                  <IframeCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      xName,
-                    }}
-                  />
-                ) : type === 'imgContrast' ? (
-                  <ImgContrastCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      modelRotateScreenshot,
-                    }}
-                  />
-                ) : type === 'formula' ? (
-                  <FormulaCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      titleFontSize,
-                      fetchType,
-                      xName,
-                      ifNeedAllow,
-                    }}
-                  />
-                ) : type === 'orderInformation' ? (
-                  <OrderInformationCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      titleFontSize,
-                      fetchType,
-                      xName,
-                      ifNeedAllow,
-                    }}
-                  />
-                ) : type === 'equipment' ? (
-                  <EquipmentControlCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      titleFontSize,
-                      ifNeedAllow,
-                    }}
-                  />
-                ) : type === 'paramControl' ? (
-                  <StatisticsCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      titleFontSize,
-                      fetchType,
-                      xName,
-                      yName,
-                      ifNeedAllow,
-                    }}
-                  />
-                ) : type === 'connectStatus' ? (
-                  <ModuleStatusCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      titleFontSize,
-                    }}
-                  />
-                ) : type === 'fastFunction' ? (
-                  <FastFunctionCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      titleFontSize,
-                      fetchType,
-                      xName,
-                      ifNeedAllow,
-                    }}
-                  />
-                ) : type === 'outputArea' ? (
-                  <OutputAreaCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      titleFontSize,
-                      fetchType,
-                      xName,
-                      ifNeedAllow,
-                    }}
-                  />
-                ) : type === 'equipmentInfo' ? (
-                  <EquipmentInfoCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      xName,
-                    }}
-                  />
-                ) : type === 'countdown' ? (
-                  <CountDownCharts
-                    id={key}
-                    data={{
-                      dataValue,
-                      fontSize,
-                      fetchType,
-                      xName,
-                      ifFetchParams,
-                      yName,
-                    }}
-                  />
-                ) : (
-                  <ImgCharts
-                    id={key}
-                    data={{
-                      defaultImg: !!defaultImg
-                        ? `${BASE_IP}file${defaultImg?.indexOf('\\') === 0 || defaultImg?.indexOf('/') === 0
-                          ? ''
-                          : '\\'
-                        }${defaultImg}`
-                        : '',
-                      fontSize,
-                      dataValue,
-                      showImgList,
-                      notLocalStorage: _.isBoolean(notLocalStorage) ? !notLocalStorage : false,
-                      imgListNum,
-                      showFooter,
-                      magnifier,
-                      magnifierSize,
-                      comparison,
-                      ifShowHeader,
-                      magnifierWidth,
-                      magnifierHeight,
-                      labelInxAxis,
-                    }}
-                  />
-                )}
-              </div>
-            </div>
-            {ifCanEdit ? (
-              <Dropdown
-                overlayClassName="edit-canvas-dropdown"
-                overlay={
-                  <Menu
-                    items={[
-                      {
-                        key: '1',
-                        icon: <EditOutlined />,
-                        label: '编辑',
-                        onClick: () => {
-                          // 双击事件触发的操作
-                          if (!!addWindowVisible || !!homeSettingVisible) {
-                            setAddWindowVisible('');
-                            setHomeSettingVisible('');
-                            setFieldsValue({});
-                          }
-                          setTimeout(() => {
-                            !!defaultImg &&
-                              setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
-                            setBasicInfoData(basicInfoData);
-                            setEditWindowData(
-                              Object.assign(
-                                {},
-                                item,
-                                !!item?.xColumns?.length ? {} : {},
-                                !!item?.yColumns?.length ? {} : {},
-                              ),
-                            );
-                            setCommonSettingList(
-                              (!!timeSelectDefault?.length ? timeSelectDefault : [{}])?.map?.(
-                                (item: any) => ({
-                                  ...item,
-                                  id: guid(),
-                                }),
-                              ),
-                            );
-                            setFieldsValue(
-                              Object.assign(
-                                {},
-                                item,
-                                !fontSize ? { fontSize: 12 } : {},
-                                !!backgroundColor && !!backgroundColor?.rgb
-                                  ? { backgroundColor: backgroundColor }
-                                  : {},
-                                type === 'platForm'
-                                  ? {
-                                    platFormOptions: !!platFormOptions
-                                      ? platFormOptions
-                                      : JSON.stringify({
-                                        左上水平隔膜: {
-                                          灰度差: {
-                                            name: '灰度差',
-                                            alias: '灰度差',
-                                            require: true,
-                                            default: 15,
-                                            value: 15,
-                                            type: 'int',
-                                            description: '边界变化的灰度差',
-                                            widget: {
-                                              type: 'InputNumber',
-                                              max: 255,
-                                              min: 0,
-                                              step: 1,
-                                            },
-                                          },
-                                          灰度合并像素: {
-                                            name: '灰度合并像素',
-                                            alias: '灰度合并像素',
-                                            require: true,
-                                            default: 2,
-                                            value: 2,
-                                            type: 'int',
-                                            description: '边界变化的灰度合并像素',
-                                            widget: {
-                                              type: 'InputNumber',
-                                              max: 5,
-                                              min: 1,
-                                              step: 1,
-                                            },
-                                          },
-                                          亮度变化方向: {
-                                            name: '亮度变化方向',
-                                            alias: '亮度变化方向',
-                                            require: true,
-                                            default: 2,
-                                            value: 2,
-                                            type: 'List[string]',
-                                            description:
-                                              '边界找线亮度变化方向, 1为亮到暗, 2为暗到亮',
-                                            widget: {
-                                              type: 'Select',
-                                              options: [
-                                                { label: '1-亮到暗', value: 1 },
-                                                { label: '2-暗到亮', value: 2 },
-                                              ],
-                                            },
-                                          },
-                                          直线度: {
-                                            name: '直线度',
-                                            alias: '直线度',
-                                            require: true,
-                                            default: 3,
-                                            value: 3,
-                                            type: 'int',
-                                            description: '直线度要求，值越小，线越直',
-                                            widget: {
-                                              type: 'InputNumber',
-                                              max: 100,
-                                              min: 1,
-                                              step: 1,
-                                            },
-                                          },
-                                          降噪滤波核: {
-                                            name: '降噪滤波核',
-                                            alias: '降噪滤波核',
-                                            require: true,
-                                            default: 5,
-                                            value: 5,
-                                            type: 'int',
-                                            description: '去噪滤波核大小',
-                                            widget: {
-                                              type: 'InputNumber',
-                                              max: 21,
-                                              min: 1,
-                                              step: 1,
-                                            },
-                                          },
-                                          找线方向下采样倍数: {
-                                            name: '找线方向下采样倍数',
-                                            alias: '找线方向下采样倍数',
-                                            require: true,
-                                            default: 8,
-                                            value: 8,
-                                            type: 'int',
-                                            description: '区域下采样倍数，提高计算速度',
-                                            widget: {
-                                              type: 'InputNumber',
-                                              max: 16,
-                                              min: 2,
-                                              step: 2,
-                                            },
-                                          },
-                                          垂直找线方向下采样倍数: {
-                                            name: '垂直找线方向下采样倍数',
-                                            alias: '垂直找线方向下采样倍数',
-                                            require: true,
-                                            default: 2,
-                                            value: 2,
-                                            type: 'int',
-                                            description: '区域下采样倍数，提高计算速度',
-                                            widget: {
-                                              type: 'InputNumber',
-                                              max: 16,
-                                              min: 2,
-                                              step: 2,
-                                            },
-                                          },
-                                          搜索框个数: {
-                                            name: '搜索框个数',
-                                            alias: '搜索框个数',
-                                            require: true,
-                                            default: 15,
-                                            value: 15,
-                                            type: 'int',
-                                            description: '搜索框个数',
-                                            widget: {
-                                              type: 'InputNumber',
-                                              max: 1000,
-                                              min: 3,
-                                              step: 1,
-                                            },
-                                          },
-                                          搜索框宽度: {
-                                            name: '搜索框宽度',
-                                            alias: '搜索框宽度',
-                                            require: true,
-                                            default: 6,
-                                            value: 6,
-                                            type: 'int',
-                                            description: '搜索框宽度',
-                                            widget: {
-                                              type: 'InputNumber',
-                                              max: 1000,
-                                              min: 3,
-                                              step: 1,
-                                            },
-                                          },
-                                          找线方法: {
-                                            name: '找线方法',
-                                            alias: '找线方法',
-                                            require: true,
-                                            default: '卡尺找线',
-                                            value: '卡尺找线',
-                                            type: 'List[string]',
-                                            description: '找线方法，1-卡尺找线，2-EDLines找线',
-                                            widget: {
-                                              type: 'Select',
-                                              options: [
-                                                { label: '卡尺找线', value: '卡尺找线' },
-                                                { label: 'EDLine找线', value: 'EDLine找线' },
-                                              ],
-                                            },
-                                          },
-                                        },
-                                      }),
-                                  }
-                                  : {},
-                              ),
-                            );
-                            setShowPanels({
-                              common: true,
-                              custom: true,
-                            });
-                            setColorSelector((prev: any) => ({
-                              ...prev,
-                              ...(!!fontColor && !!fontColor?.rgb
-                                ? { fontColor: fontColor.rgb }
-                                : {}),
-                              ...(!!backgroundColor && !!backgroundColor?.rgb
-                                ? { backgroundColor: backgroundColor?.rgb }
-                                : {}),
-                            }));
-
-                            setWindowType(type);
-                            if (type === 'operation2') {
-                              const res = paramsData?.flowData?.nodes.filter(
-                                (i: any) => i.id === __value[0],
-                              )?.[0];
-                              if (!!res) {
-                                const { config = {} } = res;
-                                if (!!config?.execParams && _.isObject(config?.execParams)) {
-                                  setSelectedNodeConfig(() =>
-                                    Object.entries(config.execParams)?.map?.((item: any) => {
-                                      return {
-                                        label: item[1]?.alias,
-                                        value: item[0],
-                                      };
-                                    }),
-                                  );
-                                } else if (!!config?.initParams && _.isObject(config?.initParams)) {
-                                  setSelectedNodeConfig(() =>
-                                    Object.entries(config.initParams)?.map?.((item: any) => {
-                                      return {
-                                        label: item[1]?.alias,
-                                        value: item[0],
-                                      };
-                                    }),
-                                  );
-                                }
-                              }
-                            } else {
-                              const res = paramsData?.flowData?.nodes.filter(
-                                (i: any) => i.id === __value[0],
-                              )?.[0];
-                              if (!!res) {
-                                const { config = {} } = res;
-                                if (!!config?.initParams && _.isObject(config?.initParams)) {
-                                  setSelectedNodeConfig(() =>
-                                    Object.entries(config.initParams)?.map?.((item: any) => {
-                                      return {
-                                        label: item[1]?.alias,
-                                        value: item[0],
-                                      };
-                                    }),
-                                  );
-                                }
-                              }
-                            }
-                            setAddWindowVisible(key);
-                          }, 500);
-                        },
-                      },
-                      {
-                        type: 'divider',
-                      },
-                      {
-                        key: '2',
-                        icon: <CopyOutlined />,
-                        label: '复制',
-                        onClick: () => {
-                          // 复制监控窗口
-                          const uuid32 = getuid();
-                          addWindow({
-                            ..._.omit(item, 'id'),
-                            value: [uuid32],
-                            type,
-                            size: {
-                              x: size?.x + size.w >= 96 ? size?.x - size.w : size?.x + size.w,
-                              y: size.y,
-                            },
-                          });
-                        },
-                      },
-                      {
-                        key: '3',
-                        icon: <DeleteOutlined />,
-                        label: '删除',
-                        onClick: () => {
-                          const result = addContentList?.filter((item: any) => item.id !== key);
-                          setAddContentList(result);
-                          dispatch({
-                            type: 'home/set',
-                            payload: {
-                              gridContentList: result,
-                            },
-                          });
-                          dispatch({ type: 'home/snapshot' });
-                          setParamData((prev: any) =>
-                            Object.assign({}, prev, {
-                              contentData: Object.assign({}, prev.contentData, { content: result }),
-                            }),
-                          );
-                          setAddWindowVisible('');
-                          setHomeSettingVisible('');
-                        },
-                      },
-                    ]}
-                  />
-                }
-                trigger={['contextMenu']}
-              >
+              {!['default', 'transparent'].includes(backgroundColor) ? (
                 <div
+                  className={`flex-box data-screen-card-title-box ${['border'].includes(backgroundColor) ? 'data-screen-card-title-box-border' : ''
+                    }`}
                   style={Object.assign(
                     {},
-                    ['table2', 'table3'].includes(type)
-                      ? {
-                        height: `calc(100% - 80px - ${bodyPaddingSize}px)`,
-                        marginTop: 80 + bodyPaddingSize,
-                      }
-                      : {},
-                    type === 'bodyBox'
-                      ? {
-                        top: 'auto',
-                      }
-                      : {},
+                    { fontSize: titleFontSize, padding: titlePaddingSize },
+                    ['border'].includes(backgroundColor)
+                      ? { padding: 0 }
+                      : { backgroundImage: `url(${titleBackgroundColor})` },
                   )}
-                  className="flex-box-center drag-item-content-mask common-card-title"
-                ></div>
-              </Dropdown>
-            ) : null}
-          </div>,
-        );
-        layoutData = layoutData.concat(
-          ['modal'].includes(type) && !ifCanEdit ? { ...size, w: 0, minW: 0, h: 0, minH: 0 } : size,
-        );
+                >
+                  {['border'].includes(backgroundColor) ? (
+                    <div
+                      className="data-screen-card-title-box-border-bg"
+                      style={{ top: (titleFontSize / 4) * 3 }}
+                    />
+                  ) : null}
+                  <div className="data-screen-card-title">{CCDName}</div>
+                </div>
+              ) : null}
+              {ifShowHeader ? (
+                <div className="common-card-title-box flex-box">
+                  <TooltipDiv className="flex-box common-card-title">
+                    {`${CCDName || alias || name || '无效的节点'}`}
+                    <span className="title-span">{`- ${SecLabel?.label?.alias || __value[1] || ''
+                      }`}</span>
+                  </TooltipDiv>
+                </div>
+              ) : null}
+              <div
+                className={`card-body-box ${backgroundColor === 'border' ? 'background-ubv' : ''}`}
+                style={Object.assign(
+                  {},
+                  ifShowHeader
+                    ? { height: 'calc(100% - 28px)' }
+                    : !['default', 'transparent'].includes(backgroundColor)
+                      ? { height: `calc(100% - ${(titleFontSize / 2) * 3 + titlePaddingSize * 2}px)` }
+                      : { height: '100%' },
+                  backgroundColor === 'border'
+                    ? {
+                      border: '2px solid rgba(144,144,144,0.6)',
+                      borderRadius: 6,
+                      height: '100%',
+                      padding: `${titleFontSize / 2 + bodyPaddingSize
+                        }px ${bodyPaddingSize}px ${bodyPaddingSize}px`,
+                    }
+                    : { padding: bodyPaddingSize },
+                )}
+              >
+                <div className="flex-box-center" style={{ height: '100%' }}>
+                  {!parent?.[0] &&
+                    type?.indexOf('button') < 0 &&
+                    ![
+                      'bodyBox',
+                      'form',
+                      'switchBox',
+                      'segmentSwitch',
+                      'rangeDomain',
+                      'rectRange',
+                      'modelSwitch',
+                      'iframe',
+                      'timeSelect',
+                      'httpTable',
+                    ].includes(type) ? (
+                    '请重新绑定数据节点'
+                  ) : type === 'line' ? (
+                    <LineCharts
+                      id={key}
+                      setMyChartVisible={setMyChartVisible}
+                      data={{
+                        dataValue: dataValue || [],
+                        yName,
+                        xName,
+                        dataZoom,
+                      }}
+                    />
+                  ) : type === 'point' ? (
+                    <PointCharts
+                      id={key}
+                      setMyChartVisible={setMyChartVisible}
+                      data={{
+                        dataValue: dataValue || [],
+                        yName,
+                        xName,
+                        direction,
+                        symbol,
+                        dataZoom,
+                        ifShowColorList,
+                      }}
+                    />
+                  ) : type === 'bar' ? (
+                    <BarCharts
+                      id={key}
+                      setMyChartVisible={setMyChartVisible}
+                      data={{
+                        dataValue: dataValue || [],
+                        fontSize,
+                        yName,
+                        xName,
+                        direction,
+                        align,
+                        hiddenAxis,
+                        labelInxAxis,
+                        labelDirection,
+                        barRadius,
+                        showBackground,
+                        showWithLine,
+                        barColor,
+                      }}
+                    />
+                  ) : type === 'pie' ? (
+                    <PieCharts
+                      id={key}
+                      setMyChartVisible={setMyChartVisible}
+                      data={{
+                        dataValue: dataValue || [],
+                        fontSize,
+                        yName,
+                      }}
+                    />
+                  ) : type === 'pie3D' ? (
+                    <Pie3DCharts
+                      id={key}
+                      setMyChartVisible={setMyChartVisible}
+                      data={{
+                        dataValue: dataValue || [],
+                        fontSize,
+                        xName,
+                      }}
+                    />
+                  ) : type === 'nightingalePie' ? (
+                    <NightingalePieCharts
+                      id={key}
+                      setMyChartVisible={setMyChartVisible}
+                      data={{
+                        dataValue: dataValue || [],
+                        fontSize,
+                      }}
+                    />
+                  ) : type === 'heatMap' ? (
+                    <HeatMapCharts
+                      id={key}
+                      setMyChartVisible={setMyChartVisible}
+                      data={{
+                        dataValue: dataValue || [],
+                        fontSize,
+                        backgroundColor,
+                      }}
+                    />
+                  ) : type === 'table' ? (
+                    <TableCharts
+                      id={key}
+                      data={{
+                        dataValue: dataValue || [],
+                        tableFontSize,
+                        yName,
+                        xName,
+                        fontSize,
+                        reverse,
+                        tableSize,
+                        interlacing,
+                        des_bordered,
+                        headerBackgroundColor,
+                        valueColor,
+                        line_height,
+                      }}
+                    />
+                  ) : type === 'table2' ? (
+                    <Table2Charts
+                      id={key}
+                      data={{
+                        dataValue: dataValue || [],
+                        tableFontSize,
+                        fontSize,
+                        reverse,
+                        tableSize,
+                        interlacing,
+                        des_bordered,
+                        headerBackgroundColor,
+                        valueColor,
+                        line_height,
+                        bodyPaddingSize,
+                        des_layout,
+                      }}
+                    />
+                  ) : type === 'table3' ? (
+                    <Table3Charts
+                      id={key}
+                      data={{
+                        dataValue: dataValue || [],
+                        tableFontSize,
+                        fontSize,
+                        reverse,
+                        tableSize,
+                        interlacing,
+                        des_bordered,
+                        headerBackgroundColor,
+                        valueColor,
+                        line_height,
+                      }}
+                    />
+                  ) : type === 'table4' ? (
+                    <Table4Charts
+                      id={key}
+                      data={{
+                        dataValue: dataValue || [],
+                        tableFontSize,
+                        fontSize,
+                        reverse,
+                        tableSize,
+                        interlacing,
+                        des_bordered,
+                        headerBackgroundColor,
+                        valueColor,
+                        staticHeight,
+                      }}
+                    />
+                  ) : type === 'table5' ? (
+                    <TableEditCharts
+                      id={key}
+                      data={{
+                        dataValue: dataValue || [],
+                        tableFontSize,
+                        fontSize,
+                        fetchType,
+                        xName,
+                        yName,
+                        ifFetch,
+                      }}
+                    />
+                  ) : type === 'tableAntd' ? (
+                    <TableAntdCharts
+                      id={key}
+                      data={{
+                        dataValue: dataValue || [],
+                        tableFontSize,
+                        fontSize,
+                        fetchType,
+                        xName,
+                        yName,
+                        ifFetch,
+                        reverse,
+                        interlacing,
+                        des_bordered,
+                        headerBackgroundColor,
+                        valueColor,
+                        timeSelectDefault,
+                        staticHeight,
+                      }}
+                    />
+                  ) : type === 'rangeDomain' ? (
+                    <RangeDomainCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        des_column,
+                        line_height,
+                        hiddenAxis,
+                        labelInxAxis,
+                        fetchType,
+                        xName,
+                        ifFetch,
+                        barRadius,
+                        timeSelectDefault,
+                        parentBodyBoxTab,
+                        formCustom,
+                      }}
+                    />
+                  ) : type === 'rectRange' ? (
+                    <RectRangeCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        fetchType,
+                        xName,
+                      }}
+                    />
+                  ) : type === 'modelSwitch' ? (
+                    <ModelSwitchCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        fetchType,
+                        xName,
+                        parentBodyBoxTab,
+                        formCustom,
+                        addContentList,
+                      }}
+                    />
+                  ) : type === 'tree' ? (
+                    <TreeCharts
+                      id={key}
+                      data={{
+                        dataValue: dataValue || [],
+                        fontSize,
+                        line_height,
+                      }}
+                    />
+                  ) : type === 'three' ? (
+                    <ThreeCharts
+                      id={key}
+                      data={{
+                        dataValue: dataValue || { name: '', value: [] },
+                        modelRotate,
+                        modelScale,
+                        modelRotateScreenshot,
+                        fontSize,
+                        fetchType,
+                        xName,
+                        ifShowColorList,
+                        modelUpload,
+                        yName,
+                      }}
+                    />
+                  ) : type === 'fabric' ? (
+                    <FabricCharts
+                      id={key}
+                      data={{
+                        dataValue: dataValue || {},
+                        fontSize,
+                        fetchType,
+                        xName,
+                        yName,
+                      }}
+                    />
+                  ) : type === 'alert' ? (
+                    <AlertCharts
+                      id={key}
+                      data={{
+                        dataValue: dataValue || [],
+                        fontSize,
+                        yName,
+                      }}
+                    />
+                  ) : type === 'imgs' ? (
+                    <ImgsCharts
+                      id={key}
+                      data={{
+                        dataValue: dataValue || [],
+                        imgs_width,
+                        imgs_height,
+                      }}
+                    />
+                  ) : type === 'progress' ? (
+                    <ProgressCharts
+                      id={key}
+                      data={{
+                        dataValue: dataValue || 0,
+                        barColor,
+                        progressType,
+                        progressSize,
+                        progressSteps,
+                      }}
+                    />
+                  ) : type === 'description' ? (
+                    <DescriptionCharts
+                      id={key}
+                      data={{
+                        dataValue: dataValue || [],
+                        basicInfoData,
+                        fontSize,
+                        des_bordered,
+                        des_column,
+                        des_layout,
+                        des_size,
+                      }}
+                    />
+                  ) : type === 'rank' ? (
+                    <RankCharts
+                      id={key}
+                      data={{
+                        dataValue: dataValue || [],
+                        fontSize,
+                        yName,
+                      }}
+                    />
+                  ) : type === 'listSwitchImg' ? (
+                    <ListSwitchImgCharts
+                      id={key}
+                      data={{
+                        dataValue: dataValue || [],
+                        fontSize,
+                        yName
+                      }}
+                    />
+                  ) : type === 'bodyBox' ? (
+                    <BodyBoxCharts
+                      id={key}
+                      data={{
+                        fontSize,
+                        timeSelectDefault,
+                        yName,
+                        iconSize,
+                        fetchParams,
+                        direction,
+                        addContentList,
+                      }}
+                    />
+                  ) : type === 'form' ? (
+                    <FormCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        titleFontSize,
+                        fontSize,
+                        timeSelectDefault,
+                        yName,
+                        xName,
+                        fetchType,
+                        modelUpload,
+                        ifNeedAllow,
+                        modelRotate,
+                        passwordHelp,
+                        direction,
+                      }}
+                    />
+                  ) : type === 'nestForm' ? (
+                    <NestFormCharts
+                      id={key}
+                      data={{
+                        fontSize,
+                        des_column,
+                        des_bordered,
+                        yName,
+                      }}
+                    />
+                  ) : type === 'laminationImage' ? (
+                    <IaminationImageCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        des_column,
+                        markNumberLeft,
+                        markNumberTop,
+                      }}
+                    />
+                  ) : type === 'reJudgment' ? (
+                    <ReJudgmentCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        xName,
+                        fetchType,
+                      }}
+                    />
+                  ) : type === 'httpTable' ? (
+                    <AntdTableFromHttpCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        xName,
+                        fetchType,
+                        httpRotation, httpRotationTime,
+                      }}
+                    />
+                  ) : type === 'cable' ? (
+                    <CableCharts
+                      id={key}
+                      setMyChartVisible={setMyChartVisible}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        dataZoom
+                      }}
+                    />
+                  ) : type === 'button' ? (
+                    <Button
+                      type={['primary', 'link', 'ghost'].includes(valueColor) ? valueColor : ''}
+                      id={key}
+                      style={Object.assign(
+                        { fontSize },
+                        { height: '100%', width: '100%' },
+                        !['primary', 'link', 'ghost'].includes(valueColor)
+                          ? { backgroundColor: valueColor, color: '#fff' }
+                          : {},
+                      )}
+                      className={`${des_bordered ? 'text-break' : ''}`}
+                      onClick={() => {
+                        const func = () => {
+                          let params = undefined;
+                          if (
+                            !_.isUndefined(fetchParams) &&
+                            !_.isNull(fetchParams) &&
+                            _.isString(fetchParams) &&
+                            !!fetchParams
+                          ) {
+                            try {
+                              params = JSON.parse(fetchParams);
+                            } catch (e) {
+                              console.log('按钮传递参数格式不对:', e);
+                              params = undefined;
+                            }
+                          }
+                          btnFetch(fetchType, xName, params).then((res: any) => {
+                            if (!!res && res.code === 'SUCCESS') {
+                              message.success('success');
+                            } else {
+                              message.error(res?.message || '后台服务异常，请重启服务');
+                            }
+                          });
+                        };
+                        if (ifNeedAllow) {
+                          Modal.confirm({
+                            title: '提示',
+                            icon: <ExclamationCircleOutlined />,
+                            content: '确认发送？',
+                            okText: '确认',
+                            cancelText: '取消',
+                            onOk: () => {
+                              func();
+                            },
+                          });
+                        } else {
+                          func();
+                        }
+                      }}
+                    >
+                      {yName || '按钮'}
+                    </Button>
+                  ) : type === 'timeSelect' ? (
+                    <TimeSelectCharts
+                      id={key}
+                      data={{
+                        fontSize,
+                        yName,
+                        xName,
+                        fetchType,
+                        timeSelectDefault,
+                        modelRotate,
+                      }}
+                    />
+                  ) : type === 'buttonInp' ? (
+                    <ButtonCharts
+                      id={key}
+                      data={{
+                        fontSize,
+                        yName,
+                        xName,
+                        fetchType,
+                        ifNeedClear,
+                        valueColor,
+                        des_bordered,
+                        fetchParams,
+                      }}
+                    />
+                  ) : type === 'buttonPassword' ? (
+                    <ButtonPWCharts
+                      id={key}
+                      data={{
+                        fontSize,
+                        yName,
+                        xName,
+                        fetchType,
+                        password,
+                        passwordHelp,
+                        fetchParams,
+                        valueColor,
+                        des_bordered,
+                      }}
+                    />
+                  ) : type === 'buttonUpload' ? (
+                    <ButtonUploadCharts
+                      id={key}
+                      data={{
+                        fontSize,
+                        yName,
+                        xName,
+                        fetchType,
+                        fetchParams,
+                        valueColor,
+                        ifNeedAllow,
+                        des_bordered,
+                      }}
+                    />
+                  ) : type === 'switchBox' ? (
+                    <SwitchBoxCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        dispatch,
+                        fontSize,
+                        yName,
+                        timeSelectDefault,
+                        des_column,
+                        direction,
+                        modelRotate,
+                      }}
+                    />
+                  ) : type === 'segmentSwitch' ? (
+                    <SegmentSwitchCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        yName,
+                        des_layout,
+                        des_bordered,
+                        timeSelectDefault,
+                        xName,
+                        fetchType,
+                        password,
+                        ifNeedAllow,
+                      }}
+                    />
+                  ) : type === 'operation' ? (
+                    <OperationCharts
+                      id={key}
+                      data={{
+                        operationList,
+                        dataValue,
+                        fontSize,
+                        showLabel,
+                        ifPopconfirm,
+                        des_column,
+                        des_bordered,
+                        yName,
+                        valueOnTop,
+                        passwordHelp,
+                        password,
+                      }}
+                    />
+                  ) : type === 'operation2' ? (
+                    <Operation2Charts
+                      id={key}
+                      data={{
+                        operationList,
+                        dataValue,
+                        fontSize,
+                        xName,
+                        ifUpdateProject,
+                        ifUpdatetoInitParams,
+                        ifFetch,
+                        ifPopconfirm,
+                        showLabel,
+                        des_column,
+                        des_bordered,
+                        yName,
+                        valueOnTop,
+                        passwordHelp,
+                        password,
+                      }}
+                    />
+                  ) : type === 'statistic' ? (
+                    <StatisticCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        yName,
+                        fontColor,
+                        direction,
+                        valueOnTop,
+                      }}
+                    />
+                  ) : type === 'platForm' ? (
+                    <PlatFormCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        fetchType,
+                        xName,
+                        ifFetch,
+                        platFormOptions,
+                      }}
+                    />
+                  ) : type === 'modal' ? (
+                    <ModalCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        yName,
+                        fetchType,
+                        xName,
+                        ifFetch,
+                        ifFetchParams,
+                      }}
+                    />
+                  ) : type === 'buttonImages' ? (
+                    <ButtonImagesCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        reverse,
+                        modelRotateScreenshot,
+                        fetchType,
+                        xName,
+                      }}
+                    />
+                  ) : type === 'imgButton' ? (
+                    <ImgButtonCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        xColumns,
+                        fetchType,
+                        xName,
+                        yName,
+                        markNumberLeft,
+                        markNumberTop,
+                        fileTypes,
+                        fileFetch,
+                      }}
+                    />
+                  ) : type === 'alertImg' ? (
+                    <AlertImgCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        lineNumber,
+                        columnNumber,
+                        magnifier,
+                        magnifierSize,
+                      }}
+                    />
+                  ) : type === 'iframe' ? (
+                    <IframeCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        xName,
+                      }}
+                    />
+                  ) : type === 'imgContrast' ? (
+                    <ImgContrastCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        modelRotateScreenshot,
+                      }}
+                    />
+                  ) : type === 'formula' ? (
+                    <FormulaCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        titleFontSize,
+                        fetchType,
+                        xName,
+                        ifNeedAllow,
+                      }}
+                    />
+                  ) : type === 'orderInformation' ? (
+                    <OrderInformationCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        titleFontSize,
+                        fetchType,
+                        xName,
+                        ifNeedAllow,
+                      }}
+                    />
+                  ) : type === 'equipment' ? (
+                    <EquipmentControlCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        titleFontSize,
+                        ifNeedAllow,
+                      }}
+                    />
+                  ) : type === 'paramControl' ? (
+                    <StatisticsCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        titleFontSize,
+                        fetchType,
+                        xName,
+                        yName,
+                        ifNeedAllow,
+                      }}
+                    />
+                  ) : type === 'connectStatus' ? (
+                    <ModuleStatusCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        titleFontSize,
+                      }}
+                    />
+                  ) : type === 'fastFunction' ? (
+                    <FastFunctionCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        titleFontSize,
+                        fetchType,
+                        xName,
+                        ifNeedAllow,
+                      }}
+                    />
+                  ) : type === 'outputArea' ? (
+                    <OutputAreaCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        titleFontSize,
+                        fetchType,
+                        xName,
+                        ifNeedAllow,
+                      }}
+                    />
+                  ) : type === 'equipmentInfo' ? (
+                    <EquipmentInfoCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        xName,
+                      }}
+                    />
+                  ) : type === 'countdown' ? (
+                    <CountDownCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        fetchType,
+                        xName,
+                        ifFetchParams,
+                        yName,
+                      }}
+                    />
+                  ) : (
+                    <ImgCharts
+                      id={key}
+                      data={{
+                        defaultImg: !!defaultImg
+                          ? `${BASE_IP}file${defaultImg?.indexOf('\\') === 0 || defaultImg?.indexOf('/') === 0
+                            ? ''
+                            : '\\'
+                          }${defaultImg}`
+                          : '',
+                        fontSize,
+                        dataValue,
+                        showImgList,
+                        notLocalStorage: _.isBoolean(notLocalStorage) ? !notLocalStorage : false,
+                        imgListNum,
+                        showFooter,
+                        magnifier,
+                        magnifierSize,
+                        comparison,
+                        ifShowHeader,
+                        magnifierWidth,
+                        magnifierHeight,
+                        labelInxAxis,
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+              {ifCanEdit ? (
+                <Dropdown
+                  overlayClassName="edit-canvas-dropdown"
+                  overlay={
+                    <Menu
+                      items={[
+                        {
+                          key: '1',
+                          icon: <EditOutlined />,
+                          label: '编辑',
+                          onClick: () => {
+                            // 双击事件触发的操作
+                            if (!!addWindowVisible || !!homeSettingVisible) {
+                              setAddWindowVisible('');
+                              setHomeSettingVisible('');
+                              setFieldsValue({});
+                            }
+                            setTimeout(() => {
+                              !!defaultImg &&
+                                setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
+                              setBasicInfoData(basicInfoData);
+                              setEditWindowData(
+                                Object.assign(
+                                  {},
+                                  item,
+                                  !!item?.xColumns?.length ? {} : {},
+                                  !!item?.yColumns?.length ? {} : {},
+                                ),
+                              );
+                              setCommonSettingList(
+                                (!!timeSelectDefault?.length ? timeSelectDefault : [{}])?.map?.(
+                                  (item: any) => ({
+                                    ...item,
+                                    id: guid(),
+                                  }),
+                                ),
+                              );
+                              setFieldsValue(
+                                Object.assign(
+                                  {},
+                                  item,
+                                  !fontSize ? { fontSize: 12 } : {},
+                                  !!backgroundColor && !!backgroundColor?.rgb
+                                    ? { backgroundColor: backgroundColor }
+                                    : {},
+                                  type === 'platForm'
+                                    ? {
+                                      platFormOptions: !!platFormOptions
+                                        ? platFormOptions
+                                        : JSON.stringify({
+                                          左上水平隔膜: {
+                                            灰度差: {
+                                              name: '灰度差',
+                                              alias: '灰度差',
+                                              require: true,
+                                              default: 15,
+                                              value: 15,
+                                              type: 'int',
+                                              description: '边界变化的灰度差',
+                                              widget: {
+                                                type: 'InputNumber',
+                                                max: 255,
+                                                min: 0,
+                                                step: 1,
+                                              },
+                                            },
+                                            灰度合并像素: {
+                                              name: '灰度合并像素',
+                                              alias: '灰度合并像素',
+                                              require: true,
+                                              default: 2,
+                                              value: 2,
+                                              type: 'int',
+                                              description: '边界变化的灰度合并像素',
+                                              widget: {
+                                                type: 'InputNumber',
+                                                max: 5,
+                                                min: 1,
+                                                step: 1,
+                                              },
+                                            },
+                                            亮度变化方向: {
+                                              name: '亮度变化方向',
+                                              alias: '亮度变化方向',
+                                              require: true,
+                                              default: 2,
+                                              value: 2,
+                                              type: 'List[string]',
+                                              description:
+                                                '边界找线亮度变化方向, 1为亮到暗, 2为暗到亮',
+                                              widget: {
+                                                type: 'Select',
+                                                options: [
+                                                  { label: '1-亮到暗', value: 1 },
+                                                  { label: '2-暗到亮', value: 2 },
+                                                ],
+                                              },
+                                            },
+                                            直线度: {
+                                              name: '直线度',
+                                              alias: '直线度',
+                                              require: true,
+                                              default: 3,
+                                              value: 3,
+                                              type: 'int',
+                                              description: '直线度要求，值越小，线越直',
+                                              widget: {
+                                                type: 'InputNumber',
+                                                max: 100,
+                                                min: 1,
+                                                step: 1,
+                                              },
+                                            },
+                                            降噪滤波核: {
+                                              name: '降噪滤波核',
+                                              alias: '降噪滤波核',
+                                              require: true,
+                                              default: 5,
+                                              value: 5,
+                                              type: 'int',
+                                              description: '去噪滤波核大小',
+                                              widget: {
+                                                type: 'InputNumber',
+                                                max: 21,
+                                                min: 1,
+                                                step: 1,
+                                              },
+                                            },
+                                            找线方向下采样倍数: {
+                                              name: '找线方向下采样倍数',
+                                              alias: '找线方向下采样倍数',
+                                              require: true,
+                                              default: 8,
+                                              value: 8,
+                                              type: 'int',
+                                              description: '区域下采样倍数，提高计算速度',
+                                              widget: {
+                                                type: 'InputNumber',
+                                                max: 16,
+                                                min: 2,
+                                                step: 2,
+                                              },
+                                            },
+                                            垂直找线方向下采样倍数: {
+                                              name: '垂直找线方向下采样倍数',
+                                              alias: '垂直找线方向下采样倍数',
+                                              require: true,
+                                              default: 2,
+                                              value: 2,
+                                              type: 'int',
+                                              description: '区域下采样倍数，提高计算速度',
+                                              widget: {
+                                                type: 'InputNumber',
+                                                max: 16,
+                                                min: 2,
+                                                step: 2,
+                                              },
+                                            },
+                                            搜索框个数: {
+                                              name: '搜索框个数',
+                                              alias: '搜索框个数',
+                                              require: true,
+                                              default: 15,
+                                              value: 15,
+                                              type: 'int',
+                                              description: '搜索框个数',
+                                              widget: {
+                                                type: 'InputNumber',
+                                                max: 1000,
+                                                min: 3,
+                                                step: 1,
+                                              },
+                                            },
+                                            搜索框宽度: {
+                                              name: '搜索框宽度',
+                                              alias: '搜索框宽度',
+                                              require: true,
+                                              default: 6,
+                                              value: 6,
+                                              type: 'int',
+                                              description: '搜索框宽度',
+                                              widget: {
+                                                type: 'InputNumber',
+                                                max: 1000,
+                                                min: 3,
+                                                step: 1,
+                                              },
+                                            },
+                                            找线方法: {
+                                              name: '找线方法',
+                                              alias: '找线方法',
+                                              require: true,
+                                              default: '卡尺找线',
+                                              value: '卡尺找线',
+                                              type: 'List[string]',
+                                              description: '找线方法，1-卡尺找线，2-EDLines找线',
+                                              widget: {
+                                                type: 'Select',
+                                                options: [
+                                                  { label: '卡尺找线', value: '卡尺找线' },
+                                                  { label: 'EDLine找线', value: 'EDLine找线' },
+                                                ],
+                                              },
+                                            },
+                                          },
+                                        }),
+                                    }
+                                    : {},
+                                ),
+                              );
+                              setShowPanels({
+                                common: true,
+                                custom: true,
+                              });
+                              setColorSelector((prev: any) => ({
+                                ...prev,
+                                ...(!!fontColor && !!fontColor?.rgb
+                                  ? { fontColor: fontColor.rgb }
+                                  : {}),
+                                ...(!!backgroundColor && !!backgroundColor?.rgb
+                                  ? { backgroundColor: backgroundColor?.rgb }
+                                  : {}),
+                              }));
 
+                              setWindowType(type);
+                              if (type === 'operation2') {
+                                const res = paramsData?.flowData?.nodes.filter(
+                                  (i: any) => i.id === __value[0],
+                                )?.[0];
+                                if (!!res) {
+                                  const { config = {} } = res;
+                                  if (!!config?.execParams && _.isObject(config?.execParams)) {
+                                    setSelectedNodeConfig(() =>
+                                      Object.entries(config.execParams)?.map?.((item: any) => {
+                                        return {
+                                          label: item[1]?.alias,
+                                          value: item[0],
+                                        };
+                                      }),
+                                    );
+                                  } else if (!!config?.initParams && _.isObject(config?.initParams)) {
+                                    setSelectedNodeConfig(() =>
+                                      Object.entries(config.initParams)?.map?.((item: any) => {
+                                        return {
+                                          label: item[1]?.alias,
+                                          value: item[0],
+                                        };
+                                      }),
+                                    );
+                                  }
+                                }
+                              } else {
+                                const res = paramsData?.flowData?.nodes.filter(
+                                  (i: any) => i.id === __value[0],
+                                )?.[0];
+                                if (!!res) {
+                                  const { config = {} } = res;
+                                  if (!!config?.initParams && _.isObject(config?.initParams)) {
+                                    setSelectedNodeConfig(() =>
+                                      Object.entries(config.initParams)?.map?.((item: any) => {
+                                        return {
+                                          label: item[1]?.alias,
+                                          value: item[0],
+                                        };
+                                      }),
+                                    );
+                                  }
+                                }
+                              }
+                              setAddWindowVisible(key);
+                            }, 500);
+                          },
+                        },
+                        {
+                          type: 'divider',
+                        },
+                        {
+                          key: '2',
+                          icon: <CopyOutlined />,
+                          label: '复制',
+                          onClick: () => {
+                            // 复制监控窗口
+                            const uuid32 = getuid();
+                            addWindow({
+                              ..._.omit(item, 'id'),
+                              value: [uuid32],
+                              type,
+                              size: {
+                                x: size?.x + size.w >= 96 ? size?.x - size.w : size?.x + size.w,
+                                y: size.y,
+                              },
+                            });
+                          },
+                        },
+                        {
+                          key: '3',
+                          icon: <DeleteOutlined />,
+                          label: '删除',
+                          onClick: () => {
+                            const result = addContentList?.filter((item: any) => item.id !== key);
+                            setAddContentList(result);
+                            dispatch({
+                              type: 'home/set',
+                              payload: {
+                                gridContentList: result,
+                              },
+                            });
+                            dispatch({ type: 'home/snapshot' });
+                            setParamData((prev: any) =>
+                              Object.assign({}, prev, {
+                                contentData: Object.assign({}, prev.contentData, { content: result }),
+                              }),
+                            );
+                            setAddWindowVisible('');
+                            setHomeSettingVisible('');
+                          },
+                        },
+                      ]}
+                    />
+                  }
+                  trigger={['contextMenu']}
+                >
+                  <div
+                    style={Object.assign(
+                      {},
+                      ['table2', 'table3'].includes(type)
+                        ? {
+                          height: `calc(100% - 80px - ${bodyPaddingSize}px)`,
+                          marginTop: 80 + bodyPaddingSize,
+                        }
+                        : {},
+                      type === 'bodyBox'
+                        ? {
+                          top: 'auto',
+                        }
+                        : {},
+                    )}
+                    className="flex-box-center drag-item-content-mask common-card-title"
+                  ></div>
+                </Dropdown>
+              ) : null}
+            </div>,
+          );
+          layoutData = layoutData.concat(
+            ['modal'].includes(type) && !ifCanEdit ? { ...size, w: 0, minW: 0, h: 0, minH: 0 } : size,
+          );
+        }
         if (!!ifLocalStorage) {
           resultData = resultData.concat(
             !!dataValue && !['operation2'].includes(type)

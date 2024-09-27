@@ -52,7 +52,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
       });
     }
     // dataValue = [
-    //   { name: '上限', value: 2.2, type: 'markLine', color: 'red' },
+    //   { name: '上限', value: 2.2, type: 'markLine',position:'x', color: 'red' },
     //   { name: '标准值', value: 1.6, type: 'markLine', color: 'green' },
     //   { name: '下限', value: 1.53, type: 'markLine', color: 'red' },
     //   { name: '开始', value: 2.2, type: 'start' },
@@ -279,7 +279,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
           }),
           markLine: {
             data: markLineData?.map?.((mark: any, index: number) => {
-              const { value, name, color } = mark;
+              const { value, name, color, position } = mark;
               return Object.assign(
                 {},
                 {
@@ -297,7 +297,9 @@ const BarCharts: React.FC<Props> = (props: any) => {
                     formatter: `${name}：${value}`,
                   },
                 },
-                direction === 'rows' ? { xAxis: value } : { yAxis: value },
+                !!position ?
+                  (position === 'x' ? { xAxis: value } : { yAxis: value }) :
+                  (direction === 'rows' ? { xAxis: value } : { yAxis: value }),
               );
             }),
             silent: false, // 鼠标悬停事件, true悬停不会出现实线
