@@ -1990,7 +1990,7 @@ const Home: React.FC<any> = (props: any) => {
                         timeSelectDefault,
                         xName,
                         fetchType,
-                        password,
+                        fetchParams,
                         ifNeedAllow,
                       }}
                     />
@@ -6017,7 +6017,7 @@ const Home: React.FC<any> = (props: any) => {
                       rules={[{ required: true, message: '按钮参数' }]}
                     >
                       {commonSettingList?.map?.((item: any, index: number) => {
-                        const { label, value, color, id } = item;
+                        const { label, value, password, color, id } = item;
                         return (
                           <div
                             className="flex-box"
@@ -6046,7 +6046,7 @@ const Home: React.FC<any> = (props: any) => {
                                 }}
                               />
                             </div>
-                            <div style={{ flex: 1, padding: '0 8px' }}>
+                            <div style={{ flex: 1 }}>
                               <Select
                                 style={{ width: '100%' }}
                                 defaultValue={color}
@@ -6070,6 +6070,17 @@ const Home: React.FC<any> = (props: any) => {
                                 ]}
                                 onChange={(val) => {
                                   onSegmentSwitchChange(val, index, 'color');
+                                }}
+                              />
+                            </div>
+                            <div style={{ flex: 1, padding: '0 8px' }}>
+                              <Input
+                                defaultValue={password}
+                                placeholder="password"
+                                style={{ height: 28 }}
+                                onChange={(e) => {
+                                  const val = e?.target?.value;
+                                  onSegmentSwitchChange(val, index, 'password');
                                 }}
                               />
                             </div>
@@ -6124,7 +6135,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Input size="large" />
                     </Form.Item>
                     <Form.Item
-                      name={`password`}
+                      name={`fetchParams`}
                       label={'传递参数的key'}
                       initialValue={'value'}
                       rules={[{ required: false, message: '传递参数的key' }]}

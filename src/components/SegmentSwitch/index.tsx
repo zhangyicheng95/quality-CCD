@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Input, InputNumber, Switch } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Form, Input, message, Modal } from 'antd';
 import * as _ from 'lodash';
 import styles from './index.less';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -40,7 +40,10 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
     buttonColor = '',
     reverse = false,
   } = props;
+  const [form] = Form.useForm();
   const [lock, setLock] = useState(0);
+  const [tabPasswordVisible, setTabPasswordVisible] = useState<any>({});
+
   useEffect(() => {
     let index = 0;
     fontInBody.forEach?.((item: any, cIndex: number) => {
@@ -50,6 +53,18 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
     });
     setLock(index);
   }, [value, defaultValue]);
+
+  // tab切换
+  const onTabChange = (item: any) => {
+    const { value, index } = item;
+    if (!!onClick) {
+      setLock(index);
+      !!onClick && onClick?.(value);
+    } else {
+      setLock(index);
+      !!onChange && onChange?.(value);
+    }
+  };
 
   return (
     <div
@@ -74,11 +89,17 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
           !!onClick && !disabled
             ? () => {
               if (lock + 1 < fontInBody.length) {
-                setLock(lock + 1);
-                onClick?.(fontInBody[lock + 1]?.value);
+                if (!!fontInBody[lock + 1]?.password) {
+                  setTabPasswordVisible({ ...fontInBody[lock + 1], index: lock + 1 });
+                } else {
+                  onTabChange({ ...fontInBody[lock + 1], index: lock + 1 })
+                }
               } else {
-                setLock(0);
-                onClick?.(fontInBody[0]?.value);
+                if (!!fontInBody[0]?.password) {
+                  setTabPasswordVisible({ ...fontInBody[0], index: 0 });
+                } else {
+                  onTabChange({ ...fontInBody[0], index: 0 });
+                }
               }
             }
             : () => { }
@@ -102,7 +123,7 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
           )}
         />
         {(fontInBody || [])?.map((item: any, index: number) => {
-          const { value, label, color } = item;
+          const { label, color, password } = item;
           return (
             <div
               className={`flex-box-center segment-switch-box-item ${color}`}
@@ -114,8 +135,11 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
               key={`segment-switch-box-item-${index}`}
               onClick={() => {
                 if (lock !== index && !disabled && !loading) {
-                  setLock(index);
-                  !!onChange && onChange?.(value);
+                  if (!!password) {
+                    setTabPasswordVisible({ ...item, index });
+                  } else {
+                    onTabChange({ ...item, index });
+                  }
                 }
               }}
             >
@@ -124,6 +148,43 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
           );
         })}
       </div>
+      {
+        // tab切换-密码框
+        !!Object.keys?.(tabPasswordVisible)?.length ? (
+          <Modal
+            title={'密码校验'}
+            open={!!Object.keys?.(tabPasswordVisible)?.length}
+            onOk={() => {
+              form.validateFields().then((values) => {
+                const { pass } = values;
+                const { password } = tabPasswordVisible;
+                if (pass == password) {
+                  onTabChange(tabPasswordVisible);
+                  form.resetFields();
+                  setTabPasswordVisible({});
+                } else {
+                  message.error('密码错误');
+                }
+              });
+            }}
+            onCancel={() => {
+              form.resetFields();
+              setTabPasswordVisible({});
+            }}
+            maskClosable={false}
+          >
+            <Form form={form} scrollToFirstError>
+              <Form.Item
+                name={'pass'}
+                label={'密码校验'}
+                rules={[{ required: true, message: '密码' }]}
+              >
+                <Input />
+              </Form.Item>
+            </Form>
+          </Modal>
+        ) : null
+      }
     </div>
   );
 };

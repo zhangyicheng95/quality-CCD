@@ -24,7 +24,7 @@ const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
     timeSelectDefault = [],
     xName,
     fetchType,
-    password = 'value',
+    fetchParams = 'value',
     ifNeedAllow = false,
   } = data;
   const ipString: any = localStorage.getItem('ipString') || '';
@@ -118,7 +118,7 @@ const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
             const func = () => {
               setSelected(e);
               if (!fetchType || !xName) return;
-              btnFetch(fetchType, xName, { [password || 'value']: e }).then((res: any) => {
+              btnFetch(fetchType, xName, { [fetchParams || 'value']: e }).then((res: any) => {
                 if (!!res && res.code === 'SUCCESS') {
                   message.success('success');
                   localStorage.setItem(`segmentSwitch-${id}`, e);
