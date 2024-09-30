@@ -46,7 +46,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
   } = data;
   if (process.env.NODE_ENV === 'development' && !dataValue) {
     dataValue =
-      'https://th.bing.com/th/id/OIP.Nyb5k0iKxw5XYkDXj-geSwHaE4?rs=1&pid=ImgDetMain';
+      'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0';
   }
   const ifCanEdit = useMemo(() => {
     return location.hash?.indexOf('edit') > -1;
@@ -169,10 +169,6 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         } else {
           scale = onscale;
         }
-        if (ratio === 1) {
-          setImgUpload(pre => !pre);
-          return;
-        }
 
         const origin = {
           x: (ratio - 1) * ulWidth * 0.5,
@@ -196,6 +192,9 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         x = offsetX;
         y = offsetY;
         ul.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${offsetX}, ${offsetY})`;
+        if (ratio === 1) {
+          // setImgUpload(pre => !pre);
+        }
       });
 
       img = null;
@@ -313,6 +312,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             //便不再继续重复此函数 （clearInterval取消周期性执行）
             clearInterval(time);
           }
+          // setImgUpload(pre => !pre);
         }, 100);
       } else {
         // e.preventDefault();
@@ -366,7 +366,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         }
       };
     }
-  }, [magnifierVisible, selectedNum, dataValue]);
+  }, [magnifierVisible, urlList.current, selectedNum, dataValue, imgUpload]);
   const source = useMemo(() => {
     return notLocalStorage ? dataValue : urlList.current?.[selectedNum] || dataValue;
   }, [urlList.current, selectedNum, dataValue, imgUpload]);
@@ -525,9 +525,9 @@ const ImgCharts: React.FC<Props> = (props: any) => {
               >
                 {'< '}
               </div>
-              {`${selectedNum + 1}/${urlList.current?.length}`}
+              {`${selectedNum + 1}/${urlList.current?.length || 1}`}
               <div
-                className={`next-btn ${selectedNum + 1 === urlList.current.length ? 'greyColorStyle' : ''
+                className={`next-btn ${selectedNum + 1 >= urlList.current.length ? 'greyColorStyle' : ''
                   }`}
                 onClick={() => onNext()}
               >

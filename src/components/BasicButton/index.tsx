@@ -55,7 +55,7 @@ const BasicButton: React.FC<Props> = (props: any) => {
     >
       {!!icon || load ? (
         <div
-          className="basic-button-icon"
+          className="flex-box basic-button-icon"
           style={{
             width: imgSize,
             minWidth: imgSize,
@@ -67,9 +67,8 @@ const BasicButton: React.FC<Props> = (props: any) => {
         </div>
       ) : null}
       <div
-        className={`basic-button-name ${hover && !selected ? 'hover' : ''} ${
-          selected ? 'font-selected' : ''
-        }`}
+        className={`basic-button-name ${hover && !selected ? 'hover' : ''} ${selected ? 'font-selected' : ''
+          }`}
       >
         {title}
       </div>

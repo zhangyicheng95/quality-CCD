@@ -2588,7 +2588,7 @@ const Home: React.FC<any> = (props: any) => {
                         : {},
                       type === 'bodyBox'
                         ? {
-                          top: 'auto',
+                          top: '90%',
                         }
                         : {},
                     )}
@@ -3260,7 +3260,7 @@ const Home: React.FC<any> = (props: any) => {
   };
 
   return (
-    <div className={`${styles.home}`}>
+    <div className={`flex-box-column ${styles.home}`}>
       <div className="flex-box home-body">
         {ifCanEdit ? (
           <DndProvider backend={HTML5Backend}>
@@ -7402,81 +7402,85 @@ const Home: React.FC<any> = (props: any) => {
           ) : null}
         </NodeDetailWrapper>
       </div>
-      <div className="flex-box home-footer">
-        {started ? (
-          <div className="home-footer-item-box success">检测中</div>
-        ) : (
-          <div
-            className="home-footer-item-box success"
-            onClick={() => {
-              ifCanEdit && setFooterSelectVisible(true);
-            }}
-          >
-            未启动
-          </div>
-        )}
-        {(
-          _.isBoolean(paramData?.contentData?.showLogo) ? paramData?.contentData?.showLogo : true
-        ) ? (
-          <div className="home-footer-powerby">&copy;技术支持: UBVision团队</div>
-        ) : null}
-        {useMemo(() => {
-          return (
-            <Fragment>
-              {
-                // 节点状态
-                !!footerSelectList?.length &&
-                footerSelectList?.map?.((id: any, index: number) => {
-                  const item = footerData?.['state']?.[id] || footerData[id];
-                  if (!item) {
-                    return null;
+      {
+        !!paramsData?.contentData?.showFooter ?
+          <div className="flex-box home-footer">
+            {started ? (
+              <div className="home-footer-item-box success">检测中</div>
+            ) : (
+              <div
+                className="home-footer-item-box success"
+                onClick={() => {
+                  ifCanEdit && setFooterSelectVisible(true);
+                }}
+              >
+                未启动
+              </div>
+            )}
+            {(
+              _.isBoolean(paramData?.contentData?.showLogo) ? paramData?.contentData?.showLogo : true
+            ) ? (
+              <div className="home-footer-powerby">&copy;技术支持: UBVision团队</div>
+            ) : null}
+            {useMemo(() => {
+              return (
+                <Fragment>
+                  {
+                    // 节点状态
+                    !!footerSelectList?.length &&
+                    footerSelectList?.map?.((id: any, index: number) => {
+                      const item = footerData?.['state']?.[id] || footerData[id];
+                      if (!item) {
+                        return null;
+                      }
+                      const { Status, name } = item;
+                      return (
+                        <div
+                          key={id}
+                          className={`home-footer-item-box ${Status === 'running' ? 'success-font' : 'error-font'
+                            }`}
+                          onClick={() => {
+                            ifCanEdit && setFooterSelectVisible(true);
+                          }}
+                        >
+                          {name?.split('|')?.[1] ||
+                            nodeList?.filter((i: any) => i.value === id)[0]?.label}
+                          {index + 1 === footerSelectList?.length ? null : (
+                            <span className="operation-line">|</span>
+                          )}
+                        </div>
+                      );
+                    })
                   }
-                  const { Status, name } = item;
-                  return (
-                    <div
-                      key={id}
-                      className={`home-footer-item-box ${Status === 'running' ? 'success-font' : 'error-font'
-                        }`}
-                      onClick={() => {
-                        ifCanEdit && setFooterSelectVisible(true);
-                      }}
-                    >
-                      {name?.split('|')?.[1] ||
-                        nodeList?.filter((i: any) => i.value === id)[0]?.label}
-                      {index + 1 === footerSelectList?.length ? null : (
-                        <span className="operation-line">|</span>
-                      )}
-                    </div>
-                  );
-                })
-              }
-              {
-                // 内存状态
-                !!footerData?.['ram']
-                  ? Object.entries(footerData?.['ram'])?.map?.((item: any) => {
-                    const { current, total } = item;
-                    return (
-                      <div
-                        key={item[0]}
-                        className={`home-footer-item-box`}
-                        onClick={() => {
-                          ifCanEdit && setFooterSelectVisible(true);
-                        }}
-                      >
-                        {`${item[0]} : ${current}/${total}`}
-                      </div>
-                    );
-                  })
-                  : null
-              }
-              {
-                // 运行时间
-                !!footerData?.['time'] ? footerData?.['time'] : null
-              }
-            </Fragment>
-          );
-        }, [started, footerData, footerSelectList])}
-      </div>
+                  {
+                    // 内存状态
+                    !!footerData?.['ram']
+                      ? Object.entries(footerData?.['ram'])?.map?.((item: any) => {
+                        const { current, total } = item;
+                        return (
+                          <div
+                            key={item[0]}
+                            className={`home-footer-item-box`}
+                            onClick={() => {
+                              ifCanEdit && setFooterSelectVisible(true);
+                            }}
+                          >
+                            {`${item[0]} : ${current}/${total}`}
+                          </div>
+                        );
+                      })
+                      : null
+                  }
+                  {
+                    // 运行时间
+                    !!footerData?.['time'] ? footerData?.['time'] : null
+                  }
+                </Fragment>
+              );
+            }, [started, footerData, footerSelectList])}
+          </div>
+          : null
+      }
       {
         // footer节点显示选择
         footerSelectVisible ? (

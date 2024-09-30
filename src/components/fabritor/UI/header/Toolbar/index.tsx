@@ -1,20 +1,16 @@
-import { Fragment, useContext, useEffect, useRef, useState } from 'react';
-import { Button, Form, Input, InputNumber, message, Modal, Select } from 'antd';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { Form, Input, InputNumber, message, Modal, Select } from 'antd';
 import { fabric } from 'fabric';
 import { GloablStateContext } from '@/context';
 import { BorderlessTableOutlined, ClearOutlined, DragOutlined, ExclamationCircleFilled, SaveOutlined } from '@ant-design/icons';
 import { CenterV } from '@/components/fabritor/components/Center';
 import ToolbarItem from './ToolbarItem';
 import ToolbarDivider from '@/components/fabritor/components/ToolbarDivider';
-import SegmentSwitch from '@/components/SegmentSwitch';
-import ShapeTypeList from '@/components/fabritor/UI/panel/ShapePanel/shape-type-list';
 import { BASIC_POINT_RULE_FORMAT, CALIPER_RULE_FORMAT, DRAW_MODE_CURSOR } from '@/common/constants/globalConstants';
-import { groupSelection, removeObject } from '@/utils/helper';
+import { removeObject } from '@/utils/helper';
 import { drawLine } from '@/components/fabritor/editor/objects/line';
-import { getArrowPoint } from '@/utils/fabrictorUtils';
 import { btnFetch } from '@/services/api';
-import { guid, twoPointDistance } from '@/utils/utils';
-import { createPathFromSvg } from '@/components/fabritor/editor/objects/path';
+import { guid } from '@/utils/utils';
 import { createTextbox } from '@/components/fabritor/editor/objects/textbox';
 
 export default function Toolbar() {
