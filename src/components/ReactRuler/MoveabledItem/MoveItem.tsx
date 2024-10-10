@@ -21,7 +21,7 @@ import TableCharts from '@/pages/home/components/Canvas/components/TableCharts';
 import AlertCharts from '@/pages/home/components/Canvas/components/AlertCharts';
 import Table2Charts from '@/pages/home/components/Canvas/components/Table2Charts';
 import ImgsCharts from '@/pages/home/components/Canvas/components/ImgsCharts';
-import ButtonCharts from '@/pages/home/components/Canvas/components/ButtonCharts';
+import ButtonInputCharts from '@/pages/home/components/Canvas/components/ButtonInputCharts';
 import ImgCharts from '@/pages/home/components/Canvas/components/ImgCharts';
 import ProgressCharts from '@/pages/home/components/Canvas/components/ProgressCharts';
 import DescriptionCharts from '@/pages/home/components/Canvas/components/DescriptionCharts';
@@ -1095,7 +1095,7 @@ const InitItem = (props: any) => {
               }}
             />
           ) : type === 'buttonInp' ? (
-            <ButtonCharts
+            <ButtonInputCharts
               id={key}
               data={{
                 fontSize,

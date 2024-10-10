@@ -281,6 +281,16 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
               />
               : null
           }
+          {
+            !!leftModelSelected?.name ?
+              <div className='flex-box-center' style={{
+                width: '100%',
+                padding: 24,
+                fontSize: 24,
+                fontWeight: 'bold'
+              }}>当前型号：{leftModelSelected.name}</div>
+              : null
+          }
         </div>
       </div>
       <div className="flex-box re-judgment-right">

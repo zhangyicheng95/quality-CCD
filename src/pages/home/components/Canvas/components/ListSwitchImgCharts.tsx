@@ -37,7 +37,7 @@ const localData = [
   },
   {
     "name": "10:26|LM8F7E898RA12847",
-    "status": true,
+    "status": false,
     "children": {
       "left": {
         "imgs": [
@@ -122,7 +122,8 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
                 {
                   !!status ?
                     <Badge status="success" />
-                    : null
+                    :
+                    <Badge status="error" />
                 }
                 <TooltipDiv title={name}>{name}</TooltipDiv>
               </div>

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { AutoComplete, Button, message } from 'antd';
+import { Button, message, Modal } from 'antd';
 import { btnFetch } from '@/services/api';
-import { useModel } from 'umi';
-import TooltipDiv from '@/components/TooltipDiv';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 interface Props {
   data: any;
@@ -15,119 +14,83 @@ interface Props {
 const ButtonCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   const {
+    dataValue = {},
     fontSize = 14,
     yName = '按钮',
     xName = '',
     fetchType,
-    ifNeedClear,
+    ifNeedAllow,
     valueColor = 'primary',
     des_bordered,
     fetchParams,
+    line_height = 0
   } = data;
-  const { initialState } = useModel<any>('@@initialState');
-  const { params } = initialState;
-  const [value, setValue] = useState('');
-  const [valueList, setValueList] = useState<any>([]);
+  const [locked, setLocked] = useState(0);
 
   useEffect(() => {
-    setValueList(JSON.parse(localStorage.getItem(`inputButton-${params.id}-${id}`) || '[]'));
-  }, [localStorage.getItem(`inputButton-${params.id}-${id}`)]);
-  const onChange = (val: any) => {
-    try {
-      const res = JSON.parse(val);
-      if (fetchType === 'post' && !_.isObject(res)) {
-        setValue(JSON.stringify({ msg: val }));
-      } else {
-        setValue(val);
-      }
-    } catch (e) {
-      setValue(!!val ? JSON.stringify({ msg: val }) : '');
-    }
-  };
+    if (!!line_height && dataValue?.action == 0) {
+      setLocked(0);
+    };
+  }, [line_height, dataValue?.action]);
 
   return (
     <div id={`echart-${id}`} className={`${styles.buttonCharts} flex-box`}>
-      <AutoComplete
-        options={(valueList || [])?.map?.((item: any) => {
-          return {
-            label: (
-              <div className="flex-box-justify-between" style={{ paddingRight: 8 }} key={item}>
-                {item}
-                <TooltipDiv
-                  onClick={(e: any) => {
-                    // 防止鼠标击穿
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setValueList((prev: any) => {
-                      const result = prev.filter((i: any) => i !== item);
-                      localStorage.setItem(
-                        `inputButton-${params.id}-${id}`,
-                        JSON.stringify(result),
-                      );
-                      return result;
-                    });
-                  }}
-                >
-                  删除
-                </TooltipDiv>
-              </div>
-            ),
-            value: item,
-          };
-        })}
-        style={{ width: '100%', fontSize }}
-        showSearch
-        onChange={(value: string) => onChange(value)}
-      />
       <Button
+        disabled={!!line_height && (locked >= line_height)}
         type={['primary', 'link', 'ghost'].includes(valueColor) ? valueColor : ''}
         style={Object.assign(
           { fontSize },
+          { height: '100%', width: '100%' },
           !['primary', 'link', 'ghost'].includes(valueColor)
             ? { backgroundColor: valueColor, color: '#fff' }
             : {},
         )}
         className={`${des_bordered ? 'text-break' : ''}`}
         onClick={() => {
-          let param1: any = null;
-          if (!_.isUndefined(value) && !_.isNull(value) && _.isString(value) && !!value) {
-            try {
-              param1 = { ...JSON.parse(value), ...!!fetchParams ? JSON.parse(fetchParams) : {} };
-              setValueList((prev: any) => {
-                const result = !!param1?.msg
-                  ? Array.from(new Set(prev.concat(param1?.msg)))
-                  : Array.from(new Set(prev.concat(value)));
-                localStorage.setItem(`inputButton-${params.id}-${id}`, JSON.stringify(result));
-                return result;
-              });
-            } catch (e) {
-              console.log('参数按钮传递参数格式不对:', e);
-              message.error('传递参数 格式不正确');
-              param1 = '';
+          const func = () => {
+            let params = undefined;
+            if (
+              !_.isUndefined(fetchParams) &&
+              !_.isNull(fetchParams) &&
+              _.isString(fetchParams) &&
+              !!fetchParams
+            ) {
+              try {
+                params = JSON.parse(fetchParams);
+              } catch (e) {
+                console.log('按钮传递参数格式不对:', e);
+                params = undefined;
+              }
             }
+            btnFetch(fetchType, xName, params).then((res: any) => {
+              if (!!res && res.code === 'SUCCESS') {
+                if (!!line_height) {
+                  setLocked(pre => pre + 1);
+                }
+                message.success('success');
+              } else {
+                message.error(res?.message || '后台服务异常，请重启服务');
+              }
+            });
+          };
+          if (ifNeedAllow) {
+            Modal.confirm({
+              title: '提示',
+              icon: <ExclamationCircleOutlined />,
+              content: '确认发送？',
+              okText: '确认',
+              cancelText: '取消',
+              onOk: () => {
+                func();
+              },
+            });
+          } else {
+            func();
           }
-          btnFetch(fetchType, xName, param1).then((res: any) => {
-            if (!!res && res.code === 'SUCCESS') {
-              message.success('success');
-            } else {
-              message.error(res?.message || '后台服务异常，请重启服务');
-            }
-          });
         }}
       >
-        {yName}
+        {yName || '按钮'}
       </Button>
-      {!!value && ifNeedClear ? (
-        <Button
-          style={{ fontSize }}
-          onClick={() => {
-            setValue('');
-            window.location.reload();
-          }}
-        >
-          清空
-        </Button>
-      ) : null}
     </div>
   );
 };

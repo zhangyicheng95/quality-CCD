@@ -60,7 +60,7 @@ import TableCharts from '@/pages/home/components/Canvas/components/TableCharts';
 import AlertCharts from '@/pages/home/components/Canvas/components/AlertCharts';
 import Table2Charts from '@/pages/home/components/Canvas/components/Table2Charts';
 import ImgsCharts from '@/pages/home/components/Canvas/components/ImgsCharts';
-import ButtonCharts from '@/pages/home/components/Canvas/components/ButtonCharts';
+import ButtonInputCharts from '@/pages/home/components/Canvas/components/ButtonInputCharts';
 import ImgCharts from '@/pages/home/components/Canvas/components/ImgCharts';
 import ProgressCharts from '@/pages/home/components/Canvas/components/ProgressCharts';
 import DescriptionCharts from '@/pages/home/components/Canvas/components/DescriptionCharts';
@@ -145,6 +145,7 @@ import FabricCharts from './components/FabricCharts';
 import CableCharts from './components/CableCharts';
 import CountDownCharts from './components/CountDownCharts';
 import ListSwitchImgCharts from './components/ListSwitchImgCharts';
+import ButtonCharts from './components/ButtonCharts';
 
 const leftPanelDataLocal = [
   {
@@ -1030,6 +1031,7 @@ const Home: React.FC<any> = (props: any) => {
             return {
               value: name,
               label: value,
+              disabled: name === 'value'
             };
           }),
       };
@@ -1856,59 +1858,21 @@ const Home: React.FC<any> = (props: any) => {
                       }}
                     />
                   ) : type === 'button' ? (
-                    <Button
-                      type={['primary', 'link', 'ghost'].includes(valueColor) ? valueColor : ''}
+                    <ButtonCharts
                       id={key}
-                      style={Object.assign(
-                        { fontSize },
-                        { height: '100%', width: '100%' },
-                        !['primary', 'link', 'ghost'].includes(valueColor)
-                          ? { backgroundColor: valueColor, color: '#fff' }
-                          : {},
-                      )}
-                      className={`${des_bordered ? 'text-break' : ''}`}
-                      onClick={() => {
-                        const func = () => {
-                          let params = undefined;
-                          if (
-                            !_.isUndefined(fetchParams) &&
-                            !_.isNull(fetchParams) &&
-                            _.isString(fetchParams) &&
-                            !!fetchParams
-                          ) {
-                            try {
-                              params = JSON.parse(fetchParams);
-                            } catch (e) {
-                              console.log('按钮传递参数格式不对:', e);
-                              params = undefined;
-                            }
-                          }
-                          btnFetch(fetchType, xName, params).then((res: any) => {
-                            if (!!res && res.code === 'SUCCESS') {
-                              message.success('success');
-                            } else {
-                              message.error(res?.message || '后台服务异常，请重启服务');
-                            }
-                          });
-                        };
-                        if (ifNeedAllow) {
-                          Modal.confirm({
-                            title: '提示',
-                            icon: <ExclamationCircleOutlined />,
-                            content: '确认发送？',
-                            okText: '确认',
-                            cancelText: '取消',
-                            onOk: () => {
-                              func();
-                            },
-                          });
-                        } else {
-                          func();
-                        }
+                      data={{
+                        dataValue,
+                        fontSize,
+                        yName,
+                        xName,
+                        fetchType,
+                        ifNeedAllow,
+                        valueColor,
+                        des_bordered,
+                        fetchParams,
+                        line_height
                       }}
-                    >
-                      {yName || '按钮'}
-                    </Button>
+                    />
                   ) : type === 'timeSelect' ? (
                     <TimeSelectCharts
                       id={key}
@@ -1922,7 +1886,7 @@ const Home: React.FC<any> = (props: any) => {
                       }}
                     />
                   ) : type === 'buttonInp' ? (
-                    <ButtonCharts
+                    <ButtonInputCharts
                       id={key}
                       data={{
                         fontSize,
@@ -2607,7 +2571,7 @@ const Home: React.FC<any> = (props: any) => {
             !!dataValue && !['operation2'].includes(type)
               ? {
                 ...item,
-                [__value[1]]: ['three', 'buttonImages', 'imgButton'].includes(type)
+                [__value[1]]: ['three', 'buttonImages', 'imgButton', 'button'].includes(type)
                   ? _.omit(dataValue, 'action')
                   : ['fabric', 'modelSwitch', 'reJudgment', 'cable'].includes(type)
                     ? undefined
@@ -5682,9 +5646,14 @@ const Home: React.FC<any> = (props: any) => {
                           <Switch />
                         </Form.Item>
                       ) :
-                        <Form.Item name="ifNeedAllow" label="二次确认" valuePropName="checked">
-                          <Switch />
-                        </Form.Item>
+                        <Fragment>
+                          <Form.Item name="ifNeedAllow" label="二次确认" valuePropName="checked">
+                            <Switch />
+                          </Form.Item>
+                          <Form.Item name="line_height" label="允许按几次" tooltip="0/不填:代表不作限制">
+                            <InputNumber min={0} />
+                          </Form.Item>
+                        </Fragment>
                     }
                   </Fragment>
                 ) : null}
@@ -7403,7 +7372,7 @@ const Home: React.FC<any> = (props: any) => {
         </NodeDetailWrapper>
       </div>
       {
-        !!paramsData?.contentData?.showFooter ?
+        (!!paramsData?.contentData?.showFooter || !_.isBoolean(paramsData?.contentData?.showFooter)) ?
           <div className="flex-box home-footer">
             {started ? (
               <div className="home-footer-item-box success">检测中</div>
