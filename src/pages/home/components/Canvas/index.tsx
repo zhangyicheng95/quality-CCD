@@ -415,7 +415,7 @@ const Home: React.FC<any> = (props: any) => {
               loading={loading}
               onClick={() => end()}
             />
-            <BasicButton
+            {/* <BasicButton
               title={'重启'}
               icon={<ReloadOutlined />}
               iconSize={homeSettingData['slider-1']?.iconSize || 40}
@@ -424,7 +424,7 @@ const Home: React.FC<any> = (props: any) => {
               disabled={!started || ifCanEdit}
               loading={loading}
               onClick={() => reStart()}
-            />
+            /> */}
           </div>
           {ifCanEdit ? (
             <Dropdown

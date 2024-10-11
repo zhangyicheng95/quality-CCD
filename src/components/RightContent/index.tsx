@@ -61,17 +61,15 @@ const GlobalHeaderRight: React.FC = () => {
       <ClearOutlined
         style={{ marginRight: 12 }}
         onClick={() => {
-          if (!!localStorage.getItem(`localGridContentList-${params.id}`)) {
-            const localStorageKeys = getAllLocalStorageKeys();
-            (localStorageKeys || []).forEach?.((key: any) => {
-              if (!['parentOrigin', 'ipUrlList', 'ipUrl-realtime']?.includes(key)) {
-                localStorage.removeItem(key);
-              }
-            });
-            setTimeout(() => {
-              window.location.reload();
-            }, 500);
-          }
+          const localStorageKeys = getAllLocalStorageKeys();
+          (localStorageKeys || []).forEach?.((key: any) => {
+            if (!['parentOrigin', 'ipUrlList', 'ipUrl-realtime']?.includes(key)) {
+              localStorage.removeItem(key);
+            }
+          });
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
         }}
       />
       <SettingOutlined />

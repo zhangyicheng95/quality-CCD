@@ -100,9 +100,9 @@ const ImgCharts: React.FC<Props> = (props: any) => {
   }, []);
   useEffect(() => {
     if (notLocalStorage) {
-      localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify([dataValue]));
+      // localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify([dataValue]));
       setSelectedNum(0);
-      urlList.current = [dataValue];
+      urlList.current = !!dataValue ? [dataValue] : [];
     } else {
       const localhostList = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || '[]');
       if (!dataValue) {
