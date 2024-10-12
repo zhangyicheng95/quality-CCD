@@ -28,8 +28,10 @@ const ButtonCharts: React.FC<Props> = (props: any) => {
   const [locked, setLocked] = useState(0);
 
   useEffect(() => {
-    if (!!line_height && dataValue?.action == 0) {
+    if (dataValue?.action == 1) {
       setLocked(0);
+    } else if (dataValue?.action == 0) {
+      setLocked(line_height);
     };
   }, [line_height, dataValue?.action]);
 

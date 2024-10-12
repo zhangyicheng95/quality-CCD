@@ -1727,31 +1727,34 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         }}
                       />
                     </Form.Item>
-                    {!inHome && !['POINT', 'LINE'].includes(feature?.type) ? (
-                      <Form.Item
-                        name={`找线方向`}
-                        label="找线方向"
-                        tooltip="遵守左手法制，大拇指方向为找线方向"
-                        style={['POINT', 'LINE'].includes(feature?.type) ? { display: 'none' } : {}}
-                        initialValue={featureList?.[selectedFeature]?.['找线方向']?.value || 0}
-                        rules={[{ required: true, message: '找线方向' }]}
-                      >
-                        <Select
-                          style={{ width: '100%' }}
-                          options={[
-                            { label: '下到上', value: 0 },
-                            { label: '左到右', value: 90 },
-                            { label: '上到下', value: 180 },
-                            { label: '右到左', value: 270 },
-                            // { label: '', value: 360 }
-                          ]?.map?.((res: any) => {
-                            const { label, value } = res;
-                            return { key: value, label: label, value: value };
-                          })}
-                          placeholder="找线方向"
-                        />
-                      </Form.Item>
-                    ) : null}
+                    {
+                      !inHome && !['POINT', 'LINE'].includes(feature?.type) ? (
+                        <Form.Item
+                          name={`找线方向`}
+                          label="找线方向"
+                          tooltip="遵守左手法制，大拇指方向为找线方向"
+                          style={['POINT', 'LINE'].includes(feature?.type) ? { display: 'none' } : {}}
+                          initialValue={featureList?.[selectedFeature]?.['找线方向']?.value || 0}
+                          rules={[{ required: true, message: '找线方向' }]}
+                        >
+                          <Select
+                            style={{ width: '100%' }}
+                            disabled
+                            options={[
+                              { label: '下到上', value: 0 },
+                              { label: '左到右', value: 90 },
+                              { label: '上到下', value: 180 },
+                              { label: '右到左', value: 270 },
+                              // { label: '', value: 360 }
+                            ]?.map?.((res: any) => {
+                              const { label, value } = res;
+                              return { key: value, label: label, value: value };
+                            })}
+                            placeholder="找线方向"
+                          />
+                        </Form.Item>
+                      ) : null
+                    }
                     {_.isEmpty(selectedOptionType)
                       ? !!featureList?.[selectedFeature]
                         ? Object.entries(featureList?.[selectedFeature])?.map?.((item: any) => {

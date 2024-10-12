@@ -5316,6 +5316,7 @@ const Home: React.FC<any> = (props: any) => {
                             id,
                             parent,
                             disabled = false,
+                            require = false,
                           } = item;
                           if (!!parent) {
                             return null;
@@ -5362,14 +5363,14 @@ const Home: React.FC<any> = (props: any) => {
                                       value: 'InputNumber',
                                       label: '数字输入框',
                                     },
-                                    {
-                                      value: 'MultiSelect',
-                                      label: '复选框',
-                                    },
-                                    {
-                                      value: 'Select',
-                                      label: '单选框',
-                                    },
+                                    // {
+                                    //   value: 'MultiSelect',
+                                    //   label: '复选框',
+                                    // },
+                                    // {
+                                    //   value: 'Select',
+                                    //   label: '单选框',
+                                    // },
                                     {
                                       value: 'Switch',
                                       label: '开关',
@@ -5440,13 +5441,23 @@ const Home: React.FC<any> = (props: any) => {
                                 />
                               ) : null}
                               <Checkbox
+                                defaultChecked={require}
+                                onChange={(e) => {
+                                  const val = e.target.checked;
+                                  onFormChartsChange(val, index, 'require');
+                                }}
+                              >
+                                必填
+                              </Checkbox>
+                              <Checkbox
+                                style={{ marginLeft: 0 }}
                                 defaultChecked={disabled}
                                 onChange={(e) => {
                                   const val = e.target.checked;
                                   onFormChartsChange(val, index, 'disabled');
                                 }}
                               >
-                                disabled
+                                禁用
                               </Checkbox>
                               <Button
                                 icon={<MinusSquareOutlined />}

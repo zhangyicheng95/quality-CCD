@@ -1272,7 +1272,7 @@ export const FormatWidgetToDom: any = (props: any) => {
           label={label}
           style={display ? { display: 'none' } : {}}
           tooltip={description}
-          initialValue={(_.isArray(value) ? value[0] : value) || false}
+          initialValue={_.isArray(value) ? value[0] : value}
           rules={[{ required: require, message: `${alias}` }]}
         >
           <Select

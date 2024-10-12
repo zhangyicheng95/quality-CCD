@@ -226,7 +226,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
           {(timeSelectDefault || [])
             ?.sort((a: any, b: any) => a.sort - b.sort)
             ?.map((item: any, index: number) => {
-              const { name, alias, sort = 0, type, className, parent, disabled = false } = item;
+              const { name, alias, sort = 0, type, className, parent, disabled = false, require = false } = item;
               if (!!parent) {
                 return null;
               }
@@ -261,7 +261,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
                 name,
                 onHidden: false,
                 orderId: sort,
-                require: !disabled,
+                require: require,
                 type: 'string',
                 value: ['MultiSelect', 'Select'].includes(type) ? [] : undefined,
                 widget: Object.assign(
