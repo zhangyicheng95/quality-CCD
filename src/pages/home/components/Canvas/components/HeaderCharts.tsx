@@ -33,17 +33,19 @@ const HeaderCharts: React.FC<Props> = (props: any) => {
           alignItems: homeSettingData['header']?.titleAlign,
         }}
       >
-        {!!homeSettingData['header']?.headerTitle ? (
-          <img
-            src={icon}
-            alt="logo"
-            className="header-box-left-logo"
-            style={{
-              width: homeSettingData['header']?.headerTitleFontSize,
-              height: homeSettingData['header']?.headerTitleFontSize,
-            }}
-          />
-        ) : null}
+        {
+          // !!homeSettingData['header']?.headerTitle ? (
+          //   <img
+          //     src={icon}
+          //     alt="logo"
+          //     className="header-box-left-logo"
+          //     style={{
+          //       width: homeSettingData['header']?.headerTitleFontSize,
+          //       height: homeSettingData['header']?.headerTitleFontSize,
+          //     }}
+          //   />
+          // ) : null
+        }
         <div
           className="flex-box header-box-left-title"
           style={{ height: homeSettingData['header']?.headerTitleFontSize }}
@@ -74,7 +76,7 @@ const HeaderCharts: React.FC<Props> = (props: any) => {
             在线
           </div>
         ) : null}
-        <div style={{ height: homeSettingData['header']?.headerTitleFontSize }}>{time}</div>
+        <div style={{ height: homeSettingData['header']?.headerTitleFontSize, lineHeight: 1 }}>{time}</div>
       </div>
     </Fragment>
   );

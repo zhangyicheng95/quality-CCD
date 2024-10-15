@@ -13,7 +13,7 @@ const StatisticCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let { dataValue, fontSize, yName, fontColor, direction, valueOnTop } = data;
   if (process.env.NODE_ENV === 'development') {
-    dataValue = { value: (Math.random() * 10000).toFixed(0), color: 'green' };
+    dataValue = { value: 'OK', color: 'green' };
   }
   return (
     <div
@@ -26,9 +26,8 @@ const StatisticCharts: React.FC<Props> = (props: any) => {
     >
       {valueOnTop ? null : <div className="statistic-title">{yName}</div>}
       <div
-        className={`statistic-value ${
-          dataValue?.color === 'red' ? 'NG-font' : dataValue?.color === 'green' ? 'OK-font' : ''
-        }`}
+        className={`statistic-value ${dataValue?.color === 'red' ? 'NG-font' : dataValue?.color === 'green' ? 'OK-font' : ''
+          }`}
         style={Object.assign(
           {
             fontSize: Number(fontSize) + 10,
@@ -36,17 +35,17 @@ const StatisticCharts: React.FC<Props> = (props: any) => {
           !!dataValue?.color
             ? { color: dataValue?.color }
             : !!fontColor && !!fontColor?.rgb
-            ? {
+              ? {
                 color: `rgba(${fontColor.rgb.r},${fontColor.rgb.g},${fontColor.rgb.b},${fontColor.rgb.a})`,
               }
-            : {},
+              : {},
         )}
       >
         {_.isString(dataValue)
           ? dataValue
           : !!dataValue?.value
-          ? dataValue?.value
-          : JSON.stringify(dataValue)}
+            ? dataValue?.value
+            : JSON.stringify(dataValue)}
       </div>
       {valueOnTop ? (
         <div
