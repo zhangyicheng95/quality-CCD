@@ -222,6 +222,14 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
       style={{ fontSize }}
     >
       <div className="flex-box-center re-judgment-left" ref={leftTableDomRef}>
+        {
+          !!leftModelSelected.OK ? <div className='flex-box-center' style={{
+            width: '100%',
+            padding: 24,
+            color: 'rgba(0,87,17,1)',
+            fontSize: 24
+          }}>{leftModelSelected.OK}</div> : null
+        }
         <div
           className="flex-box re-judgment-left-table"
           ref={leftTableImgDomRef}
@@ -229,14 +237,6 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
             !!leftModelSelected.OK ? { backgroundColor: 'rgba(0,200,0,0.4)' } : {}
           }
         >
-          {
-            !!leftModelSelected.OK ? <div className='flex-box-center' style={{
-              width: '100%',
-              padding: 24,
-              color: 'rgba(0,87,17,1)',
-              fontSize: 24
-            }}>{leftModelSelected.OK}</div> : null
-          }
           {
             !!leftModelSelected?.url ?
               <img
@@ -281,17 +281,17 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
               />
               : null
           }
-          {
-            !!leftModelSelected?.name ?
-              <div className='flex-box-center' style={{
-                width: '100%',
-                padding: 24,
-                fontSize: 24,
-                fontWeight: 'bold'
-              }}>当前型号：{leftModelSelected.name}</div>
-              : null
-          }
         </div>
+        {
+          !!leftModelSelected?.name ?
+            <div className='flex-box-center' style={{
+              width: '100%',
+              padding: 24,
+              fontSize: 24,
+              fontWeight: 'bold'
+            }}>当前型号：{leftModelSelected.name}</div>
+            : null
+        }
       </div>
       <div className="flex-box re-judgment-right">
         <div className="re-judgment-right-img-list">
