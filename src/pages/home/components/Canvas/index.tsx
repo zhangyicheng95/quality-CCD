@@ -1956,6 +1956,7 @@ const Home: React.FC<any> = (props: any) => {
                         fetchType,
                         fetchParams,
                         ifNeedAllow,
+                        modelRotate,
                       }}
                     />
                   ) : type === 'operation' ? (
@@ -6121,6 +6122,19 @@ const Home: React.FC<any> = (props: any) => {
                       rules={[{ required: false, message: '传递参数的key' }]}
                     >
                       <Input size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      name={`modelRotate`}
+                      label={'默认值拉取方式'}
+                      rules={[{ required: false, message: '默认值拉取方式' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={[
+                          { label: '通过节点推送', value: 'socket' },
+                          { label: '通过HTTP拉取', value: 'http' }
+                        ]}
+                      />
                     </Form.Item>
                     <Form.Item name="ifNeedAllow" label="是否二次确认" valuePropName="checked">
                       <Switch />

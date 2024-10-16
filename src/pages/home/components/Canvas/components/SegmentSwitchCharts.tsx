@@ -16,7 +16,7 @@ interface Props {
 const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id, started, dispatch } = props;
   const {
-    dataValue,
+    dataValue = undefined,
     fontSize = 14,
     yName = '',
     des_layout,
@@ -26,6 +26,7 @@ const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
     fetchType,
     fetchParams = 'value',
     ifNeedAllow = false,
+    modelRotate = 'socket'
   } = data;
   const ipString: any = localStorage.getItem('ipString') || '';
   const [selected, setSelected] = useState('');
@@ -36,18 +37,24 @@ const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
         setSelected(localStorage.getItem(`segmentSwitch-${id}`) || "");
       }, 300);
     }
-    if (started) {
-      btnFetch('get', xName).then((res: any) => {
-        if (!!res && res.code === 'SUCCESS') {
-          setSelected(res?.data?.value);
-        } else {
-          // message.error(res?.message || '后台服务异常，请重启服务');
-          const select = dataValue || timeSelectDefault?.[0]?.value;
-          setSelected(select);
-        }
-      });
+  }, []);
+  useEffect(() => {
+    if (modelRotate === 'socket' && !_.isUndefined(dataValue)) {
+      setSelected(dataValue);
+    } else {
+      if (started) {
+        btnFetch('get', xName).then((res: any) => {
+          if (!!res && res.code === 'SUCCESS') {
+            setSelected(res?.data?.value);
+          } else {
+            // message.error(res?.message || '后台服务异常，请重启服务');
+            const select = dataValue || timeSelectDefault?.[0]?.value;
+            setSelected(select);
+          }
+        });
+      }
     }
-  }, [timeSelectDefault, started]);
+  }, [timeSelectDefault, modelRotate, started, dataValue]);
   // 启动任务
   const start = () => {
     if (!ipString) {
