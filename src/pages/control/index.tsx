@@ -1515,27 +1515,29 @@ export const FormatWidgetToDom: any = (props: any) => {
           tooltip={description}
           className="codeEditor"
         >
-          {!!value ? (
-            <Input.TextArea
-              autoSize={{ maxRows: 5 }}
-              value={language === 'json' && _.isObject(value) ? formatJson(value) : value}
-              style={{ marginBottom: 8 }}
-              disabled
-            />
-          ) : null}
-          <Button
-            onClick={() => {
-              setEditorValue?.({
-                id: name,
-                value: language === 'json' && _.isObject(value) ? formatJson(value) : value,
-                language: language || 'json',
-              });
-              setEditorVisible?.(true);
-            }}
-            disabled={disabled}
-          >
-            打开编辑器
-          </Button>
+          <>
+            {!!value ? (
+              <Input.TextArea
+                autoSize={{ maxRows: 5 }}
+                value={language === 'json' && _.isObject(value) ? formatJson(value) : value}
+                style={{ marginBottom: 8 }}
+                disabled
+              />
+            ) : null}
+            <Button
+              onClick={() => {
+                setEditorValue?.({
+                  id: name,
+                  value: language === 'json' && _.isObject(value) ? formatJson(value) : value,
+                  language: language || 'json',
+                });
+                setEditorVisible?.(true);
+              }}
+              disabled={disabled}
+            >
+              打开编辑器
+            </Button>
+          </>
         </FormItem>
       );
     case 'ImageLabelField':
@@ -1647,86 +1649,88 @@ export const FormatWidgetToDom: any = (props: any) => {
             style={display ? { display: 'none' } : {}}
             tooltip={description}
           >
-            {(options || [])?.map?.((item: any, index: number) => {
-              const { id, label, value } = item;
-              return (
-                <div
-                  className="flex-box"
-                  key={id || index}
-                  style={{ marginBottom: index + 1 !== options.length ? 24 : 0 }}
-                >
-                  <div style={{ paddingRight: 12, whiteSpace: 'nowrap' }}>原始值 :</div>
-                  <Input
-                    style={{ width: '50%' }}
-                    defaultValue={label}
-                    onBlur={(e) => {
-                      const { value } = e.target;
-                      !!updateTimer?.current && clearTimeout(updateTimer?.current);
-                      updateTimer.current = setTimeout(() => {
-                        const result = options?.map?.((tag: any) => {
-                          if (tag.id === id) {
-                            return Object.assign({}, tag, {
-                              label: value,
-                            });
-                          }
-                          return tag;
-                        });
-                        widgetChange?.(name, result, parent);
-                      }, 300);
-                    }}
-                  />
-                  <div style={{ padding: '0 12px', whiteSpace: 'nowrap' }}>映射值 :</div>
-                  <Input
-                    style={{ width: '50%' }}
-                    defaultValue={value}
-                    onBlur={(e) => {
-                      const { value } = e.target;
-                      !!updateTimer?.current && clearTimeout(updateTimer?.current);
-                      updateTimer.current = setTimeout(() => {
-                        const result = options?.map?.((tag: any) => {
-                          if (tag.id === id) {
-                            return Object.assign({}, tag, {
-                              value: value,
-                            });
-                          }
-                          return tag;
-                        });
-                        widgetChange?.(name, result, parent);
-                      }, 300);
-                    }}
-                  />
-                  <MinusCircleOutlined
-                    style={{ marginLeft: 8 }}
-                    onClick={() => {
-                      if (options.length > 1) {
+            <>
+              {(options || [])?.map?.((item: any, index: number) => {
+                const { id, label, value } = item;
+                return (
+                  <div
+                    className="flex-box"
+                    key={id || index}
+                    style={{ marginBottom: index + 1 !== options.length ? 24 : 0 }}
+                  >
+                    <div style={{ paddingRight: 12, whiteSpace: 'nowrap' }}>原始值 :</div>
+                    <Input
+                      style={{ width: '50%' }}
+                      defaultValue={label}
+                      onBlur={(e) => {
+                        const { value } = e.target;
                         !!updateTimer?.current && clearTimeout(updateTimer?.current);
                         updateTimer.current = setTimeout(() => {
-                          const result = options.filter((i: any) => i.id !== id);
+                          const result = options?.map?.((tag: any) => {
+                            if (tag.id === id) {
+                              return Object.assign({}, tag, {
+                                label: value,
+                              });
+                            }
+                            return tag;
+                          });
                           widgetChange?.(name, result, parent);
                         }, 300);
-                      }
-                    }}
-                  />
-                </div>
-              );
-            })}
+                      }}
+                    />
+                    <div style={{ padding: '0 12px', whiteSpace: 'nowrap' }}>映射值 :</div>
+                    <Input
+                      style={{ width: '50%' }}
+                      defaultValue={value}
+                      onBlur={(e) => {
+                        const { value } = e.target;
+                        !!updateTimer?.current && clearTimeout(updateTimer?.current);
+                        updateTimer.current = setTimeout(() => {
+                          const result = options?.map?.((tag: any) => {
+                            if (tag.id === id) {
+                              return Object.assign({}, tag, {
+                                value: value,
+                              });
+                            }
+                            return tag;
+                          });
+                          widgetChange?.(name, result, parent);
+                        }, 300);
+                      }}
+                    />
+                    <MinusCircleOutlined
+                      style={{ marginLeft: 8 }}
+                      onClick={() => {
+                        if (options.length > 1) {
+                          !!updateTimer?.current && clearTimeout(updateTimer?.current);
+                          updateTimer.current = setTimeout(() => {
+                            const result = options.filter((i: any) => i.id !== id);
+                            widgetChange?.(name, result, parent);
+                          }, 300);
+                        }
+                      }}
+                    />
+                  </div>
+                );
+              })}
 
-            <Button
-              type="dashed"
-              style={{ marginTop: 24 }}
-              onClick={() => {
-                const result = (options || []).concat({
-                  id: guid(),
-                  label: '',
-                  value: '',
-                });
-                widgetChange?.(name, result, parent);
-              }}
-              block
-              icon={<PlusOutlined />}
-            >
-              添加可选项
-            </Button>
+              <Button
+                type="dashed"
+                style={{ marginTop: 24 }}
+                onClick={() => {
+                  const result = (options || []).concat({
+                    id: guid(),
+                    label: '',
+                    value: '',
+                  });
+                  widgetChange?.(name, result, parent);
+                }}
+                block
+                icon={<PlusOutlined />}
+              >
+                添加可选项
+              </Button>
+            </>
           </Form.Item>
         </>
       );

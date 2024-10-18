@@ -1084,7 +1084,7 @@ export function FormatWidgetToDom(props: any) {
           style={!!style ? style : {}}
           className="codeEditor"
         >
-          <div>
+          <>
             {!!value ? (
               <Input.TextArea
                 autoSize={{ maxRows: 5 }}
@@ -1108,7 +1108,7 @@ export function FormatWidgetToDom(props: any) {
             >
               打开编辑器
             </Button>
-          </div>
+          </>
         </FormItem>
       );
     case 'ImageLabelField':
