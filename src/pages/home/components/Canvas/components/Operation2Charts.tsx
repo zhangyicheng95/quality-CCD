@@ -22,7 +22,7 @@ import TooltipDiv from '@/components/TooltipDiv';
 import { btnFetch, updateParams } from '@/services/api';
 import Measurement from '@/components/Measurement';
 import SliderGroup from '@/components/SliderGroup';
-import { formatJson } from '@/utils/utils';
+import { formatJson, guid } from '@/utils/utils';
 import IpInput from '@/components/IpInputGroup';
 import moment from 'moment';
 import ChooseFileButton from '@/components/ChooseFileButton';
@@ -658,7 +658,7 @@ export function FormatWidgetToDom(props: any) {
   if (_.isArray(options) && _.isString(options[0])) {
     options = options?.map?.((option: string) => ({ label: option, value: option }));
   }
-  const name = `${id}`;
+  const name = `${id || guid()}`;
 
   useEffect(() => {
     if (type1 === 'TagRadio') {
@@ -1084,29 +1084,31 @@ export function FormatWidgetToDom(props: any) {
           style={!!style ? style : {}}
           className="codeEditor"
         >
-          {!!value ? (
-            <Input.TextArea
-              autoSize={{ maxRows: 5 }}
-              value={language === 'json' && _.isObject(value) ? formatJson(value) : value}
-              style={{ marginBottom: 8 }}
-              disabled
-            />
-          ) : null}
-          <Button
-            style={{ fontSize: 'inherit' }}
-            onClick={() => {
-              setEditorValue({
-                id: name,
-                value: language === 'json' && _.isObject(value) ? formatJson(value) : value,
-                language: language || 'json',
-                inGroup,
-              });
-              setEditorVisible(true);
-            }}
-            disabled={disabled}
-          >
-            打开编辑器
-          </Button>
+          <div>
+            {!!value ? (
+              <Input.TextArea
+                autoSize={{ maxRows: 5 }}
+                value={language === 'json' && _.isObject(value) ? formatJson(value) : value}
+                style={{ marginBottom: 8 }}
+                disabled
+              />
+            ) : null}
+            <Button
+              style={{ fontSize: 'inherit' }}
+              onClick={() => {
+                setEditorValue({
+                  id: name,
+                  value: language === 'json' && _.isObject(value) ? formatJson(value) : value,
+                  language: language || 'json',
+                  inGroup,
+                });
+                setEditorVisible(true);
+              }}
+              disabled={disabled}
+            >
+              打开编辑器
+            </Button>
+          </div>
         </FormItem>
       );
     case 'ImageLabelField':

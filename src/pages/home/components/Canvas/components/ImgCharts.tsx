@@ -68,14 +68,13 @@ const ImgCharts: React.FC<Props> = (props: any) => {
   const dom = useRef<any>();
   const imgBoxRef = useRef<any>();
   const urlList = useRef<any>([]);
-  const uploadTimer = useRef<any>(null);
   const [chartSize, setChartSize] = useState(false);
   const [selectedNum, setSelectedNum] = useState(0);
-  const [imgUpload, setImgUpload] = useState(false);
   const [imgVisible, setImgVisible] = useState(false);
   const [visibleDirection, setVisibleDirection] = useState<any>('column');
   const [visible, setVisible] = useState(false);
   const [magnifierVisible, setMagnifierVisible] = useState(false);
+  const [imgOriginalSize, setImgOriginalSize] = useState({ width: 1, height: 1 });
 
   useLayoutEffect(() => {
     try {
@@ -128,6 +127,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     img.title = 'img.png';
     img.onload = (res: any) => {
       const { width = 1, height = 1 } = img;
+      setImgOriginalSize({ width, height });
       setChartSize(width / height > dom?.current?.clientWidth / dom?.current?.clientHeight);
       if (ifCanEdit) return;
       const ul = imgBoxRef.current;
@@ -170,7 +170,6 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         } else {
           scale = onscale;
         }
-
         const origin = {
           x: (ratio - 1) * ulWidth * 0.5,
           y: (ratio - 1) * ulHeight * 0.5,
@@ -193,19 +192,11 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         x = offsetX;
         y = offsetY;
         ul.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${offsetX}, ${offsetY})`;
-        if (ratio === 1) {
-          if (!!uploadTimer.current) {
-            clearTimeout(uploadTimer.current);
-          };
-          uploadTimer.current = setTimeout(() => {
-            setImgUpload(pre => !pre);
-          }, 100);
-        }
       });
 
       img = null;
     };
-  }, [urlList.current, selectedNum, dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight]);
+  }, [selectedNum, dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight]);
   useEffect(() => {
     if (!dataValue) {
       const list = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || '[]');
@@ -218,6 +209,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     const mask: any = dom?.current?.querySelector('.mask');
     if (!eventDom) return;
 
+    const ul: any = imgBoxRef.current;
     //申明全局变量
     var timeStart: any = 0,
       timeEnd: any = 0,
@@ -227,8 +219,9 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       var now = new Date();
       return now.getTime();
     }
-    const ul: any = imgBoxRef.current;
     eventDom.onmousedown = function (e: any) {
+      scale = !!ul.style.transform?.split('matrix(')?.[1]?.split(',')?.[0] ? Number(ul.style.transform?.split('matrix(')?.[1]?.split(',')?.[0]) : 1;
+
       if (scale === 1) {
         mask.style.display = 'block';
         //获取鼠标按下时的时间
@@ -262,7 +255,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             mask.style['top'] = top + 'px';
             let bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
             let imgDom: any = document.getElementById(`img-charts-bigImg-${id}`);
-            const source = notLocalStorage ? dataValue : urlList.current?.[selectedNum] || dataValue;
+            const source = urlList.current?.[selectedNum] || dataValue;
             if (!imgDom) {
               bigDom = document.createElement('div');
               bigDom.className = `img-charts-big img-charts-big-${id}`;
@@ -333,6 +326,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       e.preventDefault();
       e.stopPropagation();
       if (isDown) {
+        scale = ul.style.transform?.split('matrix(')?.[1]?.split(',')?.[0];
         const current1 = { x: e.clientX, y: e.clientY };
         diff.x = current1?.x - lastPointermove?.x;
         diff.y = current1.y - lastPointermove.y;
@@ -371,7 +365,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         }
       };
     }
-  }, [magnifierVisible, urlList.current, selectedNum, dataValue]);
+  }, [magnifierVisible, selectedNum, dataValue]);
   const source = useMemo(() => {
     return notLocalStorage ? dataValue : urlList.current?.[selectedNum] || dataValue;
   }, [urlList.current, selectedNum, dataValue]);
@@ -404,91 +398,90 @@ const ImgCharts: React.FC<Props> = (props: any) => {
           style={markNumber ? { width: 'calc(100% - 20px)' } : { width: '100%' }}
         >
           {
-            useMemo(() => {
-              return (!!source || !!defaultImg) ? (
-                <Fragment>
+            (!!source || !!defaultImg) ? (
+              <Fragment>
+                <div
+                  className="img-box"
+                  style={
+                    chartSize ? { width: '100%', height: 'auto' } : { width: 'auto', height: '100%' }
+                  }
+                  ref={imgBoxRef}
+                >
                   <div
-                    className="img-box"
+                    className="ant-image-mask"
                     style={
-                      chartSize ? { width: '100%', height: 'auto' } : { width: 'auto', height: '100%' }
+                      chartSize
+                        ? { width: '100%', height: 'auto' }
+                        : { width: 'auto', height: '100%' }
                     }
-                    ref={imgBoxRef}
-                  >
-                    <div
-                      className="ant-image-mask"
-                      style={
-                        chartSize
-                          ? { width: '100%', height: 'auto' }
-                          : { width: 'auto', height: '100%' }
-                      }
-                    />
-                    <Image
-                      src={`${_.isString(source) ? source : source?.url || defaultImg}` + (!!labelInxAxis ? `?__timestamp=${+new Date()}` : '')}
-                      alt="logo"
-                      style={
-                        chartSize
-                          ? { width: '100%', height: 'auto' }
-                          : { width: 'auto', height: '100%' }
-                      }
-                      preview={false}
-                    />
-                    {
-                      (!!source?.defects && _.isArray(source?.defects)) ?
-                        (source?.defects || [])?.map((defect: any, index: number) => {
-                          const { defectName = '', status, position = [] } = defect;
-                          const add = source?.increment || { x: 0, y: 0 };
-                          if (_.isNumber(status)) {
-                            // 有status代表是标记OK NG
-                            return <div
-                              className="img-box-mark-right-defect"
-                              style={{
-                                left: `${(position?.[0] + add?.x) * 100}%`,
-                                top: `${(position?.[1] + add?.y) * 100}%`,
-                                color: status == 1 ? '#0f0' : '#f00'
-                              }}
-                              key={`defect-${index}`}
-                            >
-                              <div className='img-box-mark-right-defect-status'>
-                                {status == 1 ? 'OK' : 'NG'}
-                              </div>
-                            </div>
-                          } else {
-                            return <div
-                              className="img-box-mark-right-defect"
-                              style={{
-                                left: `${(position?.[0] + add?.x) * 100}%`,
-                                top: `${(position?.[1] + add?.y) * 100}%`,
-                                width: `${(position?.[2] - position?.[0] + add?.x) * 100}%`,
-                                height: `${(position?.[3] - position?.[1] + add?.y) * 100}%`,
-                                border: '1px solid red',
-                              }}
-                              key={`defect-${index}`}
-                            >
-                              <div className='img-box-mark-right-defect-title'>
-                                {defectName}
-                              </div>
-                            </div>
-                          }
-                        })
-                        : null
+                  />
+                  <Image
+                    src={`${_.isString(source) ? source : source?.url || `${defaultImg}?__timestamp=${+new Date()}`}` + (!!labelInxAxis ? `?__timestamp=${+new Date()}` : '')}
+                    alt="logo"
+                    style={
+                      chartSize
+                        ? { width: '100%', height: 'auto' }
+                        : { width: 'auto', height: '100%' }
                     }
-                    <div
-                      className="mask"
-                      style={
-                        !!magnifierWidth && !!magnifierHeight
-                          ? {
-                            width: magnifierWidth,
-                            height: magnifierHeight,
-                          }
-                          : {}
-                      }
-                    />
-                  </div>
-                </Fragment>
-              ) : (
-                <Skeleton.Image active={true} />
-              )
-            }, [JSON.stringify(source), defaultImg, chartSize, imgUpload])
+                    preview={false}
+                  />
+                  {
+                    (!!source?.defects && _.isArray(source?.defects)) ?
+                      (source?.defects || [])?.map((defect: any, index: number) => {
+                        const { defectName = '', status, position = [] } = defect;
+                        const { width, height } = imgOriginalSize;
+                        const add = source?.increment || { x: 0, y: 0 };
+                        if (_.isNumber(status)) {
+                          // 有status代表是标记OK NG
+                          return <div
+                            className="img-box-mark-right-defect"
+                            style={{
+                              left: `${(position?.[0] / (width - add.x)) * 100}%`,
+                              top: `${(position?.[1] / (height - add.y)) * 100}%`,
+                              color: status == 1 ? '#0f0' : '#f00',
+                            }}
+                            key={`defect-${index}`}
+                          >
+                            <div className='img-box-mark-right-defect-status' style={{ lineHeight: 0.7 }}>
+                              {status == 1 ? 'OK' : 'NG'}
+                            </div>
+                          </div>
+                        } else {
+                          return <div
+                            className="img-box-mark-right-defect"
+                            style={{
+                              left: `${(position?.[0] / (width - add.x)) * 100}%`,
+                              top: `${(position?.[1] / (height - add.y)) * 100}%`,
+                              width: `${((position?.[2] - position?.[0]) / (width - add.x)) * 100}%`,
+                              height: `${((position?.[3] - position?.[1]) / (height - add.y)) * 100}%`,
+                              border: '1px solid red',
+                            }}
+                            key={`defect-${index}`}
+                          >
+                            <div className='img-box-mark-right-defect-title' style={{ lineHeight: 0.7 }}>
+                              {defectName}
+                            </div>
+                          </div>
+                        }
+                      })
+                      : null
+                  }
+                  <div
+                    className="mask"
+                    style={
+                      !!magnifierWidth && !!magnifierHeight
+                        ? {
+                          width: magnifierWidth,
+                          height: magnifierHeight,
+                        }
+                        : {}
+                    }
+                  />
+                </div>
+              </Fragment>
+            ) : (
+              <Skeleton.Image active={true} />
+            )
           }
         </div>
         <div

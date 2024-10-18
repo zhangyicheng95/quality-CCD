@@ -1421,9 +1421,9 @@ const Home: React.FC<any> = (props: any) => {
                   {},
                   ifShowHeader
                     ? { height: 'calc(100% - 28px)' }
-                    : !['default', 'transparent'].includes(backgroundColor)
-                      ? { height: `calc(100% - ${(titleFontSize / 2) * 3 + titlePaddingSize * 2}px)` }
-                      : { height: '100%' },
+                    // : !['default', 'transparent'].includes(backgroundColor)
+                    //   ? { height: `calc(100% - ${(titleFontSize / 2) * 3 + titlePaddingSize * 2}px)`, marginTop: `${((titleFontSize / 2) * 3 + titlePaddingSize * 2) / 2}px` }
+                    : { height: '100%' },
                   backgroundColor === 'border'
                     ? {
                       border: '2px solid rgba(144,144,144,0.6)',
