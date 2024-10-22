@@ -5,7 +5,6 @@ import * as _ from 'lodash';
 import { message, Modal } from 'antd';
 import { ExpandOutlined } from '@ant-design/icons';
 import ImgCharts from './ImgCharts';
-import { position } from 'html2canvas/dist/types/css/property-descriptors/position';
 
 interface Props {
   data: any;

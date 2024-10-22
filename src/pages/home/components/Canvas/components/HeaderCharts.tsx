@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import icon from '@/assets//images/benchi-logo.svg';
 import useClock from '@/hooks/useClock';
 import { BASE_IP } from '@/services/api';
+import { useModel } from 'umi';
 
 interface Props {
   homeSettingData: any;
@@ -11,6 +12,7 @@ interface Props {
 
 const HeaderCharts: React.FC<Props> = (props: any) => {
   const { homeSettingData, started = false } = props;
+  const { initialState } = useModel<any>('@@initialState');
   const { time } = useClock();
 
   if (!homeSettingData['header']?.fontSize) {
@@ -35,17 +37,23 @@ const HeaderCharts: React.FC<Props> = (props: any) => {
         }}
       >
         {
-          (!!homeSettingData['header']?.headerTitle && !!localStorage.getItem('quality_icon')) ? (
-            <img
-              src={`${BASE_IP}file_browser${localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'}${localStorage.getItem('quality_icon')}`}
-              alt="logo"
-              className="header-box-left-logo"
-              style={{
-                // width: homeSettingData['header']?.headerTitleFontSize,
-                height: homeSettingData['header']?.headerTitleFontSize,
-              }}
-            />
-          ) : null
+          ((
+            _.isBoolean(initialState?.params?.contentData?.showLogo)
+              ? initialState?.params?.contentData?.showLogo
+              : true
+          ) && !!localStorage.getItem('quality_icon'))
+            ?
+            (
+              <img
+                src={`${BASE_IP}file_browser${localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'}${localStorage.getItem('quality_icon')}?__timestamp=${+new Date()}`}
+                alt="logo"
+                className="header-box-left-logo"
+                style={{
+                  // width: homeSettingData['header']?.headerTitleFontSize,
+                  height: homeSettingData['header']?.headerTitleFontSize,
+                }}
+              />
+            ) : null
         }
         <div
           className="flex-box header-box-left-title"
@@ -68,7 +76,7 @@ const HeaderCharts: React.FC<Props> = (props: any) => {
             style={{ fontSize: Math.max(homeSettingData['header']?.fontSize - 12, 20) }}
           >
             <div
-              className="header-box-time-status-icon"
+              className="header-box-time-status-icon success"
               style={{
                 width: homeSettingData['header']?.headerTitleFontSize,
                 height: homeSettingData['header']?.headerTitleFontSize,

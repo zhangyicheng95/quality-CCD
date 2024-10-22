@@ -315,6 +315,10 @@ export const windowTypeList: any = [
     value: 'listSwitchImg',
     label: '列表切换图片窗口',
   },
+  {
+    value: 'chartsCombination',
+    label: '图表组合窗口',
+  },
 ];
 // 默认基础组件
 export const basicWindowList: any = [

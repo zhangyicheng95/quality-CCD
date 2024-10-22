@@ -146,6 +146,7 @@ import CableCharts from './components/CableCharts';
 import CountDownCharts from './components/CountDownCharts';
 import ListSwitchImgCharts from './components/ListSwitchImgCharts';
 import ButtonCharts from './components/ButtonCharts';
+import ChartsCombinationCharts from './components/ChartsCombinationCharts';
 
 const leftPanelDataLocal = [
   {
@@ -2190,6 +2191,33 @@ const Home: React.FC<any> = (props: any) => {
                         xName,
                         ifFetchParams,
                         yName,
+                      }}
+                    />
+                  ) : type === 'chartsCombination' ? (
+                    <ChartsCombinationCharts
+                      id={key}
+                      setMyChartVisible={setMyChartVisible}
+                      data={{
+                        dataValue,
+                        titleFontSize,
+                        fontSize,
+                        tableFontSize, reverse, tableSize, interlacing, des_bordered,
+                        headerBackgroundColor, valueColor, line_height, bodyPaddingSize, des_layout,
+                        imgListNum,
+                        imgs_height,
+                        imgs_width,
+                        dataZoom,
+                        yName,
+                        xName,
+                        direction,
+                        align,
+                        hiddenAxis,
+                        labelInxAxis,
+                        labelDirection,
+                        barRadius,
+                        showBackground,
+                        showWithLine,
+                        barColor,
                       }}
                     />
                   ) : (
@@ -4605,6 +4633,302 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                   </Fragment>
                 ) : null}
+                {
+                  ['chartsCombination'].includes(windowType) ? (
+                    <Fragment>
+                      <Form.Item
+                        name={`imgListNum`}
+                        label={'行高'}
+                        rules={[{ required: true, message: '行高' }]}
+                        initialValue={300}
+                      >
+                        <InputNumber min={100} />
+                      </Form.Item>
+                      <Divider>通用表格配置</Divider>
+                      <Form.Item name="des_layout" label="布局方向" initialValue={'vertical'}>
+                        <Select
+                          options={[
+                            { label: '横向', value: 'horizontal' },
+                            { label: '纵向', value: 'vertical' },
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`reverse`}
+                        label={'数据倒序'}
+                        rules={[{ required: true, message: '数据倒序' }]}
+                        initialValue={false}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: false,
+                              label: '正序显示',
+                            },
+                            {
+                              value: true,
+                              label: '倒序显示',
+                            },
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`headerBackgroundColor`}
+                        label={'头部背景色'}
+                        initialValue={'default'}
+                        rules={[{ required: false, message: '窗口背景' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: 'default',
+                              label: '默认',
+                            },
+                            {
+                              value: 'transparent',
+                              label: '透明色',
+                            },
+                            {
+                              value: 'line1',
+                              label: '渐变色1',
+                            },
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item name={`interlacing`} label={'隔行换色'} initialValue={'default'}>
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: 'default',
+                              label: '不变色',
+                            },
+                            {
+                              value: '1',
+                              label: '灰色',
+                            },
+                            {
+                              value: '2',
+                              label: '蓝色渐变',
+                            },
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item name="des_bordered" label="是否展示边框" valuePropName="checked">
+                        <Switch />
+                      </Form.Item>
+                      <Form.Item name="tableFontSize" label="表头字号">
+                        <InputNumber min={14} placeholder="表头字号" />
+                      </Form.Item>
+                      <Form.Item
+                        name={`valueColor`}
+                        label={'颜色渲染'}
+                        initialValue={'value'}
+                        rules={[{ required: false, message: '颜色渲染' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: 'value',
+                              label: '数据颜色渲染到文字上',
+                            },
+                            {
+                              value: 'background',
+                              label: '数据颜色渲染到背景',
+                            },
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`line_height`}
+                        label={'内容行高'}
+                        rules={[{ required: true, message: '内容行高' }]}
+                        initialValue={38}
+                      >
+                        <InputNumber min={10} />
+                      </Form.Item>
+                      <Divider>折线趋势图配置</Divider>
+                      <Form.Item
+                        name={`imgs_height`}
+                        label={windowType === 'table' ? '表格key名' : 'y 轴名称'}
+                        rules={[{ required: true, message: 'y轴名称' }]}
+                      >
+                        <Input size="large" />
+                      </Form.Item>
+                      <Form.Item
+                        name={`imgs_width`}
+                        label={windowType === 'table' ? '表格value名' : 'x 轴名称'}
+                        rules={[{ required: true, message: 'x轴名称' }]}
+                      >
+                        <Input size="large" />
+                      </Form.Item>
+                      <Form.Item
+                        name={`dataZoom`}
+                        label={'展示最新的'}
+                        rules={[{ required: false, message: '展示最新的' }]}
+                        initialValue={0}
+                      >
+                        <InputNumber min={0} />
+                      </Form.Item>
+                      <Divider>柱状图配置</Divider>
+                      <Form.Item
+                        name={`yName`}
+                        label={windowType === 'table' ? '表格key名' : 'y 轴名称'}
+                        rules={[{ required: true, message: 'y轴名称' }]}
+                      >
+                        <Input size="large" />
+                      </Form.Item>
+                      <Form.Item
+                        name={`xName`}
+                        label={windowType === 'table' ? '表格value名' : 'x 轴名称'}
+                        rules={[{ required: true, message: 'x轴名称' }]}
+                      >
+                        <Input size="large" />
+                      </Form.Item>
+                      <Form.Item
+                        name={`direction`}
+                        label={'图形方向'}
+                        rules={[{ required: false, message: '图形方向' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: 'rows',
+                              label: '横向',
+                            },
+                            {
+                              value: 'column',
+                              label: '纵向',
+                            },
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`align`}
+                        label={'对齐方向'}
+                        initialValue={'left'}
+                        rules={[{ required: false, message: '对齐方向' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: 'left',
+                              label: '左对齐',
+                            },
+                            {
+                              value: 'right',
+                              label: '右对齐',
+                            },
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item name="barRadius" label="柱子圆角" valuePropName="checked">
+                        <Switch />
+                      </Form.Item>
+                      <Form.Item name="hiddenAxis" label="隐藏坐标轴" valuePropName="checked">
+                        <Switch />
+                      </Form.Item>
+                      <Form.Item name="labelInxAxis" label="标签在内" valuePropName="checked">
+                        <Switch />
+                      </Form.Item>
+                      <Form.Item name="showBackground" label="显示背景" valuePropName="checked">
+                        <Switch />
+                      </Form.Item>
+                      <Form.Item name="showWithLine" label="显示折线趋势" valuePropName="checked">
+                        <Switch />
+                      </Form.Item>
+                      <Form.Item name={`labelDirection`} label={'数值在柱子内'} initialValue={'none'}>
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: 'none',
+                              label: '不展示',
+                            },
+                            {
+                              value: 'top',
+                              label: '居上',
+                            },
+                            {
+                              value: 'center',
+                              label: '居中',
+                            },
+                            {
+                              value: 'bottom',
+                              label: '居下',
+                            },
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`barColor`}
+                        label={'图形颜色'}
+                        initialValue={'default'}
+                        rules={[{ required: false, message: '图形颜色' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          mode={['bar'].includes(windowType) ? 'multiple' : undefined}
+                          options={[
+                            ['default', '默认'],
+                            ['line1', '渐变1'],
+                            ['line2', '渐变2'],
+                            ['#73c0de', '蓝色'],
+                            ['#5470c6', '深蓝'],
+                            ['#91cc75', '绿色'],
+                            ['#3ba272', '深绿'],
+                            ['#fac858', '黄色'],
+                            ['#ee6666', '红色'],
+                            ['#fc8452', '橘红'],
+                            ['#9a60b4', '紫色'],
+                            ['#ea7ccc', '粉色'],
+                            ['#000', '黑色'],
+                            ['#fff', '白色'],
+                          ]?.map?.((item: any, index: number) => {
+                            return {
+                              value: item[0],
+                              label:
+                                index === 0 ? (
+                                  item[1]
+                                ) : (
+                                  <div className="flex-box">
+                                    <div
+                                      className="item-label-icon"
+                                      style={{ backgroundColor: item[0] }}
+                                    />
+                                    {item[1]}
+                                  </div>
+                                ),
+                            };
+                          })}
+                          onChange={(value) => {
+                            if (value?.indexOf('default') > 0) {
+                              setFieldsValue({
+                                barColor: ['default'],
+                              });
+                            } else if (value?.indexOf('line1') > 0) {
+                              setFieldsValue({
+                                barColor: ['line1'],
+                              });
+                            } else if (value?.indexOf('line2') > 0) {
+                              setFieldsValue({
+                                barColor: ['line2'],
+                              });
+                            } else {
+                              setFieldsValue({
+                                barColor: _.pull(value, 'default', 'line1', 'line2'),
+                              });
+                            }
+                          }}
+                        />
+                      </Form.Item>
+                    </Fragment>
+                  ) : null}
                 {['tableAntd', 'table3', 'table2', 'table'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item name="des_layout" label="布局方向" initialValue={'vertical'}>

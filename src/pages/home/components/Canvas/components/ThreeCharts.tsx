@@ -1758,7 +1758,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
              * */
             material = new THREE.MeshStandardMaterial({
               // MeshStandardMaterial,MeshBasicMaterial,PointsMaterial
-              color: addType === 'add' ? colorList[models.length % 6] : '#808080',
+              color: addType === 'add' ? colorList[models.length % colorList.length] : '#808080',
             });
           }
           mesh.current = new THREE.Mesh(geometry, material); // Points,Mesh
