@@ -139,7 +139,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
     };
     // 取模版
     const modelValue = dataValue?.filter((i: any) => i.type === 'model')?.[0]?.value;
-    if (!_.isUndefined(modelValue)) {
+    if (!!modelValue) {
       setLeftModelSelected(!!Object.keys(modelValue)?.length ? modelValue : { position: {}, url: '' });
     };
     // 消息提示
@@ -247,7 +247,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
               : null
           }
           {
-            (dataValue || [])?.map((item: any, index: number) => {
+            (dataValue || [])?.map?.((item: any, index: number) => {
               const { status, position } = item;
               if (status === 0) {
                 return <div
@@ -296,7 +296,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
       <div className="flex-box re-judgment-right">
         <div className="re-judgment-right-img-list">
           {
-            (dataValue || [])?.map((item: any, index: number) => {
+            (dataValue || [])?.map?.((item: any, index: number) => {
               const { status, title, url, flag } = item;
               if (status === 0) {
                 return <div
@@ -363,7 +363,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                 allowClear
                 style={{ minWidth: 80 }}
                 onChange={(value) => handleChange('regionCode', value)}
-                options={Object.keys(leftModelSelected?.position || {})?.map((i: any) => ({ key: i, value: i }))}
+                options={(Object.keys?.(leftModelSelected?.position || {}))?.map?.((i: any) => ({ key: i, value: i }))}
               />
             </Form.Item>
             <Form.Item

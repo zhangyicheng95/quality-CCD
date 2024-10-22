@@ -1158,9 +1158,9 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       const endTime = +new Date();
       console.log('模型加载渲染耗时:', `${(endTime - startTime) / 1000}s`);
     };
+    const models = getAllModelsFromScene(scene.current);
     function addPickable(mesh: any) {
       timeHost();
-      const models = getAllModelsFromScene(scene.current);
       mesh.name = `tx-${models.length}`;
       if (mesh?.material) {
         mesh.material.side = THREE.DoubleSide;
@@ -1747,6 +1747,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             });
           } else {
             setMeshHasColor(false);
+            const colorList = ['#808080', '#55fdfd', '#ffd700', '#c0c0c0', '#b87333', '#c3c3c3'];
             /** 没有颜色则手动添加
              *  金色：#ffd700
              *  银色：#c0c0c0
@@ -1757,7 +1758,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
              * */
             material = new THREE.MeshStandardMaterial({
               // MeshStandardMaterial,MeshBasicMaterial,PointsMaterial
-              color: addType === 'add' ? '#55fdfd' : '#808080',
+              color: addType === 'add' ? colorList[models.length % 6] : '#808080',
             });
           }
           mesh.current = new THREE.Mesh(geometry, material); // Points,Mesh

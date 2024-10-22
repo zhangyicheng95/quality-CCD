@@ -2574,7 +2574,7 @@ const Home: React.FC<any> = (props: any) => {
                 ...item,
                 [__value[1]]: ['three', 'buttonImages', 'imgButton', 'button'].includes(type)
                   ? _.omit(dataValue, 'action')
-                  : ['fabric', 'modelSwitch', 'reJudgment', 'cable'].includes(type)
+                  : ['fabric', 'modelSwitch', 'reJudgment', 'cable', 'listSwitchImg'].includes(type)
                     ? undefined
                     : ['laminationImage'].includes(type) ?
                       {
