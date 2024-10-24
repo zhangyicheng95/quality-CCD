@@ -150,8 +150,13 @@ const iconDom = (
   <img
     src={
       !!localStorage.getItem('quality_icon')
-        ? `${BASE_IP}file_browser${localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'
-        }${localStorage.getItem('quality_icon')}`
+        ?
+        // @ts-ignore
+        localStorage.getItem('quality_icon')?.indexOf('http') > -1 ?
+          localStorage.getItem('quality_icon')
+          :
+          `${BASE_IP}file_browser${localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'
+          }${localStorage.getItem('quality_icon')}`
         : icon
     }
     alt="logo"

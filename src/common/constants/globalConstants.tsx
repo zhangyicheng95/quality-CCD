@@ -55,6 +55,11 @@ export const layoutTransform = {
 export const systemType = window?.QUALITY_CCD_CONFIG?.type;
 // 自定义组件
 export const windowTypeList: any = [
+  {
+    value: 'header',
+    label: '数据头部',
+    icon: dataHeaderImage,
+  },
   // {
   //   value: 'header',
   //   label: '标头窗口',
@@ -322,11 +327,11 @@ export const windowTypeList: any = [
 ];
 // 默认基础组件
 export const basicWindowList: any = [
-  {
-    value: 'header',
-    label: '数据头部',
-    icon: dataHeaderImage,
-  },
+  // {
+  //   value: 'header',
+  //   label: '数据头部',
+  //   icon: dataHeaderImage,
+  // },
   {
     value: 'slider-1',
     label: '功能按钮',

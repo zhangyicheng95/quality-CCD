@@ -753,3 +753,9 @@ export const debounce = (fn: any, delay: number) => {
     }, delay);
   }
 };
+// 检查字符串中汉字个数
+export const findChineseNum = (str: string) => {
+  const re = /[\u4E00-\u9FA5]/g; //测试中文字符的正则
+  var leng = str?.match?.(re)?.length || 0;  //计算中文的个数
+  return leng;
+}

@@ -125,8 +125,8 @@ const FormCharts: React.FC<Props> = (props: any) => {
   // 预设单号表格
   const columns = useMemo(
     () =>
-      timeSelectDefault
-        .map((item: any) => {
+      (timeSelectDefault || [])
+        ?.map((item: any) => {
           const { name, alias } = item;
           return {
             title: alias,
@@ -137,7 +137,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
             },
           };
         })
-        .concat({
+        ?.concat({
           title: '操作',
           dataIndex: 'operation',
           key: 'operation',

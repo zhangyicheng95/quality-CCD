@@ -46,10 +46,16 @@ const BarCharts: React.FC<Props> = (props: any) => {
   } = data;
   if (process.env.NODE_ENV === 'development') {
     for (let i = 0; i < 7; i++) {
-      dataValue.push({
-        name: '数据' + i,
-        value: Math.random() * 10,
-      });
+      dataValue = dataValue.concat([
+        {
+          name: '数据' + i,
+          value: Math.random() * 10,
+        },
+        {
+          name: '数据' + i,
+          value: Math.random() * 11,
+        }
+      ]);
     }
     // dataValue = [
     //   { name: '上限', value: 2.2, type: 'markLine',position:'x', color: 'red' },

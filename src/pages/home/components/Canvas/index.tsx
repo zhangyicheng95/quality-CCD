@@ -214,14 +214,6 @@ const Home: React.FC<any> = (props: any) => {
   const [logDataVisible, setLogDataVisible] = useState('');
   const [homeSettingVisible, setHomeSettingVisible] = useState('');
   const [homeSettingData, setHomeSettingData] = useState({
-    header: {
-      fontSize: 20,
-      headerTitle: '',
-      headerName: '',
-      titleAlign: 'center',
-      headerTitleFontSize: 16,
-      backgroundColor: 'default',
-    },
     'slider-1': {
       des_column: 1,
       delay: 0,
@@ -281,69 +273,6 @@ const Home: React.FC<any> = (props: any) => {
   // 基础组件
   const gridList = useMemo(
     () => [
-      <div key={'header'}>
-        <div
-          className="header-box drag-item-content-box background-ubv"
-          style={Object.assign(
-            {},
-            { fontSize: homeSettingData['header']?.fontSize },
-            homeSettingData['header']?.backgroundColor === 'default'
-              ? {}
-              : homeSettingData['header']?.backgroundColor === 'transparent'
-                ? { backgroundColor: 'transparent' }
-                : {
-                  backgroundImage: `url(${homeSettingData['header']?.backgroundColor})`,
-                  backgroundColor: 'transparent',
-                },
-          )}
-        >
-          <div className={`flex-box-justify-between header-box-body`}>
-            <HeaderCharts homeSettingData={homeSettingData} started={started} />
-          </div>
-          {ifCanEdit ? (
-            <Dropdown
-              overlayClassName="edit-canvas-dropdown"
-              overlay={
-                <Menu
-                  items={[
-                    {
-                      key: '1',
-                      icon: <EditOutlined />,
-                      label: '编辑',
-                      onClick: () => {
-                        // 双击事件触发的操作
-                        if (!!addWindowVisible || !!homeSettingVisible) {
-                          setAddWindowVisible('');
-                          setHomeSettingVisible('');
-                          setFieldsValue({});
-                        }
-                        setTimeout(() => {
-                          setFieldsValue(homeSettingData?.['header']);
-                          setHomeSettingVisible('header');
-                        }, 500);
-                      },
-                    },
-                    {
-                      type: 'divider',
-                    },
-                    {
-                      key: '2',
-                      icon: <DeleteOutlined />,
-                      label: '删除',
-                      onClick: () => {
-                        deleteBasic('header');
-                      },
-                    },
-                  ]}
-                />
-              }
-              trigger={['contextMenu']}
-            >
-              <div className="flex-box-center drag-item-content-mask common-card-title"></div>
-            </Dropdown>
-          ) : null}
-        </div>
-      </div>,
       <div key={'slider-1'}>
         <div
           className="btn-box drag-item-content-box background-ubv"
@@ -1450,8 +1379,22 @@ const Home: React.FC<any> = (props: any) => {
                       'iframe',
                       'timeSelect',
                       'httpTable',
+                      'header',
                     ].includes(type) ? (
                     '请重新绑定数据节点'
+                  ) : type === 'header' ? (
+                    <HeaderCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        yName,
+                        xName,
+                        tableFontSize,
+                        des_layout,
+                        magnifierSize
+                      }}
+                    />
                   ) : type === 'line' ? (
                     <LineCharts
                       id={key}
@@ -1722,6 +1665,8 @@ const Home: React.FC<any> = (props: any) => {
                         dataValue: dataValue || [],
                         fontSize,
                         yName,
+                        magnifierWidth,
+                        des_layout,
                       }}
                     />
                   ) : type === 'imgs' ? (
@@ -1772,7 +1717,11 @@ const Home: React.FC<any> = (props: any) => {
                       data={{
                         dataValue: dataValue || [],
                         fontSize,
-                        yName
+                        modelRotate,
+                        fetchType,
+                        xName,
+                        tableFontSize,
+                        magnifierSize
                       }}
                     />
                   ) : type === 'bodyBox' ? (
@@ -2573,12 +2522,12 @@ const Home: React.FC<any> = (props: any) => {
                   <div
                     style={Object.assign(
                       {},
-                      ['table2', 'table3'].includes(type)
-                        ? {
-                          height: `calc(100% - 80px - ${bodyPaddingSize}px)`,
-                          marginTop: 80 + bodyPaddingSize,
-                        }
-                        : {},
+                      // ['table2', 'table3'].includes(type)
+                      //   ? {
+                      //     height: `calc(100% - 80px - ${bodyPaddingSize}px)`,
+                      //     marginTop: 80 + bodyPaddingSize,
+                      //   }
+                      //   : {},
                       type === 'bodyBox'
                         ? {
                           top: '90%',
@@ -4131,7 +4080,16 @@ const Home: React.FC<any> = (props: any) => {
                         value: 'black',
                         label: '黑色背景',
                       },
-                      {
+                      ...['header'].includes(windowType) ? [
+                        {
+                          value: dataHeaderImage,
+                          label: '背景图1',
+                        },
+                        {
+                          value: dataHeaderImage2,
+                          label: '背景图2',
+                        },
+                      ] : [{
                         value: dataItemImage1,
                         label: '背景图1',
                       },
@@ -4162,7 +4120,7 @@ const Home: React.FC<any> = (props: any) => {
                       {
                         value: 'border',
                         label: '圆角边框',
-                      },
+                      },]
                     ]}
                   />
                 </Form.Item>
@@ -4191,7 +4149,7 @@ const Home: React.FC<any> = (props: any) => {
                   />
                 </Form.Item>
                 <Form.Item name="titleFontSize" label="标题字号">
-                  <InputNumber min={12} placeholder="标题字号" />
+                  <InputNumber placeholder="标题字号" />
                 </Form.Item>
                 <Form.Item
                   name={'titlePaddingSize'}
@@ -4215,7 +4173,7 @@ const Home: React.FC<any> = (props: any) => {
                   initialValue={16}
                   rules={[{ required: true, message: '字号' }]}
                 >
-                  <InputNumber min={12} />
+                  <InputNumber />
                 </Form.Item>
                 {!['modal'].includes(windowType) ? (
                   <Form.Item
@@ -4240,6 +4198,46 @@ const Home: React.FC<any> = (props: any) => {
                 </div>
               </Divider>
               <div style={showPanels?.custom ? {} : { display: 'none' }}>
+                {['header'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item name="xName" label="标题">
+                      <Input />
+                    </Form.Item>
+                    <Form.Item name="yName" label="左侧logo名称">
+                      <Input />
+                    </Form.Item>
+                    <Form.Item name="tableFontSize" label="标题字号" initialValue={24}>
+                      <InputNumber />
+                    </Form.Item>
+                    <Form.Item name="magnifierSize" label="logo大小" initialValue={40}>
+                      <InputNumber />
+                    </Form.Item>
+                    <Form.Item
+                      name={`des_layout`}
+                      label={'对齐方式'}
+                      initialValue={'center'}
+                      rules={[{ required: false, message: '对齐方式' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={[
+                          {
+                            value: 'center',
+                            label: '居中',
+                          },
+                          {
+                            value: 'flex-start',
+                            label: '居上',
+                          },
+                          {
+                            value: 'flex-end',
+                            label: '居下',
+                          },
+                        ]}
+                      />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
                 {['img', 'imgDefects'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item
@@ -5518,7 +5516,7 @@ const Home: React.FC<any> = (props: any) => {
                       initialValue={24}
                       rules={[{ required: true, message: '图标大小' }]}
                     >
-                      <InputNumber min={12} />
+                      <InputNumber />
                     </Form.Item>
                     <Form.Item name={'yName'} label="按钮距离左边距" initialValue={0}>
                       <InputNumber min={0} />
@@ -5550,6 +5548,33 @@ const Home: React.FC<any> = (props: any) => {
                             {
                               value: 'point',
                               label: '圆点',
+                            },
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item name="magnifierWidth" label="圆点大小" initialValue={40}>
+                        <InputNumber />
+                      </Form.Item>
+                      <Form.Item
+                        name={`des_layout`}
+                        label={'对齐方式'}
+                        initialValue={'center'}
+                        rules={[{ required: false, message: '对齐方式' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            {
+                              value: 'center',
+                              label: '居中',
+                            },
+                            {
+                              value: 'start',
+                              label: '居左',
+                            },
+                            {
+                              value: 'end',
+                              label: '居右',
                             },
                           ]}
                         />
@@ -6663,6 +6688,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name={`yName`}
                         label={'服务接口地址'}
+                        tooltip="用于控制启动/停止检测"
                         rules={[{ required: false, message: '接口地址' }]}
                       >
                         <Input placeholder="接口地址" size="large" />
@@ -6670,6 +6696,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name={`xName`}
                         label={'算法接口地址'}
+                        tooltip="传输图片和标注信息"
                         rules={[{ required: false, message: '接口地址' }]}
                       >
                         <Input placeholder="接口地址" size="large" />
@@ -7374,6 +7401,54 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                   </Fragment>
                 ) : null}
+                {
+                  ['listSwitchImg'].includes(windowType) ? (
+                    <Fragment>
+                      <Form.Item
+                        name={`modelRotate`}
+                        label={'布局方式'}
+                        initialValue={'1'}
+                        rules={[{ required: false, message: '布局方式' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          options={[
+                            { label: '列表-图片-图片', value: '1' },
+                            { label: '列表-表格-图片', value: '2' }
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`fetchType`}
+                        label={'http类型'}
+                        rules={[{ required: false, message: 'http类型' }]}
+                      >
+                        <Select
+                          style={{ width: '100%' }}
+                          placeholder="http类型"
+                          options={['get', 'post', 'put', 'delete', 'wbsocket']
+                            ?.map?.((item: any) => ({
+                              value: item,
+                              label: _.toUpper(item),
+                            }))}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={`xName`}
+                        label={'接口地址'}
+                        rules={[{ required: false, message: '接口地址' }]}
+                      >
+                        <Input placeholder="接口地址" size="large" />
+                      </Form.Item>
+                      <Form.Item name="tableFontSize" label="表格字号" initialValue={16}>
+                        <InputNumber />
+                      </Form.Item>
+                      <Form.Item name="magnifierSize" label="图片字号" initialValue={14}>
+                        <InputNumber />
+                      </Form.Item>
+                    </Fragment>
+                  ) : null
+                }
                 {['equipmentInfo'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item
@@ -7443,7 +7518,7 @@ const Home: React.FC<any> = (props: any) => {
                     initialValue={40}
                     rules={[{ required: true, message: '图标大小' }]}
                   >
-                    <InputNumber min={12} />
+                    <InputNumber />
                   </Form.Item>
                   <Form.Item name={'controlList'} label="控制从机">
                     {commonSettingList?.map?.((item: any, index: number) => {
@@ -7500,7 +7575,7 @@ const Home: React.FC<any> = (props: any) => {
                   label="字号"
                   rules={[{ required: true, message: '字号' }]}
                 >
-                  <InputNumber min={12} />
+                  <InputNumber />
                 </Form.Item>
               )}
               {homeSettingVisible === 'slider-4' ? (
@@ -7539,7 +7614,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Input />
                   </Form.Item>
                   <Form.Item name="headerTitleFontSize" label="标题字号">
-                    <InputNumber min={12} />
+                    <InputNumber />
                   </Form.Item>
                   <Form.Item
                     name={`titleAlign`}

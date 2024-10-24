@@ -68,7 +68,7 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
 
   return (
     <div
-      className={`flex-box ${styles['segment-switch']}`}
+      className={`flex-box segment-switch-box ${styles['segment-switch']}`}
       ref={ref}
       style={Object.assign(
         {},

@@ -71,7 +71,15 @@ const TableCharts: React.FC<Props> = (props: any) => {
         style={Object.assign(
           { fontSize: tableFontSize },
           tableScroll ? { width: 'calc(100% - 6px)' } : { width: 'calc(100% - 1px)' },
-          headerBackgroundColor === 'transparent' ? { backgroundColor: 'transparent' } : {},
+          headerBackgroundColor === 'transparent'
+            ? { backgroundColor: 'transparent' }
+            : headerBackgroundColor === 'line1'
+              ? {
+                backgroundColor: 'transparent',
+                backgroundImage:
+                  'linear-gradient(to right, rgba(39, 90, 235, 1), rgb(26, 160, 222))',
+              }
+              : {},
         )}
       >
         <TooltipDiv title={yName} className="charts-header-item">

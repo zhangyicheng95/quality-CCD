@@ -4,7 +4,7 @@ import styles from '../index.module.less';
 import TooltipDiv from '@/components/TooltipDiv';
 import { Button, message } from 'antd';
 import { useModel } from 'umi';
-import { ifHasChinese } from '@/utils/utils';
+import { findChineseNum, ifHasChinese } from '@/utils/utils';
 import { updateParams } from '@/services/api';
 import { UndoOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -15,7 +15,7 @@ interface Props {
   onClick?: any;
 }
 
-const localData = [
+const localData1 = [
   {
     name: '结果',
     value: [
@@ -179,6 +179,25 @@ const localData = [
     ],
   },
 ];
+const localData = [
+  {
+    name: '今日检测总数',
+    value: [
+      { value: 12 },
+    ],
+  },
+  {
+    name: '今日OK数',
+    value: [
+      { value: 11 },
+    ],
+  },
+  {
+    name: '今日检测总数',
+    value: [
+      { value: `${(11 / 12 * 100).toFixed(2)}%` },
+    ],
+  },]
 
 const Table2Charts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
@@ -288,18 +307,13 @@ const Table2Charts: React.FC<Props> = (props: any) => {
               isNum = false;
             }
           }
-          if (
-            Math.max(text?.length, name.length) *
-            fontSize *
-            (isNum || name?.indexOf('时间') > -1 ? 0.59 : 1) +
-            18 >
-            number
-          ) {
-            number =
-              Math.max(text?.length, name.length) *
-              fontSize *
-              (isNum || name?.indexOf('时间') > -1 ? 0.59 : 1) +
-              18;
+          const trustLengthNum = (Math.max(text?.length, name.length) - findChineseNum('' + text)) * fontSize * 0.59
+            +
+            findChineseNum('' + text) * fontSize * 1
+            // (isNum || name?.indexOf('时间') > -1 ? 0.59 : 1) 
+            + 32;
+          if (trustLengthNum > number) {
+            number = trustLengthNum;
           }
         });
 
@@ -317,74 +331,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
       setBoxSizeSelf(Math.max(boxSize, domRef.current?.clientWidth));
     }
   }, [dataValue, fontSize, domRef?.current?.clientWidth, window.screen.width]);
-  const updateCanvas = (tableSizes: any) => {
-    const updateParam = {
-      ...params,
-      contentData: {
-        ...params?.contentData,
-        content: params?.contentData?.content?.map?.((item: any) => {
-          if (item.id === id) {
-            return Object.assign({}, item, {
-              tableSize: tableSizes,
-            });
-          }
-          return item;
-        }),
-      },
-    };
-    setInitialState((preInitialState: any) => ({
-      ...preInitialState,
-      params: updateParam,
-    }));
-    updateParams({
-      id: params.id,
-      data: updateParam,
-    }).then((res: any) => {
-      if (res && res.code === 'SUCCESS') {
-        // setInitialState((preInitialState: any) => ({
-        //     ...preInitialState,
-        //     params: res?.data
-        // }));
-      } else {
-        message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
-      }
-    });
-  };
-  const onMoveIconMouseDown = (ev: any, index: number) => {
-    const { target } = ev;
-    const parent = target.parentNode;
-    const { clientWidth } = parent;
-    let width = 0;
-    if (!domRef.current) return;
-    domRef.current.onmousemove = (e: any) => {
-      width = Math.min(Math.abs(clientWidth - (ev.pageX - e.pageX)), 0.9);
-      parent.style.width = width + 'px';
-      parent.style.minWidth = width + 'px';
-    };
-    domRef.current.onmouseup = (e: any) => {
-      const chartsBox: any = document.getElementById(`echart-${id}`);
-      const { clientWidth } = chartsBox;
-      const tableSizes = _.isArray(tableSize) ? _.cloneDeep(tableSize) : [];
 
-      if (!!tableSizes?.length) {
-        tableSizes[index] = Math.max((width / clientWidth) * 100, 10) + '%';
-      } else {
-        dataValue.forEach?.((item: any, ind: number) => {
-          if (ind === index) {
-            tableSizes[index] = Math.max((width / clientWidth) * 100, 10) + '%';
-          } else {
-            tableSizes[ind] = !!tableSizes[ind] ? tableSizes[ind] : 0;
-          }
-        });
-      }
-      setTableSizeSelf(tableSizes);
-
-      updateCanvas(tableSizes);
-      domRef.current.onmousemove = (e: any) => {
-        // 释放鼠标
-      };
-    };
-  };
   return (
     <div id={`echart-${id}`} className={styles.table2Charts} ref={domRef} style={{ fontSize }}>
       {des_layout === 'horizontal' ? (
@@ -520,14 +467,14 @@ const Table2Charts: React.FC<Props> = (props: any) => {
             className="charts-header-box flex-box"
             style={Object.assign(
               { fontSize: tableFontSize },
-              { width: boxSizeSelf > domRef?.current?.clientWidth + 20 ? boxSizeSelf : '100%' },
+              // { width: boxSizeSelf > domRef?.current?.clientWidth + 20 ? boxSizeSelf : '100%' },
               headerBackgroundColor === 'transparent'
                 ? { backgroundColor: 'transparent' }
                 : headerBackgroundColor === 'line1'
                   ? {
                     backgroundColor: 'transparent',
                     backgroundImage:
-                      'linear-gradient(to right, rgba(39,90,235,0.8), rgba(140,210,220,1))',
+                      'linear-gradient(to right, rgba(39, 90, 235, 1), rgb(26, 160, 222))',
                   }
                   : {},
               { left: bodyPaddingSize },
@@ -548,47 +495,35 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                           maxWidth: '50%',
                         }
                         : {},
+                      // headerBackgroundColor === 'transparent'
+                      //   ? { backgroundColor: 'transparent' }
+                      //   : headerBackgroundColor === 'line1'
+                      //     ? {
+                      //       backgroundColor: 'transparent',
+                      //       backgroundImage:
+                      //         'linear-gradient(to right, rgba(39, 90, 235, 1), rgb(26, 160, 222))',
+                      //       opacity: 0.7
+                      //     }
+                      //     : {}
                     )}
                   >
                     <TooltipDiv title={name} className="charts-header-item-title">
                       {name}
                     </TooltipDiv>
-                    {index + 1 === dataValue?.length ? null : (
-                      <div
-                        id={`charts-header-item-move-${index}`}
-                        className="charts-header-item-border"
-                        style={ifCanEdit ? { width: 10 } : {}}
-                        onMouseDown={(e: any) => {
-                          if (location.hash?.indexOf('edit') > -1) {
-                            onMoveIconMouseDown(e, index);
-                          }
-                        }}
-                      />
-                    )}
                   </div>
                 );
               })}
-            {ifCanEdit ? (
-              <Button
-                type="link"
-                icon={<UndoOutlined />}
-                className="reset-table-size"
-                onClick={() => {
-                  setTableSizeSelf([]);
-                  updateCanvas([]);
-                }}
-              />
-            ) : null}
           </div>
           <div
             className="charts-body-box flex-box"
-            style={
+            style={Object.assign({},
               des_bordered
                 ? {
                   borderWidth: '1px',
                 }
-                : {}
-            }
+                : {},
+              // { width: boxSizeSelf > domRef?.current?.clientWidth + 20 ? boxSizeSelf : '100%' },
+            )}
           >
             {_.isArray(dataValue)
               ? (dataValue || [])?.map?.((item: any, index: number) => {

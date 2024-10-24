@@ -14,10 +14,10 @@ interface Props {
 const AlertCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
-    dataValue = [], fontSize = 12, yName,
+    dataValue = [], fontSize = 12, yName, des_layout = 'center', magnifierWidth
   } = data;
   if (process.env.NODE_ENV === 'development') {
-    dataValue = [{ name: '状态1', value: false, }];
+    dataValue = [{ name: 'NG', value: false, }];
   }
 
   useEffect(() => {
@@ -28,11 +28,10 @@ const AlertCharts: React.FC<Props> = (props: any) => {
     }
   }, [dataValue]);
   return (
-    <div id={`echart-${id}`} className={`${styles.alertCharts} flex-box`}>
+    <div id={`echart-${id}`} className={`flex-box ${styles.alertCharts}`} style={{ justifyContent: des_layout }}>
       {_.isArray(dataValue) &&
         (dataValue || [])?.map?.((item: any, index: number) => {
           const { name, value, color } = item;
-          const width = fontSize + 12;
           const realColor = !!value ? '#88db57' : '#931212';
           if (yName === 'point') {
             return (
@@ -47,7 +46,7 @@ const AlertCharts: React.FC<Props> = (props: any) => {
                 <div
                   className={`alert-item-point-icon`}
                   style={Object.assign(
-                    { height: width, width: width },
+                    { height: magnifierWidth, width: magnifierWidth },
                     !!color ? { backgroundColor: color } : { backgroundColor: realColor }
                   )}
                 />

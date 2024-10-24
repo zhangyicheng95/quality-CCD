@@ -13,8 +13,9 @@ const StatisticCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let { dataValue, fontSize, yName, fontColor, direction, valueOnTop } = data;
   if (process.env.NODE_ENV === 'development') {
-    dataValue = { value: 'OK', color: 'green' };
+    dataValue = { value: '当前车辆BSN码：29R08056', color: '' };
   }
+
   return (
     <div
       id={`echart-${id}`}
@@ -26,8 +27,7 @@ const StatisticCharts: React.FC<Props> = (props: any) => {
     >
       {valueOnTop ? null : <div className="statistic-title">{yName}</div>}
       <div
-        className={`statistic-value ${dataValue?.color === 'red' ? 'NG-font' : dataValue?.color === 'green' ? 'OK-font' : ''
-          }`}
+        className={`statistic-value ${dataValue?.color === 'red' ? 'NG-font' : dataValue?.color === 'green' ? 'OK-font' : ''}`}
         style={Object.assign(
           {
             fontSize: Number(fontSize) + 10,

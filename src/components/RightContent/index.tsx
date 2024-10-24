@@ -63,7 +63,7 @@ const GlobalHeaderRight: React.FC = () => {
         onClick={() => {
           const localStorageKeys = getAllLocalStorageKeys();
           (localStorageKeys || []).forEach?.((key: any) => {
-            if (!['parentOrigin', 'ipUrlList', 'ipUrl-realtime']?.includes(key)) {
+            if (!['parentOrigin', 'ipUrlList', 'ipUrl-realtime', 'quality_icon']?.includes(key)) {
               localStorage.removeItem(key);
             }
           });
