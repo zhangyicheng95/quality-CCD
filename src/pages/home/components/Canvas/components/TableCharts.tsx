@@ -95,13 +95,14 @@ const TableCharts: React.FC<Props> = (props: any) => {
       </div>
       <div
         className="charts-body-box"
-        style={
+        style={Object.assign({},
+          { marginTop: tableFontSize + 24 },
           des_bordered
             ? {
               borderWidth: '1px',
             }
             : {}
-        }
+        )}
       >
         {_.isArray(dataValue)
           ? (!!reverse ? _.cloneDeep(dataValue).reverse() : dataValue)?.map?.(

@@ -319,9 +319,9 @@ export default function Toolbar() {
             };
           }
         } else if (sub_type === 'rect') {
-          if (!sub_name) {
-            throw new Error();
-          }
+          // if (!sub_name) {
+          //   throw new Error();
+          // }
           const realItem = editor?.canvas?.getObjects()?.filter((i: any) => i?.angle === angle && i.sub_type === sub_type && i.top === top)?.[0];
           return {
             ...common,

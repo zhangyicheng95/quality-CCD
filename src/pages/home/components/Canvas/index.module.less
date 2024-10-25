@@ -666,10 +666,9 @@
 
       .charts-header-item {
         flex: 1;
-        height: 38px;
-        padding: 2px 8px;
+        padding: 12px 16px;
+        line-height: 1;
         overflow: hidden;
-        line-height: 38px;
         text-align: center;
         border-right: 1px solid @body-background;
 
@@ -1233,6 +1232,7 @@
         overflow-y: auto;
         background-color: rgba(144, 144, 144, .1);
         padding: 4px;
+        margin: 12px 0;
 
         &-item {
           width: 100%;
@@ -1245,6 +1245,12 @@
         .selected {
           background-color: @primary-color;
           color: #eee;
+        }
+      }
+
+      &-footer {
+        .ant-btn {
+          width: 100%;
         }
       }
     }

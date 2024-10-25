@@ -14,6 +14,7 @@ import {
   Popconfirm,
   Radio,
   Select,
+  Switch,
 } from 'antd';
 import MonacoEditor from '@/components/MonacoEditor';
 import PlatFormModal from '@/components/platForm';
@@ -976,14 +977,10 @@ export function FormatWidgetToDom(props: any) {
           initialValue={value || false}
           rules={[{ required: require, message: `${alias}` }]}
         >
-          <SegmentSwitch
+          <Switch
             style={{ height: fontSize * 2 }}
-            fontInBody={[
-              { label: '', value: false, backgroundColor: 'grey' },
-              { label: '', value: true, backgroundColor: '' },
-            ]}
             disabled={disabled}
-            onClick={(e: boolean) => {
+            onChange={(e: boolean) => {
               widgetChange?.(name, e, parent);
             }}
           />
