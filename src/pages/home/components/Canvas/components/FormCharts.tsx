@@ -89,7 +89,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
     if (!_.isEmpty(dataValue)) {
       init(dataValue);
     }
-  }, [dataValue]);
+  }, [JSON.stringify(dataValue)]);
   // 提交
   const onSubmit = () => {
     form.validateFields().then((values) => {

@@ -257,7 +257,7 @@ export default function Toolbar() {
           return {
             type: 'point',
             sub_type: sub_type.split('point_')[1],
-            left: left + width / 2, top: top + top / 2,
+            left: left + width / 2, top: top + height / 2,
             angle: 0,
             scale: scaleX
           }
@@ -272,7 +272,7 @@ export default function Toolbar() {
         } else if (sub_type === 'point' || (!sub_type && path?.length <= 3)) {
           return {
             type: 'point',
-            left: left + width / 2, top: top + top / 2,
+            left: left + width / 2, top: top + height / 2,
             angle: 0,
             scale: scaleX
           }

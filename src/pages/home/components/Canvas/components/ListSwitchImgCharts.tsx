@@ -9,7 +9,6 @@ import BasicTable from '@/components/BasicTable';
 import { btnFetch } from '@/services/api';
 import moment from 'moment';
 
-const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 interface Props {
   data: any;
@@ -73,22 +72,39 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
     dataValue = localData;
   };
   const domRef = useRef<any>();
+  const [leftList, setLeftList] = useState([]);
   const [selected, setSelected] = useState<any>(null);
   const [selectedNum, setSelectedNum] = useState({ left: 0, right: 0 });
-  const [searchItem, setSearchItem] = useState([]);
+  const [searchItem, setSearchItem] = useState('');
+  const [tableSource, setTableSource] = useState([]);
+  const [rightImgSource, setRightImgSource] = useState('');
 
   useEffect(() => {
-    if (!!dataValue?.length) {
-      setSelected(dataValue?.[dataValue?.length - 1]);
-      setSelectedNum({
-        left: dataValue?.[dataValue?.length - 1]?.children?.['left']?.imgs?.length - 1,
-        right: dataValue?.[dataValue?.length - 1]?.children?.['right']?.imgs?.length - 1
-      });
+    if (modelRotate === '1') {
+      if (!!dataValue?.length) {
+        setSelected(dataValue?.[dataValue?.length - 1]);
+        setSelectedNum({
+          left: dataValue?.[dataValue?.length - 1]?.children?.['left']?.imgs?.length - 1,
+          right: dataValue?.[dataValue?.length - 1]?.children?.['right']?.imgs?.length - 1
+        });
+      } else {
+        setSelected(null);
+        setSelectedNum({ left: 0, right: 0 });
+      }
     } else {
+      if (dataValue?.key === 'list') {
+        setLeftList(dataValue?.data || []);
+      } else if (dataValue?.key === 'table') {
+        setTableSource(dataValue?.data || []);
+      } else if (dataValue?.key === 'img') {
+        setRightImgSource(dataValue?.data || '');
+      }
+
       setSelected(null);
-      setSelectedNum({ left: 0, right: 0 });
+      setSearchItem('');
+      setTableSource([]);
+      setRightImgSource('');
     }
-    setSearchItem(dataValue || []);
   }, [JSON.stringify(dataValue)]);
   const tableColumns = [
     {
@@ -140,7 +156,7 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
       dataIndex: 'camera',
       key: 'camera',
       align: 'center',
-      width: `${fontSize * 3 + 32}px`
+      width: `${fontSize * 2 + 32}px`
     }
   ];
   const onModalChange = (params: any) => {
@@ -154,6 +170,8 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
           );
         }
       });
+    } else {
+      message.error('请先设置服务接口');
     }
   };
 
@@ -170,89 +188,50 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
             null
             :
             <div className="listSwitchImgCharts-left-search-box">
-              <RangePicker
+              <DatePicker
                 style={{ fontSize }}
                 popupClassName="listSwitchImgCharts-left-search-box-range-picker"
-                defaultValue={[
-                  moment(
-                    new Date().toLocaleDateString(),
-                    dateFormat,
-                  ),
-                  moment(new Date(), dateFormat),
-                ]}
-                ranges={{
-                  今日: [
-                    moment(new Date().toLocaleDateString(), dateFormat),
-                    moment(new Date(), dateFormat),
-                  ],
-                  过去一周: [
-                    moment(
-                      new Date(
-                        new Date(new Date().toLocaleDateString()).getTime() - 6 * 24 * 60 * 60 * 1000,
-                      ),
-                      dateFormat,
-                    ),
-                    moment(new Date(), dateFormat),
-                  ],
-                  过去一个月: [
-                    moment(
-                      new Date(
-                        new Date(new Date().toLocaleDateString()).getTime() - 29 * 24 * 60 * 60 * 1000,
-                      ),
-                      dateFormat,
-                    ),
-                    moment(new Date(), dateFormat),
-                  ],
-                }}
-                showTime
-                format="YYYY/MM/DD HH:mm:ss"
+                defaultValue={moment(new Date(), dateFormat)}
+                format="YYYY-MM-DD"
                 onChange={(dates: any, dateStrings: any) => {
-                  let param1 = {};
-                  if (dates) {
-                    if (_.isArray(dateStrings)) {
-                      param1 = { start: dateStrings[0], end: dateStrings[1] };
-                    } else {
-                      param1 = { time: dateStrings };
-                    }
-                  } else {
-                  }
-                  onModalChange(param1)
+                  onModalChange({ time: dateStrings });
                 }}
               />
               <Input.Search
                 onSearch={(val) => {
-                  setSearchItem(() => {
-                    return dataValue?.filter((i: any) => i?.name?.indexOf(val) > -1);
-                  });
+                  setSearchItem(val);
                 }}
               />
             </div>
         }
         <div className="listSwitchImgCharts-left-body">
           {
-            (searchItem || [])?.slice(0, 20)?.map((item: any, index: number) => {
-              const { name, status, children } = item;
-              return <div
-                className={`flex-box listSwitchImgCharts-left-body-item ${selected?.name === name ? 'selected' : ''}`}
-                key={`listSwitchImgCharts-left-body-item-${index}`}
-                onClick={() => {
-                  setSelected(item);
-                  setSelectedNum({
-                    left: children?.['left']?.imgs?.length - 1,
-                    right: children?.['right']?.imgs?.length - 1
-                  });
-                  onModalChange({ name });
-                }}
-              >
-                {
-                  !!status ?
-                    <Badge status="success" />
-                    :
-                    <Badge status="error" />
-                }
-                <TooltipDiv title={name}>{name}</TooltipDiv>
-              </div>
-            })
+            (dataValue || [])
+              ?.filter((i: any) => i?.name?.indexOf(searchItem) > -1)
+              ?.slice(0, 20)
+              ?.map((item: any, index: number) => {
+                const { name, status, children } = item;
+                return <div
+                  className={`flex-box listSwitchImgCharts-left-body-item ${selected?.name === name ? 'selected' : ''}`}
+                  key={`listSwitchImgCharts-left-body-item-${index}`}
+                  onClick={() => {
+                    setSelected(item);
+                    setSelectedNum({
+                      left: children?.['left']?.imgs?.length - 1,
+                      right: children?.['right']?.imgs?.length - 1
+                    });
+                    onModalChange({ name: name?.split('|')?.[1]?.trim?.() });
+                  }}
+                >
+                  {
+                    !!status ?
+                      <Badge status="success" />
+                      :
+                      <Badge status="error" />
+                  }
+                  <TooltipDiv title={name}>{name}</TooltipDiv>
+                </div>
+              })
           }
         </div>
       </div>
@@ -267,18 +246,16 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
                 const name = item[0];
                 const { imgs } = item[1];
                 const num = selectedNum[name];
-                console.log(imgs[num]);
-
                 return <div
                   key={`listSwitchImgCharts-right-body-item-${index}`}
                   className="flex-box listSwitchImgCharts-right-body-item"
                 >
                   {
-                    (modelRotate === '2' && name === 'left' && _.isArray(imgs[num])) ?
+                    (modelRotate === '2' && name === 'left' && _.isArray(tableSource)) ?
                       <BasicTable
                         style={{ fontSize: tableFontSize }}
                         columns={tableColumns}
-                        dataSource={imgs[num]?.map((item: any) => ({ id: guid(), ...item }))}
+                        dataSource={tableSource?.map((item: any) => ({ id: guid(), ...item }))}
                         rowKey={(record: any) => record?.id}
                         defaultExpandAllRows={true}
                         pagination={null}
@@ -286,13 +263,20 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
                           return domRef.current;
                         }}
                         className={`listSwitchImgCharts-right-body-item-table`}
+                        onRow={(record: any) => {
+                          return {
+                            onClick: () => {
+                              onModalChange({ name: selected?.name, ...record });
+                            }
+                          };
+                        }}
                       />
                       :
                       <Fragment>
                         <ImgCharts
                           id={`${id.split('$$')[0]}$$${selected?.name}${name}$$alertImg`}
                           data={{
-                            dataValue: imgs[num] || undefined,
+                            dataValue: modelRotate === '2' ? rightImgSource : imgs[num],
                             comparison: false,
                             magnifier: true,
                             magnifierSize: 4,

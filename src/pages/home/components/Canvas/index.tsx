@@ -3929,7 +3929,7 @@ const Home: React.FC<any> = (props: any) => {
                 <Form.Item
                   name={'value'}
                   label="绑定节点"
-                  rules={[{ required: true, message: '绑定节点' }]}
+                  rules={[{ required: false, message: '绑定节点' }]}
                 >
                   <Cascader
                     style={{ width: '100%' }}
@@ -4013,7 +4013,7 @@ const Home: React.FC<any> = (props: any) => {
                   name={'type'}
                   label="窗口类型"
                   initialValue={'img'}
-                  rules={[{ required: true, message: '窗口类型' }]}
+                  rules={[{ required: false, message: '窗口类型' }]}
                 >
                   <Select
                     disabled
@@ -4171,7 +4171,7 @@ const Home: React.FC<any> = (props: any) => {
                   name={'fontSize'}
                   label="字号"
                   initialValue={16}
-                  rules={[{ required: true, message: '字号' }]}
+                  rules={[{ required: false, message: '字号' }]}
                 >
                   <InputNumber />
                 </Form.Item>
@@ -4323,7 +4323,7 @@ const Home: React.FC<any> = (props: any) => {
                       name="lineNumber"
                       label="行数"
                       initialValue={1}
-                      rules={[{ required: true, message: '行数' }]}
+                      rules={[{ required: false, message: '行数' }]}
                     >
                       <InputNumber min={1} placeholder="" />
                     </Form.Item>
@@ -4331,7 +4331,7 @@ const Home: React.FC<any> = (props: any) => {
                       name="columnNumber"
                       label="列数"
                       initialValue={1}
-                      rules={[{ required: true, message: '列数' }]}
+                      rules={[{ required: false, message: '列数' }]}
                     >
                       <InputNumber min={1} placeholder="" />
                     </Form.Item>
@@ -4352,14 +4352,14 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`yName`}
                       label={windowType === 'table' ? '表格key名' : 'y 轴名称'}
-                      rules={[{ required: true, message: 'y轴名称' }]}
+                      rules={[{ required: false, message: 'y轴名称' }]}
                     >
                       <Input size="large" />
                     </Form.Item>
                     <Form.Item
                       name={`xName`}
                       label={windowType === 'table' ? '表格value名' : 'x 轴名称'}
-                      rules={[{ required: true, message: 'x轴名称' }]}
+                      rules={[{ required: false, message: 'x轴名称' }]}
                     >
                       <Input size="large" />
                     </Form.Item>
@@ -4584,7 +4584,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`symbol`}
                       label={'散点形状'}
-                      rules={[{ required: true, message: '散点形状' }]}
+                      rules={[{ required: false, message: '散点形状' }]}
                       initialValue={'rect'}
                     >
                       <Select
@@ -4637,7 +4637,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name={`imgListNum`}
                         label={'行高'}
-                        rules={[{ required: true, message: '行高' }]}
+                        rules={[{ required: false, message: '行高' }]}
                         initialValue={300}
                       >
                         <InputNumber min={100} />
@@ -4654,7 +4654,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name={`reverse`}
                         label={'数据倒序'}
-                        rules={[{ required: true, message: '数据倒序' }]}
+                        rules={[{ required: false, message: '数据倒序' }]}
                         initialValue={false}
                       >
                         <Select
@@ -4743,7 +4743,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name={`line_height`}
                         label={'内容行高'}
-                        rules={[{ required: true, message: '内容行高' }]}
+                        rules={[{ required: false, message: '内容行高' }]}
                         initialValue={38}
                       >
                         <InputNumber min={10} />
@@ -4752,14 +4752,14 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name={`imgs_height`}
                         label={windowType === 'table' ? '表格key名' : 'y 轴名称'}
-                        rules={[{ required: true, message: 'y轴名称' }]}
+                        rules={[{ required: false, message: 'y轴名称' }]}
                       >
                         <Input size="large" />
                       </Form.Item>
                       <Form.Item
                         name={`imgs_width`}
                         label={windowType === 'table' ? '表格value名' : 'x 轴名称'}
-                        rules={[{ required: true, message: 'x轴名称' }]}
+                        rules={[{ required: false, message: 'x轴名称' }]}
                       >
                         <Input size="large" />
                       </Form.Item>
@@ -4775,14 +4775,14 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name={`yName`}
                         label={windowType === 'table' ? '表格key名' : 'y 轴名称'}
-                        rules={[{ required: true, message: 'y轴名称' }]}
+                        rules={[{ required: false, message: 'y轴名称' }]}
                       >
                         <Input size="large" />
                       </Form.Item>
                       <Form.Item
                         name={`xName`}
                         label={windowType === 'table' ? '表格value名' : 'x 轴名称'}
-                        rules={[{ required: true, message: 'x轴名称' }]}
+                        rules={[{ required: false, message: 'x轴名称' }]}
                       >
                         <Input size="large" />
                       </Form.Item>
@@ -4940,7 +4940,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`reverse`}
                       label={'数据倒序'}
-                      rules={[{ required: true, message: '数据倒序' }]}
+                      rules={[{ required: false, message: '数据倒序' }]}
                       initialValue={false}
                     >
                       <Select
@@ -5031,7 +5031,7 @@ const Home: React.FC<any> = (props: any) => {
                         <Form.Item
                           name={`line_height`}
                           label={'内容行高'}
-                          rules={[{ required: true, message: '内容行高' }]}
+                          rules={[{ required: false, message: '内容行高' }]}
                           initialValue={38}
                         >
                           <InputNumber min={10} />
@@ -5062,7 +5062,7 @@ const Home: React.FC<any> = (props: any) => {
                         <Form.Item
                           name={`staticHeight`}
                           label={'表格大小'}
-                          rules={[{ required: true, message: '表格大小' }]}
+                          rules={[{ required: false, message: '表格大小' }]}
                           initialValue={'small'}
                         >
                           <Select
@@ -5154,7 +5154,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`staticHeight`}
                       label={'紧凑行高'}
-                      rules={[{ required: true, message: '紧凑行高' }]}
+                      rules={[{ required: false, message: '紧凑行高' }]}
                       valuePropName="checked"
                       initialValue={false}
                     >
@@ -5204,7 +5204,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`line_height`}
                       label={'内容行高'}
-                      rules={[{ required: true, message: '内容行高' }]}
+                      rules={[{ required: false, message: '内容行高' }]}
                       initialValue={24}
                     >
                       <InputNumber min={10} />
@@ -5407,7 +5407,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`imgs_width`}
                       label={'小图的宽'}
-                      rules={[{ required: true, message: '小图的宽' }]}
+                      rules={[{ required: false, message: '小图的宽' }]}
                       initialValue={150}
                     >
                       <InputNumber />
@@ -5415,7 +5415,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`imgs_height`}
                       label={'小图的高'}
-                      rules={[{ required: true, message: '小图的高' }]}
+                      rules={[{ required: false, message: '小图的高' }]}
                       initialValue={150}
                     >
                       <InputNumber />
@@ -5427,7 +5427,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`yName`}
                       label={'排序方式'}
-                      rules={[{ required: true, message: '排序方式' }]}
+                      rules={[{ required: false, message: '排序方式' }]}
                       initialValue={'verse'}
                     >
                       <Select
@@ -5451,7 +5451,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`timeSelectDefault`}
                       label={'切换按钮'}
-                      rules={[{ required: true, message: '切换按钮' }]}
+                      rules={[{ required: false, message: '切换按钮' }]}
                     >
                       {commonSettingList
                         ?.sort((a: any, b: any) => a.sort - b.sort)
@@ -5514,7 +5514,7 @@ const Home: React.FC<any> = (props: any) => {
                       name={'iconSize'}
                       label="图标大小"
                       initialValue={24}
-                      rules={[{ required: true, message: '图标大小' }]}
+                      rules={[{ required: false, message: '图标大小' }]}
                     >
                       <InputNumber />
                     </Form.Item>
@@ -5866,14 +5866,14 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name="markNumberTop"
                         label="顶部图示长度"
-                        rules={[{ required: true, message: '顶部图示长度' }]}
+                        rules={[{ required: false, message: '顶部图示长度' }]}
                       >
                         <InputNumber min={0} placeholder="顶部图示长度" />
                       </Form.Item>
                       <Form.Item
                         name="markNumberLeft"
                         label="左侧图示长度"
-                        rules={[{ required: true, message: '左侧图示长度' }]}
+                        rules={[{ required: false, message: '左侧图示长度' }]}
                       >
                         <InputNumber min={0} placeholder="左侧图示长度" />
                       </Form.Item>
@@ -5933,7 +5933,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Form.Item
                         name={`httpRotation`}
                         label={'接口轮训'}
-                        rules={[{ required: true, message: '接口轮训' }]}
+                        rules={[{ required: false, message: '接口轮训' }]}
                         valuePropName="checked"
                         initialValue={false}
                       >
@@ -5970,7 +5970,7 @@ const Home: React.FC<any> = (props: any) => {
                       name={`yName`}
                       label={'按钮名称'}
                       initialValue="按钮"
-                      rules={[{ required: true, message: '按钮名称' }]}
+                      rules={[{ required: false, message: '按钮名称' }]}
                     >
                       <Input size="large" />
                     </Form.Item>
@@ -6023,7 +6023,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`yName`}
                       label={'按钮名称'}
-                      rules={[{ required: true, message: '按钮名称' }]}
+                      rules={[{ required: false, message: '按钮名称' }]}
                     >
                       <Input size="large" />
                     </Form.Item>
@@ -6057,7 +6057,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`password`}
                       label={'设置密码'}
-                      rules={[{ required: true, message: '设置密码' }]}
+                      rules={[{ required: false, message: '设置密码' }]}
                     >
                       <Input.Password visibilityToggle={false} allowClear size="large" />
                     </Form.Item>
@@ -6075,7 +6075,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`yName`}
                       label={'按钮名称'}
-                      rules={[{ required: true, message: '按钮名称' }]}
+                      rules={[{ required: false, message: '按钮名称' }]}
                     >
                       <Input size="large" />
                     </Form.Item>
@@ -6160,7 +6160,7 @@ const Home: React.FC<any> = (props: any) => {
                       name={`yName`}
                       label={'类型'}
                       initialValue={'datePicker'}
-                      rules={[{ required: true, message: '类型' }]}
+                      rules={[{ required: false, message: '类型' }]}
                     >
                       <Select
                         style={{ width: '100%' }}
@@ -6268,7 +6268,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`timeSelectDefault`}
                       label={'按钮参数'}
-                      rules={[{ required: true, message: '按钮参数' }]}
+                      rules={[{ required: false, message: '按钮参数' }]}
                     >
                       {commonSettingList?.map?.((item: any, index: number) => {
                         const { id, label, ip, projectId } = item;
@@ -6344,7 +6344,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`timeSelectDefault`}
                       label={'按钮参数'}
-                      rules={[{ required: true, message: '按钮参数' }]}
+                      rules={[{ required: false, message: '按钮参数' }]}
                     >
                       {commonSettingList?.map?.((item: any, index: number) => {
                         const { label, value, password, color, id } = item;
@@ -6715,7 +6715,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`operationList`}
                       label={'操作项'}
-                      rules={[{ required: true, message: '操作项' }]}
+                      rules={[{ required: false, message: '操作项' }]}
                     >
                       <Select
                         style={{ width: '100%' }}
@@ -6850,7 +6850,7 @@ const Home: React.FC<any> = (props: any) => {
                       name={`direction`}
                       label={'对齐方向'}
                       initialValue={'center'}
-                      rules={[{ required: true, message: '对齐方向' }]}
+                      rules={[{ required: false, message: '对齐方向' }]}
                     >
                       <Select
                         style={{ width: '100%' }}
@@ -7115,14 +7115,14 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name="markNumberTop"
                       label="顶部图示长度"
-                      rules={[{ required: true, message: '顶部图示长度' }]}
+                      rules={[{ required: false, message: '顶部图示长度' }]}
                     >
                       <InputNumber min={1} placeholder="顶部图示长度" />
                     </Form.Item>
                     <Form.Item
                       name="markNumberLeft"
                       label="左侧图示长度"
-                      rules={[{ required: true, message: '左侧图示长度' }]}
+                      rules={[{ required: false, message: '左侧图示长度' }]}
                     >
                       <InputNumber min={1} placeholder="左侧图示长度" />
                     </Form.Item>
@@ -7224,7 +7224,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`fetchType`}
                       label={'http类型'}
-                      rules={[{ required: true, message: 'http类型' }]}
+                      rules={[{ required: false, message: 'http类型' }]}
                     >
                       <Select
                         style={{ width: '100%' }}
@@ -7238,14 +7238,14 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`xName`}
                       label={'上传缺陷地址'}
-                      rules={[{ required: true, message: '接口地址' }]}
+                      rules={[{ required: false, message: '接口地址' }]}
                     >
                       <Input placeholder="接口地址" size="large" />
                     </Form.Item>
                     <Form.Item
                       name={`yName`}
                       label={'获取缺陷地址'}
-                      rules={[{ required: true, message: '接口地址' }]}
+                      rules={[{ required: false, message: '接口地址' }]}
                     >
                       <Input placeholder="接口地址" size="large" />
                     </Form.Item>
@@ -7260,14 +7260,14 @@ const Home: React.FC<any> = (props: any) => {
                         '边框不良',
                         '条码铭牌不清晰',
                       ]}
-                      rules={[{ required: true, message: '归档类型' }]}
+                      rules={[{ required: false, message: '归档类型' }]}
                     >
                       <Select mode="tags" style={{ width: '100%' }} options={[]} />
                     </Form.Item>
                     <Form.Item
                       name={`fileFetch`}
                       label={'归档地址'}
-                      rules={[{ required: true, message: '归档地址' }]}
+                      rules={[{ required: false, message: '归档地址' }]}
                     >
                       <Input placeholder="归档地址" size="large" />
                     </Form.Item>
@@ -7331,7 +7331,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`xName`}
                       label={'嵌套地址'}
-                      rules={[{ required: true, message: '嵌套地址' }]}
+                      rules={[{ required: false, message: '嵌套地址' }]}
                     >
                       <Input size="large" />
                     </Form.Item>
@@ -7374,7 +7374,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item
                       name={`httpRotation`}
                       label={'接口轮训'}
-                      rules={[{ required: true, message: '接口轮训' }]}
+                      rules={[{ required: false, message: '接口轮训' }]}
                       valuePropName="checked"
                       initialValue={false}
                     >
@@ -7516,7 +7516,7 @@ const Home: React.FC<any> = (props: any) => {
                     name={'iconSize'}
                     label="图标大小"
                     initialValue={40}
-                    rules={[{ required: true, message: '图标大小' }]}
+                    rules={[{ required: false, message: '图标大小' }]}
                   >
                     <InputNumber />
                   </Form.Item>
@@ -7573,7 +7573,7 @@ const Home: React.FC<any> = (props: any) => {
                 <Form.Item
                   name={'fontSize'}
                   label="字号"
-                  rules={[{ required: true, message: '字号' }]}
+                  rules={[{ required: false, message: '字号' }]}
                 >
                   <InputNumber />
                 </Form.Item>
@@ -7983,7 +7983,7 @@ const Home: React.FC<any> = (props: any) => {
               <Form.Item
                 name={'value'}
                 label="绑定方案"
-                rules={[{ required: true, message: '绑定方案' }]}
+                rules={[{ required: false, message: '绑定方案' }]}
                 initialValue={paramData?.contentData?.ipList}
               >
                 <Select
@@ -8204,7 +8204,7 @@ const Home: React.FC<any> = (props: any) => {
               <Form.Item
                 name={'pass'}
                 label={'密码校验'}
-                rules={[{ required: true, message: '密码' }]}
+                rules={[{ required: false, message: '密码' }]}
               >
                 <Input />
               </Form.Item>

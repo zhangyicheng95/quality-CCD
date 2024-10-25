@@ -82,12 +82,16 @@ const TableCharts: React.FC<Props> = (props: any) => {
               : {},
         )}
       >
-        <TooltipDiv title={yName} className="charts-header-item">
-          {yName}
-        </TooltipDiv>
-        <TooltipDiv title={xName} className="charts-header-item">
-          {xName}
-        </TooltipDiv>
+        {!!yName?.trim?.() ?
+          <TooltipDiv title={yName} className="charts-header-item">
+            {yName}
+          </TooltipDiv>
+          : null}
+        {!!xName?.trim?.() ?
+          <TooltipDiv title={xName} className="charts-header-item">
+            {xName}
+          </TooltipDiv>
+          : null}
       </div>
       <div
         className="charts-body-box"
