@@ -206,7 +206,7 @@ export default function Toolbar() {
         if (sub_type === 'image') {
           return {
             ...common,
-            url: item.objects?.[0]?.src,
+            url: item.objects?.[0]?.src?.split('?')?.[0],
             dpi: dpi,
           }
         } else if (["line", "dash-line", "arrow-line-1", "arrow-line-2"].includes(sub_type)) {

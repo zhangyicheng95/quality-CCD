@@ -103,28 +103,28 @@ const BarCharts: React.FC<Props> = (props: any) => {
     dataValue.forEach?.((item: any) => {
       const { name, value, type } = item;
       if (value > max) {
-        max = value;
+        max = _.isArray(value) ? Math.max(...value) : value;
       }
       if (type === 'markLine') {
         markLineData = markLineData.concat(item);
       } else if (type === 'start') {
-        threshold_start = value;
+        threshold_start = _.isArray(value) ? Math.min(...value) : value;
       } else if (type === 'end') {
-        threshold_end = value;
+        threshold_end = _.isArray(value) ? Math.max(...value) : value;
       } else {
         seriesData = seriesData.concat(item);
         yData = yData.concat(name);
       }
       if (_.isNull(minValue) || _.isNull(maxValue)) {
-        minValue = value;
-        maxValue = value;
+        minValue = _.isArray(value) ? Math.min(...value) : value;
+        maxValue = _.isArray(value) ? Math.max(...value) : value;
         return;
       }
-      if (value < minValue) {
-        minValue = value;
+      if ((_.isArray(value) ? Math.min(...value) : value) < minValue) {
+        minValue = _.isArray(value) ? Math.min(...value) : value;
       }
-      if (value > maxValue) {
-        maxValue = value;
+      if ((_.isArray(value) ? Math.max(...value) : value) > maxValue) {
+        maxValue = _.isArray(value) ? Math.max(...value) : value;
       }
     });
     if (direction === 'rows') {
@@ -276,7 +276,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
             data: seriesData?.map?.((item: any, index: number) => {
               const { value } = item;
 
-              return value;
+              return _.isArray(value) ? Math.max(...value) : value;
             }),
           }
           : null,
@@ -309,13 +309,12 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 formatter: (params: any) => params?.value?.toFixed?.(0) || params?.value,
                 fontSize,
               },
-              stack: 'total',
               showBackground: !!barRadius && !!showBackground,
-              barMaxWidth: '20%',
+              barMaxWidth: '10%',
               itemStyle: Object.assign(
                 {},
                 barColor.includes('default')
-                  ? { color: color }
+                  ? { color: color || colorOption[index] }
                   : barColor.includes('line1')
                     ? {
                       color: new echarts.graphic.LinearGradient(
@@ -416,7 +415,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
             },
             stack: 'total',
             showBackground: !!barRadius && !!showBackground,
-            barMaxWidth: '20%',
+            barMaxWidth: '10%',
             data: seriesData?.map?.((item: any, index: number) => {
               const { value, color } = item;
               if (params.dataIndex >= colorList.length) {
@@ -503,7 +502,6 @@ const BarCharts: React.FC<Props> = (props: any) => {
           }
       ).filter(Boolean),
     });
-    console.log(option);
 
     myChartRef.current?.setOption(option);
     myChartRef.current?.resize({

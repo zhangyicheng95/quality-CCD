@@ -65,6 +65,19 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
       !!onChange && onChange?.(value);
     }
   };
+  const onSubmit = () => {
+    form.validateFields().then((values) => {
+      const { pass } = values;
+      const { password } = tabPasswordVisible;
+      if (pass == password) {
+        onTabChange(tabPasswordVisible);
+        form.resetFields();
+        setTabPasswordVisible({});
+      } else {
+        message.error('密码错误');
+      }
+    });
+  };
 
   return (
     <div
@@ -154,19 +167,7 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
           <Modal
             title={'密码校验'}
             open={!!Object.keys?.(tabPasswordVisible)?.length}
-            onOk={() => {
-              form.validateFields().then((values) => {
-                const { pass } = values;
-                const { password } = tabPasswordVisible;
-                if (pass == password) {
-                  onTabChange(tabPasswordVisible);
-                  form.resetFields();
-                  setTabPasswordVisible({});
-                } else {
-                  message.error('密码错误');
-                }
-              });
-            }}
+            onOk={() => onSubmit()}
             onCancel={() => {
               form.resetFields();
               setTabPasswordVisible({});
@@ -179,7 +180,7 @@ const SegmentSwitch: React.FC<Props> = (props: any) => {
                 label={'密码校验'}
                 rules={[{ required: true, message: '密码' }]}
               >
-                <Input />
+                <Input autoFocus />
               </Form.Item>
             </Form>
           </Modal>

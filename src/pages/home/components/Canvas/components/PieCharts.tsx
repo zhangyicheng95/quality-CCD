@@ -15,7 +15,7 @@ interface Props {
 
 const PieCharts: React.FC<Props> = (props: any) => {
   let { data = {}, id, legend, dispatch, setMyChartVisible } = props;
-  let { dataValue = [], fontSize, yName } = data;
+  let { dataValue = [], fontSize, yName, ifShowColorList = false } = data;
   if (process.env.NODE_ENV === 'development') {
     dataValue = [
       { name: '机台状态1', value: '1024' },
@@ -53,6 +53,7 @@ const PieCharts: React.FC<Props> = (props: any) => {
         options.legend,
         { left: '3%' },
         legend[id] ? { selected: legend[id] } : {},
+        { show: !!ifShowColorList },
       ),
       grid: { ...options.grid, top: 'bottom' },
       xAxis: { show: false },

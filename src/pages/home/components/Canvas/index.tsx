@@ -1448,6 +1448,7 @@ const Home: React.FC<any> = (props: any) => {
                         dataValue: dataValue || [],
                         fontSize,
                         yName,
+                        ifShowColorList,
                       }}
                     />
                   ) : type === 'pie3D' ? (
@@ -4530,6 +4531,14 @@ const Home: React.FC<any> = (props: any) => {
                       rules={[{ required: false, message: '环内文字' }]}
                     >
                       <Input size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      name="ifShowColorList"
+                      label="展示图例"
+                      initialValue={false}
+                      valuePropName="checked"
+                    >
+                      <Switch />
                     </Form.Item>
                   </Fragment>
                 ) : null}

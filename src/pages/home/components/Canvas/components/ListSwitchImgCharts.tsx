@@ -125,7 +125,7 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
   const domRef = useRef<any>();
   const timeSelected = useRef(moment(new Date()).format(dateFormat));
   const [leftList, setLeftList] = useState([]);
-  const [selected, setSelected] = useState<any>(null);
+  const [selected, setSelected] = useState<any>({});
   const [selectedNum, setSelectedNum] = useState({ left: 0, right: 0 });
   const [searchItem, setSearchItem] = useState('');
   const [tableSource, setTableSource] = useState<any>([]);
@@ -140,7 +140,7 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
           right: dataValue?.[dataValue?.length - 1]?.children?.['right']?.imgs?.length - 1
         });
       } else {
-        setSelected(null);
+        setSelected({});
         setSelectedNum({ left: 0, right: 0 });
       }
     } else {

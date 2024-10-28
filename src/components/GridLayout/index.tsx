@@ -51,6 +51,8 @@ const GridLayout: React.FC<Props> = (props: any) => {
     });
     onChange && onChange(EUlayoutArr);
   };
+  const slider1 = list.filter((i: any) => i.key === 'slider-1');
+  const bodyList = list.filter((i: any) => i.key !== 'slider-1');
 
   return (
     <>
@@ -93,7 +95,7 @@ const GridLayout: React.FC<Props> = (props: any) => {
               }
             })?.filter(Boolean)} */}
 
-            {list.filter(Boolean)}
+            {bodyList.concat(slider1).filter(Boolean)}
           </ResponsiveGridLayout>
         }
       </div>
