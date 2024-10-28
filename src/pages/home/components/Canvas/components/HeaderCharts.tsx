@@ -1,9 +1,11 @@
 import React, { Fragment, useRef } from 'react';
 import * as _ from 'lodash';
 import useClock from '@/hooks/useClock';
-import { BASE_IP } from '@/services/api';
+import { BASE_IP, updateParams } from '@/services/api';
 import { connect, useModel } from 'umi';
 import styles from '../index.module.less';
+import ChooseFileButton from '@/components/ChooseFileButton';
+import { message } from 'antd';
 
 interface Props {
   data: any;
@@ -50,19 +52,77 @@ const HeaderCharts: React.FC<Props> = (props: any) => {
           ) && !!localStorage.getItem('quality_icon'))
             ?
             (
-              <img
-                // @ts-ignore
-                src={localStorage.getItem('quality_icon')?.indexOf('http') > -1 ?
-                  localStorage.getItem('quality_icon')
-                  :
-                  `${BASE_IP}file_browser${localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'}${localStorage.getItem('quality_icon')}?__timestamp=${+new Date()}`}
-                alt="logo"
-                className="header-box-left-logo"
-                style={{
-                  height: magnifierSize,
-                  minHeight: magnifierSize,
-                }}
-              />
+              <Fragment>
+                {
+                  initialState?.params?.contentData?.changeLogo ?
+                    <ChooseFileButton
+                      className="header-box-left-img-select"
+                      name={'header-img-select'}
+                      onClick={() => {
+                        if (!!localStorage.getItem('parentOrigin')) {
+                          window?.parent?.postMessage?.(
+                            { type: 'openFile', name: 'header-img-select', suffix: ['jpg', 'png', 'svg', 'dxf'] },
+                            localStorage.getItem('parentOrigin') || '',
+                          );
+                        } else {
+                          window.location?.reload?.();
+                        }
+                      }}
+                      onOk={(value: any) => {
+                        const params = {
+                          ...initialState?.params,
+                          contentData: {
+                            ...initialState?.params?.contentData,
+                            quality_icon: value,
+                          },
+                        };
+                        updateParams({
+                          id: initialState?.params.id,
+                          data: params,
+                        }).then((res: any) => {
+                          if (res && res.code === 'SUCCESS') {
+                            localStorage.setItem('quality_icon', value);
+                            setTimeout(() => {
+                              window.location.reload();
+                            }, 500);
+                          } else {
+                            message.error(
+                              res?.msg || res?.message || '后台服务异常，请重启服务',
+                            );
+                          }
+                        });
+                      }}
+                    >
+                      <img
+                        // @ts-ignore
+                        src={localStorage.getItem('quality_icon')?.indexOf('http') > -1 ?
+                          localStorage.getItem('quality_icon')
+                          :
+                          `${BASE_IP}file_browser${localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'}${localStorage.getItem('quality_icon')}?__timestamp=${+new Date()}`}
+                        alt="logo"
+                        className="header-box-left-logo"
+                        style={{
+                          height: magnifierSize,
+                          minHeight: magnifierSize,
+                        }}
+                      />
+                    </ChooseFileButton>
+                    :
+                    <img
+                      // @ts-ignore
+                      src={localStorage.getItem('quality_icon')?.indexOf('http') > -1 ?
+                        localStorage.getItem('quality_icon')
+                        :
+                        `${BASE_IP}file_browser${localStorage.getItem('quality_icon')?.indexOf('\\') === 0 ? '' : '\\'}${localStorage.getItem('quality_icon')}?__timestamp=${+new Date()}`}
+                      alt="logo"
+                      className="header-box-left-logo"
+                      style={{
+                        height: magnifierSize,
+                        minHeight: magnifierSize,
+                      }}
+                    />
+                }
+              </Fragment>
             ) : null
         }
         <div

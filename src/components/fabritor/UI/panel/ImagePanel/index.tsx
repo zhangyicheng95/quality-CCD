@@ -24,7 +24,7 @@ export default function ImagePanel() {
       console.log('导入的图片路径', res);
 
       await createFImage({
-        imageSource: res,
+        imageSource: `${res}?__timestamp=${+new Date()}`,
         canvas: editor.canvas,
         sub_type: 'image',
         selectable: false,

@@ -109,6 +109,12 @@ export async function getInitialState(): Promise<{
             }),
           },
         };
+        if (!!contentData?.showLogo && !localStorage.getItem('quality_icon') && !!contentData?.quality_icon) {
+          localStorage.setItem('quality_icon', contentData?.quality_icon);
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+        }
         defaultSettings.navTheme =
           (iframeTheme === 'dark' ? 'realDark' : iframeTheme) || theme || 'realDark';
       } else {
