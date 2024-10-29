@@ -408,7 +408,7 @@ export default function Toolbar() {
     };
     localStorage.setItem('fabritor_web_json', JSON.stringify(string));
     const result = formatResult(json?.objects);
-    if (!!result?.length) {
+    if (!!result?.length && !!result?.filter((i: any) => i.type === 'image')?.length) {
       btnFetch(fetchType, xName, { data: result }).then((res: any) => {
         if (!!res && res.code === 'SUCCESS') {
           message.success('success');

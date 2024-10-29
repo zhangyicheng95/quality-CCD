@@ -34,12 +34,12 @@ export default function LocalImageSelector(props: any) {
         添加图片
       </ChooseFileButton>
       <ChooseFileButton
-        name={'fabric-img-select'}
+        name={'fabric-cad-select'}
         type="primary"
         onClick={() => {
           if (!!localStorage.getItem('parentOrigin')) {
             window?.parent?.postMessage?.(
-              { type: 'openFile', name: 'fabric-img-select', suffix: ["ply", "dxf"] },
+              { type: 'openFile', name: 'fabric-cad-select', suffix: ["ply", "dxf"] },
               localStorage.getItem('parentOrigin') || '',
             );
           } else {

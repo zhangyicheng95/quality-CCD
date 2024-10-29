@@ -1752,7 +1752,9 @@ const Home: React.FC<any> = (props: any) => {
                         modelUpload,
                         ifNeedAllow,
                         modelRotate,
+                        listType,
                         passwordHelp,
+                        password,
                         direction,
                       }}
                     />
@@ -5653,7 +5655,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Switch />
                     </Form.Item> */}
                     <Form.Item
-                      name={`passwordHelp`}
+                      name={`listType`}
                       label={'确认按钮名称'}
                       rules={[{ required: false, message: '确认按钮名称' }]}
                     >
@@ -5845,6 +5847,21 @@ const Home: React.FC<any> = (props: any) => {
                       >
                         新增
                       </Button>
+                    </Form.Item>
+                    <Form.Item
+                      name="passwordHelp"
+                      label="密码权限"
+                      valuePropName="checked"
+                      initialValue={false}
+                    >
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name={`password`}
+                      label={'密码'}
+                      rules={[{ required: false, message: '密码' }]}
+                    >
+                      <Input.Password visibilityToggle={true} allowClear size="large" />
                     </Form.Item>
                   </Fragment>
                 ) : null}

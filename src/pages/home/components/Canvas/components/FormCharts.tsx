@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
-import { Button, Form, message, Modal } from 'antd';
+import { Button, Form, Input, message, Modal } from 'antd';
 import styles from '../index.module.less';
 import { btnFetch } from '@/services/api';
 import CustomWindowBody from '@/components/CustomWindowBody';
@@ -20,6 +20,7 @@ interface Props {
 const FormCharts: React.FC<Props> = (props: any) => {
   const [form] = Form.useForm();
   const [form1] = Form.useForm();
+  const [form2] = Form.useForm();
   let { data = {}, id, started } = props;
   let {
     dataValue = {},
@@ -32,7 +33,9 @@ const FormCharts: React.FC<Props> = (props: any) => {
     modelUpload,
     ifNeedAllow,
     modelRotate,
-    passwordHelp = '',
+    listType = '',
+    passwordHelp,
+    password,
     direction = false,
   } = data;
   const [selectOptions, setSelectOptions] = useState({
@@ -42,9 +45,11 @@ const FormCharts: React.FC<Props> = (props: any) => {
   });
   const [formModalEdit, setFormModalEdit] = useState('');
   const [formModalValue, setFormModalValue] = useState({});
-
   const [visible, setVisible] = useState(false);
   const [tableDataSource, setTableDataSource] = useState([]);
+  const [locked, setLocked] = useState(!!passwordHelp);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
   // 初始化函数
   const init = (value: any) => {
     setSelectOptions(value || {});
@@ -110,6 +115,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
       };
       btnFetch(fetchType, xName, params).then((res: any) => {
         if (!!res && res.code === 'SUCCESS') {
+          setLocked(true);
           message.success('success');
         } else {
           message.error(res?.message || '后台服务异常，请重启服务');
@@ -223,82 +229,98 @@ const FormCharts: React.FC<Props> = (props: any) => {
         }
       >
         <Form form={form} scrollToFirstError>
-          {(timeSelectDefault || [])
-            ?.sort((a: any, b: any) => a.sort - b.sort)
-            ?.map((item: any, index: number) => {
-              const { name, alias, sort = 0, type, className, parent, disabled = false, require = false } = item;
-              if (!!parent) {
-                return null;
-              }
-              if (['Button', 'ModalButton'].includes(type)) {
+          {useMemo(() => {
+            return (timeSelectDefault || [])
+              ?.sort((a: any, b: any) => a.sort - b.sort)
+              ?.map((item: any, index: number) => {
+                const { name, alias, sort = 0, type, className, parent, disabled = false, require = false } = item;
+                if (!!parent) {
+                  return null;
+                }
+                if (['Button', 'ModalButton'].includes(type)) {
+                  return (
+                    <Button
+                      type={className}
+                      disabled={disabled}
+                      className={`form-charts-ant-btn ${className}`}
+                      key={name}
+                      onClick={() => {
+                        if (type === 'ModalButton') {
+                          setFormModalEdit(name);
+                          form1.setFieldsValue(formModalValue?.[name] || {});
+                        } else {
+                          btnFetch(fetchType, xName, { value: name }).then((res: any) => {
+                            if (!!res && res.code === 'SUCCESS') {
+                              message.success('success');
+                            } else {
+                              message.error(res?.message || '后台服务异常，请重启服务');
+                            }
+                          });
+                        }
+                      }}
+                    >
+                      {alias}
+                    </Button>
+                  );
+                }
+                item = {
+                  alias,
+                  name,
+                  onHidden: false,
+                  orderId: sort,
+                  require: require,
+                  type: 'string',
+                  value: ['MultiSelect', 'Select'].includes(type) ? [] : undefined,
+                  widget: Object.assign(
+                    {},
+                    { type },
+                    ['MultiSelect', 'Select'].includes(type)
+                      ? {
+                        options: selectOptions?.[name]?.options || [],
+                      }
+                      : {},
+                  ),
+                };
                 return (
-                  <Button
-                    type={className}
-                    disabled={disabled}
-                    className={`form-charts-ant-btn ${className}`}
-                    key={name}
-                    onClick={() => {
-                      if (type === 'ModalButton') {
-                        setFormModalEdit(name);
-                        form1.setFieldsValue(formModalValue?.[name] || {});
-                      } else {
-                        btnFetch(fetchType, xName, { value: name }).then((res: any) => {
-                          if (!!res && res.code === 'SUCCESS') {
-                            message.success('success');
-                          } else {
-                            message.error(res?.message || '后台服务异常，请重启服务');
-                          }
-                        });
+                  <FormatWidgetToDom
+                    key={item?.name}
+                    form={form}
+                    id={item?.name}
+                    fontSize={fontSize}
+                    label={item?.alias || item?.name}
+                    config={[item?.name, item]}
+                    disabled={locked || disabled}
+                    style={(index + 1) === timeSelectDefault.length ? { marginBottom: 0 } : {}}
+                    widgetChange={() => {
+                      if (!ifNeedAllow) {
+                        onSubmit();
                       }
                     }}
-                  >
-                    {alias}
-                  </Button>
+                  />
                 );
-              }
-              item = {
-                alias,
-                name,
-                onHidden: false,
-                orderId: sort,
-                require: require,
-                type: 'string',
-                value: ['MultiSelect', 'Select'].includes(type) ? [] : undefined,
-                widget: Object.assign(
-                  {},
-                  { type },
-                  ['MultiSelect', 'Select'].includes(type)
-                    ? {
-                      options: selectOptions?.[name]?.options || [],
-                    }
-                    : {},
-                ),
-              };
-              return (
-                <FormatWidgetToDom
-                  key={item?.name}
-                  form={form}
-                  id={item?.name}
-                  fontSize={fontSize}
-                  label={item?.alias || item?.name}
-                  config={[item?.name, item]}
-                  disabled={disabled}
-                  style={(index + 1) === timeSelectDefault.length ? { marginBottom: 0 } : {}}
-                  widgetChange={() => {
-                    if (!ifNeedAllow) {
-                      onSubmit();
-                    }
-                  }}
-                />
-              );
-            })}
+              })
+          }, [locked])}
         </Form>
       </CustomWindowBody>
       {ifNeedAllow ? (
-        <div className="flex-box-center">
+        <div className="flex-box-center form-charts-footer">
+          {passwordHelp ?
+            <Button
+              style={{ height: 40, fontSize }}
+              onClick={() => {
+                if (locked) {
+                  setPasswordVisible(true);
+                } else {
+                  setLocked((prev) => !prev);
+                }
+              }}
+            >
+              {locked ? '解锁' : '锁定'}
+            </Button>
+            : null}
           <Button
             type="primary"
-            style={{ height: 40, width: 200, fontSize }}
+            style={{ height: 40, fontSize }}
             onClick={() => {
               if (direction) {
                 Modal.confirm({
@@ -314,10 +336,9 @@ const FormCharts: React.FC<Props> = (props: any) => {
               } else {
                 onSubmit();
               }
-
             }}
           >
-            {passwordHelp ? passwordHelp : '确认'}
+            {listType ? listType : '确认'}
           </Button>
         </div>
       ) : null}
@@ -499,6 +520,42 @@ const FormCharts: React.FC<Props> = (props: any) => {
           </div>
         </div>
       </Modal>
+
+      {
+        !!passwordVisible ?
+          <Modal
+            title={'密码校验'}
+            open={!!passwordVisible}
+            onOk={() => {
+              form2.validateFields().then((values) => {
+                const { pass } = values;
+                if (pass == password) {
+                  form2.resetFields();
+                  setLocked(false);
+                  setPasswordVisible(false);
+                } else {
+                  message.error('密码错误');
+                }
+              });
+            }}
+            onCancel={() => {
+              form2.resetFields();
+              setPasswordVisible(false);
+            }}
+            maskClosable={false}
+          >
+            <Form form={form2} scrollToFirstError>
+              <Form.Item
+                name={'pass'}
+                label={'密码校验'}
+                rules={[{ required: true, message: '密码' }]}
+              >
+                <Input autoFocus />
+              </Form.Item>
+            </Form>
+          </Modal>
+          : null
+      }
     </div>
   );
 };
