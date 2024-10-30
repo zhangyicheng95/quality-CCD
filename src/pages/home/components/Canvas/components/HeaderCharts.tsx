@@ -45,11 +45,7 @@ const HeaderCharts: React.FC<Props> = (props: any) => {
         }}
       >
         {
-          ((
-            _.isBoolean(initialState?.params?.contentData?.showLogo)
-              ? initialState?.params?.contentData?.showLogo
-              : true
-          ) && !!localStorage.getItem('quality_icon'))
+          (!!initialState?.params?.contentData?.showLogo && !!localStorage.getItem('quality_icon'))
             ?
             (
               <Fragment>
@@ -123,7 +119,8 @@ const HeaderCharts: React.FC<Props> = (props: any) => {
                     />
                 }
               </Fragment>
-            ) : null
+            )
+            : null
         }
         <div
           className="flex-box header-box-left-title"

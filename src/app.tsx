@@ -93,7 +93,7 @@ export async function getInitialState(): Promise<{
         params = res?.data || {};
         title = res?.data?.quality_name || res?.data?.name;
         const { contentData = {} } = params;
-        const { theme, ipList = [] } = contentData;
+        const { theme, ipList = [], showLogo, quality_icon } = contentData;
         params = ['contentData']['ipList'] = {
           ...params,
           contentData: {
@@ -109,8 +109,8 @@ export async function getInitialState(): Promise<{
             }),
           },
         };
-        if (!!contentData?.showLogo && !localStorage.getItem('quality_icon') && !!contentData?.quality_icon) {
-          localStorage.setItem('quality_icon', contentData?.quality_icon);
+        if (!!showLogo && !localStorage.getItem('quality_icon') && !!quality_icon) {
+          localStorage.setItem('quality_icon', quality_icon);
           setTimeout(() => {
             window.location.reload();
           }, 500);
