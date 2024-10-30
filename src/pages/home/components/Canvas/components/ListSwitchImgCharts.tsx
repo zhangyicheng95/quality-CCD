@@ -295,8 +295,224 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
                           "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
                           "point": "1",
                           "camera": "1"
+                        },
+                        {
+                          "carType": "F1",
+                          "position": "左",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F1",
+                          "position": "左",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F1",
+                          "position": "左",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F1",
+                          "position": "左",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F1",
+                          "position": "左",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F1",
+                          "position": "左",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F1",
+                          "position": "左",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F1",
+                          "position": "左",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F1",
+                          "position": "左",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
+                        },
+                        {
+                          "carType": "F2",
+                          "position": "右",
+                          "result": "OK",
+                          "pointName": "前地板地毯前段（左）、前门门槛总成（左）",
+                          "point": "1",
+                          "camera": "1"
                         }
-                      ])
+                      ]);
                     }
                   }}
                 >
@@ -325,7 +541,10 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
         <div className="listSwitchImgCharts-right-show-id">
           {`当前数据: ${selected?.name}`}
         </div>
-        <div className="flex-box listSwitchImgCharts-right-body" style={{ fontSize: magnifierSize }}>
+        <div className="flex-box listSwitchImgCharts-right-body" style={{
+          fontSize: magnifierSize,
+          height: `calc(100% - 16px - ${fontSize}px)`,
+        }}>
           {
             modelRotate === '2' ?
               <Fragment>

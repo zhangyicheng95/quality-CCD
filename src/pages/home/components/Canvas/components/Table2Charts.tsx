@@ -2,11 +2,9 @@ import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import * as _ from 'lodash';
 import styles from '../index.module.less';
 import TooltipDiv from '@/components/TooltipDiv';
-import { Button, message } from 'antd';
+import { message } from 'antd';
 import { useModel } from 'umi';
 import { findChineseNum, ifHasChinese } from '@/utils/utils';
-import { updateParams } from '@/services/api';
-import { UndoOutlined } from '@ant-design/icons';
 import moment from 'moment';
 
 interface Props {
@@ -215,15 +213,11 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     bodyPaddingSize,
     des_layout,
   } = data;
-  const ifCanEdit = useMemo(() => {
-    return location.hash?.indexOf('edit') > -1;
-  }, [location.hash]);
-  const { initialState, setInitialState } = useModel<any>('@@initialState');
+  const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
   const { flowData } = params;
   const { nodes } = flowData;
   const domRef = useRef<any>(null);
-  const [boxSizeSelf, setBoxSizeSelf] = useState<any>(0);
   const [tableSizeSelf, setTableSizeSelf] = useState<any>([]);
   if (process.env.NODE_ENV === 'development') {
     dataValue = localData;
@@ -238,7 +232,6 @@ const Table2Charts: React.FC<Props> = (props: any) => {
       return;
     }
     let list: any = [];
-    let boxSize = 0;
     if (des_layout === 'horizontal') {
       const horizontalLength = dataValue?.[0]?.value?.length;
       let nameListLength = 0;
@@ -268,12 +261,10 @@ const Table2Charts: React.FC<Props> = (props: any) => {
           const number = (text?.indexOf('http://') > -1 ? 2 : text?.length) * fontSize * (isNum ? 0.57 : 1) + 18;
           if (number > (numberList[i] || 0)) {
             numberList[i] = number;
-            boxSize += number;
           }
         }
       });
       numberList.unshift(nameListLength * fontSize + 18);
-      boxSize += nameListLength * fontSize + 18;
 
       setTableSizeSelf((prev: any) => {
         return (!!prev.length ? prev : numberList).map((item: any, index: number) => {
@@ -283,7 +274,6 @@ const Table2Charts: React.FC<Props> = (props: any) => {
           };
         });
       });
-      setBoxSizeSelf(Math.max(boxSize, domRef.current?.clientWidth));
     } else {
       (dataValue || [])?.forEach?.((item: any, index: number) => {
         const { name, value } = item;
@@ -310,7 +300,6 @@ const Table2Charts: React.FC<Props> = (props: any) => {
           const trustLengthNum = (Math.max(text?.length, name.length) - findChineseNum('' + text)) * fontSize * 0.59
             +
             findChineseNum('' + text) * fontSize * 1
-            // (isNum || name?.indexOf('时间') > -1 ? 0.59 : 1) 
             + 32;
           if (trustLengthNum > number) {
             number = trustLengthNum;
@@ -318,7 +307,6 @@ const Table2Charts: React.FC<Props> = (props: any) => {
         });
 
         list[index] = number;
-        boxSize += number;
       });
       setTableSizeSelf((prev: any) => {
         return (!!prev.length ? prev : list).map((item: any, index: number) => {
@@ -328,7 +316,6 @@ const Table2Charts: React.FC<Props> = (props: any) => {
           };
         });
       });
-      setBoxSizeSelf(Math.max(boxSize, domRef.current?.clientWidth));
     }
   }, [dataValue, fontSize, domRef?.current?.clientWidth, window.screen.width]);
 
@@ -466,8 +453,13 @@ const Table2Charts: React.FC<Props> = (props: any) => {
           <div
             className="charts-header-box flex-box"
             style={Object.assign(
-              { fontSize: tableFontSize },
-              // { width: boxSizeSelf > domRef?.current?.clientWidth + 20 ? boxSizeSelf : '100%' },
+              {
+                fontSize: tableFontSize,
+                minWidth: tableSizeSelf?.reduce((pre: any, cen: any) => {
+                  const { minWidth } = cen;
+                  return pre + minWidth;
+                }, 0)
+              },
               headerBackgroundColor === 'transparent'
                 ? { backgroundColor: 'transparent' }
                 : headerBackgroundColor === 'line1'
@@ -522,7 +514,6 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                   borderWidth: '1px',
                 }
                 : {},
-              // { width: boxSizeSelf > domRef?.current?.clientWidth + 20 ? boxSizeSelf : '100%' },
             )}
           >
             {_.isArray(dataValue)

@@ -415,7 +415,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
             },
             stack: 'total',
             showBackground: !!barRadius && !!showBackground,
-            barMaxWidth: '10%',
+            barMaxWidth: '20%',
             data: seriesData?.map?.((item: any, index: number) => {
               const { value, color } = item;
               if (params.dataIndex >= colorList.length) {
