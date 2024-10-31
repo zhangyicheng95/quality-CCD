@@ -19,6 +19,7 @@ const BasicTable = (props: any) => {
           defaultPageSize: 20,
           showTotal: (total, range) => `共${total}条`,
           onChange: (page, pageSize) => !!onPageChange && onPageChange?.({ page, pageSize }),
+          ...pagination,
         } : false}
         {...rest}
       />

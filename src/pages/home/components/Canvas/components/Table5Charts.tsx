@@ -13,170 +13,173 @@ interface Props {
   id: any;
   onClick?: any;
 }
-const localData = [
-  {
-    name: '结果',
-    value: [
-      { value: 1 },
-      { value: 'OK' },
-      { value: 1 },
-      { value: 1 },
-      { value: 1 },
-      { value: 1 },
-      { value: 1 },
-      { value: 1 },
-      { value: 1 },
-    ],
-  },
-  {
-    name: '生产号',
-    value: [
-      { value: '2882381' },
-      { value: '2882383' },
-      { value: '2882384' },
-      { value: '2882387' },
-      { value: '2882389' },
-      { value: '2882392' },
-      { value: '2882394' },
-      { value: '2882396' },
-      { value: '2882399' },
-    ],
-  },
-  {
-    name: '点位名称',
-    value: [
-      { value: '前门音响' },
-      { value: '左前门把手' },
-      { value: '后门' },
-      { value: '前门音响' },
-      { value: '左前门把手' },
-      { value: '前门音响' },
-      { value: '后门' },
-      { value: '左前门把手' },
-      { value: '后门' },
-    ],
-  },
-  {
-    name: '生产号1',
-    value: [
-      { value: '2882381' },
-      { value: '2882383' },
-      { value: '2882384' },
-      { value: '2882387' },
-      { value: '2882389' },
-      { value: '2882392' },
-      { value: '2882394' },
-      { value: '2882396' },
-      { value: '2882399' },
-    ],
-  },
-  {
-    name: '点位名称1',
-    value: [
-      { value: '前门音响' },
-      { value: '左前门把手' },
-      { value: '后门' },
-      { value: '前门音响' },
-      { value: '左前门把手' },
-      { value: '前门音响' },
-      { value: '后门' },
-      { value: '左前门把手' },
-      { value: '后门' },
-    ],
-  },
-  {
-    name: '生产号2',
-    value: [
-      { value: '2882381' },
-      { value: '2882383' },
-      { value: '2882384' },
-      { value: '2882387' },
-      { value: '2882389' },
-      { value: '2882392' },
-      { value: '2882394' },
-      { value: '2882396' },
-      { value: '2882399' },
-    ],
-  },
-  {
-    name: '点位名称2',
-    value: [
-      { value: '前门音响' },
-      { value: '左前门把手' },
-      { value: '后门' },
-      { value: '前门音响' },
-      { value: '左前门把手' },
-      { value: '前门音响' },
-      { value: '后门' },
-      { value: '左前门把手' },
-      { value: '后门' },
-    ],
-  },
-  {
-    name: '检测时间',
-    value: [
-      {
-        value: moment(
-          new Date(new Date(new Date().toLocaleDateString()).getTime() + 1 * 60 * 1000),
-        ).format('YYYY-MM-DD HH:mm:ss'),
-      },
-      {
-        value: moment(
-          new Date(new Date(new Date().toLocaleDateString()).getTime() + 30 * 60 * 1000),
-        ).format('YYYY-MM-DD HH:mm:ss'),
-      },
-      {
-        value: moment(
-          new Date(new Date(new Date().toLocaleDateString()).getTime() + 2 * 52 * 60 * 1000),
-        ).format('YYYY-MM-DD HH:mm:ss'),
-      },
-      {
-        value: moment(
-          new Date(new Date(new Date().toLocaleDateString()).getTime() + 3 * 51 * 60 * 1000),
-        ).format('YYYY-MM-DD HH:mm:ss'),
-      },
-      {
-        value: moment(
-          new Date(new Date(new Date().toLocaleDateString()).getTime() + 4 * 51 * 60 * 1000),
-        ).format('YYYY-MM-DD HH:mm:ss'),
-      },
-      {
-        value: moment(
-          new Date(new Date(new Date().toLocaleDateString()).getTime() + 5 * 51 * 60 * 1000),
-        ).format('YYYY-MM-DD HH:mm:ss'),
-      },
-      {
-        value: moment(
-          new Date(new Date(new Date().toLocaleDateString()).getTime() + 6 * 53 * 60 * 1000),
-        ).format('YYYY-MM-DD HH:mm:ss'),
-      },
-      {
-        value: moment(
-          new Date(new Date(new Date().toLocaleDateString()).getTime() + 7 * 54 * 60 * 1000),
-        ).format('YYYY-MM-DD HH:mm:ss'),
-      },
-      {
-        value: moment(
-          new Date(new Date(new Date().toLocaleDateString()).getTime() + 8 * 50 * 60 * 1000),
-        ).format('YYYY-MM-DD HH:mm:ss'),
-      },
-    ],
-  },
-  {
-    name: '缺陷类型',
-    value: [
-      { value: '错装' },
-      { value: '配合不良' },
-      { value: '配合不良' },
-      { value: '错装' },
-      { value: '配合不良' },
-      { value: '错装' },
-      { value: '配合不良' },
-      { value: '配合不良' },
-      { value: '错装' },
-    ],
-  },
-];
+const localData = {
+  data: [
+    {
+      name: '结果',
+      value: [
+        { value: 1 },
+        { value: 'OK' },
+        { value: 1 },
+        { value: 1 },
+        { value: 1 },
+        { value: 1 },
+        { value: 1 },
+        { value: 1 },
+        { value: 1 },
+      ],
+    },
+    {
+      name: '生产号',
+      value: [
+        { value: '2882381' },
+        { value: '2882383' },
+        { value: '2882384' },
+        { value: '2882387' },
+        { value: '2882389' },
+        { value: '2882392' },
+        { value: '2882394' },
+        { value: '2882396' },
+        { value: '2882399' },
+      ],
+    },
+    {
+      name: '点位名称',
+      value: [
+        { value: '前门音响' },
+        { value: '左前门把手' },
+        { value: '后门' },
+        { value: '前门音响' },
+        { value: '左前门把手' },
+        { value: '前门音响' },
+        { value: '后门' },
+        { value: '左前门把手' },
+        { value: '后门' },
+      ],
+    },
+    {
+      name: '生产号1',
+      value: [
+        { value: '2882381' },
+        { value: '2882383' },
+        { value: '2882384' },
+        { value: '2882387' },
+        { value: '2882389' },
+        { value: '2882392' },
+        { value: '2882394' },
+        { value: '2882396' },
+        { value: '2882399' },
+      ],
+    },
+    {
+      name: '点位名称1',
+      value: [
+        { value: '前门音响' },
+        { value: '左前门把手' },
+        { value: '后门' },
+        { value: '前门音响' },
+        { value: '左前门把手' },
+        { value: '前门音响' },
+        { value: '后门' },
+        { value: '左前门把手' },
+        { value: '后门' },
+      ],
+    },
+    {
+      name: '生产号2',
+      value: [
+        { value: '2882381' },
+        { value: '2882383' },
+        { value: '2882384' },
+        { value: '2882387' },
+        { value: '2882389' },
+        { value: '2882392' },
+        { value: '2882394' },
+        { value: '2882396' },
+        { value: '2882399' },
+      ],
+    },
+    {
+      name: '点位名称2',
+      value: [
+        { value: '前门音响' },
+        { value: '左前门把手' },
+        { value: '后门' },
+        { value: '前门音响' },
+        { value: '左前门把手' },
+        { value: '前门音响' },
+        { value: '后门' },
+        { value: '左前门把手' },
+        { value: '后门' },
+      ],
+    },
+    {
+      name: '检测时间',
+      value: [
+        {
+          value: moment(
+            new Date(new Date(new Date().toLocaleDateString()).getTime() + 1 * 60 * 1000),
+          ).format('YYYY-MM-DD HH:mm:ss'),
+        },
+        {
+          value: moment(
+            new Date(new Date(new Date().toLocaleDateString()).getTime() + 30 * 60 * 1000),
+          ).format('YYYY-MM-DD HH:mm:ss'),
+        },
+        {
+          value: moment(
+            new Date(new Date(new Date().toLocaleDateString()).getTime() + 2 * 52 * 60 * 1000),
+          ).format('YYYY-MM-DD HH:mm:ss'),
+        },
+        {
+          value: moment(
+            new Date(new Date(new Date().toLocaleDateString()).getTime() + 3 * 51 * 60 * 1000),
+          ).format('YYYY-MM-DD HH:mm:ss'),
+        },
+        {
+          value: moment(
+            new Date(new Date(new Date().toLocaleDateString()).getTime() + 4 * 51 * 60 * 1000),
+          ).format('YYYY-MM-DD HH:mm:ss'),
+        },
+        {
+          value: moment(
+            new Date(new Date(new Date().toLocaleDateString()).getTime() + 5 * 51 * 60 * 1000),
+          ).format('YYYY-MM-DD HH:mm:ss'),
+        },
+        {
+          value: moment(
+            new Date(new Date(new Date().toLocaleDateString()).getTime() + 6 * 53 * 60 * 1000),
+          ).format('YYYY-MM-DD HH:mm:ss'),
+        },
+        {
+          value: moment(
+            new Date(new Date(new Date().toLocaleDateString()).getTime() + 7 * 54 * 60 * 1000),
+          ).format('YYYY-MM-DD HH:mm:ss'),
+        },
+        {
+          value: moment(
+            new Date(new Date(new Date().toLocaleDateString()).getTime() + 8 * 50 * 60 * 1000),
+          ).format('YYYY-MM-DD HH:mm:ss'),
+        },
+      ],
+    },
+    {
+      name: '缺陷类型',
+      value: [
+        { value: '错装' },
+        { value: '配合不良' },
+        { value: '配合不良' },
+        { value: '错装' },
+        { value: '配合不良' },
+        { value: '错装' },
+        { value: '配合不良' },
+        { value: '配合不良' },
+        { value: '错装' },
+      ],
+    },
+  ],
+  total: 100
+};
 const Table5Charts: React.FC<Props> = (props: any) => {
   const { data = {}, id } = props;
   let {
@@ -196,18 +199,18 @@ const Table5Charts: React.FC<Props> = (props: any) => {
   const [dataSource, setDataSource] = useState<any>([]);
 
   useEffect(() => {
-    if (!_.isArray(dataValue)) {
+    if (!_.isArray(dataValue?.data)) {
       message.error('分页表格组件数据格式不正确，请检查');
       return;
     };
-    const keys = (dataValue || [])
+    const keys = (dataValue?.data || [])
       ?.reduce((pre: any, cen: any) => {
         const { name } = cen;
         return Object.assign({}, pre, { [name]: '' });
       }, {});
 
     let list: any = [];
-    (dataValue || [])?.forEach((item: any) => {
+    (dataValue?.data || [])?.forEach((item: any) => {
       const { name, value } = item;
       (value || [])?.forEach((valueItem: any, index: number) => {
         if (!!list[index]) {
@@ -225,9 +228,9 @@ const Table5Charts: React.FC<Props> = (props: any) => {
     });
 
     setDataSource(list);
-  }, [dataValue]);
+  }, [dataValue?.data]);
   const columns = useMemo(() => {
-    return dataValue?.map((item: any) => {
+    return dataValue?.data?.map((item: any) => {
       const { name, value } = item;
       return {
         title: name,
@@ -237,7 +240,7 @@ const Table5Charts: React.FC<Props> = (props: any) => {
         width: `${fontSize * name?.length + 32}px`
       };
     });
-  }, [dataValue]);
+  }, [dataValue?.data]);
   const onSubmit = (params: any) => {
     form.validateFields().then((values) => {
       btnFetch(fetchType, xName, { ...values, ...params }).then((res: any) => {
@@ -332,6 +335,9 @@ const Table5Charts: React.FC<Props> = (props: any) => {
             columns={columns}
             dataSource={dataSource}
             bordered={des_bordered}
+            pagination={!!dataValue?.total ? {
+              total: dataValue?.total,
+            } : {}}
             onPageChange={(res: any) => {
               pageRef.current = res;
               onSubmit({ ...res, type: 'search' });
