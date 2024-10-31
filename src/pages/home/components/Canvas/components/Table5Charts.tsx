@@ -188,8 +188,8 @@ const Table5Charts: React.FC<Props> = (props: any) => {
         width: `${fontSize * name?.length + 32}px`,
         render: (text: any, record: any) => {
           if (!!text && !!Object?.keys?.(text)?.length) {
-            return <div style={Object.assign({ lineHeight: `${line_height}px` }, !!text?.color ?
-              valueColor === 'value' ? { color: text?.color } : { backgroundColor: text?.color }
+            return <div style={Object.assign({ lineHeight: `${line_height}px`, padding: '0 4px' }, !!text?.color ?
+              valueColor === 'value' ? { color: text?.color } : { backgroundColor: text?.color, color: '#eee' }
               : {})}>{text?.value}</div>
           } else {
             return text;
