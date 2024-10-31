@@ -719,6 +719,28 @@ export function FormatWidgetToDom(props: any) {
           }
         </Form.Item>
       );
+    case 'RangePicker':
+      return (
+        <Form.Item
+          name={name}
+          label={label}
+          tooltip={description}
+          style={!!style ? style : {}}
+          initialValue={moment(value || undefined)}
+          rules={[{ required: require, message: `${alias}` }]}
+        >
+          {
+            <DatePicker.RangePicker
+              disabled={disabled}
+              onBlur={(e: any) => {
+                widgetChange?.(name, new Date(e.target.value).getTime(), parent);
+              }}
+              showTime
+              style={{ width: '100%' }}
+            />
+          }
+        </Form.Item>
+      );
     case 'IpInput':
       return (
         <Form.Item

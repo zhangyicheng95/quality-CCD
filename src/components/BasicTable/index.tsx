@@ -4,7 +4,7 @@ import { Table, Pagination } from 'antd';
 import styles from './index.less';
 
 const BasicTable = (props: any) => {
-  const { dataSource, summary, pagination, ...rest } = props;
+  const { dataSource, summary, pagination, onPageChange, ...rest } = props;
 
   return (
     <div className={styles.basicTable}>
@@ -13,11 +13,12 @@ const BasicTable = (props: any) => {
         dataSource={dataSource}
         pagination={pagination !== null ? {
           total: dataSource.length,
-          // showQuickJumper: true,
+          showQuickJumper: true,
           showSizeChanger: true,
           pageSizeOptions: [10, 20, 50],
           defaultPageSize: 20,
-          // showTotal: (total, range) => `共${total}条`,
+          showTotal: (total, range) => `共${total}条`,
+          onChange: (page, pageSize) => !!onPageChange && onPageChange?.({ page, pageSize }),
         } : false}
         {...rest}
       />

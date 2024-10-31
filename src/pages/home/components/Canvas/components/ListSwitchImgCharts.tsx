@@ -27,8 +27,7 @@ const localData1 = [
             "url": 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0',
             "point": { "label": "点位", "value": "8" },
             "status": { "label": "", "value": "OK" },
-          },
-          `http://localhost:8866/${guid()}.jpg`
+          }
         ]
       },
       "right": {
@@ -579,6 +578,7 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
                       magnifierSize: 4,
                       showFooter: true,
                       notLocalStorage: true,
+                      fontSize
                     }}
                   />
                 </div>

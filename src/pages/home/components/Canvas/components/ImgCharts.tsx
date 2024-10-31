@@ -619,7 +619,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         </div>
       ) : null}
       {showFooter ? (
-        <div className="flex-box-justify-between img-box-footer-list2">
+        <div className="flex-box-justify-between img-box-footer-list2" style={{ fontSize: 16 }}>
           {_.isObject(source) &&
             (Object.entries(source) || [])?.map?.((item: any) => {
               if (item[0] == 'url') {

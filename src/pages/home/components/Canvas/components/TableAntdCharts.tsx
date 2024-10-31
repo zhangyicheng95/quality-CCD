@@ -135,53 +135,57 @@ const TableAntdCharts: React.FC<Props> = (props: any) => {
           });
         }
       });
+    };
+    if (_.isArray(timeSelectDefault)) {
+      let length = 0;
+      (timeSelectDefault || [])?.forEach?.((item: any) => {
+        const { label } = item;
+        length += label?.length;
+      });
+      return timeSelectDefault?.length
+        ? result.concat({
+          title: '操作项',
+          dataIndex: 'operation',
+          key: 'operation',
+          width: length * fontSize + 16 + 40,
+          render: (text: any, record: any) => {
+            return (
+              <div className="flex-box">
+                {(timeSelectDefault || [])?.map((item: any, index: number) => {
+                  const { value, label } = item;
+                  return (
+                    <div className="flex-box" key={`operation-${value}`}>
+                      <a
+                        onClick={() => {
+                          if (!!fetchType && !!xName) {
+                            btnFetch(fetchType, xName, { value }).then((res: any) => {
+                              if (res && res.code === 'SUCCESS') {
+                                message.success('success');
+                              } else {
+                                message.error(
+                                  res?.msg || res?.message || '后台服务异常，请重启服务',
+                                );
+                              }
+                            });
+                          }
+                        }}
+                      >
+                        {label}
+                      </a>
+                      {index + 1 === timeSelectDefault?.length ? null : (
+                        <span className="operation-line">|</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          },
+        })
+        : result;
+    } else {
+      return result;
     }
-    let length = 0;
-    (timeSelectDefault || [])?.forEach?.((item: any) => {
-      const { label } = item;
-      length += label?.length;
-    });
-    return timeSelectDefault?.length
-      ? result.concat({
-        title: '操作项',
-        dataIndex: 'operation',
-        key: 'operation',
-        width: length * fontSize + 16 + 40,
-        render: (text: any, record: any) => {
-          return (
-            <div className="flex-box">
-              {(timeSelectDefault || [])?.map((item: any, index: number) => {
-                const { value, label } = item;
-                return (
-                  <div className="flex-box" key={`operation-${value}`}>
-                    <a
-                      onClick={() => {
-                        if (!!fetchType && !!xName) {
-                          btnFetch(fetchType, xName, { value }).then((res: any) => {
-                            if (res && res.code === 'SUCCESS') {
-                              message.success('success');
-                            } else {
-                              message.error(
-                                res?.msg || res?.message || '后台服务异常，请重启服务',
-                              );
-                            }
-                          });
-                        }
-                      }}
-                    >
-                      {label}
-                    </a>
-                    {index + 1 === timeSelectDefault?.length ? null : (
-                      <span className="operation-line">|</span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          );
-        },
-      })
-      : result;
   }, [dataValue, timeSelectDefault]);
   const onSearch = (params?: any) => {
     if (!!fetchType && !!xName) {

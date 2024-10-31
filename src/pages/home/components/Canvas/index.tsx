@@ -147,6 +147,7 @@ import CountDownCharts from './components/CountDownCharts';
 import ListSwitchImgCharts from './components/ListSwitchImgCharts';
 import ButtonCharts from './components/ButtonCharts';
 import ChartsCombinationCharts from './components/ChartsCombinationCharts';
+import Table5Charts from './components/Table5Charts';
 
 const leftPanelDataLocal = [
   {
@@ -1549,16 +1550,15 @@ const Home: React.FC<any> = (props: any) => {
                       }}
                     />
                   ) : type === 'table5' ? (
-                    <TableEditCharts
+                    <Table5Charts
                       id={key}
                       data={{
                         dataValue: dataValue || [],
-                        tableFontSize,
                         fontSize,
+                        des_bordered,
                         fetchType,
                         xName,
-                        yName,
-                        ifFetch,
+                        timeSelectDefault
                       }}
                     />
                   ) : type === 'tableAntd' ? (
@@ -3149,7 +3149,7 @@ const Home: React.FC<any> = (props: any) => {
   };
   // 表单窗口
   const onFormChartsChange = (value: any, index: number, type: string, parent?: string) => {
-    let list = [].concat(commonSettingList);
+    let list: any = [].concat(commonSettingList);
     if (type === 'remove') {
       setCommonSettingList([]);
       list = commonSettingList
@@ -3161,7 +3161,7 @@ const Home: React.FC<any> = (props: any) => {
         })
         .filter(Boolean);
     } else if (type === 'add') {
-      list = (commonSettingList || [])?.concat({ sort: commonSettingList.length });
+      list = (_.isArray(commonSettingList) ? commonSettingList : [])?.concat({ sort: (_.isArray(commonSettingList) ? commonSettingList : []).length });
     } else if (type === 'addChild') {
       list = (commonSettingList || [])?.concat({ sort: commonSettingList.length, parent });
     } else if (type === 'up') {
@@ -5175,6 +5175,9 @@ const Home: React.FC<any> = (props: any) => {
                 ) : null}
                 {['table5'].includes(windowType) ? (
                   <Fragment>
+                    <Form.Item name="des_bordered" label="是否展示边框" valuePropName="checked">
+                      <Switch />
+                    </Form.Item>
                     <Form.Item
                       name={`fetchType`}
                       label={'http类型'}
@@ -5196,14 +5199,180 @@ const Home: React.FC<any> = (props: any) => {
                       <Input size="large" />
                     </Form.Item>
                     <Form.Item
-                      name={`yName`}
-                      label={'获取类型'}
-                      rules={[{ required: false, message: '获取类型' }]}
+                      name={`timeSelectDefault`}
+                      label={'表单项'}
+                      rules={[{ required: false, message: '表单项' }]}
                     >
-                      <Input size="large" />
-                    </Form.Item>
-                    <Form.Item name="ifFetch" label="是否拉取列表" valuePropName="checked">
-                      <Switch />
+                      {commonSettingList
+                        ?.sort((a: any, b: any) => a.sort - b.sort)
+                        ?.map?.((item: any, index: number) => {
+                          const {
+                            name,
+                            alias,
+                            type,
+                            className = '',
+                            id,
+                            parent,
+                            require = false,
+                          } = item;
+                          if (!!parent) {
+                            return null;
+                          }
+                          return (
+                            <div
+                              className="flex-box form-time-select-item"
+                              key={`segmentSwitch-item-${index}`}
+                              style={{ marginBottom: 8, gap: 8 }}
+                            >
+                              <div style={{ flex: 1 }}>
+                                <Input
+                                  defaultValue={name}
+                                  placeholder="name"
+                                  style={{ height: 28 }}
+                                  onChange={(e) => {
+                                    const val = e?.target?.value;
+                                    onFormChartsChange(val, index, 'name');
+                                  }}
+                                />
+                              </div>
+                              <div style={{ flex: 1 }}>
+                                <Input
+                                  defaultValue={alias}
+                                  placeholder="alias"
+                                  style={{ height: 28 }}
+                                  onChange={(e) => {
+                                    const val = e?.target?.value;
+                                    onFormChartsChange(val, index, 'alias');
+                                  }}
+                                />
+                              </div>
+                              <div style={{ flex: 1 }}>
+                                <Select
+                                  defaultValue={type}
+                                  placeholder="type"
+                                  style={{ width: '100%', height: 28 }}
+                                  options={[
+                                    {
+                                      value: 'Input',
+                                      label: '普通输入框',
+                                    },
+                                    {
+                                      value: 'InputNumber',
+                                      label: '数字输入框',
+                                    },
+                                    // {
+                                    //   value: 'MultiSelect',
+                                    //   label: '复选框',
+                                    // },
+                                    // {
+                                    //   value: 'Select',
+                                    //   label: '单选框',
+                                    // },
+                                    {
+                                      value: 'Switch',
+                                      label: '开关',
+                                    },
+                                    {
+                                      value: 'DatePicker',
+                                      label: '时间选择器',
+                                    },
+                                    {
+                                      value: 'RangePicker',
+                                      label: '时间区间选择器',
+                                    },
+                                    {
+                                      value: 'IpInput',
+                                      label: 'ip输入框',
+                                    },
+                                    {
+                                      value: 'Button',
+                                      label: '按钮',
+                                    },
+                                  ]}
+                                  onChange={(val) => {
+                                    onFormChartsChange(val, index, 'type');
+                                  }}
+                                />
+                              </div>
+                              {type?.indexOf('Button') > -1 ? (
+                                <div style={{ flex: 1 }}>
+                                  <Select
+                                    defaultValue={className}
+                                    placeholder="颜色"
+                                    style={{ width: '100%', height: 28 }}
+                                    options={[
+                                      {
+                                        value: 'default',
+                                        label: '默认',
+                                      },
+                                      {
+                                        value: 'primary',
+                                        label: '蓝色',
+                                      },
+                                      {
+                                        value: 'success',
+                                        label: '绿色',
+                                      },
+                                      {
+                                        value: 'error',
+                                        label: '红色',
+                                      },
+                                      {
+                                        value: 'warning',
+                                        label: '黄色',
+                                      },
+                                    ]}
+                                    onChange={(val) => {
+                                      onFormChartsChange(val, index, 'className');
+                                    }}
+                                  />
+                                </div>
+                              ) : null}
+                              {type?.indexOf('ModalButton') > -1 ? (
+                                <Button
+                                  icon={<FormOutlined />}
+                                  style={{ height: 28 }}
+                                  onClick={() => {
+                                    setFormModalEdit(name);
+                                  }}
+                                />
+                              ) : null}
+                              <Checkbox
+                                defaultChecked={require}
+                                onChange={(e) => {
+                                  const val = e.target.checked;
+                                  onFormChartsChange(val, index, 'require');
+                                }}
+                              >
+                                必填
+                              </Checkbox>
+                              <Button
+                                icon={<MinusSquareOutlined />}
+                                style={{ height: 28 }}
+                                onClick={() => {
+                                  onFormChartsChange('', id, 'remove');
+                                }}
+                              />
+                              <Button
+                                icon={<ArrowUpOutlined />}
+                                style={{ height: 28 }}
+                                disabled={index === 0}
+                                onClick={() => {
+                                  onFormChartsChange('', index, 'up');
+                                }}
+                              />
+                            </div>
+                          );
+                        })}
+                      <Button
+                        icon={<PlusSquareOutlined />}
+                        type="primary"
+                        onClick={() => {
+                          onFormChartsChange('', 0, 'add');
+                        }}
+                      >
+                        新增
+                      </Button>
                     </Form.Item>
                   </Fragment>
                 ) : null}

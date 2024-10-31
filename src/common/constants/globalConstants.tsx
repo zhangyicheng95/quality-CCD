@@ -151,7 +151,7 @@ export const windowTypeList: any = [
   },
   {
     value: 'table5',
-    label: '可编辑表格窗口',
+    label: '分页表格窗口',
     icon: table5Icon,
     type: 'table',
   },
