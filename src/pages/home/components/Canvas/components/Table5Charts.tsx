@@ -290,7 +290,7 @@ const Table5Charts: React.FC<Props> = (props: any) => {
                     orderId: sort,
                     require: require,
                     type: 'string',
-                    value: ['MultiSelect', 'Select'].includes(type) ? [] : undefined,
+                    value: ['MultiSelect', 'Select', 'RangePicker'].includes(type) ? [] : undefined,
                     widget: { type }
                   };
                   return (
@@ -325,7 +325,7 @@ const Table5Charts: React.FC<Props> = (props: any) => {
         </Form>
       </div>
       <div className="table5-charts-body" style={{
-        height: `calc(100% - 16px - ${domRef?.current?.getElementsByClassName('table5-charts-search')?.[0]?.clientHeight || 0}px)`
+        height: `calc(100% - ${domRef?.current?.getElementsByClassName('table5-charts-search')?.[0]?.clientHeight || 0}px)`
       }}>
         <Form form={form} component={false}>
           <BasicTable
@@ -334,7 +334,7 @@ const Table5Charts: React.FC<Props> = (props: any) => {
             bordered={des_bordered}
             onPageChange={(res: any) => {
               pageRef.current = res;
-              onSubmit(res);
+              onSubmit({ ...res, type: 'search' });
             }}
           />
         </Form>

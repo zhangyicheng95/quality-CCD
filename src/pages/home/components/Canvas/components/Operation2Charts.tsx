@@ -726,7 +726,7 @@ export function FormatWidgetToDom(props: any) {
           label={label}
           tooltip={description}
           style={!!style ? style : {}}
-          initialValue={moment(value || undefined)}
+          initialValue={!!value?.[0] ? [moment(value[0]), moment(value[1])] : undefined}
           rules={[{ required: require, message: `${alias}` }]}
         >
           {
