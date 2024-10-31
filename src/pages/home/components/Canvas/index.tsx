@@ -1558,6 +1558,8 @@ const Home: React.FC<any> = (props: any) => {
                         des_bordered,
                         fetchType,
                         xName,
+                        valueColor,
+                        line_height,
                         timeSelectDefault
                       }}
                     />
@@ -5197,6 +5199,34 @@ const Home: React.FC<any> = (props: any) => {
                       rules={[{ required: false, message: '接口地址' }]}
                     >
                       <Input size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      name={`valueColor`}
+                      label={'颜色渲染'}
+                      initialValue={'value'}
+                      rules={[{ required: false, message: '颜色渲染' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={[
+                          {
+                            value: 'value',
+                            label: '数据颜色渲染到文字上',
+                          },
+                          {
+                            value: 'background',
+                            label: '数据颜色渲染到背景',
+                          },
+                        ]}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={`line_height`}
+                      label={'内容行高'}
+                      rules={[{ required: false, message: '内容行高' }]}
+                      initialValue={28}
+                    >
+                      <InputNumber min={10} />
                     </Form.Item>
                     <Form.Item
                       name={`timeSelectDefault`}

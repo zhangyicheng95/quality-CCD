@@ -7,6 +7,7 @@ import styles from '../index.module.less';
 import { btnFetch } from '@/services/api';
 import { FormatWidgetToDom } from './Operation2Charts';
 import moment from 'moment';
+import { guid } from '@/utils/utils';
 
 interface Props {
   data: any;
@@ -18,7 +19,7 @@ const localData = {
     {
       name: '结果',
       value: [
-        { value: 1 },
+        { value: 1, color: 'red' },
         { value: 'OK' },
         { value: 1 },
         { value: 1 },
@@ -45,62 +46,6 @@ const localData = {
     },
     {
       name: '点位名称',
-      value: [
-        { value: '前门音响' },
-        { value: '左前门把手' },
-        { value: '后门' },
-        { value: '前门音响' },
-        { value: '左前门把手' },
-        { value: '前门音响' },
-        { value: '后门' },
-        { value: '左前门把手' },
-        { value: '后门' },
-      ],
-    },
-    {
-      name: '生产号1',
-      value: [
-        { value: '2882381' },
-        { value: '2882383' },
-        { value: '2882384' },
-        { value: '2882387' },
-        { value: '2882389' },
-        { value: '2882392' },
-        { value: '2882394' },
-        { value: '2882396' },
-        { value: '2882399' },
-      ],
-    },
-    {
-      name: '点位名称1',
-      value: [
-        { value: '前门音响' },
-        { value: '左前门把手' },
-        { value: '后门' },
-        { value: '前门音响' },
-        { value: '左前门把手' },
-        { value: '前门音响' },
-        { value: '后门' },
-        { value: '左前门把手' },
-        { value: '后门' },
-      ],
-    },
-    {
-      name: '生产号2',
-      value: [
-        { value: '2882381' },
-        { value: '2882383' },
-        { value: '2882384' },
-        { value: '2882387' },
-        { value: '2882389' },
-        { value: '2882392' },
-        { value: '2882394' },
-        { value: '2882396' },
-        { value: '2882399' },
-      ],
-    },
-    {
-      name: '点位名称2',
       value: [
         { value: '前门音响' },
         { value: '左前门把手' },
@@ -188,6 +133,8 @@ const Table5Charts: React.FC<Props> = (props: any) => {
     des_bordered,
     fetchType,
     xName,
+    valueColor = 'value',
+    line_height = 28,
     timeSelectDefault,
   } = data;
   if (process.env.NODE_ENV === 'development') {
@@ -216,12 +163,13 @@ const Table5Charts: React.FC<Props> = (props: any) => {
         if (!!list[index]) {
           list[index] = {
             ...list[index],
-            [name]: valueItem?.value || ''
+            [name]: valueItem || ''
           };
         } else {
           list[index] = {
+            id: guid(),
             ...keys,
-            [name]: valueItem?.value || ''
+            [name]: valueItem || '',
           };
         }
       });
@@ -237,7 +185,16 @@ const Table5Charts: React.FC<Props> = (props: any) => {
         dataIndex: name,
         key: name,
         align: 'center',
-        width: `${fontSize * name?.length + 32}px`
+        width: `${fontSize * name?.length + 32}px`,
+        render: (text: any, record: any) => {
+          if (!!text && !!Object?.keys?.(text)?.length) {
+            return <div style={Object.assign({ lineHeight: `${line_height}px` }, !!text?.color ?
+              valueColor === 'value' ? { color: text?.color } : { backgroundColor: text?.color }
+              : {})}>{text?.value}</div>
+          } else {
+            return text;
+          }
+        }
       };
     });
   }, [dataValue?.data]);
@@ -270,6 +227,7 @@ const Table5Charts: React.FC<Props> = (props: any) => {
                   if (['Button'].includes(type)) {
                     return (
                       <Form.Item
+                        key={name}
                         name={name}
                         label={''}
                         style={{ float: 'left', marginRight: 16, marginBottom: 12 }}
@@ -338,6 +296,7 @@ const Table5Charts: React.FC<Props> = (props: any) => {
             pagination={!!dataValue?.total ? {
               total: dataValue?.total,
             } : {}}
+            rowKey={(record: any) => record?.id}
             onPageChange={(res: any) => {
               pageRef.current = res;
               onSubmit({ ...res, type: 'search' });
