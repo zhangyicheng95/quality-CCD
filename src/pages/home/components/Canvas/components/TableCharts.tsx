@@ -79,7 +79,7 @@ const TableCharts: React.FC<Props> = (props: any) => {
         style={Object.assign(
           {
             fontSize: tableFontSize,
-            minWidth: tableSize[0] + tableSize[1]
+            minWidth: ((tableSize[0] + tableSize[1]) || 'auto')
           },
           tableScroll ? { width: 'calc(100% - 6px)' } : { width: 'calc(100% - 1px)' },
           headerBackgroundColor === 'transparent'

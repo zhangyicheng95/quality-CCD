@@ -43,6 +43,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     lockImg = false,
     modelRotateScreenshot = false,
     labelInxAxis = false,
+    ifShowColorList = false,
   } = data;
   if (process.env.NODE_ENV === 'development' && !dataValue) {
     dataValue =
@@ -75,6 +76,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
   const [visible, setVisible] = useState(false);
   const [magnifierVisible, setMagnifierVisible] = useState(false);
   const [imgOriginalSize, setImgOriginalSize] = useState({ width: 1, height: 1 });
+  const [imgTypeChange, setImgTypeChange] = useState('');
 
   useLayoutEffect(() => {
     try {
@@ -367,8 +369,15 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     }
   }, [magnifierVisible, selectedNum, dataValue]);
   const source = useMemo(() => {
-    return notLocalStorage ? dataValue : urlList.current?.[selectedNum] || dataValue;
-  }, [urlList.current, selectedNum, dataValue]);
+    const res = notLocalStorage ? dataValue : urlList.current?.[selectedNum] || dataValue;
+    return !!ifShowColorList ?
+      imgTypeChange === 'NG' ?
+        res.replace('NG', 'ORIG') :
+        imgTypeChange === 'ORIG' ?
+          res.replace('ORIG', 'NG') :
+          res
+      : res;
+  }, [urlList.current, selectedNum, dataValue, ifShowColorList, imgTypeChange]);
   const onPrev = () => {
     setSelectedNum((pre: number) => {
       if (pre - 1 >= 0) {
@@ -537,6 +546,21 @@ const ImgCharts: React.FC<Props> = (props: any) => {
               </div>
             </Fragment>
           )}
+          {
+            ifShowColorList ?
+              <Button
+                className="img-box-btn-item"
+                // className="flex-box"
+                // style={{ gap: 4 }}
+                type={'link'}
+                onClick={() => {
+                  setImgTypeChange((prev: any) => prev === 'NG' ? 'ORIG' : 'NG')
+                }}
+              >
+                切换{imgTypeChange === 'NG' ? '原图' : imgTypeChange === 'ORIG' ? '结果图' : ''}
+              </Button>
+              : null
+          }
           <DownloadOutlined
             className="img-box-btn-item"
             onClick={() => {

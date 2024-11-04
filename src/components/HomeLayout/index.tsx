@@ -73,15 +73,19 @@ const HomeLayout: React.FC<any> = (props) => {
     }
     getAllProject(data.value).then((res: any) => {
       if (res && res.code === 'SUCCESS') {
-        const result = (res?.data || [])?.map?.((item: any) => {
-          const { quality_name, name, id } = item;
-          return {
-            value: id,
-            realIp: data.value,
-            label: name,
-          };
-        });
-        setProjectList((prev) => prev.concat(result));
+        const result = (res?.data || [])
+          ?.sort((a: any, b: any) => {
+            return b.updatedAt - a.updatedAt;
+          })
+          ?.map?.((item: any) => {
+            const { quality_name, name, id } = item;
+            return {
+              value: id,
+              realIp: data.value,
+              label: name,
+            };
+          });
+        setProjectList(result);
         dispatch({
           type: 'themeStore/projectListAction',
           payload: { label: data.name, options: result },

@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { useModel } from 'umi';
 import { message } from 'antd';
 import { FrownOutlined, SmileOutlined } from '@ant-design/icons';
+import { guid } from '@/utils/utils';
 
 interface Props {
   data: any;
@@ -19,6 +19,7 @@ const AlertCharts: React.FC<Props> = (props: any) => {
   if (process.env.NODE_ENV === 'development') {
     dataValue = [{ name: 'NG', value: false, }];
   }
+  const [dataList, setDataList] = useState<any>([]);
 
   useEffect(() => {
     if (!_.isArray(dataValue)) {
@@ -26,50 +27,55 @@ const AlertCharts: React.FC<Props> = (props: any) => {
       console.log('AlertCharts:', dataValue);
       return;
     }
-  }, [dataValue]);
+    setDataList(dataValue?.map((i) => ({ id: guid(), ...i })));
+  }, [JSON.stringify(dataValue)]);
   return (
     <div id={`echart-${id}`} className={`flex-box ${styles.alertCharts}`} style={{ justifyContent: des_layout }}>
-      {_.isArray(dataValue) &&
-        (dataValue || [])?.map?.((item: any, index: number) => {
-          const { name, value, color } = item;
-          const realColor = !!value ? '#88db57' : '#931212';
-          if (yName === 'point') {
-            return (
-              <div
-                key={`echart-${id}-${index}`}
-                className={`flex-box-column alert-item-point`}
-                style={Object.assign(
-                  { fontSize },
-                  !!color ? { color } : { color: realColor }
-                )}
-              >
+      {
+        _.isArray(dataList) ?
+          (dataList || [])?.map?.((item: any, index: number) => {
+            const { name, value, color } = item;
+            const realColor = !!value ? '#88db57' : '#931212';
+            if (yName === 'point') {
+              return (
                 <div
-                  className={`alert-item-point-icon`}
+                  key={`echart-${id}-${item.id}`}
+                  className={`flex-box-column alert-item-point`}
+                  style={{
+                    fontSize,
+                    color: color || realColor
+                  }}
+                >
+                  <div
+                    className={`alert-item-point-icon`}
+                    style={{
+                      height: magnifierWidth,
+                      width: magnifierWidth,
+                      backgroundColor: color || realColor
+                    }}
+                  />
+                  {name}
+                </div>
+              );
+            } else {
+              return (
+                <div
+                  key={`echart-${id}-${item.id}`}
+                  className={`flex-box-center alert-item`}
                   style={Object.assign(
-                    { height: magnifierWidth, width: magnifierWidth },
-                    !!color ? { backgroundColor: color } : { backgroundColor: realColor }
+                    { fontSize },
+                    !!color ? { backgroundColor: color, color } : { backgroundColor: realColor, color: realColor }
                   )}
-                />
-                {name}
-              </div>
-            );
-          } else {
-            return (
-              <div
-                key={`echart-${id}-${index}`}
-                className={`flex-box-center alert-item`}
-                style={Object.assign(
-                  { fontSize },
-                  !!color ? { backgroundColor: color, color } : { backgroundColor: realColor, color: realColor }
-                )}
-              >
-                <span style={{ position: 'absolute', left: 4, top: 4, fontSize: 12 }}>{name}</span>
-                {!!value ? <SmileOutlined /> : <FrownOutlined />}
-                {!!value ? 'OK' : 'NG'}
-              </div>
-            );
-          }
-        })}
+                >
+                  <span style={{ position: 'absolute', left: 4, top: 4, fontSize: 12 }}>{name}</span>
+                  {!!value ? <SmileOutlined /> : <FrownOutlined />}
+                  {!!value ? 'OK' : 'NG'}
+                </div>
+              );
+            }
+          })
+          : null
+      }
     </div>
   );
 };

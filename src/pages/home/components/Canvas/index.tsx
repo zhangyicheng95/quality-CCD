@@ -2197,6 +2197,7 @@ const Home: React.FC<any> = (props: any) => {
                         magnifierWidth,
                         magnifierHeight,
                         labelInxAxis,
+                        ifShowColorList,
                       }}
                     />
                   )}
@@ -4299,11 +4300,11 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item name="magnifierHeight" label="放大镜高">
                       <InputNumber min={1} placeholder="放大镜高度" />
                     </Form.Item>
-                    <Form.Item name="comparison" label="开启对比图" valuePropName="checked">
+                    <Form.Item name="comparison" label="对比图" valuePropName="checked">
                       <Switch />
                     </Form.Item>
                     <Form.Item
-                      name="notLocalStorage" label="开启图片缓存" valuePropName="checked"
+                      name="notLocalStorage" label="图片缓存" valuePropName="checked"
                       initialValue={true}
                     >
                       <Switch />
@@ -4318,6 +4319,9 @@ const Home: React.FC<any> = (props: any) => {
                       <InputNumber min={1} placeholder="图片列表数量" />
                     </Form.Item>
                     <Form.Item name="showFooter" label="显示底部描述" valuePropName="checked">
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item name="ifShowColorList" label="原图/NG图切换" valuePropName="checked">
                       <Switch />
                     </Form.Item>
                   </Fragment>

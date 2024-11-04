@@ -255,7 +255,6 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
           {
             (modelRotate === '2' ? leftList : dataValue || [])
               ?.filter((i: any) => i?.name?.indexOf(searchItem) > -1)
-              ?.slice(0, 20)
               ?.map((item: any, index: number) => {
                 const { name, status, children } = item;
                 return <div
