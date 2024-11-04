@@ -258,16 +258,25 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             let bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
             let imgDom: any = document.getElementById(`img-charts-bigImg-${id}`);
             const source = urlList.current?.[selectedNum] || dataValue;
+            const link = _.isString(source) ? source : source?.url || defaultImg;
             if (!imgDom) {
               bigDom = document.createElement('div');
               bigDom.className = `img-charts-big img-charts-big-${id}`;
               document.body.appendChild(bigDom);
               imgDom = document.createElement('img');
               imgDom.id = `img-charts-bigImg-${id}`;
-              imgDom.src = _.isString(source) ? source : source?.url || defaultImg;
+              imgDom.src = imgTypeChange === 'NG' ?
+                link.replace('NG', 'ORIG') :
+                imgTypeChange === 'ORIG' ?
+                  link.replace('ORIG', 'NG') :
+                  link;
               bigDom.appendChild(imgDom);
             } else {
-              imgDom.src = _.isString(source) ? source : source?.url || defaultImg;
+              imgDom.src = imgTypeChange === 'NG' ?
+                link.replace('NG', 'ORIG') :
+                imgTypeChange === 'ORIG' ?
+                  link.replace('ORIG', 'NG') :
+                  link;
               bigDom.style.display = 'block';
             }
             // 放大镜大小
@@ -557,7 +566,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                   setImgTypeChange((prev: any) => prev === 'NG' ? 'ORIG' : 'NG')
                 }}
               >
-                切换{imgTypeChange === 'NG' ? '原图' : imgTypeChange === 'ORIG' ? '结果图' : ''}
+                切换{imgTypeChange === 'NG' ? '结果图' : imgTypeChange === 'ORIG' ? '原图' : ''}
               </Button>
               : null
           }
@@ -592,8 +601,18 @@ const ImgCharts: React.FC<Props> = (props: any) => {
           >
             {(urlList.current || [])?.map?.((item: any, index: number) => {
               if (_.isString(item)) {
+                item = imgTypeChange === 'NG' ?
+                  item.replace('NG', 'ORIG') :
+                  imgTypeChange === 'ORIG' ?
+                    item.replace('ORIG', 'NG') :
+                    item;
                 return <Image src={item} alt={item} key={`${id}-${item}-${index}`} />;
               } else if (!!item?.url) {
+                item.url = imgTypeChange === 'NG' ?
+                  item?.url.replace('NG', 'ORIG') :
+                  imgTypeChange === 'ORIG' ?
+                    item?.url.replace('ORIG', 'NG') :
+                    item?.url;
                 return (
                   <Image src={item?.url} alt={item?.url} key={`${id}-${item?.url}-${index}`} />
                 );
