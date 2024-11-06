@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { Button, Form, Input, message, notification, Select } from 'antd';
+import { Button, Form, Image, Input, message, notification, Select } from 'antd';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import ImgCharts from './ImgCharts';
 import { btnFetch } from '@/services/api';
@@ -36,7 +36,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
         },
         flag: true,
         title: 'BOTTOM.C8 BOTTOM.C9平面三伤1.1.11',
-        url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0'
+        url: 'https://th.bing.com/th/id/R.8c519252dac30475433fa46314eb1647?rik=k3Y%2fYrn%2faCmwfA&pid=ImgRaw&r=0'
       },
       {
         status: 0,
@@ -314,7 +314,9 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                       </div>
                       : null
                   }
-                  <img src={url} alt={url} />
+                  <div className="re-judgment-right-img-list-item-img-box flex-box-center">
+                    <img src={url} alt={url} />
+                  </div>
                   <div
                     className='re-judgment-right-img-list-item-title'
                     style={selected?.url === url ? {

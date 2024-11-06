@@ -2187,7 +2187,7 @@ const Home: React.FC<any> = (props: any) => {
                           }${defaultImg}`
                           : '',
                         fontSize,
-                        dataValue: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0',
+                        dataValue,
                         showImgList,
                         notLocalStorage: _.isBoolean(notLocalStorage) ? !notLocalStorage : false,
                         imgListNum,
@@ -2559,7 +2559,7 @@ const Home: React.FC<any> = (props: any) => {
             !!dataValue && !['operation2'].includes(type)
               ? {
                 ...item,
-                [__value[1]]: ['three', 'buttonImages', 'imgButton', 'button', 'table2'].includes(type)
+                [__value[1]]: ['three', 'buttonImages', 'imgButton', 'button'].includes(type)
                   ? _.omit(dataValue, 'action')
                   : ['fabric', 'modelSwitch', 'reJudgment', 'cable', 'listSwitchImg'].includes(type)
                     ? undefined
@@ -2568,7 +2568,9 @@ const Home: React.FC<any> = (props: any) => {
                         ...(item?.[__value[1]] || {}),
                         ...(dataValue || {})
                       }
-                      : dataValue,
+                      : ['table2'].includes(type) ?
+                        _.isArray(dataValue) ? dataValue : []
+                        : dataValue,
               }
               : item,
           );
