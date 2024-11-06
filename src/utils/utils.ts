@@ -758,4 +758,19 @@ export const findChineseNum = (str: string) => {
   const re = /[\u4E00-\u9FA5]/g; //测试中文字符的正则
   var leng = str?.match?.(re)?.length || 0;  //计算中文的个数
   return leng;
-}
+};
+/**
+ * 检测图片链接是否存在
+ * @param url 图片地址
+ * @param callback 回调函数
+ */
+export function imageExists(url: string, callback: any) {
+  const img = new Image();
+  img.onload = function () {
+    callback(true);
+  };
+  img.onerror = function () {
+    callback(false);
+  };
+  img.src = url;
+};

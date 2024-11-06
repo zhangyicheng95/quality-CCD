@@ -1515,6 +1515,8 @@ const Home: React.FC<any> = (props: any) => {
                         line_height,
                         bodyPaddingSize,
                         des_layout,
+                        imgs_width,
+                        imgs_height
                       }}
                     />
                   ) : type === 'table3' ? (
@@ -2185,7 +2187,7 @@ const Home: React.FC<any> = (props: any) => {
                           }${defaultImg}`
                           : '',
                         fontSize,
-                        dataValue,
+                        dataValue: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0',
                         showImgList,
                         notLocalStorage: _.isBoolean(notLocalStorage) ? !notLocalStorage : false,
                         imgListNum,
@@ -2198,6 +2200,8 @@ const Home: React.FC<any> = (props: any) => {
                         magnifierHeight,
                         labelInxAxis,
                         ifShowColorList,
+                        imgs_width,
+                        imgs_height
                       }}
                     />
                   )}
@@ -2555,7 +2559,7 @@ const Home: React.FC<any> = (props: any) => {
             !!dataValue && !['operation2'].includes(type)
               ? {
                 ...item,
-                [__value[1]]: ['three', 'buttonImages', 'imgButton', 'button'].includes(type)
+                [__value[1]]: ['three', 'buttonImages', 'imgButton', 'button', 'table2'].includes(type)
                   ? _.omit(dataValue, 'action')
                   : ['fabric', 'modelSwitch', 'reJudgment', 'cable', 'listSwitchImg'].includes(type)
                     ? undefined
@@ -4303,10 +4307,7 @@ const Home: React.FC<any> = (props: any) => {
                     <Form.Item name="comparison" label="对比图" valuePropName="checked">
                       <Switch />
                     </Form.Item>
-                    <Form.Item
-                      name="notLocalStorage" label="图片缓存" valuePropName="checked"
-                      initialValue={true}
-                    >
+                    <Form.Item name="notLocalStorage" label="图片缓存" valuePropName="checked" initialValue={true}>
                       <Switch />
                     </Form.Item>
                     <Form.Item name="showImgList" label="图片列表" valuePropName="checked">
@@ -4323,6 +4324,12 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                     <Form.Item name="ifShowColorList" label="原图/NG图切换" valuePropName="checked">
                       <Switch />
+                    </Form.Item>
+                    <Form.Item name="imgs_width" label="存图原路径">
+                      <Input placeholder="存图原路径" />
+                    </Form.Item>
+                    <Form.Item name="imgs_height" label="存图目标路径">
+                      <Input placeholder="存图目标路径" />
                     </Form.Item>
                   </Fragment>
                 ) : null}
@@ -5164,6 +5171,12 @@ const Home: React.FC<any> = (props: any) => {
                         </Form.Item>
                       </Fragment>
                     )}
+                    <Form.Item name="imgs_width" label="存图原路径">
+                      <Input placeholder="存图原路径" />
+                    </Form.Item>
+                    <Form.Item name="imgs_height" label="存图目标路径">
+                      <Input placeholder="存图目标路径" />
+                    </Form.Item>
                   </Fragment>
                 ) : null}
                 {['table4'].includes(windowType) ? (

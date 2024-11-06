@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Button, Image, Modal, Skeleton } from 'antd';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
@@ -15,6 +15,7 @@ import {
 } from '@ant-design/icons';
 import html2canvas from 'html2canvas';
 import TooltipDiv from '@/components/TooltipDiv';
+import imageWrapper from '@/hooks/imageWrapper';
 
 interface Props {
   data: any;
@@ -743,4 +744,4 @@ const ImgCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default ImgCharts;
+export default memo(imageWrapper(ImgCharts));

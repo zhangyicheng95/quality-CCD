@@ -4,8 +4,10 @@ import styles from '../index.module.less';
 import TooltipDiv from '@/components/TooltipDiv';
 import { message } from 'antd';
 import { useModel } from 'umi';
-import { findChineseNum, ifHasChinese } from '@/utils/utils';
+import { findChineseNum, ifHasChinese, imageExists } from '@/utils/utils';
 import moment from 'moment';
+import { DownloadOutlined } from '@ant-design/icons';
+import html2canvas from 'html2canvas';
 
 interface Props {
   data: any;
@@ -181,13 +183,13 @@ const localData = [
   {
     name: '今日检测总数',
     value: [
-      { value: 12 },
+      { value: 'http://123.png' },
     ],
   },
   {
     name: '今日OK数',
     value: [
-      { value: 11 },
+      { value: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0' },
     ],
   },
   {
@@ -212,6 +214,8 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     line_height,
     bodyPaddingSize,
     des_layout,
+    imgs_width,
+    imgs_height
   } = data;
   const { initialState } = useModel<any>('@@initialState');
   const { params } = initialState;
@@ -319,6 +323,38 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     }
   }, [dataValue, fontSize, domRef?.current?.clientWidth, window.screen.width]);
 
+  useEffect(() => {
+    if (dataValue.action === '0') {
+      shotDownLoad();
+    }
+  }, [dataValue.action]);
+  // 截图下载
+  const shotDownLoad = () => {
+    html2canvas(domRef.current, {
+      backgroundColor: 'rgba(144,144,144,.5)',
+      scale: 1,
+      useCORS: true, // 是否尝试使⽤CORS从服务器加载图像
+      allowTaint: false, // 是否允许跨域图像。会污染画布，导致⽆法使⽤canvas.toDataURL ⽅法
+    }).then((canvas: any) => {
+      let imageDataURL = canvas.toDataURL('image/png', { quality: 1, });
+      var link = document.createElement('a');
+      link.href = imageDataURL;
+      link.download = `output.png`;
+      link.click();
+    });
+  };
+  // 打开图片外部链接
+  const openLink = (link: string) => {
+    imageExists(link, (res: boolean) => {
+      if (res) {
+        window.open(link, '_blank');
+      } else {
+        console.log('图片不存在');
+        window.open(link?.replace(imgs_width, imgs_height), '_blank');
+      }
+    });
+  };
+
   return (
     <div id={`echart-${id}`} className={styles.table2Charts} ref={domRef} style={{ fontSize }}>
       {des_layout === 'horizontal' ? (
@@ -383,15 +419,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                               : {},
                           )}
                           placement={'top'}
-                          onClick={
-                            value?.indexOf?.('http://') > -1
-                              ? () => {
-                                window.open(value, '_blank');
-                              }
-                              : null
-                          }
+                          onClick={() => openLink(value)}
                         >
-                          {value?.indexOf?.('http://') > -1 ? '查看' : value}
+                          {(value?.indexOf?.('http://') > -1 || value?.indexOf?.('https://') > -1) ? '查看' : value}
                         </TooltipDiv>
                         {!des_bordered || index + 1 === dataValue?.length ? null : (
                           <div
@@ -425,15 +455,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                             : {},
                         )}
                         placement={'top'}
-                        onClick={
-                          val?.indexOf?.('http://') > -1
-                            ? () => {
-                              window.open(val, '_blank');
-                            }
-                            : null
-                        }
+                        onClick={() => openLink(val)}
                       >
-                        {val?.indexOf?.('http://') > -1 ? '查看' : val}
+                        {(val?.indexOf?.('http://') > -1 || val?.indexOf?.('https://') > -1) ? '查看' : val}
                       </TooltipDiv>
                       {!des_bordered || index + 1 === dataValue?.length ? null : (
                         <div
@@ -499,7 +523,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                       //     : {}
                     )}
                   >
-                    <TooltipDiv title={name} className="charts-header-item-title">
+                    <TooltipDiv title={name} placement="top" className="charts-header-item-title">
                       {name}
                     </TooltipDiv>
                   </div>
@@ -563,15 +587,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                     : {},
                                 )}
                                 placement={'top'}
-                                onClick={
-                                  value?.indexOf?.('http://') > -1
-                                    ? () => {
-                                      window.open(value, '_blank');
-                                    }
-                                    : null
-                                }
+                                onClick={() => openLink(value)}
                               >
-                                {value?.indexOf?.('http://') > -1 ? '查看' : value}
+                                {(value?.indexOf?.('http://') > -1 || value?.indexOf?.('https://') > -1) ? '查看' : value}
                               </TooltipDiv>
                               {!des_bordered || index + 1 === dataValue?.length ? null : (
                                 <div
@@ -602,15 +620,9 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                   : {},
                               )}
                               placement={'top'}
-                              onClick={
-                                val?.indexOf?.('http://') > -1
-                                  ? () => {
-                                    window.open(val, '_blank');
-                                  }
-                                  : null
-                              }
+                              onClick={() => openLink(val)}
                             >
-                              {val?.indexOf?.('http://') > -1 ? '查看' : val}
+                              {(val?.indexOf?.('http://') > -1 || val?.indexOf?.('https://') > -1) ? '查看' : val}
                             </TooltipDiv>
                             {!des_bordered || index + 1 === dataValue?.length ? null : (
                               <div
@@ -629,6 +641,14 @@ const Table2Charts: React.FC<Props> = (props: any) => {
           </div>
         </Fragment>
       )}
+      <div className="download-btn">
+        <DownloadOutlined
+          className="img-box-btn-item"
+          onClick={() => {
+            shotDownLoad();
+          }}
+        />
+      </div>
     </div>
   );
 };
