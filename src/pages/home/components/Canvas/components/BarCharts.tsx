@@ -54,14 +54,38 @@ const BarCharts: React.FC<Props> = (props: any) => {
       // ]);
     }
     dataValue = [
-      // { name: '上限', value: 2.2, type: 'markLine', position: 'x', color: 'red' },
-      // { name: '标准值', value: 1.6, type: 'markLine', color: 'green' },
-      // { name: '下限', value: 1.53, type: 'markLine', color: 'red' },
-      // { name: '开始', value: 2.2, type: 'start' },
-      // { name: '截止', value: 2.2, type: 'end' },
-      { name: "name1", value: [1, 2, 3] },
-      { name: "name2", value: [3, 4, 5] },
-      { name: "name3", value: [1, 5, 5] }
+      {
+        "name": "破损",
+        "value": 6
+      },
+      {
+        "name": "漆粒子",
+        "value": 0
+      },
+      {
+        "name": "漆瘤",
+        "value": 0
+      },
+      {
+        "name": "漆坑",
+        "value": 0
+      },
+      {
+        "name": "气泡",
+        "value": 0
+      },
+      {
+        "name": "色差",
+        "value": 0
+      },
+      {
+        "name": "色斑",
+        "value": 0
+      },
+      {
+        "name": "划伤",
+        "value": 0
+      }
     ];
   }
   const { initialState } = useModel<any>('@@initialState');
@@ -203,56 +227,41 @@ const BarCharts: React.FC<Props> = (props: any) => {
           : { data: yData },
         hiddenAxis ? { show: false } : {},
       ),
-      series: [
-        !barRadius && !!showBackground
-          ? {
-            type: 'bar',
-            show: true,
-            itemStyle: {
-              normal: {
-                label: {
-                  show: labelDirection !== 'none',
-                  position: direction === 'rows' ? 'insideRight' : 'insideTop',
-                  formatter: '{b}',
-                  padding: [0, 12, 0, 0],
-                  fontSize: 14,
-                },
-                color: 'rgba(180, 180, 180, 0.2)',
-              },
-            },
-            tooltip: { show: false },
-            stack: 'total',
-            data: seriesData?.map?.(() => max * 2),
+      series: (_.isArray(seriesData?.[0]?.value) ?
+        seriesData?.map((series: any, index: number) => {
+          const { name, value, color } = series;
+          if (params.dataIndex >= colorList.length) {
+            index = params.dataIndex - colorList.length;
           }
-          : null,
-        showWithLine
-          ? {
-            name: 'name',
-            type: 'line',
-            tooltip: {
-              show: false,
+          return {
+            name: name,
+            type: 'bar',
+            label: {
+              show: labelDirection !== 'none',
+              fontFamily: 'monospace',
+              borderWidth: 0,
+              position:
+                direction === 'rows'
+                  ? labelDirection === 'top'
+                    ? 'insideRight'
+                    : labelDirection === 'bottom'
+                      ? 'insideLeft'
+                      : 'inside'
+                  : labelDirection === 'top'
+                    ? 'top'
+                    : labelDirection === 'bottom'
+                      ? 'insideBottom'
+                      : 'inside',
+              formatter: (params: any) => params?.value?.toFixed?.(0) || params?.value,
+              fontSize,
             },
-            lineStyle: {
-              ...(barColor.includes('line1')
-                ? {
-                  color: new echarts.graphic.LinearGradient(
-                    direction === 'rows' ? 1 : 0,
-                    direction === 'rows' ? 0 : 1,
-                    0,
-                    0,
-                    [
-                      {
-                        offset: 0,
-                        color: colorList[0],
-                      },
-                      {
-                        offset: 1,
-                        color: colorList[1],
-                      },
-                    ],
-                  ),
-                }
-                : barColor.includes('line2')
+            showBackground: !!barRadius && !!showBackground,
+            barMaxWidth: '10%',
+            itemStyle: Object.assign(
+              {},
+              barColor.includes('default')
+                ? { color: color || colorOption[index] }
+                : barColor.includes('line1')
                   ? {
                     color: new echarts.graphic.LinearGradient(
                       direction === 'rows' ? 1 : 0,
@@ -262,59 +271,110 @@ const BarCharts: React.FC<Props> = (props: any) => {
                       [
                         {
                           offset: 0,
-                          color: colorList2[0],
+                          color: colorList[0],
                         },
                         {
                           offset: 1,
-                          color: colorList2[1],
+                          color: colorList[1],
                         },
                       ],
                     ),
                   }
-                  : {}),
-            },
-            data: seriesData?.map?.((item: any, index: number) => {
-              const { value } = item;
-
-              return _.isArray(value) ? Math.max(...value) : value;
-            }),
-          }
-          : null,
-      ]?.concat(
-        _.isArray(seriesData?.[0]?.value) ?
-          seriesData?.map((series: any, index: number) => {
-            const { name, value, color } = series;
+                  : barColor.includes('line2')
+                    ? {
+                      color: new echarts.graphic.LinearGradient(
+                        direction === 'rows' ? 1 : 0,
+                        direction === 'rows' ? 0 : 1,
+                        0,
+                        0,
+                        [
+                          {
+                            offset: 0,
+                            color: colorList2[0],
+                          },
+                          {
+                            offset: 1,
+                            color: colorList2[1],
+                          },
+                        ],
+                      ),
+                    }
+                    : { color: barColor[index % barColor?.length] },
+              barRadius ? { borderRadius: [100, 100, 0, 0] } : {},
+            ),
+            data: value,
+            ...index === 0 ? {
+              markLine: {
+                data: markLineData?.map?.((mark: any, index: number) => {
+                  const { value, name, color, position } = mark;
+                  return Object.assign(
+                    {},
+                    {
+                      name: name,
+                      type: 'median',
+                      lineStyle: {
+                        width: 1,
+                        color: color || colorOption[index],
+                      },
+                      label: {
+                        show: true,
+                        position: 'middle',
+                        distance: 5,
+                        color: color || colorOption[index],
+                        formatter: `${name}：${value}`,
+                      },
+                    },
+                    !!position ?
+                      (position === 'x' ? { xAxis: value } : { yAxis: value }) :
+                      (direction === 'rows' ? { xAxis: value } : { yAxis: value }),
+                  );
+                }),
+                silent: false, // 鼠标悬停事件, true悬停不会出现实线
+                symbol: 'none', // 去掉箭头
+              }
+            } : {},
+            ...(barColor.includes('default') ? { colorBy: 'data' } : {}),
+          };
+        })
+        :
+        [{
+          name: 'name',
+          type: 'bar',
+          label: {
+            show: labelDirection !== 'none',
+            fontFamily: 'monospace',
+            borderWidth: 0,
+            position:
+              direction === 'rows'
+                ? labelDirection === 'top'
+                  ? 'insideRight'
+                  : labelDirection === 'bottom'
+                    ? 'insideLeft'
+                    : 'inside'
+                : labelDirection === 'top'
+                  ? 'top'
+                  : labelDirection === 'bottom'
+                    ? 'insideBottom'
+                    : 'inside',
+            formatter: (params: any) => params?.value?.toFixed?.(0) || params?.value,
+            fontSize,
+          },
+          stack: 'total',
+          showBackground: !!barRadius && !!showBackground,
+          barMaxWidth: '20%',
+          data: seriesData?.map?.((item: any, index: number) => {
+            const { value, color } = item;
             if (params.dataIndex >= colorList.length) {
               index = params.dataIndex - colorList.length;
             }
+            console.log(barColor);
+
             return {
-              name: name,
-              type: 'bar',
-              label: {
-                show: labelDirection !== 'none',
-                fontFamily: 'monospace',
-                borderWidth: 0,
-                position:
-                  direction === 'rows'
-                    ? labelDirection === 'top'
-                      ? 'insideRight'
-                      : labelDirection === 'bottom'
-                        ? 'insideLeft'
-                        : 'inside'
-                    : labelDirection === 'top'
-                      ? 'top'
-                      : labelDirection === 'bottom'
-                        ? 'insideBottom'
-                        : 'inside',
-                formatter: (params: any) => params?.value?.toFixed?.(0) || params?.value,
-                fontSize,
-              },
-              showBackground: !!barRadius && !!showBackground,
-              barMaxWidth: '10%',
+              value: value,
               itemStyle: Object.assign(
                 {},
                 barColor.includes('default')
-                  ? { color: color || colorOption[index] }
+                  ? { color: color }
                   : barColor.includes('line1')
                     ? {
                       color: new echarts.graphic.LinearGradient(
@@ -356,78 +416,88 @@ const BarCharts: React.FC<Props> = (props: any) => {
                       : { color: barColor[index % barColor?.length] },
                 barRadius ? { borderRadius: [100, 100, 0, 0] } : {},
               ),
-              data: value,
-              ...index === 0 ? {
-                markLine: {
-                  data: markLineData?.map?.((mark: any, index: number) => {
-                    const { value, name, color, position } = mark;
-                    return Object.assign(
-                      {},
-                      {
-                        name: name,
-                        type: 'median',
-                        lineStyle: {
-                          width: 1,
-                          color: color || colorOption[index],
-                        },
-                        label: {
-                          show: true,
-                          position: 'middle',
-                          distance: 5,
-                          color: color || colorOption[index],
-                          formatter: `${name}：${value}`,
-                        },
-                      },
-                      !!position ?
-                        (position === 'x' ? { xAxis: value } : { yAxis: value }) :
-                        (direction === 'rows' ? { xAxis: value } : { yAxis: value }),
-                    );
-                  }),
-                  silent: false, // 鼠标悬停事件, true悬停不会出现实线
-                  symbol: 'none', // 去掉箭头
-                }
-              } : {},
-              ...(barColor.includes('default') ? { colorBy: 'data' } : {}),
             };
-          })
-          :
-          {
-            name: 'name',
-            type: 'bar',
-            label: {
-              show: labelDirection !== 'none',
-              fontFamily: 'monospace',
-              borderWidth: 0,
-              position:
-                direction === 'rows'
-                  ? labelDirection === 'top'
-                    ? 'insideRight'
-                    : labelDirection === 'bottom'
-                      ? 'insideLeft'
-                      : 'inside'
-                  : labelDirection === 'top'
-                    ? 'top'
-                    : labelDirection === 'bottom'
-                      ? 'insideBottom'
-                      : 'inside',
-              formatter: (params: any) => params?.value?.toFixed?.(0) || params?.value,
-              fontSize,
-            },
-            stack: 'total',
-            showBackground: !!barRadius && !!showBackground,
-            barMaxWidth: '20%',
-            data: seriesData?.map?.((item: any, index: number) => {
-              const { value, color } = item;
-              if (params.dataIndex >= colorList.length) {
-                index = params.dataIndex - colorList.length;
+          }),
+          markLine: {
+            data: markLineData?.map?.((mark: any, index: number) => {
+              const { value, name, color, position } = mark;
+              return Object.assign(
+                {},
+                {
+                  name: name,
+                  type: 'median',
+                  lineStyle: {
+                    width: 1,
+                    color: color || colorOption[index],
+                  },
+                  label: {
+                    show: true,
+                    position: 'middle',
+                    distance: 5,
+                    color: color || colorOption[index],
+                    formatter: `${name}：${value}`,
+                  },
+                },
+                !!position ?
+                  (position === 'x' ? { xAxis: value } : { yAxis: value }) :
+                  (direction === 'rows' ? { xAxis: value } : { yAxis: value }),
+              );
+            }),
+            silent: false, // 鼠标悬停事件, true悬停不会出现实线
+            symbol: 'none', // 去掉箭头
+          },
+          ...(barColor.includes('default') ? { colorBy: 'data' } : {}),
+        }]).concat(
+          [
+            !barRadius && !!showBackground
+              ? {
+                type: 'bar',
+                show: true,
+                itemStyle: {
+                  normal: {
+                    label: {
+                      show: labelDirection !== 'none',
+                      position: direction === 'rows' ? 'insideRight' : 'insideTop',
+                      formatter: '{b}',
+                      padding: [0, 12, 0, 0],
+                      fontSize: 14,
+                    },
+                    color: 'rgba(180, 180, 180, 0.2)',
+                  },
+                },
+                tooltip: { show: false },
+                stack: 'total',
+                data: seriesData?.map?.(() => max * 2),
               }
-              return {
-                value: value,
-                itemStyle: Object.assign(
-                  {},
-                  barColor.includes('default')
-                    ? { color: color }
-                    : barColor.includes('line1')
+              : null,
+            showWithLine
+              ? {
+                name: 'name',
+                type: 'line',
+                tooltip: {
+                  show: false,
+                },
+                lineStyle: {
+                  ...(barColor.includes('line1')
+                    ? {
+                      color: new echarts.graphic.LinearGradient(
+                        direction === 'rows' ? 1 : 0,
+                        direction === 'rows' ? 0 : 1,
+                        0,
+                        0,
+                        [
+                          {
+                            offset: 0,
+                            color: colorList[0],
+                          },
+                          {
+                            offset: 1,
+                            color: colorList[1],
+                          },
+                        ],
+                      ),
+                    }
+                    : barColor.includes('line2')
                       ? {
                         color: new echarts.graphic.LinearGradient(
                           direction === 'rows' ? 1 : 0,
@@ -437,71 +507,28 @@ const BarCharts: React.FC<Props> = (props: any) => {
                           [
                             {
                               offset: 0,
-                              color: colorList[0],
+                              color: colorList2[0],
                             },
                             {
                               offset: 1,
-                              color: colorList[1],
+                              color: colorList2[1],
                             },
                           ],
                         ),
                       }
-                      : barColor.includes('line2')
-                        ? {
-                          color: new echarts.graphic.LinearGradient(
-                            direction === 'rows' ? 1 : 0,
-                            direction === 'rows' ? 0 : 1,
-                            0,
-                            0,
-                            [
-                              {
-                                offset: 0,
-                                color: colorList2[0],
-                              },
-                              {
-                                offset: 1,
-                                color: colorList2[1],
-                              },
-                            ],
-                          ),
-                        }
-                        : { color: barColor[index % barColor?.length] },
-                  barRadius ? { borderRadius: [100, 100, 0, 0] } : {},
-                ),
-              };
-            }),
-            markLine: {
-              data: markLineData?.map?.((mark: any, index: number) => {
-                const { value, name, color, position } = mark;
-                return Object.assign(
-                  {},
-                  {
-                    name: name,
-                    type: 'median',
-                    lineStyle: {
-                      width: 1,
-                      color: color || colorOption[index],
-                    },
-                    label: {
-                      show: true,
-                      position: 'middle',
-                      distance: 5,
-                      color: color || colorOption[index],
-                      formatter: `${name}：${value}`,
-                    },
-                  },
-                  !!position ?
-                    (position === 'x' ? { xAxis: value } : { yAxis: value }) :
-                    (direction === 'rows' ? { xAxis: value } : { yAxis: value }),
-                );
-              }),
-              silent: false, // 鼠标悬停事件, true悬停不会出现实线
-              symbol: 'none', // 去掉箭头
-            },
-            ...(barColor.includes('default') ? { colorBy: 'data' } : {}),
-          }
-      ).filter(Boolean),
+                      : {}),
+                },
+                data: seriesData?.map?.((item: any, index: number) => {
+                  const { value } = item;
+
+                  return _.isArray(value) ? Math.max(...value) : value;
+                }),
+              }
+              : null,
+          ]
+        ).filter(Boolean),
     });
+    console.log(option);
 
     myChartRef.current?.setOption(option);
     myChartRef.current?.resize({
