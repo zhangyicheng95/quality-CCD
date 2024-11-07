@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef } from 'react';
+import React, { Fragment, memo, useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 import options from './commonOptions';
 import { useModel } from 'umi';
@@ -367,8 +367,6 @@ const BarCharts: React.FC<Props> = (props: any) => {
             if (params.dataIndex >= colorList.length) {
               index = params.dataIndex - colorList.length;
             }
-            console.log(barColor);
-
             return {
               value: value,
               itemStyle: Object.assign(
@@ -528,7 +526,6 @@ const BarCharts: React.FC<Props> = (props: any) => {
           ]
         ).filter(Boolean),
     });
-    console.log(option);
 
     myChartRef.current?.setOption(option);
     myChartRef.current?.resize({
@@ -568,4 +565,4 @@ const BarCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default BarCharts;
+export default memo(BarCharts);

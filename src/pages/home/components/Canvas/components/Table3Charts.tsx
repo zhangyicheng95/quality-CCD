@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import * as _ from 'lodash';
 import styles from '../index.module.less';
 import TooltipDiv from '@/components/TooltipDiv';
@@ -376,4 +376,4 @@ const Table3Charts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default Table3Charts;
+export default memo(Table3Charts);

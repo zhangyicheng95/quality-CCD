@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import * as _ from 'lodash';
 import styles from '../index.module.less';
 import BasicTable from '@/components/BasicTable';
@@ -291,4 +291,4 @@ const TableAntdCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default TableAntdCharts;
+export default memo(TableAntdCharts);

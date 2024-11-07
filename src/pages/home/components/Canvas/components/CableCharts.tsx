@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, memo, useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts';
 import options from './commonOptions';
 import * as _ from 'lodash';
@@ -336,4 +336,4 @@ const CableCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default CableCharts;
+export default memo(CableCharts);

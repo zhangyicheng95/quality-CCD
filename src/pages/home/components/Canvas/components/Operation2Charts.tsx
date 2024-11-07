@@ -733,7 +733,7 @@ export function FormatWidgetToDom(props: any) {
             <DatePicker.RangePicker
               disabled={disabled}
               onBlur={(e: any) => {
-                widgetChange?.(name, new Date(e.target.value).getTime(), parent);
+                widgetChange?.(name, e.target.value, parent);
               }}
               showTime
               style={{ width: '100%' }}

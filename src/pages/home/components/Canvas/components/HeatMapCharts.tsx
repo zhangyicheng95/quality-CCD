@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 // @ts-ignore
 import h337 from 'heatmapjs';
 import * as _ from 'lodash';
@@ -92,4 +92,4 @@ const HeatMapCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default HeatMapCharts;
+export default memo(HeatMapCharts);

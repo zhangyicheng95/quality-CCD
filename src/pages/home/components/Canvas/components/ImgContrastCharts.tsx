@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { message, Select } from 'antd';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
@@ -99,4 +99,4 @@ const ImgContrastCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default ImgContrastCharts;
+export default memo(ImgContrastCharts);

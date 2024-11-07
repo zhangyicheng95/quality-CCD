@@ -1,7 +1,7 @@
 import TooltipDiv from '@/components/TooltipDiv';
 import { message } from 'antd';
 import _ from 'lodash';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { useModel } from 'umi';
 import styles from '../index.module.less';
 
@@ -206,4 +206,4 @@ const TableCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default TableCharts;
+export default memo(TableCharts);

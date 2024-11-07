@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, memo, useEffect, useRef, useState } from 'react';
 import { Badge, Input, message, DatePicker, Button } from 'antd';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
@@ -637,4 +637,4 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default ListSwitchImgCharts;
+export default memo(ListSwitchImgCharts);

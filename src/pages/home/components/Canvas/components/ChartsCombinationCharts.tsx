@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, memo, useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts';
 import styles from '../index.module.less';
 import options from './commonOptions';
@@ -108,4 +108,4 @@ const ChartsCombinationCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default ChartsCombinationCharts;
+export default memo(ChartsCombinationCharts);

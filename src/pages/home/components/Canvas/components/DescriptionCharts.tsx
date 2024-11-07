@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import { Descriptions, message } from 'antd';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
@@ -76,4 +76,4 @@ const DescriptionCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default DescriptionCharts;
+export default memo(DescriptionCharts);

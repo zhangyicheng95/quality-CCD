@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import * as _ from 'lodash';
 import styles from '../index.module.less';
 
@@ -27,4 +27,4 @@ const IframeCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default IframeCharts;
+export default memo(IframeCharts);

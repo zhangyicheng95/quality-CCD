@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
 import ImgCharts from './ImgCharts';
@@ -115,4 +115,4 @@ const IaminationImageCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default IaminationImageCharts;
+export default memo(IaminationImageCharts);

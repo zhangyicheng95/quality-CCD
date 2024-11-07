@@ -1,3 +1,4 @@
+import { imageExists } from '@/utils/utils';
 import _ from 'lodash';
 import useImageAuth from './useImageAuth';
 
@@ -14,8 +15,9 @@ const imageWrapper = (WrappedComponent: any) => {
     //     </div>
     //   </div>;
     // }
-    props.data.dataValue = link;
-    return <WrappedComponent {...props} />;
+    // props.data.dataValue = link;
+
+    return <WrappedComponent {...props} needReplace={!!link} />;
   };
 
   return Component;

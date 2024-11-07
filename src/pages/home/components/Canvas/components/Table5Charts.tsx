@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { useModel } from 'umi';
 import BasicTable from '@/components/BasicTable';
 import { Button, Form, message } from 'antd';
@@ -200,7 +200,25 @@ const Table5Charts: React.FC<Props> = (props: any) => {
   }, [dataValue?.data]);
   const onSubmit = (params: any) => {
     form.validateFields().then((values) => {
-      btnFetch(fetchType, xName, { ...values, ...params }).then((res: any) => {
+      const valueFormat = Object.entries(values)?.reduce((pre: any, cen: any) => {
+        if (cen[0]?.indexOf('RangePicker') > -1) {
+          return {
+            ...pre,
+            [cen[0]?.split('$%$')?.[0]]: [cen?.[1]?.[0].format('YYYY-MM-DD HH:mm:ss'), cen?.[1]?.[1].format('YYYY-MM-DD HH:mm:ss')],
+          };
+        } else if (cen[0]?.indexOf('DatePicker') > -1) {
+          return {
+            ...pre,
+            [cen[0]?.split('$%$')?.[0]]: cen?.[1].format('YYYY-MM-DD HH:mm:ss'),
+          };
+        } else {
+          return {
+            ...pre,
+            [cen[0]?.split('$%$')?.[0]]: cen[1],
+          };
+        };
+      }, {});
+      btnFetch(fetchType, xName, { ...valueFormat, ...params }).then((res: any) => {
         if (res && res.code === 'SUCCESS') {
           message.success('success');
         } else {
@@ -258,7 +276,7 @@ const Table5Charts: React.FC<Props> = (props: any) => {
                     <FormatWidgetToDom
                       key={item?.name}
                       form={form}
-                      id={item?.name}
+                      id={`${item?.name}$%$${type}`}
                       fontSize={fontSize}
                       label={item?.alias || item?.name}
                       config={[item?.name, item]}
@@ -308,4 +326,4 @@ const Table5Charts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default Table5Charts;
+export default memo(Table5Charts);

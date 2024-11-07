@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, memo, useEffect, useMemo, useRef, useState } from 'react';
 import * as _ from 'lodash';
 import styles from '../index.module.less';
 import TooltipDiv from '@/components/TooltipDiv';
@@ -231,6 +231,10 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     //   dataValue = localData;
     // }
     if (!_.isArray(dataValue)) {
+      if (dataValue.action === '0') {
+        shotDownLoad();
+        return;
+      }
       message.error('通用表格组件数据格式不正确，请检查');
       console.log('Table2Charts:', dataValue);
       return;
@@ -322,12 +326,6 @@ const Table2Charts: React.FC<Props> = (props: any) => {
       });
     }
   }, [dataValue, fontSize, domRef?.current?.clientWidth, window.screen.width]);
-
-  useEffect(() => {
-    if (dataValue.action === '0') {
-      shotDownLoad();
-    }
-  }, [dataValue.action]);
   // 截图下载
   const shotDownLoad = () => {
     html2canvas(domRef.current, {
@@ -641,16 +639,16 @@ const Table2Charts: React.FC<Props> = (props: any) => {
           </div>
         </Fragment>
       )}
-      <div className="download-btn">
+      {/* <div className="download-btn">
         <DownloadOutlined
           className="img-box-btn-item"
           onClick={() => {
             shotDownLoad();
           }}
         />
-      </div>
+      </div> */}
     </div>
   );
 };
 
-export default Table2Charts;
+export default memo(Table2Charts);

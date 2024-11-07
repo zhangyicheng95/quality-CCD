@@ -24,7 +24,7 @@ interface Props {
 }
 
 const ImgCharts: React.FC<Props> = (props: any) => {
-  const { data = {}, id } = props;
+  const { data = {}, id, needReplace = false } = props;
   let {
     defaultImg,
     dataValue,
@@ -45,6 +45,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     modelRotateScreenshot = false,
     labelInxAxis = false,
     ifShowColorList = false,
+    imgs_width, imgs_height,
   } = data;
   if (process.env.NODE_ENV === 'development' && !dataValue) {
     dataValue =
@@ -70,7 +71,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
   const dom = useRef<any>();
   const imgBoxRef = useRef<any>();
   const urlList = useRef<any>([]);
-  const [chartSize, setChartSize] = useState(false);
+  const [chartSize, setChartSize] = useState(true);
   const [selectedNum, setSelectedNum] = useState(0);
   const [imgVisible, setImgVisible] = useState(false);
   const [visibleDirection, setVisibleDirection] = useState<any>('column');
@@ -122,8 +123,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         urlList.current = list.slice(-100);
       }
     }
-  }, [dataValue, comparison]);
-  useEffect(() => {
+    // 滚轮缩放
     let img: any = document.createElement('img');
     const source = urlList.current?.[selectedNum] || dataValue;
     img.src = _.isString(source) ? source : source?.url;
@@ -196,11 +196,9 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         y = offsetY;
         ul.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${offsetX}, ${offsetY})`;
       });
-
       img = null;
     };
-  }, [selectedNum, dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight]);
-  useEffect(() => {
+    // 鼠标按下放大镜
     if (!dataValue) {
       const list = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || '[]');
       dataValue = list?.[list?.length - 1] || '';
@@ -258,7 +256,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             mask.style['top'] = top + 'px';
             let bigDom: any = document.getElementsByClassName(`img-charts-big-${id}`)[0];
             let imgDom: any = document.getElementById(`img-charts-bigImg-${id}`);
-            const source = urlList.current?.[selectedNum] || dataValue;
+            const source = !!needReplace ? (urlList.current?.[selectedNum] || dataValue)?.replace(imgs_width, imgs_height) : (urlList.current?.[selectedNum] || dataValue);
             const link = _.isString(source) ? source : source?.url || defaultImg;
             if (!imgDom) {
               bigDom = document.createElement('div');
@@ -377,7 +375,8 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         }
       };
     }
-  }, [magnifierVisible, selectedNum, dataValue]);
+  }, [selectedNum, dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight, magnifierVisible]);
+
   const source = useMemo(() => {
     const res = notLocalStorage ? dataValue : urlList.current?.[selectedNum] || dataValue;
     return !!ifShowColorList ?
@@ -435,7 +434,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                     }
                   />
                   <Image
-                    src={`${_.isString(source) ? source : source?.url || `${defaultImg}?__timestamp=${+new Date()}`}` + (!!labelInxAxis ? `?__timestamp=${+new Date()}` : '')}
+                    src={`${(!!needReplace ? (_.isString(source) ? source : source?.url)?.replace(imgs_width, imgs_height) : (_.isString(source) ? source : source?.url)) || `${defaultImg}?__timestamp=${+new Date()}`}` + (!!labelInxAxis ? `?__timestamp=${+new Date()}` : '')}
                     alt="logo"
                     style={
                       chartSize
@@ -607,7 +606,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                   imgTypeChange === 'ORIG' ?
                     item.replace('ORIG', 'NG') :
                     item;
-                return <Image src={item} alt={item} key={`${id}-${item}-${index}`} />;
+                return <Image src={!!needReplace ? item?.replace(imgs_width, imgs_height) : item} alt={item} key={`${id}-${item}-${index}`} />;
               } else if (!!item?.url) {
                 item.url = imgTypeChange === 'NG' ?
                   item?.url.replace('NG', 'ORIG') :
@@ -615,7 +614,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                     item?.url.replace('ORIG', 'NG') :
                     item?.url;
                 return (
-                  <Image src={item?.url} alt={item?.url} key={`${id}-${item?.url}-${index}`} />
+                  <Image src={!!needReplace ? item?.url?.replace(imgs_width, imgs_height) : item?.url} alt={item?.url} key={`${id}-${item?.url}-${index}`} />
                 );
               }
               return null;
@@ -718,7 +717,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             </div>
             <div className={`flex-box image-contrast-modal-body-bottom ${visibleDirection}`}>
               <Image
-                src={`${urlList.current?.[selectedNum] || ''}?__timestamp=${+new Date()}`}
+                src={`${(!!needReplace ? urlList.current?.[selectedNum]?.replace(imgs_width, imgs_height) : urlList.current?.[selectedNum]) || ''}?__timestamp=${+new Date()}`}
                 alt="logo"
                 className="image-contrast-modal-body-img"
               />
@@ -744,4 +743,4 @@ const ImgCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default memo(imageWrapper(ImgCharts));
+export default imageWrapper(memo(ImgCharts));

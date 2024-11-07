@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import * as echarts from 'echarts';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
@@ -56,4 +56,4 @@ const ChartPreviewModal: React.FC<Props> = (props: any) => {
 
 };
 
-export default ChartPreviewModal;
+export default memo(ChartPreviewModal);

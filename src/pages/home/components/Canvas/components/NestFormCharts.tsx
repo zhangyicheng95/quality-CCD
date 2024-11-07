@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
 import { Button, Form, message, Popconfirm } from 'antd';
 import styles from '../index.module.less';
@@ -326,4 +326,4 @@ const NestFormCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default NestFormCharts;
+export default memo(NestFormCharts);

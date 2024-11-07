@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { Image, message } from 'antd';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
@@ -121,4 +121,4 @@ const ImgsCharts: React.FC<Props> = (props: any) => {
   );
 };
 
-export default ImgsCharts;
+export default memo(ImgsCharts);
