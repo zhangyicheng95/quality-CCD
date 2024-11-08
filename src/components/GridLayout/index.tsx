@@ -103,6 +103,6 @@ const GridLayout: React.FC<Props> = (props: any) => {
   );
 };
 
-export default connect(({ home }) => ({
+export default connect(({ home }: any) => ({
   canvasLock: home.canvasLock || false,
 }))(GridLayout);

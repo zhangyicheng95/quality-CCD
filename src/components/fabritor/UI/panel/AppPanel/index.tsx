@@ -1,7 +1,6 @@
 import { Card } from 'antd';
 import { SmileOutlined } from '@ant-design/icons';
 import { useState } from 'react';
-import EmojiPanel from './Emoji';
 
 const APP_LIST = [
   {
@@ -45,17 +44,18 @@ export default function AppPanel() {
   }
 
   const renderApp = () => {
-    if (app === 'emoji') {
-      return <EmojiPanel back={back2List} />
-    }
+    // if (app === 'emoji') {
+    //   return <EmojiPanel back={back2List} />
+    // }
     return null;
   }
 
   return (
     <div>
-      {
+      {renderAppList()}
+      {/* {
         app ? renderApp() : renderAppList()
-      }
+      } */}
     </div>
   )
 }

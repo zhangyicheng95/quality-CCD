@@ -730,6 +730,7 @@ export function FormatWidgetToDom(props: any) {
           rules={[{ required: require, message: `${alias}` }]}
         >
           {
+            // @ts-ignore
             <DatePicker.RangePicker
               disabled={disabled}
               onBlur={(e: any) => {
@@ -997,6 +998,7 @@ export function FormatWidgetToDom(props: any) {
           tooltip={description}
           style={!!style ? style : {}}
           initialValue={value || false}
+          valuePropName="checked"
           rules={[{ required: require, message: `${alias}` }]}
         >
           <Switch

@@ -324,6 +324,10 @@ export const windowTypeList: any = [
     value: 'chartsCombination',
     label: '图表组合窗口',
   },
+  {
+    value: 'loopAlert',
+    label: '轮播公告窗口',
+  },
 ];
 // 默认基础组件
 export const basicWindowList: any = [

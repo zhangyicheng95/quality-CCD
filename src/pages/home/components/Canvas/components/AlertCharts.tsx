@@ -64,7 +64,7 @@ const AlertCharts: React.FC<Props> = (props: any) => {
                   className={`flex-box-center alert-item`}
                   style={Object.assign(
                     { fontSize },
-                    !!color ? { backgroundColor: color, color } : { backgroundColor: realColor, color: realColor }
+                    !!color ? { backgroundColor: color } : { backgroundColor: realColor }
                   )}
                 >
                   <span style={{ position: 'absolute', left: 4, top: 4, fontSize: 12 }}>{name}</span>

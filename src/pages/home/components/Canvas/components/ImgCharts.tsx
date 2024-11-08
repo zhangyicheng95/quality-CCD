@@ -111,7 +111,14 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       if (!dataValue) {
         dataValue = localhostList?.[localhostList?.length - 1] || '';
       }
-      let list = Array.from(new Set(urlList.current.concat(dataValue)));
+      let list: any = [];
+      if (_.isString(dataValue) || !_.isBoolean(dataValue?.ifStorage) || !!dataValue?.ifStorage) {
+        // 缓存进去
+        list = Array.from(new Set(urlList.current.concat(dataValue)))?.filter((i: any) => _.isString(i) || (!_.isBoolean(dataValue?.ifStorage) || !!dataValue?.ifStorage));
+      } else {
+        // 不存
+        list = Array.from(new Set(urlList.current.concat(dataValue)));
+      }
       if (list?.length >= 101) {
         list = list.slice(-95);
         localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
@@ -122,7 +129,10 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         setSelectedNum(list?.length - 1 >= 99 ? 99 : list?.length - 1);
         urlList.current = list.slice(-100);
       }
+
     }
+  }, [dataValue, comparison]);
+  useEffect(() => {
     // 滚轮缩放
     let img: any = document.createElement('img');
     const source = urlList.current?.[selectedNum] || dataValue;
@@ -198,6 +208,8 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       });
       img = null;
     };
+  }, [selectedNum, dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight]);
+  useEffect(() => {
     // 鼠标按下放大镜
     if (!dataValue) {
       const list = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || '[]');
@@ -375,7 +387,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         }
       };
     }
-  }, [selectedNum, dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight, magnifierVisible]);
+  }, [magnifierVisible, selectedNum, dataValue]);
 
   const source = useMemo(() => {
     const res = notLocalStorage ? dataValue : urlList.current?.[selectedNum] || dataValue;

@@ -148,6 +148,7 @@ import ListSwitchImgCharts from './components/ListSwitchImgCharts';
 import ButtonCharts from './components/ButtonCharts';
 import ChartsCombinationCharts from './components/ChartsCombinationCharts';
 import Table5Charts from './components/Table5Charts';
+import LoopAlertCharts from './components/LoopAlertCharts';
 
 const leftPanelDataLocal = [
   {
@@ -2176,6 +2177,14 @@ const Home: React.FC<any> = (props: any) => {
                         barColor,
                       }}
                     />
+                  ) : type === 'loopAlert' ? (
+                    <LoopAlertCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                      }}
+                    />
                   ) : (
                     <ImgCharts
                       id={key}
@@ -2569,7 +2578,7 @@ const Home: React.FC<any> = (props: any) => {
                         ...(dataValue || {})
                       }
                       : ['table2'].includes(type) ?
-                        _.isArray(dataValue) ? dataValue : []
+                        (dataValue?.[0] === "0" ? [] : dataValue)
                         : dataValue,
               }
               : item,

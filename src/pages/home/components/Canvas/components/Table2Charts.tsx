@@ -231,12 +231,12 @@ const Table2Charts: React.FC<Props> = (props: any) => {
     //   dataValue = localData;
     // }
     if (!_.isArray(dataValue)) {
-      if (dataValue.action === '0') {
-        shotDownLoad();
-        return;
-      }
       message.error('通用表格组件数据格式不正确，请检查');
       console.log('Table2Charts:', dataValue);
+      return;
+    }
+    if (dataValue?.[0] === '0') {
+      shotDownLoad();
       return;
     }
     let list: any = [];
