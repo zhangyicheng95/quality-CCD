@@ -58,6 +58,7 @@
     "@antv/l7": "^2.3.7",
     "@antv/l7-maps": "^2.3.7",
     "@antv/l7-react": "^2.1.9",
+    "@babel/runtime": "^7.26.0",
     "@rengr/heatmap.js": "^2.0.10",
     "@scena/react-guides": "^0.28.2",
     "@umijs/route-utils": "^2.0.0",
