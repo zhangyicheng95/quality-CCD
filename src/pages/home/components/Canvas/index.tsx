@@ -149,6 +149,7 @@ import ButtonCharts from './components/ButtonCharts';
 import ChartsCombinationCharts from './components/ChartsCombinationCharts';
 import Table5Charts from './components/Table5Charts';
 import LoopAlertCharts from './components/LoopAlertCharts';
+import SelectCharts from './components/SelectCharts';
 
 const leftPanelDataLocal = [
   {
@@ -1382,6 +1383,7 @@ const Home: React.FC<any> = (props: any) => {
                       'timeSelect',
                       'httpTable',
                       'header',
+                      'optionSelect'
                     ].includes(type) ? (
                     '请重新绑定数据节点'
                   ) : type === 'header' ? (
@@ -1682,6 +1684,19 @@ const Home: React.FC<any> = (props: any) => {
                         dataValue: dataValue || [],
                         imgs_width,
                         imgs_height,
+                      }}
+                    />
+                  ) : type === 'optionSelect' ? (
+                    <SelectCharts
+                      id={key}
+                      data={{
+                        dataValue: dataValue || [],
+                        fontSize,
+                        timeSelectDefault,
+                        fetchType,
+                        xName,
+                        yName,
+                        ifNeedAllow,
                       }}
                     />
                   ) : type === 'progress' ? (
@@ -6271,6 +6286,95 @@ const Home: React.FC<any> = (props: any) => {
                     }
                   </Fragment>
                 ) : null}
+                {['optionSelect'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`yName`}
+                      label={'名称'}
+                      initialValue=""
+                      rules={[{ required: false, message: '名称' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      name={`timeSelectDefault`}
+                      label={'按钮参数'}
+                      rules={[{ required: false, message: '按钮参数' }]}
+                    >
+                      {commonSettingList?.map?.((item: any, index: number) => {
+                        const { label, value, password, color, id } = item;
+                        return (
+                          <div
+                            className="flex-box"
+                            key={`segmentSwitch-item-${index}`}
+                            style={{ marginBottom: 8 }}
+                          >
+                            <div style={{ flex: 1 }}>
+                              <Input
+                                defaultValue={label}
+                                placeholder="label"
+                                style={{ height: 28 }}
+                                onChange={(e) => {
+                                  const val = e?.target?.value;
+                                  onSegmentSwitchChange(val, index, 'label');
+                                }}
+                              />
+                            </div>
+                            <div style={{ flex: 1, padding: '0 8px' }}>
+                              <Input
+                                defaultValue={value}
+                                placeholder="value"
+                                style={{ height: 28 }}
+                                onChange={(e) => {
+                                  const val = e?.target?.value;
+                                  onSegmentSwitchChange(val, index, 'value');
+                                }}
+                              />
+                            </div>
+                            <div>
+                              <Button
+                                icon={<MinusSquareOutlined />}
+                                style={{ height: 28 }}
+                                onClick={() => {
+                                  onSegmentSwitchChange('', id, 'remove');
+                                }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                      <Button
+                        icon={<PlusSquareOutlined />}
+                        onClick={() => {
+                          onSegmentSwitchChange('', 0, 'add');
+                        }}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={`fetchType`}
+                      label={'http类型'}
+                      rules={[{ required: false, message: 'http类型' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
+                          value: item,
+                          label: _.toUpper(item),
+                        }))}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={`xName`}
+                      label={'接口地址'}
+                      rules={[{ required: false, message: '接口地址' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                    <Form.Item name="ifNeedAllow" label="是否多选" valuePropName="checked">
+                      <Switch />
+                    </Form.Item>
+                  </Fragment>
+                  ):null}
                 {['buttonPassword'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item

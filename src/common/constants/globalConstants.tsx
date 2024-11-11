@@ -192,6 +192,11 @@ export const windowTypeList: any = [
     type: 'module',
   },
   {
+    value: 'optionSelect',
+    label: '下拉框选择组件',
+    type: 'module',
+  },
+  {
     value: 'button',
     label: '按钮组件',
     icon: buttonIcon,
