@@ -333,6 +333,10 @@ export const windowTypeList: any = [
     value: 'loopAlert',
     label: '轮播公告窗口',
   },
+  {
+    value: 'logAlert',
+    label: '日志socket窗口',
+  },
 ];
 // 默认基础组件
 export const basicWindowList: any = [

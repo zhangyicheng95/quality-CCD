@@ -150,6 +150,7 @@ import ChartsCombinationCharts from './components/ChartsCombinationCharts';
 import Table5Charts from './components/Table5Charts';
 import LoopAlertCharts from './components/LoopAlertCharts';
 import SelectCharts from './components/SelectCharts';
+import LogCharts from './components/LogCharts';
 
 const leftPanelDataLocal = [
   {
@@ -1192,6 +1193,7 @@ const Home: React.FC<any> = (props: any) => {
           progressType = 'line',
           progressSize = 8,
           progressSteps = 5,
+          logSize = 50,
           des_bordered,
           des_column,
           des_layout,
@@ -1383,7 +1385,8 @@ const Home: React.FC<any> = (props: any) => {
                       'timeSelect',
                       'httpTable',
                       'header',
-                      'optionSelect'
+                      'optionSelect',
+                      'logAlert'
                     ].includes(type) ? (
                     '请重新绑定数据节点'
                   ) : type === 'header' ? (
@@ -2198,6 +2201,16 @@ const Home: React.FC<any> = (props: any) => {
                       data={{
                         dataValue,
                         fontSize,
+                      }}
+                    />
+                  ) : type === 'logAlert' ? (
+                    <LogCharts
+                      id={key}
+                      data={{
+                        dataValue,
+                        fontSize,
+                        xName,
+                        logSize
                       }}
                     />
                   ) : (
@@ -5782,59 +5795,57 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                   </Fragment>
                 ) : null}
-                {
-                  ['alert'].includes(windowType) ? (
-                    <Fragment>
-                      <Form.Item
-                        name={`yName`}
-                        label={'显示方式'}
-                        initialValue="default"
-                        rules={[{ required: false, message: '显示方式' }]}
-                      >
-                        <Select
-                          style={{ width: '100%' }}
-                          options={[
-                            {
-                              value: 'default',
-                              label: '默认',
-                            },
-                            {
-                              value: 'point',
-                              label: '圆点',
-                            },
-                          ]}
-                        />
-                      </Form.Item>
-                      <Form.Item name="magnifierWidth" label="圆点大小" initialValue={40}>
-                        <InputNumber />
-                      </Form.Item>
-                      <Form.Item
-                        name={`des_layout`}
-                        label={'对齐方式'}
-                        initialValue={'center'}
-                        rules={[{ required: false, message: '对齐方式' }]}
-                      >
-                        <Select
-                          style={{ width: '100%' }}
-                          options={[
-                            {
-                              value: 'center',
-                              label: '居中',
-                            },
-                            {
-                              value: 'start',
-                              label: '居左',
-                            },
-                            {
-                              value: 'end',
-                              label: '居右',
-                            },
-                          ]}
-                        />
-                      </Form.Item>
-                    </Fragment>
-                  ) : null
-                }
+                {['alert'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`yName`}
+                      label={'显示方式'}
+                      initialValue="default"
+                      rules={[{ required: false, message: '显示方式' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={[
+                          {
+                            value: 'default',
+                            label: '默认',
+                          },
+                          {
+                            value: 'point',
+                            label: '圆点',
+                          },
+                        ]}
+                      />
+                    </Form.Item>
+                    <Form.Item name="magnifierWidth" label="圆点大小" initialValue={40}>
+                      <InputNumber />
+                    </Form.Item>
+                    <Form.Item
+                      name={`des_layout`}
+                      label={'对齐方式'}
+                      initialValue={'center'}
+                      rules={[{ required: false, message: '对齐方式' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={[
+                          {
+                            value: 'center',
+                            label: '居中',
+                          },
+                          {
+                            value: 'start',
+                            label: '居左',
+                          },
+                          {
+                            value: 'end',
+                            label: '居右',
+                          },
+                        ]}
+                      />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
                 {['form'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item
@@ -6125,113 +6136,105 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                   </Fragment>
                 ) : null}
-                {
-                  ['laminationImage'].includes(windowType) ? (
-                    <Fragment>
-                      <Form.Item initialValue={3} name="des_column" label="行数">
-                        <InputNumber min={1} placeholder="行数" />
-                      </Form.Item>
-                      <Form.Item
-                        name="markNumberTop"
-                        label="顶部图示长度"
-                        rules={[{ required: false, message: '顶部图示长度' }]}
-                      >
-                        <InputNumber min={0} placeholder="顶部图示长度" />
-                      </Form.Item>
-                      <Form.Item
-                        name="markNumberLeft"
-                        label="左侧图示长度"
-                        rules={[{ required: false, message: '左侧图示长度' }]}
-                      >
-                        <InputNumber min={0} placeholder="左侧图示长度" />
-                      </Form.Item>
-                    </Fragment>
-                  ) : null
-                }
-                {
-                  ['reJudgment'].includes(windowType) ? (
-                    <Fragment>
-                      <Form.Item
-                        name={`fetchType`}
-                        label={'http类型'}
-                        rules={[{ required: false, message: 'http类型' }]}
-                      >
-                        <Select
-                          style={{ width: '100%' }}
-                          options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
+                {['laminationImage'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item initialValue={3} name="des_column" label="行数">
+                      <InputNumber min={1} placeholder="行数" />
+                    </Form.Item>
+                    <Form.Item
+                      name="markNumberTop"
+                      label="顶部图示长度"
+                      rules={[{ required: false, message: '顶部图示长度' }]}
+                    >
+                      <InputNumber min={0} placeholder="顶部图示长度" />
+                    </Form.Item>
+                    <Form.Item
+                      name="markNumberLeft"
+                      label="左侧图示长度"
+                      rules={[{ required: false, message: '左侧图示长度' }]}
+                    >
+                      <InputNumber min={0} placeholder="左侧图示长度" />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
+                {['reJudgment'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`fetchType`}
+                      label={'http类型'}
+                      rules={[{ required: false, message: 'http类型' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
+                          value: item,
+                          label: _.toUpper(item),
+                        }))}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={`xName`}
+                      label={'接口地址'}
+                      rules={[{ required: false, message: '接口地址' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
+                {['httpTable'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`fetchType`}
+                      label={'http类型'}
+                      rules={[{ required: false, message: 'http类型' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={['get', 'post', 'put', 'delete', 'wbsocket']
+                          ?.map?.((item: any) => ({
                             value: item,
                             label: _.toUpper(item),
                           }))}
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        name={`xName`}
-                        label={'接口地址'}
-                        rules={[{ required: false, message: '接口地址' }]}
-                      >
-                        <Input size="large" />
-                      </Form.Item>
-                    </Fragment>
-                  ) : null
-                }
-                {
-                  ['httpTable'].includes(windowType) ? (
-                    <Fragment>
-                      <Form.Item
-                        name={`fetchType`}
-                        label={'http类型'}
-                        rules={[{ required: false, message: 'http类型' }]}
-                      >
-                        <Select
-                          style={{ width: '100%' }}
-                          options={['get', 'post', 'put', 'delete', 'wbsocket']
-                            ?.map?.((item: any) => ({
-                              value: item,
-                              label: _.toUpper(item),
-                            }))}
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        name={`xName`}
-                        label={'接口地址'}
-                        rules={[{ required: false, message: '接口地址' }]}
-                      >
-                        <Input size="large" />
-                      </Form.Item>
-                      <Form.Item
-                        name={`httpRotation`}
-                        label={'接口轮训'}
-                        rules={[{ required: false, message: '接口轮训' }]}
-                        valuePropName="checked"
-                        initialValue={false}
-                      >
-                        <Switch />
-                      </Form.Item>
-                      <Form.Item
-                        name={`httpRotationTime`}
-                        label={'轮训时间间隔'}
-                        initialValue={2000}
-                        rules={[{ required: false, message: '轮训时间间隔' }]}
-                      >
-                        <InputNumber addonAfter="毫秒" />
-                      </Form.Item>
-                    </Fragment>
-                  ) : null
-                }
-                {
-                  ['cable'].includes(windowType) ? (
-                    <Fragment>
-                      <Form.Item
-                        name={`dataZoom`}
-                        label={'展示最新的'}
-                        rules={[{ required: false, message: '展示最新的' }]}
-                        initialValue={0}
-                      >
-                        <InputNumber min={0} />
-                      </Form.Item>
-                    </Fragment>
-                  ) : null
-                }
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={`xName`}
+                      label={'接口地址'}
+                      rules={[{ required: false, message: '接口地址' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      name={`httpRotation`}
+                      label={'接口轮训'}
+                      rules={[{ required: false, message: '接口轮训' }]}
+                      valuePropName="checked"
+                      initialValue={false}
+                    >
+                      <Switch />
+                    </Form.Item>
+                    <Form.Item
+                      name={`httpRotationTime`}
+                      label={'轮训时间间隔'}
+                      initialValue={2000}
+                      rules={[{ required: false, message: '轮训时间间隔' }]}
+                    >
+                      <InputNumber addonAfter="毫秒" />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
+                {['cable'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`dataZoom`}
+                      label={'展示最新的'}
+                      rules={[{ required: false, message: '展示最新的' }]}
+                      initialValue={0}
+                    >
+                      <InputNumber min={0} />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
                 {['button', 'buttonInp'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item
@@ -6374,7 +6377,7 @@ const Home: React.FC<any> = (props: any) => {
                       <Switch />
                     </Form.Item>
                   </Fragment>
-                  ):null}
+                ) : null}
                 {['buttonPassword'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item
@@ -7025,42 +7028,40 @@ const Home: React.FC<any> = (props: any) => {
                     ) : null}
                   </Fragment>
                 ) : null}
-                {
-                  ['fabric'].includes(windowType) ? (
-                    <Fragment>
-                      <Form.Item
-                        name={`fetchType`}
-                        label={'http类型'}
-                        rules={[{ required: false, message: 'http类型' }]}
-                      >
-                        <Select
-                          style={{ width: '100%' }}
-                          placeholder="http类型"
-                          options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
-                            value: item,
-                            label: _.toUpper(item),
-                          }))}
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        name={`yName`}
-                        label={'服务接口地址'}
-                        tooltip="用于控制启动/停止检测"
-                        rules={[{ required: false, message: '接口地址' }]}
-                      >
-                        <Input placeholder="接口地址" size="large" />
-                      </Form.Item>
-                      <Form.Item
-                        name={`xName`}
-                        label={'算法接口地址'}
-                        tooltip="传输图片和标注信息"
-                        rules={[{ required: false, message: '接口地址' }]}
-                      >
-                        <Input placeholder="接口地址" size="large" />
-                      </Form.Item>
-                    </Fragment>
-                  ) : null
-                }
+                {['fabric'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`fetchType`}
+                      label={'http类型'}
+                      rules={[{ required: false, message: 'http类型' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        placeholder="http类型"
+                        options={['get', 'post', 'put', 'delete']?.map?.((item: any) => ({
+                          value: item,
+                          label: _.toUpper(item),
+                        }))}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={`yName`}
+                      label={'服务接口地址'}
+                      tooltip="用于控制启动/停止检测"
+                      rules={[{ required: false, message: '接口地址' }]}
+                    >
+                      <Input placeholder="接口地址" size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      name={`xName`}
+                      label={'算法接口地址'}
+                      tooltip="传输图片和标注信息"
+                      rules={[{ required: false, message: '接口地址' }]}
+                    >
+                      <Input placeholder="接口地址" size="large" />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
                 {['operation', 'operation2'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item name="des_column" label="列数" initialValue={1}>
@@ -7758,54 +7759,52 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                   </Fragment>
                 ) : null}
-                {
-                  ['listSwitchImg'].includes(windowType) ? (
-                    <Fragment>
-                      <Form.Item
-                        name={`modelRotate`}
-                        label={'布局方式'}
-                        initialValue={'1'}
-                        rules={[{ required: false, message: '布局方式' }]}
-                      >
-                        <Select
-                          style={{ width: '100%' }}
-                          options={[
-                            { label: '列表-图片-图片', value: '1' },
-                            { label: '列表-表格-图片', value: '2' }
-                          ]}
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        name={`fetchType`}
-                        label={'http类型'}
-                        rules={[{ required: false, message: 'http类型' }]}
-                      >
-                        <Select
-                          style={{ width: '100%' }}
-                          placeholder="http类型"
-                          options={['get', 'post', 'put', 'delete', 'wbsocket']
-                            ?.map?.((item: any) => ({
-                              value: item,
-                              label: _.toUpper(item),
-                            }))}
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        name={`xName`}
-                        label={'接口地址'}
-                        rules={[{ required: false, message: '接口地址' }]}
-                      >
-                        <Input placeholder="接口地址" size="large" />
-                      </Form.Item>
-                      <Form.Item name="tableFontSize" label="表格字号" initialValue={16}>
-                        <InputNumber />
-                      </Form.Item>
-                      <Form.Item name="magnifierSize" label="图片字号" initialValue={14}>
-                        <InputNumber />
-                      </Form.Item>
-                    </Fragment>
-                  ) : null
-                }
+                {['listSwitchImg'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`modelRotate`}
+                      label={'布局方式'}
+                      initialValue={'1'}
+                      rules={[{ required: false, message: '布局方式' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={[
+                          { label: '列表-图片-图片', value: '1' },
+                          { label: '列表-表格-图片', value: '2' }
+                        ]}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={`fetchType`}
+                      label={'http类型'}
+                      rules={[{ required: false, message: 'http类型' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        placeholder="http类型"
+                        options={['get', 'post', 'put', 'delete', 'wbsocket']
+                          ?.map?.((item: any) => ({
+                            value: item,
+                            label: _.toUpper(item),
+                          }))}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={`xName`}
+                      label={'接口地址'}
+                      rules={[{ required: false, message: '接口地址' }]}
+                    >
+                      <Input placeholder="接口地址" size="large" />
+                    </Form.Item>
+                    <Form.Item name="tableFontSize" label="表格字号" initialValue={16}>
+                      <InputNumber />
+                    </Form.Item>
+                    <Form.Item name="magnifierSize" label="图片字号" initialValue={14}>
+                      <InputNumber />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
                 {['equipmentInfo'].includes(windowType) ? (
                   <Fragment>
                     <Form.Item
@@ -7825,6 +7824,20 @@ const Home: React.FC<any> = (props: any) => {
                       rules={[{ required: false, message: '缩放大小' }]}
                     >
                       <InputNumber />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
+                {['logAlert'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`xName`}
+                      label={'接口地址'}
+                      rules={[{ required: false, message: '接口地址' }]}
+                    >
+                      <Input addonBefore="ws://" size="large" />
+                    </Form.Item>
+                    <Form.Item name="logSize" label="展示日志行数">
+                      <InputNumber min={1} max={200} />
                     </Form.Item>
                   </Fragment>
                 ) : null}
