@@ -1311,9 +1311,15 @@
 .logCharts {
   width: 100%;
   height: 100%;
+  overflow-y: auto;
 
   :global {
-    //
+    .content-item-span {
+      height: 100%;
+      width: 100%;
+      word-break: break-all;
+      line-height: 1.3;
+    }
   }
 }
 

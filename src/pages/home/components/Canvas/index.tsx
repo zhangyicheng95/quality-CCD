@@ -2210,7 +2210,8 @@ const Home: React.FC<any> = (props: any) => {
                         dataValue,
                         fontSize,
                         xName,
-                        logSize
+                        logSize,
+                        yName
                       }}
                     />
                   ) : (
@@ -2598,7 +2599,7 @@ const Home: React.FC<any> = (props: any) => {
                 ...item,
                 [__value[1]]: ['three', 'buttonImages', 'imgButton', 'button'].includes(type)
                   ? _.omit(dataValue, 'action')
-                  : ['fabric', 'modelSwitch', 'reJudgment', 'cable', 'listSwitchImg'].includes(type)
+                  : ['fabric', 'modelSwitch', 'reJudgment', 'cable', 'listSwitchImg', 'logAlert'].includes(type)
                     ? undefined
                     : ['laminationImage'].includes(type) ?
                       {
@@ -7838,6 +7839,13 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                     <Form.Item name="logSize" label="展示日志行数">
                       <InputNumber min={1} max={200} />
+                    </Form.Item>
+                    <Form.Item
+                      name={`yName`}
+                      label={'筛选字段'}
+                      rules={[{ required: false, message: '筛选字段' }]}
+                    >
+                      <Input size="large" />
                     </Form.Item>
                   </Fragment>
                 ) : null}

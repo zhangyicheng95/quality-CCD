@@ -417,7 +417,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                               : {},
                           )}
                           placement={'top'}
-                          onClick={() => openLink(value)}
+                          onClick={(value?.indexOf?.('http://') > -1 || value?.indexOf?.('https://') > -1) ? () => openLink(value) : null}
                         >
                           {(value?.indexOf?.('http://') > -1 || value?.indexOf?.('https://') > -1) ? '查看' : value}
                         </TooltipDiv>
@@ -453,7 +453,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                             : {},
                         )}
                         placement={'top'}
-                        onClick={() => openLink(val)}
+                        onClick={(val?.indexOf?.('http://') > -1 || val?.indexOf?.('https://') > -1) ? () => openLink(val) : null}
                       >
                         {(val?.indexOf?.('http://') > -1 || val?.indexOf?.('https://') > -1) ? '查看' : val}
                       </TooltipDiv>
@@ -585,7 +585,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                     : {},
                                 )}
                                 placement={'top'}
-                                onClick={() => openLink(value)}
+                                onClick={(value?.indexOf?.('http://') > -1 || value?.indexOf?.('https://') > -1) ? () => openLink(value) : null}
                               >
                                 {(value?.indexOf?.('http://') > -1 || value?.indexOf?.('https://') > -1) ? '查看' : value}
                               </TooltipDiv>
@@ -618,7 +618,7 @@ const Table2Charts: React.FC<Props> = (props: any) => {
                                   : {},
                               )}
                               placement={'top'}
-                              onClick={() => openLink(val)}
+                              onClick={(val?.indexOf?.('http://') > -1 || val?.indexOf?.('https://') > -1) ? () => openLink(val) : null}
                             >
                               {(val?.indexOf?.('http://') > -1 || val?.indexOf?.('https://') > -1) ? '查看' : val}
                             </TooltipDiv>

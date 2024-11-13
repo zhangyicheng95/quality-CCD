@@ -236,6 +236,7 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
             <div className="listSwitchImgCharts-left-search-box">
               <DatePicker
                 style={{ fontSize }}
+                allowClear={false}
                 popupClassName="listSwitchImgCharts-left-search-box-range-picker"
                 defaultValue={moment(new Date(), dateFormat)}
                 format="YYYY-MM-DD"
