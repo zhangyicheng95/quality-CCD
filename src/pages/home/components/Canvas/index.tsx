@@ -2599,7 +2599,7 @@ const Home: React.FC<any> = (props: any) => {
                 ...item,
                 [__value[1]]: ['three', 'buttonImages', 'imgButton', 'button'].includes(type)
                   ? _.omit(dataValue, 'action')
-                  : ['fabric', 'modelSwitch', 'reJudgment', 'cable', 'listSwitchImg', 'logAlert'].includes(type)
+                  : ['fabric', 'modelSwitch', 'reJudgment', 'cable', 'logAlert'].includes(type)
                     ? undefined
                     : ['laminationImage'].includes(type) ?
                       {
@@ -2608,7 +2608,9 @@ const Home: React.FC<any> = (props: any) => {
                       }
                       : ['table2'].includes(type) ?
                         (dataValue?.[0] === "0" ? [] : dataValue)
-                        : dataValue,
+                        : ['listSwitchImg'].includes(type) ?
+                          (dataValue || [])?.slice(-1)
+                          : dataValue,
               }
               : item,
           );
