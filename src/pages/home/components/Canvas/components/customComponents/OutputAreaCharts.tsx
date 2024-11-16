@@ -160,7 +160,7 @@ function ItemBox(props: any) {
               })}
             >
               <div className="flex-box-justify-end" style={{ gap: 4 }}>
-                {name?.slice(0, 2)?.map((itemName: string, indexName: number) => {
+                {name?.slice?.(0, 2)?.map((itemName: string, indexName: number) => {
                   return <div key={indexName}>{itemName?.split('<br/>')?.[0]?.slice?.(0, 3)}</div>;
                 })}
               </div>

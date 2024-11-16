@@ -314,6 +314,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
                   setLocked((prev) => !prev);
                 }
               }}
+              block
             >
               {locked ? '解锁' : '锁定'}
             </Button>
@@ -337,6 +338,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
                 onSubmit();
               }
             }}
+            block
           >
             {listType ? listType : '确认'}
           </Button>

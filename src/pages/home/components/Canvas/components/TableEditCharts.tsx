@@ -477,7 +477,7 @@ const TableEditCharts: React.FC<Props> = (props: any) => {
                 onClick={() => {
                   // 构造要导出的数据结构,不需要表头
                   // const header = dataSource[0];
-                  // const body = dataSource?.slice(1);
+                  // const body = dataSource?.slice?.(1);
                   // const exportData = dataSource.map((item) => {
                   //   return [item[0], item[1]];
                   // });

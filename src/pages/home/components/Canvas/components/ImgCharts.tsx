@@ -120,14 +120,14 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         list = Array.from(new Set(urlList.current.concat(dataValue)));
       }
       if (list?.length >= 101) {
-        list = list.slice(-95);
+        list = list?.slice?.(-95);
         localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
         setSelectedNum(list?.length - 1);
         urlList.current = list;
       } else {
         localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
         setSelectedNum(list?.length - 1 >= 99 ? 99 : list?.length - 1);
-        urlList.current = list.slice(-100);
+        urlList.current = list?.slice?.(-100);
       }
 
     }
@@ -636,7 +636,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       </div>
       {showImgList ? (
         <div className="flex-box-center img-box-footer-list">
-          {(urlList.current.slice(!!imgListNum ? -imgListNum : -6) || [])?.map?.(
+          {(urlList.current?.slice?.(!!imgListNum ? -imgListNum : -6) || [])?.map?.(
             (item: any, index: number) => {
               const type = _.isString(item)
                 ? item?.indexOf('OK') > -1
@@ -654,7 +654,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                     key={`${id}-${type}-${index}`}
                     className="img-box-footer-list-item"
                     onClick={() => {
-                      setSelectedNum(urlList.current.slice(0, -6)?.length + index);
+                      setSelectedNum(urlList.current?.slice?.(0, -6)?.length + index);
                     }}
                   >
                     <img src={url} alt={index + ''} />

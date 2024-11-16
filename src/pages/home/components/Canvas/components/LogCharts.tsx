@@ -57,7 +57,7 @@ const LogCharts: React.FC<Props> = (props: any) => {
         className="content-item-span"
         dangerouslySetInnerHTML={{
           // 此处需要处理
-          __html: (logList || [])?.slice(-logSize).join('<br /><br />'),
+          __html: (logList || [])?.slice?.(-logSize).join('<br /><br />'),
         }}
       />
       <div className="preview-box flex-box-center">
@@ -82,7 +82,7 @@ const LogCharts: React.FC<Props> = (props: any) => {
             className="content-item-span"
             dangerouslySetInnerHTML={{
               // 此处需要处理
-              __html: (logList || [])?.slice(-logSize).join('<br/><br />'),
+              __html: (logList || [])?.slice?.(-logSize).join('<br/><br />'),
             }}
           />
         </div>

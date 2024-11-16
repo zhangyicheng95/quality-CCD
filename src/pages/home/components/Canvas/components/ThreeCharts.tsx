@@ -289,8 +289,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             const list: any = [];
             (Track || []).forEach?.((item4: any, index4: number) => {
               const { Point_Normal, point, normVec, ...restItem4 } = item4;
-              const po = Point_Normal?.slice(0, 3),
-                no = Point_Normal?.slice(3);
+              const po = Point_Normal?.slice?.(0, 3),
+                no = Point_Normal?.slice?.(3);
               list.push({
                 ...rest,
                 ...restItem4,
@@ -1039,8 +1039,8 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
             const list: any = [];
             (Track || []).forEach?.((item4: any, index4: number) => {
               const { Point_Normal, point, normVec, ...restItem4 } = item4;
-              const po = Point_Normal?.slice(0, 3),
-                no = Point_Normal?.slice(3);
+              const po = Point_Normal?.slice?.(0, 3),
+                no = Point_Normal?.slice?.(3);
               list.push({
                 ...rest,
                 ...restItem4,
@@ -1295,7 +1295,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       processBox.style.display = 'block';
       processText.style.display = 'block';
       if (!!loaded && !!total) {
-        const process = `${((loaded / total) * 100 + '').slice(0, 5)}%`;
+        const process = `${((loaded / total) * 100 + '')?.slice?.(0, 5)}%`;
         processBox.value = loaded / total;
         processText.innerText = process;
       } else {

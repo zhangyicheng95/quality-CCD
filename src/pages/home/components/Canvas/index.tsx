@@ -1386,7 +1386,8 @@ const Home: React.FC<any> = (props: any) => {
                       'httpTable',
                       'header',
                       'optionSelect',
-                      'logAlert'
+                      'logAlert',
+                      'img'
                     ].includes(type) ? (
                     '请重新绑定数据节点'
                   ) : type === 'header' ? (
@@ -2609,7 +2610,7 @@ const Home: React.FC<any> = (props: any) => {
                       : ['table2'].includes(type) ?
                         (dataValue?.[0] === "0" ? [] : dataValue)
                         : ['listSwitchImg'].includes(type) ?
-                          (dataValue || [])?.slice(-1)
+                          (_.isArray(dataValue) ? (dataValue || [])?.slice(-1) : undefined)
                           : dataValue,
               }
               : item,

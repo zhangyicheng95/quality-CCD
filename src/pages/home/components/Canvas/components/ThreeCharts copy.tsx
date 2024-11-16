@@ -997,7 +997,7 @@ const ThreeCharts: React.FC<Props> = (props: any) => {
       processBox.style.display = 'block';
       processText.style.display = 'block';
       if (!!loaded && !!total) {
-        const process = `${((loaded / total) * 100 + '').slice(0, 5)}%`;
+        const process = `${((loaded / total) * 100 + '')?.slice?.(0, 5)}%`;
         processBox.value = loaded / total;
         processText.innerText = process;
       } else {
