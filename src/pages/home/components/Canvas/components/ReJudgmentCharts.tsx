@@ -214,6 +214,7 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
       });
     });
   };
+
   return (
     <div
       id={`echart-${id}`}
@@ -260,7 +261,10 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                     height: `${(position?.rightBottom?.y - position?.leftTop?.y) * 100}%`,
                   }}
                   onClick={() => {
-                    setSelected(item);
+                    setSelected(null);
+                    setTimeout(() => {
+                      setSelected(item);
+                    }, 200);
                   }}
                 />
               }
@@ -303,7 +307,10 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
                   className="re-judgment-right-img-list-item"
                   key={`re-judgment-right-img-list-item-${index}`}
                   onClick={() => {
-                    setSelected(item);
+                    setSelected(null);
+                    setTimeout(() => {
+                      setSelected(item);
+                    }, 200);
                   }}
                 >
                   <div className="flex-box-align-end re-judgment-right-img-list-item-status">NG</div>

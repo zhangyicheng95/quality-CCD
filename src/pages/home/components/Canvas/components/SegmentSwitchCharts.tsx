@@ -35,7 +35,7 @@ const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
     if (!!localStorage.getItem(`segmentSwitch-${id}`)) {
       setTimeout(() => {
         setSelected(localStorage.getItem(`segmentSwitch-${id}`) || "");
-      }, 300);
+      }, 1500);
     }
   }, []);
   useEffect(() => {
