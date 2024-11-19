@@ -35,12 +35,15 @@ const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
     if (!!localStorage.getItem(`segmentSwitch-${id}`)) {
       setTimeout(() => {
         setSelected(localStorage.getItem(`segmentSwitch-${id}`) || "");
-      }, 1500);
+      }, 500);
     }
   }, []);
   useEffect(() => {
-    if (modelRotate === 'socket' && !_.isUndefined(dataValue)) {
-      setSelected(dataValue);
+
+    if (modelRotate === 'socket') {
+      if (!_.isUndefined(dataValue)) {
+        setSelected(dataValue);
+      }
     } else {
       if (started) {
         btnFetch('get', xName).then((res: any) => {
