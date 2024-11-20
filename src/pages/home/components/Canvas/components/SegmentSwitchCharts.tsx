@@ -39,7 +39,6 @@ const SegmentSwitchCharts: React.FC<Props> = (props: any) => {
     }
   }, []);
   useEffect(() => {
-
     if (modelRotate === 'socket') {
       if (!_.isUndefined(dataValue)) {
         setSelected(dataValue);

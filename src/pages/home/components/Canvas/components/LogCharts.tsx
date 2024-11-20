@@ -20,7 +20,8 @@ const LogCharts: React.FC<Props> = (props: any) => {
     yName = '',
   } = data;
   const socket = useRef<any>();
-  const [logList, setLogList] = useState([]);
+  const logRef = useRef<any>(false);
+  const [logList, setLogList] = useState<any>([]);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -37,6 +38,12 @@ const LogCharts: React.FC<Props> = (props: any) => {
         };
         socket.current.onmessage = (msg: any) => {
           setLogList((pre: any) => pre?.concat(msg.data));
+          setTimeout(() => {
+            if (!logRef.current) {
+              const bottom: any = document.getElementById('log-bottom');
+              bottom.scrollIntoView({ behavior: 'smooth' });
+            }
+          }, 200);
         };
         socket.current.onclose = function () {
           console.log('服务端主动断开');
@@ -55,9 +62,15 @@ const LogCharts: React.FC<Props> = (props: any) => {
     <div id={`echart-${id}`} className={`flex-box ${styles.logCharts}`} style={{ fontSize }}>
       <div
         className="content-item-span"
+        onMouseOver={() => {
+          logRef.current = true;
+        }}
+        onMouseOut={() => {
+          logRef.current = false;
+        }}
         dangerouslySetInnerHTML={{
           // 此处需要处理
-          __html: (logList || [])?.slice?.(-logSize).join('<br /><br />'),
+          __html: (logList || [])?.slice?.(-logSize).concat('<div id="log-bottom" />').join('<br /><br />'),
         }}
       />
       <div className="preview-box flex-box-center">
