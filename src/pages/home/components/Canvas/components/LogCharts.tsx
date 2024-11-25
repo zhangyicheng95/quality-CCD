@@ -20,6 +20,7 @@ const LogCharts: React.FC<Props> = (props: any) => {
     yName = '',
   } = data;
   const socket = useRef<any>();
+  const logMsgRef = useRef<any>([]);
   const logRef = useRef<any>(false);
   const [logList, setLogList] = useState<any>([]);
   const [visible, setVisible] = useState(false);
@@ -37,13 +38,16 @@ const LogCharts: React.FC<Props> = (props: any) => {
           }
         };
         socket.current.onmessage = (msg: any) => {
-          setLogList((pre: any) => pre?.concat(msg.data));
-          setTimeout(() => {
-            if (!logRef.current) {
+          // 先把数据缓存起来
+          logMsgRef.current = logMsgRef.current?.concat(msg.data)?.slice?.(-logSize);
+          if (!logRef.current) {
+            // 鼠标不在窗口范围内，才做渲染
+            setLogList(logMsgRef.current);
+            setTimeout(() => {
               const bottom: any = document.getElementById('log-bottom');
               bottom.scrollIntoView({ behavior: 'smooth' });
-            }
-          }, 200);
+            }, 100);
+          }
         };
         socket.current.onclose = function () {
           console.log('服务端主动断开');
@@ -59,15 +63,19 @@ const LogCharts: React.FC<Props> = (props: any) => {
   }, [started, xName]);
 
   return (
-    <div id={`echart-${id}`} className={`flex-box ${styles.logCharts}`} style={{ fontSize }}>
+    <div
+      id={`echart-${id}`}
+      className={`flex-box ${styles.logCharts}`}
+      style={{ fontSize }}
+      onMouseOver={() => {
+        logRef.current = true;
+      }}
+      onMouseOut={() => {
+        logRef.current = false;
+      }}
+    >
       <div
         className="content-item-span"
-        onMouseOver={() => {
-          logRef.current = true;
-        }}
-        onMouseOut={() => {
-          logRef.current = false;
-        }}
         dangerouslySetInnerHTML={{
           // 此处需要处理
           __html: (logList || [])?.slice?.(-logSize).concat('<div id="log-bottom" />').join('<br /><br />'),
