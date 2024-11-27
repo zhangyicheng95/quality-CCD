@@ -29,8 +29,6 @@ const Setting: React.FC<any> = (props) => {
 
   // 获取数据信息
   useEffect(() => {
-    console.log(paramsData);
-
     if (!_.isEmpty(paramsData) && !_.isEmpty(paramsData?.flowData)) {
       const { quality_name, name, flowData } = paramsData;
       const { nodes } = flowData;

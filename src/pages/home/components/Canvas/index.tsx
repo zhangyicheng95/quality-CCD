@@ -4004,8 +4004,8 @@ const Home: React.FC<any> = (props: any) => {
                     options={nodeList}
                     showSearch
                     onChange={(val) => {
-                      if (!val[0]) {
-                        message.error('该节点缺少节点ID，请联系管理员');
+                      if (!val?.[0]) {
+                        form.setFieldsValue({ value: [getuid()] });
                         return;
                       }
                       const res = paramsData?.flowData?.nodes.filter(

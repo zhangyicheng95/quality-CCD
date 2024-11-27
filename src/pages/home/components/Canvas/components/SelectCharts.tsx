@@ -17,11 +17,11 @@ const SelectCharts: React.FC<Props> = (props: any) => {
     dataValue = [], fontSize = 12, fetchType, xName, yName, ifNeedAllow, timeSelectDefault
   } = data;
   if (process.env.NODE_ENV === 'development') {
-      dataValue = [
-        {label:'第一个',value:1},
-        {label:'第二个',value:2},
-        {label:'第三个',value:3}
-      ];
+    dataValue = [
+      { label: '第一个', value: 1 },
+      { label: '第二个', value: 2 },
+      { label: '第三个', value: 3 }
+    ];
   };
   const domRef = useRef<any>(null);
 
@@ -32,15 +32,14 @@ const SelectCharts: React.FC<Props> = (props: any) => {
       return;
     }
   }, [JSON.stringify(dataValue)]);
-  console.log(123);
 
   return (
-    <div id={`echart-${id}`} className={styles.selectCharts} ref={domRef}  style={{fontSize}}>
+    <div id={`echart-${id}`} className={styles.selectCharts} ref={domRef} style={{ fontSize }}>
       <Select
-        mode={ifNeedAllow ? "multiple" : ""}
-        style={{height: domRef?.current?.clientHeight, lineHeight: domRef?.current?.clientHeight}}
+        mode={ifNeedAllow ? "multiple" : undefined}
+        style={{ height: domRef?.current?.clientHeight, lineHeight: domRef?.current?.clientHeight }}
         options={timeSelectDefault || dataValue}
-        onChange={(e)=>{
+        onChange={(e) => {
         }}
       />
     </div>
