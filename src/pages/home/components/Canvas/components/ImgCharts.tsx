@@ -23,6 +23,10 @@ interface Props {
   onClick?: any;
 }
 
+const local = {
+  url: 'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0',
+  cacheControl: false,
+};
 const ImgCharts: React.FC<Props> = (props: any) => {
   const { data = {}, id, needReplace = false } = props;
   let {
@@ -48,8 +52,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     imgs_width, imgs_height,
   } = data;
   if (process.env.NODE_ENV === 'development' && !dataValue) {
-    dataValue =
-      'https://th.bing.com/th/id/R.22ae499c7c99289ef333b02bf640b822?rik=MkOhaz4Fe4DSQg&riu=http%3a%2f%2fwww.fdbusiness.com%2fwp-content%2fuploads%2f2015%2f06%2fSternMaidJune2015-680x365_c.jpg&ehk=zuoZKfrcto%2f0INs9UHPLw9HILlz%2fzPB6GGfRKFQPiHk%3d&risl=&pid=ImgRaw&r=0';
+    dataValue = local;
   }
   const ifCanEdit = useMemo(() => {
     return location.hash?.indexOf('edit') > -1;
@@ -72,7 +75,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
   const imgBoxRef = useRef<any>();
   const urlList = useRef<any>([]);
   const [chartSize, setChartSize] = useState(true);
-  const [selectedNum, setSelectedNum] = useState(0);
+  const [selectedNum, setSelectedNum] = useState<any>(0);
   const [imgVisible, setImgVisible] = useState(false);
   const [visibleDirection, setVisibleDirection] = useState<any>('column');
   const [visible, setVisible] = useState(false);
@@ -82,7 +85,11 @@ const ImgCharts: React.FC<Props> = (props: any) => {
 
   useLayoutEffect(() => {
     try {
-      const list = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || '[]');
+      const local = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || '[]');
+      let list: any[] = Array.from(new Set(local));
+      if (!!list[0]?.url) {
+        list = _.uniqBy(list, 'url');
+      };
       urlList.current = list;
     } catch (err) {
       console.log(err);
@@ -111,14 +118,10 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       if (!dataValue) {
         dataValue = localhostList?.[localhostList?.length - 1] || '';
       }
-      let list: any = [];
-      if (_.isString(dataValue) || !_.isBoolean(dataValue?.ifStorage) || !!dataValue?.ifStorage) {
-        // 缓存进去
-        list = Array.from(new Set(urlList.current.concat(dataValue)))?.filter((i: any) => _.isString(i) || (!_.isBoolean(dataValue?.ifStorage) || !!dataValue?.ifStorage));
-      } else {
-        // 不存
-        list = Array.from(new Set(urlList.current.concat(dataValue)));
-      }
+      let list: any[] = Array.from(new Set(urlList.current.concat(dataValue)));
+      if (!!list[0]?.url) {
+        list = _.uniqBy(list, 'url');
+      };
       if (list?.length >= 101) {
         list = list?.slice?.(-95);
         localStorage.setItem(`img-list-${params.id}-${id}`, JSON.stringify(list));
@@ -400,17 +403,41 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       : res;
   }, [urlList.current, selectedNum, dataValue, ifShowColorList, imgTypeChange]);
   const onPrev = () => {
+    const sortFun: any = (num: number) => {
+      if (num >= 0) {
+        if (!_.isBoolean(urlList.current?.[num]?.cacheControl) || !!urlList.current?.[num]?.cacheControl) {
+          return num;
+        } else {
+          return sortFun(num - 1);
+        };
+      } else {
+        return 0;
+      }
+    };
     setSelectedNum((pre: number) => {
       if (pre - 1 >= 0) {
-        return pre - 1;
-      }
+        const num = sortFun(pre - 1) || 0;
+        return num;
+      };
       return pre;
     });
   };
   const onNext = () => {
+    const sortFun: any = (num: number) => {
+      if (num < urlList.current.length) {
+        if (!_.isBoolean(urlList.current?.[num]?.cacheControl) || !!urlList.current?.[num]?.cacheControl) {
+          return num;
+        } else {
+          return sortFun(num + 1);
+        };
+      } else {
+        return urlList.current.length - 1;
+      }
+    };
     setSelectedNum((pre: number) => {
       if (pre + 1 < urlList.current.length) {
-        return pre + 1;
+        const num = sortFun(pre + 1) || urlList.current.length - 1;
+        return num;
       }
       return pre;
     });

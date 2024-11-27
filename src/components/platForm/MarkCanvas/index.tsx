@@ -1739,7 +1739,6 @@ const MarkCanvas: React.FC<Props> = (props: any) => {
                         >
                           <Select
                             style={{ width: '100%' }}
-                            disabled
                             options={[
                               { label: '下到上', value: 0 },
                               { label: '左到右', value: 90 },

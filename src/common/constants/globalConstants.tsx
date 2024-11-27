@@ -221,6 +221,12 @@ export const windowTypeList: any = [
     type: 'form',
   },
   {
+    value: 'buttonOpen',
+    label: '文件路径打开组件',
+    icon: buttonIcon,
+    type: 'form',
+  },
+  {
     value: 'switchBox',
     label: '批量启停窗口',
     icon: batchStartButtonIcon,

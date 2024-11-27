@@ -131,6 +131,8 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
   const [rightImgSource, setRightImgSource] = useState('');
 
   useEffect(() => {
+    console.log('列表切换组件收到消息:', dataValue);
+
     if (modelRotate === '1') {
       if (!!dataValue?.length) {
         setSelected(dataValue?.[dataValue?.length - 1]);

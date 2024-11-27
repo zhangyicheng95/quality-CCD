@@ -151,6 +151,8 @@ import Table5Charts from './components/Table5Charts';
 import LoopAlertCharts from './components/LoopAlertCharts';
 import SelectCharts from './components/SelectCharts';
 import LogCharts from './components/LogCharts';
+import ButtonOpenCharts from './components/ButtonOpenCharts';
+import ChooseDirButton from '@/components/ChooseDirButton';
 
 const leftPanelDataLocal = [
   {
@@ -1905,6 +1907,16 @@ const Home: React.FC<any> = (props: any) => {
                         des_bordered,
                       }}
                     />
+                  ) : type === 'buttonOpen' ? (
+                    <ButtonOpenCharts
+                      id={key}
+                      data={{
+                        fontSize,
+                        yName,
+                        defaultImg,
+                        valueColor,
+                      }}
+                    />
                   ) : type === 'switchBox' ? (
                     <SwitchBoxCharts
                       id={key}
@@ -2283,6 +2295,9 @@ const Home: React.FC<any> = (props: any) => {
                                   }),
                                 ),
                               );
+                              if (type === 'buttonOpen') {
+                                setSelectedPath((prev: any) => ({ ...prev, value: defaultImg }));
+                              };
                               setFieldsValue(
                                 Object.assign(
                                   {},
@@ -6515,6 +6530,89 @@ const Home: React.FC<any> = (props: any) => {
                     </Form.Item>
                     <Form.Item name="des_bordered" label="是否自动换行" valuePropName="checked">
                       <Switch />
+                    </Form.Item>
+                  </Fragment>
+                ) : null}
+                {['buttonOpen'].includes(windowType) ? (
+                  <Fragment>
+                    <Form.Item
+                      name={`yName`}
+                      label={'按钮名称'}
+                      rules={[{ required: false, message: '按钮名称' }]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      name={`defaultImg`}
+                      label={'要打开的路径'}
+                      rules={[{ required: false, message: '要打开的路径' }]}
+                    >
+                      <code className='flex-box' style={{ gap: 8 }}>
+                        {
+                          !!selectedPath?.value ?
+                            <TooltipDiv>{selectedPath?.value}</TooltipDiv>
+                            : null
+                        }
+                        <ChooseDirButton
+                          name={'selectDir'}
+                          type='primary'
+                          size="small"
+                          onClick={() => {
+                            if (!!localStorage.getItem('parentOrigin')) {
+                              window?.parent?.postMessage?.(
+                                { type: 'openDir', name: 'selectDir' },
+                                localStorage.getItem('parentOrigin') || '',
+                              );
+                            } else {
+                              setSelectPathVisible(true);
+                            }
+                          }}
+                          onOk={(value: any) => {
+                            if (!!localStorage.getItem('parentOrigin')) {
+                              setFieldsValue({ defaultImg: value });
+                              setSelectedPath({ value });
+                            }
+                          }}
+                        >
+                          选择路径
+                        </ChooseDirButton>
+                      </code>
+                    </Form.Item>
+                    <Form.Item
+                      name={`valueColor`}
+                      label={'按钮颜色'}
+                      initialValue={'primary'}
+                      rules={[{ required: false, message: '按钮颜色' }]}
+                    >
+                      <Select
+                        style={{ width: '100%' }}
+                        options={[
+                          {
+                            value: 'primary',
+                            label: '默认',
+                          },
+                          {
+                            value: 'link',
+                            label: '链接按钮',
+                          },
+                          {
+                            value: 'ghost',
+                            label: '透明按钮',
+                          },
+                          {
+                            value: 'rgba(255,107,104,1)',
+                            label: '红色',
+                          },
+                          {
+                            value: '#52c41a',
+                            label: '绿色',
+                          },
+                          {
+                            value: 'rgba(245,160,49,1)',
+                            label: '黄色',
+                          },
+                        ]}
+                      />
                     </Form.Item>
                   </Fragment>
                 ) : null}
