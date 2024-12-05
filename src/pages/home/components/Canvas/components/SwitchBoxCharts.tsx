@@ -299,9 +299,9 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
         <div
           className="switch-box-item"
           style={{
-            width: `calc(${100 / des_column}% - 4px)`,
-            minWidth: `calc(${100 / des_column}% - 4px)`,
-            maxWidth: `calc(${100 / des_column}% - 4px)`,
+            width: `calc(${100 / des_column}% - 8px)`,
+            minWidth: `calc(${100 / des_column}% - 8px)`,
+            maxWidth: `calc(${100 / des_column}% - 8px)`,
           }}
         >
           {useMemo(() => {
@@ -320,7 +320,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
                 <SegmentSwitch
                   title={
                     <div
-                      style={{ minWidth: titleLength, textAlign: !!modelRotate ? 'left' : 'right' }}
+                      style={{ minWidth: des_column > 1 ? '12px' : titleLength, textAlign: !!modelRotate ? 'left' : 'right' }}
                     >
                       {yName}
                     </div>
@@ -363,9 +363,9 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
                   <div
                     className="switch-box-item"
                     style={{
-                      width: `calc(${100 / des_column}% - 4px)`,
-                      minWidth: `calc(${100 / des_column}% - 4px)`,
-                      maxWidth: `calc(${100 / des_column}% - 4px)`,
+                      width: `calc(${100 / des_column}% - 8px)`,
+                      minWidth: `calc(${100 / des_column}% - 8px)`,
+                      maxWidth: `calc(${100 / des_column}% - 8px)`,
                     }}
                     key={`switch-box-item-${index}`}
                   >
@@ -380,7 +380,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
                           <div
                             className={`${!!modelRotate ? 'flex-box' : 'flex-box-justify-end'}`}
                             style={{
-                              minWidth: titleLength,
+                              minWidth: des_column > 1 ? '12px' : titleLength,
                               alignItems: 'center',
                               gap: 8,
                             }}
