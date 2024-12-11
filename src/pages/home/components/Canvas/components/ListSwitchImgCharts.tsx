@@ -188,24 +188,43 @@ const ListSwitchImgCharts: React.FC<Props> = (props: any) => {
       onFilter: (value: string, record: any) => record?.result?.indexOf?.(value) > -1,
     },
     {
-      title: '点位名称',
+      title: '内饰名称',
       dataIndex: 'pointName',
       key: 'pointName',
     },
     {
-      title: '点位',
+      title: '拍摄位置',
       dataIndex: 'point',
       key: 'point',
       align: 'center',
-      width: `${fontSize * 3 + 32}px`
+      width: `${fontSize * 5 + 32}px`,
     },
     {
-      title: '相机',
+      title: '相机编号',
       dataIndex: 'camera',
       key: 'camera',
       align: 'center',
-      width: `${fontSize * 2 + 32}px`
+      width: `${fontSize * 5 + 32}px`,
     }
+    // {
+    //   title: '焊点位置',
+    //   dataIndex: 'pointName',
+    //   key: 'pointName',
+    // },
+    // {
+    //   title: '拍摄位置',
+    //   dataIndex: 'point',
+    //   key: 'point',
+    //   align: 'center',
+    //   width: `${fontSize * 5 + 32}px`,
+    // },
+    // {
+    //   title: '相机编号',
+    //   dataIndex: 'camera',
+    //   key: 'camera',
+    //   align: 'center',
+    //   width: `${fontSize * 5 + 32}px`,
+    // }
   ];
   const onModalChange = (params: any) => {
     if (!!fetchType && !!xName) {

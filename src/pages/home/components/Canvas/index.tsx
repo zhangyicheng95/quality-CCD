@@ -959,7 +959,7 @@ const Home: React.FC<any> = (props: any) => {
         title: `${alias || name}`,
         label: `${alias || name}`,
         children: items
-          ?.filter((i: any) => i.group === 'bottom')
+          ?.filter((i: any) => i.group === 'bottom' && i?.label?.type !== 'numpy.ndarray')
           ?.map?.((port: any) => {
             const { label } = port;
             const { name, alias } = label;
