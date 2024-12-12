@@ -447,7 +447,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     <div id={`echart-${id}`} className={`flex-box ${styles.imgCharts}`} style={{ fontSize }}>
       <div
         className="flex-box img-box-mark-body"
-        style={showImgList ? { height: 'calc(100% - 50px)' } : { height: '100%' }}
+        style={showImgList ? { height: 'calc(100% - 50px)' } : !!showFooter ? { height: 'calc(100% - 24px)' } : { height: '100%' }}
         ref={dom}
       >
         <div
@@ -701,10 +701,11 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         </div>
       ) : null}
       {showFooter ? (
-        <div className="flex-box-justify-between img-box-footer-list2" style={{ fontSize: 16 }}>
+        <div className="flex-box-justify-between img-box-footer-list2" style={{ fontSize: 16, height: 24, lineHeight: '24px' }}>
           {_.isObject(source) &&
             (Object.entries(source) || [])?.map?.((item: any) => {
-              if (item[0] == 'url') {
+
+              if (item[0] == 'url' || !Object.keys(item[1])?.length) {
                 return null;
               }
               return (
@@ -756,7 +757,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             </div>
             <div className={`flex-box image-contrast-modal-body-bottom ${visibleDirection}`}>
               <Image
-                src={`${(!!needReplace ? urlList.current?.[selectedNum]?.replace(imgs_width, imgs_height) : urlList.current?.[selectedNum]) || ''}?__timestamp=${+new Date()}`}
+                src={`${(!!needReplace ? (_.isString(source) ? source : source?.url)?.replace(imgs_width, imgs_height) : (_.isString(source) ? source : source?.url)) || `${defaultImg}?__timestamp=${+new Date()}`}` + (!!labelInxAxis ? `?__timestamp=${+new Date()}` : '')}
                 alt="logo"
                 className="image-contrast-modal-body-img"
               />
