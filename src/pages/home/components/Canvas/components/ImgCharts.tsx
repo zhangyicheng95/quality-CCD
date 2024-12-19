@@ -212,6 +212,10 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       });
       img = null;
     };
+
+    return () => {
+      img = null;
+    }
   }, [selectedNum, dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight]);
   useEffect(() => {
     // 鼠标按下放大镜
