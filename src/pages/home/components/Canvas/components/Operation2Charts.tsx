@@ -103,9 +103,9 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     const node = nodes.filter((i: any) => i.id === id.split('$$')[0])?.[0] || {};
     const { config = {} } = node;
     let { group = [], initParams = {}, execParams = {} } = config;
-    if (!execParams || _.isEmpty(execParams)) {
-      execParams = initParams;
-    }
+    // if (!execParams || _.isEmpty(execParams)) {
+    execParams = initParams;
+    // }
     let resConfig: any = [],
       selectedOptions = {};
     operationList?.forEach?.((item: any) => {

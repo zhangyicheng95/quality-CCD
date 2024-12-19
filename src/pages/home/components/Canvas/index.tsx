@@ -8309,8 +8309,7 @@ const Home: React.FC<any> = (props: any) => {
                       return (
                         <div
                           key={id}
-                          className={`home-footer-item-box ${Status === 'running' ? 'success-font' : 'error-font'
-                            }`}
+                          className={`home-footer-item-box ${Status === 'running' ? 'success-font' : 'error-font'}`}
                           onClick={() => {
                             ifCanEdit && setFooterSelectVisible(true);
                           }}

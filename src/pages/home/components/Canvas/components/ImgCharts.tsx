@@ -73,6 +73,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
 
   const dom = useRef<any>();
   const imgBoxRef = useRef<any>();
+  const imageDomRef = useRef<any>();
   const urlList = useRef<any>([]);
   const [chartSize, setChartSize] = useState(true);
   const [selectedNum, setSelectedNum] = useState<any>(0);
@@ -102,7 +103,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         isDown = false;
       }
     }
-    window.addEventListener('keyup', onKeyUp, { passive: true });
+    window.addEventListener('keyup', onKeyUp);
 
     return () => {
       window?.removeEventListener?.('keyup', onKeyUp);
@@ -221,7 +222,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     if (ifCanEdit) return;
     const size = magnifierSize || 4;
     const eventDom: any = dom?.current?.querySelector('.ant-image-mask');
-    const ImageDom: any = dom?.current?.querySelector('.ant-image-img');
+    // const ImageDom: any = dom?.current?.querySelector('.ant-image-img');
     const mask: any = dom?.current?.querySelector('.mask');
     if (!eventDom) return;
 
@@ -251,7 +252,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             // offsetWidth 除了外边距(margin)以外，所有的宽度(高度)之和
             const { pageX = 0, pageY = 0, offsetX = 0, offsetY = 0 } = event;
             // let { clientWidth: bodyWidth, clientHeight: bodyHeight } = document.body;
-            let { clientWidth: boxWidth, clientHeight: boxHeight } = ImageDom;
+            let { clientWidth: boxWidth, clientHeight: boxHeight } = imageDomRef?.current;
             let left = offsetX - mask?.offsetWidth / 2;
             // offsetY：鼠标坐标到元素的顶部的距离
             // offsetHeight:元素的像素高度 包含元素的垂直内边距和边框,水平滚动条的高度,且是一个整数
@@ -389,7 +390,17 @@ const ImgCharts: React.FC<Props> = (props: any) => {
           bigDom.style.display = 'none';
         }
       };
-    }
+    };
+
+    return () => {
+      eventDom.onmousedown = null;
+      ul.onmousemove = null;
+      eventDom.onmouseup = null;
+      domBox.onmouseleave = null;
+      if (!!imageDomRef?.current?.src) {
+        imageDomRef.current.src = '';
+      }
+    };
   }, [magnifierVisible, selectedNum, dataValue]);
 
   const source = useMemo(() => {
@@ -472,15 +483,15 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                         : { width: 'auto', height: '100%' }
                     }
                   />
-                  <Image
+                  <img
                     src={`${(!!needReplace ? (_.isString(source) ? source : source?.url)?.replace(imgs_width, imgs_height) : (_.isString(source) ? source : source?.url)) || `${defaultImg}?__timestamp=${+new Date()}`}` + (!!labelInxAxis ? `?__timestamp=${+new Date()}` : '')}
                     alt="logo"
+                    ref={imageDomRef}
                     style={
                       chartSize
                         ? { width: '100%', height: 'auto' }
                         : { width: 'auto', height: '100%' }
                     }
-                    preview={false}
                   />
                   {
                     (!!source?.defects && _.isArray(source?.defects)) ?
