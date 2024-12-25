@@ -5,6 +5,21 @@ let socket: any = null;
 const type = 'error';
 
 const listen = (action: any, throttleAndMerge: any, ip?: string, id?: string) => {
+  const handelData = _.throttle((msg: any) => {
+    try {
+      const result = JSON.parse(msg.data);
+      const currentData = {
+        time: new Date().getTime(),
+        ...result,
+        level: _.toLower(result.level),
+        message: _.isArray(result?.message) ? result.message.join(',') : result.message,
+      };
+      action?.({ type: `home/${type}Message`, payload: currentData });
+    } catch (err) {
+      // console.log(err);
+    }
+  }, 300);
+
   if (!socket) {
     try {
       const ipString: string = localStorage.getItem('ipString') || '';
@@ -15,18 +30,7 @@ const listen = (action: any, throttleAndMerge: any, ip?: string, id?: string) =>
       };
       // socket.onmessage = throttleAndMerge;
       socket.onmessage = (msg: any) => {
-        try {
-          const result = JSON.parse(msg.data);
-          const currentData = {
-            time: new Date().getTime(),
-            ...result,
-            level: _.toLower(result.level),
-            message: _.isArray(result?.message) ? result.message.join(',') : result.message,
-          };
-          action?.({ type: `home/${type}Message`, payload: currentData });
-        } catch (err) {
-          // console.log(err);
-        }
+        handelData(msg);
       };
       socket.onclose = function () {
         console.log(`${type} ws:close`);

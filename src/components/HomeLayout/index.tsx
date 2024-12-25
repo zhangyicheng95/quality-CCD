@@ -45,7 +45,6 @@ const HomeLayout: React.FC<any> = (props) => {
         });
       }
     } catch (e) {
-      console.log('ipUrlList有问题', e);
       localStorage.removeItem('ipUrlList');
     }
 
@@ -211,16 +210,13 @@ const HomeLayout: React.FC<any> = (props) => {
       location.href = `${location.href?.split('#/')?.[0]}#/home${!!hash ? `?${hash}` : ''}`;
       window.location.reload();
     });
-  }
-  // 半个小时无操作的话，自动刷新重连，防止socket不推送数据
+  };
+  // 10分钟无操作的话，自动刷新重连，防止socket不推送数据
   useReloadAfterStationary({ wait: 1000 * 60 * 30, interval: 1000 * 60 }, () => {
     window.location.reload();
   });
   window.focus();
 
-  // console.log = (message?: any, ...optionalParams: any) => {
-  //   console.info(`${new Date()}`, message, ...optionalParams);
-  // };
   return (
     <div className={styles.reportWrap}>
       <div className="box flex-box">

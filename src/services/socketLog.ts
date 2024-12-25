@@ -1,21 +1,24 @@
 import { website } from '@/services/consts';
+import * as _ from 'lodash';
 
 let socket: any = null;
 const type = 'log';
 
 const listen = (action: any, logThrottleAndMerge: any) => {
+  const handelData = _.throttle((msg: any) => {
+    try {
+      action({ type: `home/${type}Message`, payload: msg.data });
+    } catch (err) { }
+  }, 300);
+
   if (!socket) {
     try {
       const ipString: string = localStorage.getItem('ipString') || '';
       const path = `${website.socket}task-${type}/${ipString}?tail=1&n=1`;
       socket = new WebSocket(path);
       socket.onopen = () => console.log(`${type} ws:open`);
-      // socket.onmessage = logThrottleAndMerge;
       socket.onmessage = (msg: any) => {
-        try {
-          // console.log(`${type} ws:send`, msg.data);
-          action({ type: `home/${type}Message`, payload: msg.data });
-        } catch (err) { }
+        handelData(msg);
       };
       socket.onclose = function () {
         console.log(`${type} ws:close`);

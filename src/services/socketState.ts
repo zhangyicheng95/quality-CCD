@@ -1,9 +1,17 @@
 import { website } from '@/services/consts';
+import * as _ from 'lodash';
 
 let socket: any = null;
 const type = 'state';
 
 const listen = (action: any) => {
+  const handelData = _.throttle((msg: any) => {
+    try {
+      const payload = JSON.parse(msg.data);
+      action({ type: `home/${type}Message`, payload });
+    } catch (err) { }
+  }, 1000);
+
   if (!socket) {
     try {
       const ipString: string = localStorage.getItem('ipString') || '';
@@ -11,10 +19,7 @@ const listen = (action: any) => {
       socket = new WebSocket(path);
       socket.onopen = () => console.log(`${type} ws:open`);
       socket.onmessage = (msg: any) => {
-        try {
-          const payload = JSON.parse(msg.data);
-          action({ type: `home/${type}Message`, payload });
-        } catch (err) { }
+        handelData(msg);
       };
       socket.onclose = function () {
         console.log(`${type} ws:close`);

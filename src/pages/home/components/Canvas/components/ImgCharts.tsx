@@ -71,9 +71,9 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     diff = { x: 0, y: 0 }, // 相对于上一次lastPointermove移动差值
     lastPointermove = { x: 0, y: 0 }; // 用于计算diff
 
+  const imgNumberRecord = useRef<any>(0);
   const dom = useRef<any>();
   const imgBoxRef = useRef<any>();
-  const imageDomRef = useRef<any>();
   const urlList = useRef<any>([]);
   const [chartSize, setChartSize] = useState(true);
   const [selectedNum, setSelectedNum] = useState<any>(0);
@@ -133,7 +133,11 @@ const ImgCharts: React.FC<Props> = (props: any) => {
         setSelectedNum(list?.length - 1 >= 99 ? 99 : list?.length - 1);
         urlList.current = list?.slice?.(-100);
       }
-
+      // if (imgNumberRecord.current >= 72) {
+      //   window.location.reload();
+      // } else {
+      //   imgNumberRecord.current += 1;
+      // };
     }
   }, [dataValue, comparison]);
   useEffect(() => {
@@ -212,10 +216,6 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       });
       img = null;
     };
-
-    return () => {
-      img = null;
-    }
   }, [selectedNum, dataValue, dom?.current?.clientWidth, dom?.current?.clientHeight]);
   useEffect(() => {
     // 鼠标按下放大镜
@@ -226,7 +226,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
     if (ifCanEdit) return;
     const size = magnifierSize || 4;
     const eventDom: any = dom?.current?.querySelector('.ant-image-mask');
-    // const ImageDom: any = dom?.current?.querySelector('.ant-image-img');
+    const ImageDom: any = dom?.current?.querySelector('.ant-image-img');
     const mask: any = dom?.current?.querySelector('.mask');
     if (!eventDom) return;
 
@@ -256,7 +256,7 @@ const ImgCharts: React.FC<Props> = (props: any) => {
             // offsetWidth 除了外边距(margin)以外，所有的宽度(高度)之和
             const { pageX = 0, pageY = 0, offsetX = 0, offsetY = 0 } = event;
             // let { clientWidth: bodyWidth, clientHeight: bodyHeight } = document.body;
-            let { clientWidth: boxWidth, clientHeight: boxHeight } = imageDomRef?.current;
+            let { clientWidth: boxWidth, clientHeight: boxHeight } = ImageDom;
             let left = offsetX - mask?.offsetWidth / 2;
             // offsetY：鼠标坐标到元素的顶部的距离
             // offsetHeight:元素的像素高度 包含元素的垂直内边距和边框,水平滚动条的高度,且是一个整数
@@ -401,9 +401,6 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       ul.onmousemove = null;
       eventDom.onmouseup = null;
       domBox.onmouseleave = null;
-      if (!!imageDomRef?.current?.src) {
-        imageDomRef.current.src = '';
-      }
     };
   }, [magnifierVisible, selectedNum, dataValue]);
 
@@ -487,15 +484,15 @@ const ImgCharts: React.FC<Props> = (props: any) => {
                         : { width: 'auto', height: '100%' }
                     }
                   />
-                  <img
+                  <Image
                     src={`${(!!needReplace ? (_.isString(source) ? source : source?.url)?.replace(imgs_width, imgs_height) : (_.isString(source) ? source : source?.url)) || `${defaultImg}?__timestamp=${+new Date()}`}` + (!!labelInxAxis ? `?__timestamp=${+new Date()}` : '')}
                     alt="logo"
-                    ref={imageDomRef}
                     style={
                       chartSize
                         ? { width: '100%', height: 'auto' }
                         : { width: 'auto', height: '100%' }
                     }
+                    preview={false}
                   />
                   {
                     (!!source?.defects && _.isArray(source?.defects)) ?

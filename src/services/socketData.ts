@@ -50,8 +50,8 @@ const listen = (action: any) => {
                     ? 'RUNNING'
                     : 'STOPPED'
                   : !!cen[1]?.name?.indexOf('.ply') || !!cen[1]?.name?.indexOf('.stl')
-                  ? { ...cen[1], guid: guid() }
-                  : cen[1];
+                    ? { ...cen[1], guid: guid() }
+                    : cen[1];
 
               if (key == 'uid') {
                 return {
@@ -68,7 +68,7 @@ const listen = (action: any) => {
             }, {});
             action({ type: `home/${type}Message`, payload: newData });
           }
-        } catch (err) {}
+        } catch (err) { }
       };
       socket.onclose = function () {
         console.log(`${type} ws:close`);

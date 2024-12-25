@@ -4,6 +4,8 @@ import * as _ from 'lodash';
 import { message, Select } from 'antd';
 import { FrownOutlined, SmileOutlined } from '@ant-design/icons';
 import { guid } from '@/utils/utils';
+import { btnFetch } from '@/services/api';
+import { connect } from 'umi';
 
 interface Props {
   data: any;
@@ -12,7 +14,7 @@ interface Props {
 }
 // 状态组件
 const SelectCharts: React.FC<Props> = (props: any) => {
-  const { data = {}, id } = props;
+  const { data = {}, id, started } = props;
   let {
     dataValue = [], fontSize = 12, fetchType, xName, yName, ifNeedAllow, timeSelectDefault
   } = data;
@@ -37,13 +39,17 @@ const SelectCharts: React.FC<Props> = (props: any) => {
     <div id={`echart-${id}`} className={styles.selectCharts} ref={domRef} style={{ fontSize }}>
       <Select
         mode={ifNeedAllow ? "multiple" : undefined}
+        disabled={!started}
         style={{ height: domRef?.current?.clientHeight, lineHeight: domRef?.current?.clientHeight }}
         options={timeSelectDefault || dataValue}
         onChange={(e) => {
+          btnFetch('post', xName, { data: e });
         }}
       />
     </div>
   );
 };
 
-export default SelectCharts;
+export default connect(({ home, themeStore }) => ({
+  started: home.started || false,
+}))(SelectCharts);
