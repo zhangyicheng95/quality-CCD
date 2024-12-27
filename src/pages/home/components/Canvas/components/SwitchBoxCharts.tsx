@@ -332,7 +332,7 @@ const SwitchBoxCharts: React.FC<Props> = (props: any) => {
                   buttonColor={values?.includes(false) && values?.includes(true) ? '#b8831b' : ''}
                   reverse={!!modelRotate}
                   loading={localhostLoading}
-                  onClick={(e: any) => {
+                  onChange={(e: any) => {
                     setLocalhostLoading(true);
                     setLoading((prev: any) =>
                       Object.entries(prev)?.reduce((pre: any, cen: any) => {
