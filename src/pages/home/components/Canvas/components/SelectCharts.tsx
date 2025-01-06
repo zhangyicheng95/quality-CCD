@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styles from '../index.module.less';
 import * as _ from 'lodash';
-import { message, Select } from 'antd';
+import { Form, message, Select } from 'antd';
 import { FrownOutlined, SmileOutlined } from '@ant-design/icons';
 import { guid } from '@/utils/utils';
 import { btnFetch } from '@/services/api';
@@ -19,35 +19,43 @@ const SelectCharts: React.FC<Props> = (props: any) => {
     dataValue = [], fontSize = 12, fetchType, xName, yName, ifNeedAllow, timeSelectDefault
   } = data;
   if (process.env.NODE_ENV === 'development') {
-    dataValue = [
-      { label: '第一个', value: 1 },
-      { label: '第二个', value: 2 },
-      { label: '第三个', value: 3 }
-    ];
+    dataValue = '1';
   };
   const domRef = useRef<any>(null);
+  const [form] = Form.useForm();
 
   useEffect(() => {
-    if (!_.isArray(dataValue)) {
+    if (!_.isString(dataValue)) {
       message.error('下拉选择框窗口数据格式不正确，请检查');
       console.log('SelectCharts:', dataValue);
       return;
     }
-  }, [JSON.stringify(dataValue)]);
+
+    form.setFieldsValue({
+      value: dataValue
+    });
+  }, [dataValue]);
 
   return (
     <div id={`echart-${id}`} className={styles.selectCharts} ref={domRef} style={{ fontSize }}>
       {
         !!domRef?.current?.clientHeight ?
-          <Select
-            mode={ifNeedAllow ? "multiple" : undefined}
-            disabled={!started}
-            style={{ height: domRef?.current?.clientHeight }}
-            options={timeSelectDefault || dataValue}
-            onChange={(e) => {
-              btnFetch('post', xName, { data: e });
-            }}
-          />
+          <Form form={form} scrollToFirstError>
+            <Form.Item
+              name="value"
+              label={yName || ''}
+            >
+              <Select
+                mode={ifNeedAllow ? "multiple" : undefined}
+                disabled={!started}
+                style={{ height: domRef?.current?.clientHeight }}
+                options={timeSelectDefault || dataValue}
+                onChange={(e) => {
+                  btnFetch('post', xName, { data: e });
+                }}
+              />
+            </Form.Item>
+          </Form>
           : null
       }
     </div>
