@@ -53,6 +53,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     des_column,
     des_bordered,
     yName = 150,
+    tableFontSize = 1,
     valueOnTop = false,
     passwordHelp = false,
     password
@@ -357,7 +358,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
               key={name}
               id={name}
               fontSize={fontSize}
-              config={[item?.name, item]}
+              config={[item?.name, { lines: tableFontSize, ...item }]}
               selectedOption={selectedOption}
               setSelectedOption={setSelectedOption}
               form={form}
@@ -654,6 +655,7 @@ export function FormatWidgetToDom(props: any) {
     widget = {},
     default: defaultValue,
     inGroup,
+    lines,
   } = config[1];
 
   let { max = 9999, min, options, precision, step, suffix, type: type1 } = widget;
@@ -1215,6 +1217,7 @@ export function FormatWidgetToDom(props: any) {
             step={step}
             gap={8}
             lineNum={measurementLineNum}
+            lines={lines}
             max={max}
             min={min}
             type={type}

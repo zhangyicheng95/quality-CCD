@@ -1960,6 +1960,7 @@ const Home: React.FC<any> = (props: any) => {
                         des_column,
                         des_bordered,
                         yName,
+                        tableFontSize,
                         valueOnTop,
                         passwordHelp,
                         password,
@@ -1981,6 +1982,7 @@ const Home: React.FC<any> = (props: any) => {
                         des_column,
                         des_bordered,
                         yName,
+                        tableFontSize,
                         valueOnTop,
                         passwordHelp,
                         password,
@@ -3992,7 +3994,7 @@ const Home: React.FC<any> = (props: any) => {
                   label={'监控窗口名称'}
                   rules={[{ required: false, message: '监控窗口名称' }]}
                 >
-                  <Input size="large" />
+                  <Input />
                 </Form.Item>
                 <Form.Item
                   name={'value'}
@@ -4428,14 +4430,14 @@ const Home: React.FC<any> = (props: any) => {
                       label={windowType === 'table' ? '表格key名' : 'y 轴名称'}
                       rules={[{ required: false, message: 'y轴名称' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name={`xName`}
                       label={windowType === 'table' ? '表格value名' : 'x 轴名称'}
                       rules={[{ required: false, message: 'x轴名称' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     {['table'].includes(windowType) ? null : (
                       <Form.Item
@@ -4603,7 +4605,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'环内文字'}
                       rules={[{ required: false, message: '环内文字' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name="ifShowColorList"
@@ -4836,14 +4838,14 @@ const Home: React.FC<any> = (props: any) => {
                         label={windowType === 'table' ? '表格key名' : 'y 轴名称'}
                         rules={[{ required: false, message: 'y轴名称' }]}
                       >
-                        <Input size="large" />
+                        <Input />
                       </Form.Item>
                       <Form.Item
                         name={`imgs_width`}
                         label={windowType === 'table' ? '表格value名' : 'x 轴名称'}
                         rules={[{ required: false, message: 'x轴名称' }]}
                       >
-                        <Input size="large" />
+                        <Input />
                       </Form.Item>
                       <Form.Item
                         name={`dataZoom`}
@@ -4859,14 +4861,14 @@ const Home: React.FC<any> = (props: any) => {
                         label={windowType === 'table' ? '表格key名' : 'y 轴名称'}
                         rules={[{ required: false, message: 'y轴名称' }]}
                       >
-                        <Input size="large" />
+                        <Input />
                       </Form.Item>
                       <Form.Item
                         name={`xName`}
                         label={windowType === 'table' ? '表格value名' : 'x 轴名称'}
                         rules={[{ required: false, message: 'x轴名称' }]}
                       >
-                        <Input size="large" />
+                        <Input />
                       </Form.Item>
                       <Form.Item
                         name={`direction`}
@@ -5139,7 +5141,7 @@ const Home: React.FC<any> = (props: any) => {
                           label={'接口地址'}
                           rules={[{ required: false, message: '接口地址' }]}
                         >
-                          <Input size="large" />
+                          <Input />
                         </Form.Item>
                         <Form.Item
                           name={`staticHeight`}
@@ -5273,7 +5275,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name={`valueColor`}
@@ -5518,7 +5520,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item name="ifFetch" label="是否实时触发" valuePropName="checked">
                       <Switch />
@@ -5659,7 +5661,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                   </Fragment>
                 ) : null}
@@ -5683,7 +5685,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                   </Fragment>
                 ) : null}
@@ -5872,7 +5874,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'标题名称'}
                       rules={[{ required: false, message: '标题名称' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name={`fetchType`}
@@ -5892,7 +5894,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name="modelUpload"
@@ -5931,7 +5933,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'确认按钮名称'}
                       rules={[{ required: false, message: '确认按钮名称' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name={`timeSelectDefault`}
@@ -6133,7 +6135,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'密码'}
                       rules={[{ required: false, message: '密码' }]}
                     >
-                      <Input.Password visibilityToggle={true} allowClear size="large" />
+                      <Input.Password visibilityToggle={true} allowClear />
                     </Form.Item>
                   </Fragment>
                 ) : null}
@@ -6196,7 +6198,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                   </Fragment>
                 ) : null}
@@ -6221,7 +6223,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name={`httpRotation`}
@@ -6262,7 +6264,7 @@ const Home: React.FC<any> = (props: any) => {
                       initialValue="按钮"
                       rules={[{ required: false, message: '按钮名称' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name={`fetchType`}
@@ -6282,14 +6284,14 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name={`fetchParams`}
                       label={'传递参数'}
                       rules={[{ required: false, message: '传递参数' }]}
                     >
-                      <Input.TextArea size="large" autoSize={{ minRows: 1, maxRows: 5 }} />
+                      <Input.TextArea autoSize={{ minRows: 1, maxRows: 5 }} />
                     </Form.Item>
                     {
                       ['buttonInp'].includes(windowType) ? (
@@ -6316,7 +6318,7 @@ const Home: React.FC<any> = (props: any) => {
                       initialValue=""
                       rules={[{ required: false, message: '名称' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name={`timeSelectDefault`}
@@ -6390,7 +6392,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item name="ifNeedAllow" label="是否多选" valuePropName="checked">
                       <Switch />
@@ -6404,7 +6406,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'按钮名称'}
                       rules={[{ required: false, message: '按钮名称' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name={`fetchType`}
@@ -6424,28 +6426,28 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name={`fetchParams`}
                       label={'传递参数'}
                       rules={[{ required: false, message: '传递参数' }]}
                     >
-                      <Input.TextArea size="large" autoSize={{ minRows: 1, maxRows: 5 }} />
+                      <Input.TextArea autoSize={{ minRows: 1, maxRows: 5 }} />
                     </Form.Item>
                     <Form.Item
                       name={`password`}
                       label={'设置密码'}
                       rules={[{ required: false, message: '设置密码' }]}
                     >
-                      <Input.Password visibilityToggle={false} allowClear size="large" />
+                      <Input.Password visibilityToggle={false} allowClear />
                     </Form.Item>
                     <Form.Item
                       name={`passwordHelp`}
                       label={'密码提示'}
                       rules={[{ required: false, message: '密码提示' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                   </Fragment>
                 ) : null}
@@ -6456,7 +6458,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'按钮名称'}
                       rules={[{ required: false, message: '按钮名称' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item name="ifNeedAllow" label="前端执行打开路径" valuePropName="checked">
                       <Switch />
@@ -6479,14 +6481,14 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name={`fetchParams`}
                       label={'传递参数'}
                       rules={[{ required: false, message: '传递参数' }]}
                     >
-                      <Input.TextArea size="large" autoSize={{ minRows: 1, maxRows: 5 }} />
+                      <Input.TextArea autoSize={{ minRows: 1, maxRows: 5 }} />
                     </Form.Item>
                   </Fragment>
                 ) : null}
@@ -6540,7 +6542,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'按钮名称'}
                       rules={[{ required: false, message: '按钮名称' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name={`defaultImg`}
@@ -6660,7 +6662,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name="modelRotate"
@@ -6706,7 +6708,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'总开关名称'}
                       rules={[{ required: false, message: '名称' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name="modelRotate"
@@ -6801,7 +6803,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'名称'}
                       rules={[{ required: false, message: '名称' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name={`timeSelectDefault`}
@@ -6924,7 +6926,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name={`fetchParams`}
@@ -6932,7 +6934,7 @@ const Home: React.FC<any> = (props: any) => {
                       initialValue={'value'}
                       rules={[{ required: false, message: '传递参数的key' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name={`modelRotate`}
@@ -7124,7 +7126,7 @@ const Home: React.FC<any> = (props: any) => {
                           label={'接口地址'}
                           rules={[{ required: false, message: '接口地址' }]}
                         >
-                          <Input size="large" />
+                          <Input />
                         </Form.Item>
                       </Fragment>
                     ) : null}
@@ -7152,7 +7154,7 @@ const Home: React.FC<any> = (props: any) => {
                       tooltip="用于控制启动/停止检测"
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input placeholder="接口地址" size="large" />
+                      <Input placeholder="接口地址" />
                     </Form.Item>
                     <Form.Item
                       name={`xName`}
@@ -7160,7 +7162,7 @@ const Home: React.FC<any> = (props: any) => {
                       tooltip="传输图片和标注信息"
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input placeholder="接口地址" size="large" />
+                      <Input placeholder="接口地址" />
                     </Form.Item>
                   </Fragment>
                 ) : null}
@@ -7222,6 +7224,13 @@ const Home: React.FC<any> = (props: any) => {
                       <InputNumber />
                     </Form.Item>
                     <Form.Item
+                      name={`tableFontSize`}
+                      label={'Measurement组件行数'}
+                      initialValue={1}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                    <Form.Item
                       name="valueOnTop"
                       label="是否单独控制"
                       tooltip="如果每个属性需要单独控制是否开启，则打开"
@@ -7241,7 +7250,7 @@ const Home: React.FC<any> = (props: any) => {
                             label={'接口地址'}
                             rules={[{ required: false, message: '接口地址' }]}
                           >
-                            <Input size="large" />
+                            <Input />
                           </Form.Item>
                         ) : null}
                         <Form.Item
@@ -7293,7 +7302,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'密码'}
                       rules={[{ required: false, message: '密码' }]}
                     >
-                      <Input.Password visibilityToggle={true} allowClear size="large" />
+                      <Input.Password visibilityToggle={true} allowClear />
                     </Form.Item>
                   </Fragment>
                 ) : null}
@@ -7304,7 +7313,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'统计名称'}
                       rules={[{ required: false, message: '统计名称' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item
                       name={`direction`}
@@ -7374,7 +7383,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input placeholder="接口地址" size="large" />
+                      <Input placeholder="接口地址" />
                     </Form.Item>
                     <Form.Item
                       name="platFormOptions"
@@ -7532,7 +7541,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input placeholder="接口地址" size="large" />
+                      <Input placeholder="接口地址" />
                     </Form.Item>
                     <Form.Item name="ifFetchParams" label="反馈参数" valuePropName="checked">
                       <Switch />
@@ -7560,13 +7569,13 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item name="ifFetchParams" label="提示词" initialValue={"保养"}>
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                     <Form.Item name="yName" label="按钮名称" initialValue={"已保养"}>
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                   </Fragment>
                 ) : null}
@@ -7700,14 +7709,14 @@ const Home: React.FC<any> = (props: any) => {
                       label={'上传缺陷地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input placeholder="接口地址" size="large" />
+                      <Input placeholder="接口地址" />
                     </Form.Item>
                     <Form.Item
                       name={`yName`}
                       label={'获取缺陷地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input placeholder="接口地址" size="large" />
+                      <Input placeholder="接口地址" />
                     </Form.Item>
                     <Form.Item
                       name="fileTypes"
@@ -7729,7 +7738,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'归档地址'}
                       rules={[{ required: false, message: '归档地址' }]}
                     >
-                      <Input placeholder="归档地址" size="large" />
+                      <Input placeholder="归档地址" />
                     </Form.Item>
                   </Fragment>
                 ) : null}
@@ -7769,7 +7778,7 @@ const Home: React.FC<any> = (props: any) => {
                           initialValue={'http://127.0.0.1:8888/upload'}
                           rules={[{ required: false, message: '接口地址' }]}
                         >
-                          <Input size="large" />
+                          <Input />
                         </Form.Item>
                       </Fragment>
                     ) : null}
@@ -7793,7 +7802,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'嵌套地址'}
                       rules={[{ required: false, message: '嵌套地址' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                   </Fragment>
                 ) : null}
@@ -7826,7 +7835,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input placeholder="接口地址" size="large" />
+                      <Input placeholder="接口地址" />
                     </Form.Item>
                     <Form.Item name="ifNeedAllow" label="是否二次确认" valuePropName="checked">
                       <Switch />
@@ -7897,7 +7906,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input placeholder="接口地址" size="large" />
+                      <Input placeholder="接口地址" />
                     </Form.Item>
                     <Form.Item name="tableFontSize" label="表格字号" initialValue={16}>
                       <InputNumber />
@@ -7936,7 +7945,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'接口地址'}
                       rules={[{ required: false, message: '接口地址' }]}
                     >
-                      <Input addonBefore="ws://" size="large" />
+                      <Input addonBefore="ws://" />
                     </Form.Item>
                     <Form.Item name="logSize" label="展示日志行数">
                       <InputNumber min={1} max={200} />
@@ -7946,7 +7955,7 @@ const Home: React.FC<any> = (props: any) => {
                       label={'筛选字段'}
                       rules={[{ required: false, message: '筛选字段' }]}
                     >
-                      <Input size="large" />
+                      <Input />
                     </Form.Item>
                   </Fragment>
                 ) : null}

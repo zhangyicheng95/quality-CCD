@@ -211,7 +211,7 @@ const HomeLayout: React.FC<any> = (props) => {
       window.location.reload();
     });
   };
-  // 10分钟无操作的话，自动刷新重连，防止socket不推送数据
+  // 30分钟无操作的话，自动刷新重连，防止socket不推送数据
   useReloadAfterStationary({ wait: 1000 * 60 * 30, interval: 1000 * 60 }, () => {
     window.location.reload();
   });

@@ -17,6 +17,7 @@ interface Props {
   max?: number;
   min?: number;
   lineNum?: number;
+  lines?: number;
   style?: any;
   type?: any;
   gap?: any;
@@ -36,6 +37,7 @@ const Measurement: React.FC<Props> = (props: any) => {
     max = 100000,
     min = -100000,
     lineNum = 4,
+    lines = 3,
     style = null,
     type = 'float',
     gap = 8,
@@ -116,8 +118,8 @@ const Measurement: React.FC<Props> = (props: any) => {
             key={index}
             className="flex-box-center item-input-box"
             style={{
-              minWidth: `calc(${100 / lineNum}% - ${!!gap ? gap : 24}px)`,
-              width: `calc(${100 / lineNum}% - ${!!gap ? gap : 24}px)`,
+              minWidth: `calc(${100 / lineNum * lines}% - ${!!gap ? gap : 24}px)`,
+              width: `calc(${100 / lineNum * lines}% - ${!!gap ? gap : 24}px)`,
             }}
           >
             <div

@@ -29,6 +29,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
     des_column,
     des_bordered,
     yName = 150,
+    tableFontSize = 1,
     valueOnTop = false,
     passwordHelp = false,
     password
@@ -263,7 +264,7 @@ const OperationCharts: React.FC<Props> = (props: any) => {
                         id={item?.name}
                         fontSize={fontSize}
                         // label={item?.alias || item?.name}
-                        config={[item?.name, item]}
+                        config={[item?.name, { lines: tableFontSize, ...item }]}
                         widgetChange={widgetChange}
                         form={form}
                         disabled={!!started}
