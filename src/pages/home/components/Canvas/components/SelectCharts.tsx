@@ -37,15 +37,19 @@ const SelectCharts: React.FC<Props> = (props: any) => {
 
   return (
     <div id={`echart-${id}`} className={styles.selectCharts} ref={domRef} style={{ fontSize }}>
-      <Select
-        mode={ifNeedAllow ? "multiple" : undefined}
-        disabled={!started}
-        style={{ height: domRef?.current?.clientHeight, lineHeight: domRef?.current?.clientHeight }}
-        options={timeSelectDefault || dataValue}
-        onChange={(e) => {
-          btnFetch('post', xName, { data: e });
-        }}
-      />
+      {
+        !!domRef?.current?.clientHeight ?
+          <Select
+            mode={ifNeedAllow ? "multiple" : undefined}
+            disabled={!started}
+            style={{ height: domRef?.current?.clientHeight }}
+            options={timeSelectDefault || dataValue}
+            onChange={(e) => {
+              btnFetch('post', xName, { data: e });
+            }}
+          />
+          : null
+      }
     </div>
   );
 };
