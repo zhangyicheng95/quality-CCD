@@ -56,7 +56,8 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     tableFontSize = 1,
     valueOnTop = false,
     passwordHelp = false,
-    password
+    password,
+    line_height = "1,1,1"
   } = data;
   if (!_.isBoolean(showLabel)) {
     showLabel = true;
@@ -314,6 +315,8 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     if (!name) {
       name = item?.id;
     }
+    const widthItem = line_height?.split(',')?.map((i: string) => Number(i));
+    const widthNum = _.sumBy(widthItem);
     return (
       <div
         className={`${type === 'TagRadio'
@@ -327,7 +330,8 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
           {},
           des_column > 1
             ? {
-              width: `calc(${100 / des_column}% - 8px)`,
+              // width: `calc(${100 / des_column}% - 8px)`,
+              width: `calc(${100 / widthNum} * ${line_height?.split(',')[index % des_column]}% - 8px)`,
               marginRight: configList?.length % des_column === des_column - 1 ? 0 : 8,
             }
             : {},

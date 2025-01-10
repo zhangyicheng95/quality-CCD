@@ -1986,6 +1986,7 @@ const Home: React.FC<any> = (props: any) => {
                         valueOnTop,
                         passwordHelp,
                         password,
+                        line_height,
                       }}
                     />
                   ) : type === 'statistic' ? (
@@ -7170,6 +7171,14 @@ const Home: React.FC<any> = (props: any) => {
                   <Fragment>
                     <Form.Item name="des_column" label="列数" initialValue={1}>
                       <InputNumber />
+                    </Form.Item>
+                    <Form.Item
+                      name="line_height"
+                      label="每一列的宽度比例"
+                      tooltip="每一列的比例: 1,1,1"
+                      initialValue={"1,1,1"}
+                    >
+                      <Input />
                     </Form.Item>
                     <Form.Item name="des_bordered" label="是否展示边框" valuePropName="checked">
                       <Switch />
