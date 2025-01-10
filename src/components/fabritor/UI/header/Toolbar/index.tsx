@@ -171,7 +171,7 @@ export default function Toolbar() {
         }
         let {
           type, sub_type, path, height, width, text, strokeWidth,
-          left, top, scaleX = 1, angle, dpi, sub_name,
+          left, top, scaleX = 1, angle = 0, angle_step = 30, dpi, sub_name,
           backgroundColor, fill, fontSize, caliperRule, measurementErrorRule,
         } = item;
         if (
@@ -195,7 +195,7 @@ export default function Toolbar() {
         }
         const common = {
           type: sub_type, left, top, height: height * scaleX, width: width * scaleX,
-          angle, scale: scaleX, sub_name
+          angle, angle_step, scale: scaleX, sub_name
         }
         // if (sub_type === 'text') {
         //   return {
@@ -218,7 +218,8 @@ export default function Toolbar() {
             y1: item.y1,
             x2: item.x2,
             y2: item.y2,
-            angle: 0,
+            angle,
+            angle_step,
             scale: scaleX,
             ...caliperRule
           }
@@ -235,7 +236,8 @@ export default function Toolbar() {
             y1: item.y1,
             x2: item.x2,
             y2: item.y2,
-            angle: 0,
+            angle,
+            angle_step,
             sub_name,
             scale: scaleX,
             ...caliperRule
@@ -250,6 +252,7 @@ export default function Toolbar() {
             left: left + width / 2,
             top: top + height / 2,
             angle,
+            angle_step,
             scale: scaleX,
             ...caliperRule
           };
@@ -258,7 +261,8 @@ export default function Toolbar() {
             type: 'point',
             sub_type: sub_type.split('point_')[1],
             left: left + width / 2, top: top + height / 2,
-            angle: 0,
+            angle,
+            angle_step,
             scale: scaleX
           }
         } else if (sub_type === 'outer_point') {
@@ -266,14 +270,16 @@ export default function Toolbar() {
             type: 'point',
             sub_type,
             left: left + width / 2, top: top + top / 2,
-            angle: 0,
+            angle,
+            angle_step,
             scale: scaleX
           }
         } else if (sub_type === 'point' || (!sub_type && path?.length <= 3)) {
           return {
             type: 'point',
             left: left + width / 2, top: top + height / 2,
-            angle: 0,
+            angle,
+            angle_step,
             scale: scaleX
           }
         } else if (sub_type?.indexOf('_measurementError_') > -1) {
@@ -334,6 +340,7 @@ export default function Toolbar() {
             top: top + top / 2,
             radius: width / 2,
             angle,
+            angle_step,
             scale: scaleX
           }
         } else if (sub_type === "sector") {
@@ -408,6 +415,7 @@ export default function Toolbar() {
     };
     localStorage.setItem('fabritor_web_json', JSON.stringify(string));
     const result = formatResult(json?.objects);
+    console.log('传递的参数', result);
     if (!!result?.length && !!result?.filter((i: any) => i.type === 'image')?.length) {
       btnFetch(fetchType, xName, { data: result }).then((res: any) => {
         if (!!res && res.code === 'SUCCESS') {

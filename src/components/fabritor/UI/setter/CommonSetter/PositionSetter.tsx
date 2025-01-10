@@ -71,7 +71,6 @@ export default function PositionSetter() {
         object.set(key, value);
       }
     });
-
     editor.canvas.requestRenderAll();
     editor.fireCustomModifiedEvent();
   }
@@ -83,7 +82,8 @@ export default function PositionSetter() {
       lockRatio: true,
       left: object.left,
       top: object.top,
-      angle: object.angle
+      angle: object.angle,
+      angle_step: object.angle_step || 30
     });
   }
 
@@ -141,19 +141,26 @@ export default function PositionSetter() {
               </Col>
             </Row>
             <Row gutter={8}>
-              <Col span={8}>
+              <Col span={12}>
                 <FormItem label={`X(像素})`} name="left">
                   <PxInputNumber />
                 </FormItem>
               </Col>
-              <Col span={8}>
+              <Col span={12}>
                 <FormItem label={`Y(像素})`} name="top">
                   <PxInputNumber />
                 </FormItem>
               </Col>
-              <Col span={8}>
+            </Row>
+            <Row gutter={8}>
+              <Col span={12}>
                 <FormItem label={`旋转(°)`} name="angle">
                   <PxInputNumber min={-360} max={360} precision={0} />
+                </FormItem>
+              </Col>
+              <Col span={12}>
+                <FormItem label={`旋转角度步长`} name="angle_step" initialValue={30}>
+                  <PxInputNumber min={-0} max={90} precision={0} />
                 </FormItem>
               </Col>
             </Row>
