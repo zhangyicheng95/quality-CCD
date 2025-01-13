@@ -115,7 +115,9 @@ const FormCharts: React.FC<Props> = (props: any) => {
       };
       btnFetch(fetchType, xName, params).then((res: any) => {
         if (!!res && res.code === 'SUCCESS') {
-          setLocked(true);
+          if (passwordHelp) {
+            setLocked(true);
+          }
           message.success('success');
         } else {
           message.error(res?.message || '后台服务异常，请重启服务');
