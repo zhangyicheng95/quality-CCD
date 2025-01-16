@@ -139,8 +139,8 @@ const ReJudgmentCharts: React.FC<Props> = (props: any) => {
     };
     // 取模版
     const modelValue = dataValue?.filter((i: any) => i.type === 'model')?.[0]?.value;
-    if (!!modelValue) {
-      setLeftModelSelected(!!Object.keys(modelValue)?.length ? modelValue : { position: {}, url: '' });
+    if (!!modelValue && modelValue != 'undefined' && modelValue != 'null') {
+      setLeftModelSelected(!!Object?.keys?.(modelValue)?.length ? modelValue : { position: {}, url: '' });
     };
     // 消息提示
     const messageValue = dataValue?.filter((i: any) => i.type === 'message')?.[0]?.value;

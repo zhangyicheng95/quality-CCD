@@ -87,6 +87,13 @@ const FormCharts: React.FC<Props> = (props: any) => {
           message.error(res?.message || '后台服务异常，请重启服务');
         }
       });
+    } else {
+      if (!!localStorage.getItem(`formCharts-${id}`)) {
+        setTimeout(() => {
+          const localData = JSON.parse(localStorage.getItem(`formCharts-${id}`) || "{}");
+          init(localData);
+        }, 500);
+      }
     }
   }, [started]);
   // socket监听dataValue
@@ -117,6 +124,7 @@ const FormCharts: React.FC<Props> = (props: any) => {
         if (!!res && res.code === 'SUCCESS') {
           if (passwordHelp) {
             setLocked(true);
+            localStorage.setItem(`formCharts-${id}`, JSON.stringify(params));
           }
           message.success('success');
         } else {
