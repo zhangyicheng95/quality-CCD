@@ -56,15 +56,15 @@ const BarCharts: React.FC<Props> = (props: any) => {
     dataValue = [
       {
         "name": "破损",
-        "value": 6
+        "value": 0.61
       },
       {
         "name": "漆粒子",
-        "value": 0
+        "value": 0.01
       },
       {
         "name": "漆瘤",
-        "value": 0
+        "value": 0.02
       },
       {
         "name": "漆坑",
@@ -205,7 +205,12 @@ const BarCharts: React.FC<Props> = (props: any) => {
         options?.xAxis,
         {
           axisLabel: Object.assign(
-            {},
+            {
+              textStyle: {
+                // color: "#eee",
+                fontSize: '14px'
+              },
+            },
             options?.xAxis?.axisLabel,
             {
               formatter: function (val: any) {
@@ -215,7 +220,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
             labelInxAxis ? { inside: true, color: '#fff' } : {},
             { fontSize },
           ),
-          type: direction === 'rows' ? 'value' : 'category',
+          type: 'category', //direction === 'rows' ? 'value' : 'category',
           splitLine: { show: false },
           splitNumber: 3,
           name: direction === 'rows' ? yName : xName,
@@ -356,7 +361,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
                   : labelDirection === 'bottom'
                     ? 'insideBottom'
                     : 'inside',
-            formatter: (params: any) => params?.value?.toFixed?.(0) || params?.value,
+            formatter: (params: any) => params?.value?.toFixed?.(2) || params?.value,
             fontSize,
           },
           stack: 'total',

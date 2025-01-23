@@ -48,6 +48,9 @@ const options = {
     scale: true,
     axisLabel: {
       color: '#bbb',
+      formatter: function (val: any) {
+        return Number(val).toFixed(2);
+      },
       // fontFamily:'serif',
     },
     axisLine: {
