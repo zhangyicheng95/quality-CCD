@@ -1,4 +1,4 @@
-import React, { Fragment, memo, useEffect, useRef } from 'react';
+import React, { Fragment, memo, useEffect, useMemo, useRef } from 'react';
 import * as echarts from 'echarts';
 import options from './commonOptions';
 import { useModel } from 'umi';
@@ -93,7 +93,9 @@ const BarCharts: React.FC<Props> = (props: any) => {
   const domRef = useRef<any>();
   const myChartRef = useRef<any>();
   barColor = [].concat(barColor);
-
+  const theme = useMemo(() => {
+    return params?.contentData?.theme || 'realDark';
+  }, [params?.contentData?.theme]);
   useEffect(() => {
     if (!!domRef.current) {
       myChartRef.current = echarts.init(domRef.current);
@@ -362,6 +364,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
                     ? 'insideBottom'
                     : 'inside',
             formatter: (params: any) => params?.value?.toFixed?.(2) || params?.value,
+            color: theme === 'realDark' ? '#eee' : '#111',
             fontSize,
           },
           stack: 'total',
