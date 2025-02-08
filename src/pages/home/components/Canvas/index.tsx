@@ -1696,7 +1696,7 @@ const Home: React.FC<any> = (props: any) => {
                     <SelectCharts
                       id={key}
                       data={{
-                        dataValue: dataValue || [],
+                        dataValue: dataValue,
                         fontSize,
                         timeSelectDefault,
                         fetchType,

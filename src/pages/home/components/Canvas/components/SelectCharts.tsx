@@ -25,12 +25,6 @@ const SelectCharts: React.FC<Props> = (props: any) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    if (!_.isString(dataValue)) {
-      message.error('下拉选择框窗口数据格式不正确，请检查');
-      console.log('SelectCharts:', dataValue);
-      return;
-    }
-
     form.setFieldsValue({
       value: dataValue
     });
