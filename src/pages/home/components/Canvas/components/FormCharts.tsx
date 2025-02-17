@@ -38,13 +38,13 @@ const FormCharts: React.FC<Props> = (props: any) => {
     password,
     direction = false,
   } = data;
-  const [selectOptions, setSelectOptions] = useState({
+  const [selectOptions, setSelectOptions] = useState<any>({
     1: { value: '', type: '', options: [{ label: 'aaa', value: 'aaa' }] },
     2: { value: '', type: '', options: [{ label: 'aaa', value: 'aaa' }] },
     3: { value: '', type: '', options: [{ label: 'aaa', value: 'aaa' }] },
   });
   const [formModalEdit, setFormModalEdit] = useState('');
-  const [formModalValue, setFormModalValue] = useState({});
+  const [formModalValue, setFormModalValue] = useState<any>({});
   const [visible, setVisible] = useState(false);
   const [tableDataSource, setTableDataSource] = useState([]);
   const [locked, setLocked] = useState(!!passwordHelp);
@@ -122,10 +122,10 @@ const FormCharts: React.FC<Props> = (props: any) => {
       };
       btnFetch(fetchType, xName, params).then((res: any) => {
         if (!!res && res.code === 'SUCCESS') {
+          localStorage.setItem(`formCharts-${id}`, JSON.stringify(params));
           if (passwordHelp) {
             setLocked(true);
-            localStorage.setItem(`formCharts-${id}`, JSON.stringify(params));
-          }
+          };
           message.success('success');
         } else {
           message.error(res?.message || '后台服务异常，请重启服务');
