@@ -186,10 +186,10 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
           let resultEnabled: any = {};
           (Object.entries(values) || []).forEach?.((res: any, index: number) => {
             const name = res[0]?.split('$$')?.[0];
-            const value: any =
-              !_.isUndefined(res[1]) && !_.isNull(res[1])
-                ? res[1]
-                : pre?.filter((i: any) => i.name === name)?.[0]?.value;
+            const value: any = res[1];
+            // !_.isUndefined(res[1]) && !_.isNull(res[1])
+            //   ? res[1]
+            //   : pre?.filter((i: any) => i.name === name)?.[0]?.value;
             // @ts-ignore
             result[name] = value instanceof moment ? new Date(value).getTime() : value;
             resultEnabled[name] = _.isBoolean(
@@ -883,9 +883,9 @@ export function FormatWidgetToDom(props: any) {
             {options?.map?.((option: any, index: any) => {
               const { id, label, value } = option;
               return (
-                <Radio key={id} value={value}>
+                <Select.Option key={id} value={value}>
                   {label}
-                </Radio>
+                </Select.Option>
               );
             })}
           </Select>
@@ -913,9 +913,9 @@ export function FormatWidgetToDom(props: any) {
             {options?.map?.((option: any, index: any) => {
               const { id, label, value } = option;
               return (
-                <Radio key={id} value={value}>
+                <Select.Option key={id} value={value}>
                   {label}
-                </Radio>
+                </Select.Option>
               );
             })}
           </Select>
