@@ -190,6 +190,7 @@ export default function Toolbar() {
             left = path[0][1];
             top = path[0][2];
           } else {
+            message.error('请调整标注/图片位置，确保位置在画布内');
             return null;
           }
         }
@@ -203,9 +204,10 @@ export default function Toolbar() {
         //     text, backgroundColor, color: fill, fontSize,
         //   }
         // } else 
-        if (sub_type === 'image') {
+        if (['image', 'f-image'].includes(sub_type)) {
           return {
             ...common,
+            type: 'image',
             url: item.objects?.[0]?.src?.split('?')?.[0],
             dpi: dpi,
           }
@@ -364,6 +366,9 @@ export default function Toolbar() {
       }
       const realCanvas = editor.canvas?.getObjects();
       const result = (list || [])?.reduce((pre: any, cen: any) => {
+        if (cen?.type === 'f-image') {
+          cen.type = 'image';
+        }
         const { type, angle, objects } = cen;
         if (type === 'group') {
           const realItemGroup = realCanvas?.filter((i: any) => (i.sub_type === cen.sub_type))?.[0];
@@ -424,6 +429,8 @@ export default function Toolbar() {
           message.error(res?.msg || res?.message || '后台服务异常，请重启服务');
         }
       });
+    } else {
+      message.warning('图片有问题，请重新添加图片模版');
     }
   };
   // 初始化卡尺

@@ -47,7 +47,7 @@ export default function Setter() {
       case 'f-arrow':
       case 'f-tri-arrow':
         return <LineSetter />;
-      case 'f-image':
+      case 'image':
         return <ImageSetter />;
       case 'path':
         if (object?.sub_type === 'rough') {
@@ -99,7 +99,7 @@ export default function Setter() {
       case 'f-arrow':
       case 'f-tri-arrow':
         return '线条';
-      case 'f-image':
+      case 'image':
       case 'image':
         return '图片';
       case 'path':

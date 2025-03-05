@@ -64,7 +64,7 @@ export default function ImageFx() {
   }
 
   useEffect(() => {
-    if (object && object.type === 'f-image') {
+    if (object && object.type === 'image') {
       initImageFx();
     }
   }, [object]);

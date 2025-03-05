@@ -3,7 +3,7 @@ import { fabric } from 'fabric';
 export const createFImageClass = () => {
   // @ts-ignore custom image
   fabric.FImage = fabric.util.createClass(fabric.Group, {
-    type: 'f-image',
+    type: 'image',
 
     initialize(options: any, alreayGrouped = false) {
       const { image, imageBorder = {}, ...rest } = options;

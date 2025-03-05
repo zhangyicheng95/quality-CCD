@@ -158,7 +158,7 @@ export default function CommonSetter() {
           <DeleteOutlined style={{ fontSize: 20 }} />
         </ToolbarItem>
         {
-          object.type === 'f-image' ?
+          object.type === 'image' ?
             <ToolbarItem
               tooltipProps={{ placement: 'top' }}
               title={'删除'}

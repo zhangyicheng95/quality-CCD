@@ -109,7 +109,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
     execParams = initParams;
     // }
     let resConfig: any = [],
-      selectedOptions = {};
+      selectedOptions: any = {};
     operationList?.forEach?.((item: any) => {
       const itemGroup = group.filter((i: any) => i.children.includes(item))?.[0];
       if (execParams?.[item]) {
@@ -140,7 +140,7 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
       if (!!dataValue && !_.isEmpty(dataValue)) {
         resetFields();
         init();
-        let obj = {};
+        let obj: any = {};
         Object.entries(dataValue)?.map?.((res: any) => {
           obj[res[0]] = res[1];
         });
@@ -182,8 +182,8 @@ const Operation2Charts: React.FC<Props> = (props: any) => {
       .then((values) => {
         setConfigList((pre: any) => {
           // 1.直接发送动态数据
-          let result = {};
-          let resultEnabled = {};
+          let result: any = {};
+          let resultEnabled: any = {};
           (Object.entries(values) || []).forEach?.((res: any, index: number) => {
             const name = res[0]?.split('$$')?.[0];
             const value: any =
@@ -808,6 +808,7 @@ export function FormatWidgetToDom(props: any) {
             rules={[{ required: require, message: `${alias}` }]}
           >
             <Select
+              allowClear
               disabled={disabled}
               onChange={(e: any, option: any) => {
                 const { value, propsKey } = option;
@@ -872,6 +873,7 @@ export function FormatWidgetToDom(props: any) {
           rules={[{ required: require, message: `${alias}` }]}
         >
           <Select
+            allowClear
             placeholder={`${alias}`}
             disabled={disabled}
             onChange={(e: any) => {
@@ -900,6 +902,7 @@ export function FormatWidgetToDom(props: any) {
           rules={[{ required: require, message: `${alias}` }]}
         >
           <Select
+            allowClear
             placeholder={`请选择${alias}`}
             mode="multiple"
             disabled={disabled}
