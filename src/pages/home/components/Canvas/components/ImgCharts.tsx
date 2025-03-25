@@ -91,7 +91,15 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       if (!!list[0]?.url) {
         list = _.uniqBy(list, 'url');
       };
-      urlList.current = list;
+      urlList.current = list?.map((item: any) => {
+        if (_.isString(item)) {
+          return !!needReplace ? item?.replace(imgs_width, imgs_height) : item;
+        }
+        return {
+          ...item,
+          url: !!needReplace ? item?.url?.replace(imgs_width, imgs_height) : item?.url,
+        };
+      });
     } catch (err) {
       console.log(err);
     }
@@ -115,7 +123,15 @@ const ImgCharts: React.FC<Props> = (props: any) => {
       setSelectedNum(0);
       urlList.current = !!dataValue ? [dataValue] : [];
     } else {
-      const localhostList = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || '[]');
+      const localhostList = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || '[]')?.map((item: any) => {
+        if (_.isString(item)) {
+          return !!needReplace ? item?.replace(imgs_width, imgs_height) : item;
+        }
+        return {
+          ...item,
+          url: !!needReplace ? item?.url?.replace(imgs_width, imgs_height) : item?.url,
+        };
+      });
       if (!dataValue) {
         dataValue = localhostList?.[localhostList?.length - 1] || '';
       }
@@ -220,7 +236,15 @@ const ImgCharts: React.FC<Props> = (props: any) => {
   useEffect(() => {
     // 鼠标按下放大镜
     if (!dataValue) {
-      const list = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || '[]');
+      const list = JSON.parse(localStorage.getItem(`img-list-${params.id}-${id}`) || '[]')?.map((item: any) => {
+        if (_.isString(item)) {
+          return !!needReplace ? item?.replace(imgs_width, imgs_height) : item;
+        }
+        return {
+          ...item,
+          url: !!needReplace ? item?.url?.replace(imgs_width, imgs_height) : item?.url,
+        };
+      });
       dataValue = list?.[list?.length - 1] || '';
     }
     if (ifCanEdit) return;
